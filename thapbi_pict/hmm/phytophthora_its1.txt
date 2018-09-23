@@ -1,0 +1,18 @@
+# hmmbuild :: profile HMM construction from multiple sequence alignments
+# HMMER 3.1b1 (May 2013); http://hmmer.org/
+# Copyright (C) 2013 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# input alignment file:             phytophthora_its1.fas
+# output HMM file:                  phytophthora_its1.hmm
+# name (the single) HMM:            phytophthora_its1
+# output directed to file:          phytophthora_its1.txt
+# processed alignment resaved to:   phytophthora_its1.sto
+# input alignment is asserted as:   DNA
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# idx name                  nseq  alen  mlen     W eff_nseq re/pos description
+#---- -------------------- ----- ----- ----- ----- -------- ------ -----------
+1     phytophthora_its1      172   273   176   306     2.56  0.450 
+
+# CPU time: 0.05u 0.00s 00:00:00.05 Elapsed: 00:00:00.07
