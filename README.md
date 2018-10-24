@@ -1,3 +1,5 @@
+[![THAPBI PICT TravisCI build status](https://api.travis-ci.org/peterjc/thapbi-pict.svg?branch=master)](https://travis-ci.org/peterjc/thapbi-pict/branches)
+
 # THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 
 *Phytophthora* (from Greek meaning plant-destroyer) species are economically
