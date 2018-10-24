@@ -1,0 +1,23 @@
+# This is a special configuration file to run tests on Travis-CI via
+# GitHub notifications when changes are committed.
+#
+# This file is not intended for end users of the tool.
+
+# We don't need sudo so can avoid slower legacy TravisCI infrastructure
+sudo: false
+
+language: python
+python: "3.7"
+cache: pip
+
+before_install:
+ - "if grep -P '\t' *.md; then echo 'Tabs are bad, please use four spaces in Markdown files.'; false; fi"
+ - "if grep -n -r '[[:blank:]]$' *.md; then echo 'Please remove trailing whitespace in Markdown files.'; false; fi"
+
+install:
+ - pip install --upgrade pip setuptools
+ - pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+
+script:
+ - echo "Using flake8 to check Python code"
+ - flake8 .
