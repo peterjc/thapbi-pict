@@ -17,17 +17,16 @@ This continues earlier work including:
 * https://github.com/peterthorpe5/public_scripts/tree/master/metapy
 * https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools
 
+# Installation
+
+*Pending...*
+
+# Release History
+
+*Pending...*
+
 # Development Notes
 
-## Python style conventions
-
-The Python code follows [PEP8](https://www.python.org/dev/peps/pep-0008/)
-and [PEP257 docstring](https://www.python.org/dev/peps/pep-0257/) style,
-guided by the [Zen of Python](https://www.python.org/dev/peps/pep-0020/).
-
-## Dependencies
-
-We will use the [Conda](https://conda.io/) packaging system, including the
-[BioConda](https://bioconda.github.io/) channel for bioinformatics packages,
-and [PyPI](https://pypi.python.org/) packages to define a reproducible
-environment for running this software.
+Please see the ``CONTRIBUTING.md`` file for details of the development
+setup including Python style conventions, git pre-commit hook, continuous
+integration and test coverage.
