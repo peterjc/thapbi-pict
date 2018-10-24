@@ -1,4 +1,5 @@
 [![THAPBI PICT TravisCI build status](https://api.travis-ci.org/peterjc/thapbi-pict.svg?branch=master)](https://travis-ci.org/peterjc/thapbi-pict/branches)
+[![THAPBI PICT CircleCI build status](https://circleci.com/gh/peterjc/thapbi-pict/tree/master.svg?style=svg)](https://circleci.com/gh/peterjc/thapbi-pict/tree/master)
 
 # THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 

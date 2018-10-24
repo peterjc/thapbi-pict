@@ -1,0 +1,35 @@
+# This is a special configuration file to run tests on Circle-CI via
+# GitHub notifications when changes are committed.
+#
+# This file is not intended for end users of the tool.
+
+version: 2
+jobs:
+  build:
+    docker:
+      - image: continuumio/miniconda3
+    steps:
+      - checkout
+      - run:
+          name: Setup Conda
+          command: |
+            conda config --set always_yes yes --set changeps1 no
+            conda update -q conda
+            # In future point at project-env.yml file here:
+            conda create -q -n myenv python=3.7
+            source activate myenv
+            python --version
+            conda info -a
+      - run:
+          name: Whitespace checks
+          command: |
+            if grep -P '\t' *.md; then echo 'Tabs are bad, please use four spaces in Markdown files.'; false; fi
+            if grep -P '\t' *.yml .circleci/*.yml ; then echo 'Tabs are bad, please use four spaces in Yaml files.'; false; fi
+            if grep -n -r '[[:blank:]]$' *.md; then echo 'Please remove trailing whitespace in Markdown files.'; false; fi
+            if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi
+      - run:
+          name: Flake8 Python checks
+          command: |
+            pip install --upgrade pip setuptools
+            pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+            flake8 .
