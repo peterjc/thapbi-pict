@@ -1,6 +1,8 @@
 Legacy databases, FASTA files from earlier in the THAPBI Phyto-Threats
 project.
 
+# database.fasta circa 2016
+
 File ``database.fasta`` was originally checked into the GitHub repository
 https://github.com/widdowquinn/THAPBI-pycits/ ago on 24 October 2016 as the
 following commit:
@@ -18,3 +20,9 @@ the clade name (here ``1``), species (here *Phytophthora infestans*) and an
 identifier (here voucher number ``CBS36651`` whose 795bp nucleotide sequence
 is available on the NCBI as accession ``HQ643247.1``).
 
+# Phytophthora_ITS_database_v0.004.fasta from Feb 2018
+
+File ``Phytophthora_ITS_database_v0.004.fasta`` taken from here, with the
+spelling of *Phytophthora* corrected), created 28 Feb 2018:
+
+https://github.com/peterthorpe5/public_scripts/blob/master/metapy/data/Phytophora_ITS_database_v0.004.fasta
