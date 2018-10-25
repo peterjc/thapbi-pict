@@ -38,4 +38,4 @@ jobs:
       - run:
           name: Dependency Installation
           command: |
-            pip install biopython
+            conda install biopython
