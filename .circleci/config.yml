@@ -38,4 +38,4 @@ jobs:
       - run:
           name: Dependency Installation
           command: |
-            conda install biopython
+            conda install --file requirements.txt

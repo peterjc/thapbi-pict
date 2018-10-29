@@ -21,7 +21,9 @@ before_install:
 install:
  - pip install --upgrade pip setuptools
  - pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
- - pip install biopython
+ - pip install -r requirements.txt
+ - python -c "import Bio; print(Bio.__version__)"
+ - python -c "import sqlalchemy; print(sqlalchemy.__version__)"
 
 script:
  - echo "Using flake8 to check Python code"
