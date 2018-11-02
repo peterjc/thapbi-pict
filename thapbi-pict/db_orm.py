@@ -5,7 +5,7 @@ database schema and the code to import/export the data as
 Python objects.
 """
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -33,10 +33,24 @@ class SequenceSource(Base):
     __tablename__ = "its1_source"
 
     accession = Column(String, primary_key=True)
-    its1_md5 = Column(String(32))
+    its1_md5 = Column(String(32), ForeignKey("its1_sequence.md5"))
     sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
+
     taxid = Column(Integer)  # NCBI taxid
-    species = Column(String(100))
+    # species = Column(String(100))  # Assume will have an NCBI taxid
+
+    date_added = Column(Date)  # have data_modified too?
+
+    # Implement as an enum?
+    # Unknown, Public DB, Direct Sequencing, Genome Sequence, Metabarcoding
+    seq_strategy = Column(Integer)
+
+    # Implement as an enum?
+    # Unknown, Sanger, Illumina, Roche 454, PacBio, Oxford Nanopore, etc
+    seq_platform = Column(Integer)
+
+    # Start with something like -1 = bad, +1 = good?
+    curated_trust = Column(Integer)
 
 
 Base.metadata.create_all(engine)
