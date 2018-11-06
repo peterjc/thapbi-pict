@@ -3,6 +3,10 @@
 These are FASTA format files of *Phytophthora* ITS1 sequences from earlier
 in the THAPBI Phyto-Threats project.
 
+Code to load some of these files and parse their naming conventions can be
+found in ``thapbi-pict/legacy.py`` which is used for importing them into the
+new database format.
+
 # database.fasta circa 2016
 
 File ``database.fasta`` was originally checked into the GitHub repository
