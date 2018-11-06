@@ -106,9 +106,24 @@ def parse_fasta_entry(text):
 
     Note - this assumes function ``split_composite_entry`` has already
     been used to break up any multiple species composite entries.
+
+    Will also cope with the even older legacy format missing the
+    underscore between the clade and species:
+
+    >>> parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
+    ('1', 'Phytophthora aff infestans', 'P13660')
     """
     parts = text.split("_")
     clade = parts[0]
+
+    if "Phytophthora" in clade:
+        # Legacy variant missing the first underscore
+        index = clade.index("Phytophthora")
+        # Split parts[0] into two list entries
+        parts[0] = clade[index:]
+        clade = clade[:index]
+        parts = [clade] + parts
+
     name = parts[1:-1]
     acc = parts[-1]
     if not clade_re.fullmatch(clade):
@@ -116,10 +131,17 @@ def parse_fasta_entry(text):
     return (clade, " ".join(name), acc)
 
 
+assert (parse_fasta_entry('4_P._arenaria_HQ013219')
+        == ('4', 'P. arenaria', 'HQ013219'))
+assert (parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
+        == ('1', 'Phytophthora aff infestans', 'P13660'))
+
+
 def main(fasta_files):
     """Run the script with command line arguments."""
     seq_count = 0
     entry_count = 0
+    bad_entry_count = 0
     for filename in fasta_files:
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -127,14 +149,17 @@ def main(fasta_files):
                     print("Ignoring control entry: %s" % title)
                     continue
                 seq_count += 1
-                entries = split_composite_entry(title)
+                entries = split_composite_entry(title.split(None, 1)[0])
                 for idn in entries:
                     entry_count += 1
-                    clade, species, acc = parse_fasta_entry(idn)
-                    print(clade, species, acc)
-                assert len(entries) == (title.count("Phytophthora_") +
-                                        title.count("_P._")), title
-    print("%i sequences, %i entries" % (seq_count, entry_count))
+                    try:
+                        clade, species, acc = parse_fasta_entry(idn)
+                        print(clade, species, acc)
+                    except ValueError:
+                        bad_entry_count += 1
+                        print("Can't parse entry: %r" % idn)
+    print("%i sequences, %i entries including %i bad"
+          % (seq_count, entry_count, bad_entry_count))
 
 
 if __name__ == "__main__":
