@@ -96,6 +96,26 @@ assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
             '4a_P._other_XYZ'])
 
 
+def parse_fasta_entry(text):
+    """Split an entry of Clade_Species_Accession into fields.
+
+    Will also convert the underscores in the species name into spaces:
+
+    >>> parse_fasta_entry('4_P._arenaria_HQ013219')
+    ('4', 'P. arenaria', 'HQ013219')
+
+    Note - this assumes function ``split_composite_entry`` has already
+    been used to break up any multiple species composite entries.
+    """
+    parts = text.split("_")
+    clade = parts[0]
+    name = parts[1:-1]
+    acc = parts[-1]
+    if not clade_re.fullmatch(clade):
+        raise ValueError("Clade %s not recognised from %r" % (clade, text))
+    return (clade, " ".join(name), acc)
+
+
 def main(fasta_files):
     """Run the script with command line arguments."""
     seq_count = 0
@@ -103,11 +123,15 @@ def main(fasta_files):
     for filename in fasta_files:
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
+                if title.startswith("Control_"):
+                    print("Ignoring control entry: %s" % title)
+                    continue
                 seq_count += 1
                 entries = split_composite_entry(title)
                 for idn in entries:
                     entry_count += 1
-                    print(idn)
+                    clade, species, acc = parse_fasta_entry(idn)
+                    print(clade, species, acc)
                 assert len(entries) == (title.count("Phytophthora_") +
                                         title.count("_P._")), title
     print("%i sequences, %i entries" % (seq_count, entry_count))
