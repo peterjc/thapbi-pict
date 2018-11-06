@@ -112,8 +112,24 @@ def parse_fasta_entry(text):
 
     >>> parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
     ('1', 'Phytophthora aff infestans', 'P13660')
+
+    And the old variant without any clade at the start, e.g.
+
+    >>> parse_fasta_entry('P._amnicola_CBS131652')
+    ('', 'P. amnicola', 'CBS131652')
+
+    And the old variant with just an accession, e.g.
+
+    >>> parse_fasta_entry('VHS17779')
+    ('', '', 'VHS17779')
+
     """
     parts = text.split("_")
+
+    if len(parts) == 1:
+        # Legacy variant with just an accession
+        return ("", "", text)
+
     clade = parts[0]
 
     if "Phytophthora" in clade:
@@ -124,9 +140,17 @@ def parse_fasta_entry(text):
         clade = clade[:index]
         parts = [clade] + parts
 
+    if clade in ("PPhytophthora"):
+        # Legacy error with extra P and no clade
+        clade = "Phytophthora"
+    if clade in ("P.", "Phytophthora"):
+        # Legacy variant missing the clade
+        parts = [clade] + parts
+        clade = ''
+
     name = parts[1:-1]
     acc = parts[-1]
-    if not clade_re.fullmatch(clade):
+    if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
     return (clade, " ".join(name), acc)
 
@@ -135,6 +159,9 @@ assert (parse_fasta_entry('4_P._arenaria_HQ013219')
         == ('4', 'P. arenaria', 'HQ013219'))
 assert (parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
         == ('1', 'Phytophthora aff infestans', 'P13660'))
+assert (parse_fasta_entry('P._amnicola_CBS131652')
+        == ('', 'P. amnicola', 'CBS131652'))
+assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
 def main(fasta_files):
