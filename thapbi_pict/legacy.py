@@ -63,26 +63,54 @@ for _ in ("8b_Phytophthora_brassicae_HQ643158_"
     assert composite_re.search(_), _
 
 
+def split_composite_entry(text):
+    """Split possibly composite FASTA description into list of strings.
+
+    >>> split_composite_entry('4_Phytophthora_alticola_HQ013214')
+    ['4_Phytophthora_alticola_HQ013214']
+    >>> split_composite_entry('4_P._alticola_HQ013214_4_P._arenaria_HQ013219')
+    ['4_P._alticola_HQ013214', '4_P._arenaria_HQ013219']
+
+    """
+    rest = text
+    answer = []
+    while True:
+        split = composite_re.search(rest)
+        if not split:
+            return answer + [rest]
+        index = split.start()
+        answer.append(rest[:index])
+        # plus one to omit the underscore:
+        rest = rest[index + 1:]
+
+
+assert (split_composite_entry('4_Phytophthora_alticola_HQ013214')
+        == ['4_Phytophthora_alticola_HQ013214'])
+assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
+                              '4_P._arenaria_HQ013219')
+        == ['4_Phytophthora_alticola_HQ013214', '4_P._arenaria_HQ013219'])
+assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
+                              '4_P._arenaria_HQ013219_4a_P._other_XYZ')
+        == ['4_Phytophthora_alticola_HQ013214',
+            '4_P._arenaria_HQ013219',
+            '4a_P._other_XYZ'])
+
+
 def main(fasta_files):
     """Run the script with command line arguments."""
-    print("TODO")
-    count = 0
-    composite = 0
+    seq_count = 0
+    entry_count = 0
     for filename in fasta_files:
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
-                count += 1
-                idn = title.split(None, 1)[0]  # First word only
-                if composite_re.search(idn):
-                    composite += 1
-                    assert (idn.count("Phytophthora_") +
-                            idn.count("_P._") > 1), idn
-                else:
-                    assert (idn.count("Phytophthora_") +
-                            idn.count("_P._") <= 1), idn
-                assert clade_re.match(idn)
-    print("%i composite" % composite)
-    print("%i sequences" % count)
+                seq_count += 1
+                entries = split_composite_entry(title)
+                for idn in entries:
+                    entry_count += 1
+                    print(idn)
+                assert len(entries) == (title.count("Phytophthora_") +
+                                        title.count("_P._")), title
+    print("%i sequences, %i entries" % (seq_count, entry_count))
 
 
 if __name__ == "__main__":
