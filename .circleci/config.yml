@@ -36,6 +36,11 @@ jobs:
             pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
             flake8 .
       - run:
-          name: Dependency Installation
+          name: Installation
           command: |
             conda install --file requirements.txt
+            pip install .
+      - run:
+          name: Test
+          command: |
+            python -c "import thapbi_pict; print(thapbi_pict.__version__)"
