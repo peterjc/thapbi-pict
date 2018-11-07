@@ -229,5 +229,5 @@ def main(fasta_files, db_url, debug=True):
 
 
 if __name__ == "__main__":
-    #main(sys.argv[1:], "sqlite:///:memory:", debug=True)
+    # main(sys.argv[1:], "sqlite:///:memory:", debug=True)
     main(sys.argv[1:], "sqlite:///test.sqlite", debug=True)
