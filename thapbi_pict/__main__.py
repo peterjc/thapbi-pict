@@ -23,9 +23,12 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    print("This is THAPBI PICT v%s" % __version__)
+    if "-v" in args or "--version" in args:
+        print("THAPBI PICT v%s" % __version__)
+        sys.exit(0)
 
     # TODO - Add argument parsing here...
+    print("This is THAPBI PICT v%s" % __version__)
 
 
 if __name__ == "__main__":
