@@ -13,8 +13,8 @@ from . import __version__
 
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
-    print("This would import a legacy ITS1 FASTA file into a database.")
-    return 0
+    from .legacy import main
+    return main(args.fasta, args.database, debug=True)
 
 
 def dump(args=None):
@@ -51,6 +51,9 @@ def main(args=None):
     parser_import = subparsers.add_parser(
         "legacy-import",
         description="Load one of our legacy ITS1 FASTA files into a database.")
+    parser_import.add_argument(
+        'fasta', nargs='+',
+        help='One or more ITS1 fasta filenames.')
     parser_import.add_argument(
         "-d", "--database", type=str,
         help="Which database to write to (or create)")
