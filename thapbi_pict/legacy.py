@@ -38,11 +38,10 @@ same naming pattern but adds four synthetic control sequences named
 
 import hashlib
 import re
-import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from db_orm import ITS1, SequenceSource, connect_to_db
+from .db_orm import ITS1, SequenceSource, connect_to_db
 
 
 # Define a regular expression for the clade naming
@@ -226,8 +225,3 @@ def main(fasta_files, db_url, debug=True):
     session.commit()
     print("%i sequences, %i entries including %i bad"
           % (seq_count, entry_count, bad_entry_count))
-
-
-if __name__ == "__main__":
-    # main(sys.argv[1:], "sqlite:///:memory:", debug=True)
-    main(sys.argv[1:], "sqlite:///test.sqlite", debug=True)
