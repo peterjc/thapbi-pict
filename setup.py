@@ -20,7 +20,11 @@ Once installed, you should be able to run the tool using:
 
    thapbi_pict
 
-This should find the installed Python script via your PATH setting.
+Or start it as a module::
+
+   python3 -m thapbi_pict
+
+Either should find the installed copy of the Python code.
 """
 from __future__ import print_function
 

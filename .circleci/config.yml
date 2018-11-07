@@ -45,3 +45,4 @@ jobs:
           command: |
             python -c "import thapbi_pict; print(thapbi_pict.__version__)"
             thapbi_pict -v
+            python -m thapbi_pict -v
