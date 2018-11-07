@@ -5,6 +5,8 @@ This implementes the ``thapbi_pict dump ...`` command.
 
 import sys
 
+from sqlalchemy.orm import joinedload
+
 from .db_orm import SequenceSource, connect_to_db
 
 
@@ -21,7 +23,8 @@ def main(db_url, output_txt, debug=True):
     else:
         out_handle = open(output_txt, "w")
 
-    for seq_source in session.query(SequenceSource).order_by(
+    for seq_source in session.query(SequenceSource).options(
+            joinedload(SequenceSource.its1_seq)).order_by(
             SequenceSource.date_added):
         entry_count += 1
         out_handle.write("%s\t%s\t%s\t%s\n"
