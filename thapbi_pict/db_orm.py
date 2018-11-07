@@ -11,9 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-engine = create_engine('sqlite:///:memory:', echo=True)
 Base = declarative_base()
-Session = sessionmaker(bind=engine)
 
 
 class ITS1(Base):
@@ -67,4 +65,18 @@ class SequenceSource(Base):
     curated_trust = Column(Integer)
 
 
-Base.metadata.create_all(engine)
+def connect_to_db(*args, **kwargs):
+    """Create engine and return session make bound to it.
+
+    >>> Session = connect_to_db('sqlite:///:memory:', echo=True)
+    >>> session = Session()
+    """
+    engine = create_engine(*args, **kwargs)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    return Session
+
+
+if __name__ == "__main__":
+    print("Debugging example")
+    Session = connect_to_db('sqlite:///:memory:', echo=True)
