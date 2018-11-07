@@ -38,6 +38,7 @@ same naming pattern but adds four synthetic control sequences named
 
 import hashlib
 import re
+import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -181,7 +182,9 @@ def main(fasta_files, db_url, debug=True):
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
                 if title.startswith("Control_"):
-                    print("Ignoring control entry: %s" % title)
+                    if debug:
+                        sys.stderr.write("Ignoring control entry: %s\n"
+                                         % title)
                     continue
                 seq_count += 1
 
@@ -200,7 +203,8 @@ def main(fasta_files, db_url, debug=True):
                         clade, species, acc = parse_fasta_entry(idn)
                     except ValueError:
                         bad_entry_count += 1
-                        print("Can't parse entry: %r" % idn)
+                        sys.stderr.write("WARNING: Can't parse entry: %r\n"
+                                         % idn)
                         continue
                     if acc in acc_set:
                         raise ValueError("Duplicated accession %r" % acc)
@@ -221,7 +225,7 @@ def main(fasta_files, db_url, debug=True):
                                                   seq_platform=0,
                                                   curated_trust=0)
                     session.add(record_entry)
-                    print(clade, species, acc)
+                    # print(clade, species, acc)
     session.commit()
-    print("%i sequences, %i entries including %i bad"
-          % (seq_count, entry_count, bad_entry_count))
+    sys.stderr.write("%i sequences, %i entries including %i bad\n"
+                     % (seq_count, entry_count, bad_entry_count))
