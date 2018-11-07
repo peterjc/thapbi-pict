@@ -22,8 +22,10 @@ def legacy_import(args=None):
 
 def dump(args=None):
     """Subcommand to dump a database to a text file."""
-    print("This would dump a database to a text file.")
-    return 0
+    from .dump import main
+    return main(db_url=args.database,
+                output_txt=args.output,
+                debug=args.verbose)
 
 
 def main(args=None):
@@ -76,10 +78,11 @@ def main(args=None):
         "-d", "--database", type=str,
         help="Which database to export from")
     parser_dump.add_argument(
-        "-o", "--output",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
-        help="File to write to (default stdout)")
+        "-o", "--output", type=str, default="-",
+        help="File to write to (default '-' meaning stdout)")
+    parser_dump.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
     parser_dump.set_defaults(func=dump)
 
     # What have we been asked to do?
