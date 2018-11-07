@@ -42,7 +42,7 @@ import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from db_orm import ITS1, SequenceSource, Session
+from db_orm import ITS1, SequenceSource, connect_to_db
 
 
 # Define a regular expression for the clade naming
@@ -167,9 +167,12 @@ assert (parse_fasta_entry('P._amnicola_CBS131652')
 assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
-def main(fasta_files):
+def main(fasta_files, db_url, debug=True):
     """Run the script with command line arguments."""
-    session = Session()  # Connect to the DB
+    # Connect to the DB,
+    Session = connect_to_db(db_url, echo=debug)
+    session = Session()
+
     seq_count = 0
     entry_count = 0
     bad_entry_count = 0
@@ -226,4 +229,5 @@ def main(fasta_files):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    #main(sys.argv[1:], "sqlite:///:memory:", debug=True)
+    main(sys.argv[1:], "sqlite:///test.sqlite", debug=True)
