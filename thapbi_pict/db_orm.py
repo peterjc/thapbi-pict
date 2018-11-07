@@ -8,7 +8,7 @@ Python objects.
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker
 
 
 Base = declarative_base()
@@ -63,6 +63,13 @@ class SequenceSource(Base):
 
     # Start with something like -1 = bad, +1 = good?
     curated_trust = Column(Integer)
+
+    its1_seq = relationship("ITS1", back_populates="entries")
+
+
+ITS1.entries = relationship("SequenceSource",
+                            order_by=SequenceSource.accession,
+                            back_populates="its1_seq")
 
 
 def connect_to_db(*args, **kwargs):
