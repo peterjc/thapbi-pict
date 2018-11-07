@@ -14,11 +14,13 @@ from . import __version__
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     print("This would import a legacy ITS1 FASTA file into a database.")
+    return 0
 
 
 def dump(args=None):
     """Subcommand to dump a database to a text file."""
     print("This would dump a database to a text file.")
+    return 0
 
 
 def main(args=None):
@@ -75,7 +77,7 @@ def main(args=None):
     options = parser.parse_args(args)
     if hasattr(options, "func"):
         # Invoke the subcommand
-        options.func(options)
+        sys.exit(options.func(options))
     else:
         # Called without a subcommand
         parser.print_help()
