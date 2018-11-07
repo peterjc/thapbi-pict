@@ -17,10 +17,12 @@ before_install:
  - "if grep -n -r '[[:blank:]]$' *.md */*.md */*/*.md; then echo 'Please remove trailing whitespace in Markdown files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi"
-
-install:
  - pip install --upgrade pip setuptools
  - pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+ - echo "Using flake8 to check Python code"
+ - flake8 .
+
+install:
  - pip install -r requirements.txt
  - python -c "import Bio; print(Bio.__version__)"
  - python -c "import sqlalchemy; print(sqlalchemy.__version__)"
@@ -30,5 +32,3 @@ script:
  - python -c "import thapbi_pict; print(thapbi_pict.__version__)"
  - thapbi_pict -v
  - python -m thapbi_pict -v
- - echo "Using flake8 to check Python code"
- - flake8 .
