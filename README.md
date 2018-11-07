@@ -22,7 +22,20 @@ This continues earlier work including:
 
 # Installation
 
-*Pending...*
+In future we intend to release this software on PyPI to allow you to install
+with ``pip install thapbi_pict`` and on BioConda which would allow install
+with just ``conda install thapbi_pict``.
+
+However, for you you should download the source code from GitHub, decompress
+it if required, and run ``pip3 install .`` which should automatically get
+our Python dependencies.
+
+Once installed, you should be able to run the tool using:
+
+   thapbi_pict
+
+This should automatically find the installed copy of the Python code.
+
 
 # Release History
 
