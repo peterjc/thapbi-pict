@@ -24,8 +24,11 @@ def main(db_url, output_txt, debug=True):
     for seq_source in session.query(SequenceSource).order_by(
             SequenceSource.date_added):
         entry_count += 1
-        out_handle.write("%s\t%s\n"
-                         % (seq_source.accession, seq_source.current_species))
+        out_handle.write("%s\t%s\t%s\t%s\n"
+                         % (seq_source.accession,
+                            seq_source.current_species,
+                            seq_source.its1_seq.sequence,
+                            seq_source.sequence))
 
     if output_txt == "-":
         sys.stderr.write("Wrote %i entries\n" % entry_count)
