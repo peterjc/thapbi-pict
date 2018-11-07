@@ -28,5 +28,6 @@ install:
 
 script:
  - python -c "import thapbi_pict; print(thapbi_pict.__version__)"
+ - thapbi_pict -v
  - echo "Using flake8 to check Python code"
  - flake8 .

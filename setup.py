@@ -16,6 +16,11 @@ it with pip without having to download it first::
 
     pip3 install thapbi_pict
 
+Once installed, you should be able to run the tool using:
+
+   thapbi_pict
+
+This should find the installed Python script via your PATH setting.
 """
 from __future__ import print_function
 
@@ -77,6 +82,11 @@ setup(name='thapbi_pict',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
           'Topic :: Software Development :: Libraries :: Python Modules',
       ],
+      entry_points={
+          'console_scripts': [
+              'thapbi_pict = thapbi_pict.__main__:main'
+          ]
+      },
       packages=[
           'thapbi_pict',
       ],
