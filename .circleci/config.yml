@@ -46,3 +46,5 @@ jobs:
             python -c "import thapbi_pict; print(thapbi_pict.__version__)"
             thapbi_pict -v
             python -m thapbi_pict -v
+            thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
+            thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.005.fasta
