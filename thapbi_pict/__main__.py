@@ -14,7 +14,10 @@ from . import __version__
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     from .legacy import main
-    return main(args.fasta, args.database, debug=True)
+    return main(
+        fasta_files=args.fasta,
+        db_url=args.database,
+        debug=args.verbose)
 
 
 def dump(args=None):
@@ -57,6 +60,9 @@ def main(args=None):
     parser_import.add_argument(
         "-d", "--database", type=str,
         help="Which database to write to (or create)")
+    parser_import.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
     parser_import.add_argument(
         "-t", "--taxid", type=int, default=0,
         help="Default NCBI taxid (integer)")
