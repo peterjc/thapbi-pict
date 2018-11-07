@@ -36,10 +36,13 @@ same naming pattern but adds four synthetic control sequences named
 ``Control_42 C4``. Note the use of a space here.
 """
 
+import hashlib
 import re
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+
+from db_orm import ITS1, SequenceSource, Session
 
 
 # Define a regular expression for the clade naming
@@ -166,9 +169,12 @@ assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 def main(fasta_files):
     """Run the script with command line arguments."""
+    session = Session()  # Connect to the DB
     seq_count = 0
     entry_count = 0
     bad_entry_count = 0
+    idn_set = set()
+    acc_set = set()
     for filename in fasta_files:
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -176,15 +182,45 @@ def main(fasta_files):
                     print("Ignoring control entry: %s" % title)
                     continue
                 seq_count += 1
+
+                # Here assume the FASTA sequence is already trimmed to the ITS1
+                seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
+                session.add(ITS1(md5=seq_md5, sequence=seq))
+
+                # One sequence can have multiple entries
                 entries = split_composite_entry(title.split(None, 1)[0])
                 for idn in entries:
+                    if idn in idn_set:
+                        raise ValueError("Duplicated identifier %r" % idn)
+                    idn_set.add(idn)
                     entry_count += 1
                     try:
                         clade, species, acc = parse_fasta_entry(idn)
-                        print(clade, species, acc)
                     except ValueError:
                         bad_entry_count += 1
                         print("Can't parse entry: %r" % idn)
+                        continue
+                    if acc in acc_set:
+                        raise ValueError("Duplicated accession %r" % acc)
+                    acc_set.add(acc)
+                    # Load into the DB
+                    genus = species.split(None, 1)[0] if species else ""
+                    taxid = 0
+                    record_entry = SequenceSource(accession=acc,
+                                                  its1_md5=seq_md5,
+                                                  sequence=seq,
+                                                  original_taxid=taxid,
+                                                  original_genus=genus,
+                                                  original_species=species,
+                                                  current_taxid=taxid,
+                                                  current_genus=genus,
+                                                  current_species=species,
+                                                  seq_strategy=0,
+                                                  seq_platform=0,
+                                                  curated_trust=0)
+                    session.add(record_entry)
+                    print(clade, species, acc)
+    session.commit()
     print("%i sequences, %i entries including %i bad"
           % (seq_count, entry_count, bad_entry_count))
 
