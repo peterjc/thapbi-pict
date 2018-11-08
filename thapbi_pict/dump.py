@@ -10,7 +10,7 @@ from sqlalchemy.orm import joinedload
 from .db_orm import SequenceSource, connect_to_db
 
 
-def main(db_url, output_txt, debug=True):
+def main(db_url, output_txt, clade="", debug=True):
     """Run the database dump with arguments from the command line."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -23,9 +23,16 @@ def main(db_url, output_txt, debug=True):
     else:
         out_handle = open(output_txt, "w")
 
-    for seq_source in session.query(SequenceSource).options(
-            joinedload(SequenceSource.its1_seq)).order_by(
-            SequenceSource.date_added):
+    # Doing a join on the two main tables:
+    view = session.query(SequenceSource).options(
+        joinedload(SequenceSource.its1_seq))
+    # Sorting for reproducibility
+    view = view.order_by(SequenceSource.date_added)
+
+    if clade:
+        view = view.filter(SequenceSource.current_clade.in_(clade.split(",")))
+
+    for seq_source in view:
         entry_count += 1
         out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
                          % (seq_source.accession,

@@ -36,6 +36,7 @@ def dump(args=None):
     from .dump import main
     return main(db_url=expand_database_argument(args.database),
                 output_txt=args.output,
+                clade=args.clade,
                 debug=args.verbose)
 
 
@@ -91,6 +92,9 @@ def main(args=None):
     parser_dump.add_argument(
         "-o", "--output", type=str, default="-",
         help="File to write to (default '-' meaning stdout)")
+    parser_dump.add_argument(
+        "-c", "--clade", type=str, default="",
+        help="Which clade(s) to export (comma separated list, blank for all)")
     parser_dump.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
