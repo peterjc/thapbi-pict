@@ -85,7 +85,8 @@ def main(args=None):
     # dump
     parser_dump = subparsers.add_parser(
         "dump",
-        description="Export an ITS1 database to a text file.")
+        description="Export an ITS1 database to a text file.",
+        epilog="e.g. 'thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt'")
     parser_dump.add_argument(
         "-d", "--database", type=str, required=True,
         help="Which database to export from")
@@ -94,7 +95,9 @@ def main(args=None):
         help="File to write to (default '-' meaning stdout)")
     parser_dump.add_argument(
         "-c", "--clade", type=str, default="",
-        help="Which clade(s) to export (comma separated list, blank for all)")
+        help="Which clade(s) to export (comma separated list, "
+             "with '-' meaning no clade defined). "
+             "Default is not to filter by clade.")
     parser_dump.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")

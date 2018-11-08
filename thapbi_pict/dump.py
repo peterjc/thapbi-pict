@@ -30,7 +30,9 @@ def main(db_url, output_txt, clade="", debug=True):
     view = view.order_by(SequenceSource.date_added)
 
     if clade:
-        view = view.filter(SequenceSource.current_clade.in_(clade.split(",")))
+        # Split on commas, convert "-" into "" meaning no entry
+        clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
+        view = view.filter(SequenceSource.current_clade.in_(clade_list))
 
     for seq_source in view:
         entry_count += 1
