@@ -14,6 +14,25 @@ from sqlalchemy.orm import relationship, sessionmaker
 Base = declarative_base()
 
 
+class DataSource(Base):
+    """Database entry for a data source (NCBI, Legacy, etc).
+
+    Each accession is expected to be unique within a data source.
+    """
+
+    __tablename__ = "data_source"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))  # e.g. NCBI, Legacy v0.005
+    uri = Column(String(200))  # e.g. traceable filename or URL
+    date = Column(DateTime)
+    notes = Column(String(1000))
+
+    def __repr__(self):
+        """Represent a DataSource database entry as a string."""
+        return "DataSource(name=%r, ...)" % self.name
+
+
 class ITS1(Base):
     """Database entry for a single ITS1 sequence."""
 
@@ -32,7 +51,12 @@ class SequenceSource(Base):
 
     __tablename__ = "its1_source"
 
-    accession = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+
+    source_accession = Column(String)  # Hopefully unique within source_id
+    source_id = Column(Integer, ForeignKey("data_source.id"))
+    source = relationship(DataSource)
+
     its1_md5 = Column(String(32), ForeignKey("its1_sequence.md5"))
     sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
 
@@ -52,7 +76,7 @@ class SequenceSource(Base):
     # i.e. looking up species name and genus via the taxid
     # For now, storing genus etc locally will help with simple filtering
 
-    date_added = Column(DateTime)
+    # date_added = Column(DateTime) -> see data_source.date
     date_modified = Column(DateTime)
 
     # Implement as an enum?
@@ -70,7 +94,7 @@ class SequenceSource(Base):
 
 
 ITS1.entries = relationship("SequenceSource",
-                            order_by=SequenceSource.accession,
+                            order_by=SequenceSource.source_accession,
                             back_populates="its1_seq")
 
 

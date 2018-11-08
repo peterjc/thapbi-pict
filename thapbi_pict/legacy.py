@@ -37,12 +37,14 @@ same naming pattern but adds four synthetic control sequences named
 """
 
 import hashlib
+import os
 import re
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .db_orm import ITS1, SequenceSource, connect_to_db
+from . import __version__
+from .db_orm import DataSource, ITS1, SequenceSource, connect_to_db
 
 
 # Define a regular expression for the clade naming
@@ -173,11 +175,21 @@ assert (parse_fasta_entry('P._amnicola_CBS131652')
 assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
-def main(fasta_files, db_url, debug=True):
+def main(fasta_files, db_url, name=None, debug=True):
     """Run the script with command line arguments."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
+
+    if not name:
+        name = "Legacy import of " + " ".join(
+           os.path.basename(_) for _ in fasta_files)
+
+    db_source = DataSource(
+        name=name,
+        uri=":".join(fasta_files),
+        notes="Imported with thapbi_pict legacy_import v%s" % __version__)
+    session.add(db_source)
 
     seq_count = 0
     entry_count = 0
@@ -221,7 +233,8 @@ def main(fasta_files, db_url, debug=True):
                     genus, species = name.split(None, 1) if name else ("", "")
                     assert genus != "P.", title
                     taxid = 0
-                    record_entry = SequenceSource(accession=acc,
+                    record_entry = SequenceSource(source_accession=acc,
+                                                  source=db_source,
                                                   its1_md5=seq_md5,
                                                   sequence=seq,
                                                   original_clade=clade,

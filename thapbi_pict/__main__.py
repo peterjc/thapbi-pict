@@ -28,6 +28,7 @@ def legacy_import(args=None):
     return main(
         fasta_files=args.fasta,
         db_url=expand_database_argument(args.database),
+        name=args.name,
         debug=args.verbose)
 
 
@@ -75,11 +76,11 @@ def main(args=None):
         "-d", "--database", type=str,
         help="Which database to write to (or create)")
     parser_import.add_argument(
+        "-n", "--name", type=str, default="",
+        help="Data source name (string, ideally avoiding spaces etc)")
+    parser_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
-    parser_import.add_argument(
-        "-t", "--taxid", type=int, default=0,
-        help="Default NCBI taxid (integer)")
     parser_import.set_defaults(func=legacy_import)
 
     # dump

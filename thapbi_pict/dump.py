@@ -27,7 +27,7 @@ def main(db_url, output_txt, clade="", debug=True):
     view = session.query(SequenceSource).options(
         joinedload(SequenceSource.its1_seq))
     # Sorting for reproducibility
-    view = view.order_by(SequenceSource.date_added)
+    view = view.order_by(SequenceSource.id)
 
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
@@ -37,7 +37,7 @@ def main(db_url, output_txt, clade="", debug=True):
     for seq_source in view:
         entry_count += 1
         out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
-                         % (seq_source.accession,
+                         % (seq_source.source_accession,
                             seq_source.current_clade,
                             seq_source.current_genus,
                             seq_source.current_species,
