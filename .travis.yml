@@ -33,9 +33,10 @@ script:
  - thapbi_pict -v
  - python -m thapbi_pict -v
  - thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
- - thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/database.fasta
+ - thapbi_pict legacy-import -d database/legacy/database.sqlite database/legacy/database.fasta
  - thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
  - thapbi_pict legacy-import -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
  - thapbi_pict dump 2>&1 | grep "the following arguments are required"
  - thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null
  - thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
+ - thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -c -
