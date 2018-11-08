@@ -37,12 +37,14 @@ class SequenceSource(Base):
     sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
 
     # Whatever was recorded in the original data source
+    original_clade = Column(String(10))  # TODO - Integer linked to table?
     original_taxid = Column(Integer)  # NCBI taxid
     original_genus = Column(String(100))
-    original_species = Column(String(100))
+    original_species = Column(String(100))  # source may have variant/strain?
 
-    # Initially the same values as above, but expect to reclassify some entries
-    current_taxid = Column(Integer)  # NCBI taxid
+    # Initially based on the values above, but expect to reclassify some
+    current_clade = Column(String(10))
+    current_taxid = Column(Integer)  # NCBI taxid, perhaps as species only?
     current_genus = Column(String(100))
     current_species = Column(String(100))
 

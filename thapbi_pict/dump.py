@@ -27,8 +27,10 @@ def main(db_url, output_txt, debug=True):
             joinedload(SequenceSource.its1_seq)).order_by(
             SequenceSource.date_added):
         entry_count += 1
-        out_handle.write("%s\t%s\t%s\t%s\n"
+        out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
                          % (seq_source.accession,
+                            seq_source.current_clade,
+                            seq_source.current_genus,
                             seq_source.current_species,
                             seq_source.its1_seq.sequence,
                             seq_source.sequence))

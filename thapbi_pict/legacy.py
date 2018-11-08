@@ -100,7 +100,7 @@ assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
 
 
 def parse_fasta_entry(text):
-    """Split an entry of Clade_Species_Accession into fields.
+    """Split an entry of Clade_SpeciesName_Accession into fields.
 
     Will also convert the underscores in the species name into spaces:
 
@@ -126,6 +126,8 @@ def parse_fasta_entry(text):
     >>> parse_fasta_entry('VHS17779')
     ('', '', 'VHS17779')
 
+    Dividing the species name into genus, species, strain etc
+    is not handled here.
     """
     parts = text.split("_")
 
@@ -200,7 +202,7 @@ def main(fasta_files, db_url, debug=True):
                     idn_set.add(idn)
                     entry_count += 1
                     try:
-                        clade, species, acc = parse_fasta_entry(idn)
+                        clade, name, acc = parse_fasta_entry(idn)
                     except ValueError:
                         bad_entry_count += 1
                         sys.stderr.write("WARNING: Can't parse entry: %r\n"
@@ -210,14 +212,18 @@ def main(fasta_files, db_url, debug=True):
                         raise ValueError("Duplicated accession %r" % acc)
                     acc_set.add(acc)
                     # Load into the DB
-                    genus = species.split(None, 1)[0] if species else ""
+                    # Store "Phytophthora aff infestans" as
+                    # genus "Phytophthora", species "aff infestans"
+                    genus, species = name.split(None, 1) if name else ("", "")
                     taxid = 0
                     record_entry = SequenceSource(accession=acc,
                                                   its1_md5=seq_md5,
                                                   sequence=seq,
+                                                  original_clade=clade,
                                                   original_taxid=taxid,
                                                   original_genus=genus,
                                                   original_species=species,
+                                                  current_clade=clade,
                                                   current_taxid=taxid,
                                                   current_genus=genus,
                                                   current_species=species,
