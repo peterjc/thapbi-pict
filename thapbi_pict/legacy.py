@@ -131,13 +131,20 @@ def parse_fasta_entry(text):
     Dividing the species name into genus, species, strain etc
     is not handled here.
     """
-    parts = text.split("_")
+    # The rstrip is to handle this legacy entry:
+    # >PPhytophthora_fluvialis_CBS129424_JF701436_ P. fluvialis
+    # See also fixing PPhytophthora later on...
+    parts = text.rstrip("_").split("_")
 
     if len(parts) == 1:
         # Legacy variant with just an accession
         return ("", "", text)
 
     clade = parts[0]
+
+    if clade in ("PPhytophthora", "P."):
+        # Legacy error no clade and either extra P, or just P.
+        clade = "Phytophthora"
 
     if "Phytophthora" in clade:
         # Legacy variant missing the first underscore
@@ -146,14 +153,6 @@ def parse_fasta_entry(text):
         parts[0] = clade[index:]
         clade = clade[:index]
         parts = [clade] + parts
-
-    if clade in ("PPhytophthora", "P."):
-        # Legacy error no clade and either extra P, or just P.
-        clade = "Phytophthora"
-    if clade == "Phytophthora":
-        # Legacy variant missing the clade
-        parts = [clade] + parts
-        clade = ''
 
     name = parts[1:-1]
     acc = parts[-1]
@@ -195,7 +194,6 @@ def main(fasta_files, db_url, name=None, debug=True):
     entry_count = 0
     bad_entry_count = 0
     idn_set = set()
-    acc_set = set()
     for filename in fasta_files:
         with open(filename) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -212,29 +210,31 @@ def main(fasta_files, db_url, name=None, debug=True):
                 session.add(its1)
 
                 # One sequence can have multiple entries
+                idn = title.split(None, 1)[0]
+                if idn in idn_set:
+                    sys.stderr.write("WARNING: Duplicated identifier %r\n"
+                                     % idn)
+                idn_set.add(idn)
+
                 entries = split_composite_entry(title.split(None, 1)[0])
-                for idn in entries:
-                    if idn in idn_set:
-                        raise ValueError("Duplicated identifier %r" % idn)
-                    idn_set.add(idn)
+                for entry in entries:
                     entry_count += 1
                     try:
-                        clade, name, acc = parse_fasta_entry(idn)
-                    except ValueError:
+                        clade, name, acc = parse_fasta_entry(entry)
+                    except ValueError as e:
                         bad_entry_count += 1
-                        sys.stderr.write("WARNING: Can't parse entry: %r\n"
-                                         % idn)
+                        sys.stderr.write("WARNING: %s - Can't parse: %r\n"
+                                         % (e, idn))
                         continue
-                    if acc in acc_set:
-                        raise ValueError("Duplicated accession %r" % acc)
-                    acc_set.add(acc)
                     # Load into the DB
                     # Store "Phytophthora aff infestans" as
                     # genus "Phytophthora", species "aff infestans"
                     genus, species = name.split(None, 1) if name else ("", "")
                     assert genus != "P.", title
                     taxid = 0
-                    record_entry = SequenceSource(source_accession=acc,
+                    # Note we use the original FASTA identifier for traceablity
+                    # but means the multi-entries get the same source accession
+                    record_entry = SequenceSource(source_accession=idn,
                                                   source=db_source,
                                                   its1=its1,
                                                   sequence=seq,
