@@ -38,7 +38,8 @@ class ITS1(Base):
 
     __tablename__ = "its1_sequence"
 
-    md5 = Column(String(32), primary_key=True)
+    id = Column(Integer, primary_key=True)
+    md5 = Column(String(32))
     sequence = Column(String(250))
 
     def __repr__(self):
@@ -57,7 +58,9 @@ class SequenceSource(Base):
     source_id = Column(Integer, ForeignKey("data_source.id"))
     source = relationship(DataSource)
 
-    its1_md5 = Column(String(32), ForeignKey("its1_sequence.md5"))
+    its1_id = Column(Integer, ForeignKey("its1_sequence.id"))
+    its1 = relationship(ITS1)
+
     sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
 
     # Whatever was recorded in the original data source
@@ -89,13 +92,6 @@ class SequenceSource(Base):
 
     # Start with something like -1 = bad, +1 = good?
     curated_trust = Column(Integer)
-
-    its1_seq = relationship("ITS1", back_populates="entries")
-
-
-ITS1.entries = relationship("SequenceSource",
-                            order_by=SequenceSource.source_accession,
-                            back_populates="its1_seq")
 
 
 def connect_to_db(*args, **kwargs):

@@ -208,7 +208,8 @@ def main(fasta_files, db_url, name=None, debug=True):
 
                 # Here assume the FASTA sequence is already trimmed to the ITS1
                 seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
-                session.add(ITS1(md5=seq_md5, sequence=seq))
+                its1 = ITS1(md5=seq_md5, sequence=seq)
+                session.add(its1)
 
                 # One sequence can have multiple entries
                 entries = split_composite_entry(title.split(None, 1)[0])
@@ -235,7 +236,7 @@ def main(fasta_files, db_url, name=None, debug=True):
                     taxid = 0
                     record_entry = SequenceSource(source_accession=acc,
                                                   source=db_source,
-                                                  its1_md5=seq_md5,
+                                                  its1=its1,
                                                   sequence=seq,
                                                   original_clade=clade,
                                                   original_taxid=taxid,

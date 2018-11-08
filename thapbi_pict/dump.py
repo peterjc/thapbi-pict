@@ -25,7 +25,7 @@ def main(db_url, output_txt, clade="", debug=True):
 
     # Doing a join on the two main tables:
     view = session.query(SequenceSource).options(
-        joinedload(SequenceSource.its1_seq))
+        joinedload(SequenceSource.its1))
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
@@ -41,7 +41,7 @@ def main(db_url, output_txt, clade="", debug=True):
                             seq_source.current_clade,
                             seq_source.current_genus,
                             seq_source.current_species,
-                            seq_source.its1_seq.sequence,
+                            seq_source.its1.sequence,
                             seq_source.sequence))
 
     if output_txt == "-":
