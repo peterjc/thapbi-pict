@@ -75,7 +75,7 @@ def main(args=None):
         "dump",
         description="Export an ITS1 database to a text file.")
     parser_dump.add_argument(
-        "-d", "--database", type=str,
+        "-d", "--database", type=str, required=True,
         help="Which database to export from")
     parser_dump.add_argument(
         "-o", "--output", type=str, default="-",
