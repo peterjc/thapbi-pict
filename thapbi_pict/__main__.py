@@ -12,7 +12,7 @@ from . import __version__
 
 
 def expand_database_argument(text):
-    """Expand an SQLite3 filename to an SQLalchemey URL."""
+    """Expand an SQLite3 filename to an SQLalchemy URL."""
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
     # as we might be about to create it.
