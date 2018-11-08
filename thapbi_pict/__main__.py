@@ -11,19 +11,30 @@ import sys
 from . import __version__
 
 
+def expand_database_argument(text):
+    """Expand an SQLite3 filename to an SQLalchemey URL."""
+    # TODO: Expand this to allow other DB prefixes later
+    # Note we are not currently checking file exists,
+    # as we might be about to create it.
+    prefix = "sqlite:///"
+    if text.startswith(prefix):
+        return text
+    return prefix + text
+
+
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     from .legacy import main
     return main(
         fasta_files=args.fasta,
-        db_url=args.database,
+        db_url=expand_database_argument(args.database),
         debug=args.verbose)
 
 
 def dump(args=None):
     """Subcommand to dump a database to a text file."""
     from .dump import main
-    return main(db_url=args.database,
+    return main(db_url=expand_database_argument(args.database),
                 output_txt=args.output,
                 debug=args.verbose)
 

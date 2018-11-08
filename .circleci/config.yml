@@ -49,6 +49,6 @@ jobs:
 	    set -o pipefail
             thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
             thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
-            thapbi_pict legacy-import -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
+            thapbi_pict legacy-import -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
             thapbi_pict dump 2>&1 | grep "the following arguments are required"
             thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null
