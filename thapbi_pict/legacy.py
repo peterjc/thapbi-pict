@@ -145,27 +145,31 @@ def parse_fasta_entry(text):
         clade = clade[:index]
         parts = [clade] + parts
 
-    if clade in ("PPhytophthora"):
-        # Legacy error with extra P and no clade
+    if clade in ("PPhytophthora", "P."):
+        # Legacy error no clade and either extra P, or just P.
         clade = "Phytophthora"
-    if clade in ("P.", "Phytophthora"):
+    if clade == "Phytophthora":
         # Legacy variant missing the clade
         parts = [clade] + parts
         clade = ''
 
     name = parts[1:-1]
     acc = parts[-1]
+
+    if name[0] == "P.":
+        name[0] = "Phytophthora"
+
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
     return (clade, " ".join(name), acc)
 
 
 assert (parse_fasta_entry('4_P._arenaria_HQ013219')
-        == ('4', 'P. arenaria', 'HQ013219'))
+        == ('4', 'Phytophthora arenaria', 'HQ013219'))
 assert (parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
         == ('1', 'Phytophthora aff infestans', 'P13660'))
 assert (parse_fasta_entry('P._amnicola_CBS131652')
-        == ('', 'P. amnicola', 'CBS131652'))
+        == ('', 'Phytophthora amnicola', 'CBS131652'))
 assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
@@ -215,6 +219,7 @@ def main(fasta_files, db_url, debug=True):
                     # Store "Phytophthora aff infestans" as
                     # genus "Phytophthora", species "aff infestans"
                     genus, species = name.split(None, 1) if name else ("", "")
+                    assert genus != "P.", title
                     taxid = 0
                     record_entry = SequenceSource(accession=acc,
                                                   its1_md5=seq_md5,
