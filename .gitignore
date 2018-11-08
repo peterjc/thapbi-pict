@@ -1,3 +1,9 @@
+#Ignore the build directory (and its sub-directories):
+build
+
+#Ignore the distribution directory
+dist
+
 # Python compiled files
 *.pyc
 *.pyo
