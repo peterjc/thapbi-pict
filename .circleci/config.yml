@@ -47,6 +47,10 @@ jobs:
             thapbi_pict -v
             python -m thapbi_pict -v
             # thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
+            thapbi_pict legacy-import -d "sqlite:///tests/legacy-import/dup_seqs.sqlite" tests/legacy-import/dup_seqs.fasta
+            if [ `sqlite3 tests/legacy-import/dup_seqs.sqlite "SELECT COUNT(id) FROM data_source;"` == "1" ]; then true; else echo "Wrong count"; false; fi
+            if [ `sqlite3 tests/legacy-import/dup_seqs.sqlite "SELECT COUNT(id) FROM its1_source;"` == "8" ]; then true; else echo "Wrong count"; false; fi
+            if [ `sqlite3 tests/legacy-import/dup_seqs.sqlite "SELECT COUNT(id) FROM its1_sequence;"` == "2" ]; then true; else echo "Wrong count"; false; fi
             thapbi_pict legacy-import -d "sqlite:///database/legacy/database.sqlite" database/legacy/database.fasta
             thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
             thapbi_pict legacy-import -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
