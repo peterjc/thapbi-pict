@@ -184,6 +184,7 @@ def main(fasta_files, db_url, name=None, debug=True):
         name = "Legacy import of " + " ".join(
            os.path.basename(_) for _ in fasta_files)
 
+    # TODO - explicit check for the name already being in use
     db_source = DataSource(
         name=name,
         uri=":".join(fasta_files),
@@ -206,8 +207,13 @@ def main(fasta_files, db_url, name=None, debug=True):
 
                 # Here assume the FASTA sequence is already trimmed to the ITS1
                 seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
-                its1 = ITS1(md5=seq_md5, sequence=seq)
-                session.add(its1)
+
+                # Is is already there? e.g. duplicate sequences in FASTA file
+                its1 = session.query(ITS1).filter_by(
+                    md5=seq_md5, sequence=seq).one_or_none()
+                if its1 is None:
+                    its1 = ITS1(md5=seq_md5, sequence=seq)
+                    session.add(its1)
 
                 # One sequence can have multiple entries
                 idn = title.split(None, 1)[0]
