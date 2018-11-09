@@ -58,3 +58,8 @@ jobs:
             thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null
             thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
             thapbi_pict dump -d "database/legacy/database.sqlite" -o /dev/null -c -
+            thapbi_pict legacy-import -d $TMP/legacy_004_and_005.sqlite database/legacy/Phytophthora_ITS_database_v0.004.fasta -n "Legacy DB v0.004"
+            thapbi_pict legacy-import -d $TMP/legacy_004_and_005.sqlite database/legacy/Phytophthora_ITS_database_v0.005.fasta -n "Legacy DB v0.005"
+            if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM data_source;"` == "2" ]; then true; else echo "Wrong count"; false; fi
+            if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_source;"` == "378" ]; then true; else echo "Wrong count"; false; fi
+            if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_sequence;"` == "172" ]; then true; else echo "Wrong count"; false; fi
