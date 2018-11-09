@@ -39,8 +39,8 @@ class ITS1(Base):
     __tablename__ = "its1_sequence"
 
     id = Column(Integer, primary_key=True)
-    md5 = Column(String(32))
-    sequence = Column(String(250))
+    md5 = Column(String(32), unique=True)
+    sequence = Column(String(250), unique=True)
 
     def __repr__(self):
         """Represent an ITS1 database entry as a string."""
