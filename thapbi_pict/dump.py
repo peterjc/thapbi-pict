@@ -7,7 +7,7 @@ import sys
 
 from sqlalchemy.orm import joinedload
 
-from .db_orm import SequenceSource, connect_to_db
+from .db_orm import SequenceSource, Taxonomy, connect_to_db
 
 
 def main(db_url, output_txt, clade="", debug=True):
@@ -24,19 +24,18 @@ def main(db_url, output_txt, clade="", debug=True):
         out_handle = open(output_txt, "w")
 
     # Doing a join to pull in the ITS1 and Taxonomy tables too:
-    view = session.query(SequenceSource).options(
-        joinedload(SequenceSource.its1),
-        joinedload(SequenceSource.current_taxonomy))
+    view = session.query(SequenceSource).join(
+        SequenceSource.current_taxonomy).options(
+        joinedload(SequenceSource.current_taxonomy)).options(
+        joinedload(SequenceSource.its1))
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
+    clade_list = None
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
         clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
-        # TODO - how to make this work with new schema?
-        # view = view.filter(
-        #     SequenceSource.current_taxonomy.clade.in_(clade_list))
-        sys.stderr.write("DEBUG: Ignoring clade in %r filter\n" % clade_list)
+        view = view.filter(Taxonomy.clade.in_(clade_list))
 
     for seq_source in view:
         entry_count += 1
@@ -47,6 +46,9 @@ def main(db_url, output_txt, clade="", debug=True):
                             seq_source.current_taxonomy.species,
                             seq_source.its1.sequence,
                             seq_source.sequence))
+        if clade_list:
+            assert seq_source.current_taxonomy.clade in clade_list, \
+                seq_source.current_taxonomy
 
     if output_txt == "-":
         sys.stderr.write("Wrote %i entries\n" % entry_count)
