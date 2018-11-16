@@ -6,7 +6,7 @@ Python objects.
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -31,6 +31,28 @@ class DataSource(Base):
     def __repr__(self):
         """Represent a DataSource database entry as a string."""
         return "DataSource(name=%r, ...)" % self.name
+
+
+class Taxonomy(Base):
+    """Database entry for a species' taxonomy entry."""
+
+    __tablename__ = "taxonomy"
+
+    id = Column(Integer, primary_key=True)
+    clade = Column(String(10))  # TODO - Integer linked to table?
+    ncbi_taxid = Column(Integer)
+    genus = Column(String(100))
+    species = Column(String(100))  # source may have variant/strain?
+
+    # Might have old entry with clade A, and new curated entry with clade B
+    # (but same genus, species and NCBI taxid)
+    UniqueConstraint('genus', 'species', 'ncbi_taxid', 'clade')
+    # TODO - name this constraint, or define it via an index?
+
+    def __repr__(self):
+        """Represent a taxonomy database entry as a string."""
+        return ("Taxonomy(clade=%r, ncbi_taxid=%r, genus=%i, species=%r)"
+                % (self.clade, self.ncbi_taxid, self.genus, self.species))
 
 
 class ITS1(Base):
@@ -59,25 +81,19 @@ class SequenceSource(Base):
     source = relationship(DataSource)
 
     its1_id = Column(Integer, ForeignKey("its1_sequence.id"))
-    its1 = relationship(ITS1)
+    its1 = relationship(ITS1, foreign_keys=[its1_id])
 
     sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
 
     # Whatever was recorded in the original data source
-    original_clade = Column(String(10))  # TODO - Integer linked to table?
-    original_taxid = Column(Integer)  # NCBI taxid
-    original_genus = Column(String(100))
-    original_species = Column(String(100))  # source may have variant/strain?
+    original_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
+    original_taxonomy = relationship(
+        Taxonomy, foreign_keys=[original_taxonomy_id])
 
     # Initially based on the values above, but expect to reclassify some
-    current_clade = Column(String(10))
-    current_taxid = Column(Integer)  # NCBI taxid, perhaps as species only?
-    current_genus = Column(String(100))
-    current_species = Column(String(100))
-
-    # TODO - Supplement this with an NCBI taxonomy table?
-    # i.e. looking up species name and genus via the taxid
-    # For now, storing genus etc locally will help with simple filtering
+    current_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
+    current_taxonomy = relationship(
+        Taxonomy, foreign_keys=[current_taxonomy_id])
 
     # date_added = Column(DateTime) -> see data_source.date
     date_modified = Column(DateTime)
