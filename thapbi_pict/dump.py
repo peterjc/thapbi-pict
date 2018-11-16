@@ -5,7 +5,7 @@ This implementes the ``thapbi_pict dump ...`` command.
 
 import sys
 
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 from .db_orm import SequenceSource, Taxonomy, connect_to_db
 
@@ -24,8 +24,9 @@ def main(db_url, output_txt, clade="", debug=True):
         out_handle = open(output_txt, "w")
 
     # Doing a join to pull in the ITS1 and Taxonomy tables too:
+    cur_tax = aliased(Taxonomy)
     view = session.query(SequenceSource).join(
-        SequenceSource.current_taxonomy).options(
+        cur_tax, SequenceSource.current_taxonomy).options(
         joinedload(SequenceSource.current_taxonomy)).options(
         joinedload(SequenceSource.its1))
     # Sorting for reproducibility
@@ -35,7 +36,7 @@ def main(db_url, output_txt, clade="", debug=True):
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
         clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
-        view = view.filter(Taxonomy.clade.in_(clade_list))
+        view = view.filter(cur_tax.clade.in_(clade_list))
 
     for seq_source in view:
         entry_count += 1
