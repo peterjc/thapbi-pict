@@ -174,20 +174,19 @@ assert (parse_fasta_entry('P._amnicola_CBS131652')
 assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
-def main(fasta_files, db_url, name=None, debug=True):
+def main(fasta_file, db_url, name=None, debug=True):
     """Run the script with command line arguments."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
 
     if not name:
-        name = "Legacy import of " + " ".join(
-           os.path.basename(_) for _ in fasta_files)
+        name = "Legacy import of %s" % os.path.basename(fasta_file)
 
     # TODO - explicit check for the name already being in use
     db_source = DataSource(
         name=name,
-        uri=":".join(fasta_files),
+        uri=fasta_file,
         notes="Imported with thapbi_pict legacy_import v%s" % __version__)
     session.add(db_source)
 
@@ -195,68 +194,68 @@ def main(fasta_files, db_url, name=None, debug=True):
     entry_count = 0
     bad_entry_count = 0
     idn_set = set()
-    for filename in fasta_files:
-        with open(filename) as handle:
-            for title, seq in SimpleFastaParser(handle):
-                if title.startswith("Control_"):
-                    if debug:
-                        sys.stderr.write("Ignoring control entry: %s\n"
-                                         % title)
-                    continue
-                seq_count += 1
 
-                # Here assume the FASTA sequence is already trimmed to the ITS1
-                seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            if title.startswith("Control_"):
+                if debug:
+                    sys.stderr.write("Ignoring control entry: %s\n"
+                                     % title)
+                continue
+            seq_count += 1
 
-                # Is is already there? e.g. duplicate sequences in FASTA file
-                its1 = session.query(ITS1).filter_by(
+            # Here assume the FASTA sequence is already trimmed to the ITS1
+            seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
+
+            # Is is already there? e.g. duplicate sequences in FASTA file
+            its1 = session.query(ITS1).filter_by(
                     md5=seq_md5, sequence=seq).one_or_none()
-                if its1 is None:
-                    its1 = ITS1(md5=seq_md5, sequence=seq)
-                    session.add(its1)
+            if its1 is None:
+                its1 = ITS1(md5=seq_md5, sequence=seq)
+                session.add(its1)
 
-                # One sequence can have multiple entries
-                idn = title.split(None, 1)[0]
-                if idn in idn_set:
-                    sys.stderr.write("WARNING: Duplicated identifier %r\n"
-                                     % idn)
-                idn_set.add(idn)
+            # One sequence can have multiple entries
+            idn = title.split(None, 1)[0]
+            if idn in idn_set:
+                sys.stderr.write("WARNING: Duplicated identifier %r\n"
+                                 % idn)
+            idn_set.add(idn)
 
-                entries = split_composite_entry(title.split(None, 1)[0])
-                for entry in entries:
-                    entry_count += 1
-                    try:
-                        clade, name, acc = parse_fasta_entry(entry)
-                    except ValueError as e:
-                        bad_entry_count += 1
-                        sys.stderr.write("WARNING: %s - Can't parse: %r\n"
-                                         % (e, idn))
-                        continue
-                    # Load into the DB
-                    # Store "Phytophthora aff infestans" as
-                    # genus "Phytophthora", species "aff infestans"
-                    genus, species = name.split(None, 1) if name else ("", "")
-                    assert genus != "P.", title
-                    taxid = 0
-                    # Note we use the original FASTA identifier for traceablity
-                    # but means the multi-entries get the same source accession
-                    record_entry = SequenceSource(source_accession=idn,
-                                                  source=db_source,
-                                                  its1=its1,
-                                                  sequence=seq,
-                                                  original_clade=clade,
-                                                  original_taxid=taxid,
-                                                  original_genus=genus,
-                                                  original_species=species,
-                                                  current_clade=clade,
-                                                  current_taxid=taxid,
-                                                  current_genus=genus,
-                                                  current_species=species,
-                                                  seq_strategy=0,
-                                                  seq_platform=0,
-                                                  curated_trust=0)
-                    session.add(record_entry)
-                    # print(clade, species, acc)
+            entries = split_composite_entry(title.split(None, 1)[0])
+            for entry in entries:
+                entry_count += 1
+                try:
+                    clade, name, acc = parse_fasta_entry(entry)
+                except ValueError as e:
+                    bad_entry_count += 1
+                    sys.stderr.write("WARNING: %s - Can't parse: %r\n"
+                                     % (e, idn))
+                    continue
+                # Load into the DB
+                # Store "Phytophthora aff infestans" as
+                # genus "Phytophthora", species "aff infestans"
+                genus, species = name.split(None, 1) if name else ("", "")
+                assert genus != "P.", title
+                taxid = 0
+                # Note we use the original FASTA identifier for traceablity
+                # but means the multi-entries get the same source accession
+                record_entry = SequenceSource(source_accession=idn,
+                                              source=db_source,
+                                              its1=its1,
+                                              sequence=seq,
+                                              original_clade=clade,
+                                              original_taxid=taxid,
+                                              original_genus=genus,
+                                              original_species=species,
+                                              current_clade=clade,
+                                              current_taxid=taxid,
+                                              current_genus=genus,
+                                              current_species=species,
+                                              seq_strategy=0,
+                                              seq_platform=0,
+                                              curated_trust=0)
+                session.add(record_entry)
+                # print(clade, species, acc)
     session.commit()
     sys.stderr.write("%i sequences, %i entries including %i bad\n"
                      % (seq_count, entry_count, bad_entry_count))

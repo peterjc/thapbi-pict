@@ -26,7 +26,7 @@ def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     from .legacy import main
     return main(
-        fasta_files=args.fasta,
+        fasta_file=args.fasta,
         db_url=expand_database_argument(args.database),
         name=args.name,
         debug=args.verbose)
@@ -70,8 +70,8 @@ def main(args=None):
         "legacy-import",
         description="Load one of our legacy ITS1 FASTA files into a database.")
     parser_import.add_argument(
-        'fasta', nargs='+',
-        help='One or more ITS1 fasta filenames.')
+        'fasta', type=str,
+        help='One ITS1 fasta filename.')
     parser_import.add_argument(
         "-d", "--database", type=str,
         help="Which database to write to (or create)")
