@@ -1,6 +1,6 @@
 #!/bin/bash
-set -eux
 IFS=$'\n\t'
+set -eux
 
 # Note not using "set -o pipefile" as want to use that
 # with grep to check error messages
