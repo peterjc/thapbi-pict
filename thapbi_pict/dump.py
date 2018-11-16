@@ -23,24 +23,28 @@ def main(db_url, output_txt, clade="", debug=True):
     else:
         out_handle = open(output_txt, "w")
 
-    # Doing a join on the two main tables:
+    # Doing a join to pull in the ITS1 and Taxonomy tables too:
     view = session.query(SequenceSource).options(
-        joinedload(SequenceSource.its1))
+        joinedload(SequenceSource.its1),
+        joinedload(SequenceSource.current_taxonomy))
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
         clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
-        view = view.filter(SequenceSource.current_clade.in_(clade_list))
+        # TODO - how to make this work with new schema?
+        # view = view.filter(
+        #     SequenceSource.current_taxonomy.clade.in_(clade_list))
+        sys.stderr.write("DEBUG: Ignoring clade in %r filter\n" % clade_list)
 
     for seq_source in view:
         entry_count += 1
         out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
                          % (seq_source.source_accession,
-                            seq_source.current_clade,
-                            seq_source.current_genus,
-                            seq_source.current_species,
+                            seq_source.current_taxonomy.clade,
+                            seq_source.current_taxonomy.genus,
+                            seq_source.current_taxonomy.species,
                             seq_source.its1.sequence,
                             seq_source.sequence))
 
