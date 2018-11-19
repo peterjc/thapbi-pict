@@ -5,9 +5,9 @@ This implementes the ``thapbi_pict dump ...`` command.
 
 import sys
 
-from sqlalchemy.orm import joinedload, aliased
+from sqlalchemy.orm import aliased, contains_eager
 
-from .db_orm import SequenceSource, Taxonomy, connect_to_db
+from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 
 def main(db_url, output_txt, clade="", debug=True):
@@ -25,10 +25,12 @@ def main(db_url, output_txt, clade="", debug=True):
 
     # Doing a join to pull in the ITS1 and Taxonomy tables too:
     cur_tax = aliased(Taxonomy)
+    its1_seq = aliased(ITS1)
     view = session.query(SequenceSource).join(
+        its1_seq, SequenceSource.its1).join(
         cur_tax, SequenceSource.current_taxonomy).options(
-        joinedload(SequenceSource.current_taxonomy)).options(
-        joinedload(SequenceSource.its1))
+        contains_eager(SequenceSource.its1, alias=its1_seq)).options(
+        contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
