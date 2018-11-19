@@ -25,6 +25,7 @@ class DataSource(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))  # e.g. NCBI, Legacy v0.005
     uri = Column(String(200))  # e.g. traceable filename or URL
+    md5 = Column(String(32), unique=True)
     date = Column(DateTime)
     notes = Column(String(1000))
 

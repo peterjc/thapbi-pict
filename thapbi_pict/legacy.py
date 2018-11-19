@@ -70,6 +70,19 @@ for _ in ("8b_Phytophthora_brassicae_HQ643158_"
     assert composite_re.search(_), _
 
 
+def md5_hexdigest(filename, chunk_size=1024):
+    """Return the MD5 hex-digest of the given file."""
+    hash_md5 = hashlib.md5()
+    with open(filename, "rb") as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                # EOF
+                break
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
 def split_composite_entry(text):
     """Split possibly composite FASTA description into list of strings.
 
@@ -185,10 +198,14 @@ def main(fasta_file, db_url, name=None, debug=True):
     if not name:
         name = "Legacy import of %s" % os.path.basename(fasta_file)
 
-    # TODO - explicit check for the name already being in use
+    md5 = md5_hexdigest(fasta_file)
+
+    # TODO - explicit check for reusing name, and/or unique in schema
+    # TODO - explicit check for reusing MD5 (not just DB schema check)
     db_source = DataSource(
         name=name,
         uri=fasta_file,
+        md5=md5,
         notes="Imported with thapbi_pict legacy_import v%s" % __version__)
     session.add(db_source)
 
