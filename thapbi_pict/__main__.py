@@ -22,6 +22,11 @@ def expand_database_argument(text):
     return prefix + text
 
 
+def ncbi_import(args=None):
+    """Subcommand to import an NCBI ITS1 FASTA file into a database."""
+    return 0
+
+
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     from .legacy import main
@@ -65,23 +70,41 @@ def main(args=None):
                                        description="valid subcommands",
                                        help="additional help")
 
-    # legacy-import
-    parser_import = subparsers.add_parser(
-        "legacy-import",
-        description="Load one of our legacy ITS1 FASTA files into a database.")
-    parser_import.add_argument(
+    # ncbi-import
+    parser_ncbi_import = subparsers.add_parser(
+        "ncbi-import",
+        description="Load an NCBI format ITS1 FASTA file into a database.")
+    parser_ncbi_import.add_argument(
         'fasta', type=str,
         help='One ITS1 fasta filename.')
-    parser_import.add_argument(
+    parser_ncbi_import.add_argument(
         "-d", "--database", type=str,
         help="Which database to write to (or create)")
-    parser_import.add_argument(
+    parser_ncbi_import.add_argument(
         "-n", "--name", type=str, default="",
         help="Data source name (string, ideally avoiding spaces etc)")
-    parser_import.add_argument(
+    parser_ncbi_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
-    parser_import.set_defaults(func=legacy_import)
+    parser_ncbi_import.set_defaults(func=ncbi_import)
+
+    # legacy-import
+    parser_legacy_import = subparsers.add_parser(
+        "legacy-import",
+        description="Load one of our legacy ITS1 FASTA files into a database.")
+    parser_legacy_import.add_argument(
+        'fasta', type=str,
+        help='One ITS1 fasta filename.')
+    parser_legacy_import.add_argument(
+        "-d", "--database", type=str,
+        help="Which database to write to (or create)")
+    parser_legacy_import.add_argument(
+        "-n", "--name", type=str, default="",
+        help="Data source name (string, ideally avoiding spaces etc)")
+    parser_legacy_import.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
+    parser_legacy_import.set_defaults(func=legacy_import)
 
     # dump
     parser_dump = subparsers.add_parser(
