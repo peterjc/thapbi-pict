@@ -23,6 +23,8 @@ before_install:
  - flake8 .
 
 install:
+ # Thus far only using conda on CircleCI, can we used apt packages instead?
+ # conda install --file requirements-test.txt
  - pip install -r requirements.txt
  - python -c "import Bio; print(Bio.__version__)"
  - python -c "import sqlalchemy; print(sqlalchemy.__version__)"

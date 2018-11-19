@@ -19,6 +19,9 @@ jobs:
             conda create -q -n myenv python=3.7
             source activate myenv
             python --version
+            conda config --add channels defaults
+            conda config --add channels conda-forge
+            conda config --add channels bioconda
             conda info -a
       - run:
           name: Whitespace checks
@@ -38,6 +41,7 @@ jobs:
       - run:
           name: Installation
           command: |
+            conda install --file requirements-test.txt
             conda install --file requirements.txt
             pip install .
       - run:
