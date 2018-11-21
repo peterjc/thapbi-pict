@@ -51,3 +51,4 @@ jobs:
             thapbi_pict -v
             python -m thapbi_pict -v
             tests/test_legacy-import.sh
+            tests/test_ncbi-import.sh
