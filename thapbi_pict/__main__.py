@@ -24,7 +24,12 @@ def expand_database_argument(text):
 
 def ncbi_import(args=None):
     """Subcommand to import an NCBI ITS1 FASTA file into a database."""
-    return 0
+    from .ncbi import main
+    return main(
+        fasta_file=args.fasta,
+        db_url=expand_database_argument(args.database),
+        name=args.name,
+        debug=args.verbose)
 
 
 def legacy_import(args=None):
