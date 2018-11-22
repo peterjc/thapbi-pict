@@ -1,6 +1,0 @@
-# These are the testing dependencies, best installed with
-#
-# $ conda install --file requirements.txt
-#
-
-entrez-direct
