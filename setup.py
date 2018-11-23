@@ -31,7 +31,7 @@ from __future__ import print_function
 import sys
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     sys.exit("We need the Python library setuptools to be installed. "
              "Try runnning: python -m ensurepip")
@@ -91,9 +91,7 @@ setup(name='thapbi_pict',
               'thapbi_pict = thapbi_pict.__main__:main'
           ]
       },
-      packages=[
-          'thapbi_pict',
-      ],
+      packages=find_packages(),
       install_requires=[
           'biopython',
           'sqlalchemy',
