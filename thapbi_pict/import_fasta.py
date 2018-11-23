@@ -10,12 +10,11 @@ import hashlib
 import os
 import sys
 
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-
 from . import __version__
 from .db_orm import DataSource, ITS1, SequenceSource
 from .db_orm import Taxonomy
 from .db_orm import connect_to_db
+from .hmm import filter_for_ITS1
 
 
 def md5_hexdigest(filename, chunk_size=1024):
@@ -81,8 +80,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     bad_entry_count = 0
     idn_set = set()
 
-    with open(fasta_file) as handle:
-        for title, seq in SimpleFastaParser(handle):
+    for title, seq, its1_seq in filter_for_ITS1(fasta_file):
             if title.startswith("Control_"):
                 if debug:
                     sys.stderr.write("Ignoring control entry: %s\n"
@@ -90,14 +88,19 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                 continue
             seq_count += 1
 
-            # Here assume the FASTA sequence is already trimmed to the ITS1
-            seq_md5 = hashlib.md5(seq.upper().encode("ascii")).hexdigest()
+            if not its1_seq:
+                if debug:
+                    sys.stderr.write("Ignoring non-ITS entry: %s\n"
+                                     % title)
+                continue
+
+            its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
 
             # Is is already there? e.g. duplicate sequences in FASTA file
             its1 = session.query(ITS1).filter_by(
-                    md5=seq_md5, sequence=seq).one_or_none()
+                    md5=its1_md5, sequence=its1_seq).one_or_none()
             if its1 is None:
-                its1 = ITS1(md5=seq_md5, sequence=seq)
+                its1 = ITS1(md5=its1_md5, sequence=its1_seq)
                 session.add(its1)
 
             # One sequence can have multiple entries

@@ -66,6 +66,38 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
     shutil.rmtree(tmp_dir)
 
 
+def filter_for_ITS1(input_fasta, bitscore_threshold="5", debug=False):
+    """Search for the expected single ITS1 sequence within FASTA entries.
+
+    The arbitrary low bitscore_threshold default is based on ensuring
+    all the sequences in our legacy FASTA files pass without false
+    positive additional weak hits complicating things.
+    """
+    hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
+    for record, result in run_and_parse_hmmscan(
+                hmm, input_fasta,
+                bitscore_threshold=bitscore_threshold,
+                debug=debug):
+        title = record.description
+        seq = str(record.seq)
+        if not result:
+            yield title, seq, None
+            continue
+
+        assert len(result) == 1
+        hit = result[0]
+        assert hit.id == "phytophthora_its1"
+
+        if len(hit) == 0:
+            yield title, seq, None
+            continue
+
+        assert len(hit) == 1
+        hsp = hit[0]
+
+        yield title, seq, seq[hsp.query_start:hsp.query_end]
+
+
 def filter_fasta_for_ITS1(input_fasta, output_fasta,
                           bitscore_threshold=None,
                           trim=True,
