@@ -66,7 +66,7 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
     shutil.rmtree(tmp_dir)
 
 
-def filter_for_ITS1(input_fasta, bitscore_threshold="5", debug=False):
+def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
     The arbitrary low bitscore_threshold default is based on ensuring
@@ -90,6 +90,13 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="5", debug=False):
 
         if len(hit) == 0:
             yield title, seq, None
+            continue
+
+        if len(hit) > 1:
+            sys.stderr.write("WARNING: Ignoring %s as has multiple HSPs:\n"
+                             % (record.id))
+            for hsp in hit:
+                sys.stderr.write("%s\n" % hsp)
             continue
 
         assert len(hit) == 1
