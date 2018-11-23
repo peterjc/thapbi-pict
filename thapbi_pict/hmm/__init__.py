@@ -63,7 +63,8 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
 
 
 def filter_fasta_for_ITS1(input_fasta, output_fasta,
-                          bitscore_threshold="50",
+                          bitscore_threshold=None,
+                          trim=True,
                           debug=False):
     """Search for ITS1 sequences and produce an output of any matches.
 
@@ -100,21 +101,25 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
                 continue
             if len(hit) != 1:
                 print(hit)
-                for dom in hit:
-                    print(dom)
-                assert False
+                for hsp in hit:
+                    print(hsp)
+                assert False, "%s hit had %i HSPs" % (record.id, len(hit))
             assert len(hit) == 1
             hsp = hit[0]
             print(hsp.query_id, hsp.bitscore, hsp.query_start, hsp.query_end)
             assert record.id == hsp.query_id
             old_len = len(record)
-            record = record[hsp.query_start:hsp.query_end]
-            if len(record) == old_len:
-                record.description = "HMM bitscore %s, untrimmed at %ibp" % (
-                    hsp.bitscore, old_len)
-            else:
-                record.description = "HMM bitscore %s, cut %ibp to %ibp" % (
-                    hsp.bitscore, old_len, len(record))
+            if trim:
+                record = record[hsp.query_start:hsp.query_end]
+                if len(record) == old_len:
+                    record.description = ("HMM bitscore %s, "
+                                          "untrimmed at %ibp" % (
+                                              hsp.bitscore, old_len))
+                else:
+                    record.description = ("HMM bitscore %s, "
+                                          "cut %ibp to %ibp" % (
+                                              hsp.bitscore, old_len,
+                                              len(record)))
             output_count += SeqIO.write(record, out_handle, "fasta")
     return input_count, output_count
 
@@ -125,5 +130,6 @@ if __name__ == "__main__":
         in_fasta = sys.argv[1]
         out_fasta = sys.argv[2]
         in_count, out_count = filter_fasta_for_ITS1(in_fasta, out_fasta,
-                                                    debug=True)
+                                                    bitscore_threshold="5",
+                                                    trim=True, debug=True)
         print("Extracted %i from %i inputs" % (out_count, in_count))
