@@ -75,16 +75,17 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
 
     Initially the HMM is hard coded.
     """
-    fasta_dict = SeqIO.index(input_fasta, "fasta")
-
     hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
     input_count = 0
     output_count = 0
 
     with open(output_fasta, "w") as out_handle:
-        for result in run_and_parse_hmmscan(hmm, input_fasta,
-                                            bitscore_threshold=bitscore_threshold,  # noqa: E501
-                                            debug=debug):
+        for record, result in zip(
+                SeqIO.parse(input_fasta, "fasta"),
+                run_and_parse_hmmscan(hmm, input_fasta,
+                                      bitscore_threshold=bitscore_threshold,
+                                      debug=debug)):
+            assert record.id == result.id, "%s vs %s" % (record.id, result.id)
             input_count += 1
             if not result:
                 if debug:
@@ -105,7 +106,7 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
             assert len(hit) == 1
             hsp = hit[0]
             print(hsp.query_id, hsp.bitscore, hsp.query_start, hsp.query_end)
-            record = fasta_dict[hsp.query_id]
+            assert record.id == hsp.query_id
             old_len = len(record)
             record = record[hsp.query_start:hsp.query_end]
             if len(record) == old_len:
