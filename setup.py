@@ -92,6 +92,7 @@ setup(name='thapbi_pict',
           ]
       },
       packages=find_packages(),
+      include_package_data=True,
       install_requires=[
           'biopython',
           'sqlalchemy',

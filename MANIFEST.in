@@ -1,0 +1,13 @@
+# MANIFEST.in
+#
+# This tells setuptools what files to distribute.
+
+include MANIFEST.in
+include *.md
+
+recursive-include thapbi_pict *.py
+recursive-include thapbi_pict/hmm phytophthora_its1.*
+
+recursive-include database *
+
+recursive-include tests *
