@@ -100,13 +100,11 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
                     sys.stderr.write("DEBUG: Ignoring %s\n" % result.id)
                 continue
             if len(hit) != 1:
-                print(hit)
-                for hsp in hit:
-                    print(hsp)
+                sys.stderr.write("ERROR: %s\n" % hit)
                 assert False, "%s hit had %i HSPs" % (record.id, len(hit))
             assert len(hit) == 1
             hsp = hit[0]
-            print(hsp.query_id, hsp.bitscore, hsp.query_start, hsp.query_end)
+            # print(hsp.query_id, hsp.bitscore, hsp.query_start, hsp.query_end)
             assert record.id == hsp.query_id
             old_len = len(record)
             if trim:
