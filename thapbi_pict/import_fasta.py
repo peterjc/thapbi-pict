@@ -81,74 +81,74 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     idn_set = set()
 
     for title, seq, its1_seq in filter_for_ITS1(fasta_file):
-            if title.startswith("Control_"):
-                if debug:
-                    sys.stderr.write("Ignoring control entry: %s\n"
-                                     % title)
+        if title.startswith("Control_"):
+            if debug:
+                sys.stderr.write("Ignoring control entry: %s\n"
+                                 % title)
+            continue
+        seq_count += 1
+
+        if not its1_seq:
+            if debug:
+                sys.stderr.write("Ignoring non-ITS entry: %s\n"
+                                 % title)
+            continue
+
+        its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
+
+        # Is is already there? e.g. duplicate sequences in FASTA file
+        its1 = session.query(ITS1).filter_by(
+            md5=its1_md5, sequence=its1_seq).one_or_none()
+        if its1 is None:
+            its1 = ITS1(md5=its1_md5, sequence=its1_seq)
+            session.add(its1)
+
+        # One sequence can have multiple entries
+        idn = title.split(None, 1)[0]
+        if idn in idn_set:
+            sys.stderr.write("WARNING: Duplicated identifier %r\n"
+                             % idn)
+        idn_set.add(idn)
+
+        entries = fasta_split_fn(title.split(None, 1)[0])
+        for entry in entries:
+            entry_count += 1
+            try:
+                clade, name, acc = fasta_parse_fn(entry)
+            except ValueError as e:
+                bad_entry_count += 1
+                sys.stderr.write("WARNING: %s - Can't parse: %r\n"
+                                 % (e, idn))
                 continue
-            seq_count += 1
-
-            if not its1_seq:
-                if debug:
-                    sys.stderr.write("Ignoring non-ITS entry: %s\n"
-                                     % title)
-                continue
-
-            its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
-
+            # Load into the DB
+            # Store "Phytophthora aff infestans" as
+            # genus "Phytophthora", species "aff infestans"
+            genus, species = name.split(None, 1) if name else ("", "")
+            assert genus != "P.", title
+            taxid = 0
             # Is is already there? e.g. duplicate sequences in FASTA file
-            its1 = session.query(ITS1).filter_by(
-                    md5=its1_md5, sequence=its1_seq).one_or_none()
-            if its1 is None:
-                its1 = ITS1(md5=its1_md5, sequence=its1_seq)
-                session.add(its1)
-
-            # One sequence can have multiple entries
-            idn = title.split(None, 1)[0]
-            if idn in idn_set:
-                sys.stderr.write("WARNING: Duplicated identifier %r\n"
-                                 % idn)
-            idn_set.add(idn)
-
-            entries = fasta_split_fn(title.split(None, 1)[0])
-            for entry in entries:
-                entry_count += 1
-                try:
-                    clade, name, acc = fasta_parse_fn(entry)
-                except ValueError as e:
-                    bad_entry_count += 1
-                    sys.stderr.write("WARNING: %s - Can't parse: %r\n"
-                                     % (e, idn))
-                    continue
-                # Load into the DB
-                # Store "Phytophthora aff infestans" as
-                # genus "Phytophthora", species "aff infestans"
-                genus, species = name.split(None, 1) if name else ("", "")
-                assert genus != "P.", title
-                taxid = 0
-                # Is is already there? e.g. duplicate sequences in FASTA file
-                taxonomy = session.query(Taxonomy).filter_by(
+            taxonomy = session.query(Taxonomy).filter_by(
+                clade=clade, genus=genus, species=species,
+                ncbi_taxid=taxid).one_or_none()
+            if taxonomy is None:
+                taxonomy = Taxonomy(
                     clade=clade, genus=genus, species=species,
-                    ncbi_taxid=taxid).one_or_none()
-                if taxonomy is None:
-                    taxonomy = Taxonomy(
-                        clade=clade, genus=genus, species=species,
-                        ncbi_taxid=taxid)
-                    session.add(taxonomy)
+                    ncbi_taxid=taxid)
+                session.add(taxonomy)
 
-                # Note we use the original FASTA identifier for traceablity
-                # but means the multi-entries get the same source accession
-                record_entry = SequenceSource(source_accession=idn,
-                                              source=db_source,
-                                              its1=its1,
-                                              sequence=seq,
-                                              original_taxonomy=taxonomy,
-                                              current_taxonomy=taxonomy,
-                                              seq_strategy=0,
-                                              seq_platform=0,
-                                              curated_trust=0)
-                session.add(record_entry)
-                # print(clade, species, acc)
+            # Note we use the original FASTA identifier for traceablity
+            # but means the multi-entries get the same source accession
+            record_entry = SequenceSource(source_accession=idn,
+                                          source=db_source,
+                                          its1=its1,
+                                          sequence=seq,
+                                          original_taxonomy=taxonomy,
+                                          current_taxonomy=taxonomy,
+                                          seq_strategy=0,
+                                          seq_platform=0,
+                                          curated_trust=0)
+            session.add(record_entry)
+            # print(clade, species, acc)
     session.commit()
     sys.stderr.write("%i sequences, %i entries including %i bad\n"
                      % (seq_count, entry_count, bad_entry_count))
