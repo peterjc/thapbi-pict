@@ -35,7 +35,8 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
     ``$PATH`` but an explicit path can be given), writing the output to a
     temporary file which will be deleted after parsing it.
 
-    This will yield Biopython objects via the HMMER3 parser in Bio.SearchIO.
+    This will yield 2-tuples of Biopython objects via the FASTA parser in
+    Bio.SeqIO, and the HMMER3 text parser in Bio.SearchIO.
     """
     if not os.path.isfile(fasta_input_file):
         raise ValueError("Missing FASTA input %r" % fasta_input_file)
@@ -55,8 +56,11 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
         sys.stderr.write("DEBUG: Executing command: %s\n" % " ".join(cmd))
     subprocess.check_call(cmd)
 
-    for record in SearchIO.parse(hmm_out, "hmmer3-text"):
-        yield record
+    for record, result in zip(SeqIO.parse(fasta_input_file, "fasta"),
+                              SearchIO.parse(hmm_out, "hmmer3-text")):
+        if record.id != result.id:
+            raise ValueError("FASTA %s vs HMMER %s" % (record.id, result.id))
+        yield record, result
 
     os.remove(hmm_out)
     shutil.rmtree(tmp_dir)
@@ -81,12 +85,10 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
     output_count = 0
 
     with open(output_fasta, "w") as out_handle:
-        for record, result in zip(
-                SeqIO.parse(input_fasta, "fasta"),
-                run_and_parse_hmmscan(hmm, input_fasta,
-                                      bitscore_threshold=bitscore_threshold,
-                                      debug=debug)):
-            assert record.id == result.id, "%s vs %s" % (record.id, result.id)
+        for record, result in run_and_parse_hmmscan(
+                hmm, input_fasta,
+                bitscore_threshold=bitscore_threshold,
+                debug=debug):
             input_count += 1
             if not result:
                 if debug:
