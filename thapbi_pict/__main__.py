@@ -16,6 +16,8 @@ def expand_database_argument(text):
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
     # as we might be about to create it.
+    if not text:
+        sys.exit("The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
         return text
@@ -83,7 +85,7 @@ def main(args=None):
         'fasta', type=str,
         help='One ITS1 fasta filename.')
     parser_ncbi_import.add_argument(
-        "-d", "--database", type=str,
+        "-d", "--database", type=str, required=True,
         help="Which database to write to (or create)")
     parser_ncbi_import.add_argument(
         "-n", "--name", type=str, default="",
@@ -101,7 +103,7 @@ def main(args=None):
         'fasta', type=str,
         help='One ITS1 fasta filename.')
     parser_legacy_import.add_argument(
-        "-d", "--database", type=str,
+        "-d", "--database", type=str, required=True,
         help="Which database to write to (or create)")
     parser_legacy_import.add_argument(
         "-n", "--name", type=str, default="",
