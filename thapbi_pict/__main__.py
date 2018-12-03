@@ -24,6 +24,15 @@ def expand_database_argument(text):
     return prefix + text
 
 
+def load_tax(args=None):
+    """Subcommand to load an NCBI taxonomy dump into an ITS1 database."""
+    from .taxdump import main
+    return main(
+        tax=args.tax,
+        db_url=expand_database_argument(args.database),
+        debug=args.verbose)
+
+
 def ncbi_import(args=None):
     """Subcommand to import an NCBI ITS1 FASTA file into a database."""
     from .ncbi import main
@@ -76,6 +85,21 @@ def main(args=None):
     subparsers = parser.add_subparsers(
         title="subcommands",
         help="Each subcommand has its own additional help")
+
+    # load-tax
+    parser_load_tax = subparsers.add_parser(
+        "load-tax",
+        description="Load an NCBI taxonomy dump into an ITS1 database.")
+    parser_load_tax.add_argument(
+        "-t", "--tax", type=str, required=True,
+        help='Folder containing NCBI taxonomy dump files names.dmp etc.')
+    parser_load_tax.add_argument(
+        "-d", "--database", type=str, required=True,
+        help="Which database to write to (or create)")
+    parser_load_tax.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
+    parser_load_tax.set_defaults(func=load_tax)
 
     # ncbi-import
     parser_ncbi_import = subparsers.add_parser(

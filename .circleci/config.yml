@@ -52,3 +52,4 @@ jobs:
             python -m thapbi_pict -v
             tests/test_legacy-import.sh
             tests/test_ncbi-import.sh
+            tests/test_load-tax.sh

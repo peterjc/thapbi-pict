@@ -36,3 +36,4 @@ script:
  - python -m thapbi_pict -v
  # Can't run tests/test_legacy-import.sh without hmmer
  # Can't run tests/test-ncbi_import.sh without entrez-direct & hmmer
+ - tests/test_load-tax.sh
