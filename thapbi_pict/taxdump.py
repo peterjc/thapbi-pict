@@ -123,6 +123,16 @@ def main(tax, db_url, ancestors, debug=True):
     new = 0
     for taxid, genus, species in genus_species:
         clade = ""
+
+        if species.split(" ", 1)[0] == genus:
+            # We are storing "Phytophthora infestans" as
+            # genus="Phytophthora", species="infestans"
+            species = species.split(" ", 1)[1]
+
+        if species == "unclassified " + genus:
+            # Another special case
+            species = "unclassified"
+
         # Is is already there? e.g. prior import
         taxonomy = session.query(Taxonomy).filter_by(
             clade=clade, genus=genus, species=species,
