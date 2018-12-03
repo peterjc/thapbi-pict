@@ -73,9 +73,9 @@ def main(args=None):
         epilog="e.g. run 'thapbi_pict dump -h' for the dump subcommand help.")
     parser.add_argument("-v", "--version", action="version",
                         version="THAPBI PICT v%s" % __version__)
-    subparsers = parser.add_subparsers(title="subcommands",
-                                       description="valid subcommands",
-                                       help="additional help")
+    subparsers = parser.add_subparsers(
+        title="subcommands",
+        help="Each subcommand has its own additional help")
 
     # ncbi-import
     parser_ncbi_import = subparsers.add_parser(
