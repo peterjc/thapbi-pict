@@ -30,6 +30,7 @@ def load_tax(args=None):
     return main(
         tax=args.tax,
         db_url=expand_database_argument(args.database),
+        ancestors=args.ancestors,
         debug=args.verbose)
 
 
@@ -96,6 +97,9 @@ def main(args=None):
     parser_load_tax.add_argument(
         "-d", "--database", type=str, required=True,
         help="Which database to write to (or create)")
+    parser_load_tax.add_argument(
+        "-a", "--ancestors", type=str, default="4783",
+        help="Comma separated lists of taxids, default 4783 for Phytophthora"),
     parser_load_tax.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
