@@ -7,6 +7,9 @@ The code is needed initially for loading an NCBI taxdump folder (files
 import os
 import sys
 
+from .db_orm import Taxonomy
+from .db_orm import connect_to_db
+
 
 def load_nodes(nodes_dmp):
     """Load the NCBI taxdump nodes.dmp file.
@@ -74,7 +77,7 @@ def top_level_species(tree, ranks, names, genus_list):
                 sys.stderr.write(
                     "WARNING: Treating %s '%s' (txid%i) as a species.\n"
                     % (ranks[taxid], name, taxid))
-            yield taxid, ranks[taxid], name
+            yield taxid, names[tree[taxid]], name
 
 
 def main(tax, db_url, ancestors, debug=True):
@@ -112,7 +115,36 @@ def main(tax, db_url, ancestors, debug=True):
         sys.stderr.write(
             "Filtered down to %i species names\n" % len(genus_species))
 
-    for row in genus_species:
-        print(row)
+    # Connect to the DB,
+    Session = connect_to_db(db_url, echo=debug)
+    session = Session()
+
+    old = 0
+    new = 0
+    for taxid, genus, species in genus_species:
+        clade = ""
+        # Is is already there? e.g. prior import
+        taxonomy = session.query(Taxonomy).filter_by(
+            clade=clade, genus=genus, species=species,
+            ncbi_taxid=taxid).one_or_none()
+        if taxonomy is None:
+            new += 1
+            taxonomy = Taxonomy(
+                clade=clade, genus=genus, species=species,
+                ncbi_taxid=taxid)
+            session.add(taxonomy)
+        else:
+            old += 1
+
+    session.commit()
+
+    if old:
+        sys.stderr.write(
+            "Loaded %i new species entries into DB (%i already there)\n"
+            % (new, old))
+    else:
+        sys.stderr.write(
+            "Loaded %i species entries into DB (none already there)\n"
+            % new)
 
     return 0
