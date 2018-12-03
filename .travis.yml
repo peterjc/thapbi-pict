@@ -34,5 +34,5 @@ script:
  - python -c "import thapbi_pict; print(thapbi_pict.__version__)"
  - thapbi_pict -v
  - python -m thapbi_pict -v
- - tests/test_legacy-import.sh
- # Can't run tests/test-ncbi_import.sh without entrez-direct
+ # Can't run tests/test_legacy-import.sh without hmmer
+ # Can't run tests/test-ncbi_import.sh without entrez-direct & hmmer
