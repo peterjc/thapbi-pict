@@ -50,6 +50,6 @@ jobs:
             python -c "import thapbi_pict; print(thapbi_pict.__version__)"
             thapbi_pict -v
             python -m thapbi_pict -v
+            tests/test_load-tax.sh
             tests/test_legacy-import.sh
             tests/test_ncbi-import.sh
-            tests/test_load-tax.sh
