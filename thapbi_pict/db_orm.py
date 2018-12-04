@@ -38,17 +38,18 @@ class Taxonomy(Base):
     """Database entry for a species' taxonomy entry."""
 
     __tablename__ = "taxonomy"
+    __table_args__ = (
+        UniqueConstraint('genus', 'species', 'ncbi_taxid', 'clade')
+        # TODO - name this constraint, or define it via an index?
+        # Might have old entry with clade A, and new curated entry with clade B
+        # (but same genus, species and NCBI taxid)
+    )
 
     id = Column(Integer, primary_key=True)
     clade = Column(String(10))  # TODO - Integer linked to table?
     ncbi_taxid = Column(Integer)
     genus = Column(String(100))
     species = Column(String(100))  # source may have variant/strain?
-
-    # Might have old entry with clade A, and new curated entry with clade B
-    # (but same genus, species and NCBI taxid)
-    UniqueConstraint('genus', 'species', 'ncbi_taxid', 'clade')
-    # TODO - name this constraint, or define it via an index?
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""
