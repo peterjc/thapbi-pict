@@ -45,6 +45,10 @@ def parse_fasta_entry(text):
         sys.stderr.write(
             "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], acc))
         name = ["Phytophthora", name[0][2:]]
+    if name[0] == "Sequence":
+        # Another special case
+        # e.g. A57915.1 Sequence 20 from Patent EP0751227
+        name = []
     return (clade, " ".join(name), acc)
 
 
