@@ -6,7 +6,7 @@ Python objects.
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy import create_engine, UniqueConstraint
+from sqlalchemy import create_engine, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -39,10 +39,17 @@ class Taxonomy(Base):
 
     __tablename__ = "taxonomy"
     __table_args__ = (
-        UniqueConstraint('genus', 'species', 'ncbi_taxid', 'clade')
-        # TODO - name this constraint, or define it via an index?
         # Might have old entry with clade A, and new curated entry with clade B
         # (but same genus, species and NCBI taxid)
+        Index("taxid_genus_species_clade",
+              'ncbi_taxid', 'genus', 'species', 'clade',
+              unique=True),
+        Index("taxid_genus_species",
+              'ncbi_taxid', 'genus', 'species',
+              unique=False),
+        Index("genus_species",
+              'genus', 'species',
+              unique=False),
     )
 
     id = Column(Integer, primary_key=True)
