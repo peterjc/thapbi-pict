@@ -30,18 +30,6 @@ def md5_hexdigest(filename, chunk_size=1024):
     return hash_md5.hexdigest()
 
 
-def split_composite_entry(text):
-    """Split possibly composite FASTA description into list of strings.
-
-    With our legacy FASTA files, this is done with a regular expression.
-
-    Currently the NCBI importer does not have to deal with it, but supporting
-    the ctrl+a convention used in NCBI BLAST FASTA files for merged entries
-    would make sense.
-    """
-    return [text]
-
-
 def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                       fasta_split_fn=None, fasta_parse_fn=None):
     """Import a FASTA file into the database."""
