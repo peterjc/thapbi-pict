@@ -32,7 +32,12 @@ def md5_hexdigest(filename, chunk_size=1024):
 
 def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                       fasta_split_fn=None, fasta_parse_fn=None):
-    """Import a FASTA file into the database."""
+    """Import a FASTA file into the database.
+
+    Optional argument fasta_split_fn is given the full FASTA
+    title line, and should return a list of sub-entries (by
+    default, a single entry list).
+    """
     # Argument validation,
     if fasta_split_fn is None:
         def fasta_split_fn(text):
@@ -98,7 +103,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                              % idn)
         idn_set.add(idn)
 
-        entries = fasta_split_fn(title.split(None, 1)[0])
+        entries = fasta_split_fn(title)
         for entry in entries:
             entry_count += 1
             try:
@@ -111,6 +116,9 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
             # Load into the DB
             # Store "Phytophthora aff infestans" as
             # genus "Phytophthora", species "aff infestans"
+            if debug and not name:
+                sys.stderr.write(
+                    "WARNING: No species information from %r\n" % entry)
             genus, species = name.split(None, 1) if name else ("", "")
             assert genus != "P.", title
             taxid = 0

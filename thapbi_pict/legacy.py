@@ -70,7 +70,7 @@ def split_composite_entry(text):
     ['4_P._alticola_HQ013214', '4_P._arenaria_HQ013219']
 
     """
-    rest = text
+    rest = text.split(None, 1)[0]  # Only look at the first word
     answer = []
     while True:
         split = composite_re.search(rest)
