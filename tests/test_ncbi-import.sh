@@ -17,8 +17,8 @@ grep -c "^>" $TMP/ncbi_sample.fasta
 rm -rf $TMP/ncbi_sample.sqlite
 thapbi_pict ncbi-import -d $TMP/ncbi_sample.sqlite $TMP/ncbi_sample.fasta
 
-if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM data_source;"` == "1" ]; then true; else echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -gt "100" ]; then true; else echo "Taxonomy count too low"; false; fi
+if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
+if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "100" ]; then echo "Taxonomy count too low"; false; fi
 
 thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $TMP/ncbi_sample.sqlite -o /dev/null
