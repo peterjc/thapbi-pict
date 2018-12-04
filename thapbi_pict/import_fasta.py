@@ -49,6 +49,20 @@ def find_taxonomy(session, clade, genus, species, validate_species):
             # There was a unique entry already, use it.
             return taxonomy
 
+        # Can we find a match without the clade?
+        if clade:
+            # If there is a unique match without the clade,
+            # use it to get the NCBI taxid:
+            taxonomy = session.query(Taxonomy).filter_by(
+                clade="", genus=genus, species=species).one_or_none()
+            if taxonomy is not None and taxonomy.ncbi_taxid:
+                # There was a unique entry already, use as template!
+                taxonomy = Taxonomy(
+                    clade=clade, genus=genus, species=species,
+                    ncbi_taxid=taxonomy.ncbi_taxid)
+                session.add(taxonomy)  # Can we refactor this?
+                return taxonomy
+
         if not validate_species:
             # If the DB has not been preloaded, we don't
             # want to try trimming the species - it would
