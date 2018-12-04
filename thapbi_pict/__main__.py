@@ -41,6 +41,7 @@ def ncbi_import(args=None):
         fasta_file=args.fasta,
         db_url=expand_database_argument(args.database),
         name=args.name,
+        validate_species=args.validate_species,
         debug=args.verbose)
 
 
@@ -51,6 +52,7 @@ def legacy_import(args=None):
         fasta_file=args.fasta,
         db_url=expand_database_argument(args.database),
         name=args.name,
+        validate_species=args.validate_species,
         debug=args.verbose)
 
 
@@ -119,6 +121,9 @@ def main(args=None):
         "-n", "--name", type=str, default="",
         help="Data source name (string, ideally avoiding spaces etc)")
     parser_ncbi_import.add_argument(
+        "-s", "--validate_species", default=False, action="store_true",
+        help="Validate species names against existing DB entries")
+    parser_ncbi_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
     parser_ncbi_import.set_defaults(func=ncbi_import)
@@ -136,6 +141,9 @@ def main(args=None):
     parser_legacy_import.add_argument(
         "-n", "--name", type=str, default="",
         help="Data source name (string, ideally avoiding spaces etc)")
+    parser_legacy_import.add_argument(
+        "-s", "--validate_species", default=False, action="store_true",
+        help="Validate species names against existing DB entries")
     parser_legacy_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
