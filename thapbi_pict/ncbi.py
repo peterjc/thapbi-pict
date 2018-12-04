@@ -40,6 +40,10 @@ def parse_fasta_entry(text):
     return (clade, " ".join(name), acc)
 
 
+assert parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes') == \
+    ('', 'Phytophthora drechsleri', 'LC159493.1')
+
+
 def main(fasta_file, db_url, name=None, debug=True):
     """Run the script with command line arguments."""
     return(import_fasta_file(fasta_file, db_url, name=name, debug=debug,
