@@ -18,6 +18,8 @@ Then, import this into our ITS DB using::
 
 """  # noqa: E501
 
+import sys
+
 from .import_fasta import import_fasta_file
 
 
@@ -37,6 +39,12 @@ def parse_fasta_entry(text):
     clade = ''
     acc = parts[0]
     name = parts[1:3]  # assumes "Genus species" only (2 words)
+    if len(name[0]) > 2 and name[0].startswith("P."):
+        # Special case, but can we assume these are Phytophthora?
+        # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
+        sys.stderr.write(
+            "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], acc))
+        name = ["Phytophthora", name[0][2:]]
     return (clade, " ".join(name), acc)
 
 
