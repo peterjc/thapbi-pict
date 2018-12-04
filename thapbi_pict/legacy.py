@@ -152,6 +152,11 @@ def parse_fasta_entry(text):
 
     if name[0] == "P.":
         name[0] = "Phytophthora"
+    # NCBI uses lower case "x" for hybrid species names,
+    # while the legacy FASTA files used upper case "X":
+    for i in range(len(name)):
+        if name[i] == "X":
+            name[i] = "x"
 
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
