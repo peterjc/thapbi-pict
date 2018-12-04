@@ -31,6 +31,7 @@ thapbi_pict legacy-import -d $TMP/legacy_004_and_005.sqlite database/legacy/Phyt
 if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM data_source;"` == "2" ]; then true; else echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_source;"` == "378" ]; then true; else echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_sequence;"` == "172" ]; then true; else echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM taxonomy;"` == "166" ]; then true; else echo "Wrong taxonomy count"; false; fi
 
 thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
