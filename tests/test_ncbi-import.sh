@@ -19,8 +19,18 @@ thapbi_pict ncbi-import -d $TMP/ncbi_sample.sqlite $TMP/ncbi_sample.fasta
 
 if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "100" ]; then echo "Taxonomy count too low"; false; fi
+# Other values subject to change
 
 thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $TMP/ncbi_sample.sqlite -o /dev/null
+
+rm -rf $TMP/ncbi_sample_validated.sqlite
+thapbi_pict load-tax -d $TMP/ncbi_sample_validated.sqlite -t new_taxdump_2018-12-01 -a 4783
+thapbi_pict ncbi-import -d $TMP/ncbi_sample_validated.sqlite $TMP/ncbi_sample.fasta -s
+if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
+if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "100" ]; then echo "Taxonomy count too low"; false; fi
+# Other values subject to change
+
+thapbi_pict dump -d $TMP/ncbi_sample_validated.sqlite -o /dev/null
 
 echo "$0 passed"
