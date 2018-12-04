@@ -31,7 +31,8 @@ def md5_hexdigest(filename, chunk_size=1024):
 
 
 def import_fasta_file(fasta_file, db_url, name=None, debug=True,
-                      fasta_split_fn=None, fasta_parse_fn=None):
+                      fasta_split_fn=None, fasta_parse_fn=None,
+                      validate_species=False):
     """Import a FASTA file into the database.
 
     Optional argument fasta_split_fn is given the full FASTA

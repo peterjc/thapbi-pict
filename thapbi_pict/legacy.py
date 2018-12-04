@@ -167,8 +167,10 @@ assert (parse_fasta_entry('P._amnicola_CBS131652')
 assert (parse_fasta_entry('ACC-ONLY') == ('', '', 'ACC-ONLY'))
 
 
-def main(fasta_file, db_url, name=None, debug=True):
+def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
     """Run the script with command line arguments."""
-    return(import_fasta_file(fasta_file, db_url, name=name, debug=debug,
-                             fasta_split_fn=split_composite_entry,
-                             fasta_parse_fn=parse_fasta_entry))
+    return import_fasta_file(
+        fasta_file, db_url, name=name, debug=debug,
+        fasta_split_fn=split_composite_entry,
+        fasta_parse_fn=parse_fasta_entry,
+        validate_species=validate_species)
