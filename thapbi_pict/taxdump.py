@@ -104,6 +104,8 @@ def main(tax, db_url, ancestors, debug=True):
                          % len(names))
 
     genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
+    if not genus_list:
+        sys.exit("Could not identify any genus names under the given nodes\n")
     if debug:
         sys.stderr.write(
             "Identified %i genera under specified ancestor node: %s\n"

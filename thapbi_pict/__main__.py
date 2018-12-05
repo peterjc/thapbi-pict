@@ -101,7 +101,8 @@ def main(args=None):
         help="Which database to write to (or create)")
     parser_load_tax.add_argument(
         "-a", "--ancestors", type=str, default="4783",
-        help="Comma separated lists of taxids, default 4783 for Phytophthora"),
+        help="Comma separated lists of taxids at genus level or higher, "
+             "default 4783 for Phytophthora"),
     parser_load_tax.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
