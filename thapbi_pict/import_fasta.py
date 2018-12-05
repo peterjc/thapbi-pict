@@ -124,6 +124,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     entry_count = 0
     bad_entry_count = 0
     idn_set = set()
+    bad_sp = 0
 
     for title, seq, its1_seq in filter_for_ITS1(fasta_file):
         if title.startswith("Control_"):
@@ -182,6 +183,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                     sys.stderr.write("WARNING: Could not validate %r from %r\n"
                                      % (name, entry))
                     # TODO - Find any unclassified genus entry, and use that
+                bad_sp += 1
                 taxonomy = Taxonomy(
                     clade=clade, genus=genus, species=species,
                     ncbi_taxid=0)
@@ -203,3 +205,6 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     session.commit()
     sys.stderr.write("%i sequences, %i entries including %i bad\n"
                      % (seq_count, entry_count, bad_entry_count))
+    if validate_species:
+        sys.stderr.write("Had to add %i unvalidated species entries\n"
+                         % bad_sp)
