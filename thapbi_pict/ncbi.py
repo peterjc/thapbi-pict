@@ -26,34 +26,42 @@ from .import_fasta import import_fasta_file
 def parse_fasta_entry(text):
     """Split an entry of Accession_Genus_Species_name_Description.
 
+    Returns a tuple: Clade (always empty), presumed genus-species
+    (here taken as two words by default), and spare text which
+    might be more of the species (for use with species name
+    validation).
+
     Note we can't infer the clade without looking up the species,
     so for now this returns an empty clade.
 
-    >>> parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes for ITS1, 5.8S rRNA, ITS2, partial and complete sequence, isolate: PhWa20140918-2')
-    ('', 'Phytophthora drechsleri', 'LC159493.1')
+    >>> parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
+    ('', 'Phytophthora drechsleri', 'genes ...')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
     """  # noqa: E501
     parts = text.rstrip().split()
     clade = ''
-    acc = parts[0]
+    # acc = parts[0]
     name = parts[1:3]  # assumes "Genus species" only (2 words)
+    rest = parts[3:]
     if len(name[0]) > 2 and name[0].startswith("P."):
         # Special case, but can we assume these are Phytophthora?
         # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
         sys.stderr.write(
-            "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], acc))
+            "WARNING: Assuming %s from %s is Phytophthora\n"
+            % (name[0], parts[0]))
         name = ["Phytophthora", name[0][2:]]
     if name[0] == "Sequence":
         # Another special case
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
         name = []
-    return (clade, " ".join(name), acc)
+        rest = []
+    return (clade, " ".join(name), " ".join(rest))
 
 
-assert parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes') == \
-    ('', 'Phytophthora drechsleri', 'LC159493.1')
+assert parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...') == \
+    ('', 'Phytophthora drechsleri', 'genes ...')
 
 
 def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
