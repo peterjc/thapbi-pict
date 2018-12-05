@@ -30,38 +30,59 @@ def md5_hexdigest(filename, chunk_size=1024):
     return hash_md5.hexdigest()
 
 
-def find_taxonomy(session, clade, genus, species, validate_species):
+def lookup_taxonomy(session, clade, genus, species):
     """Find this entry in the taxonomy table (if present)."""
+    assert isinstance(clade, str), clade
+    assert isinstance(genus, str), genus
+    assert isinstance(species, str), species
+    # Can we find a match without knowing the taxid?
+    taxonomy = session.query(Taxonomy).filter_by(
+        clade=clade, genus=genus, species=species).one_or_none()
+    if taxonomy is not None:
+        # There was a unique entry already, use it.
+        # It may even have an NCBI taxid?
+        return taxonomy
+
+    # Can we find a match with taxid=0?
+    taxonomy = session.query(Taxonomy).filter_by(
+        clade=clade, genus=genus, species=species,
+        ncbi_taxid=0).one_or_none()
+    if taxonomy is not None:
+        # There was a unique entry already, use it.
+        return taxonomy
+
+    # Can we find a match without the clade?
+    if clade:
+        # If there is a unique match without the clade,
+        # use it to get the NCBI taxid:
+        taxonomy = session.query(Taxonomy).filter_by(
+            clade="", genus=genus, species=species).one_or_none()
+        if taxonomy is not None and taxonomy.ncbi_taxid:
+            # There was a unique entry already, use as template!
+            taxonomy = Taxonomy(
+                clade=clade, genus=genus, species=species,
+                ncbi_taxid=taxonomy.ncbi_taxid)
+            session.add(taxonomy)  # Can we refactor this?
+            return taxonomy
+
+
+def find_taxonomy(session, clade, sp_name, sp_name_etc,
+                  validate_species):
+    """Fuzzy search for this entry in the taxonomy table (if present)."""
+    assert isinstance(clade, str), clade
+    assert isinstance(sp_name, str), sp_name
+    assert isinstance(sp_name_etc, str), sp_name_etc
+    # First loop removes words (until just one word for species)
+    # in the hope of finding a match. This is for our legacy files.
+    # Second loop adds words (from the species_etc string) in the
+    # hope of finding a match. This is for the NCBI FASTA files.
+    genus, species = sp_name.split(" ", 1) if sp_name else ("", "")
     while True:
-        # Can we find a match without knowing the taxid?
-        taxonomy = session.query(Taxonomy).filter_by(
-            clade=clade, genus=genus, species=species).one_or_none()
-        if taxonomy is not None:
-            # There was a unique entry already, use it.
-            # It may even have an NCBI taxid?
+        # sys.stderr.write("DEBUG: Trying genus=%r, species=%r\n"
+        #                  % (genus, species))
+        taxonomy = lookup_taxonomy(session, clade, genus, species)
+        if taxonomy:
             return taxonomy
-
-        # Can we find a match with taxid=0?
-        taxonomy = session.query(Taxonomy).filter_by(
-            clade=clade, genus=genus, species=species,
-            ncbi_taxid=0).one_or_none()
-        if taxonomy is not None:
-            # There was a unique entry already, use it.
-            return taxonomy
-
-        # Can we find a match without the clade?
-        if clade:
-            # If there is a unique match without the clade,
-            # use it to get the NCBI taxid:
-            taxonomy = session.query(Taxonomy).filter_by(
-                clade="", genus=genus, species=species).one_or_none()
-            if taxonomy is not None and taxonomy.ncbi_taxid:
-                # There was a unique entry already, use as template!
-                taxonomy = Taxonomy(
-                    clade=clade, genus=genus, species=species,
-                    ncbi_taxid=taxonomy.ncbi_taxid)
-                session.add(taxonomy)  # Can we refactor this?
-                return taxonomy
 
         if not validate_species:
             # If the DB has not been preloaded, we don't
@@ -75,10 +96,27 @@ def find_taxonomy(session, clade, genus, species, validate_species):
             return None
         words = species.split()
         if len(words) == 1:
-            # Nope, give up
-            return None
+            # Nope, give up the trimming approach
+            break
         # Remove last word, loop and try again
         species = " ".join(words[:-1])
+
+    # Removing words failed, can we try adding words?
+    if not sp_name or not sp_name_etc:
+        return None
+    extra = sp_name_etc.split(None, 6)
+    for i in range(1, max(5, len(extra))):
+        genus, species = sp_name.split(" ", 1)
+        species = " ".join([species] + extra[:i])
+        # sys.stderr.write(
+        #     "DEBUG: Extending species name, trying genus=%r, species=%r\n"
+        #     % (genus, species))
+        taxonomy = lookup_taxonomy(session, clade, genus, species)
+        if taxonomy:
+            return taxonomy
+
+    # Failed to find a match
+    return None
 
 
 def import_fasta_file(fasta_file, db_url, name=None, debug=True,
@@ -160,12 +198,14 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
         for entry in entries:
             entry_count += 1
             try:
-                clade, name, acc = fasta_parse_fn(entry)
+                clade, name, name_etc = fasta_parse_fn(entry)
             except ValueError as e:
                 bad_entry_count += 1
                 sys.stderr.write("WARNING: %s - Can't parse: %r\n"
                                  % (e, idn))
                 continue
+            assert isinstance(name, str), name
+            assert isinstance(name_etc, str), name_etc
             # Load into the DB
             # Store "Phytophthora aff infestans" as
             # genus "Phytophthora", species "aff infestans"
@@ -175,8 +215,9 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
             genus, species = name.split(None, 1) if name else ("", "")
             assert genus != "P.", title
             # Is is already there? e.g. duplicate sequences in FASTA file
+            # Note even if have no species text, still do the DB lookup!
             taxonomy = find_taxonomy(session,
-                                     clade, genus, species,
+                                     clade, name, name_etc,
                                      validate_species)
             if taxonomy is None:
                 if validate_species and name:
