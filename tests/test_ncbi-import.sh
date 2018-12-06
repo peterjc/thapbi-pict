@@ -26,7 +26,10 @@ thapbi_pict dump -d $TMP/ncbi_sample.sqlite -o /dev/null
 
 rm -rf $TMP/ncbi_sample_validated.sqlite
 thapbi_pict load-tax -d $TMP/ncbi_sample_validated.sqlite -t new_taxdump_2018-12-01 -a 4783
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 thapbi_pict ncbi-import -d $TMP/ncbi_sample_validated.sqlite $TMP/ncbi_sample.fasta -s
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "100" ]; then echo "Taxonomy count too low"; false; fi
 # Other values subject to change
