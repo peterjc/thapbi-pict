@@ -36,12 +36,15 @@ if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM taxonomy;"` 
 # Now test with species name validation, load with Phytophthora
 rm -rf $TMP/legacy_004_and_005_validated.sqlite
 thapbi_pict load-tax -d $TMP/legacy_004_and_005_validated.sqlite -t new_taxdump_2018-12-01 -a 4783
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 thapbi_pict legacy-import -d $TMP/legacy_004_and_005_validated.sqlite database/legacy/Phytophthora_ITS_database_v0.005.fasta -n "Legacy DB v0.005" -s
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 thapbi_pict legacy-import -d $TMP/legacy_004_and_005_validated.sqlite database/legacy/Phytophthora_ITS_database_v0.004.fasta -n "Legacy DB v0.004" -s
+if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(id) FROM its1_source;"` -ne "378" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
-# TODO: Species count
 
 thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
