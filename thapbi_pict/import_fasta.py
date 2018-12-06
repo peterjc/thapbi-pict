@@ -144,6 +144,16 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
 
+    if validate_species:
+        count = session.query(Taxonomy).distinct(
+            Taxonomy.genus, Taxonomy.species).count()
+        if debug:
+            sys.stderr.write(
+                "Taxonomy table contains %i distinct species\n" % count)
+        if not count:
+            sys.exit(
+                "Taxonomy table empty, cannot use validate species option\n")
+
     if not name:
         name = "Import of %s" % os.path.basename(fasta_file)
 

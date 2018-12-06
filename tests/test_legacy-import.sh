@@ -10,6 +10,9 @@ export TMP=${TMP:-/tmp}
 echo "Checking legacy-import"
 thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
 
+# Cannot use validation without having some taxonomy entries
+thapbi_pict ncbi-import -d "sqlite:///:memory:" tests/legacy-import/dup_seqs.fasta -s 2>&1 | grep "Taxonomy table empty"
+
 rm -rf $TMP/dup_seqs.sqlite
 thapbi_pict legacy-import -d $TMP/dup_seqs.sqlite tests/legacy-import/dup_seqs.fasta
 if [ `sqlite3 $TMP/dup_seqs.sqlite "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
@@ -20,6 +23,8 @@ rm -rf database/legacy/database.sqlite
 thapbi_pict legacy-import -d database/legacy/database.sqlite database/legacy/database.fasta
 
 thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
+
+thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta -s 2>&1 | grep "cannot"
 
 rm -rf database/legacy/Phytophthora_ITS_database_v0.005.sqlite
 thapbi_pict legacy-import -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta

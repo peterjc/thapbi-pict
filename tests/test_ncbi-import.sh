@@ -14,6 +14,9 @@ if [ ! -f $TMP/ncbi_sample.fasta ]; then esearch -db nucleotide -query "its1 AND
 
 grep -c "^>" $TMP/ncbi_sample.fasta
 
+# Cannot use validation without having some taxonomy entries
+thapbi_pict ncbi-import -d sqlite:///:memory: $TMP/ncbi_sample.fasta -s 2>&1 | grep "Taxonomy table empty"
+
 rm -rf $TMP/ncbi_sample.sqlite
 thapbi_pict ncbi-import -d $TMP/ncbi_sample.sqlite $TMP/ncbi_sample.fasta
 
