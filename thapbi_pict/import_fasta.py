@@ -225,11 +225,11 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
             if taxonomy is None:
                 if validate_species:
                     bad_sp_entries += 1
-                    if name:
+                    if name and debug:
                         sys.stderr.write(
                             "WARNING: Could not validate species %r from %r\n"
                             % (name, entry))
-                    else:
+                    if not name:
                         sys.stderr.write(
                             "WARNING: Could not determine species from %r\n"
                             % entry)
