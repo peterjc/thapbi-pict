@@ -63,5 +63,8 @@ thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g Phytophthora
 thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
 thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -s "ambiguous" 2>&1 | grep "requires a single genus"
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g "Phytophthora" -s "ambiguous" 2>&1 | grep "not in database"
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g "Phytopthora" 2>&1 | grep "not in database"
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -c "123" 2>&1 | grep "not in database"
 
 echo "$0 passed"
