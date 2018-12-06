@@ -159,10 +159,12 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     session.add(db_source)
 
     seq_count = 0
+    its1_seq_count = 0
     entry_count = 0
-    bad_entry_count = 0
+    bad_entries = 0
+    bad_sp_entries = 0
+    good_entries = 0
     idn_set = set()
-    bad_sp = 0
 
     for title, seq, its1_seq in filter_for_ITS1(fasta_file):
         if title.startswith("Control_"):
@@ -177,6 +179,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                 sys.stderr.write("Ignoring non-ITS entry: %s\n"
                                  % title)
             continue
+        its1_seq_count += 1
 
         its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
 
@@ -200,7 +203,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
             try:
                 clade, name, name_etc = fasta_parse_fn(entry)
             except ValueError as e:
-                bad_entry_count += 1
+                bad_entries += 1
                 sys.stderr.write("WARNING: %s - Can't parse: %r\n"
                                  % (e, idn))
                 continue
@@ -220,11 +223,18 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                                      clade, name, name_etc,
                                      validate_species)
             if taxonomy is None:
-                if validate_species and name:
-                    sys.stderr.write("WARNING: Could not validate %r from %r\n"
-                                     % (name, entry))
-                    # TODO - Find any unclassified genus entry, and use that
-                bad_sp += 1
+                if validate_species:
+                    bad_sp_entries += 1
+                    if name:
+                        sys.stderr.write(
+                            "WARNING: Could not validate species %r from %r\n"
+                            % (name, entry))
+                    else:
+                        sys.stderr.write(
+                            "WARNING: Could not determine species from %r\n"
+                            % entry)
+                    # Do NOT write it to the DB
+                    continue
                 taxonomy = Taxonomy(
                     clade=clade, genus=genus, species=species,
                     ncbi_taxid=0)
@@ -242,10 +252,24 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                                           seq_platform=0,
                                           curated_trust=0)
             session.add(record_entry)
+            good_entries += 1
             # print(clade, species, acc)
     session.commit()
-    sys.stderr.write("%i sequences, %i entries including %i bad\n"
-                     % (seq_count, entry_count, bad_entry_count))
+    sys.stderr.write(
+        "%i sequences, %i of which have ITS1, giving %i potential entries.\n"
+        % (seq_count, its1_seq_count, entry_count))
+    assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
+    assert its1_seq_count <= entry_count, (its1_seq_count, entry_count)
+    assert bad_entries <= entry_count, (bad_entries, entry_count)
+    assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
-        sys.stderr.write("Had to add %i unvalidated species entries\n"
-                         % bad_sp)
+        sys.stderr.write(
+            "Loaded %i entries, %i failed species validation, %i rejected.\n"
+            % (good_entries, bad_sp_entries, bad_entries))
+        assert entry_count == good_entries + bad_entries + bad_sp_entries
+    else:
+        sys.stderr.write(
+            "Loaded %i entries, %i rejected.\n"
+            % (good_entries, bad_entries))
+        assert bad_sp_entries == 0
+        assert entry_count == good_entries + bad_entries
