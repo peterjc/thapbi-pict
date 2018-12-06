@@ -123,7 +123,7 @@ def main(args=None):
         help="Data source name (string, ideally avoiding spaces etc)")
     parser_ncbi_import.add_argument(
         "-s", "--validate_species", default=False, action="store_true",
-        help="Validate species names against existing DB entries")
+        help="Only load ITS1 entries matching a known species name")
     parser_ncbi_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
@@ -144,7 +144,7 @@ def main(args=None):
         help="Data source name (string, ideally avoiding spaces etc)")
     parser_legacy_import.add_argument(
         "-s", "--validate_species", default=False, action="store_true",
-        help="Validate species names against existing DB entries")
+        help="Only load ITS1 entries matching a known species name")
     parser_legacy_import.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
