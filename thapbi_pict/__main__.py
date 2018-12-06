@@ -185,7 +185,7 @@ comma.
         help="File to write to (default '-' meaning stdout)")
     parser_dump.add_argument(
         "-f", "--format", type=str, default="txt",
-        choices=["txt"],
+        choices=["txt", "fasta"],
         help="Format to write out (default 'txt' for debugging).")
     parser_dump.add_argument(
         "-c", "--clade", type=str, default="",
