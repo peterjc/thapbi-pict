@@ -62,6 +62,8 @@ def dump(args=None):
     return main(db_url=expand_database_argument(args.database),
                 output_txt=args.output,
                 clade=args.clade,
+                genus=args.genus,
+                species=args.species,
                 debug=args.verbose)
 
 
@@ -154,7 +156,15 @@ def main(args=None):
     parser_dump = subparsers.add_parser(
         "dump",
         description="Export an ITS1 database to a text file.",
-        epilog="e.g. 'thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt'")
+        epilog="""Examples:
+
+$ thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt
+
+$ thapbi_pict dump -d ... -g Phytophthora -s "ilicis, sp. aff. meadii" -o Phytophthora.txt
+
+Note that the -s or --species option allows spaces after the
+comma.
+""")  # noqa: E501
     parser_dump.add_argument(
         "-d", "--database", type=str, required=True,
         help="Which database to export from")
@@ -166,6 +176,15 @@ def main(args=None):
         help="Which clade(s) to export (comma separated list, "
              "with '-' meaning no clade defined). "
              "Default is not to filter by clade.")
+    parser_dump.add_argument(
+        "-g", "--genus", type=str, default="",
+        help="Which genus (or genera) export (comma separated list). "
+             "Default is not to filter by genus.")
+    parser_dump.add_argument(
+        "-s", "--species", type=str, default="",
+        help="Which species to export (comma separated list). "
+             "Requires a single genus argument be given. "
+             "Default is not to filter by species.")
     parser_dump.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")

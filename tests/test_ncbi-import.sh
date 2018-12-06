@@ -38,5 +38,7 @@ if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "10
 # Other values subject to change
 
 thapbi_pict dump -d $TMP/ncbi_sample_validated.sqlite -o /dev/null
+thapbi_pict dump -d $TMP/ncbi_sample_validated.sqlite -o /dev/null -g Phytophthora
+thapbi_pict dump -d $TMP/ncbi_sample_validated.sqlite -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
 echo "$0 passed"

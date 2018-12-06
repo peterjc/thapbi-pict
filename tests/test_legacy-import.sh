@@ -59,5 +59,9 @@ thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
 thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
 thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -c -
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g Phytophthora
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
+
+thapbi_pict dump -d database/legacy/database.sqlite -o /dev/null -s "ambiguous" 2>&1 | grep "requires a single genus"
 
 echo "$0 passed"

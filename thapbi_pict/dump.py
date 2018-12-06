@@ -10,7 +10,7 @@ from sqlalchemy.orm import aliased, contains_eager
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 
-def main(db_url, output_txt, clade="", debug=True):
+def main(db_url, output_txt, clade="", genus="", species="", debug=True):
     """Run the database dump with arguments from the command line."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -34,11 +34,31 @@ def main(db_url, output_txt, clade="", debug=True):
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
-    clade_list = None
+    clade_list = []
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
         clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
         view = view.filter(cur_tax.clade.in_(clade_list))
+    del clade
+
+    genus_list = []
+    if genus.strip():
+        # Split on commas, strip white spaces
+        genus_list = [_.strip() for _ in genus.strip().split(",")]
+        view = view.filter(cur_tax.genus.in_(genus_list))
+    del genus
+
+    sp_list = []
+    if species.strip():
+        # Split on commas, strip white spaces
+        sp_list = [_.strip() for _ in species.strip().split(",")]
+        view = view.filter(cur_tax.species.in_(sp_list))
+    del species
+
+    if sp_list and len(genus_list) != 1:
+        # This is to avoid ambiguity as some species names are used
+        # in more than one genus.
+        sys.exit("Using -s/--species requires a single genus via -g/--genus\n")
 
     for seq_source in view:
         entry_count += 1
@@ -51,6 +71,12 @@ def main(db_url, output_txt, clade="", debug=True):
                             seq_source.sequence))
         if clade_list:
             assert seq_source.current_taxonomy.clade in clade_list, \
+                seq_source.current_taxonomy
+        if genus_list:
+            assert seq_source.current_taxonomy.genus in genus_list, \
+                seq_source.current_taxonomy
+        if sp_list:
+            assert seq_source.current_taxonomy.species in sp_list, \
                 seq_source.current_taxonomy
 
     if output_txt == "-":
