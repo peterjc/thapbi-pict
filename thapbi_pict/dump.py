@@ -10,7 +10,7 @@ from sqlalchemy.orm import aliased, contains_eager
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 
-def main(db_url, output_txt, clade="", genus="", species="", debug=True):
+def main(db_url, output_filename, clade="", genus="", species="", debug=True):
     """Run the database dump with arguments from the command line."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -18,10 +18,10 @@ def main(db_url, output_txt, clade="", genus="", species="", debug=True):
 
     entry_count = 0
 
-    if output_txt == "-":
+    if output_filename == "-":
         out_handle = sys.stdout
     else:
-        out_handle = open(output_txt, "w")
+        out_handle = open(output_filename, "w")
 
     # Doing a join to pull in the ITS1 and Taxonomy tables too:
     cur_tax = aliased(Taxonomy)
@@ -91,9 +91,9 @@ def main(db_url, output_txt, clade="", genus="", species="", debug=True):
             assert seq_source.current_taxonomy.species in sp_list, \
                 seq_source.current_taxonomy
 
-    if output_txt == "-":
+    if output_filename == "-":
         sys.stderr.write("Wrote %i entries\n" % entry_count)
     else:
         out_handle.close()
         sys.stderr.write("Wrote %i entries to %r\n"
-                         % (entry_count, output_txt))
+                         % (entry_count, output_filename))

@@ -60,7 +60,7 @@ def dump(args=None):
     """Subcommand to dump a database to a text file."""
     from .dump import main
     return main(db_url=expand_database_argument(args.database),
-                output_txt=args.output,
+                output_filename=args.output,
                 clade=args.clade,
                 genus=args.genus,
                 species=args.species,
