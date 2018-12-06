@@ -61,6 +61,7 @@ def dump(args=None):
     from .dump import main
     return main(db_url=expand_database_argument(args.database),
                 output_filename=args.output,
+                output_format=args.format,
                 clade=args.clade,
                 genus=args.genus,
                 species=args.species,
@@ -182,6 +183,10 @@ comma.
     parser_dump.add_argument(
         "-o", "--output", type=str, default="-",
         help="File to write to (default '-' meaning stdout)")
+    parser_dump.add_argument(
+        "-f", "--format", type=str, default="txt",
+        choices=["txt"],
+        help="Format to write out (default 'txt' for debugging).")
     parser_dump.add_argument(
         "-c", "--clade", type=str, default="",
         help="Which clade(s) to export (comma separated list, "
