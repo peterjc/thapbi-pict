@@ -38,6 +38,9 @@ def main(db_url, output_txt, clade="", genus="", species="", debug=True):
     if clade:
         # Split on commas, convert "-" into "" meaning no entry
         clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
+        for x in clade_list:
+            if not session.query(Taxonomy).filter_by(clade=x).count():
+                sys.stderr.write("WARNING: Clade %r not in database\n" % x)
         view = view.filter(cur_tax.clade.in_(clade_list))
     del clade
 
@@ -45,6 +48,9 @@ def main(db_url, output_txt, clade="", genus="", species="", debug=True):
     if genus.strip():
         # Split on commas, strip white spaces
         genus_list = [_.strip() for _ in genus.strip().split(",")]
+        for x in genus_list:
+            if not session.query(Taxonomy).filter_by(genus=x).count():
+                sys.stderr.write("WARNING: Genus %r not in database\n" % x)
         view = view.filter(cur_tax.genus.in_(genus_list))
     del genus
 
@@ -59,6 +65,12 @@ def main(db_url, output_txt, clade="", genus="", species="", debug=True):
         # This is to avoid ambiguity as some species names are used
         # in more than one genus.
         sys.exit("Using -s/--species requires a single genus via -g/--genus\n")
+
+    for x in sp_list:
+        if not session.query(Taxonomy).filter_by(species=x,
+                                                 genus=genus_list[0]).count():
+            sys.stderr.write(
+                "WARNING: '%s %s' not in database\n" % (genus_list[0], x))
 
     for seq_source in view:
         entry_count += 1
