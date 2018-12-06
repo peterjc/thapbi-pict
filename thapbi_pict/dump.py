@@ -75,21 +75,29 @@ def main(db_url, output_filename, output_format,
 
     for seq_source in view:
         entry_count += 1
-        if output_format == "fasta":
-            out_handle.write(">%s [clade=%s] [species=%s %s]\n%s\n"
-                             % (seq_source.source_accession,
-                                seq_source.current_taxonomy.clade,
-                                seq_source.current_taxonomy.genus,
-                                seq_source.current_taxonomy.species,
-                                seq_source.its1.sequence))
-        else:
-            out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
-                             % (seq_source.source_accession,
-                                seq_source.current_taxonomy.clade,
-                                seq_source.current_taxonomy.genus,
-                                seq_source.current_taxonomy.species,
-                                seq_source.its1.sequence,
-                                seq_source.sequence))
+        try:
+            if output_format == "fasta":
+                out_handle.write(">%s [clade=%s] [species=%s %s]\n%s\n"
+                                 % (seq_source.source_accession,
+                                    seq_source.current_taxonomy.clade,
+                                    seq_source.current_taxonomy.genus,
+                                    seq_source.current_taxonomy.species,
+                                    seq_source.its1.sequence))
+            else:
+                out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
+                                 % (seq_source.source_accession,
+                                    seq_source.current_taxonomy.clade,
+                                    seq_source.current_taxonomy.genus,
+                                    seq_source.current_taxonomy.species,
+                                    seq_source.its1.sequence,
+                                    seq_source.sequence))
+        except BrokenPipeError:
+            # Likely writing to stdout | head, or similar
+            # If so, stdout has been closed
+            sys.stderr.write("Aborting with broken pipe\n")
+            sys.stderr.close()
+            sys.exit(1)
+
         if clade_list:
             assert seq_source.current_taxonomy.clade in clade_list, \
                 seq_source.current_taxonomy
