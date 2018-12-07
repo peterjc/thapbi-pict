@@ -67,6 +67,15 @@ def dump(args=None):
                 debug=args.verbose)
 
 
+def classify_reads(args=None):
+    """Subcommand to classify reads using an ITS1 database."""
+    from .classify import main
+    return main(fasta=args.fasta,
+                db_url=expand_database_argument(args.database),
+                method=args.method,
+                debug=args.verbose)
+
+
 def main(args=None):
     """Execute the command line script thapbi_pict.
 
@@ -189,6 +198,26 @@ comma.
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
     parser_dump.set_defaults(func=dump)
+
+    # classify-reads
+    parser_classify_reads = subparsers.add_parser(
+        "classify-reads",
+        description="Classify FASTA file of ITS1 reads by species.")
+    parser_classify_reads.add_argument(
+        'fasta', type=str, nargs='+',
+        help='One or more ITS1 fasta filenames or folder names'
+             '(containing files named *.fasta).')
+    parser_classify_reads.add_argument(
+        "-d", "--database", type=str, required=True,
+        help="Which ITS1 database to use for species classification.")
+    parser_classify_reads.add_argument(
+        "-m", "--method", type=str, default="identity",
+        choices=["identity"],
+        help="Method to use, default uses simple identity.")
+    parser_classify_reads.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
+    parser_classify_reads.set_defaults(func=classify_reads)
 
     # What have we been asked to do?
     options = parser.parse_args(args)
