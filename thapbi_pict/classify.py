@@ -7,15 +7,52 @@ import os
 import sys
 
 from .db_orm import connect_to_db
+from .db_orm import ITS1, SequenceSource, Taxonomy
+from .hmm import filter_for_ITS1
 
 
-def method_identity(filename, session, debug=False):
+def method_identity(fasta_file, session, debug=False):
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
-    purposes.
+    purposes. It uses HMMER3 to find any ITS1 match, and then
+    looks for a perfect identical entry in the database.
     """
-    return 0
+    # The FASTA file should have long sequences which might
+    # contain a known ITS1 sequence as a substring. If the
+    # search were inverted, the SQL LIKE command could likely
+    # be used (e.g. via SQLalchemey's contains operator).
+    #
+    # Plan B is brute force - we can run hmmscan to find any
+    # ITS1 matchs, and then look for 100% equality in the DB.
+    count = 0
+    matched = 0
+    for title, seq, its1_seq in filter_for_ITS1(fasta_file):
+        count += 1
+        idn = title.split(None, 1)[0]
+        if not its1_seq:
+            # TODO - Handle multiple HMM matches here
+            print(idn, "No single ITS1 HMM match")
+            continue
+        assert its1_seq == its1_seq.upper()
+        # Now, does this match any of the ITS1 seq in our DB?
+        its1 = session.query(ITS1).filter_by(
+            sequence=its1_seq).one_or_none()
+        if its1 is None:
+            print(idn, "No ITS1 database match")
+            continue
+        # its1 -> one or more SequenceSource
+        # each SequenceSource -> one current taxonomy
+        sp_list = [
+            ("%s %s" % (_.current_taxonomy.genus,
+                        _.current_taxonomy.species))
+            for _ in session.query(
+                    SequenceSource).filter_by(its1=its1)]
+        if not sp_list:
+            print(idn, "No taxonomy for ITS1 database match")
+        print(idn, "/".join(sorted(set(sp_list))))
+        matched += 1
+    return count, matched
 
 
 methods = {
@@ -52,23 +89,43 @@ def main(fasta, db_url, method, debug=False):
             % (method, ", ".join(sorted(methods))))
     method_fn = methods[method]
 
+    # Connect to the DB,
+    Session = connect_to_db(db_url, echo=debug)
+    session = Session()
+
+    count = session.query(Taxonomy).distinct(
+        Taxonomy.genus, Taxonomy.species).count()
+    if debug:
+        sys.stderr.write(
+            "Taxonomy table contains %i distinct species.\n" % count)
+    if not count:
+        sys.exit(
+            "ERROR: Taxonomy table empty, cannot classify anything.\n")
+
+    count = session.query(ITS1).count()
+    if debug:
+        sys.stderr.write(
+            "ITS1 table contains %i distinct sequences.\n" % count)
+    if not count:
+        sys.exit(
+            "ERROR: ITS1 table empty, cannot classify anything.\n")
+
     fasta_files = find_fasta_files(fasta, debug=debug)
     if debug:
         sys.stderr.write(
             "Classifying %i input FASTA files\n" % len(fasta_files))
 
-    # Connect to the DB,
-    Session = connect_to_db(db_url, echo=debug)
-    session = Session()
-
     read_count = 0
+    match_count = 0
     for filename in fasta_files:
         if debug:
             sys.stderr.write("%s classifer on %s\n" % (method, filename))
-        read_count += method_fn(filename, session, debug)
+        r_count, m_count = method_fn(filename, session, debug)
+        read_count += r_count
+        match_count += m_count
 
     sys.stderr.write(
-        "%s classifier ran on %i reads from %i files\n"
-        % (method, read_count, len(fasta_files)))
+        "%s classifier assigned species to %i of %i reads from %i files\n"
+        % (method, match_count, read_count, len(fasta_files)))
 
     return 0
