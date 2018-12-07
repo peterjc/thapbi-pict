@@ -27,6 +27,11 @@ if [ `sqlite3 $TMP/ncbi_sample.sqlite "SELECT COUNT(id) FROM taxonomy;"` -lt "10
 thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $TMP/ncbi_sample.sqlite -o /dev/null
 
+
+if [ ! -f "new_taxdump_2018-12-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2018-12-01.zip"; fi
+if [ ! -d "new_taxdump_2018-12-01" ]; then unzip new_taxdump_2018-12-01.zip -d new_taxdump_2018-12-01; fi
+
+
 rm -rf $TMP/ncbi_sample_validated.sqlite
 thapbi_pict load-tax -d $TMP/ncbi_sample_validated.sqlite -t new_taxdump_2018-12-01 -a 4783
 if [ `sqlite3 $TMP/legacy_004_and_005_validated.sqlite "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi

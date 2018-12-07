@@ -38,6 +38,9 @@ if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_source;
 if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $TMP/legacy_004_and_005.sqlite "SELECT COUNT(id) FROM taxonomy;"` -ne "166" ]; then echo "Wrong taxonomy count"; false; fi
 
+if [ ! -f "new_taxdump_2018-12-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2018-12-01.zip"; fi
+if [ ! -d "new_taxdump_2018-12-01" ]; then unzip new_taxdump_2018-12-01.zip -d new_taxdump_2018-12-01; fi
+
 # Now test with species name validation, load with Phytophthora
 # Then add 172 entries from v5, then 170 entries from v4
 rm -rf $TMP/legacy_004_and_005_validated.sqlite
