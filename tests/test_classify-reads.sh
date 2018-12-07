@@ -9,6 +9,7 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking classify-reads"
 thapbi_pict classify-reads 2>&1 | grep "the following arguments are required"
+thapbi_pict classify-reads -d "sqlite:///:memory:" hypothetical_example.fasta 2>&1 | grep "cannot classify anything"
 
 # Passing one filename:
 thapbi_pict classify-reads -m identity -d $TMP/legacy_004_and_005_validated.sqlite database/legacy/database.fasta
