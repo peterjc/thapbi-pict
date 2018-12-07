@@ -8,3 +8,4 @@ hmmer
 pear=0.9.6
 trimmomatic
 unzip
+bioconductor-dada2
