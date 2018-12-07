@@ -21,9 +21,15 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import warnings
 
-from Bio import SearchIO
+from Bio import BiopythonExperimentalWarning
 from Bio import SeqIO
+
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', BiopythonExperimentalWarning)
+    # This experimenal code (beta) warning was dropped in Biopython 1.73
+    from Bio import SearchIO
 
 
 def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
