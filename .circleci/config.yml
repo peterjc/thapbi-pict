@@ -53,3 +53,4 @@ jobs:
             tests/test_load-tax.sh
             tests/test_legacy-import.sh
             tests/test_ncbi-import.sh
+            tests/test_classify-reads.sh
