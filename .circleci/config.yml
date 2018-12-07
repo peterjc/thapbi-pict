@@ -42,6 +42,7 @@ jobs:
           name: Installation
           command: |
             conda install --file requirements-ext.txt
+            R -e "library('dada2'); packageVersion('dada2')"
             conda install --file requirements.txt
             pip install .
       - run:
