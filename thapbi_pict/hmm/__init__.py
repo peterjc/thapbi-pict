@@ -85,7 +85,7 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
                 bitscore_threshold=bitscore_threshold,
                 debug=debug):
         title = record.description
-        seq = str(record.seq)
+        seq = str(record.seq).upper()
         if not result:
             yield title, seq, None
             continue
@@ -153,6 +153,7 @@ def filter_fasta_for_ITS1(input_fasta, output_fasta,
             hsp = hit[0]
             # print(hsp.query_id, hsp.bitscore, hsp.query_start, hsp.query_end)
             assert record.id == hsp.query_id
+            record.seq = record.seq.upper()
             old_len = len(record)
             if trim:
                 record = record[hsp.query_start:hsp.query_end]
