@@ -60,7 +60,7 @@ class Taxonomy(Base):
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""
-        return ("Taxonomy(clade=%r, ncbi_taxid=%r, genus=%i, species=%r)"
+        return ("Taxonomy(clade=%r, ncbi_taxid=%r, genus=%r, species=%r)"
                 % (self.clade, self.ncbi_taxid, self.genus, self.species))
 
 
