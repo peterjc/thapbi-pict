@@ -14,13 +14,15 @@ from .hmm import filter_for_ITS1
 def taxonomy_consensus(taxon_entries):
     """Return LCA summary of the taxonomy objects from DB.
 
+    Expects a de-duplicated list of Taxonomy table entries.
+
     Returns a tuple of strings, starting with genus, species and clade.
     """
     if not taxon_entries:
         return "", "", "", "No taxonomy entries"
     if len(taxon_entries) == 1:
         t = taxon_entries[0]
-        return t.genus, t.species, t.clade, "Single match"
+        return t.genus, t.species, t.clade, "Unique taxonomy match"
 
     tmp = list(set(_.genus for _ in taxon_entries))
     if "" in tmp:
@@ -78,9 +80,10 @@ def method_identity(fasta_file, session, read_report, debug=False):
             else:
                 # its1 -> one or more SequenceSource
                 # each SequenceSource -> one current taxonomy
+                # TODO: Refactor the query to get the DB to apply disinct?
                 genus, species, clade, note = taxonomy_consensus(
-                    [_.current_taxonomy for _ in session.query(
-                        SequenceSource).filter_by(its1=its1)])
+                    list(set(_.current_taxonomy for _ in session.query(
+                        SequenceSource).filter_by(its1=its1))))
                 matched += 1
         read_report.write(
             "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
