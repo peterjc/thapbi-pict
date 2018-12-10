@@ -73,6 +73,7 @@ def classify_reads(args=None):
     return main(fasta=args.fasta,
                 db_url=expand_database_argument(args.database),
                 method=args.method,
+                read_report=args.read_report,
                 debug=args.verbose)
 
 
@@ -214,6 +215,9 @@ comma.
         "-m", "--method", type=str, default="identity",
         choices=["identity"],
         help="Method to use, default uses simple identity.")
+    parser_classify_reads.add_argument(
+        "-r", "--read_report", type=str, default="-", metavar="FILENAME",
+        help="File to write read-level report to (default '-' for stdout).")
     parser_classify_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
