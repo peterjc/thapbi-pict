@@ -71,7 +71,7 @@ def method_identity(fasta_file, session, read_report, debug=False):
     # ITS1 matchs, and then look for 100% equality in the DB.
     count = 0
     matched = 0
-    for title, seq, its1_seqs in filter_for_ITS1(fasta_file, multiple=True):
+    for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
         count += 1
         idn = title.split(None, 1)[0]
         genus = species = clade = note = ""
