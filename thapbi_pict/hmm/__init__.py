@@ -98,17 +98,8 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
             yield title, seq, None
             continue
 
-        if len(hit) > 1:
-            sys.stderr.write("WARNING: Ignoring %s as has multiple HSPs:\n"
-                             % (record.id))
-            for hsp in hit:
-                sys.stderr.write("%s\n" % hsp)
-            continue
-
-        assert len(hit) == 1
-        hsp = hit[0]
-
-        yield title, seq, seq[hsp.query_start:hsp.query_end]
+        yield (title, seq,
+               [seq[hsp.query_start:hsp.query_end] for hsp in hit])
 
 
 def filter_fasta_for_ITS1(input_fasta, output_fasta,

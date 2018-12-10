@@ -176,19 +176,25 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     good_entries = 0
     idn_set = set()
 
-    for title, seq, its1_seq in filter_for_ITS1(fasta_file):
+    for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
+        seq_count += 1
         if title.startswith("Control_"):
             if debug:
-                sys.stderr.write("Ignoring control entry: %s\n"
+                sys.stderr.write("DEBUG: Ignoring control entry: %s\n"
                                  % title)
             continue
-        seq_count += 1
-
-        if not its1_seq:
+        if not its1_seqs:
+            bad_entries += 1
             if debug:
-                sys.stderr.write("Ignoring non-ITS entry: %s\n"
+                sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n"
                                  % title)
             continue
+        if len(its1_seqs) > 1:
+            bad_entries += 1
+            sys.stderr.write("WARNING: Ignoring %s as has multiple HSPs\n"
+                             % title)
+            continue
+        its1_seq = its1_seqs[0]
         its1_seq_count += 1
 
         its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()

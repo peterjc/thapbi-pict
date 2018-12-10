@@ -71,18 +71,18 @@ def method_identity(fasta_file, session, read_report, debug=False):
     # ITS1 matchs, and then look for 100% equality in the DB.
     count = 0
     matched = 0
-    for title, seq, its1_seq in filter_for_ITS1(fasta_file):
+    for title, seq, its1_seqs in filter_for_ITS1(fasta_file, multiple=True):
         count += 1
         idn = title.split(None, 1)[0]
         genus = species = clade = note = ""
-        if not its1_seq:
-            # TODO - Handle multiple HMM matches here
-            note = "No single ITS1 HMM match"
+        if not its1_seqs:
+            note = "No ITS1 HMM matches"
         else:
-            assert its1_seq == its1_seq.upper()
+            for its1_seq in its1_seqs:
+                assert its1_seq == its1_seq.upper()
             # Now, does this match any of the ITS1 seq in our DB?
-            its1 = session.query(ITS1).filter_by(
-                sequence=its1_seq).one_or_none()
+            its1 = session.query(ITS1).filter(
+                ITS1.sequence.in_(its1_seqs)).one_or_none()
             if its1 is None:
                 note = "No ITS1 database match"
             else:
