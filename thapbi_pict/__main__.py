@@ -74,6 +74,7 @@ def classify_reads(args=None):
                 db_url=expand_database_argument(args.database),
                 method=args.method,
                 read_report=args.read_report,
+                tax_report=args.tax_report,
                 debug=args.verbose)
 
 
@@ -218,6 +219,9 @@ comma.
     parser_classify_reads.add_argument(
         "-r", "--read_report", type=str, default="-", metavar="FILENAME",
         help="File to write read-level report to (default '-' for stdout).")
+    parser_classify_reads.add_argument(
+        "-t", "--tax_report", type=str, default="", metavar="FILENAME",
+        help="File to write read-level report to (use '-' for stdout).")
     parser_classify_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")

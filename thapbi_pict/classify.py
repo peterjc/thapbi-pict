@@ -6,6 +6,8 @@ This implementes the ``thapbi_pict classify-reads ...`` command.
 import os
 import sys
 
+from collections import Counter
+
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
 from .hmm import filter_for_ITS1
@@ -55,7 +57,8 @@ def taxonomy_consensus(taxon_entries):
     return (genus, species, clade, note)
 
 
-def method_identity(fasta_file, session, read_report, debug=False):
+def method_identity(fasta_file, session, read_report, tax_report,
+                    debug=False):
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
@@ -71,6 +74,7 @@ def method_identity(fasta_file, session, read_report, debug=False):
     # ITS1 matchs, and then look for 100% equality in the DB.
     count = 0
     matched = 0
+    tax_counts = Counter()
     for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
         count += 1
         idn = title.split(None, 1)[0]
@@ -93,8 +97,12 @@ def method_identity(fasta_file, session, read_report, debug=False):
                     list(set(_.current_taxonomy for _ in session.query(
                         SequenceSource).filter_by(its1=its1))))
                 matched += 1
+                tax_counts[(genus, species, clade)] += 1
         read_report.write(
             "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
+    for (genus, species, clade), tax_count in sorted(tax_counts.items()):
+        tax_report.write(
+            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count))
     return count, matched
 
 
@@ -122,7 +130,7 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
     return sorted(set(answer))
 
 
-def main(fasta, db_url, method, read_report, debug=False):
+def main(fasta, db_url, method, read_report, tax_report, debug=False):
     """Implement the thapbi_pict classify-reads command."""
     assert isinstance(fasta, list)
 
@@ -162,12 +170,21 @@ def main(fasta, db_url, method, read_report, debug=False):
     match_count = 0
     if read_report == "-":
         read_handle = sys.stdout
-    else:
+    elif read_report:
         read_handle = open(read_report, "w")
+    else:
+        read_handle = open(sys.devnull, "w")
+    if tax_report == "-":
+        tax_handle = sys.stdout
+    elif tax_report:
+        tax_handle = open(tax_report, "w")
+    else:
+        tax_handle = open(sys.devnull, "w")
     for filename in fasta_files:
         if debug:
             sys.stderr.write("%s classifer on %s\n" % (method, filename))
-        r_count, m_count = method_fn(filename, session, read_handle, debug)
+        r_count, m_count = method_fn(
+            filename, session, read_handle, tax_handle, debug)
         read_count += r_count
         match_count += m_count
 
@@ -176,5 +193,7 @@ def main(fasta, db_url, method, read_report, debug=False):
         % (method, match_count, read_count, len(fasta_files)))
     if read_report != "-":
         read_handle.close()
+    if tax_report != "-":
+        tax_handle.close()
 
     return 0
