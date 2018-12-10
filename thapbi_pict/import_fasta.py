@@ -184,13 +184,11 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                                  % title)
             continue
         if not its1_seqs:
-            bad_entries += 1
             if debug:
                 sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n"
                                  % title)
             continue
         if len(its1_seqs) > 1:
-            bad_entries += 1
             sys.stderr.write("WARNING: Ignoring %s as has multiple HSPs\n"
                              % title)
             continue
