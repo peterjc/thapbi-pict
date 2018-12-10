@@ -17,6 +17,8 @@ def taxonomy_consensus(taxon_entries):
     Expects a de-duplicated list of Taxonomy table entries.
 
     Returns a tuple of strings, starting with genus, species and clade.
+
+    Currently also reports a text note for debugging.
     """
     if not taxon_entries:
         return "", "", "", "No taxonomy entries"
@@ -32,19 +34,25 @@ def taxonomy_consensus(taxon_entries):
     if not genus:
         return "", "", "", "Conflicting genera"
 
+    note = "Consensus from %i taxonomy entries" % len(taxon_entries)
+
     # e.g. Clades of "", "8a" --> "8a"
     # but any conflict -> ""
-    tmp = list(set(_.clade for _ in taxon_entries))
-    if "" in tmp:
-        tmp.remove("")
-    clade = tmp[0] if len(tmp) == 1 else ""
+    c_list = list(set(_.clade for _ in taxon_entries))
+    if "" in c_list:
+        c_list.remove("")
+    clade = c_list[0] if len(c_list) == 1 else ""
+    if not clade:
+        note += " (clades: %s)" % ",".join(sorted(c_list))
 
-    tmp = list(set(_.species for _ in taxon_entries))
-    if "" in tmp:
-        tmp.remove("")
-    species = tmp[0] if len(tmp) == 1 else ""
+    s_list = list(set(_.species for _ in taxon_entries))
+    if "" in s_list:
+        s_list.remove("")
+    species = s_list[0] if len(s_list) == 1 else ""
+    if not species:
+        note += " (species: %s)" % ", ".join(sorted(s_list))
 
-    return genus, species, clade, "Consensus"
+    return (genus, species, clade, note)
 
 
 def method_identity(fasta_file, session, read_report, debug=False):
