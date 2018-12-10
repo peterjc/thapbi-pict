@@ -15,9 +15,9 @@ export DB=$TMP/legacy_004_and_005_validated.sqlite
 if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; fi
 
 # Passing one filename:
-thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta
+thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta | cut -f 5 | sort | uniq -c
 
 # Passing one directory name (should get all three FASTA files):
-thapbi_pict classify-reads -m identity -d $DB database/legacy/
+thapbi_pict classify-reads -m identity -d $DB database/legacy/ -r /dev/null
 
 echo "$0 passed"
