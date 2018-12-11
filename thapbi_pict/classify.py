@@ -57,7 +57,7 @@ def taxonomy_consensus(taxon_entries):
     return (genus, species, clade, note)
 
 
-def method_identity(fasta_file, session, read_report, tax_report,
+def method_identity(fasta_file, session, read_report, tax_counts,
                     debug=False):
     """Classify using perfect identity.
 
@@ -74,7 +74,6 @@ def method_identity(fasta_file, session, read_report, tax_report,
     # ITS1 matchs, and then look for 100% equality in the DB.
     count = 0
     matched = 0
-    tax_counts = Counter()
     for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
         count += 1
         idn = title.split(None, 1)[0]
@@ -100,9 +99,7 @@ def method_identity(fasta_file, session, read_report, tax_report,
                 tax_counts[(genus, species, clade)] += 1
         read_report.write(
             "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
-    for (genus, species, clade), tax_count in sorted(tax_counts.items()):
-        tax_report.write(
-            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count))
+
     return count, matched
 
 
@@ -180,13 +177,20 @@ def main(fasta, db_url, method, read_report, tax_report, debug=False):
         tax_handle = open(tax_report, "w")
     else:
         tax_handle = open(sys.devnull, "w")
+
+    tax_counter = Counter()
     for filename in fasta_files:
         if debug:
             sys.stderr.write("%s classifer on %s\n" % (method, filename))
         r_count, m_count = method_fn(
-            filename, session, read_handle, tax_handle, debug)
+            filename, session, read_handle, tax_counter, debug)
         read_count += r_count
         match_count += m_count
+
+    # Write out a simple taxonomy report
+    for (genus, species, clade), tax_count in sorted(tax_counter.items()):
+        tax_handle.write(
+            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count))
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"
