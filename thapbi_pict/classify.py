@@ -183,6 +183,13 @@ def main(fasta, db_url, method, out_dir, debug=False):
         tax_name = os.path.join(
             folder, "%s.%s-tax.tsv" % (stem, method))
 
+        if os.path.isfile(read_name) and os.path.isfile(tax_name):
+            sys.stderr.write(
+                "WARNING: Skipping %s and %s as already exist\n"
+                % (read_name, tax_name))
+            # TODO: Count the number of reads and matches?
+            continue
+
         if debug:
             sys.stderr.write(
                 "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
