@@ -170,13 +170,13 @@ def main(fasta, db_url, method, read_report, tax_report, debug=False):
     elif read_report:
         read_handle = open(read_report, "w")
     else:
-        read_handle = open(sys.devnull, "w")
+        read_handle = open(os.devnull, "w")
     if tax_report == "-":
         tax_handle = sys.stdout
     elif tax_report:
         tax_handle = open(tax_report, "w")
     else:
-        tax_handle = open(sys.devnull, "w")
+        tax_handle = open(os.devnull, "w")
 
     tax_counter = Counter()
     for filename in fasta_files:
