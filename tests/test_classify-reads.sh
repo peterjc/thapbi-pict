@@ -18,6 +18,6 @@ if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; 
 thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta | cut -f 5 | sort | uniq -c
 
 # Passing one directory name (should get all three FASTA files):
-thapbi_pict classify-reads -m identity -d $DB database/legacy/ -r /dev/null
+thapbi_pict classify-reads -m identity -d $DB database/legacy/ -r /dev/null -t - | grep -c Phytophthora
 
 echo "$0 passed"
