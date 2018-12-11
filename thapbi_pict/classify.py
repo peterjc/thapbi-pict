@@ -4,7 +4,9 @@ This implementes the ``thapbi_pict classify-reads ...`` command.
 """
 
 import os
+import shutil
 import sys
+import tempfile
 
 from collections import Counter
 
@@ -169,9 +171,8 @@ def main(fasta, db_url, method, out_dir, debug=False):
     read_count = 0
     match_count = 0
     for filename in fasta_files:
-        if debug:
-            sys.stderr.write(
-                "DEBUG: %s classifer on %s\n" % (method, filename))
+        sys.stderr.write(
+            "Running %s classifer on %s\n" % (method, filename))
 
         folder, stem = os.path.split(filename)
         stem = os.path.splitext(stem)[0]
@@ -186,12 +187,18 @@ def main(fasta, db_url, method, out_dir, debug=False):
             sys.stderr.write(
                 "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
 
-        with open(read_name, "w") as read_handle:
-            with open(tax_name, "w") as tax_handle:
-                r_count, m_count = method_fn(
-                    filename, session, read_handle, tax_handle, debug)
+        tmp_reads = tempfile.NamedTemporaryFile("wt", delete=False)
+        tmp_tax = tempfile.NamedTemporaryFile("wt", delete=False)
+        # Run the classifier...
+        r_count, m_count = method_fn(
+            filename, session, tmp_reads, tmp_tax, debug)
         read_count += r_count
         match_count += m_count
+        # Move our temp files into position...
+        tmp_reads.close()
+        tmp_tax.close()
+        shutil.move(tmp_reads.name, read_name)
+        shutil.move(tmp_tax.name, tax_name)
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"
