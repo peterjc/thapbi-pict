@@ -73,8 +73,7 @@ def classify_reads(args=None):
     return main(fasta=args.fasta,
                 db_url=expand_database_argument(args.database),
                 method=args.method,
-                read_report=args.read_report,
-                tax_report=args.tax_report,
+                out_dir=args.output,
                 debug=args.verbose)
 
 
@@ -204,10 +203,13 @@ comma.
     # classify-reads
     parser_classify_reads = subparsers.add_parser(
         "classify-reads",
-        description="Classify FASTA file of ITS1 reads by species.")
+        description="Classify FASTA file of ITS1 reads by species.",
+        epilog="Each input file XXX.fasta will result in output files "
+               "namesd XXX.method-reads.tsv and XXX.method-tax.tsv in "
+               "the specified output directory (default input dir).")
     parser_classify_reads.add_argument(
         'fasta', type=str, nargs='+',
-        help='One or more ITS1 fasta filenames or folder names'
+        help='One or more ITS1 FASTA filenames or folder names'
              '(containing files named *.fasta).')
     parser_classify_reads.add_argument(
         "-d", "--database", type=str, required=True,
@@ -217,11 +219,9 @@ comma.
         choices=["identity"],
         help="Method to use, default uses simple identity.")
     parser_classify_reads.add_argument(
-        "-r", "--read_report", type=str, default="-", metavar="FILENAME",
-        help="File to write read-level report to (default '-' for stdout).")
-    parser_classify_reads.add_argument(
-        "-t", "--tax_report", type=str, default="", metavar="FILENAME",
-        help="File to write read-level report to (use '-' for stdout).")
+        "-o", "--output", type=str, default="-", metavar="DIRNAME",
+        help="Directory to write output reports to, default "
+             "is next to each input file.")
     parser_classify_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")

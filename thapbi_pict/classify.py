@@ -57,7 +57,7 @@ def taxonomy_consensus(taxon_entries):
     return (genus, species, clade, note)
 
 
-def method_identity(fasta_file, session, read_report, tax_counts,
+def method_identity(fasta_file, session, read_report, tax_report,
                     debug=False):
     """Classify using perfect identity.
 
@@ -74,6 +74,7 @@ def method_identity(fasta_file, session, read_report, tax_counts,
     # ITS1 matchs, and then look for 100% equality in the DB.
     count = 0
     matched = 0
+    tax_counts = Counter()
     for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
         count += 1
         idn = title.split(None, 1)[0]
@@ -99,7 +100,9 @@ def method_identity(fasta_file, session, read_report, tax_counts,
                 tax_counts[(genus, species, clade)] += 1
         read_report.write(
             "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
-
+    for (genus, species, clade), tax_count in sorted(tax_counts.items()):
+        tax_report.write(
+            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count))
     return count, matched
 
 
@@ -127,7 +130,7 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
     return sorted(set(answer))
 
 
-def main(fasta, db_url, method, read_report, tax_report, debug=False):
+def main(fasta, db_url, method, out_dir, debug=False):
     """Implement the thapbi_pict classify-reads command."""
     assert isinstance(fasta, list)
 
@@ -165,39 +168,33 @@ def main(fasta, db_url, method, read_report, tax_report, debug=False):
 
     read_count = 0
     match_count = 0
-    if read_report == "-":
-        read_handle = sys.stdout
-    elif read_report:
-        read_handle = open(read_report, "w")
-    else:
-        read_handle = open(os.devnull, "w")
-    if tax_report == "-":
-        tax_handle = sys.stdout
-    elif tax_report:
-        tax_handle = open(tax_report, "w")
-    else:
-        tax_handle = open(os.devnull, "w")
-
-    tax_counter = Counter()
     for filename in fasta_files:
         if debug:
-            sys.stderr.write("%s classifer on %s\n" % (method, filename))
-        r_count, m_count = method_fn(
-            filename, session, read_handle, tax_counter, debug)
+            sys.stderr.write(
+                "DEBUG: %s classifer on %s\n" % (method, filename))
+
+        folder, stem = os.path.split(filename)
+        stem = os.path.splitext(stem)[0]
+        if out_dir and out_dir != "-":
+            folder = out_dir
+        read_name = os.path.join(
+            folder, "%s.%s-reads.tsv" % (stem, method))
+        tax_name = os.path.join(
+            folder, "%s.%s-tax.tsv" % (stem, method))
+
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
+
+        with open(read_name, "w") as read_handle:
+            with open(tax_name, "w") as tax_handle:
+                r_count, m_count = method_fn(
+                    filename, session, read_handle, tax_handle, debug)
         read_count += r_count
         match_count += m_count
-
-    # Write out a simple taxonomy report
-    for (genus, species, clade), tax_count in sorted(tax_counter.items()):
-        tax_handle.write(
-            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count))
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"
         % (method, match_count, read_count, len(fasta_files)))
-    if read_report != "-":
-        read_handle.close()
-    if tax_report != "-":
-        tax_handle.close()
 
     return 0

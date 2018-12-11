@@ -14,10 +14,18 @@ thapbi_pict classify-reads -d "sqlite:///:memory:" hypothetical_example.fasta 2>
 export DB=$TMP/legacy_004_and_005_validated.sqlite
 if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; fi
 
-# Passing one filename:
-thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta | cut -f 5 | sort | uniq -c
+rm -rf database/legacy/*.identity-reads.tsv
+rm -rf database/legacy/*.identity-tax.tsv
+
+# Passing one filename; default output dir:
+thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta
+cut -f 5 database/legacy/database.identity-reads.tsv | sort | uniq -c
+grep -c Phytophthora database/legacy/database.identity-tax.tsv
 
 # Passing one directory name (should get all three FASTA files):
-thapbi_pict classify-reads -m identity -d $DB database/legacy/ -r /dev/null -t - | grep -c Phytophthora
+rm -rf $TMP/legacy/*.identity-*.tsv
+mkdir -p $TMP/legacy
+thapbi_pict classify-reads -m identity -d $DB database/legacy/ -o $TMP/legacy
+ls -1 $TMP/legacy/*.identity-*.tsv  # Should be 6 pairs
 
 echo "$0 passed"
