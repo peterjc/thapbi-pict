@@ -5,6 +5,9 @@ This implementes the ``thapbi_pict prepare-reads ...`` command.
 
 import os
 import sys
+import tempfile
+
+from .utils import run
 
 
 def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
@@ -60,6 +63,30 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
     return pairs
 
 
+def run_trimmomatic(left_in, right_in, left_out, right_out,
+                    adapters="TruSeq3-PE.fa",
+                    debug=False, cpu=0):
+    """Run trimmomatic on a pair of FASTQ files.
+
+    The input files may be gzipped.
+    """
+    if not os.path.isfile(adapters):
+        sys.exit("ERROR: Missing Illumina adapters file for trimmomatic: %s\n"
+                 % adapters)
+    if " " in adapters:
+        # Can we do this with slash escaping? Clever quoting?
+        sys.exit("ERROR: Spaces in the adapter filename are a bad idea: %s\n"
+                 % adapters)
+    cmd = ["trimmomatic", "PE"]
+    if cpu:
+        cmd += ["-threads", str(cpu)]
+    cmd += ["-phred33"]
+    # We don't want the unpaired left and right output files, so /dev/null
+    cmd += [left_in, right_in, left_out, os.devnull, right_out, os.devnull]
+    cmd += ['ILLUMINACLIP:%s:2:30:10' % adapters]
+    return run(cmd, debug=debug)
+
+
 def main(fastq, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command."""
     assert isinstance(fastq, list)
@@ -70,7 +97,7 @@ def main(fastq, out_dir, debug=False, cpu=0):
             "Preparing %i paired FASTQ files\n"
             % len(fastq_file_pairs))
 
-    for stem, left, right in fastq_file_pairs:
+    for stem, raw_R1, raw_R2 in fastq_file_pairs:
         folder, stem = os.path.split(stem)
         if out_dir and out_dir != "-":
             folder = out_dir
@@ -80,5 +107,17 @@ def main(fastq, out_dir, debug=False, cpu=0):
             sys.stderr.write(
                 "WARNING: Skipping %s as already exist\n" % fasta_name)
             continue
-        sys.stderr.write("Preparing %s\n" % stem)
+
+        # Context manager should remove the temp dir:
+        with tempfile.TemporaryDirectory() as tmp:
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+            trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
+            trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
+            run_trimmomatic(
+                raw_R1, raw_R2, trim_R1, trim_R2,
+                debug=debug, cpu=cpu)
+
+        sys.stderr.write("Prepared %s\n" % stem)
     return 0
