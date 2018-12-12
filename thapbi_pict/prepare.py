@@ -87,6 +87,15 @@ def run_trimmomatic(left_in, right_in, left_out, right_out,
     return run(cmd, debug=debug)
 
 
+def run_pear(trimmed_R1, trimmed_R2, output_prefix,
+             debug=False, cpu=0):
+    """Run pear on a pair of trimmed FASTQ files."""
+    cmd = ["pear", "-f", trimmed_R1, "-r", trimmed_R2, "-o", output_prefix]
+    if cpu:
+        cmd += ["--threads", str(cpu)]
+    return run(cmd, debug=debug)
+
+
 def main(fastq, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command."""
     assert isinstance(fastq, list)
@@ -113,11 +122,27 @@ def main(fastq, out_dir, debug=False, cpu=0):
             if debug:
                 sys.stderr.write(
                     "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+
+            # trimmomatic
             trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
             trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
             run_trimmomatic(
                 raw_R1, raw_R2, trim_R1, trim_R2,
                 debug=debug, cpu=cpu)
+            for _ in (trim_R1, trim_R2):
+                if not os.path.isfile(_):
+                    sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
+
+            # pear
+            pear_prefix = os.path.join(tmp, "pear")
+            merged = os.path.join(tmp, "pear.assembled.fastq")
+            run_pear(
+                trim_R1, trim_R2, pear_prefix,
+                debug=debug, cpu=cpu)
+            if not os.path.isfile(merged):
+                sys.exit("ERROR: Expected file %r from pear\n" % merged)
+
+            # TODO - Turn the merged FASTQ into a FASTA files...
 
         sys.stderr.write("Prepared %s\n" % stem)
     return 0
