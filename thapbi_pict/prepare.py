@@ -60,7 +60,7 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
     return pairs
 
 
-def main(fastq, out_dir, debug=False):
+def main(fastq, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command."""
     assert isinstance(fastq, list)
 
