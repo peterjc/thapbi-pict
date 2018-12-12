@@ -217,9 +217,9 @@ comma.
     parser_prepare_reads = subparsers.add_parser(
         "prepare-reads",
         description="Trim and merge paired FASTQ files of ITS1 amplicons.",
-        epilog="Each pair of input files XXX-R1.fastq and XXX-R2.fastq "
-               "(deduced from standard Illumina paired file suffix naming) "
-               "will result an output file XXX.fasta in the specified ouput"
+        epilog="Each pair of input files should follow Illumina naming "
+               "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz] and will "
+               "result an output file XXX.fasta in the specified ouput"
                "directory (default input dir).")
     parser_prepare_reads.add_argument(
         'fastq', type=str, nargs='+',
