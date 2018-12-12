@@ -73,7 +73,8 @@ def prepare_reads(args=None):
     from .prepare import main
     return main(fastq=args.fastq,
                 out_dir=args.output,
-                debug=args.verbose)
+                debug=args.verbose,
+                cpu=args.cpu)
 
 
 def classify_reads(args=None):
@@ -232,6 +233,9 @@ comma.
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
+    parser_prepare_reads.add_argument(
+        "--cpu", type=int, default=0,
+        help="Number of parallel threads to use in called tools.")
     parser_prepare_reads.set_defaults(func=prepare_reads)
 
     # classify-reads
