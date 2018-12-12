@@ -68,6 +68,14 @@ def dump(args=None):
                 debug=args.verbose)
 
 
+def prepare_reads(args=None):
+    """Subcommand to prepare FASTA paired reads."""
+    from .prepare import main
+    return main(fastq=args.fastq,
+                out_dir=args.output,
+                debug=args.verbose)
+
+
 def classify_reads(args=None):
     """Subcommand to classify reads using an ITS1 database."""
     from .classify import main
@@ -204,6 +212,27 @@ comma.
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
     parser_dump.set_defaults(func=dump)
+
+    # prepare reads
+    parser_prepare_reads = subparsers.add_parser(
+        "prepare-reads",
+        description="Trim and merge paired FASTQ files of ITS1 amplicons.",
+        epilog="Each pair of input files XXX-R1.fastq and XXX-R2.fastq "
+               "(deduced from standard Illumina paired file suffix naming) "
+               "will result an output file XXX.fasta in the specified ouput"
+               "directory (default input dir).")
+    parser_prepare_reads.add_argument(
+        'fastq', type=str, nargs='+',
+        help='One or more ITS1 FASTQ filenames or folder names'
+             '(containing files named *.fastq or *.fastq.gz).')
+    parser_prepare_reads.add_argument(
+        "-o", "--output", type=str, default="-", metavar="DIRNAME",
+        help="Directory to write output FASTA files to, "
+             "default is next to each input file.")
+    parser_prepare_reads.add_argument(
+        "-v", "--verbose", action='store_true',
+        help="Verbose logging")
+    parser_prepare_reads.set_defaults(func=prepare_reads)
 
     # classify-reads
     parser_classify_reads = subparsers.add_parser(
