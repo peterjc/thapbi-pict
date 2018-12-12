@@ -5,4 +5,5 @@
 
 entrez-direct
 hmmer
+trimmomatic
 unzip
