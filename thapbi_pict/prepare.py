@@ -4,8 +4,11 @@ This implementes the ``thapbi_pict prepare-reads ...`` command.
 """
 
 import os
+import shutil
 import sys
 import tempfile
+
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .utils import run
 
@@ -142,7 +145,22 @@ def main(fastq, out_dir, debug=False, cpu=0):
             if not os.path.isfile(merged):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged)
 
-            # TODO - Turn the merged FASTQ into a FASTA files...
+            # Apply left/right trim and convert to FASTA
+            chopped = os.path.join(tmp, "done.fasta")
+            # TODO: Set these via command line
+            left = 53
+            right = 20
+            with open(merged) as handle:
+                with open(chopped, "w") as out_handle:
+                    for title, seq, qual in FastqGeneralIterator(handle):
+                        if right:
+                            out_handle.write(
+                                ">%s\n%s\n" % (title, seq[left:-right]))
+                        else:
+                            # zero right trimming
+                            out_handle.write(
+                                ">%s\n%s\n" % (title, seq[left:]))
 
+            shutil.move(chopped, fasta_name)
         sys.stderr.write("Prepared %s\n" % stem)
     return 0
