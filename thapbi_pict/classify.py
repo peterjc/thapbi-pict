@@ -60,7 +60,7 @@ def taxonomy_consensus(taxon_entries):
 
 
 def method_identity(fasta_file, session, read_report, tax_report,
-                    debug=False):
+                    tmp_dir, debug=False, cpu=0):
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
@@ -109,7 +109,7 @@ def method_identity(fasta_file, session, read_report, tax_report,
 
 
 methods = {
-    "identity": method_identity
+    "identity": method_identity,
 }
 
 
@@ -132,7 +132,7 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
     return sorted(set(answer))
 
 
-def main(fasta, db_url, method, out_dir, debug=False):
+def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify-reads command."""
     assert isinstance(fasta, list)
 
@@ -194,18 +194,28 @@ def main(fasta, db_url, method, out_dir, debug=False):
             sys.stderr.write(
                 "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
 
-        tmp_reads = tempfile.NamedTemporaryFile("wt", delete=False)
-        tmp_tax = tempfile.NamedTemporaryFile("wt", delete=False)
-        # Run the classifier...
-        r_count, m_count = method_fn(
-            filename, session, tmp_reads, tmp_tax, debug)
-        read_count += r_count
-        match_count += m_count
-        # Move our temp files into position...
-        tmp_reads.close()
-        tmp_tax.close()
-        shutil.move(tmp_reads.name, read_name)
-        shutil.move(tmp_tax.name, tax_name)
+        # Context manager should remove the temp dir:
+        with tempfile.TemporaryDirectory() as tmp:
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+            # Using same file names, but in tmp folder:
+            tmp_reads = os.path.join(
+                tmp, "%s.%s-reads.tsv" % (stem, method))
+            tmp_tax = os.path.join(
+                tmp, "%s.%s-tax.tsv" % (stem, method))
+            # Run the classifier...
+            with open(tmp_reads, "w") as reads_handle:
+                with open(tmp_tax, "w") as tax_handle:
+                    r_count, m_count = method_fn(
+                        filename, session,
+                        reads_handle, tax_handle,
+                        tmp, debug)
+            read_count += r_count
+            match_count += m_count
+            # Move our temp files into position...
+            shutil.move(tmp_reads, read_name)
+            shutil.move(tmp_tax, tax_name)
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"

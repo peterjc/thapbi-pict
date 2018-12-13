@@ -98,7 +98,8 @@ def classify_reads(args=None):
                 db_url=expand_database_argument(args.database),
                 method=args.method,
                 out_dir=args.output,
-                debug=args.verbose)
+                debug=args.verbose,
+                cpu=args.cpu)
 
 
 def main(args=None):
@@ -277,6 +278,9 @@ comma.
     parser_classify_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
+    parser_classify_reads.add_argument(
+        "--cpu", type=int, default=0,
+        help="Max number of parallel threads to use in called tools.")
     parser_classify_reads.set_defaults(func=classify_reads)
 
     # What have we been asked to do?
