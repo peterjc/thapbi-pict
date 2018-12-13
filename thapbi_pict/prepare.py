@@ -4,6 +4,7 @@ This implementes the ``thapbi_pict prepare-reads ...`` command.
 """
 
 import os
+import subprocess
 import shutil
 import sys
 import tempfile
@@ -66,13 +67,31 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
     return pairs
 
 
+def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
+    """Locate Illumina adapter FASTA file bundled with trimmomatic."""
+    # This works on a bioconda installed trimmomatic,
+    # which gives .../conda/bin/trimmomatic and we want
+    # .../conda/share/trimmomatic/adapters/TruSeq3-PE.fa
+    bin_path = os.path.split(subprocess.getoutput("which trimmomatic"))[0]
+    filename = os.path.join(
+        bin_path, "..", "share", "trimmomatic", "adapters", fasta_name)
+    if os.path.isfile(filename):
+        return filename
+    sys.exit("Could not find %s installed with trimmomatic." % fasta_name)
+
+
 def run_trimmomatic(left_in, right_in, left_out, right_out,
-                    adapters="TruSeq3-PE.fa",
+                    adapters=None,
                     debug=False, cpu=0):
     """Run trimmomatic on a pair of FASTQ files.
 
     The input files may be gzipped.
+
+    If the FASTA adapters file is not specified, will try to use
+    TruSeq3-PE.fa as bundled with a BioConda install of trimmomatic.
     """
+    if not adapters:
+        adapters = find_trimmomatic_adapters()
     if not os.path.isfile(adapters):
         sys.exit("ERROR: Missing Illumina adapters file for trimmomatic: %s\n"
                  % adapters)
