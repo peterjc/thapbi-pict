@@ -13,6 +13,7 @@ from collections import Counter
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
 from .hmm import filter_for_ITS1
+from .utils import cmd_as_string, run
 
 
 def taxonomy_consensus(taxon_entries):
@@ -104,8 +105,115 @@ def method_identity(fasta_file, session, read_report,
     return tax_counts
 
 
+def make_swarm_db_fasta(db_fasta, session):
+    """Prepare a SWARM style ITS1 FASTA sequence from our DB."""
+    view = session.query(ITS1)
+    count = 0
+    skip = 0
+    unambig = set('ACGT')
+    with open(db_fasta, "w") as handle:
+        for its1 in view:
+            md5 = its1.md5
+            its1_seq = its1.sequence
+            if not unambig.issuperset(its1_seq):
+                skip += 1
+                continue
+            # Using md5_ref_abundance to avoid duplicating any exact
+            # sequence matching read which would be md5_abundance
+            abundance = 1  # need to look at sequence_source join...
+            handle.write(">%s_db_%i\n%s\n" % (md5, abundance, its1_seq))
+            count += 1
+    sys.stderr.write(
+        "Wrote %i unique sequences from DB to FASTA file for SWARM.\n"
+        % count)
+    if skip:
+        sys.stderr.write(
+            "WARNING: Skipped %i DB sequences due to ambiguous bases.\n"
+            % skip)
+    return count
+
+
+def run_swarm(input_fasta, output_clusters,
+              diff=1,
+              debug=False, cpu=0):
+    """Run swarm on a prepared FASTA file."""
+    # Seems swarm only looks at one positional argument,
+    # silently ignores any second or third FASTA file.
+    # However, it will take stdin, e.g. swarm -d 1 <(cat *.nu)
+    # This may be useful as we want to feed in the combination
+    # of a database dump (with idn_abundance naming), plus the
+    # prepared sequencing reads.
+    cmd = ["swarm"]
+    if cpu:
+        cmd += ["-t", str(cpu)]  # -t, --threads
+    cmd += ["-d", str(diff)]  # -d, --differences
+    cmd += ["-o", output_clusters]  # -o, --output-file
+    if isinstance(input_fasta, str):
+        cmd += [input_fasta]
+    else:
+        # Swarm defaults to stdin, so don't need this:
+        # cmd += ["/dev/stdin"]
+        cmd = 'cat "%s" | %s' % ('" "'.join(input_fasta), cmd_as_string(cmd))
+    return run(cmd, debug=debug)
+
+
+def method_swarm(fasta_file, session, read_report,
+                 tmp_dir, debug=False, cpu=0):
+    """Classify using SWARM.
+
+    Dumps the database to a swarm-ready FASTA file, and gives
+    this and the prepared non-redundant input FASTA to swarm.
+    Uses the database sequences to assign species to clusters,
+    and thus reads within a cluster to that species.
+    """
+    db_fasta = os.path.join(tmp_dir, "swarm_db.fasta")
+    swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
+    make_swarm_db_fasta(db_fasta, session)
+    run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1,
+              debug=debug, cpu=cpu)
+
+    if not os.path.isfile(swarm_clusters):
+        sys.exit(
+            "Swarm did not produce expected output file %s\n"
+            % swarm_clusters)
+    cluster_count = 0
+    count = 0
+    tax_counts = Counter()
+    with open(swarm_clusters) as handle:
+        for line in handle:
+            cluster_count += 1
+            idns = line.strip().split()
+            read_idns = [_ for _ in idns if "_db_" not in _]
+            db_idns = [_ for _ in idns if "_db_" in _]
+            del idns
+            read_count = len(read_idns)
+            count += read_count
+            if not read_idns:
+                # DB only cluster, ignore
+                continue
+            if db_idns:
+                # TODO: Look in DB for taxonomy, what is their consensus?
+                genus = "Phytophthora"
+                species = clade = ""
+                note = ("Cluster of %i reads and %i DB entries"
+                        % (len(read_idns), len(db_idns)))
+            else:
+                # Cannot classify, report
+                genus = species = clade = ""
+                note = "Cluster of %i reads but no DB entry" % len(read_idns)
+            for idn in read_idns:
+                read_report.write(
+                    "%s\t%s\t%s\t%s\t%s\n"
+                    % (idn, genus, species, clade, note))
+            tax_counts[(genus, species, clade)] += read_count
+    sys.stderr.write("Swarm generated %i clusters\n" % cluster_count)
+    assert count == sum(tax_counts.values())
+    return tax_counts
+
+
 methods = {
     "identity": method_identity,
+    "swarm": method_swarm,
 }
 
 

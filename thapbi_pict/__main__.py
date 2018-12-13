@@ -269,7 +269,7 @@ comma.
         help="Which ITS1 database to use for species classification.")
     parser_classify_reads.add_argument(
         "-m", "--method", type=str, default="identity",
-        choices=["identity"],
+        choices=["identity", "swarm"],
         help="Method to use, default uses simple identity.")
     parser_classify_reads.add_argument(
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
