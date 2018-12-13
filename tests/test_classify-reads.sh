@@ -22,6 +22,14 @@ thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta
 cut -f 5 database/legacy/database.identity-reads.tsv | sort | uniq -c
 grep -c Phytophthora database/legacy/database.identity-tax.tsv
 
+if [ ! -f $TMP/DNAMIX_S95_L001.prepared.fasta]; then echo "Run test_prepare-reads.sh to setup test input"; false; fi
+rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv
+rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-tax.tsv
+
+thapbi_pict classify-reads -m swarm -d $DB $TMP/DNAMIX_S95_L001.prepared.fasta
+cut -f 5 $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv | sort | uniq -c
+# grep -c Phytophthora $TMP/DNAMIX_S95_L001.prepared.swarm-tax.tsv
+
 # Passing one directory name (should get all three FASTA files):
 rm -rf $TMP/legacy/*.identity-*.tsv
 mkdir -p $TMP/legacy
