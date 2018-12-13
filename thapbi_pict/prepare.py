@@ -3,12 +3,14 @@
 This implementes the ``thapbi_pict prepare-reads ...`` command.
 """
 
+import hashlib
 import os
 import subprocess
 import shutil
 import sys
 import tempfile
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .utils import run
@@ -118,6 +120,30 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix,
     return run(cmd, debug=debug)
 
 
+def make_nr(input_fasta, output_fasta):
+    """Make FASTA file non-redundant and name reads as MD5_abundance.
+
+    This naming convention is suitable for SWARM.
+
+    Returns the number of unique sequences (integer).
+    """
+    # This could be generalised if need something else, e.g.
+    # >name;size=6; for VSEARCH.
+    counts = dict()  # OrderedDict on older Python?
+    with open(input_fasta) as in_handle:
+        for title, seq in SimpleFastaParser(in_handle):
+            seq = seq.upper()
+            try:
+                counts[seq] += 1
+            except KeyError:
+                counts[seq] = 1
+    with open(output_fasta, "w") as out_handle:
+        for seq, count in counts.items():
+            md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
+            out_handle.write(">%s_%i\n%s\n" % (md5, count, seq))
+    return len(counts)  # number of unique seqs
+
+
 def main(fastq, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command."""
     assert isinstance(fastq, list)
@@ -165,7 +191,7 @@ def main(fastq, out_dir, debug=False, cpu=0):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged)
 
             # Apply left/right trim and convert to FASTA
-            chopped = os.path.join(tmp, "done.fasta")
+            chopped = os.path.join(tmp, "chop.fasta")
             # TODO: Set these via command line
             left = 53
             right = 20
@@ -180,6 +206,16 @@ def main(fastq, out_dir, debug=False, cpu=0):
                             out_handle.write(
                                 ">%s\n%s\n" % (title, seq[left:]))
 
-            shutil.move(chopped, fasta_name)
-        sys.stderr.write("Prepared %s\n" % stem)
+            # Make NR and name as MD5_abundance
+            # Not 100% sure that the chopping approach is not going to change,
+            # otherwise would be efficient to combine these two steps.
+            dedup = os.path.join(tmp, "dedup.fasta")
+            uniq_count = make_nr(chopped, dedup)
+            if debug:
+                sys.stderr.write("%i unique sequences\n" % uniq_count)
+
+            # File done
+            shutil.move(dedup, fasta_name)
+            sys.stderr.write(
+                "Prepared %s with %i unique reads\n" % (stem, uniq_count))
     return 0
