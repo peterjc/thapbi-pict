@@ -6,9 +6,21 @@ the ``main()`` function define in this Python file.
 """
 
 import argparse
+import os
 import sys
 
 from . import __version__
+
+
+def check_output_directory(out_dir):
+    """Command line validation of output directory value."""
+    if out_dir == "-" or os.path.isdir(out_dir):
+        return True
+    elif os.path.isfile(out_dir):
+        sys.exit(
+            "ERROR: Output directory name is a file: %s\n" % out_dir)
+    else:
+        sys.exit("ERROR: Output directory does not exist")
 
 
 def expand_database_argument(text):
@@ -71,6 +83,7 @@ def dump(args=None):
 def prepare_reads(args=None):
     """Subcommand to prepare FASTA paired reads."""
     from .prepare import main
+    check_output_directory(args.output)
     return main(fastq=args.fastq,
                 out_dir=args.output,
                 debug=args.verbose,
@@ -80,6 +93,7 @@ def prepare_reads(args=None):
 def classify_reads(args=None):
     """Subcommand to classify reads using an ITS1 database."""
     from .classify import main
+    check_output_directory(args.output)
     return main(fasta=args.fasta,
                 db_url=expand_database_argument(args.database),
                 method=args.method,
