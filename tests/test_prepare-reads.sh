@@ -13,6 +13,6 @@ thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
 # Try a real example
 rm -rf $TMP/DNAMIX_S95_L001.prepared.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.prepared.fasta` -ne "4710" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.prepared.fasta` -ne "921" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "$0 passed"
