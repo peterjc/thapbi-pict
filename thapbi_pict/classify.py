@@ -9,6 +9,7 @@ import sys
 import tempfile
 
 from collections import Counter
+from string import ascii_lowercase
 
 from sqlalchemy.orm import aliased, contains_eager
 
@@ -69,6 +70,10 @@ def taxonomy_consensus(taxon_entries):
     c_list = list(set(_.clade for _ in taxon_entries))
     if "" in c_list:
         c_list.remove("")
+    if len(c_list) > 1:
+        # Try dropping the letter suffix, 2,2a -> 2, or 6a,6b -> 6
+        c_list = list(set(_.rstrip(ascii_lowercase) for _ in c_list))
+        assert "" not in c_list
     clade = c_list[0] if len(c_list) == 1 else ""
     if not clade:
         note += " (clades: %s)" % ",".join(sorted(c_list))
