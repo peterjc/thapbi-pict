@@ -10,10 +10,33 @@ import tempfile
 
 from collections import Counter
 
+from sqlalchemy.orm import aliased, contains_eager
+
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
 from .hmm import filter_for_ITS1
 from .utils import cmd_as_string, run
+
+
+def md5_to_taxon(md5_list, session):
+    """Return all the taxon entries linked to given ITS1 sequences.
+
+    Each ITS1 sequence (matched by MD5 checksum) should be used
+    in one more more source table entries, each of which will have
+    a current taxonomy entry.
+    """
+    # This is deliberately following the query style used in dump
+    # (since at some point we'll want to define database subsets
+    # consistently). Still, might be able to refactor this query...
+    cur_tax = aliased(Taxonomy)
+    its1_seq = aliased(ITS1)
+    view = session.query(SequenceSource).join(
+        its1_seq, SequenceSource.its1).join(
+        cur_tax, SequenceSource.current_taxonomy).options(
+        contains_eager(SequenceSource.its1, alias=its1_seq)).filter(
+        its1_seq.md5.in_(md5_list)).options(
+        contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+    return list(set(_.current_taxonomy for _ in view))  # depulicate
 
 
 def taxonomy_consensus(taxon_entries):
@@ -183,20 +206,20 @@ def method_swarm(fasta_file, session, read_report,
         for line in handle:
             cluster_count += 1
             idns = line.strip().split()
+            # This split is safe if the reads came though our prepare-reads
             read_idns = [_ for _ in idns if "_db_" not in _]
-            db_idns = [_ for _ in idns if "_db_" in _]
+            db_md5s = [_.split("_db_", 1)[0] for _ in idns if "_db_" in _]
             del idns
             read_count = len(read_idns)
             count += read_count
             if not read_idns:
                 # DB only cluster, ignore
                 continue
-            if db_idns:
-                # TODO: Look in DB for taxonomy, what is their consensus?
-                genus = "Phytophthora"
-                species = clade = ""
-                note = ("Cluster of %i reads and %i DB entries"
-                        % (len(read_idns), len(db_idns)))
+            if db_md5s:
+                genus, species, clade, note = taxonomy_consensus(
+                    md5_to_taxon(db_md5s, session))
+                note = ("Cluster of %i reads and %i DB entries. %s"
+                        % (len(read_idns), len(db_md5s), note))
             else:
                 # Cannot classify, report
                 genus = species = clade = ""
