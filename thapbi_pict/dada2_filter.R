@@ -17,6 +17,8 @@ option_list <- list(
               help="Directory of input paired FASTQ files.", metavar="path"),
   make_option(c("-o", "--output"), type="character", default=NULL,
               help="Directory for output FASTQ files.", metavar="path"),
+  make_option(c("-t", "--threads"), type="integer", default=1,
+              help="Number of threads to use (default: 1).", metavar="integer"),
   make_option(c("--verbose"), action="store_true", type="logical", default=FALSE,
               help="Write out status messages (default: FALSE).", metavar="boolean"),
   make_option(c("--version"), action="store_true", type="logical", default=FALSE,
@@ -64,6 +66,13 @@ if (is.null(opt$output)) {
   stop("Required argument -o or --output missing.")
 }
 
+# If threads is zero or negative, set to false
+if (opt$threads > 1) {
+  multithread_opt <- opt$threads
+} else {
+  multithread_opt <- FALSE
+}
+
 # File parsing
 path <- opt$input
 filtpath <- opt$output
@@ -87,6 +96,6 @@ cat("Rev: ", fastqRs, "\n")
 filterAndTrim(fwd=file.path(path, fastqFs), filt=file.path(filtpath, fastqFs),
               rev=file.path(path, fastqRs), filt.rev=file.path(filtpath, fastqRs),
               truncLen=c(240,200), maxEE=2, truncQ=11, maxN=0, rm.phix=TRUE,
-              compress=TRUE, verbose=TRUE, multithread=TRUE)
+              compress=TRUE, verbose=TRUE, multithread=multithread_opt)
 
 cat("Done, processed ", length(fastqFs), " paired FASTQ files\n")
