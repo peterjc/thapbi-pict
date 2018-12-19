@@ -45,3 +45,20 @@ def run(cmd, debug=False):
             sys.stderr.write(e.stderr)
         sys.exit("This command failed with return code %i:\n%s\n"
                  % (e.returncode, cmd_as_string(cmd)))
+
+
+def abundance_from_read_name(text, debug=False):
+    """Extract abundance from SWARM style read name.
+
+    >>> abundance_from_read_name(">9e8f051c64c2b9cc3b6fcb27559418ca_988")
+    988
+
+    If fails, will return one.
+    """
+    try:
+        return int(text.rsplit("_", 1)[1])
+    except (ValueError, IndexError):
+        if debug:
+            sys.stderr.write(
+                "WARNING: No abundance suffix in %r\n" % text)
+        return 1

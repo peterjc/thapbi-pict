@@ -17,6 +17,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
+from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 
 
@@ -109,8 +110,9 @@ def method_identity(fasta_file, session, read_report,
     tax_counts = Counter()
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
-            count += 1
             idn = title.split(None, 1)[0]
+            abundance = abundance_from_read_name(idn)
+            count += abundance
             genus = species = clade = note = ""
             assert seq == seq.upper()
             # Now, does this match any of the ITS1 seq in our DB?
@@ -125,7 +127,7 @@ def method_identity(fasta_file, session, read_report,
                 genus, species, clade, note = taxonomy_consensus(
                     list(set(_.current_taxonomy for _ in session.query(
                          SequenceSource).filter_by(its1=its1))))
-            tax_counts[(genus, species, clade)] += 1
+            tax_counts[(genus, species, clade)] += abundance
             read_report.write(
                 "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
     assert count == sum(tax_counts.values())
@@ -214,8 +216,8 @@ def method_swarm(fasta_file, session, read_report,
             read_idns = [_ for _ in idns if "_db_" not in _]
             db_md5s = [_.split("_db_", 1)[0] for _ in idns if "_db_" in _]
             del idns
-            read_count = len(read_idns)
-            count += read_count
+            abundance = sum(abundance_from_read_name(_) for _ in read_idns)
+            count += abundance
             if not read_idns:
                 # DB only cluster, ignore
                 continue
@@ -232,7 +234,7 @@ def method_swarm(fasta_file, session, read_report,
                 read_report.write(
                     "%s\t%s\t%s\t%s\t%s\n"
                     % (idn, genus, species, clade, note))
-            tax_counts[(genus, species, clade)] += read_count
+            tax_counts[(genus, species, clade)] += abundance
     sys.stderr.write("Swarm generated %i clusters\n" % cluster_count)
     assert count == sum(tax_counts.values())
     return tax_counts
