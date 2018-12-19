@@ -13,6 +13,7 @@ import tempfile
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_ITS1
+from .utils import abundance_from_read_name
 from .utils import run
 
 
@@ -176,7 +177,7 @@ def make_nr_its1(input_fasta, output_fasta):
             sys.stderr.write(
                 "WARNING: %i possible ITS1 matches in %s\n"
                 % (len(its1_seqs), title.split(None, 1)[0]))
-        abundance = int(title.split(None, 1)[0].rsplit("_", 1)[1])
+        abundance = abundance_from_read_name(title.split(None, 1)[0])
         for seq in its1_seqs:
             seq = seq.upper()
             try:
