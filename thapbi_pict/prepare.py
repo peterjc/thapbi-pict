@@ -10,9 +10,9 @@ import shutil
 import sys
 import tempfile
 
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from Bio.SeqIO import convert
 
+from .hmm import filter_for_ITS1
 from .utils import run
 
 
@@ -120,18 +120,26 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix,
     return run(cmd, debug=debug)
 
 
-def make_nr(input_fasta, output_fasta):
-    """Make FASTA file non-redundant and name reads as MD5_abundance.
+def make_nr_its1(input_fasta, output_fasta):
+    """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
+
+    Applies HMM with hmmscan to identify any ITS1 region in
+    the input reads, then makes these into a non-redundant
+    output FASTA file names using a checksum.
 
     This naming convention is suitable for SWARM.
 
-    Returns the number of unique sequences (integer).
+    Returns the number of unique ITS1 sequences (integer).
     """
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    with open(input_fasta) as in_handle:
-        for title, seq in SimpleFastaParser(in_handle):
+    for title, _, its1_seqs in filter_for_ITS1(input_fasta):
+        if len(its1_seqs) > 1:
+            sys.stderr.write(
+                "WARNING: %i possible ITS1 matches in %s\n"
+                % (len(its1_seqs), title.split(None, 1)[0]))
+        for seq in its1_seqs:
             seq = seq.upper()
             try:
                 counts[seq] += 1
@@ -183,36 +191,26 @@ def main(fastq, out_dir, debug=False, cpu=0):
 
             # pear
             pear_prefix = os.path.join(tmp, "pear")
-            merged = os.path.join(tmp, "pear.assembled.fastq")
+            merged_fastq = os.path.join(tmp, "pear.assembled.fastq")
             run_pear(
                 trim_R1, trim_R2, pear_prefix,
                 debug=debug, cpu=cpu)
-            if not os.path.isfile(merged):
-                sys.exit("ERROR: Expected file %r from pear\n" % merged)
+            if not os.path.isfile(merged_fastq):
+                sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
-            # Apply left/right trim and convert to FASTA
-            chopped = os.path.join(tmp, "chop.fasta")
-            # TODO: Set these via command line
-            left = 53
-            right = 20
-            with open(merged) as handle:
-                with open(chopped, "w") as out_handle:
-                    for title, seq, qual in FastqGeneralIterator(handle):
-                        if right:
-                            out_handle.write(
-                                ">%s\n%s\n" % (title, seq[left:-right]))
-                        else:
-                            # zero right trimming
-                            out_handle.write(
-                                ">%s\n%s\n" % (title, seq[left:]))
-
-            # Make NR and name as MD5_abundance
-            # Not 100% sure that the chopping approach is not going to change,
-            # otherwise would be efficient to combine these two steps.
-            dedup = os.path.join(tmp, "dedup.fasta")
-            uniq_count = make_nr(chopped, dedup)
+            merged_fasta = os.path.join(tmp, "pear.assembled.fasta")
+            count = convert(merged_fastq, "fastq", merged_fasta, "fasta")
             if debug:
-                sys.stderr.write("%i unique sequences\n" % uniq_count)
+                sys.stderr.write(
+                    "Merged paired FASTQ reads into %i sequences\n"
+                    % count)
+
+            # Find the ITS1 region (if present) using hmmscan,
+            # make NR, and name as MD5_abundance
+            dedup = os.path.join(tmp, "dedup.fasta")
+            uniq_count = make_nr_its1(merged_fasta, dedup)
+            if debug:
+                sys.stderr.write("%i unique ITS1 sequences\n" % uniq_count)
 
             # File done
             shutil.move(dedup, fasta_name)
