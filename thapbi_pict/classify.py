@@ -13,9 +13,10 @@ from string import ascii_lowercase
 
 from sqlalchemy.orm import aliased, contains_eager
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
-from .hmm import filter_for_ITS1
 from .utils import cmd_as_string, run
 
 
@@ -93,30 +94,28 @@ def method_identity(fasta_file, session, read_report,
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
-    purposes. It uses HMMER3 to find any ITS1 match, and then
-    looks for a perfect identical entry in the database.
+    purposes. It assumes the input sequences have allready been
+    trimmed using HMMER3 to find any ITS1 match, and just looks
+    for a perfect identical entry in the database.
     """
-    # The FASTA file should have long sequences which might
-    # contain a known ITS1 sequence as a substring. If the
-    # search were inverted, the SQL LIKE command could likely
-    # be used (e.g. via SQLalchemey's contains operator).
+    # Assume prepare-reads already ran hmmscan with the same
+    # ITS1 HMM used when loading sequences into the DB.
     #
-    # Plan B is brute force - we can run hmmscan to find any
-    # ITS1 matchs, and then look for 100% equality in the DB.
+    # If the search were inverted, the SQL LIKE command could
+    # likely be used (e.g. via SQLalchemey's contains operator).
+    #
+    # However, we just look for 100% equality in the DB.
     count = 0
     tax_counts = Counter()
-    for title, seq, its1_seqs in filter_for_ITS1(fasta_file):
-        count += 1
-        idn = title.split(None, 1)[0]
-        genus = species = clade = note = ""
-        if not its1_seqs:
-            note = "No ITS1 HMM matches"
-        else:
-            for its1_seq in its1_seqs:
-                assert its1_seq == its1_seq.upper()
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            count += 1
+            idn = title.split(None, 1)[0]
+            genus = species = clade = note = ""
+            assert seq == seq.upper()
             # Now, does this match any of the ITS1 seq in our DB?
             its1 = session.query(ITS1).filter(
-                ITS1.sequence.in_(its1_seqs)).one_or_none()
+                    ITS1.sequence == seq).one_or_none()
             if its1 is None:
                 note = "No ITS1 database match"
             else:
@@ -125,10 +124,10 @@ def method_identity(fasta_file, session, read_report,
                 # TODO: Refactor the query to get the DB to apply disinct?
                 genus, species, clade, note = taxonomy_consensus(
                     list(set(_.current_taxonomy for _ in session.query(
-                        SequenceSource).filter_by(its1=its1))))
-        tax_counts[(genus, species, clade)] += 1
-        read_report.write(
-            "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
+                         SequenceSource).filter_by(its1=its1))))
+            tax_counts[(genus, species, clade)] += 1
+            read_report.write(
+                "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note))
     assert count == sum(tax_counts.values())
     return tax_counts
 
