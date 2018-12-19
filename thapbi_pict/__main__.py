@@ -236,7 +236,10 @@ comma.
         epilog="Each pair of input files should follow Illumina naming "
                "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz] and will "
                "result an output file XXX.fasta in the specified ouput"
-               "directory (default input dir).")
+               "directory (default input dir).\n\n"
+               "The output FASTA files are non-redundant, records named by "
+               "checksum and their abundance, and sorted by decreasing "
+               "abundance then alphabetically by sequence.")
     parser_prepare_reads.add_argument(
         'fastq', type=str, nargs='+',
         help='One or more ITS1 FASTQ filenames or folder names'
