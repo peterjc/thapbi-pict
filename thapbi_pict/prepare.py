@@ -126,11 +126,15 @@ def save_nr_fasta(counts, output_fasta):
     The output FASTA records are named ">MD5_abundance\n", which is the
     default style used in SWARM. This could in future be generalised,
     for example ">MD5;size=abundance;\n" for the VSEARCH default.
+
+    Results are sorted by decreasing abundance then alphabetically by
+    sequence.
     """
+    values = sorted((-count, seq) for seq, count in counts.items())
     with open(output_fasta, "w") as out_handle:
-        for seq, count in counts.items():
+        for count, seq in values:
             md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
-            out_handle.write(">%s_%i\n%s\n" % (md5, count, seq))
+            out_handle.write(">%s_%i\n%s\n" % (md5, -count, seq))
     return len(counts)  # number of unique seqs
 
 
