@@ -10,7 +10,7 @@ import shutil
 import sys
 import tempfile
 
-from Bio.SeqIO import convert
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_ITS1
 from .utils import run
@@ -120,12 +120,45 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix,
     return run(cmd, debug=debug)
 
 
+def save_nr_fasta(counts, output_fasta):
+    r"""Save a dictionary of sequences and counts as a FASTA file.
+
+    The output FASTA records are named ">MD5_abundance\n", which is the
+    default style used in SWARM. This could in future be generalised,
+    for example ">MD5;size=abundance;\n" for the VSEARCH default.
+    """
+    with open(output_fasta, "w") as out_handle:
+        for seq, count in counts.items():
+            md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
+            out_handle.write(">%s_%i\n%s\n" % (md5, count, seq))
+    return len(counts)  # number of unique seqs
+
+
+def make_nr_fastq_to_fasta(input_fastq, output_fasta):
+    """Make non-redundant FASTA file from FASTQ inputs, named MD5_abundance.
+
+    The FASTQ read names are ignored and treated as abundance one!
+    """
+    counts = dict()  # OrderedDict on older Python?
+    with open(input_fastq) as handle:
+        for _, seq, _ in FastqGeneralIterator(handle):
+            seq = seq.upper()
+            try:
+                counts[seq] += 1
+            except KeyError:
+                counts[seq] = 1
+    return save_nr_fasta(counts, output_fasta)
+
+
 def make_nr_its1(input_fasta, output_fasta):
     """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
 
     Applies HMM with hmmscan to identify any ITS1 region in
     the input reads, then makes these into a non-redundant
     output FASTA file names using a checksum.
+
+    Assumes the input reads also follow this naming, and takes
+    the infered abundance into account.
 
     This naming convention is suitable for SWARM.
 
@@ -139,17 +172,14 @@ def make_nr_its1(input_fasta, output_fasta):
             sys.stderr.write(
                 "WARNING: %i possible ITS1 matches in %s\n"
                 % (len(its1_seqs), title.split(None, 1)[0]))
+        abundance = int(title.split(None, 1)[0].rsplit("_", 1)[1])
         for seq in its1_seqs:
             seq = seq.upper()
             try:
-                counts[seq] += 1
+                counts[seq] += abundance
             except KeyError:
-                counts[seq] = 1
-    with open(output_fasta, "w") as out_handle:
-        for seq, count in counts.items():
-            md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
-            out_handle.write(">%s_%i\n%s\n" % (md5, count, seq))
-    return len(counts)  # number of unique seqs
+                counts[seq] = abundance
+    return save_nr_fasta(counts, output_fasta)
 
 
 def main(fastq, out_dir, debug=False, cpu=0):
@@ -198,19 +228,20 @@ def main(fastq, out_dir, debug=False, cpu=0):
             if not os.path.isfile(merged_fastq):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
-            merged_fasta = os.path.join(tmp, "pear.assembled.fasta")
-            count = convert(merged_fastq, "fastq", merged_fasta, "fasta")
+            merged_fasta = os.path.join(tmp, "dedup_long.fasta")
+            count = make_nr_fastq_to_fasta(merged_fastq, merged_fasta)
             if debug:
                 sys.stderr.write(
-                    "Merged paired FASTQ reads into %i sequences\n"
+                    "Merged paired FASTQ reads into %i unique sequences\n"
                     % count)
 
             # Find the ITS1 region (if present) using hmmscan,
             # make NR, and name as MD5_abundance
-            dedup = os.path.join(tmp, "dedup.fasta")
+            dedup = os.path.join(tmp, "dedup_its1.fasta")
             uniq_count = make_nr_its1(merged_fasta, dedup)
             if debug:
-                sys.stderr.write("%i unique ITS1 sequences\n" % uniq_count)
+                sys.stderr.write(
+                    "Cropped down to %i unique ITS1 sequences\n" % uniq_count)
 
             # File done
             shutil.move(dedup, fasta_name)
