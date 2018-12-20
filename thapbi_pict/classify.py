@@ -253,10 +253,11 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
-            for f in os.listdir(x):
-                if f.endswith(ext):
-                    # Check not a directory?
-                    answer.append(os.path.join(x, f))
+            for root, dirs, files in os.walk(x):
+                for f in files:
+                    if f.endswith(ext):
+                        # Check not a directory?
+                        answer.append(os.path.join(x, root, f))
         elif os.path.isfile(x):
             answer.append(x)
         else:
