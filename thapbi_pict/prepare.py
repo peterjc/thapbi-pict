@@ -33,7 +33,7 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
             for root, dirs, files in os.walk(x):
                 for f in files:
                     if f.endswith(ext):
-                        answer.append(os.path.join(x, root, f))
+                        answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
             answer.append(x)
         else:

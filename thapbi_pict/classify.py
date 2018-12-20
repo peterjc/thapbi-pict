@@ -257,7 +257,7 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
                 for f in files:
                     if f.endswith(ext):
                         # Check not a directory?
-                        answer.append(os.path.join(x, root, f))
+                        answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
             answer.append(x)
         else:
