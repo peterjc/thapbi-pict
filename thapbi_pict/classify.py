@@ -91,7 +91,8 @@ def taxonomy_consensus(taxon_entries):
 
 
 def method_identity(fasta_file, session, read_report,
-                    tmp_dir, debug=False, cpu=0):
+                    tmp_dir, shared_tmp_dir,
+                    debug=False, cpu=0):
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
@@ -186,8 +187,20 @@ def run_swarm(input_fasta, output_clusters,
     return run(cmd, debug=debug)
 
 
+def setup_swarm(session, shared_tmp_dir):
+    """Prepare files we'll reuse when running SWARM.
+
+    This dumps the database entries to a FASTA file which will
+    be used via ``method_swarm`` when processing each input
+    FASTA file of reads.
+    """
+    # TODO: Call make_swarm_db_fasta here
+    pass
+
+
 def method_swarm(fasta_file, session, read_report,
-                 tmp_dir, debug=False, cpu=0):
+                 tmp_dir, shared_tmp_dir,
+                 debug=False, cpu=0):
     """Classify using SWARM.
 
     Dumps the database to a swarm-ready FASTA file, and gives
@@ -240,9 +253,14 @@ def method_swarm(fasta_file, session, read_report,
     return tax_counts
 
 
-methods = {
+method_classifier = {
     "identity": method_identity,
     "swarm": method_swarm,
+}
+
+method_setup = {
+    # "identify": setup_identify,
+    "swarm": setup_swarm,
 }
 
 
@@ -270,11 +288,15 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify-reads command."""
     assert isinstance(fasta, list)
 
-    if method not in methods:
+    if method not in method_classifier:
         sys.exit(
             "ERROR: Invalid method name %r, should be one of: %s\n"
-            % (method, ", ".join(sorted(methods))))
-    method_fn = methods[method]
+            % (method, ", ".join(sorted(method_classifier))))
+    method_fn = method_classifier[method]
+    try:
+        setup_fn = method_setup[method]
+    except KeyError:
+        setup_fn = None
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -302,62 +324,71 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
         sys.stderr.write(
             "Classifying %i input FASTA files\n" % len(fasta_files))
 
-    read_count = 0
-    match_count = 0
-    for filename in fasta_files:
-        sys.stderr.write(
-            "Running %s classifer on %s\n" % (method, filename))
-
-        folder, stem = os.path.split(filename)
-        stem = os.path.splitext(stem)[0]
-        if out_dir and out_dir != "-":
-            folder = out_dir
-        read_name = os.path.join(
-            folder, "%s.%s-reads.tsv" % (stem, method))
-        tax_name = os.path.join(
-            folder, "%s.%s-tax.tsv" % (stem, method))
-
-        if os.path.isfile(read_name) and os.path.isfile(tax_name):
-            sys.stderr.write(
-                "WARNING: Skipping %s and %s as already exist\n"
-                % (read_name, tax_name))
-            # TODO: Count the number of reads and matches?
-            continue
-
+    # Context manager should remove the temp dir:
+    with tempfile.TemporaryDirectory() as shared_tmp:
         if debug:
             sys.stderr.write(
-                "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
+                "DEBUG: Shared temp folder %s\n" % shared_tmp)
+        if setup_fn:
+            setup_fn(session, shared_tmp)
 
-        # Context manager should remove the temp dir:
-        with tempfile.TemporaryDirectory() as tmp:
+        read_count = 0
+        match_count = 0
+        for filename in fasta_files:
+            sys.stderr.write(
+                "Running %s classifer on %s\n" % (method, filename))
+
+            folder, stem = os.path.split(filename)
+            stem = os.path.splitext(stem)[0]
+            if out_dir and out_dir != "-":
+                folder = out_dir
+            read_name = os.path.join(
+                folder, "%s.%s-reads.tsv" % (stem, method))
+            tax_name = os.path.join(
+                folder, "%s.%s-tax.tsv" % (stem, method))
+
+            if os.path.isfile(read_name) and os.path.isfile(tax_name):
+                sys.stderr.write(
+                    "WARNING: Skipping %s and %s as already exist\n"
+                    % (read_name, tax_name))
+                # TODO: Count the number of reads and matches?
+                continue
+
             if debug:
                 sys.stderr.write(
-                    "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
-            # Using same file names, but in tmp folder:
-            tmp_reads = os.path.join(
-                tmp, "%s.%s-reads.tsv" % (stem, method))
-            tmp_tax = os.path.join(
-                tmp, "%s.%s-tax.tsv" % (stem, method))
-            # Run the classifier and write the read report:
-            with open(tmp_reads, "w") as reads_handle:
-                tax_counts = method_fn(
-                    filename, session,
-                    reads_handle,
-                    tmp, debug, cpu)
-            # Record the taxonomy counts
-            count = sum(tax_counts.values())
-            read_count += count
-            match_count += count - tax_counts.get(("", "", ""), 0)
-            with open(tmp_tax, "w") as tax_handle:
-                for (genus, species, clade), tax_count in sorted(
-                        tax_counts.items()):
-                    tax_handle.write(
-                        "%s\t%s\t%s\t%i\n"
-                        % (genus, species, clade, tax_count))
+                    "DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
 
-            # Move our temp files into position...
-            shutil.move(tmp_reads, read_name)
-            shutil.move(tmp_tax, tax_name)
+            # Context manager should remove the temp dir:
+            with tempfile.TemporaryDirectory() as tmp:
+                if debug:
+                    sys.stderr.write(
+                        "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+                # Using same file names, but in tmp folder:
+                tmp_reads = os.path.join(
+                    tmp, "%s.%s-reads.tsv" % (stem, method))
+                tmp_tax = os.path.join(
+                    tmp, "%s.%s-tax.tsv" % (stem, method))
+                # Run the classifier and write the read report:
+                with open(tmp_reads, "w") as reads_handle:
+                    tax_counts = method_fn(
+                        filename, session,
+                        reads_handle,
+                        tmp, shared_tmp,
+                        debug, cpu)
+                # Record the taxonomy counts
+                count = sum(tax_counts.values())
+                read_count += count
+                match_count += count - tax_counts.get(("", "", ""), 0)
+                with open(tmp_tax, "w") as tax_handle:
+                    for (genus, species, clade), tax_count in sorted(
+                            tax_counts.items()):
+                        tax_handle.write(
+                            "%s\t%s\t%s\t%i\n"
+                            % (genus, species, clade, tax_count))
+
+                # Move our temp files into position...
+                shutil.move(tmp_reads, read_name)
+                shutil.move(tmp_tax, tax_name)
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"
