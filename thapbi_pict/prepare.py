@@ -178,6 +178,8 @@ def make_nr_its1(input_fasta, output_fasta):
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
     for title, _, its1_seqs in filter_for_ITS1(input_fasta):
+        if not its1_seqs:
+            continue
         if len(its1_seqs) > 1:
             sys.stderr.write(
                 "WARNING: %i possible ITS1 matches in %s\n"
