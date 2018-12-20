@@ -190,12 +190,12 @@ def run_swarm(input_fasta, output_clusters,
 def setup_swarm(session, shared_tmp_dir):
     """Prepare files we'll reuse when running SWARM.
 
-    This dumps the database entries to a FASTA file which will
-    be used via ``method_swarm`` when processing each input
-    FASTA file of reads.
+    Dumps the database to a swarm-ready FASTA file, which will
+    later be used as input to swarm together with the prepared
+    read sequnces.
     """
-    # TODO: Call make_swarm_db_fasta here
-    pass
+    db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
+    make_swarm_db_fasta(db_fasta, session)
 
 
 def method_swarm(fasta_file, session, read_report,
@@ -203,14 +203,18 @@ def method_swarm(fasta_file, session, read_report,
                  debug=False, cpu=0):
     """Classify using SWARM.
 
-    Dumps the database to a swarm-ready FASTA file, and gives
-    this and the prepared non-redundant input FASTA to swarm.
+    Uses the previously generated dump of the database to a
+    swarm-ready FASTA file, and the prepared non-redundant input
+    FASTA to input to swarm.
+
     Uses the database sequences to assign species to clusters,
     and thus reads within a cluster to that species.
     """
-    db_fasta = os.path.join(tmp_dir, "swarm_db.fasta")
+    db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
+    if not os.path.isfile(db_fasta):
+        sys.exit("ERROR: Missing generaed file %s\n"
+                 % db_fasta)
     swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
-    make_swarm_db_fasta(db_fasta, session)
     run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1,
               debug=debug, cpu=cpu)
 
