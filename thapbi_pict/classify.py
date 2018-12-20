@@ -343,7 +343,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 tax_counts = method_fn(
                     filename, session,
                     reads_handle,
-                    tmp, debug)
+                    tmp, debug, cpu)
             # Record the taxonomy counts
             count = sum(tax_counts.values())
             read_count += count
