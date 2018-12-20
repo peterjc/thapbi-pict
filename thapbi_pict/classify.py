@@ -347,7 +347,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             # Record the taxonomy counts
             count = sum(tax_counts.values())
             read_count += count
-            match_count += count - tax_counts.get(("", "", ""))
+            match_count += count - tax_counts.get(("", "", ""), 0)
             with open(tmp_tax, "w") as tax_handle:
                 for (genus, species, clade), tax_count in sorted(
                         tax_counts.items()):
