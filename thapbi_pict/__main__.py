@@ -233,10 +233,12 @@ comma.
     parser_prepare_reads = subparsers.add_parser(
         "prepare-reads",
         description="Trim and merge paired FASTQ files of ITS1 amplicons.",
-        epilog="Each pair of input files should follow Illumina naming "
-               "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz] and will "
+        epilog="Each pair of input files should follow the naming style"
+               "XXX_1.fastq[.gz] and XXX_2.fastq[.gz], or "
+               "XXX_R1.fastq[.gz] and XXX_R2.fastq[.gz], or "
+               "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz], and will "
                "result an output file XXX.fasta in the specified ouput"
-               "directory (default input dir).\n\n"
+               "directory (which defaults to the FASTQ directory).\n\n"
                "The output FASTA files are non-redundant, records named by "
                "checksum and their abundance, and sorted by decreasing "
                "abundance then alphabetically by sequence.")

@@ -55,15 +55,20 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
                 sys.stderr.write(
                     "WARNING: Ignoring %r and %r\n" % (left, right))
             continue
-        if not (left.endswith(tuple("_R1_001" + _ for _ in ext)) and
-                right.endswith(tuple("_R2_001" + _ for _ in ext))):
+        stem = None
+        for suffix_left, suffix_right in zip(("_R1_001", "_R1", "_1"),
+                                             ("_R2_001", "_R2", "_2")):
+            if left.endswith(
+                    tuple(suffix_left + _ for _ in ext)) and right.endswith(
+                    tuple(suffix_right + _ for _ in ext)):
+                stem = left.rsplit(suffix_left, 1)[0]
+                if stem != right.rsplit(suffix_right, 1)[0]:
+                    sys.exit(
+                        "ERROR: Did not recognise %r and %r as a pair\n"
+                        % (left, right))
+        if not stem:
             sys.exit(
                 "ERROR: Did not recognise pair naming for %r and %r\n"
-                % (left, right))
-        stem = left.split("_R1_001")[0]
-        if stem != right.split("_R2_001")[0]:
-            sys.exit(
-                "ERROR: Did not recognise %r and %r as a pair\n"
                 % (left, right))
         pairs.append((stem, left, right))
 
