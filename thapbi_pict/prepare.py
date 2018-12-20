@@ -136,6 +136,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     Results are sorted by decreasing abundance then alphabetically by
     sequence.
     """
+    accepted = 0
     values = sorted((-count, seq) for seq, count in counts.items())
     with open(output_fasta, "w") as out_handle:
         for count, seq in values:
@@ -144,13 +145,17 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
                 break
             md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
             out_handle.write(">%s_%i\n%s\n" % (md5, -count, seq))
-    return len(counts)  # number of unique seqs
+            accepted += 1
+    return len(counts), accepted  # number of unique seqs, accepted
 
 
 def make_nr_fastq_to_fasta(input_fastq, output_fasta, min_abundance=0):
     """Make non-redundant FASTA file from FASTQ inputs, named MD5_abundance.
 
     The FASTQ read names are ignored and treated as abundance one!
+
+    Returns the number of unique sequences (integer), and the number
+    of those which passed the minimum abundance threshold.
     """
     counts = dict()  # OrderedDict on older Python?
     with open(input_fastq) as handle:
@@ -175,7 +180,9 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0):
 
     This naming convention is suitable for SWARM.
 
-    Returns the number of unique ITS1 sequences (integer).
+    Returns the number of unique ITS1 sequences (integer),
+    and the number of those which passed the minimum abundance
+    threshold.
     """
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
@@ -245,7 +252,10 @@ def main(fastq, out_dir, min_abundance=100,
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_long.fasta")
-            count = make_nr_fastq_to_fasta(merged_fastq, merged_fasta)
+            # Do not apply min_abundance threshold here as after ITS1
+            # trimming pooling entries would increase their counts.
+            count, _ = make_nr_fastq_to_fasta(
+                merged_fastq, merged_fasta, min_abundance=0)
             if debug:
                 sys.stderr.write(
                     "Merged paired FASTQ reads into %i unique sequences\n"
@@ -255,13 +265,17 @@ def main(fastq, out_dir, min_abundance=100,
             # make NR, and name as MD5_abundance
             # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
-            uniq_count = make_nr_its1(merged_fasta, dedup, min_abundance)
+            uniq_count, acc_uniq_count = make_nr_its1(
+                merged_fasta, dedup, min_abundance)
             if debug:
                 sys.stderr.write(
-                    "Cropped down to %i unique ITS1 sequences\n" % uniq_count)
+                    "Cropped down to %i unique ITS1 sequences, "
+                    "%i of which passed abundane threshold\n"
+                    % (uniq_count, acc_uniq_count))
 
             # File done
             shutil.move(dedup, fasta_name)
             sys.stderr.write(
-                "Prepared %s with %i unique reads\n" % (stem, uniq_count))
+                "Wrote %s with %i unique reads over abundance threshold %i\n"
+                % (stem, acc_uniq_count, min_abundance))
     return 0
