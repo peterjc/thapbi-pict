@@ -126,7 +126,7 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix,
     return run(cmd, debug=debug)
 
 
-def save_nr_fasta(counts, output_fasta):
+def save_nr_fasta(counts, output_fasta, min_abundance=0):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
     The output FASTA records are named ">MD5_abundance\n", which is the
@@ -139,12 +139,15 @@ def save_nr_fasta(counts, output_fasta):
     values = sorted((-count, seq) for seq, count in counts.items())
     with open(output_fasta, "w") as out_handle:
         for count, seq in values:
+            if -count < min_abundance:
+                # Sorted, so everything hereafter is too rare
+                break
             md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
             out_handle.write(">%s_%i\n%s\n" % (md5, -count, seq))
     return len(counts)  # number of unique seqs
 
 
-def make_nr_fastq_to_fasta(input_fastq, output_fasta):
+def make_nr_fastq_to_fasta(input_fastq, output_fasta, min_abundance=0):
     """Make non-redundant FASTA file from FASTQ inputs, named MD5_abundance.
 
     The FASTQ read names are ignored and treated as abundance one!
@@ -157,10 +160,10 @@ def make_nr_fastq_to_fasta(input_fastq, output_fasta):
                 counts[seq] += 1
             except KeyError:
                 counts[seq] = 1
-    return save_nr_fasta(counts, output_fasta)
+    return save_nr_fasta(counts, output_fasta, min_abundance)
 
 
-def make_nr_its1(input_fasta, output_fasta):
+def make_nr_its1(input_fasta, output_fasta, min_abundance=0):
     """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
 
     Applies HMM with hmmscan to identify any ITS1 region in
@@ -191,10 +194,11 @@ def make_nr_its1(input_fasta, output_fasta):
                 counts[seq] += abundance
             except KeyError:
                 counts[seq] = abundance
-    return save_nr_fasta(counts, output_fasta)
+    return save_nr_fasta(counts, output_fasta, min_abundance)
 
 
-def main(fastq, out_dir, debug=False, cpu=0):
+def main(fastq, out_dir, min_abundance=100,
+         debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command."""
     assert isinstance(fastq, list)
 
@@ -249,8 +253,9 @@ def main(fastq, out_dir, debug=False, cpu=0):
 
             # Find the ITS1 region (if present) using hmmscan,
             # make NR, and name as MD5_abundance
+            # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
-            uniq_count = make_nr_its1(merged_fasta, dedup)
+            uniq_count = make_nr_its1(merged_fasta, dedup, min_abundance)
             if debug:
                 sys.stderr.write(
                     "Cropped down to %i unique ITS1 sequences\n" % uniq_count)

@@ -86,6 +86,7 @@ def prepare_reads(args=None):
     check_output_directory(args.output)
     return main(fastq=args.fastq,
                 out_dir=args.output,
+                min_abundance=args.abundance,
                 debug=args.verbose,
                 cpu=args.cpu)
 
@@ -250,6 +251,10 @@ comma.
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
         help="Directory to write output FASTA files to, "
              "default is next to each input file.")
+    parser_prepare_reads.add_argument(
+        "-a", "--abundance", type=int, default="100",
+        help="Meaninum abundance to apply to final candidate ITS1 "
+             "sequences in the output FASTA file (default 100).")
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
