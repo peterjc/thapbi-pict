@@ -205,7 +205,7 @@ def main(fastq, out_dir, debug=False, cpu=0):
             folder, "%s.prepared.fasta" % stem)
         if os.path.isfile(fasta_name):
             sys.stderr.write(
-                "WARNING: Skipping %s as already exist\n" % fasta_name)
+                "WARNING: Skipping %s as already exists\n" % fasta_name)
             continue
 
         # Context manager should remove the temp dir:
