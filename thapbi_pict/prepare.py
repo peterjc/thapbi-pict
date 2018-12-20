@@ -201,7 +201,7 @@ def main(fastq, out_dir, debug=False, cpu=0):
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
     if debug:
         sys.stderr.write(
-            "Preparing %i paired FASTQ files\n"
+            "Preparing %i FASTQ pairs\n"
             % len(fastq_file_pairs))
 
     for stem, raw_R1, raw_R2 in fastq_file_pairs:
