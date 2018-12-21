@@ -187,7 +187,8 @@ def run_swarm(input_fasta, output_clusters,
     return run(cmd, debug=debug)
 
 
-def setup_swarm(session, shared_tmp_dir):
+def setup_swarm(session, shared_tmp_dir,
+                debug=False, cpu=0):
     """Prepare files we'll reuse when running SWARM.
 
     Dumps the database to a swarm-ready FASTA file, which will
@@ -334,7 +335,8 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             sys.stderr.write(
                 "DEBUG: Shared temp folder %s\n" % shared_tmp)
         if setup_fn:
-            setup_fn(session, shared_tmp)
+            setup_fn(session, shared_tmp,
+                     debug, cpu)
 
         read_count = 0
         match_count = 0
