@@ -212,7 +212,7 @@ def method_swarm(fasta_file, session, read_report,
     """
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
-        sys.exit("ERROR: Missing generaed file %s\n"
+        sys.exit("ERROR: Missing generated file %s\n"
                  % db_fasta)
     swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
     run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1,
