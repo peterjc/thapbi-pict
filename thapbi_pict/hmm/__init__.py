@@ -107,7 +107,9 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
             # Merge them - does not seem useful to insist non-overlapping
             start = min(_.query_start for _ in hit)
             end = max(_.query_end for _ in hit)
-            sys.stderr.write(
-                "WARNING: Taking span %i-%i from %i HMM hits for:\n>%s\n%s\n"
-                % (start, end, len(hit), title, seq))
+            if len(hit) > 2:
+                sys.stderr.write(
+                    "WARNING: Taking span %i-%i from %i HMM hits for:\n"
+                    ">%s\n%s\n"
+                    % (start, end, len(hit), title, seq))
             yield title, seq, [seq[start:end]]
