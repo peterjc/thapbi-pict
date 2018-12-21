@@ -270,7 +270,7 @@ def main(fastq, out_dir, min_abundance=100,
             if debug:
                 sys.stderr.write(
                     "Cropped down to %i unique ITS1 sequences, "
-                    "%i of which passed abundane threshold\n"
+                    "%i of which passed abundance threshold\n"
                     % (uniq_count, acc_uniq_count))
 
             # File done
