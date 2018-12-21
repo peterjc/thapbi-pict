@@ -10,6 +10,7 @@ import os
 import sys
 
 from . import __version__
+from .classify import method_classifier
 
 
 def check_output_directory(out_dir):
@@ -279,7 +280,7 @@ comma.
         help="Which ITS1 database to use for species classification.")
     parser_classify_reads.add_argument(
         "-m", "--method", type=str, default="identity",
-        choices=["identity", "swarm"],
+        choices=list(method_classifier),
         help="Method to use, default uses simple identity.")
     parser_classify_reads.add_argument(
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
