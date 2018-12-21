@@ -13,6 +13,8 @@ from string import ascii_lowercase
 
 from sqlalchemy.orm import aliased, contains_eager
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
 from .hmm import filter_for_ITS1
@@ -187,8 +189,8 @@ def method_blast(
         blast_db,
         "-query",
         fasta_file,
-        "-max_target_seqs",
-        "1",  # TODO - look at ties etc
+        "-perc_identity",
+        "95",
         "-outfmt",
         "6",
         "-out",
@@ -199,20 +201,40 @@ def method_blast(
     if not os.path.isfile(blast_out):
         sys.exit("BLAST did not produce expected output file %s\n" % blast_out)
 
-    # TODO - Count the entries without a BLAST hit
-    tax_counts = Counter()
+    # We want to report on entries without a BLAST hit,
+    # and they will be missing in the BLAST output.
+    # Therefore must look at the FASTA input file too.
+
+    # Load the top-equal BLAST results into a dict,
+    blast_hits = dict()
+    score = None
     with open(blast_out) as handle:
         for line in handle:
             if debug:
                 sys.stderr.write(line)
             parts = line.rstrip("\n").split("\t")
             idn = parts[0]
+            if idn not in blast_hits:
+                blast_hits[idn] = [parts[1]]
+                score = float(parts[11])
+            elif score == float(parts[11]):
+                # Tied hit
+                blast_hits[idn].append(parts[1])
+
+    tax_counts = Counter()
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
-            db_md5s = [parts[1]]  # TODO - look at ties etc
-            genus, species, clade, note = taxonomy_consensus(
-                md5_to_taxon(db_md5s, session)
-            )
-            note = "BLAST hit bitscore %s" % parts[11]
+            if idn in blast_hits:
+                db_md5s = blast_hits[idn]
+                genus, species, clade, note = taxonomy_consensus(
+                    md5_to_taxon(db_md5s, session)
+                )
+                note = "%i BLAST hits, %s" % (len(db_md5s), note)
+            else:
+                genus = species = clade = ""
+                note = "No BLAST hit"
             read_report.write(
                 "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note)
             )
