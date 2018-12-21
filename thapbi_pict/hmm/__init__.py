@@ -62,6 +62,10 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
         sys.stderr.write("DEBUG: Executing command: %s\n" % " ".join(cmd))
     subprocess.check_call(cmd)
 
+    if debug:
+        sys.stderr.write(
+            "DEBUG: hmmscan finished, about to parse the output\n")
+
     for record, result in zip(SeqIO.parse(fasta_input_file, "fasta"),
                               SearchIO.parse(hmm_out, "hmmer3-text")):
         if record.id != result.id:
