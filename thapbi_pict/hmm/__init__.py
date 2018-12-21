@@ -100,27 +100,14 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
 
         if len(hit) == 0:
             yield title, seq, None
-            continue
         elif len(hit) == 1:
             hsp = hit[0]
             yield title, seq, [seq[hsp.query_start:hsp.query_end]]
-            continue
-        elif len(hit) == 2:
-            # Can we merge them? Want non-overlapping in consistent order
-            a, b = hit
-            if a.query_start < a.query_end < b.query_start < b.query_end:
-                # if a.hit_start < a.hit_end < b.hit_start < b.hit_end:
-                yield title, seq, [seq[a.query_start:b.query_end]]
-                continue
-            if b.query_start < b.query_end < a.query_start < a.query_end:
-                # if b.hit_start < b.hit_end < a.hit_start < a.hit_end:
-                yield title, seq, [seq[b.query_start:a.query_end]]
-                continue
-            sys.exit(
-                "ERROR: hmmscan gave two inconsistent hits from:\n>%s\n%s\n"
-                % (title, seq))
         else:
-            # Reduce to a warning if happens often...
-            sys.exit(
-                "ERROR: hmmscan gave %i hits from:\n>%s\n%s\n"
-                % (len(hit), title, seq))
+            # Merge them - does not seem useful to insist non-overlapping
+            start = min(_.query_start for _ in hit)
+            end = max(_.query_end for _ in hit)
+            sys.stderr.write(
+                "WARNING: Taking span %i-%i from %i HMM hits for:\n>%s\n%s\n"
+                % (start, end, len(hit), title, seq))
+            yield title, seq, [seq[start:end]]
