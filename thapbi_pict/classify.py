@@ -146,6 +146,80 @@ def method_identity(
     return tax_counts
 
 
+def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a BLAST DB from the ITS1 DB entries."""
+    view = session.query(ITS1)
+    db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
+    blast_db = os.path.join(shared_tmp_dir, "blast_db")
+    count = 0
+    with open(db_fasta, "w") as handle:
+        for its1 in view:
+            md5 = its1.md5
+            its1_seq = its1.sequence
+            handle.write(">%s\n%s\n" % (md5, its1_seq))
+            count += 1
+    sys.stderr.write(
+        "Wrote %i unique sequences from DB to FASTA file for BLAST database.\n" % count
+    )
+    cmd = ["makeblastdb", "-dbtype", "nucl", "-in", db_fasta, "-out", blast_db]
+    run(cmd, debug)
+
+
+def method_blast(
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+):
+    """Classify using BLAST.
+
+    Another simplistic classifier, run the ITS1 reads through blastn
+    against a BLAST database of our ITS1 database entries.
+    """
+    blast_out = os.path.join(shared_tmp_dir, "blast.tsv")
+    blast_db = os.path.join(shared_tmp_dir, "blast_db")
+    if not (
+        os.path.isfile(blast_db + ".nhr")
+        and os.path.isfile(blast_db + ".nin")
+        and os.path.isfile(blast_db + ".nsq")
+    ):
+        sys.exit("Missing generated BLAST database %s.n*\n" % blast_db)
+    cmd = [
+        "blastn",
+        "-db",
+        blast_db,
+        "-query",
+        fasta_file,
+        "-max_target_seqs",
+        "1",  # TODO - look at ties etc
+        "-outfmt",
+        "6",
+        "-out",
+        blast_out,
+    ]
+    run(cmd, debug)
+
+    if not os.path.isfile(blast_out):
+        sys.exit("BLAST did not produce expected output file %s\n" % blast_out)
+
+    # TODO - Count the entries without a BLAST hit
+    tax_counts = Counter()
+    with open(blast_out) as handle:
+        for line in handle:
+            if debug:
+                sys.stderr.write(line)
+            parts = line.rstrip("\n").split("\t")
+            idn = parts[0]
+            abundance = abundance_from_read_name(idn)
+            db_md5s = [parts[1]]  # TODO - look at ties etc
+            genus, species, clade, note = taxonomy_consensus(
+                md5_to_taxon(db_md5s, session)
+            )
+            note = "BLAST hit bitscore %s" % parts[11]
+            read_report.write(
+                "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note)
+            )
+            tax_counts[(genus, species, clade)] += abundance
+    return tax_counts
+
+
 def make_swarm_db_fasta(db_fasta, session):
     """Prepare a SWARM style ITS1 FASTA sequence from our DB."""
     view = session.query(ITS1)
@@ -266,11 +340,16 @@ def method_swarm(
     return tax_counts
 
 
-method_classifier = {"identity": method_identity, "swarm": method_swarm}
+method_classifier = {
+    "blast": method_blast,
+    "identity": method_identity,
+    "swarm": method_swarm,
+}
 
 method_setup = {
+    "blast": setup_blast,
     # "identify": setup_identify,
-    "swarm": setup_swarm
+    "swarm": setup_swarm,
 }
 
 
