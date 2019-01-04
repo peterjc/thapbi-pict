@@ -184,14 +184,40 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
     and the number of those which passed the minimum abundance
     threshold.
     """
+    exp_left = 53
+    exp_right = 20
+    margin = 10
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    for title, _, seq in filter_for_ITS1(input_fasta, debug=debug):
-        if not seq:
+    for title, full_seq, its1_seq in filter_for_ITS1(input_fasta, debug=debug):
+        if not its1_seq:
             continue
         abundance = abundance_from_read_name(title.split(None, 1)[0])
-        seq = seq.upper()
+        left = full_seq.index(its1_seq)
+        right = len(full_seq) - left - len(its1_seq)
+        if not (exp_left - margin < left < exp_left + margin and
+                exp_right - margin < right < exp_right + margin):
+            sys.stderr.write(
+                "WARNING: Unusual cropping for read %r - %i left, %i right, "
+                "giving %i, vs %i bp from fixed trimming\n"
+                % (title.split(None, 1)[0],
+                   left, right,
+                   len(its1_seq), len(full_seq) - exp_left - exp_right))
+            if debug:
+                sys.stderr.write(
+                    "Full:  %s (len %i)\n"
+                    % (full_seq, len(full_seq)))
+                sys.stderr.write(
+                    "HMM:   %s%s%s (len %i)\n"
+                    % ("-" * left, its1_seq, "-" * right, len(its1_seq)))
+                sys.stderr.write(
+                    "Fixed: %s%s%s (len %i)\n"
+                    % ("-" * exp_left,
+                       full_seq[exp_left:-exp_right],
+                       "-" * exp_right,
+                       len(full_seq[exp_left:-exp_right])))
+        seq = its1_seq.upper()
         try:
             counts[seq] += abundance
         except KeyError:
