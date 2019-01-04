@@ -247,6 +247,8 @@ def main(fastq, out_dir, min_abundance=100,
                 "WARNING: Skipping %s as already exists\n" % fasta_name)
             continue
 
+        sys.stderr.write("Preparing %s\n" % fasta_name)
+
         # Context manager should remove the temp dir:
         with tempfile.TemporaryDirectory() as tmp:
             if debug:
