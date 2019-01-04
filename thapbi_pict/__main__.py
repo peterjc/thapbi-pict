@@ -86,6 +86,7 @@ def prepare_reads(args=None):
     from .prepare import main
     check_output_directory(args.output)
     return main(fastq=args.fastq,
+                controls=args.controls,
                 out_dir=args.output,
                 min_abundance=args.abundance,
                 debug=args.verbose,
@@ -249,13 +250,20 @@ comma.
         help="One or more ITS1 FASTQ filenames or folder names "
              "(containing files named *.fastq or *.fastq.gz).")
     parser_prepare_reads.add_argument(
+        "-c", "--controls", type=str, nargs="+",
+        help="One or more control FASTQ filenames or folder names "
+             "(which can also be included in the FASTQ argument). "
+             "The paired FASTQ controls reads are processed in order to"
+             "determine the minimal abundance threshold automatically.")
+    parser_prepare_reads.add_argument(
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
         help="Directory to write output FASTA files to, "
              "default is next to each input file.")
     parser_prepare_reads.add_argument(
         "-a", "--abundance", type=int, default="100",
         help="Mininum abundance to apply to final candidate ITS1 "
-             "sequences in the output FASTA file (default 100).")
+             "sequences in the output FASTA file (default 100). "
+             "This may be increased based on any FASTQ controls.")
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action='store_true',
         help="Verbose logging")
