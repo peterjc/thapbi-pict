@@ -29,3 +29,5 @@ thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 4776
 
 # Check this error condition
 thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 12908 2>&1 | grep "Could not identify any genus names"
+
+echo "$0 passed"
