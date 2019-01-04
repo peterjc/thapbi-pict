@@ -24,9 +24,14 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
     Returns a list of tuples (stem, left filename, right filename)
     where stem is intended for use in logging and output naming,
     and may include a directory name.
+
+    The filenames will be normalised relative to the current directory
+    (so that we can directly compare file lists which could have been
+    defined inconsistently by the user).
     """
     answer = []
     for x in filenames_or_folders:
+        x = os.path.normpath(os.path.relpath(x))
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
@@ -182,7 +187,8 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
 
     Returns the number of unique ITS1 sequences (integer),
     and the number of those which passed the minimum abundance
-    threshold.
+    threshold, and the maximum abundance of any one read (for
+    use with controls for setting the threshold).
     """
     exp_left = 53
     exp_right = 20
@@ -220,32 +226,65 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
             counts[seq] += abundance
         except KeyError:
             counts[seq] = abundance
-    return save_nr_fasta(counts, output_fasta, min_abundance)
+
+    a, b = save_nr_fasta(counts, output_fasta, min_abundance)
+    return a, b, max(counts.values())
 
 
-def main(fastq, out_dir, min_abundance=100,
+def main(fastq, controls, out_dir, min_abundance=100,
          debug=False, cpu=0):
-    """Implement the thapbi_pict prepare-reads command."""
+    """Implement the thapbi_pict prepare-reads command.
+
+    If there are controls, they will be used to potentially increase
+    the minimum abundance threshold used for the non-control files.
+    """
     assert isinstance(fastq, list)
 
+    if not controls:
+        control_file_pairs = []
+    else:
+        control_file_pairs = find_fastq_pairs(controls, debug=debug)
+
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
+    fastq_file_pairs = [_ for _ in fastq_file_pairs
+                        if _ not in control_file_pairs]
+
+    # Make a unified file list, with control flag
+    file_pairs = ([(True, stem, raw_R1, raw_R2)
+                   for stem, raw_R1, raw_R2 in control_file_pairs] +
+                  [(False, stem, raw_R1, raw_R2)
+                   for stem, raw_R1, raw_R2 in fastq_file_pairs])
+
     if debug:
         sys.stderr.write(
-            "Preparing %i FASTQ pairs\n"
-            % len(fastq_file_pairs))
+            "Preparing %i data FASTQ pairs, and %i control FASTQ pairs\n"
+            % (len(fastq_file_pairs), len(control_file_pairs)))
+    if control_file_pairs and not fastq_file_pairs:
+        sys.stderr.write(
+            "WARNING: %i control FASTQ pairs, no non-control reads!\n"
+            % len(control_file_pairs))
 
-    for stem, raw_R1, raw_R2 in fastq_file_pairs:
+    for control, stem, raw_R1, raw_R2 in file_pairs:
         folder, stem = os.path.split(stem)
         if out_dir and out_dir != "-":
             folder = out_dir
         fasta_name = os.path.join(
             folder, "%s.prepared.fasta" % stem)
-        if os.path.isfile(fasta_name):
-            sys.stderr.write(
-                "WARNING: Skipping %s as already exists\n" % fasta_name)
-            continue
 
-        sys.stderr.write("Preparing %s\n" % fasta_name)
+        if os.path.isfile(fasta_name):
+            if control:
+                # TODO: Look at the file to determine the max ITS1 abundance
+                sys.stderr.write(
+                    "WARNING: Cannot yet re-use %s to set abunance, "
+                    "recreating it\n"
+                    % fasta_name)
+                os.remove(fasta_name)
+            else:
+                sys.stderr.write(
+                    "WARNING: Skipping %s as already exists\n" % fasta_name)
+                continue
+
+        sys.stderr.write("Starting to prepare %s\n" % fasta_name)
 
         # Context manager should remove the temp dir:
         with tempfile.TemporaryDirectory() as tmp:
@@ -286,17 +325,39 @@ def main(fastq, out_dir, min_abundance=100,
             # make NR, and name as MD5_abundance
             # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
-            uniq_count, acc_uniq_count = make_nr_its1(
-                merged_fasta, dedup, min_abundance, debug)
-            if debug:
+            uniq_count, acc_uniq_count, max_indiv_abundance = make_nr_its1(
+                merged_fasta, dedup, 0 if control else min_abundance, debug)
+            if control:
+                assert uniq_count == acc_uniq_count
                 sys.stderr.write(
-                    "Cropped down to %i unique ITS1 sequences, "
-                    "%i of which passed abundance threshold\n"
-                    % (uniq_count, acc_uniq_count))
+                    "Control %s has %i unique ITS1 sequences, "
+                    "%i of most abundant, "
+                    % (stem, acc_uniq_count, max_indiv_abundance))
+                if min_abundance < max_indiv_abundance:
+                    sys.stderr.write(
+                        "increasing abundance threshold from %i\n"
+                        % min_abundance)
+                else:
+                    sys.stderr.write(
+                        "keeping abundance threshold at %i\n"
+                        % min_abundance)
+                min_abundance = max(min_abundance, max_indiv_abundance)
+            elif debug:
+                sys.stderr.write(
+                    "Cropped %s down to %i unique ITS1 sequences, "
+                    "%i of which passed abundance threshold %i, "
+                    "with top abundance %i\n"
+                    % (stem, uniq_count, acc_uniq_count,
+                       min_abundance, max_indiv_abundance))
 
             # File done
             shutil.move(dedup, fasta_name)
-            sys.stderr.write(
-                "Wrote %s with %i unique reads over abundance threshold %i\n"
-                % (stem, acc_uniq_count, min_abundance))
+            if control:
+                sys.stderr.write(
+                    "Wrote %s with %i unique control reads\n"
+                    % (stem, acc_uniq_count))
+            else:
+                sys.stderr.write(
+                    "Wrote %s with %i unique reads over abundance %i\n"
+                    % (stem, acc_uniq_count, min_abundance))
     return 0
