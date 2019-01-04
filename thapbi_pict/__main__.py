@@ -246,7 +246,7 @@ comma.
                "abundance then alphabetically by sequence.")
     parser_prepare_reads.add_argument(
         'fastq', type=str, nargs='+',
-        help='One or more ITS1 FASTQ filenames or folder names'
+        help='One or more ITS1 FASTQ filenames or folder names '
              '(containing files named *.fastq or *.fastq.gz).')
     parser_prepare_reads.add_argument(
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
