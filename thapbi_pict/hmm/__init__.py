@@ -102,7 +102,7 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
             yield title, seq, None
         elif len(hit) == 1:
             hsp = hit[0]
-            yield title, seq, [seq[hsp.query_start:hsp.query_end]]
+            yield title, seq, seq[hsp.query_start:hsp.query_end]
         else:
             # Merge them - does not seem useful to insist non-overlapping
             start = min(_.query_start for _ in hit)
@@ -112,4 +112,4 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
                     "WARNING: Taking span %i-%i from %i HMM hits for:\n"
                     ">%s\n%s\n"
                     % (start, end, len(hit), title, seq))
-            yield title, seq, [seq[start:end]]
+            yield title, seq, seq[start:end]

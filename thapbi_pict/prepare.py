@@ -187,21 +187,15 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    for title, _, its1_seqs in filter_for_ITS1(input_fasta,
-                                               debug=debug):
-        if not its1_seqs:
+    for title, _, seq in filter_for_ITS1(input_fasta, debug=debug):
+        if not seq:
             continue
-        if len(its1_seqs) > 1:
-            sys.stderr.write(
-                "WARNING: %i possible ITS1 matches in %s\n"
-                % (len(its1_seqs), title.split(None, 1)[0]))
         abundance = abundance_from_read_name(title.split(None, 1)[0])
-        for seq in its1_seqs:
-            seq = seq.upper()
-            try:
-                counts[seq] += abundance
-            except KeyError:
-                counts[seq] = abundance
+        seq = seq.upper()
+        try:
+            counts[seq] += abundance
+        except KeyError:
+            counts[seq] = abundance
     return save_nr_fasta(counts, output_fasta, min_abundance)
 
 
