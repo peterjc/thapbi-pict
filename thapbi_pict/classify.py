@@ -1,6 +1,6 @@
 """Classifying prepared ITS1 reads using an ITS1 database.
 
-This implementes the ``thapbi_pict classify-reads ...`` command.
+This implements the ``thapbi_pict classify-reads ...`` command.
 """
 
 import os
