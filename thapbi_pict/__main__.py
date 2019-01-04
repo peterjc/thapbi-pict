@@ -245,9 +245,9 @@ comma.
                "checksum and their abundance, and sorted by decreasing "
                "abundance then alphabetically by sequence.")
     parser_prepare_reads.add_argument(
-        'fastq', type=str, nargs='+',
-        help='One or more ITS1 FASTQ filenames or folder names '
-             '(containing files named *.fastq or *.fastq.gz).')
+        "fastq", type=str, nargs="+",
+        help="One or more ITS1 FASTQ filenames or folder names "
+             "(containing files named *.fastq or *.fastq.gz).")
     parser_prepare_reads.add_argument(
         "-o", "--output", type=str, default="-", metavar="DIRNAME",
         help="Directory to write output FASTA files to, "
@@ -272,9 +272,9 @@ comma.
                "namesd XXX.method-reads.tsv and XXX.method-tax.tsv in "
                "the specified output directory (default input dir).")
     parser_classify_reads.add_argument(
-        'fasta', type=str, nargs='+',
-        help='One or more ITS1 FASTA filenames or folder names'
-             '(containing files named *.fasta).')
+        "fasta", type=str, nargs="+",
+        help="One or more ITS1 FASTA filenames or folder names "
+             "(containing files named *.fasta).")
     parser_classify_reads.add_argument(
         "-d", "--database", type=str, required=True,
         help="Which ITS1 database to use for species classification.")
