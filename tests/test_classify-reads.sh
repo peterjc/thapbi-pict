@@ -22,7 +22,7 @@ thapbi_pict classify-reads -m identity -d $DB database/legacy/database.fasta
 # Now fails as we expect reads to have been prepared and trimmed with HMM
 if [ `wc -l database/legacy/database.identity-reads.tsv` -ne "0" ]; then echo "Expected no matches"; false; fi
 
-if [ ! -f $TMP/DNAMIX_S95_L001.prepared.fasta]; then echo "Run test_prepare-reads.sh to setup test input"; false; fi
+if [ ! -f $TMP/DNAMIX_S95_L001.prepared.fasta ]; then echo "Run test_prepare-reads.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv
 rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-tax.tsv
 
