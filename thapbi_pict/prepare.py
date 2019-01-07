@@ -171,9 +171,9 @@ def make_nr_fastq_to_fasta(input_fastq, output_fasta, min_abundance=0):
 def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
     """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
 
-    Applies HMM with hmmscan to identify any ITS1 region in
-    the input reads, then makes these into a non-redundant
-    output FASTA file names using a checksum.
+    Applies HMM with hmmscan to identify any ITS1 region in the
+    input reads, applies trimming, then makes these into a
+    non-redundant output FASTA file names using a checksum.
 
     Assumes the input reads also follow this naming, and takes
     the infered abundance into account.
@@ -190,34 +190,32 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    for title, full_seq, its1_seq in filter_for_ITS1(input_fasta, debug=debug):
-        if not its1_seq:
+    for title, full_seq, hmm_seq in filter_for_ITS1(input_fasta, debug=debug):
+        if not hmm_seq:
+            # Using HMM match as a presense/absense filter
             continue
+        seq = full_seq[exp_left:-exp_right].upper()  # using fix trimming
         abundance = abundance_from_read_name(title.split(None, 1)[0])
-        left = full_seq.index(its1_seq)
-        right = len(full_seq) - left - len(its1_seq)
+        left = full_seq.index(hmm_seq)
+        right = len(full_seq) - left - len(hmm_seq)
         if not (exp_left - margin < left < exp_left + margin and
                 exp_right - margin < right < exp_right + margin):
             sys.stderr.write(
-                "WARNING: Unusual cropping for read %r - %i left, %i right, "
+                "WARNING: %r has HMM cropping %i left, %i right, "
                 "giving %i, vs %i bp from fixed trimming\n"
                 % (title.split(None, 1)[0],
                    left, right,
-                   len(its1_seq), len(full_seq) - exp_left - exp_right))
+                   len(hmm_seq), len(full_seq) - exp_left - exp_right))
             if debug:
                 sys.stderr.write(
                     "Full:  %s (len %i)\n"
                     % (full_seq, len(full_seq)))
                 sys.stderr.write(
                     "HMM:   %s%s%s (len %i)\n"
-                    % ("-" * left, its1_seq, "-" * right, len(its1_seq)))
+                    % ("-" * left, hmm_seq, "-" * right, len(hmm_seq)))
                 sys.stderr.write(
                     "Fixed: %s%s%s (len %i)\n"
-                    % ("-" * exp_left,
-                       full_seq[exp_left:-exp_right],
-                       "-" * exp_right,
-                       len(full_seq[exp_left:-exp_right])))
-        seq = its1_seq.upper()
+                    % ("-" * exp_left, seq, "-" * exp_right, len(seq)))
         try:
             counts[seq] += abundance
         except KeyError:
