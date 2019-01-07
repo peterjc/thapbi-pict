@@ -14,6 +14,7 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
+from .utils import abundance_values_in_fasta
 from .utils import run
 
 
@@ -273,12 +274,23 @@ def main(fastq, controls, out_dir, min_abundance=100,
 
         if os.path.isfile(fasta_name):
             if control:
-                # TODO: Look at the file to determine the max ITS1 abundance
+                (uniq_count,
+                 max_indiv_abundance) = abundance_values_in_fasta(fasta_name)
+                # TODO - Refactor this duplicated logging?
                 sys.stderr.write(
-                    "WARNING: Cannot yet re-use %s to set abunance, "
-                    "recreating it\n"
-                    % fasta_name)
-                os.remove(fasta_name)
+                    "Control %s had %i unique ITS1 sequences, "
+                    "%i of most abundant, "
+                    % (stem, uniq_count, max_indiv_abundance))
+                if min_abundance < max_indiv_abundance:
+                    sys.stderr.write(
+                        "increasing abundance threshold from %i\n"
+                        % min_abundance)
+                else:
+                    sys.stderr.write(
+                        "keeping abundance threshold at %i\n"
+                        % min_abundance)
+                min_abundance = max(min_abundance, max_indiv_abundance)
+                continue
             else:
                 sys.stderr.write(
                     "WARNING: Skipping %s as already exists\n" % fasta_name)
@@ -332,7 +344,7 @@ def main(fastq, controls, out_dir, min_abundance=100,
                 sys.stderr.write(
                     "Control %s has %i unique ITS1 sequences, "
                     "%i of most abundant, "
-                    % (stem, acc_uniq_count, max_indiv_abundance))
+                    % (stem, uniq_count, max_indiv_abundance))
                 if min_abundance < max_indiv_abundance:
                     sys.stderr.write(
                         "increasing abundance threshold from %i\n"

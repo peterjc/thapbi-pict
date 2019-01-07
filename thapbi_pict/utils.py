@@ -3,6 +3,8 @@
 import subprocess
 import sys
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
 
 def cmd_as_string(cmd):
     """Express a list command as a suitably quoted string.
@@ -62,3 +64,14 @@ def abundance_from_read_name(text, debug=False):
             sys.stderr.write(
                 "WARNING: No abundance suffix in %r\n" % text)
         return 1
+
+
+def abundance_values_in_fasta(fasta_file):
+    """Return total and maximum abundance encoded in read names."""
+    total_a = max_a = 0
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            a = abundance_from_read_name(title.split(None, 1)[0])
+            max_a = max(a, max_a)
+            total_a += a
+    return total_a, max_a
