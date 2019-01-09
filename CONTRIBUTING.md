@@ -13,10 +13,36 @@ The Python code follows [PEP8](https://www.python.org/dev/peps/pep-0008/)
 and [PEP257 docstring](https://www.python.org/dev/peps/pep-0257/) style,
 guided by the [Zen of Python](https://www.python.org/dev/peps/pep-0020/).
 
-This is enforced using command line tool [flake8](http://flake8.pycqa.org/)
-for which we recommend enabling the git pre-commit hook as follows:
+Practically, coding style is enforced with the command line tools
+[black](https://github.com/ambv/black) (which can automatically edit
+your code) and [flake8](http://flake8.pycqa.org/) (which in addition to
+style checking has a range of plugins).
+
+You can install these tools using:
+
+```console
+pip install black flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+```
+
+You can run the checks using:
+
+```console
+$ flake8 ,
+$ black --check .
+```
+
+You can ask black to edit your files with:
+
+```console
+$ black .
+```
+
+We recommend enabling the flake8 git pre-commit hook as follows:
 
 ```console
 $ flake8 --install-hook git
 $ git config --bool flake8.strict true
 ```
+
+If your editor can be configured to run flake8 and/or black automatically,
+even better.
