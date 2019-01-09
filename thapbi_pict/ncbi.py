@@ -41,7 +41,7 @@ def parse_fasta_entry(text):
     is not handled here.
     """  # noqa: E501
     parts = text.rstrip().split()
-    clade = ''
+    clade = ""
     # acc = parts[0]
     name = parts[1:3]  # assumes "Genus species" only (2 words)
     rest = parts[3:]
@@ -49,8 +49,8 @@ def parse_fasta_entry(text):
         # Special case, but can we assume these are Phytophthora?
         # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
         sys.stderr.write(
-            "WARNING: Assuming %s from %s is Phytophthora\n"
-            % (name[0], parts[0]))
+            "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], parts[0])
+        )
         name = ["Phytophthora", name[0][2:]]
     if name[0] == "Sequence":
         # Another special case
@@ -60,14 +60,21 @@ def parse_fasta_entry(text):
     return (clade, " ".join(name), " ".join(rest))
 
 
-assert parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...') == \
-    ('', 'Phytophthora drechsleri', 'genes ...')
+assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
+    "",
+    "Phytophthora drechsleri",
+    "genes ...",
+)
 
 
 def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
     """Run the script with command line arguments."""
     return import_fasta_file(
-        fasta_file, db_url, name=name, debug=debug,
+        fasta_file,
+        db_url,
+        name=name,
+        debug=debug,
         # fasta_split_fn=split_composite_entry,
         fasta_parse_fn=parse_fasta_entry,
-        validate_species=validate_species)
+        validate_species=validate_species,
+    )

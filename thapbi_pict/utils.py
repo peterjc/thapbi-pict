@@ -13,7 +13,7 @@ def cmd_as_string(cmd):
     """
     if isinstance(cmd, list):
         # Quote any entries with spaces
-        return ' '.join('"%s"' % _ if ' ' in _ else _ for _ in cmd)
+        return " ".join('"%s"' % _ if " " in _ else _ for _ in cmd)
     else:
         return cmd
 
@@ -31,22 +31,27 @@ def run(cmd, debug=False):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
-                check=True)
+                check=True,
+            )
         else:
             return subprocess.run(
-                cmd, shell=True,
+                cmd,
+                shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
-                check=True)
+                check=True,
+            )
     except subprocess.CalledProcessError as e:
         if debug:
             # Used universal_newlines=True above so that this just works
             # (equivalent to text=True in Python 3.7 onwards):
             sys.stdout.write(e.stdout)
             sys.stderr.write(e.stderr)
-        sys.exit("This command failed with return code %i:\n%s\n"
-                 % (e.returncode, cmd_as_string(cmd)))
+        sys.exit(
+            "This command failed with return code %i:\n%s\n"
+            % (e.returncode, cmd_as_string(cmd))
+        )
 
 
 def abundance_from_read_name(text, debug=False):
@@ -61,8 +66,7 @@ def abundance_from_read_name(text, debug=False):
         return int(text.rsplit("_", 1)[1])
     except (ValueError, IndexError):
         if debug:
-            sys.stderr.write(
-                "WARNING: No abundance suffix in %r\n" % text)
+            sys.stderr.write("WARNING: No abundance suffix in %r\n" % text)
         return 1
 
 

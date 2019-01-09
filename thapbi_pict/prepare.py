@@ -18,8 +18,7 @@ from .utils import abundance_values_in_fasta
 from .utils import run
 
 
-def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
-                     debug=False):
+def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"), debug=False):
     """Interpret a list of filenames and/or foldernames.
 
     Returns a list of tuples (stem, left filename, right filename)
@@ -47,35 +46,34 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"),
     # Warn if there were duplicates?
     answer = sorted(set(answer))
     if len(answer) % 2:
-        sys.exit(
-            "ERROR: Found %i FASTQ files, expected pairs\n"
-            % len(answer))
+        sys.exit("ERROR: Found %i FASTQ files, expected pairs\n" % len(answer))
 
     pairs = []
     while answer:
         left = answer.pop(0)
         right = answer.pop(0)
-        if (left.endswith(tuple("_I1_001" + _ for _ in ext))
-                and right.endswith(tuple("_I2_001" + _ for _ in ext))):
+        if left.endswith(tuple("_I1_001" + _ for _ in ext)) and right.endswith(
+            tuple("_I2_001" + _ for _ in ext)
+        ):
             if debug:
-                sys.stderr.write(
-                    "WARNING: Ignoring %r and %r\n" % (left, right))
+                sys.stderr.write("WARNING: Ignoring %r and %r\n" % (left, right))
             continue
         stem = None
-        for suffix_left, suffix_right in zip(("_R1_001", "_R1", "_1"),
-                                             ("_R2_001", "_R2", "_2")):
-            if left.endswith(
-                    tuple(suffix_left + _ for _ in ext)) and right.endswith(
-                    tuple(suffix_right + _ for _ in ext)):
+        for suffix_left, suffix_right in zip(
+            ("_R1_001", "_R1", "_1"), ("_R2_001", "_R2", "_2")
+        ):
+            if left.endswith(tuple(suffix_left + _ for _ in ext)) and right.endswith(
+                tuple(suffix_right + _ for _ in ext)
+            ):
                 stem = left.rsplit(suffix_left, 1)[0]
                 if stem != right.rsplit(suffix_right, 1)[0]:
                     sys.exit(
-                        "ERROR: Did not recognise %r and %r as a pair\n"
-                        % (left, right))
+                        "ERROR: Did not recognise %r and %r as a pair\n" % (left, right)
+                    )
         if not stem:
             sys.exit(
-                "ERROR: Did not recognise pair naming for %r and %r\n"
-                % (left, right))
+                "ERROR: Did not recognise pair naming for %r and %r\n" % (left, right)
+            )
         pairs.append((stem, left, right))
 
     return pairs
@@ -88,15 +86,16 @@ def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
     # .../conda/share/trimmomatic/adapters/TruSeq3-PE.fa
     bin_path = os.path.split(subprocess.getoutput("which trimmomatic"))[0]
     filename = os.path.join(
-        bin_path, "..", "share", "trimmomatic", "adapters", fasta_name)
+        bin_path, "..", "share", "trimmomatic", "adapters", fasta_name
+    )
     if os.path.isfile(filename):
         return filename
     sys.exit("Could not find %s installed with trimmomatic." % fasta_name)
 
 
-def run_trimmomatic(left_in, right_in, left_out, right_out,
-                    adapters=None,
-                    debug=False, cpu=0):
+def run_trimmomatic(
+    left_in, right_in, left_out, right_out, adapters=None, debug=False, cpu=0
+):
     """Run trimmomatic on a pair of FASTQ files.
 
     The input files may be gzipped.
@@ -107,24 +106,25 @@ def run_trimmomatic(left_in, right_in, left_out, right_out,
     if not adapters:
         adapters = find_trimmomatic_adapters()
     if not os.path.isfile(adapters):
-        sys.exit("ERROR: Missing Illumina adapters file for trimmomatic: %s\n"
-                 % adapters)
+        sys.exit(
+            "ERROR: Missing Illumina adapters file for trimmomatic: %s\n" % adapters
+        )
     if " " in adapters:
         # Can we do this with slash escaping? Clever quoting?
-        sys.exit("ERROR: Spaces in the adapter filename are a bad idea: %s\n"
-                 % adapters)
+        sys.exit(
+            "ERROR: Spaces in the adapter filename are a bad idea: %s\n" % adapters
+        )
     cmd = ["trimmomatic", "PE"]
     if cpu:
         cmd += ["-threads", str(cpu)]
     cmd += ["-phred33"]
     # We don't want the unpaired left and right output files, so /dev/null
     cmd += [left_in, right_in, left_out, os.devnull, right_out, os.devnull]
-    cmd += ['ILLUMINACLIP:%s:2:30:10' % adapters]
+    cmd += ["ILLUMINACLIP:%s:2:30:10" % adapters]
     return run(cmd, debug=debug)
 
 
-def run_pear(trimmed_R1, trimmed_R2, output_prefix,
-             debug=False, cpu=0):
+def run_pear(trimmed_R1, trimmed_R2, output_prefix, debug=False, cpu=0):
     """Run pear on a pair of trimmed FASTQ files."""
     cmd = ["pear", "-f", trimmed_R1, "-r", trimmed_R2, "-o", output_prefix]
     if cpu:
@@ -149,7 +149,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
             if -count < min_abundance:
                 # Sorted, so everything hereafter is too rare
                 break
-            md5 = hashlib.md5(seq.encode('ascii')).hexdigest()
+            md5 = hashlib.md5(seq.encode("ascii")).hexdigest()
             out_handle.write(">%s_%i\n%s\n" % (md5, -count, seq))
             accepted += 1
     return len(counts), accepted  # number of unique seqs, accepted
@@ -205,24 +205,31 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
         abundance = abundance_from_read_name(title.split(None, 1)[0])
         left = full_seq.index(hmm_seq)
         right = len(full_seq) - left - len(hmm_seq)
-        if not (exp_left - margin < left < exp_left + margin and
-                exp_right - margin < right < exp_right + margin):
+        if not (
+            exp_left - margin < left < exp_left + margin
+            and exp_right - margin < right < exp_right + margin
+        ):
             sys.stderr.write(
                 "WARNING: %r has HMM cropping %i left, %i right, "
                 "giving %i, vs %i bp from fixed trimming\n"
-                % (title.split(None, 1)[0],
-                   left, right,
-                   len(hmm_seq), len(full_seq) - exp_left - exp_right))
+                % (
+                    title.split(None, 1)[0],
+                    left,
+                    right,
+                    len(hmm_seq),
+                    len(full_seq) - exp_left - exp_right,
+                )
+            )
             if debug:
-                sys.stderr.write(
-                    "Full:  %s (len %i)\n"
-                    % (full_seq, len(full_seq)))
+                sys.stderr.write("Full:  %s (len %i)\n" % (full_seq, len(full_seq)))
                 sys.stderr.write(
                     "HMM:   %s%s%s (len %i)\n"
-                    % ("-" * left, hmm_seq, "-" * right, len(hmm_seq)))
+                    % ("-" * left, hmm_seq, "-" * right, len(hmm_seq))
+                )
                 sys.stderr.write(
                     "Fixed: %s%s%s (len %i)\n"
-                    % ("-" * exp_left, seq, "-" * exp_right, len(seq)))
+                    % ("-" * exp_left, seq, "-" * exp_right, len(seq))
+                )
         try:
             counts[seq] += abundance
         except KeyError:
@@ -232,8 +239,7 @@ def make_nr_its1(input_fasta, output_fasta, min_abundance=0, debug=False):
     return a, b, max(counts.values())
 
 
-def main(fastq, controls, out_dir, min_abundance=100,
-         debug=False, cpu=0):
+def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
     """Implement the thapbi_pict prepare-reads command.
 
     If there are controls, they will be used to potentially increase
@@ -247,53 +253,54 @@ def main(fastq, controls, out_dir, min_abundance=100,
         control_file_pairs = find_fastq_pairs(controls, debug=debug)
 
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
-    fastq_file_pairs = [_ for _ in fastq_file_pairs
-                        if _ not in control_file_pairs]
+    fastq_file_pairs = [_ for _ in fastq_file_pairs if _ not in control_file_pairs]
 
     # Make a unified file list, with control flag
-    file_pairs = ([(True, stem, raw_R1, raw_R2)
-                   for stem, raw_R1, raw_R2 in control_file_pairs] +
-                  [(False, stem, raw_R1, raw_R2)
-                   for stem, raw_R1, raw_R2 in fastq_file_pairs])
+    file_pairs = [
+        (True, stem, raw_R1, raw_R2) for stem, raw_R1, raw_R2 in control_file_pairs
+    ] + [(False, stem, raw_R1, raw_R2) for stem, raw_R1, raw_R2 in fastq_file_pairs]
 
     if debug:
         sys.stderr.write(
             "Preparing %i data FASTQ pairs, and %i control FASTQ pairs\n"
-            % (len(fastq_file_pairs), len(control_file_pairs)))
+            % (len(fastq_file_pairs), len(control_file_pairs))
+        )
     if control_file_pairs and not fastq_file_pairs:
         sys.stderr.write(
             "WARNING: %i control FASTQ pairs, no non-control reads!\n"
-            % len(control_file_pairs))
+            % len(control_file_pairs)
+        )
 
     for control, stem, raw_R1, raw_R2 in file_pairs:
         folder, stem = os.path.split(stem)
         if out_dir and out_dir != "-":
             folder = out_dir
-        fasta_name = os.path.join(
-            folder, "%s.prepared.fasta" % stem)
+        fasta_name = os.path.join(folder, "%s.prepared.fasta" % stem)
 
         if os.path.isfile(fasta_name):
             if control:
-                (uniq_count,
-                 max_indiv_abundance) = abundance_values_in_fasta(fasta_name)
+                (uniq_count, max_indiv_abundance) = abundance_values_in_fasta(
+                    fasta_name
+                )
                 # TODO - Refactor this duplicated logging?
                 sys.stderr.write(
                     "Control %s had %i unique ITS1 sequences, "
-                    "%i of most abundant, "
-                    % (stem, uniq_count, max_indiv_abundance))
+                    "%i of most abundant, " % (stem, uniq_count, max_indiv_abundance)
+                )
                 if min_abundance < max_indiv_abundance:
                     sys.stderr.write(
-                        "increasing abundance threshold from %i\n"
-                        % min_abundance)
+                        "increasing abundance threshold from %i\n" % min_abundance
+                    )
                 else:
                     sys.stderr.write(
-                        "keeping abundance threshold at %i\n"
-                        % min_abundance)
+                        "keeping abundance threshold at %i\n" % min_abundance
+                    )
                 min_abundance = max(min_abundance, max_indiv_abundance)
                 continue
             else:
                 sys.stderr.write(
-                    "WARNING: Skipping %s as already exists\n" % fasta_name)
+                    "WARNING: Skipping %s as already exists\n" % fasta_name
+                )
                 continue
 
         sys.stderr.write("Starting to prepare %s\n" % fasta_name)
@@ -301,15 +308,12 @@ def main(fastq, controls, out_dir, min_abundance=100,
         # Context manager should remove the temp dir:
         with tempfile.TemporaryDirectory() as tmp:
             if debug:
-                sys.stderr.write(
-                    "DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+                sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
 
             # trimmomatic
             trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
             trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-            run_trimmomatic(
-                raw_R1, raw_R2, trim_R1, trim_R2,
-                debug=debug, cpu=cpu)
+            run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
             for _ in (trim_R1, trim_R2):
                 if not os.path.isfile(_):
                     sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
@@ -317,9 +321,7 @@ def main(fastq, controls, out_dir, min_abundance=100,
             # pear
             pear_prefix = os.path.join(tmp, "pear")
             merged_fastq = os.path.join(tmp, "pear.assembled.fastq")
-            run_pear(
-                trim_R1, trim_R2, pear_prefix,
-                debug=debug, cpu=cpu)
+            run_pear(trim_R1, trim_R2, pear_prefix, debug=debug, cpu=cpu)
             if not os.path.isfile(merged_fastq):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
@@ -327,49 +329,58 @@ def main(fastq, controls, out_dir, min_abundance=100,
             # Do not apply min_abundance threshold here as after ITS1
             # trimming pooling entries would increase their counts.
             count, _ = make_nr_fastq_to_fasta(
-                merged_fastq, merged_fasta, min_abundance=0)
+                merged_fastq, merged_fasta, min_abundance=0
+            )
             if debug:
                 sys.stderr.write(
-                    "Merged paired FASTQ reads into %i unique sequences\n"
-                    % count)
+                    "Merged paired FASTQ reads into %i unique sequences\n" % count
+                )
 
             # Find the ITS1 region (if present) using hmmscan,
             # make NR, and name as MD5_abundance
             # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
             uniq_count, acc_uniq_count, max_indiv_abundance = make_nr_its1(
-                merged_fasta, dedup, 0 if control else min_abundance, debug)
+                merged_fasta, dedup, 0 if control else min_abundance, debug
+            )
             if control:
                 assert uniq_count == acc_uniq_count
                 sys.stderr.write(
                     "Control %s has %i unique ITS1 sequences, "
-                    "%i of most abundant, "
-                    % (stem, uniq_count, max_indiv_abundance))
+                    "%i of most abundant, " % (stem, uniq_count, max_indiv_abundance)
+                )
                 if min_abundance < max_indiv_abundance:
                     sys.stderr.write(
-                        "increasing abundance threshold from %i\n"
-                        % min_abundance)
+                        "increasing abundance threshold from %i\n" % min_abundance
+                    )
                 else:
                     sys.stderr.write(
-                        "keeping abundance threshold at %i\n"
-                        % min_abundance)
+                        "keeping abundance threshold at %i\n" % min_abundance
+                    )
                 min_abundance = max(min_abundance, max_indiv_abundance)
             elif debug:
                 sys.stderr.write(
                     "Cropped %s down to %i unique ITS1 sequences, "
                     "%i of which passed abundance threshold %i, "
                     "with top abundance %i\n"
-                    % (stem, uniq_count, acc_uniq_count,
-                       min_abundance, max_indiv_abundance))
+                    % (
+                        stem,
+                        uniq_count,
+                        acc_uniq_count,
+                        min_abundance,
+                        max_indiv_abundance,
+                    )
+                )
 
             # File done
             shutil.move(dedup, fasta_name)
             if control:
                 sys.stderr.write(
-                    "Wrote %s with %i unique control reads\n"
-                    % (stem, acc_uniq_count))
+                    "Wrote %s with %i unique control reads\n" % (stem, acc_uniq_count)
+                )
             else:
                 sys.stderr.write(
                     "Wrote %s with %i unique reads over abundance %i\n"
-                    % (stem, acc_uniq_count, min_abundance))
+                    % (stem, acc_uniq_count, min_abundance)
+                )
     return 0

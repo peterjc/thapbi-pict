@@ -10,8 +10,9 @@ from sqlalchemy.orm import aliased, contains_eager
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 
-def main(db_url, output_filename, output_format,
-         clade="", genus="", species="", debug=True):
+def main(
+    db_url, output_filename, output_format, clade="", genus="", species="", debug=True
+):
     """Run the database dump with arguments from the command line."""
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -27,11 +28,13 @@ def main(db_url, output_filename, output_format,
     # Doing a join to pull in the ITS1 and Taxonomy tables too:
     cur_tax = aliased(Taxonomy)
     its1_seq = aliased(ITS1)
-    view = session.query(SequenceSource).join(
-        its1_seq, SequenceSource.its1).join(
-        cur_tax, SequenceSource.current_taxonomy).options(
-        contains_eager(SequenceSource.its1, alias=its1_seq)).options(
-        contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+    view = (
+        session.query(SequenceSource)
+        .join(its1_seq, SequenceSource.its1)
+        .join(cur_tax, SequenceSource.current_taxonomy)
+        .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+        .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+    )
     # Sorting for reproducibility
     view = view.order_by(SequenceSource.id)
 
@@ -68,29 +71,39 @@ def main(db_url, output_filename, output_format,
         sys.exit("Using -s/--species requires a single genus via -g/--genus\n")
 
     for x in sp_list:
-        if not session.query(Taxonomy).filter_by(species=x,
-                                                 genus=genus_list[0]).count():
-            sys.stderr.write(
-                "WARNING: '%s %s' not in database\n" % (genus_list[0], x))
+        if (
+            not session.query(Taxonomy)
+            .filter_by(species=x, genus=genus_list[0])
+            .count()
+        ):
+            sys.stderr.write("WARNING: '%s %s' not in database\n" % (genus_list[0], x))
 
     for seq_source in view:
         entry_count += 1
         try:
             if output_format == "fasta":
-                out_handle.write(">%s [clade=%s] [species=%s %s]\n%s\n"
-                                 % (seq_source.source_accession,
-                                    seq_source.current_taxonomy.clade,
-                                    seq_source.current_taxonomy.genus,
-                                    seq_source.current_taxonomy.species,
-                                    seq_source.its1.sequence))
+                out_handle.write(
+                    ">%s [clade=%s] [species=%s %s]\n%s\n"
+                    % (
+                        seq_source.source_accession,
+                        seq_source.current_taxonomy.clade,
+                        seq_source.current_taxonomy.genus,
+                        seq_source.current_taxonomy.species,
+                        seq_source.its1.sequence,
+                    )
+                )
             else:
-                out_handle.write("%s\t%s\t%s\t%s\t%s\t%s\n"
-                                 % (seq_source.source_accession,
-                                    seq_source.current_taxonomy.clade,
-                                    seq_source.current_taxonomy.genus,
-                                    seq_source.current_taxonomy.species,
-                                    seq_source.its1.sequence,
-                                    seq_source.sequence))
+                out_handle.write(
+                    "%s\t%s\t%s\t%s\t%s\t%s\n"
+                    % (
+                        seq_source.source_accession,
+                        seq_source.current_taxonomy.clade,
+                        seq_source.current_taxonomy.genus,
+                        seq_source.current_taxonomy.species,
+                        seq_source.its1.sequence,
+                        seq_source.sequence,
+                    )
+                )
         except BrokenPipeError:
             # Likely writing to stdout | head, or similar
             # If so, stdout has been closed
@@ -99,19 +112,23 @@ def main(db_url, output_filename, output_format,
             sys.exit(1)
 
         if clade_list:
-            assert seq_source.current_taxonomy.clade in clade_list, \
-                seq_source.current_taxonomy
+            assert (
+                seq_source.current_taxonomy.clade in clade_list
+            ), seq_source.current_taxonomy
         if genus_list:
-            assert seq_source.current_taxonomy.genus in genus_list, \
-                seq_source.current_taxonomy
+            assert (
+                seq_source.current_taxonomy.genus in genus_list
+            ), seq_source.current_taxonomy
         if sp_list:
-            assert seq_source.current_taxonomy.species in sp_list, \
-                seq_source.current_taxonomy
+            assert (
+                seq_source.current_taxonomy.species in sp_list
+            ), seq_source.current_taxonomy
 
     if output_filename == "-":
-        sys.stderr.write("Wrote %i %s format entries\n"
-                         % (entry_count, output_format))
+        sys.stderr.write("Wrote %i %s format entries\n" % (entry_count, output_format))
     else:
         out_handle.close()
-        sys.stderr.write("Wrote %i %s format entries to %r\n"
-                         % (entry_count, output_format, output_filename))
+        sys.stderr.write(
+            "Wrote %i %s format entries to %r\n"
+            % (entry_count, output_format, output_filename)
+        )
