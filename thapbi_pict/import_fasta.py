@@ -36,17 +36,22 @@ def lookup_taxonomy(session, clade, genus, species):
     assert isinstance(genus, str), genus
     assert isinstance(species, str), species
     # Can we find a match without knowing the taxid?
-    taxonomy = session.query(Taxonomy).filter_by(
-        clade=clade, genus=genus, species=species).one_or_none()
+    taxonomy = (
+        session.query(Taxonomy)
+        .filter_by(clade=clade, genus=genus, species=species)
+        .one_or_none()
+    )
     if taxonomy is not None:
         # There was a unique entry already, use it.
         # It may even have an NCBI taxid?
         return taxonomy
 
     # Can we find a match with taxid=0?
-    taxonomy = session.query(Taxonomy).filter_by(
-        clade=clade, genus=genus, species=species,
-        ncbi_taxid=0).one_or_none()
+    taxonomy = (
+        session.query(Taxonomy)
+        .filter_by(clade=clade, genus=genus, species=species, ncbi_taxid=0)
+        .one_or_none()
+    )
     if taxonomy is not None:
         # There was a unique entry already, use it.
         return taxonomy
@@ -55,19 +60,24 @@ def lookup_taxonomy(session, clade, genus, species):
     if clade:
         # If there is a unique match without the clade,
         # use it to get the NCBI taxid:
-        taxonomy = session.query(Taxonomy).filter_by(
-            clade="", genus=genus, species=species).one_or_none()
+        taxonomy = (
+            session.query(Taxonomy)
+            .filter_by(clade="", genus=genus, species=species)
+            .one_or_none()
+        )
         if taxonomy is not None and taxonomy.ncbi_taxid:
             # There was a unique entry already, use as template!
             taxonomy = Taxonomy(
-                clade=clade, genus=genus, species=species,
-                ncbi_taxid=taxonomy.ncbi_taxid)
+                clade=clade,
+                genus=genus,
+                species=species,
+                ncbi_taxid=taxonomy.ncbi_taxid,
+            )
             session.add(taxonomy)  # Can we refactor this?
             return taxonomy
 
 
-def find_taxonomy(session, clade, sp_name, sp_name_etc,
-                  validate_species):
+def find_taxonomy(session, clade, sp_name, sp_name_etc, validate_species):
     """Fuzzy search for this entry in the taxonomy table (if present)."""
     assert isinstance(clade, str), clade
     assert isinstance(sp_name, str), sp_name
@@ -119,9 +129,15 @@ def find_taxonomy(session, clade, sp_name, sp_name_etc,
     return None
 
 
-def import_fasta_file(fasta_file, db_url, name=None, debug=True,
-                      fasta_split_fn=None, fasta_parse_fn=None,
-                      validate_species=False):
+def import_fasta_file(
+    fasta_file,
+    db_url,
+    name=None,
+    debug=True,
+    fasta_split_fn=None,
+    fasta_parse_fn=None,
+    validate_species=False,
+):
     """Import a FASTA file into the database.
 
     Optional argument fasta_split_fn is given the full FASTA
@@ -130,6 +146,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     """
     # Argument validation,
     if fasta_split_fn is None:
+
         def fasta_split_fn(text):
             """Treat all FASTA entries as singletons.
 
@@ -145,14 +162,13 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     session = Session()
 
     if validate_species:
-        count = session.query(Taxonomy).distinct(
-            Taxonomy.genus, Taxonomy.species).count()
+        count = (
+            session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
+        )
         if debug:
-            sys.stderr.write(
-                "Taxonomy table contains %i distinct species\n" % count)
+            sys.stderr.write("Taxonomy table contains %i distinct species\n" % count)
         if not count:
-            sys.exit(
-                "Taxonomy table empty, cannot use validate species option\n")
+            sys.exit("Taxonomy table empty, cannot use validate species option\n")
 
     if not name:
         name = "Import of %s" % os.path.basename(fasta_file)
@@ -165,7 +181,8 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
         name=name,
         uri=fasta_file,
         md5=md5,
-        notes="Imported with thapbi_pict legacy_import v%s" % __version__)
+        notes="Imported with thapbi_pict legacy_import v%s" % __version__,
+    )
     session.add(db_source)
 
     seq_count = 0
@@ -180,13 +197,11 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
         seq_count += 1
         if title.startswith("Control_"):
             if debug:
-                sys.stderr.write("DEBUG: Ignoring control entry: %s\n"
-                                 % title)
+                sys.stderr.write("DEBUG: Ignoring control entry: %s\n" % title)
             continue
         if not its1_seq:
             if debug:
-                sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n"
-                                 % title)
+                sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n" % title)
             continue
 
         its1_seq_count += 1
@@ -194,8 +209,9 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
         its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
 
         # Is is already there? e.g. duplicate sequences in FASTA file
-        its1 = session.query(ITS1).filter_by(
-            md5=its1_md5, sequence=its1_seq).one_or_none()
+        its1 = (
+            session.query(ITS1).filter_by(md5=its1_md5, sequence=its1_seq).one_or_none()
+        )
         if its1 is None:
             its1 = ITS1(md5=its1_md5, sequence=its1_seq)
             session.add(its1)
@@ -203,8 +219,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
         # One sequence can have multiple entries
         idn = title.split(None, 1)[0]
         if idn in idn_set:
-            sys.stderr.write("WARNING: Duplicated identifier %r\n"
-                             % idn)
+            sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
 
         entries = fasta_split_fn(title)
@@ -214,8 +229,7 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                 clade, name, name_etc = fasta_parse_fn(entry)
             except ValueError as e:
                 bad_entries += 1
-                sys.stderr.write("WARNING: %s - Can't parse: %r\n"
-                                 % (e, idn))
+                sys.stderr.write("WARNING: %s - Can't parse: %r\n" % (e, idn))
                 continue
             assert isinstance(name, str), name
             assert isinstance(name_etc, str), name_etc
@@ -223,31 +237,29 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
             # Store "Phytophthora aff infestans" as
             # genus "Phytophthora", species "aff infestans"
             if debug and not name:
-                sys.stderr.write(
-                    "WARNING: No species information from %r\n" % entry)
+                sys.stderr.write("WARNING: No species information from %r\n" % entry)
             genus, species = name.split(None, 1) if name else ("", "")
             assert genus != "P.", title
             # Is is already there? e.g. duplicate sequences in FASTA file
             # Note even if have no species text, still do the DB lookup!
-            taxonomy = find_taxonomy(session,
-                                     clade, name, name_etc,
-                                     validate_species)
+            taxonomy = find_taxonomy(session, clade, name, name_etc, validate_species)
             if taxonomy is None:
                 if validate_species:
                     bad_sp_entries += 1
                     if name and debug:
                         sys.stderr.write(
                             "WARNING: Could not validate species %r from %r\n"
-                            % (name, entry))
+                            % (name, entry)
+                        )
                     if not name:
                         sys.stderr.write(
-                            "WARNING: Could not determine species from %r\n"
-                            % entry)
+                            "WARNING: Could not determine species from %r\n" % entry
+                        )
                     # Do NOT write it to the DB
                     continue
                 taxonomy = Taxonomy(
-                    clade=clade, genus=genus, species=species,
-                    ncbi_taxid=0)
+                    clade=clade, genus=genus, species=species, ncbi_taxid=0
+                )
                 session.add(taxonomy)
 
             # Note we use the original FASTA identifier for traceablity
@@ -261,14 +273,16 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
                 current_taxonomy=taxonomy,
                 seq_strategy=0,
                 seq_platform=0,
-                curated_trust=0)
+                curated_trust=0,
+            )
             session.add(record_entry)
             good_entries += 1
             # print(clade, species, acc)
     session.commit()
     sys.stderr.write(
         "%i sequences, %i of which have ITS1, giving %i potential entries.\n"
-        % (seq_count, its1_seq_count, entry_count))
+        % (seq_count, its1_seq_count, entry_count)
+    )
     assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
     assert its1_seq_count <= entry_count, (its1_seq_count, entry_count)
     assert bad_entries <= entry_count, (bad_entries, entry_count)
@@ -276,11 +290,12 @@ def import_fasta_file(fasta_file, db_url, name=None, debug=True,
     if validate_species:
         sys.stderr.write(
             "Loaded %i entries, %i failed species validation, %i rejected.\n"
-            % (good_entries, bad_sp_entries, bad_entries))
+            % (good_entries, bad_sp_entries, bad_entries)
+        )
         assert entry_count == good_entries + bad_entries + bad_sp_entries
     else:
         sys.stderr.write(
-            "Loaded %i entries, %i rejected.\n"
-            % (good_entries, bad_entries))
+            "Loaded %i entries, %i rejected.\n" % (good_entries, bad_entries)
+        )
         assert bad_sp_entries == 0
         assert entry_count == good_entries + bad_entries

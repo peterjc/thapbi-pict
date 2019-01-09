@@ -76,7 +76,8 @@ def top_level_species(tree, ranks, names, genus_list):
             if ranks[taxid] != "species":
                 sys.stderr.write(
                     "WARNING: Treating %s '%s' (txid%i) as a species.\n"
-                    % (ranks[taxid], name, taxid))
+                    % (ranks[taxid], name, taxid)
+                )
             yield taxid, names[tree[taxid]], name
 
 
@@ -86,8 +87,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.exit("Could not find taxdump directory: %r\n" % tax)
     for filename in ("names.dmp", "nodes.dmp"):
         if not os.path.isfile(os.path.join(tax, filename)):
-            sys.exit("Missing %s in the taxdump directory: %r\n"
-                     % (filename, tax))
+            sys.exit("Missing %s in the taxdump directory: %r\n" % (filename, tax))
 
     try:
         ancestors = [int(_) for _ in ancestors.split(",")]
@@ -100,8 +100,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     names = load_names(os.path.join(tax, "names.dmp"))
     if debug:
-        sys.stderr.write("Loaded %i scientific names from names.dmp\n"
-                         % len(names))
+        sys.stderr.write("Loaded %i scientific names from names.dmp\n" % len(names))
 
     genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
     if not genus_list:
@@ -109,13 +108,12 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(
             "Identified %i genera under specified ancestor node: %s\n"
-            % (len(genus_list),
-               ", ".join(sorted(names[_] for _ in genus_list))))
+            % (len(genus_list), ", ".join(sorted(names[_] for _ in genus_list)))
+        )
 
     genus_species = list(top_level_species(tree, ranks, names, genus_list))
     if debug:
-        sys.stderr.write(
-            "Filtered down to %i species names\n" % len(genus_species))
+        sys.stderr.write("Filtered down to %i species names\n" % len(genus_species))
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -136,14 +134,16 @@ def main(tax, db_url, ancestors, debug=True):
             species = "unclassified"
 
         # Is is already there? e.g. prior import
-        taxonomy = session.query(Taxonomy).filter_by(
-            clade=clade, genus=genus, species=species,
-            ncbi_taxid=taxid).one_or_none()
+        taxonomy = (
+            session.query(Taxonomy)
+            .filter_by(clade=clade, genus=genus, species=species, ncbi_taxid=taxid)
+            .one_or_none()
+        )
         if taxonomy is None:
             new += 1
             taxonomy = Taxonomy(
-                clade=clade, genus=genus, species=species,
-                ncbi_taxid=taxid)
+                clade=clade, genus=genus, species=species, ncbi_taxid=taxid
+            )
             session.add(taxonomy)
         else:
             old += 1
@@ -152,11 +152,11 @@ def main(tax, db_url, ancestors, debug=True):
 
     if old:
         sys.stderr.write(
-            "Loaded %i new species entries into DB (%i already there)\n"
-            % (new, old))
+            "Loaded %i new species entries into DB (%i already there)\n" % (new, old)
+        )
     else:
         sys.stderr.write(
-            "Loaded %i species entries into DB (none already there)\n"
-            % new)
+            "Loaded %i species entries into DB (none already there)\n" % new
+        )
 
     return 0

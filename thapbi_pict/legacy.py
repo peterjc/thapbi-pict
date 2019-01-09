@@ -55,9 +55,10 @@ for _ in ("_4_P._", "_7a_P._"):
     assert composite_re.fullmatch(_), _
 for _ in ("_P._", "_7a_Phytophthora_"):
     assert not composite_re.fullmatch(_), _
-for _ in ("8b_Phytophthora_brassicae_HQ643158_"
-          "8b_P._brassicae_voucher_HQ643156",
-          "4_Phytophthora_alticola_HQ013214_4_P._arenaria_HQ013219"):
+for _ in (
+    "8b_Phytophthora_brassicae_HQ643158_" "8b_P._brassicae_voucher_HQ643156",
+    "4_Phytophthora_alticola_HQ013214_4_P._arenaria_HQ013219",
+):
     assert composite_re.search(_), _
 
 
@@ -79,19 +80,18 @@ def split_composite_entry(text):
         index = split.start()
         answer.append(rest[:index])
         # plus one to omit the underscore:
-        rest = rest[index + 1:]
+        rest = rest[index + 1 :]
 
 
-assert (split_composite_entry('4_Phytophthora_alticola_HQ013214')
-        == ['4_Phytophthora_alticola_HQ013214'])
-assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
-                              '4_P._arenaria_HQ013219')
-        == ['4_Phytophthora_alticola_HQ013214', '4_P._arenaria_HQ013219'])
-assert (split_composite_entry('4_Phytophthora_alticola_HQ013214_'
-                              '4_P._arenaria_HQ013219_4a_P._other_XYZ')
-        == ['4_Phytophthora_alticola_HQ013214',
-            '4_P._arenaria_HQ013219',
-            '4a_P._other_XYZ'])
+assert split_composite_entry("4_Phytophthora_alticola_HQ013214") == [
+    "4_Phytophthora_alticola_HQ013214"
+]
+assert split_composite_entry(
+    "4_Phytophthora_alticola_HQ013214_" "4_P._arenaria_HQ013219"
+) == ["4_Phytophthora_alticola_HQ013214", "4_P._arenaria_HQ013219"]
+assert split_composite_entry(
+    "4_Phytophthora_alticola_HQ013214_" "4_P._arenaria_HQ013219_4a_P._other_XYZ"
+) == ["4_Phytophthora_alticola_HQ013214", "4_P._arenaria_HQ013219", "4a_P._other_XYZ"]
 
 
 def parse_fasta_entry(text):
@@ -168,19 +168,24 @@ def parse_fasta_entry(text):
     return (clade, " ".join(name), "")
 
 
-assert (parse_fasta_entry('4_P._arenaria_HQ013219')
-        == ('4', 'Phytophthora arenaria', ''))
-assert (parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
-        == ('1', 'Phytophthora aff infestans', ''))
-assert (parse_fasta_entry('P._amnicola_CBS131652')
-        == ('', 'Phytophthora amnicola', ''))
-assert (parse_fasta_entry('ACC-ONLY') == ('', '', ''))
+assert parse_fasta_entry("4_P._arenaria_HQ013219") == ("4", "Phytophthora arenaria", "")
+assert parse_fasta_entry("1Phytophthora_aff_infestans_P13660") == (
+    "1",
+    "Phytophthora aff infestans",
+    "",
+)
+assert parse_fasta_entry("P._amnicola_CBS131652") == ("", "Phytophthora amnicola", "")
+assert parse_fasta_entry("ACC-ONLY") == ("", "", "")
 
 
 def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
     """Run the script with command line arguments."""
     return import_fasta_file(
-        fasta_file, db_url, name=name, debug=debug,
+        fasta_file,
+        db_url,
+        name=name,
+        debug=debug,
         fasta_split_fn=split_composite_entry,
         fasta_parse_fn=parse_fasta_entry,
-        validate_species=validate_species)
+        validate_species=validate_species,
+    )

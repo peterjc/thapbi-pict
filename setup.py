@@ -33,21 +33,25 @@ import sys
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    sys.exit("We need the Python library setuptools to be installed. "
-             "Try runnning: python -m ensurepip")
+    sys.exit(
+        "We need the Python library setuptools to be installed. "
+        "Try runnning: python -m ensurepip"
+    )
 
 
 # Make sure we have the right Python version.
 if sys.version_info[:2] < (3, 5):
-    sys.exit("THAPBI PICT requires Python 3.5 or later. "
-             "Python %d.%d detected.\n" % sys.version_info[:2])
+    sys.exit(
+        "THAPBI PICT requires Python 3.5 or later. "
+        "Python %d.%d detected.\n" % sys.version_info[:2]
+    )
 
 # We define the version number in thapbi_pict/__init__.py
 # Here we can't use "import thapbi_pict" then "thapbi_pict.__version__"
 # as that would tell us the version already installed (if any).
 __version__ = "Undefined"
-for line in open('thapbi_pict/__init__.py'):
-    if (line.startswith('__version__')):
+for line in open("thapbi_pict/__init__.py"):
+    if line.startswith("__version__"):
         exec(line.strip())
 
 # Load our markdown file README.md as the long description.
@@ -60,41 +64,35 @@ for line in open('thapbi_pict/__init__.py'):
 with open("README.md", "rb") as handle:
     readme_md = handle.read().decode("ascii")
 
-setup(name='thapbi_pict',
-      version=__version__,
-      author='Peter Cock',
-      author_email='peter.cock@hutton.ac.uk',
-      url='https://github.com/peterjc/thapbi-pict',  # For now at least
-      download_url='https://github.com/peterjc/thapbi-pict',
-      description='THAPBI Phytophthora ITS1 Classifier Tool (PICT).',
-      long_description=readme_md,
-      long_description_content_type='text/markdown',
-      classifiers=[
-          'Development Status :: 4 - Beta',
-          'Environment :: Console',
-          'Intended Audience :: Science/Research',
-          'License :: Freely Distributable',
-          'License :: OSI Approved :: MIT License',
-          'Natural Language :: English',
-          'Operating System :: MacOS :: MacOS X',
-          'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 3.5',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Topic :: Scientific/Engineering',
-          'Topic :: Scientific/Engineering :: Bio-Informatics',
-          'Topic :: Software Development :: Libraries :: Python Modules',
-      ],
-      entry_points={
-          'console_scripts': [
-              'thapbi_pict = thapbi_pict.__main__:main'
-          ]
-      },
-      packages=find_packages(),
-      include_package_data=True,
-      install_requires=[
-          'biopython',
-          'sqlalchemy',
-      ],
-      )
+setup(
+    name="thapbi_pict",
+    version=__version__,
+    author="Peter Cock",
+    author_email="peter.cock@hutton.ac.uk",
+    url="https://github.com/peterjc/thapbi-pict",  # For now at least
+    download_url="https://github.com/peterjc/thapbi-pict",
+    description="THAPBI Phytophthora ITS1 Classifier Tool (PICT).",
+    long_description=readme_md,
+    long_description_content_type="text/markdown",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Science/Research",
+        "License :: Freely Distributable",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=["biopython", "sqlalchemy"],
+)

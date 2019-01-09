@@ -27,14 +27,14 @@ from Bio import BiopythonExperimentalWarning
 from Bio import SeqIO
 
 with warnings.catch_warnings():
-    warnings.simplefilter('ignore', BiopythonExperimentalWarning)
+    warnings.simplefilter("ignore", BiopythonExperimentalWarning)
     # This experimenal code (beta) warning was dropped in Biopython 1.73
     from Bio import SearchIO
 
 
-def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
-                          bitscore_threshold=None,
-                          debug=False):
+def run_and_parse_hmmscan(
+    hmm_file, fasta_input_file, hmmscan="hmmscan", bitscore_threshold=None, debug=False
+):
     """Run hmmscan and parse the output with Bio.SearchIO.
 
     This will run the command line tool ``hmmscan`` (assumed to be on the
@@ -63,11 +63,11 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan='hmmscan',
     subprocess.check_call(cmd)
 
     if debug:
-        sys.stderr.write(
-            "DEBUG: hmmscan finished, about to parse the output\n")
+        sys.stderr.write("DEBUG: hmmscan finished, about to parse the output\n")
 
-    for record, result in zip(SeqIO.parse(fasta_input_file, "fasta"),
-                              SearchIO.parse(hmm_out, "hmmer3-text")):
+    for record, result in zip(
+        SeqIO.parse(fasta_input_file, "fasta"), SearchIO.parse(hmm_out, "hmmer3-text")
+    ):
         if record.id != result.id:
             raise ValueError("FASTA %s vs HMMER %s" % (record.id, result.id))
         yield record, result
@@ -85,9 +85,8 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
     """
     hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
     for record, result in run_and_parse_hmmscan(
-                hmm, input_fasta,
-                bitscore_threshold=bitscore_threshold,
-                debug=debug):
+        hmm, input_fasta, bitscore_threshold=bitscore_threshold, debug=debug
+    ):
         title = record.description
         seq = str(record.seq).upper()
         if not result:
@@ -102,7 +101,7 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
             yield title, seq, None
         elif len(hit) == 1:
             hsp = hit[0]
-            yield title, seq, seq[hsp.query_start:hsp.query_end]
+            yield title, seq, seq[hsp.query_start : hsp.query_end]
         else:
             # Merge them - does not seem useful to insist non-overlapping
             start = min(_.query_start for _ in hit)
@@ -110,6 +109,6 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
             if len(hit) > 2:
                 sys.stderr.write(
                     "WARNING: Taking span %i-%i from %i HMM hits for:\n"
-                    ">%s\n%s\n"
-                    % (start, end, len(hit), title, seq))
+                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
+                )
             yield title, seq, seq[start:end]

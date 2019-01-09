@@ -41,15 +41,16 @@ class Taxonomy(Base):
     __table_args__ = (
         # Might have old entry with clade A, and new curated entry with clade B
         # (but same genus, species and NCBI taxid)
-        Index("taxid_genus_species_clade",
-              'ncbi_taxid', 'genus', 'species', 'clade',
-              unique=True),
-        Index("taxid_genus_species",
-              'ncbi_taxid', 'genus', 'species',
-              unique=False),
-        Index("genus_species",
-              'genus', 'species',
-              unique=False),
+        Index(
+            "taxid_genus_species_clade",
+            "ncbi_taxid",
+            "genus",
+            "species",
+            "clade",
+            unique=True,
+        ),
+        Index("taxid_genus_species", "ncbi_taxid", "genus", "species", unique=False),
+        Index("genus_species", "genus", "species", unique=False),
     )
 
     id = Column(Integer, primary_key=True)
@@ -60,8 +61,12 @@ class Taxonomy(Base):
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""
-        return ("Taxonomy(clade=%r, ncbi_taxid=%r, genus=%r, species=%r)"
-                % (self.clade, self.ncbi_taxid, self.genus, self.species))
+        return "Taxonomy(clade=%r, ncbi_taxid=%r, genus=%r, species=%r)" % (
+            self.clade,
+            self.ncbi_taxid,
+            self.genus,
+            self.species,
+        )
 
 
 class ITS1(Base):
@@ -96,13 +101,11 @@ class SequenceSource(Base):
 
     # Whatever was recorded in the original data source
     original_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
-    original_taxonomy = relationship(
-        Taxonomy, foreign_keys=[original_taxonomy_id])
+    original_taxonomy = relationship(Taxonomy, foreign_keys=[original_taxonomy_id])
 
     # Initially based on the values above, but expect to reclassify some
     current_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
-    current_taxonomy = relationship(
-        Taxonomy, foreign_keys=[current_taxonomy_id])
+    current_taxonomy = relationship(Taxonomy, foreign_keys=[current_taxonomy_id])
 
     # date_added = Column(DateTime) -> see data_source.date
     date_modified = Column(DateTime)
@@ -133,4 +136,4 @@ def connect_to_db(*args, **kwargs):
 
 if __name__ == "__main__":
     print("Debugging example")
-    Session = connect_to_db('sqlite:///:memory:', echo=True)
+    Session = connect_to_db("sqlite:///:memory:", echo=True)
