@@ -18,11 +18,8 @@ before_install:
  - "if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi"
  - pip install --upgrade pip setuptools
- - pip install black
- - echo "Using black to check Python code"
- - black --check .
- - pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
- - echo "Using flake8 to check Python code"
+ - pip install flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+ - echo "Using flake8 (including black) to check Python code"
  - flake8 .
 
 install:
