@@ -341,6 +341,15 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             sys.stderr.write("Running %s classifer on %s\n" % (method, filename))
             sys.stdout.flush()
             sys.stderr.flush()
+            if not os.path.getsize(filename):
+                sys.stderr.write(
+                    "WARNING: %s was empty, skipping %s classifer\n"
+                    % (filename, method)
+                )
+                # Should we write empty report files instead?
+                # This might indicate an error, but could be none of the
+                # raw reads passed the abundance threshold.
+                continue
 
             folder, stem = os.path.split(filename)
             stem = os.path.splitext(stem)[0]
