@@ -339,6 +339,8 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
         match_count = 0
         for filename in fasta_files:
             sys.stderr.write("Running %s classifer on %s\n" % (method, filename))
+            sys.stdout.flush()
+            sys.stderr.flush()
 
             folder, stem = os.path.split(filename)
             stem = os.path.splitext(stem)[0]
@@ -391,4 +393,6 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
         % (method, match_count, read_count, len(fasta_files))
     )
 
+    sys.stdout.flush()
+    sys.stderr.flush()
     return 0

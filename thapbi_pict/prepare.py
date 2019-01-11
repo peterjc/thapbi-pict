@@ -272,6 +272,12 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
         )
 
     for control, stem, raw_R1, raw_R2 in file_pairs:
+        sys.stderr.write(
+            "Starting to prepare %s %s\n" % ("control" if control else "data", stem)
+        )
+        sys.stdout.flush()
+        sys.stderr.flush()
+
         folder, stem = os.path.split(stem)
         if out_dir and out_dir != "-":
             folder = out_dir
@@ -383,4 +389,7 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                     "Wrote %s with %i unique reads over abundance %i\n"
                     % (stem, acc_uniq_count, min_abundance)
                 )
+
+    sys.stdout.flush()
+    sys.stderr.flush()
     return 0
