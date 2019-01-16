@@ -119,6 +119,16 @@ def classify(args=None):
     )
 
 
+def assess_classification(args=None):
+    """Subcommand to assess classification using known true taxonomy."""
+    from .assess import main
+
+    check_output_directory(args.output)
+    return main(
+        known=args.known, method=args.method, out_dir=args.output, debug=args.verbose
+    )
+
+
 def main(args=None):
     """Execute the command line script thapbi_pict.
 
@@ -419,6 +429,46 @@ comma.
         help="Max number of parallel threads to use in called tools.",
     )
     parser_classify.set_defaults(func=classify)
+
+    # assess-classification
+    parser_assess = subparsers.add_parser(
+        "assess",
+        description="Assess accuracy of ITS1 read classification.",
+        epilog="Takes as input XXX.known_tax.tsv and matching "
+        "predictions in XXX.method-reads.tsv (in same directory) "
+        "to produce a multi-species confusion matrix named "
+        "XXX.method-confusion.tsv, and a summary to stdout.",
+    )
+    parser_assess.add_argument(
+        "known",
+        type=str,
+        nargs="+",
+        help="One or more file or folder names (containing files "
+        "named *.known_tax.tsv) containing sequence level taxonomy "
+        "assignment. Expects matching files named *.method-reads.tsv "
+        "in the same directory.",
+    )
+    parser_assess.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default="identity",
+        choices=list(method_classifier),
+        help="Method to assess (used to infer filenames), " "default is identity.",
+    )
+    parser_assess.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="DIRNAME",
+        help="Directory to write output reports to, default "
+        "is next to each input file.",
+    )
+    parser_assess.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_assess.set_defaults(func=assess_classification)
 
     # What have we been asked to do?
     options = parser.parse_args(args)
