@@ -156,6 +156,19 @@ def assess_classification(args=None):
     )
 
 
+def plate_summary(args=None):
+    """Subcommand to run per-output-folder summary of classifiers."""
+    from .summary import main
+
+    return main(
+        inputs=args.inputs,
+        output=args.output,
+        method=args.method,
+        min_abundance=args.abundance,
+        debug=args.verbose,
+    )
+
+
 def main(args=None):
     """Execute the command line script thapbi_pict.
 
@@ -611,6 +624,53 @@ comma.
     )
     parser_assess.set_defaults(func=assess_classification)
     del parser_assess  # To prevent acidentally adding more
+
+    # plate-summary
+    parser_plate_summary = subparsers.add_parser(
+        "plate-summary",
+        description="Summary report on classifier output (per folder).",
+        epilog="Assumes you have run one or more classifier methods, "
+        "giving output folder(s) containing XXX.method-reads.tsv and "
+        "XXX.method-tax.tsv files. Expects one plate per folder.",
+    )
+    parser_plate_summary.add_argument(
+        "inputs",
+        type=str,
+        nargs="+",
+        help="One or more prepared read files (*.fasta), prediction "
+        "files (*.method.fasta)  or folder names. Expects to find "
+        "where the method extension can be set via -m / --method.",
+    )
+    parser_plate_summary.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default="identity",
+        help="Method to report (used to infer filenames), default is identity.",
+    )
+    parser_plate_summary.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="1",
+        help="Mininum sample level abundance to require for the report. "
+        "Default is one meaning look at everything, but rather than re-running "
+        "the classifier with a stricter minimum abundance you can apply it here.",
+    )
+    parser_plate_summary.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="File to write summary sequence vs samples table to. "
+        "Default is '-' meaning to stdout.",
+    )
+    parser_plate_summary.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_plate_summary.set_defaults(func=plate_summary)
+    del parser_plate_summary  # To prevent acidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
