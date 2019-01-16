@@ -1,6 +1,6 @@
-"""Classifying prepared ITS1 reads using an ITS1 database.
+"""Classifying prepared ITS1 sequences using an ITS1 database.
 
-This implements the ``thapbi_pict classify-reads ...`` command.
+This implements the ``thapbi_pict classify ...`` command.
 """
 
 import os
@@ -216,7 +216,7 @@ def method_swarm(
     FASTA to input to swarm.
 
     Uses the database sequences to assign species to clusters,
-    and thus reads within a cluster to that species.
+    and thus input sequences within a cluster to that species.
     """
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
@@ -233,7 +233,7 @@ def method_swarm(
         for line in handle:
             cluster_count += 1
             idns = line.strip().split()
-            # This split is safe if the reads came though our prepare-reads
+            # This split is safe if the sequence came though our prepare-reads
             read_idns = [_ for _ in idns if "_db_" not in _]
             db_md5s = [_.split("_db_", 1)[0] for _ in idns if "_db_" in _]
             del idns
@@ -246,7 +246,7 @@ def method_swarm(
                 genus, species, clade, note = taxonomy_consensus(
                     md5_to_taxon(db_md5s, session)
                 )
-                note = "Cluster of %i reads and %i DB entries. %s" % (
+                note = "Cluster of %i seqs and %i DB entries. %s" % (
                     len(read_idns),
                     len(db_md5s),
                     note,
@@ -254,7 +254,7 @@ def method_swarm(
             else:
                 # Cannot classify, report
                 genus = species = clade = ""
-                note = "Cluster of %i reads but no DB entry" % len(read_idns)
+                note = "Cluster of %i seqs but no DB entry" % len(read_idns)
             for idn in read_idns:
                 read_report.write(
                     "%s\t%s\t%s\t%s\t%s\n" % (idn, genus, species, clade, note)
@@ -294,7 +294,7 @@ def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
 
 
 def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
-    """Implement the thapbi_pict classify-reads command."""
+    """Implement the thapbi_pict classify command."""
     assert isinstance(fasta, list)
 
     if method not in method_classifier:
@@ -382,7 +382,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                             % (method, filename)
                         )
                         tax_counts = Counter()
-                        reads_handle.write("#(no reads to classify)\n")
+                        reads_handle.write("#(no sequences to classify)\n")
                 # Record the taxonomy counts
                 count = sum(tax_counts.values())
                 read_count += count
@@ -396,7 +396,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                             "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count)
                         )
                     if not count:
-                        tax_handle.write("#(no reads to classify)\n")
+                        tax_handle.write("#(no sequences to classify)\n")
 
                 # Move our temp files into position...
                 shutil.move(tmp_reads, read_name)

@@ -104,8 +104,8 @@ def prepare_reads(args=None):
     )
 
 
-def classify_reads(args=None):
-    """Subcommand to classify reads using an ITS1 database."""
+def classify(args=None):
+    """Subcommand to classify ITS1 sequences using a database."""
     from .classify import main
 
     check_output_directory(args.output)
@@ -370,29 +370,29 @@ comma.
     )
     parser_prepare_reads.set_defaults(func=prepare_reads)
 
-    # classify-reads
-    parser_classify_reads = subparsers.add_parser(
+    # classify
+    parser_classify = subparsers.add_parser(
         "classify-reads",
-        description="Classify FASTA file of ITS1 reads by species.",
+        description="Classify FASTA file of ITS1 sequences by species.",
         epilog="Each input file XXX.fasta will result in output files "
         "namesd XXX.method-reads.tsv and XXX.method-tax.tsv in "
         "the specified output directory (default input dir).",
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "fasta",
         type=str,
         nargs="+",
         help="One or more ITS1 FASTA filenames or folder names "
         "(containing files named *.fasta).",
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "-d",
         "--database",
         type=str,
         required=True,
         help="Which ITS1 database to use for species classification.",
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "-m",
         "--method",
         type=str,
@@ -400,7 +400,7 @@ comma.
         choices=list(method_classifier),
         help="Method to use, default uses simple identity.",
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "-o",
         "--output",
         type=str,
@@ -409,16 +409,16 @@ comma.
         help="Directory to write output reports to, default "
         "is next to each input file.",
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
-    parser_classify_reads.add_argument(
+    parser_classify.add_argument(
         "--cpu",
         type=int,
         default=0,
         help="Max number of parallel threads to use in called tools.",
     )
-    parser_classify_reads.set_defaults(func=classify_reads)
+    parser_classify.set_defaults(func=classify)
 
     # What have we been asked to do?
     options = parser.parse_args(args)

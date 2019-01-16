@@ -56,4 +56,4 @@ jobs:
             tests/test_legacy-import.sh
             tests/test_ncbi-import.sh
             tests/test_prepare-reads.sh
-            tests/test_classify-reads.sh
+            tests/test_classify.sh
