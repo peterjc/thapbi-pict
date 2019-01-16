@@ -125,7 +125,11 @@ def assess_classification(args=None):
 
     check_output_directory(args.output)
     return main(
-        known=args.known, method=args.method, out_dir=args.output, debug=args.verbose
+        fasta=args.fasta,
+        known=args.known,
+        method=args.method,
+        out_dir=args.output,
+        debug=args.verbose,
     )
 
 
@@ -434,19 +438,30 @@ comma.
     parser_assess = subparsers.add_parser(
         "assess",
         description="Assess accuracy of ITS1 read classification.",
-        epilog="Takes as input XXX.known_tax.tsv and matching "
+        epilog="Takes as input XXX.known-reads.tsv and matching "
         "predictions in XXX.method-reads.tsv (in same directory) "
         "to produce a multi-species confusion matrix named "
-        "XXX.method-confusion.tsv, and a summary to stdout.",
+        "XXX.method-vs-known.tsv, and a summary to stdout. You can "
+        "deliberately compare to prediction methods to each other "
+        "using this.",
     )
     parser_assess.add_argument(
-        "known",
+        "fasta",
         type=str,
         nargs="+",
-        help="One or more file or folder names (containing files "
-        "named *.known_tax.tsv) containing sequence level taxonomy "
-        "assignment. Expects matching files named *.method-reads.tsv "
-        "in the same directory.",
+        help="One or more FASTA file or folder names. Next to each "
+        "FASTA file expects matching files *.method-reads.tsv to be "
+        "assessed against *.known-reads.tsv, where these filenames "
+        "can be set via -m / --method and -k / --known arguments. ",
+    )
+    parser_assess.add_argument(
+        "-k",
+        "--known",
+        type=str,
+        default="known",
+        help="Replaces the string used in filenames for the truth "
+        "against which the method in -m / --method is assessed. "
+        "This could be any defined method, default is 'known'.",
     )
     parser_assess.add_argument(
         "-m",
@@ -454,7 +469,7 @@ comma.
         type=str,
         default="identity",
         choices=list(method_classifier),
-        help="Method to assess (used to infer filenames), " "default is identity.",
+        help="Method to assess (used to infer filenames), default is identity.",
     )
     parser_assess.add_argument(
         "-o",
