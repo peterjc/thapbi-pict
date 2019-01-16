@@ -341,15 +341,6 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             sys.stderr.write("Running %s classifer on %s\n" % (method, filename))
             sys.stdout.flush()
             sys.stderr.flush()
-            if not os.path.getsize(filename):
-                sys.stderr.write(
-                    "WARNING: %s was empty, skipping %s classifer\n"
-                    % (filename, method)
-                )
-                # Should we write empty report files instead?
-                # This might indicate an error, but could be none of the
-                # raw reads passed the abundance threshold.
-                continue
 
             folder, stem = os.path.split(filename)
             stem = os.path.splitext(stem)[0]
@@ -378,20 +369,34 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 tmp_tax = os.path.join(tmp, "%s.%s-tax.tsv" % (stem, method))
                 # Run the classifier and write the read report:
                 with open(tmp_reads, "w") as reads_handle:
-                    tax_counts = method_fn(
-                        filename, session, reads_handle, tmp, shared_tmp, debug, cpu
-                    )
+                    reads_handle.write("#read-name\tgenus\tspecies\tclade\tnote\n")
+                    if os.path.getsize(filename):
+                        # There are reads to classify
+                        tax_counts = method_fn(
+                            filename, session, reads_handle, tmp, shared_tmp, debug, cpu
+                        )
+                    else:
+                        # No reads, no taxonomy assignments
+                        sys.stderr.write(
+                            "WARNING: Skipping %s classifier on %s as zero reads\n"
+                            % (method, filename)
+                        )
+                        tax_counts = Counter()
+                        reads_handle.write("#(no reads to classify)\n")
                 # Record the taxonomy counts
                 count = sum(tax_counts.values())
                 read_count += count
                 match_count += count - tax_counts.get(("", "", ""), 0)
                 with open(tmp_tax, "w") as tax_handle:
+                    tax_handle.write("#genus\tspecies\tclade\tread-count\n")
                     for (genus, species, clade), tax_count in sorted(
                         tax_counts.items()
                     ):
                         tax_handle.write(
                             "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count)
                         )
+                    if not count:
+                        tax_handle.write("#(no reads to classify)\n")
 
                 # Move our temp files into position...
                 shutil.move(tmp_reads, read_name)
