@@ -18,6 +18,7 @@ from .db_orm import ITS1, SequenceSource, Taxonomy
 from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
+from .utils import find_requested_files
 
 
 def md5_to_taxon(md5_list, session):
@@ -273,26 +274,6 @@ method_setup = {
 }
 
 
-def find_fasta_files(filenames_or_folders, ext=".fasta", debug=False):
-    """Interpret a list of filenames and/or foldernames."""
-    answer = []
-    for x in filenames_or_folders:
-        if os.path.isdir(x):
-            if debug:
-                sys.stderr.write("Walking directory %r\n" % x)
-            for root, dirs, files in os.walk(x):
-                for f in files:
-                    if f.endswith(ext):
-                        # Check not a directory?
-                        answer.append(os.path.join(root, f))
-        elif os.path.isfile(x):
-            answer.append(x)
-        else:
-            sys.exit("ERROR: %r is not a file or a directory\n" % x)
-    # Warn if there were duplicates?
-    return sorted(set(answer))
-
-
 def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify command."""
     assert isinstance(fasta, list)
@@ -324,7 +305,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     if not count:
         sys.exit("ERROR: ITS1 table empty, cannot classify anything.\n")
 
-    fasta_files = find_fasta_files(fasta, debug=debug)
+    fasta_files = find_requested_files(fasta, ext=".fasta", debug=debug)
     if debug:
         sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
 

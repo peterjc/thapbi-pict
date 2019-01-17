@@ -1,5 +1,6 @@
 """Helper functions for THAPB-PICT code."""
 
+import os
 import subprocess
 import sys
 
@@ -79,3 +80,23 @@ def abundance_values_in_fasta(fasta_file):
             max_a = max(a, max_a)
             total_a += a
     return total_a, max_a
+
+
+def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
+    """Interpret a list of filenames and/or foldernames."""
+    answer = []
+    for x in filenames_or_folders:
+        if os.path.isdir(x):
+            if debug:
+                sys.stderr.write("Walking directory %r\n" % x)
+            for root, dirs, files in os.walk(x):
+                for f in files:
+                    if f.endswith(ext):
+                        # Check not a directory?
+                        answer.append(os.path.join(root, f))
+        elif os.path.isfile(x):
+            answer.append(x)
+        else:
+            sys.exit("ERROR: %r is not a file or a directory\n" % x)
+    # Warn if there were duplicates?
+    return sorted(set(answer))
