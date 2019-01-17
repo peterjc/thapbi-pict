@@ -75,7 +75,7 @@ def abundance_values_in_fasta(fasta_file):
     """Return total and maximum abundance encoded in read names."""
     total_a = max_a = 0
     with open(fasta_file) as handle:
-        for title, seq in SimpleFastaParser(handle):
+        for title, _ in SimpleFastaParser(handle):
             a = abundance_from_read_name(title.split(None, 1)[0])
             max_a = max(a, max_a)
             total_a += a
@@ -89,7 +89,7 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
-            for root, dirs, files in os.walk(x):
+            for root, _, files in os.walk(x):
                 for f in files:
                     if f.endswith(ext):
                         # Check not a directory?

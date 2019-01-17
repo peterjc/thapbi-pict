@@ -35,7 +35,7 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"), debug=Fa
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
-            for root, dirs, files in os.walk(x):
+            for root, _, files in os.walk(x):
                 for f in files:
                     if f.endswith(ext):
                         answer.append(os.path.join(root, f))
