@@ -16,7 +16,7 @@ def main(fasta, known, method, out_dir, debug=False):
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
 
-    sys.stderr.write("Assessed %s vs %s" % (method, known))
+    sys.stderr.write("Assessed %s vs %s\n" % (method, known))
 
     sys.stdout.flush()
     sys.stderr.flush()
