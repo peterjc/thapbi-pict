@@ -148,7 +148,7 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
         # specificity, selectivity or true negative rate (TNR)
         specificity = float(tn) / (tn + fp) if tn else 0.0
         # precision or positive predictive value (PPV)
-        precision = float(tp) / (tp + fp) if fp else 0.0
+        precision = float(tp) / (tp + fp) if tp else 0.0
         # F1 score
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
         handle.write(
