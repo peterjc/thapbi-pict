@@ -28,12 +28,37 @@ def tally_files(expected_file, predicted_file):
     for expt, pred in zip(
         parse_species_tsv(expected_file), parse_species_tsv(predicted_file)
     ):
-        assert expt[0] == pred[0]
+        if not expt[0] == pred[0]:
+            sys.exit(
+                "Sequence name mismatch in %s vs %s, %s vs %s\n"
+                % (expected_file, predicted_file, expt[0], pred[0])
+            )
         # Might only have genus with species "", thus strip whitespace:
         expt_sp = ("%s %s" % (expt[1], expt[2])).strip()
         pred_sp = ("%s %s" % (pred[1], pred[2])).strip()
         counter[expt_sp, pred_sp] += 1
     return counter
+
+
+def save_confusion_matrix(tally, filename, debug=False):
+    """Output a multi-class confusion matrix as a tab-separated table."""
+    species = set()
+    for expt, pred in tally:
+        species.add(expt)
+        species.add(pred)
+    species = sorted(species)
+    with open(filename, "w") as handle:
+        handle.write("#\t%s\n" % "\t".join(species))
+        for pred in species:
+            handle.write(
+                "%s\t%s\n"
+                % (pred, "\t".join(str(tally[pred, expt]) for expt in species))
+            )
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Wrote %i x %i confusion matrix to %s\n"
+            % (len(species), len(species), filename)
+        )
 
 
 def main(fasta, known, method, out_dir, debug=False):
@@ -71,7 +96,7 @@ def main(fasta, known, method, out_dir, debug=False):
             global_tally.update(file_tally)
 
     sys.stderr.write("Assessed %s vs %s in %i files\n" % (method, known, count))
-    print(global_tally)
+    save_confusion_matrix(global_tally, "/dev/stdout", debug=debug)
 
     sys.stdout.flush()
     sys.stderr.flush()
