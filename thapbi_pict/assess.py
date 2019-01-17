@@ -83,7 +83,7 @@ def extract_binary_tally(class_name, tally):
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
 
 
-def main(fasta, known, method, output, debug=False):
+def main(fasta, known, method, assess_output, confusion_output, debug=False):
     """Implement the thapbi_pict assess command."""
     assert isinstance(fasta, list)
 
@@ -122,15 +122,17 @@ def main(fasta, known, method, output, debug=False):
     if not count:
         sys.exit("ERROR: Could not find files to assess\n")
 
-    if debug:
-        save_confusion_matrix(global_tally, "/dev/stderr", debug=debug)
+    if confusion_output == "-":
+        save_confusion_matrix(global_tally, "/dev/stdout", debug=debug)
+    elif confusion_output:
+        save_confusion_matrix(global_tally, confusion_output, debug=debug)
 
-    if output == "-":
+    if assess_output == "-":
         if debug:
             sys.stderr.write("DEBUG: Output to stdout...\n")
         handle = sys.stdout
     else:
-        handle = open(output, "w")
+        handle = open(assess_output, "w")
 
     handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
     sp_list = class_list_from_tally(global_tally)
@@ -152,7 +154,7 @@ def main(fasta, known, method, output, debug=False):
             "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\n"
             % (species, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
         )
-    if output != "-":
+    if assess_output != "-":
         handle.close()
 
     sys.stdout.flush()
