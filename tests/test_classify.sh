@@ -25,6 +25,11 @@ if [ `wc -l database/legacy/database.identity-reads.tsv` -ne "0" ]; then echo "E
 if [ ! -f $TMP/DNAMIX_S95_L001.prepared.fasta ]; then echo "Run test_prepare-reads.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv
 rm -rf $TMP/DNAMIX_S95_L001.prepared.swarm-tax.tsv
+rm -rf $TMP/DNAMIX_S95_L001.prepared.identity-reads.tsv
+rm -rf $TMP/DNAMIX_S95_L001.prepared.identity-tax.tsv
+
+# Explicitly setting output directory, would be here anyway:
+thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.prepared.fasta -o $TMP/
 
 thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.prepared.fasta
 cut -f 5 $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv | sort | uniq -c
