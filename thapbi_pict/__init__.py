@@ -10,7 +10,11 @@ This Python package provides ITS1-based diagnostic/profiling tools for the
 Tree Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats project,
 funded by the UK's [BBSRC](https://www.bbsrc.ac.uk).
 
-You would typically use THAPBI PICT via the command line tools it defines.
+You would typically use THAPBI PICT via the command line tool it defines::
+
+    $ thapbi_pict --help
+    ...
+
 """
 
-__version__ = "0.0.0"
+__version__ = "0.0.1"
