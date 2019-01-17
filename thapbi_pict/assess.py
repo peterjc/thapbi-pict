@@ -25,8 +25,13 @@ def parse_species_tsv(tabular_file):
 def tally_files(expected_file, predicted_file):
     """Make dictionary tally confusion matrix of species assignements."""
     counter = Counter()
+    # Sorting because currently not all the classifiers produce out in
+    # the same order. The identify classifier respects the input FASTA
+    # order (which is by decreasing abundance), while the swarm classifier
+    # uses the cluster order. Currently the outputs are all small, so fine.
     for expt, pred in zip(
-        parse_species_tsv(expected_file), parse_species_tsv(predicted_file)
+        sorted(parse_species_tsv(expected_file)),
+        sorted(parse_species_tsv(predicted_file)),
     ):
         if not expt[0] == pred[0]:
             sys.exit(
