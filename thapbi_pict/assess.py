@@ -97,7 +97,6 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
         for f in fasta_list:
-            sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, f))
             stem = f[:-6]
             predicted_file = stem + ".%s-reads.tsv" % method
             expected_file = stem + ".%s-reads.tsv" % known
@@ -111,6 +110,8 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
             if not os.path.isfile(expected_file):
                 sys.stderr.write("WARNING: Missing %s\n" % expected_file)
                 continue
+            if debug:
+                sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, f))
 
             file_tally = tally_files(expected_file, predicted_file)
             count += 1
