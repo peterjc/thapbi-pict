@@ -22,7 +22,7 @@ call black from flake8).
 You can install these tools using:
 
 ```console
-pip install black flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint
+pip install black flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear
 ```
 
 You can run the checks using:
