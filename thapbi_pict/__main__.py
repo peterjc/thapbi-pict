@@ -127,7 +127,8 @@ def assess_classification(args=None):
         fasta=args.fasta,
         known=args.known,
         method=args.method,
-        output=args.output,
+        assess_output=args.output,
+        confusion_output=args.confusion,
         debug=args.verbose,
     )
 
@@ -478,6 +479,14 @@ comma.
         metavar="FILENAME",
         help="File to write species level classification assessment table to. "
         "Default is '-' meaning to stdout.",
+    )
+    parser_assess.add_argument(
+        "-c",
+        "--confusion",
+        type=str,
+        metavar="FILENAME",
+        help="File to write species level confusion matrix to. "
+        "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     parser_assess.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
