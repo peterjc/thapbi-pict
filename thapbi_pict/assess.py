@@ -83,7 +83,7 @@ def extract_binary_tally(class_name, tally):
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
 
 
-def main(fasta, known, method, out_dir, debug=False):
+def main(fasta, known, method, output, debug=False):
     """Implement the thapbi_pict assess command."""
     assert isinstance(fasta, list)
 
@@ -118,36 +118,44 @@ def main(fasta, known, method, out_dir, debug=False):
             global_tally.update(file_tally)
 
     sys.stderr.write("Assessed %s vs %s in %i files\n" % (method, known, count))
-    save_confusion_matrix(global_tally, "/dev/stdout", debug=debug)
-
-    with open("/dev/stdout", "w") as handle:
-        handle.write(
-            "#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n"
-        )
-        sp_list = class_list_from_tally(global_tally)
-        for species in sp_list:
-            if not species or " " not in species:
-                # Not looking at genus level here,
-                # these numbers would be misleading as is
-                continue
-            tp, fp, fn, tn = extract_binary_tally(species, global_tally)
-            # sensitivity, recall, hit rate, or true positive rate (TPR):
-            sensitivity = float(tp) / (tp + fn) if tp else 0.0
-            # specificity, selectivity or true negative rate (TNR)
-            specificity = float(tn) / (tn + fp) if tn else 0.0
-            # precision or positive predictive value (PPV)
-            precision = float(tp) / (tp + fp) if fp else 0.0
-            # F1 score
-            f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
-            handle.write(
-                "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\n"
-                % (species, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
-            )
-
-    sys.stdout.flush()
-    sys.stderr.flush()
 
     if not count:
         sys.exit("ERROR: Could not find files to assess\n")
+
+    if debug:
+        save_confusion_matrix(global_tally, "/dev/stderr", debug=debug)
+
+    if output == "-":
+        if debug:
+            sys.stderr.write("DEBUG: Output to stdout...\n")
+        handle = sys.stdout
+    else:
+        handle = open(output, "w")
+
+    handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
+    sp_list = class_list_from_tally(global_tally)
+    for species in sp_list:
+        if not species or " " not in species:
+            # Not looking at genus level here,
+            # these numbers would be misleading as is
+            continue
+        tp, fp, fn, tn = extract_binary_tally(species, global_tally)
+        # sensitivity, recall, hit rate, or true positive rate (TPR):
+        sensitivity = float(tp) / (tp + fn) if tp else 0.0
+        # specificity, selectivity or true negative rate (TNR)
+        specificity = float(tn) / (tn + fp) if tn else 0.0
+        # precision or positive predictive value (PPV)
+        precision = float(tp) / (tp + fp) if fp else 0.0
+        # F1 score
+        f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
+        handle.write(
+            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\n"
+            % (species, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
+        )
+    if output != "-":
+        handle.close()
+
+    sys.stdout.flush()
+    sys.stderr.flush()
 
     return 0
