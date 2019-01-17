@@ -123,12 +123,11 @@ def assess_classification(args=None):
     """Subcommand to assess classification using known true taxonomy."""
     from .assess import main
 
-    check_output_directory(args.output)
     return main(
         fasta=args.fasta,
         known=args.known,
         method=args.method,
-        out_dir=args.output,
+        output=args.output,
         debug=args.verbose,
     )
 
@@ -476,9 +475,9 @@ comma.
         "--output",
         type=str,
         default="-",
-        metavar="DIRNAME",
-        help="Directory to write output reports to, default "
-        "is next to each input file.",
+        metavar="FILENAME",
+        help="File to write species level classification assessment table to. "
+        "Default is '-' meaning to stdout.",
     )
     parser_assess.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
