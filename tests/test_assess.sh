@@ -24,7 +24,7 @@ thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity > $T
 diff $TMP/stdout.txt $TMP/assess_swarm_vs_identity.tsv
 
 # Check confusion matrix output to stdout works:
-thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c -
+thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c - > $TMP/stdout.txt
 diff $TMP/stdout.txt $TMP/confusion_swarm_vs_identity.tsv
 
 echo "$0 passed"
