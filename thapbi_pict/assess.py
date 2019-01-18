@@ -71,8 +71,17 @@ def save_confusion_matrix(tally, filename, debug=False):
         )
 
 
+def species_level(prediction):
+    """Is this prediction atspecies level.
+
+    Returns True for a binomial name (at least one space), false for genus
+    only or no prediction.
+    """
+    return prediction and " " in prediction
+
+
 def extract_binary_tally(class_name, tally):
-    """Compress a multi-class confusion matrix to a binary one.
+    """Compress a multi-class confusion matrix to a single-species binary one.
 
     Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
     False Negatives (FN), True Negatives (TN)
@@ -81,6 +90,42 @@ def extract_binary_tally(class_name, tally):
     for (expt, pred), count in tally.items():
         bt[expt == class_name, pred == class_name] += count
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
+
+
+def extract_global_tally(tally):
+    """Compress multi-class confusion matrix to global binary one.
+
+    Treats no prediction and genus level only prediction as negatives,
+    trests species level prediction as positives.
+
+    If the input data has no negative controls, all there will be no
+    true negatives.
+
+    Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
+    False Negatives (FN), True Negatives (TN).
+    """
+    tp = fp = fn = tn = 0
+    for (expt, pred), count in tally.items():
+        if species_level(expt):
+            # Have species level expectation...
+            if species_level(pred):
+                # this is either TP or FP
+                if expt == pred:
+                    tp += count
+                else:
+                    fp += count
+            else:
+                # No species level prediction, FN
+                fn += count
+        elif species_level(pred):
+            # Have no species level expectation, but a (false) species
+            # level prediction was made - FP
+            fp += count
+        else:
+            # Have no species level expectation, no species
+            # level prediction was made - TN
+            tn += count
+    return tp, fp, fn, tn
 
 
 def main(fasta, known, method, assess_output, confusion_output, debug=False):
@@ -137,12 +182,18 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
 
     handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
     sp_list = class_list_from_tally(global_tally)
-    for species in sp_list:
-        if not species or " " not in species:
+    for species in sp_list + [None]:
+        if species is None:
+            # Special case flag to report global values at end
+            tp, fp, fn, tn = extract_global_tally(global_tally)
+            species = "OVERALL"
+        elif species_level(species):
+            tp, fp, fn, tn = extract_binary_tally(species, global_tally)
+        else:
             # Not looking at genus level here,
             # these numbers would be misleading as is
+            # see special case above
             continue
-        tp, fp, fn, tn = extract_binary_tally(species, global_tally)
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
         # specificity, selectivity or true negative rate (TNR)
