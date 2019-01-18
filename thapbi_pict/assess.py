@@ -181,19 +181,14 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
         handle = open(assess_output, "w")
 
     handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
-    sp_list = class_list_from_tally(global_tally)
-    for species in sp_list + [None]:
+    sp_list = [_ for _ in class_list_from_tally(global_tally) if species_level(_)]
+    for species in [None] + sp_list:
         if species is None:
             # Special case flag to report global values at end
             tp, fp, fn, tn = extract_global_tally(global_tally)
             species = "OVERALL"
-        elif species_level(species):
-            tp, fp, fn, tn = extract_binary_tally(species, global_tally)
         else:
-            # Not looking at genus level here,
-            # these numbers would be misleading as is
-            # see special case above
-            continue
+            tp, fp, fn, tn = extract_binary_tally(species, global_tally)
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
         # specificity, selectivity or true negative rate (TNR)
