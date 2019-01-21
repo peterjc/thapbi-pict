@@ -19,11 +19,11 @@ if [ ! -f $TMP/20th_Century_ITS1.fasta ]; then esearch -db nucleotide -query "it
 if [ `grep -c "^>" $TMP/20th_Century_ITS1.fasta` -ne 129 ]; then echo "Record count from NCBI Entrez changed"; false; fi
 
 # Cannot use validation without having some taxonomy entries
-thapbi_pict ncbi-import -d sqlite:///:memory: $TMP/20th_Century_ITS1.fasta -s 2>&1 | grep "Taxonomy table empty"
+thapbi_pict ncbi-import -d sqlite:///:memory: $TMP/20th_Century_ITS1.fasta 2>&1 | grep "Taxonomy table empty"
 
 export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
-thapbi_pict ncbi-import -d $DB $TMP/20th_Century_ITS1.fasta
+thapbi_pict ncbi-import -x -d $DB $TMP/20th_Century_ITS1.fasta
 
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "96" ]; then echo "Wrong its1_sequence count"; false; fi
@@ -41,7 +41,7 @@ rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01 -a 4783
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
-thapbi_pict ncbi-import -d $DB $TMP/20th_Century_ITS1.fasta -s
+thapbi_pict ncbi-import -d $DB $TMP/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "96" ]; then echo "Wrong its1_sequence count"; false; fi
