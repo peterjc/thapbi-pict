@@ -163,11 +163,28 @@ def parse_fasta_entry(text):
         if name[i] == "X":
             name[i] = "x"
 
+    # Handle a couple of synonyms here, where our legacy file and the NCBI
+    # do not agree. This is a temporary stop-gap without full synonym support.
+    if name[0:2] == ["Phytophthora", "austrocedri"]:
+        name[1] = "austrocedrae"
+    if name[0:3] == ["Phytophthora", "taxon", "cyperaceae"]:
+        name = ["Phytophthora", "balyanboodja"] + name[3:]
+
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
     return (clade, " ".join(name), "")
 
 
+assert parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184") == (
+    "8d",
+    "Phytophthora austrocedrae",
+    "",
+), parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184")
+assert parse_fasta_entry("6_Phytophthora_taxon_cyperaceae_KJ372258") == (
+    "6",
+    "Phytophthora balyanboodja",
+    "",
+)
 assert parse_fasta_entry("4_P._arenaria_HQ013219") == ("4", "Phytophthora arenaria", "")
 assert parse_fasta_entry("1Phytophthora_aff_infestans_P13660") == (
     "1",
