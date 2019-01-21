@@ -56,7 +56,7 @@ def ncbi_import(args=None):
         fasta_file=args.fasta,
         db_url=expand_database_argument(args.database),
         name=args.name,
-        validate_species=args.validate_species,
+        validate_species=not args.lax,
         debug=args.verbose,
     )
 
@@ -69,7 +69,7 @@ def legacy_import(args=None):
         fasta_file=args.fasta,
         db_url=expand_database_argument(args.database),
         name=args.name,
-        validate_species=args.validate_species,
+        validate_species=not args.lax,
         debug=args.verbose,
     )
 
@@ -194,7 +194,9 @@ def main(args=None):
     # ncbi-import
     parser_ncbi_import = subparsers.add_parser(
         "ncbi-import",
-        description="Load an NCBI format ITS1 FASTA file into a database.",
+        description="Load an NCBI format ITS1 FASTA file into a database. "
+        "By default verifies species names against a pre-loaded taxonomy, "
+        "non-matching entries are rejected.",
     )
     parser_ncbi_import.add_argument("fasta", type=str, help="One ITS1 fasta filename.")
     parser_ncbi_import.add_argument(
@@ -202,21 +204,21 @@ def main(args=None):
         "--database",
         type=str,
         required=True,
-        help="Which database to write to (or create)",
+        help="Which database to write to (or create).",
     )
     parser_ncbi_import.add_argument(
         "-n",
         "--name",
         type=str,
         default="",
-        help="Data source name (string, ideally avoiding spaces etc)",
+        help="Data source name (string, ideally avoiding spaces etc).",
     )
     parser_ncbi_import.add_argument(
-        "-s",
-        "--validate_species",
+        "-x",
+        "--lax",
         default=False,
         action="store_true",
-        help="Only load ITS1 entries matching a known species name",
+        help="Accept species names without pre-loaded taxonomy.",
     )
     parser_ncbi_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
@@ -226,7 +228,9 @@ def main(args=None):
     # legacy-import
     parser_legacy_import = subparsers.add_parser(
         "legacy-import",
-        description="Load one of our legacy ITS1 FASTA files into a database.",
+        description="Load one of our legacy ITS1 FASTA files into a database. "
+        "By default verifies species names against a pre-loaded taxonomy, "
+        "non-matching entries are rejected.",
     )
     parser_legacy_import.add_argument(
         "fasta", type=str, help="One ITS1 fasta filename."
@@ -246,11 +250,11 @@ def main(args=None):
         help="Data source name (string, ideally avoiding spaces etc)",
     )
     parser_legacy_import.add_argument(
-        "-s",
-        "--validate_species",
+        "-x",
+        "--lax",
         default=False,
         action="store_true",
-        help="Only load ITS1 entries matching a known species name",
+        help="Accept species names without pre-loaded taxonomy.",
     )
     parser_legacy_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
