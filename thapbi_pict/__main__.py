@@ -124,7 +124,7 @@ def assess_classification(args=None):
     from .assess import main
 
     return main(
-        fasta=args.fasta,
+        inputs=args.inputs,
         known=args.known,
         method=args.method,
         assess_output=args.output,
@@ -450,13 +450,13 @@ comma.
         "using this.",
     )
     parser_assess.add_argument(
-        "fasta",
+        "inputs",
         type=str,
         nargs="+",
-        help="One or more FASTA file or folder names. Next to each "
-        "FASTA file expects matching files *.method-reads.tsv to be "
-        "assessed against *.known-reads.tsv, where these filenames "
-        "can be set via -m / --method and -k / --known arguments. ",
+        help="One or more prediction folder names. Expects to find "
+        "matching files *.method-reads.tsv to be assessed against "
+        "*.known-reads.tsv, where these filenames can be set via "
+        "-m / --method and -k / --known arguments. ",
     )
     parser_assess.add_argument(
         "-k",

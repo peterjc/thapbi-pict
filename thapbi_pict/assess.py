@@ -128,11 +128,11 @@ def extract_global_tally(tally):
     return tp, fp, fn, tn
 
 
-def main(fasta, known, method, assess_output, confusion_output, debug=False):
+def main(inputs, known, method, assess_output, confusion_output, debug=False):
     """Implement the thapbi_pict assess command."""
-    assert isinstance(fasta, list)
+    assert isinstance(inputs, list)
 
-    fasta_list = find_requested_files(fasta, ext=".fasta", debug=debug)
+    input_list = find_requested_files(inputs, ext=".%s-reads.tsv" % method, debug=debug)
 
     count = 0
     global_tally = Counter()
@@ -141,22 +141,18 @@ def main(fasta, known, method, assess_output, confusion_output, debug=False):
     with tempfile.TemporaryDirectory() as shared_tmp:
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
-        for f in fasta_list:
-            stem = f[:-6]
-            predicted_file = stem + ".%s-reads.tsv" % method
+        for predicted_file in input_list:
+            stem = predicted_file.rsplit(".", 2)[0]
+            assert predicted_file == stem + ".%s-reads.tsv" % method
             expected_file = stem + ".%s-reads.tsv" % known
             # Not aborting here as typically in a folder while should have
             # full set of predictions, will only have expected results for
             # control subset.
-            if not os.path.isfile(predicted_file):
-                sys.stderr.write("WARNING: Missing %s\n" % predicted_file)
-                continue
-            expected_file = stem + ".%s-reads.tsv" % known
             if not os.path.isfile(expected_file):
                 sys.stderr.write("WARNING: Missing %s\n" % expected_file)
                 continue
             if debug:
-                sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, f))
+                sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, stem))
 
             file_tally = tally_files(expected_file, predicted_file)
             count += 1
