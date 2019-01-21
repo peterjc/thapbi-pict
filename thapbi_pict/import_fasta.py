@@ -168,7 +168,7 @@ def import_fasta_file(
         if debug:
             sys.stderr.write("Taxonomy table contains %i distinct species\n" % count)
         if not count:
-            sys.exit("Taxonomy table empty, cannot use validate species option\n")
+            sys.exit("ERROR: Taxonomy table empty, cannot validate species.\n")
 
     if not name:
         name = "Import of %s" % os.path.basename(fasta_file)
