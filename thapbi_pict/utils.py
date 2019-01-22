@@ -83,7 +83,10 @@ def abundance_values_in_fasta(fasta_file):
 
 
 def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
-    """Interpret a list of filenames and/or foldernames."""
+    """Interpret a list of filenames and/or foldernames.
+
+    The extensions argument can be a tuple.
+    """
     answer = []
     for x in filenames_or_folders:
         if os.path.isdir(x):
@@ -99,7 +102,7 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
                 answer.append(x)
             else:
                 sys.exit(
-                    "Specified filename %s does not have expected extension %s."
+                    "Specified filename %r does not have expected extension %r."
                     % (x, ext)
                 )
         else:
