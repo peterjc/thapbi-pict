@@ -3,6 +3,7 @@
 # $ conda install --file requirements-ext.txt
 #
 
+blast
 entrez-direct
 hmmer
 pear=0.9.6
