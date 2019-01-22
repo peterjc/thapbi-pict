@@ -196,6 +196,8 @@ def method_blast(
         "-out",
         blast_out,
     ]
+    if cpu:
+        cmd += ["-num_threads", str(cpu)]
     run(cmd, debug)
 
     if not os.path.isfile(blast_out):
