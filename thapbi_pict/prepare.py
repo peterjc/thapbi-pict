@@ -281,7 +281,7 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
         folder, stem = os.path.split(stem)
         if out_dir and out_dir != "-":
             folder = out_dir
-        fasta_name = os.path.join(folder, "%s.prepared.fasta" % stem)
+        fasta_name = os.path.join(folder, "%s.fasta" % stem)
 
         if os.path.isfile(fasta_name):
             if control:
