@@ -9,7 +9,6 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking assess"
 
-if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare.sh to setup test input"; false; fi
 if [ ! -f $TMP/DNAMIX_S95_L001.swarm.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 
