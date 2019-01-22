@@ -17,14 +17,14 @@ rm -rf $TMP/assess_swarm_vs_identity.tsv
 rm -rf $TMP/confusion_swarm_vs_identity.tsv
 
 # Don't have a gold standard known truth to test this against, so test swarm vs identity
-thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c $TMP/confusion_swarm_vs_identity.tsv
+thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c $TMP/confusion_swarm_vs_identity.tsv
 
 # Check assessment output to stdout works (default):
-thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity > $TMP/stdout.txt
+thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv -m swarm -k identity > $TMP/stdout.txt
 diff $TMP/stdout.txt $TMP/assess_swarm_vs_identity.tsv
 
 # Check confusion matrix output to stdout works:
-thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.fasta -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c - > $TMP/stdout.txt
+thapbi_pict assess $TMP/DNAMIX_S95_L001.prepared.swarm-reads.tsv -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c - > $TMP/stdout.txt
 diff $TMP/stdout.txt $TMP/confusion_swarm_vs_identity.tsv
 
 echo "$0 passed"

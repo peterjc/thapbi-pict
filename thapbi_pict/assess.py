@@ -143,7 +143,10 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
         for predicted_file in input_list:
             stem = predicted_file.rsplit(".", 2)[0]
-            assert predicted_file == stem + ".%s-reads.tsv" % method
+            assert predicted_file == stem + ".%s-reads.tsv" % method, "%s vs %s" % (
+                predicted_file,
+                stem + ".%s-reads.tsv" % method,
+            )
             expected_file = stem + ".%s-reads.tsv" % known
             # Not aborting here as typically in a folder while should have
             # full set of predictions, will only have expected results for
