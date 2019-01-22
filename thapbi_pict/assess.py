@@ -132,7 +132,7 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
 
-    input_list = find_requested_files(inputs, ext=".%s-reads.tsv" % method, debug=debug)
+    input_list = find_requested_files(inputs, ext=".%s.tsv" % method, debug=debug)
 
     count = 0
     global_tally = Counter()
@@ -143,11 +143,11 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
         for predicted_file in input_list:
             stem = predicted_file.rsplit(".", 2)[0]
-            assert predicted_file == stem + ".%s-reads.tsv" % method, "%s vs %s" % (
+            assert predicted_file == stem + ".%s.tsv" % method, "%s vs %s" % (
                 predicted_file,
-                stem + ".%s-reads.tsv" % method,
+                stem + ".%s.tsv" % method,
             )
-            expected_file = stem + ".%s-reads.tsv" % known
+            expected_file = stem + ".%s.tsv" % known
             # Not aborting here as typically in a folder while should have
             # full set of predictions, will only have expected results for
             # control subset.

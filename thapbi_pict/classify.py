@@ -327,7 +327,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             stem = os.path.splitext(stem)[0]
             if out_dir and out_dir != "-":
                 folder = out_dir
-            read_name = os.path.join(folder, "%s.%s-reads.tsv" % (stem, method))
+            read_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
             tax_name = os.path.join(folder, "%s.%s-tax.tsv" % (stem, method))
 
             if os.path.isfile(read_name) and os.path.isfile(tax_name):
@@ -346,7 +346,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 if debug:
                     sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
                 # Using same file names, but in tmp folder:
-                tmp_reads = os.path.join(tmp, "%s.%s-reads.tsv" % (stem, method))
+                tmp_reads = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
                 tmp_tax = os.path.join(tmp, "%s.%s-tax.tsv" % (stem, method))
                 # Run the classifier and write the read report:
                 with open(tmp_reads, "w") as reads_handle:

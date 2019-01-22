@@ -393,7 +393,7 @@ comma.
         "classify",
         description="Classify FASTA file of ITS1 sequences by species.",
         epilog="Each input file XXX.fasta will result in output files "
-        "namesd XXX.method-reads.tsv and XXX.method-tax.tsv in "
+        "namesd XXX.method.tsv and XXX.method-tax.tsv in "
         "the specified output directory (default input dir).",
     )
     parser_classify.add_argument(
@@ -442,8 +442,8 @@ comma.
     parser_assess = subparsers.add_parser(
         "assess",
         description="Assess accuracy of ITS1 read classification.",
-        epilog="Takes as input XXX.known-reads.tsv and matching "
-        "predictions in XXX.method-reads.tsv (in same directory) "
+        epilog="Takes as input XXX.known.tsv and matching "
+        "predictions in XXX.method.tsv (in same directory) "
         "to produce a multi-species confusion matrix named "
         "XXX.method-vs-known.tsv, and a summary to stdout. You can "
         "deliberately compare to prediction methods to each other "
@@ -454,8 +454,8 @@ comma.
         type=str,
         nargs="+",
         help="One or more prediction folder names. Expects to find "
-        "matching files *.method-reads.tsv to be assessed against "
-        "*.known-reads.tsv, where these filenames can be set via "
+        "matching files *.method.tsv to be assessed against "
+        "*.known.tsv, where these filenames can be set via "
         "-m / --method and -k / --known arguments. ",
     )
     parser_assess.add_argument(
