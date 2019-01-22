@@ -23,10 +23,13 @@ if [ `wc -l database/legacy/database.identity.tsv` -ne "0" ]; then echo "Expecte
 
 if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.swarm.tsv
+rm -rf $TMP/DNAMIX_S95_L001.blast.tsv
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 
 # Explicitly setting output directory, would be here anyway:
 thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/
+
+thapbi_pict classify -m blast -d $DB $TMP/DNAMIX_S95_L001.fasta
 
 thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta
 cut -f 5 $TMP/DNAMIX_S95_L001.swarm.tsv | sort | uniq -c
