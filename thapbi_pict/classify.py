@@ -328,18 +328,14 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             if out_dir and out_dir != "-":
                 folder = out_dir
             read_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
-            tax_name = os.path.join(folder, "%s.%s-tax.tsv" % (stem, method))
 
-            if os.path.isfile(read_name) and os.path.isfile(tax_name):
-                sys.stderr.write(
-                    "WARNING: Skipping %s and %s as already exist\n"
-                    % (read_name, tax_name)
-                )
+            if os.path.isfile(read_name):
+                sys.stderr.write("WARNING: Skipping %s as already exists\n" % read_name)
                 # TODO: Count the number of reads and matches?
                 continue
 
             if debug:
-                sys.stderr.write("DEBUG: Outputs %s and %s\n" % (read_name, tax_name))
+                sys.stderr.write("DEBUG: Output %s\n" % read_name)
 
             # Context manager should remove the temp dir:
             with tempfile.TemporaryDirectory() as tmp:
@@ -347,7 +343,6 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                     sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
                 # Using same file names, but in tmp folder:
                 tmp_reads = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
-                tmp_tax = os.path.join(tmp, "%s.%s-tax.tsv" % (stem, method))
                 # Run the classifier and write the read report:
                 with open(tmp_reads, "w") as reads_handle:
                     reads_handle.write("#read-name\tgenus\tspecies\tclade\tnote\n")
@@ -368,20 +363,9 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 count = sum(tax_counts.values())
                 read_count += count
                 match_count += count - tax_counts.get(("", "", ""), 0)
-                with open(tmp_tax, "w") as tax_handle:
-                    tax_handle.write("#genus\tspecies\tclade\tread-count\n")
-                    for (genus, species, clade), tax_count in sorted(
-                        tax_counts.items()
-                    ):
-                        tax_handle.write(
-                            "%s\t%s\t%s\t%i\n" % (genus, species, clade, tax_count)
-                        )
-                    if not count:
-                        tax_handle.write("#(no sequences to classify)\n")
 
-                # Move our temp files into position...
+                # Move our temp file into position...
                 shutil.move(tmp_reads, read_name)
-                shutil.move(tmp_tax, tax_name)
 
     sys.stderr.write(
         "%s classifier assigned species to %i of %i reads from %i files\n"

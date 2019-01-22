@@ -15,7 +15,6 @@ export DB=$TMP/legacy_004_and_005_validated.sqlite
 if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; fi
 
 rm -rf database/legacy/*.identity.tsv
-rm -rf database/legacy/*.identity-tax.tsv
 
 # Passing one filename; default output dir:
 thapbi_pict classify -m identity -d $DB database/legacy/database.fasta
@@ -24,21 +23,18 @@ if [ `wc -l database/legacy/database.identity.tsv` -ne "0" ]; then echo "Expecte
 
 if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.swarm.tsv
-rm -rf $TMP/DNAMIX_S95_L001.swarm-tax.tsv
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
-rm -rf $TMP/DNAMIX_S95_L001.identity-tax.tsv
 
 # Explicitly setting output directory, would be here anyway:
 thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/
 
 thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta
 cut -f 5 $TMP/DNAMIX_S95_L001.swarm.tsv | sort | uniq -c
-# grep -c Phytophthora $TMP/DNAMIX_S95_L001.swarm-tax.tsv
 
 # Passing one directory name (should get all three FASTA files):
-rm -rf $TMP/legacy/*.identity-*.tsv
+rm -rf $TMP/legacy/*.identity.tsv
 mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB database/legacy/ -o $TMP/legacy
-ls -1 $TMP/legacy/*.identity-*.tsv  # Should be 6 pairs
+if [ `ls -1 $TMP/legacy/*.identity.tsv | wc -l` -ne `3` ]; then echo "Expected 3 files;" false; fi
 
 echo "$0 passed"

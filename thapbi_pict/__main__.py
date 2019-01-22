@@ -392,9 +392,9 @@ comma.
     parser_classify = subparsers.add_parser(
         "classify",
         description="Classify FASTA file of ITS1 sequences by species.",
-        epilog="Each input file XXX.fasta will result in output files "
-        "namesd XXX.method.tsv and XXX.method-tax.tsv in "
-        "the specified output directory (default input dir).",
+        epilog="Each input file XXX.fasta will result in an output file "
+        "named XXX.method.tsv in the specified output directory (default "
+        "input dir).",
     )
     parser_classify.add_argument(
         "fasta",
