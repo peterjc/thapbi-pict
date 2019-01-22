@@ -95,7 +95,13 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
                         # Check not a directory?
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
-            answer.append(x)
+            if x.endswith(ext):
+                answer.append(x)
+            else:
+                sys.exit(
+                    "Specified filename %s does not have expected extension %s."
+                    % (x, ext)
+                )
         else:
             sys.exit("ERROR: %r is not a file or a directory\n" % x)
     # Warn if there were duplicates?
