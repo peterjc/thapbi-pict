@@ -61,6 +61,21 @@ def ncbi_import(args=None):
     )
 
 
+def seq_import(args=None):
+    """Subcommand to import classified ITS1 sequences into a database."""
+    from .seq_import import main
+
+    return main(
+        inputs=args.inputs,
+        method=args.method,
+        db_url=expand_database_argument(args.database),
+        min_abundance=args.abundance,
+        name=args.name,
+        validate_species=not args.lax,
+        debug=args.verbose,
+    )
+
+
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a database."""
     from .legacy import main
@@ -224,6 +239,72 @@ def main(args=None):
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_ncbi_import.set_defaults(func=ncbi_import)
+
+    # seq-import
+    parser_seq_import = subparsers.add_parser(
+        "seq-import",
+        description="Load classified sequences from one or more processed "
+        "FASTA files into an ITS1 database. e.g. Using 'known' classifier "
+        "results normally created for your positive controls for running "
+        "classifier assessment."
+        "By default verifies species names against a pre-loaded taxonomy, "
+        "non-matching entries are rejected.",
+    )
+    parser_seq_import.add_argument(
+        "inputs",
+        type=str,
+        nargs="+",
+        help="One or more ITS1 FASTA and classifier filenames or folders "
+        "(names containing files named *.fasta and *.method.tsv, where "
+        "method is set via the -m / --method argument).",
+    )
+    parser_seq_import.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default="known",
+        help="Method to used, determines the TSV files from which the "
+        "species classification will be read. Default is 'known' matching "
+        "the convention used in the classifier assessment command for "
+        "known trusted species assignments (i.e. positive controls).",
+    )
+    parser_seq_import.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="1000",
+        help="Mininum abundance to require before importing a sequence, "
+        "over-and-above whatever was used to prepare the FASTA file. "
+        "Default here is 1000, which is ten times the default of 100 used "
+        "for the classification pipeline - be cautious what goes in your "
+        "ITS1 database).",
+    )
+    parser_seq_import.add_argument(
+        "-d",
+        "--database",
+        type=str,
+        required=True,
+        help="Which ITS1 database to add the sequences to.",
+    )
+    parser_seq_import.add_argument(
+        "-n",
+        "--name",
+        type=str,
+        default="",
+        help="Name to record for this data source name (string, ideally "
+        "avoiding spaces etc).",
+    )
+    parser_seq_import.add_argument(
+        "-x",
+        "--lax",
+        default=False,
+        action="store_true",
+        help="Accept species names without pre-loaded taxonomy.",
+    )
+    parser_seq_import.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_seq_import.set_defaults(func=seq_import)
 
     # legacy-import
     parser_legacy_import = subparsers.add_parser(
