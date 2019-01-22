@@ -196,7 +196,7 @@ assert parse_fasta_entry("ACC-ONLY") == ("", "", "")
 
 
 def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
-    """Run the script with command line arguments."""
+    """Implement the thapbi_pict legacy-import command."""
     return import_fasta_file(
         fasta_file,
         db_url,
