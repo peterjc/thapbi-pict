@@ -442,19 +442,21 @@ comma.
     parser_assess = subparsers.add_parser(
         "assess",
         description="Assess accuracy of ITS1 read classification.",
-        epilog="Takes as input XXX.known.tsv and matching "
-        "predictions in XXX.method.tsv (in same directory) "
-        "to produce a multi-species confusion matrix named "
-        "XXX.method-vs-known.tsv, and a summary to stdout. You can "
-        "deliberately compare to prediction methods to each other "
-        "using this.",
+        epilog="Takes as input prediction in XXX.method.tsv "
+        "and matching expected classifications in XXX.known.tsv "
+        "(which can be in different directories) to produce a "
+        "multi-species confusion matrix named XXX.method-vs-known.tsv, "
+        "and a summary to stdout. "
+        "You can deliberately compare two prediction methods to "
+        "each other using this, but a known set of positive controls "
+        "is the expected benchmark.",
     )
     parser_assess.add_argument(
         "inputs",
         type=str,
         nargs="+",
-        help="One or more prediction folder names. Expects to find "
-        "matching files *.method.tsv to be assessed against "
+        help="One or more prediction file or folder names. Expects to "
+        "find matching files *.method.tsv to be assessed against "
         "*.known.tsv, where these filenames can be set via "
         "-m / --method and -k / --known arguments. ",
     )

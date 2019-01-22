@@ -132,7 +132,36 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
 
-    input_list = find_requested_files(inputs, ext=".%s.tsv" % method, debug=debug)
+    file_list = find_requested_files(
+        inputs, ext=(".%s.tsv" % method, ".%s.tsv" % known), debug=debug
+    )
+    pred_list = [_ for _ in file_list if _.endswith(".%s.tsv" % method)]
+    expt_list = [_ for _ in file_list if _.endswith(".%s.tsv" % known)]
+    del file_list
+
+    # Dicts mapping stem to filename
+    pred_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in pred_list)
+    expt_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in expt_list)
+
+    # This could happen if have same filename used in different folders:
+    if len(pred_dict) < len(pred_list):
+        sys.exit("ERROR: Duplicate file names for %s" % method)
+    if len(expt_dict) < len(expt_list):
+        sys.exit("ERROR: Duplicate file names for %s" % known)
+    del pred_list, expt_list
+
+    input_list = []
+    for stem in pred_dict:
+        if stem in expt_dict:
+            input_list.append((pred_dict[stem], expt_dict[stem]))
+        else:
+            # Acceptable in motivating use case where on a given plate
+            # only some of the samples would be known positive controls:
+            sys.stderr.write(
+                "WARNING: Have %s but missing %s.%s.tsv\n"
+                % (pred_dict[stem], stem, method)
+            )
+    del pred_dict, expt_dict
 
     count = 0
     global_tally = Counter()
@@ -141,19 +170,7 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
     with tempfile.TemporaryDirectory() as shared_tmp:
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
-        for predicted_file in input_list:
-            stem = predicted_file.rsplit(".", 2)[0]
-            assert predicted_file == stem + ".%s.tsv" % method, "%s vs %s" % (
-                predicted_file,
-                stem + ".%s.tsv" % method,
-            )
-            expected_file = stem + ".%s.tsv" % known
-            # Not aborting here as typically in a folder while should have
-            # full set of predictions, will only have expected results for
-            # control subset.
-            if not os.path.isfile(expected_file):
-                sys.stderr.write("WARNING: Missing %s\n" % expected_file)
-                continue
+        for predicted_file, expected_file in input_list:
             if debug:
                 sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, stem))
 
@@ -163,6 +180,8 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
             global_tally.update(file_tally)
 
     sys.stderr.write("Assessed %s vs %s in %i files\n" % (method, known, count))
+
+    assert count == len(input_list)
 
     if not count:
         sys.exit("ERROR: Could not find files to assess\n")

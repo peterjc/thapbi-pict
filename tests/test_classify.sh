@@ -22,22 +22,22 @@ thapbi_pict classify -m identity -d $DB database/legacy/database.fasta
 if [ `wc -l database/legacy/database.identity.tsv` -ne "0" ]; then echo "Expected no matches"; false; fi
 
 if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare.sh to setup test input"; false; fi
-rm -rf $TMP/DNAMIX_S95_L001.swarm.tsv
-rm -rf $TMP/DNAMIX_S95_L001.blast.tsv
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
+rm -rf $TMP/thapbi_swarm
+rm -rf $TMP/thapbi_blast
+mkdir -p $TMP/thapbi_swarm
+mkdir -p $TMP/thapbi_blast
 
 # Explicitly setting output directory, would be here anyway:
 thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/
-
-thapbi_pict classify -m blast -d $DB $TMP/DNAMIX_S95_L001.fasta
-
-thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta
+thapbi_pict classify -m blast -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
+thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
 cut -f 5 $TMP/DNAMIX_S95_L001.swarm.tsv | sort | uniq -c
 
 # Passing one directory name (should get all three FASTA files):
 rm -rf $TMP/legacy/*.identity.tsv
 mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB database/legacy/ -o $TMP/legacy
-if [ `ls -1 $TMP/legacy/*.identity.tsv | wc -l` -ne `3` ]; then echo "Expected 3 files;" false; fi
+if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "3" ]; then echo "Expected 3 files;" false; fi
 
 echo "$0 passed"
