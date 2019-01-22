@@ -225,7 +225,7 @@ def method_blast(
 
     tax_counts = Counter()
     with open(fasta_file) as handle:
-        for title, seq in SimpleFastaParser(handle):
+        for title, _ in SimpleFastaParser(handle):
             idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
             if idn in blast_hits:
