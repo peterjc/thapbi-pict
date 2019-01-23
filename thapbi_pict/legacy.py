@@ -202,7 +202,7 @@ def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
         db_url,
         name=name,
         debug=debug,
-        fasta_split_fn=split_composite_entry,
-        fasta_parse_fn=parse_fasta_entry,
+        fasta_entry_fn=split_composite_entry,
+        entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
     )

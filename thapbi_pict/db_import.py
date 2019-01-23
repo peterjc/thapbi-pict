@@ -134,28 +134,49 @@ def import_fasta_file(
     db_url,
     name=None,
     debug=True,
-    fasta_split_fn=None,
-    fasta_parse_fn=None,
+    fasta_entry_fn=None,
+    entry_taxonomy_fn=None,
     validate_species=False,
 ):
     """Import a FASTA file into the database.
 
-    Optional argument fasta_split_fn is given the full FASTA
-    title line, and should return a list of sub-entries (by
-    default, a single entry list).
+    For ``thapbi_pict legacy-import`` some FASTA sequences are
+    treated as multiple entries sharing that same sequence. For
+    ``thapbi_pict ncbi-import``, each FASTA sequence is treated
+    as a single entry. For ``thapbi_pict seq-import`` again each
+    FASTA sequence is treated as a single entry, but depending on
+    the meta-data it may or may not be imported into the DB.
+
+    That behaviour is controlled by the optional argument
+    fasta_entry_fn which is a function which will be given the
+    full FASTA title line, and should return a list of sub-entries
+    (by default, a single entry list) to be imported. This can
+    return an empty list if the FASTA entry is to be ignored.
+
+    Required argument entry_taxonomy_fn is a function which will
+    be given the entries from function fasta_split_fn, and should
+    return the associated taxonomy information. This can be done
+    by parsing the string, or looking it up in another source.
+
+    In ``thapbi_pict legacy-import`` and ``thapbi_pict ncbi-import``
+    the species metadata is recorded directly in the FASTA title
+    lines. However, the metadata for ``thapbi_pict seq-import``
+    comes from a sister TSV file, and is cross-referenced by the
+    FASTA sequence identifier.
     """
     # Argument validation,
-    if fasta_split_fn is None:
+    if fasta_entry_fn is None:
 
-        def fasta_split_fn(text):
+        def fasta_entry_fn(text):
             """Treat all FASTA entries as singletons.
 
-            Default is not to support merged FASTA entries.
+            Default is not to support merged FASTA entries, and accept
+            all the sequences.
             """
             return [text]
 
-    if fasta_parse_fn is None:
-        raise ValueError("Need function to split FASTA title into fields.")
+    if entry_taxonomy_fn is None:
+        raise ValueError("Need function to get meta-data from FASTA title.")
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
@@ -222,11 +243,11 @@ def import_fasta_file(
             sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
 
-        entries = fasta_split_fn(title)
+        entries = fasta_entry_fn(title)
         for entry in entries:
             entry_count += 1
             try:
-                clade, name, name_etc = fasta_parse_fn(entry)
+                clade, name, name_etc = entry_taxonomy_fn(entry)
             except ValueError as e:
                 bad_entries += 1
                 sys.stderr.write("WARNING: %s - Can't parse: %r\n" % (e, idn))
