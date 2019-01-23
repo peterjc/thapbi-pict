@@ -38,7 +38,7 @@ same naming pattern but adds four synthetic control sequences named
 
 import re
 
-from .import_fasta import import_fasta_file
+from .db_import import import_fasta_file
 
 # Define a regular expression for the clade naming
 clade_re = re.compile(r"\d+[a-z]*")  # note - RE is not start anchored
