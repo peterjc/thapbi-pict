@@ -309,8 +309,8 @@ def import_fasta_file(
             # print(clade, species, acc)
     session.commit()
     sys.stderr.write(
-        "File had %i sequences, %i of which have ITS1, of which %i accepted.\n"
-        % (seq_count, its1_seq_count, good_seq_count)
+        "File %s had %i sequences, %i of which have ITS1, of which %i accepted.\n"
+        % (fasta_file, seq_count, its1_seq_count, good_seq_count)
     )
     assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
     assert bad_entries <= entry_count, (bad_entries, entry_count)
