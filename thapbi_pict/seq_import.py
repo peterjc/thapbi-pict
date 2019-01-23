@@ -37,6 +37,9 @@ def main(
 
     input_list = find_paired_files(inputs, ".fasta", ".%s.tsv" % method, debug=debug)
 
+    if not input_list:
+        sys.exit("Need *.fasta files with matching *.%s.tsv classification\n" % method)
+
     sys.stderr.write(
         "Importing %i FASTA files with %s classifications\n" % (len(input_list), method)
     )
@@ -52,6 +55,12 @@ def main(
                     sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
                 genus_species = genus + " " + species if species else genus
                 meta_data[idn] = (0, clade, genus_species, "")
+
+        if not meta_data:
+            sys.stderr.write(
+                "File %s has no sequences, ignoring %s\n" % (tsv_file, fasta_file)
+            )
+            continue
 
         def sequence_wanted(title):
             """Check if identifier was in the TSV file, and passess abundance level."""
