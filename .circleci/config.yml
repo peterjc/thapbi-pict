@@ -57,4 +57,5 @@ jobs:
             tests/test_ncbi-import.sh
             tests/test_prepare-reads.sh
             tests/test_classify.sh
+            tests/test_seq-import.sh
             tests/test_assess.sh
