@@ -19,6 +19,7 @@ contamination, you can set a minimum abundance for importing.
 import sys
 
 from .db_import import import_fasta_file
+from .utils import abundance_from_read_name
 from .utils import find_paired_files
 
 
@@ -52,8 +53,24 @@ def main(
                 genus_species = genus + " " + species if species else genus
                 meta_data[idn] = (0, clade, genus_species, "")
 
+        def sequence_wanted(title):
+            """Check if identifier was in the TSV file, and passess abundance level."""
+            idn = title.split(None, 1)[0]
+            if idn not in meta_data:
+                return []
+            elif abundance_from_read_name(idn) < min_abundance:
+                return []
+            else:
+                return [idn]
+
         import_fasta_file(
-            fasta_file, db_url, name, entry_taxonomy_fn=meta_data.get, debug=debug
+            fasta_file,
+            db_url,
+            name,
+            fasta_entry_fn=sequence_wanted,
+            entry_taxonomy_fn=meta_data.get,
+            debug=debug,
+            validate_species=validate_species,
         )
 
     sys.stderr.write("Imported %i FASTA files\n" % len(input_list))
