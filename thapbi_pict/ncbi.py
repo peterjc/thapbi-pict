@@ -26,10 +26,10 @@ from .db_import import import_fasta_file
 def parse_fasta_entry(text):
     """Split an entry of Accession_Genus_Species_name_Description.
 
-    Returns a tuple: Clade (always empty), presumed genus-species
-    (here taken as two words by default), and spare text which
-    might be more of the species (for use with species name
-    validation).
+    Returns a tuple: taxid (always zero), clade (always empty),
+    presumed genus-species (here taken as two words by default),
+    and spare text which might be more of the species (for use
+    with species name validation).
 
     Note we can't infer the clade without looking up the species,
     so for now this returns an empty clade.
@@ -41,6 +41,7 @@ def parse_fasta_entry(text):
     is not handled here.
     """  # noqa: E501
     parts = text.rstrip().split()
+    taxid = 0
     clade = ""
     # acc = parts[0]
     name = parts[1:3]  # assumes "Genus species" only (2 words)
@@ -57,10 +58,11 @@ def parse_fasta_entry(text):
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
         name = []
         rest = []
-    return (clade, " ".join(name), " ".join(rest))
+    return (taxid, clade, " ".join(name), " ".join(rest))
 
 
 assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
+    0,
     "",
     "Phytophthora drechsleri",
     "genes ...",

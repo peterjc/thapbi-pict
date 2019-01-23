@@ -97,10 +97,10 @@ assert split_composite_entry(
 def parse_fasta_entry(text):
     """Split an entry of Clade_SpeciesName_Accession into fields.
 
-    Returns a tuple of Clade, Species, and an empty string
-    (since any extra text in the species is already included,
-    unlike the NCBI FASTA parser where the end of the species
-    is not well defined). Discards the accession.
+    Returns a tuple of taxid (always zero), clade, Species, and an
+    empty string (since any extra text in the species is already
+    included, unlike the NCBI FASTA parser where the end of the
+    species is not well defined). Discards the accession.
 
     Will also convert the underscores in the species name into spaces:
 
@@ -129,6 +129,8 @@ def parse_fasta_entry(text):
     Dividing the species name into genus, species, strain etc
     is not handled here.
     """
+    taxid = 0
+
     # The rstrip is to handle this legacy entry:
     # >PPhytophthora_fluvialis_CBS129424_JF701436_ P. fluvialis
     # See also fixing PPhytophthora later on...
@@ -136,7 +138,7 @@ def parse_fasta_entry(text):
 
     if len(parts) == 1:
         # Legacy variant with just an accession
-        return ("", "", "")
+        return (taxid, "", "", "")
 
     clade = parts[0]
 
@@ -172,27 +174,40 @@ def parse_fasta_entry(text):
 
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
-    return (clade, " ".join(name), "")
+    return (taxid, clade, " ".join(name), "")
 
 
 assert parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184") == (
+    0,
     "8d",
     "Phytophthora austrocedrae",
     "",
 ), parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184")
 assert parse_fasta_entry("6_Phytophthora_taxon_cyperaceae_KJ372258") == (
+    0,
     "6",
     "Phytophthora balyanboodja",
     "",
 )
-assert parse_fasta_entry("4_P._arenaria_HQ013219") == ("4", "Phytophthora arenaria", "")
+assert parse_fasta_entry("4_P._arenaria_HQ013219") == (
+    0,
+    "4",
+    "Phytophthora arenaria",
+    "",
+)
 assert parse_fasta_entry("1Phytophthora_aff_infestans_P13660") == (
+    0,
     "1",
     "Phytophthora aff infestans",
     "",
 )
-assert parse_fasta_entry("P._amnicola_CBS131652") == ("", "Phytophthora amnicola", "")
-assert parse_fasta_entry("ACC-ONLY") == ("", "", "")
+assert parse_fasta_entry("P._amnicola_CBS131652") == (
+    0,
+    "",
+    "Phytophthora amnicola",
+    "",
+)
+assert parse_fasta_entry("ACC-ONLY") == (0, "", "", "")
 
 
 def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
