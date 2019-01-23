@@ -3,13 +3,12 @@
 This implements the ``thapbi_pict assess ...`` command.
 """
 
-import os
 import sys
 import tempfile
 
 from collections import Counter
 
-from .utils import find_requested_files
+from .utils import find_paired_files
 
 
 def parse_species_tsv(tabular_file):
@@ -132,36 +131,9 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
 
-    file_list = find_requested_files(
-        inputs, ext=(".%s.tsv" % method, ".%s.tsv" % known), debug=debug
+    input_list = find_paired_files(
+        inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
     )
-    pred_list = [_ for _ in file_list if _.endswith(".%s.tsv" % method)]
-    expt_list = [_ for _ in file_list if _.endswith(".%s.tsv" % known)]
-    del file_list
-
-    # Dicts mapping stem to filename
-    pred_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in pred_list)
-    expt_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in expt_list)
-
-    # This could happen if have same filename used in different folders:
-    if len(pred_dict) < len(pred_list):
-        sys.exit("ERROR: Duplicate file names for %s" % method)
-    if len(expt_dict) < len(expt_list):
-        sys.exit("ERROR: Duplicate file names for %s" % known)
-    del pred_list, expt_list
-
-    input_list = []
-    for stem in pred_dict:
-        if stem in expt_dict:
-            input_list.append((pred_dict[stem], expt_dict[stem]))
-        else:
-            # Acceptable in motivating use case where on a given plate
-            # only some of the samples would be known positive controls:
-            sys.stderr.write(
-                "WARNING: Have %s but missing %s.%s.tsv\n"
-                % (pred_dict[stem], stem, method)
-            )
-    del pred_dict, expt_dict
 
     count = 0
     global_tally = Counter()
@@ -172,7 +144,9 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
         for predicted_file, expected_file in input_list:
             if debug:
-                sys.stderr.write("Assessing %s vs %s for %s\n" % (method, known, stem))
+                sys.stderr.write(
+                    "Assessing %s vs %s\n" % (predicted_file, expected_file)
+                )
 
             file_tally = tally_files(expected_file, predicted_file)
             count += 1

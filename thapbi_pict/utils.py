@@ -109,3 +109,50 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
             sys.exit("ERROR: %r is not a file or a directory\n" % x)
     # Warn if there were duplicates?
     return sorted(set(answer))
+
+
+def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
+    """Interpret a list of filenames and/or foldernames to find pairs.
+
+    Looks for paired files named XXX.ext1 and XXX.ext2 which can be
+    in different directories - duplicated filenames (in different
+    directories) are considered to be an error.
+
+    Having XXX.ext1 without XXX.ext2 is treated as a warning.
+
+    Having XXX.ext2 without XXX.ext1 is ignored without warning.
+
+    The arguments ext1 and ext2 should include the leading dot.
+    """
+    file_list = find_requested_files(
+        filenames_or_folders, ext=(ext1, ext2), debug=debug
+    )
+    ext1_list = [_ for _ in file_list if _.endswith(ext1)]
+    ext2_list = [_ for _ in file_list if _.endswith(ext2)]
+    del file_list
+
+    # Dicts mapping stem to filename
+    ext1_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in ext1_list)
+    ext2_dict = dict((os.path.basename(_).rsplit(".", 2)[0], _) for _ in ext2_list)
+
+    # This could happen if have same filename used in different folders:
+    if len(ext1_dict) < len(ext1_list):
+        sys.exit("ERROR: Duplicate *.%s file names" % ext1)
+    if len(ext2_dict) < len(ext2_list):
+        sys.exit("ERROR: Duplicate *.%s file names" % ext2)
+    del ext1_list, ext2_list
+
+    input_list = []
+    for stem in ext1_dict:
+        if stem in ext2_dict:
+            input_list.append((ext1_dict[stem], ext2_dict[stem]))
+        else:
+            # Acceptable in motivating use case where on a given plate
+            # only some of the samples would be known positive controls:
+            sys.stderr.write(
+                "WARNING: Have %s but missing %s%s\n" % (ext1_dict[stem], stem, ext2)
+            )
+    # TODO: Check for XXX.ext2 without XXX.ext1 here?
+    del ext1_dict, ext2_dict
+
+    return input_list
