@@ -18,6 +18,7 @@ contamination, you can set a minimum abundance for importing.
 
 import sys
 
+from .db_import import import_fasta_file
 from .utils import find_paired_files
 
 
@@ -39,4 +40,21 @@ def main(
         "Importing %i FASTA files with %s classifications\n" % (len(input_list), method)
     )
 
+    for fasta_file, tsv_file in input_list:
+
+        meta_data = dict()
+        with open(tsv_file) as handle:
+            for line in handle:
+                # TODO - Include taxid in the classifier output
+                idn, genus, species, clade, etc = line.split("\t", 4)
+                if idn in meta_data:
+                    sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
+                genus_species = genus + " " + species if species else genus
+                meta_data[idn] = (0, clade, genus_species, "")
+
+        import_fasta_file(
+            fasta_file, db_url, name, entry_taxonomy_fn=meta_data.get, debug=debug
+        )
+
+    sys.stderr.write("Imported %i FASTA files\n" % len(input_list))
     return 0
