@@ -210,6 +210,8 @@ def import_fasta_file(
 
     seq_count = 0
     its1_seq_count = 0
+    good_seq_count = 0
+
     entry_count = 0
     bad_entries = 0
     bad_sp_entries = 0
@@ -246,6 +248,8 @@ def import_fasta_file(
         idn_set.add(idn)
 
         entries = fasta_entry_fn(title)
+        if entries:
+            good_seq_count += 1
         for entry in entries:
             entry_count += 1
             try:
@@ -305,22 +309,22 @@ def import_fasta_file(
             # print(clade, species, acc)
     session.commit()
     sys.stderr.write(
-        "%i sequences, %i of which have ITS1, giving %i potential entries.\n"
-        % (seq_count, its1_seq_count, entry_count)
+        "File had %i sequences, %i of which have ITS1, of which %i accepted.\n"
+        % (seq_count, its1_seq_count, good_seq_count)
     )
     assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
-    assert its1_seq_count <= entry_count, (its1_seq_count, entry_count)
     assert bad_entries <= entry_count, (bad_entries, entry_count)
     assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
-            "Loaded %i entries, %i failed species validation, %i rejected.\n"
-            % (good_entries, bad_sp_entries, bad_entries)
+            "Of %i potential entries, %i unparsable, %i failed sp. validation, %i OK.\n"
+            % (entry_count, bad_entries, bad_sp_entries, good_entries)
         )
         assert entry_count == good_entries + bad_entries + bad_sp_entries
     else:
         sys.stderr.write(
-            "Loaded %i entries, %i rejected.\n" % (good_entries, bad_entries)
+            "Of %i potential entries, loaded %i entries, %i failed parsing.\n"
+            % (entry_count, good_entries, bad_entries)
         )
         assert bad_sp_entries == 0
         assert entry_count == good_entries + bad_entries
