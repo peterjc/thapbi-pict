@@ -77,8 +77,10 @@ def lookup_taxonomy(session, clade, genus, species):
             return taxonomy
 
 
-def find_taxonomy(session, clade, sp_name, sp_name_etc, validate_species):
+def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species):
     """Fuzzy search for this entry in the taxonomy table (if present)."""
+    if taxid:
+        raise NotImplementedError("TODO - currently assumes unknown.")
     assert isinstance(clade, str), clade
     assert isinstance(sp_name, str), sp_name
     assert isinstance(sp_name_etc, str), sp_name_etc
@@ -247,7 +249,7 @@ def import_fasta_file(
         for entry in entries:
             entry_count += 1
             try:
-                clade, name, name_etc = entry_taxonomy_fn(entry)
+                taxid, clade, name, name_etc = entry_taxonomy_fn(entry)
             except ValueError as e:
                 bad_entries += 1
                 sys.stderr.write("WARNING: %s - Can't parse: %r\n" % (e, idn))
@@ -263,7 +265,9 @@ def import_fasta_file(
             assert genus != "P.", title
             # Is is already there? e.g. duplicate sequences in FASTA file
             # Note even if have no species text, still do the DB lookup!
-            taxonomy = find_taxonomy(session, clade, name, name_etc, validate_species)
+            taxonomy = find_taxonomy(
+                session, taxid, clade, name, name_etc, validate_species
+            )
             if taxonomy is None:
                 if validate_species:
                     bad_sp_entries += 1
@@ -279,7 +283,7 @@ def import_fasta_file(
                     # Do NOT write it to the DB
                     continue
                 taxonomy = Taxonomy(
-                    clade=clade, genus=genus, species=species, ncbi_taxid=0
+                    clade=clade, genus=genus, species=species, ncbi_taxid=taxid
                 )
                 session.add(taxonomy)
 
