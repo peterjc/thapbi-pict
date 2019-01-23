@@ -20,7 +20,7 @@ Then, import this into our ITS DB using::
 
 import sys
 
-from .import_fasta import import_fasta_file
+from .db_import import import_fasta_file
 
 
 def parse_fasta_entry(text):
