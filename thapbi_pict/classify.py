@@ -419,7 +419,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
         if setup_fn:
             setup_fn(session, shared_tmp, debug, cpu)
 
-        read_count = 0
+        seq_count = 0
         match_count = 0
         for filename in fasta_files:
             sys.stderr.write("Running %s classifer on %s\n" % (method, filename))
@@ -430,49 +430,51 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             stem = os.path.splitext(stem)[0]
             if out_dir and out_dir != "-":
                 folder = out_dir
-            read_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
+            output_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
 
-            if os.path.isfile(read_name):
-                sys.stderr.write("WARNING: Skipping %s as already exists\n" % read_name)
-                # TODO: Count the number of reads and matches?
+            if os.path.isfile(output_name):
+                sys.stderr.write(
+                    "WARNING: Skipping %s as already exists\n" % output_name
+                )
+                # TODO: Count the number of sequences and matches?
                 continue
 
             if debug:
-                sys.stderr.write("DEBUG: Output %s\n" % read_name)
+                sys.stderr.write("DEBUG: Output %s\n" % output_name)
 
             # Context manager should remove the temp dir:
             with tempfile.TemporaryDirectory() as tmp:
                 if debug:
                     sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
                 # Using same file names, but in tmp folder:
-                tmp_reads = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
-                # Run the classifier and write the read report:
-                with open(tmp_reads, "w") as reads_handle:
-                    reads_handle.write("#read-name\tgenus\tspecies\tclade\tnote\n")
+                tmp_pred = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
+                # Run the classifier and write the sequence report:
+                with open(tmp_pred, "w") as pred_handle:
+                    pred_handle.write("#sequence-name\tgenus\tspecies\tclade\tnote\n")
                     if os.path.getsize(filename):
-                        # There are reads to classify
+                        # There are sequences to classify
                         tax_counts = method_fn(
-                            filename, session, reads_handle, tmp, shared_tmp, debug, cpu
+                            filename, session, pred_handle, tmp, shared_tmp, debug, cpu
                         )
                     else:
-                        # No reads, no taxonomy assignments
+                        # No sequences, no taxonomy assignments
                         sys.stderr.write(
-                            "WARNING: Skipping %s classifier on %s as zero reads\n"
+                            "WARNING: Skipping %s classifier on %s as zero sequences\n"
                             % (method, filename)
                         )
                         tax_counts = Counter()
-                        reads_handle.write("#(no sequences to classify)\n")
+                        pred_handle.write("#(no sequences to classify)\n")
                 # Record the taxonomy counts
                 count = sum(tax_counts.values())
-                read_count += count
+                seq_count += count
                 match_count += count - tax_counts.get(("", "", ""), 0)
 
                 # Move our temp file into position...
-                shutil.move(tmp_reads, read_name)
+                shutil.move(tmp_pred, output_name)
 
     sys.stderr.write(
-        "%s classifier assigned species to %i of %i reads from %i files\n"
-        % (method, match_count, read_count, len(fasta_files))
+        "%s classifier assigned species/genus to %i of %i sequences from %i files\n"
+        % (method, match_count, seq_count, len(fasta_files))
     )
 
     sys.stdout.flush()
