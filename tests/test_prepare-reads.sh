@@ -20,8 +20,10 @@ if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FAST
 
 echo "Generating mock control file"
 # Using just 50 real reads (50 * 4 = 200 lines)
+set +o pipefail
 zcat tests/reads/DNAMIX_S95_L001_R1_001.fastq.gz | head -n 200 > $TMP/MOCK_CONTROL_R1.fastq
 zcat tests/reads/DNAMIX_S95_L001_R2_001.fastq.gz | head -n 200 > $TMP/MOCK_CONTROL_R2.fastq
+set -o pipefail
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/MOCK_CONTROL.fasta
