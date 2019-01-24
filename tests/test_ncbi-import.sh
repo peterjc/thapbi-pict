@@ -1,14 +1,14 @@
 #!/bin/bash
 IFS=$'\n\t'
 set -eux
-
-# Note not using "set -o pipefile" as want to use that
-# with grep to check error messages
+# Note not using "set -o pipefile" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
 echo "Checking ncbi-import"
 thapbi_pict ncbi-import 2>&1 | grep "the following arguments are required"
+thapbi_pict dump 2>&1 | grep "the following arguments are required"
+set -o pipefail
 
 # Couldn't see how to set a limit on the number of records via
 # esearch/efetch command line. Instead to avoid timeouts setting
@@ -19,7 +19,9 @@ if [ ! -f $TMP/20th_Century_ITS1.fasta ]; then esearch -db nucleotide -query "it
 if [ `grep -c "^>" $TMP/20th_Century_ITS1.fasta` -ne 129 ]; then echo "Record count from NCBI Entrez changed"; false; fi
 
 # Cannot use validation without having some taxonomy entries
+set +o pipefail
 thapbi_pict ncbi-import -d sqlite:///:memory: $TMP/20th_Century_ITS1.fasta 2>&1 | grep "Taxonomy table empty"
+set -o pipefail
 
 export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
@@ -30,7 +32,6 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "96" ]; then echo 
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "43" ]; then echo "Wrong taxonomy count"; false; fi
 # Other values subject to change
 
-thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $DB -o /dev/null
 
 if [ ! -f "new_taxdump_2018-12-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2018-12-01.zip"; fi

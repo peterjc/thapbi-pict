@@ -1,14 +1,13 @@
 #!/bin/bash
 IFS=$'\n\t'
 set -eux
-
-# Note not using "set -o pipefile" as want to use that
-# with grep to check error messages
+# Note not using "set -o pipefile" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
 echo "Checking prepare-reads"
 thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
+set -o pipefail
 
 # Try a real example
 rm -rf $TMP/DNAMIX_S95_L001.fasta

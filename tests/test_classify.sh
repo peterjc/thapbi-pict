@@ -1,15 +1,14 @@
 #!/bin/bash
 IFS=$'\n\t'
 set -eux
-
-# Note not using "set -o pipefile" as want to use that
-# with grep to check error messages
+# Note not using "set -o pipefile" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
 echo "Checking classify"
 thapbi_pict classify 2>&1 | grep "the following arguments are required"
 thapbi_pict classify -d "sqlite:///:memory:" hypothetical_example.fasta 2>&1 | grep "cannot classify anything"
+set -o pipefail
 
 export DB=$TMP/legacy_004_and_005_validated.sqlite
 if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; fi

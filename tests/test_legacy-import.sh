@@ -1,17 +1,14 @@
 #!/bin/bash
 IFS=$'\n\t'
 set -eux
-
-# Note not using "set -o pipefile" as want to use that
-# with grep to check error messages
+# Note not using "set -o pipefile" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
 echo "Checking legacy-import"
 thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
-
-# Cannot use validation without having some taxonomy entries
-thapbi_pict ncbi-import -d "sqlite:///:memory:" tests/legacy-import/dup_seqs.fasta 2>&1 | grep "Taxonomy table empty"
+thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta 2>&1 | grep "Taxonomy table empty"
+set -o pipefail
 
 export DB=$TMP/dup_seqs.sqlite
 rm -rf $DB
@@ -25,8 +22,6 @@ rm -rf $DB
 thapbi_pict legacy-import -x -d $DB database/legacy/database.fasta
 
 thapbi_pict legacy-import -x -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta
-
-thapbi_pict legacy-import -d "sqlite:///:memory:" database/legacy/Phytophthora_ITS_database_v0.004.fasta 2>&1 | grep "cannot"
 
 rm -rf database/legacy/Phytophthora_ITS_database_v0.005.sqlite
 thapbi_pict legacy-import -x -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
@@ -64,7 +59,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "348" ]; then echo "
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "348" ]; then echo "Wrong FASTA record count"; false; fi
 
-thapbi_pict dump 2>&1 | grep "the following arguments are required"
+#thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
 thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
 
@@ -73,9 +68,12 @@ thapbi_pict dump -d $DB -o /dev/null -c -
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
+set +o pipefail
+thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $DB -o /dev/null -s "ambiguous" 2>&1 | grep "requires a single genus"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytophthora" -s "ambiguous" 2>&1 | grep "not in database"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytopthora" 2>&1 | grep "not in database"
 thapbi_pict dump -d $DB -o /dev/null -c "123" 2>&1 | grep "not in database"
+set -o pipefail
 
 echo "$0 passed"
