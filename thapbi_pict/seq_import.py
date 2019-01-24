@@ -49,12 +49,11 @@ def main(
         meta_data = dict()
         with open(tsv_file) as handle:
             for line in handle:
-                # TODO - Include taxid in the classifier output
-                idn, genus, species, clade, etc = line.split("\t", 4)
+                idn, taxid, genus, species, clade, etc = line.split("\t", 4)
                 if idn in meta_data:
                     sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
                 genus_species = genus + " " + species if species else genus
-                meta_data[idn] = (0, clade, genus_species, "")
+                meta_data[idn] = (int(taxid), clade, genus_species, "")
 
         if not meta_data:
             sys.stderr.write(
