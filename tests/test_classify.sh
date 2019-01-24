@@ -18,8 +18,7 @@ rm -rf database/legacy/*.identity.tsv
 
 # Passing one filename; default output dir:
 thapbi_pict classify -m identity -d $DB database/legacy/database.fasta
-# Now fails as we expect reads to have been prepared and trimmed with HMM
-if [ `wc -l database/legacy/database.identity.tsv` -ne "0" ]; then echo "Expected no matches"; false; fi
+if [ "`grep -c -v '^#' database/legacy/database.identity.tsv`" -ne "`grep -c '^>' database/legacy/database.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
 if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
