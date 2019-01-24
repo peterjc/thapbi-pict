@@ -17,8 +17,9 @@ def parse_species_tsv(tabular_file):
         for line in handle:
             if line.startswith("#"):
                 continue
-            name, genus, species, etc = line.split("\t", 3)
-            yield name, genus, species
+            name, taxid, genus, species, etc = line.split("\t", 4)
+            taxid = int(taxid)
+            yield name, genus, species, taxid
 
 
 def tally_files(expected_file, predicted_file):
@@ -40,6 +41,7 @@ def tally_files(expected_file, predicted_file):
         # Might only have genus with species "", thus strip whitespace:
         expt_sp = ("%s %s" % (expt[1], expt[2])).strip()
         pred_sp = ("%s %s" % (pred[1], pred[2])).strip()
+        # TODO: Look at taxid, expt[3] and pred[3]
         counter[expt_sp, pred_sp] += 1
     return counter
 
