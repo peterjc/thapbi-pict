@@ -18,7 +18,6 @@ def parse_species_tsv(tabular_file):
             if line.startswith("#"):
                 continue
             name, taxid, genus, species, etc = line.split("\t", 4)
-            taxid = int(taxid)
             yield name, genus, species, taxid
 
 
@@ -44,6 +43,7 @@ def tally_files(expected_file, predicted_file):
         pred_sp = ("%s %s" % (pred[1], pred[2])) if pred[2] else ""
         assert species_level(pred_sp) or not pred_sp, pred_sp
         # TODO: Look at taxid, expt[3] and pred[3]
+        # TODO: Handle ambiguous entries with ; separated entries
         counter[expt_sp, pred_sp] += 1
     return counter
 
