@@ -46,6 +46,40 @@ def md5_to_taxon(md5_list, session):
     return list(set(_.current_taxonomy for _ in view))  # depulicate
 
 
+def unique_or_separated(values, sep=";"):
+    """Return sole element, or a string joining all elements using the separator."""
+    if len(set(values)) == 1:
+        return values[0]
+    else:
+        return sep.join(str(_) for _ in values)
+
+
+def taxonomy_summary(taxon_entries):
+    """Return semi-colon separated summary of the taxonomy objects from DB.
+
+    If there is a single result, returns a tuple of taxid (integer), genus,
+    species, clade, and debugging comment (strings).
+
+    If any of the fields has conflicting values, returns a semi-colon separated
+    string instead (in the same order so you can match taxid to species etc).
+    """
+    if not taxon_entries:
+        return 0, "", "", "", "No taxonomy entries"
+    if len(taxon_entries) == 1:
+        t = taxon_entries[0]
+        return t.ncbi_taxid, t.genus, t.species, t.clade, "Unique taxonomy match"
+
+    taxon_entries.sort(key=lambda t: (t.ncbi_taxid, t.genus, t.species))
+
+    return (
+        unique_or_separated([t.ncbi_taxid for t in taxon_entries]),
+        unique_or_separated([t.genus for t in taxon_entries]),
+        unique_or_separated([t.species for t in taxon_entries]),
+        unique_or_separated([t.clade for t in taxon_entries]),
+        "",  # Not useful to report # of entries as redundant info
+    )
+
+
 def taxonomy_consensus(taxon_entries):
     """Return LCA summary of the taxonomy objects from DB.
 
@@ -95,7 +129,14 @@ def taxonomy_consensus(taxon_entries):
 
 
 def method_identity(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    take_lca,
+    debug=False,
+    cpu=0,
 ):
     """Classify using perfect identity.
 
@@ -135,17 +176,19 @@ def method_identity(
                 # its1 -> one or more SequenceSource
                 # each SequenceSource -> one current taxonomy
                 # TODO: Refactor the query to get the DB to apply disinct?
-                taxid, genus, species, clade, note = taxonomy_consensus(
-                    list(
-                        set(
-                            _.current_taxonomy
-                            for _ in session.query(SequenceSource).filter_by(its1=its1)
-                        )
+                t = list(
+                    set(
+                        _.current_taxonomy
+                        for _ in session.query(SequenceSource).filter_by(its1=its1)
                     )
                 )
+                if take_lca:
+                    taxid, genus, species, clade, note = taxonomy_consensus(t)
+                else:
+                    taxid, genus, species, clade, note = taxonomy_summary(t)
         tax_counts[(genus, species, clade)] += abundance
         read_report.write(
-            "%s\t%i\t%s\t%s\t%s\t%s\n" % (idn, taxid, genus, species, clade, note)
+            "%s\t%s\t%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus, species, clade, note)
         )
     assert count == sum(tax_counts.values())
     return tax_counts
@@ -171,7 +214,14 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    take_lca,
+    debug=False,
+    cpu=0,
 ):
     """Classify using BLAST.
 
@@ -233,16 +283,19 @@ def method_blast(
             abundance = abundance_from_read_name(idn)
             if idn in blast_hits:
                 db_md5s = blast_hits[idn]
-                taxid, genus, species, clade, note = taxonomy_consensus(
-                    md5_to_taxon(db_md5s, session)
-                )
-                note = "%i BLAST hits, %s" % (len(db_md5s), note)
+                t = md5_to_taxon(db_md5s, session)
+                if take_lca:
+                    taxid, genus, species, clade, note = taxonomy_consensus(t)
+                else:
+                    taxid, genus, species, clade, note = taxonomy_summary(t)
+                note = ("%i BLAST hits. %s" % (len(db_md5s), note)).strip()
             else:
                 taxid = 0
                 genus = species = clade = ""
                 note = "No BLAST hit"
             read_report.write(
-                "%s\t%i\t%s\t%s\t%s\t%s\n" % (idn, taxid, genus, species, clade, note)
+                "%s\t%s\t%s\t%s\t%s\t%s\n"
+                % (idn, str(taxid), genus, species, clade, note)
             )
             tax_counts[(genus, species, clade)] += abundance
     return tax_counts
@@ -310,7 +363,14 @@ def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_swarm(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    take_lca,
+    debug=False,
+    cpu=0,
 ):
     """Classify using SWARM.
 
@@ -346,14 +406,15 @@ def method_swarm(
                 # DB only cluster, ignore
                 continue
             if db_md5s:
-                taxid, genus, species, clade, note = taxonomy_consensus(
-                    md5_to_taxon(db_md5s, session)
-                )
-                note = "Cluster of %i seqs and %i DB entries. %s" % (
-                    len(read_idns),
-                    len(db_md5s),
-                    note,
-                )
+                t = md5_to_taxon(db_md5s, session)
+                if take_lca:
+                    taxid, genus, species, clade, note = taxonomy_consensus(t)
+                else:
+                    taxid, genus, species, clade, note = taxonomy_summary(t)
+                note = (
+                    "Cluster of %i seqs and %i DB entries. %s"
+                    % (len(read_idns), len(db_md5s), note)
+                ).strip()
             else:
                 # Cannot classify, report
                 taxid = 0
@@ -361,8 +422,8 @@ def method_swarm(
                 note = "Cluster of %i seqs but no DB entry" % len(read_idns)
             for idn in read_idns:
                 read_report.write(
-                    "%s\t%i\t%s\t%s\t%s\t%s\n"
-                    % (idn, taxid, genus, species, clade, note)
+                    "%s\t%s\t%s\t%s\t%s\t%s\n"
+                    % (idn, str(taxid), genus, species, clade, note)
                 )
             tax_counts[(genus, species, clade)] += abundance
     sys.stderr.write("Swarm generated %i clusters\n" % cluster_count)
@@ -386,6 +447,8 @@ method_setup = {
 def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify command."""
     assert isinstance(fasta, list)
+
+    take_lca = False
 
     if method not in method_classifier:
         sys.exit(
@@ -462,7 +525,14 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                     if os.path.getsize(filename):
                         # There are sequences to classify
                         tax_counts = method_fn(
-                            filename, session, pred_handle, tmp, shared_tmp, debug, cpu
+                            filename,
+                            session,
+                            pred_handle,
+                            tmp,
+                            shared_tmp,
+                            take_lca,
+                            debug,
+                            cpu,
                         )
                     else:
                         # No sequences, no taxonomy assignments
