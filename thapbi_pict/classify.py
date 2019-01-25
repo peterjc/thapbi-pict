@@ -71,13 +71,37 @@ def taxonomy_summary(taxon_entries):
 
     taxon_entries.sort(key=lambda t: (t.ncbi_taxid, t.genus, t.species))
 
+    # e.g. Clades of "", "8a" --> "8a", but any conflict -> ""
+    clade = clade_consensus(t.clade for t in taxon_entries)
+    if not clade:
+        clade = unique_or_separated([t.clade for t in taxon_entries])
+
     return (
         unique_or_separated([t.ncbi_taxid for t in taxon_entries]),
         unique_or_separated([t.genus for t in taxon_entries]),
         unique_or_separated([t.species for t in taxon_entries]),
-        unique_or_separated([t.clade for t in taxon_entries]),
+        clade,
         "",  # Not useful to report # of entries as redundant info
     )
+
+
+def clade_consensus(clades):
+    """Determine clade consensus, dropping alpha suffix if needed.
+
+    e.g. Clades of "", "8a" --> "8a", or "2a", "2b" --> "2",
+    but any conflict -> "".
+
+    Ignores empty clade as for most of our data sources, don't have
+    any clade information.
+    """
+    c_list = list(set(clades))
+    if "" in c_list:
+        c_list.remove("")
+    if len(c_list) > 1:
+        # Try dropping the letter suffix, 2,2a -> 2, or 6a,6b -> 6
+        c_list = list(set(_.rstrip(ascii_lowercase) for _ in c_list))
+        assert "" not in c_list
+    return c_list[0] if len(c_list) == 1 else ""
 
 
 def taxonomy_consensus(taxon_entries):
@@ -104,18 +128,8 @@ def taxonomy_consensus(taxon_entries):
 
     note = "Consensus from %i taxonomy entries" % len(taxon_entries)
 
-    # e.g. Clades of "", "8a" --> "8a"
-    # but any conflict -> ""
-    c_list = list(set(_.clade for _ in taxon_entries))
-    if "" in c_list:
-        c_list.remove("")
-    if len(c_list) > 1:
-        # Try dropping the letter suffix, 2,2a -> 2, or 6a,6b -> 6
-        c_list = list(set(_.rstrip(ascii_lowercase) for _ in c_list))
-        assert "" not in c_list
-    clade = c_list[0] if len(c_list) == 1 else ""
-    if not clade:
-        note += " (clades: %s)" % ",".join(sorted(c_list))
+    # e.g. Clades of "", "8a" --> "8a", but any conflict -> ""
+    clade = clade_consensus(_.clade for _ in taxon_entries)
 
     s_list = list(set(_.species for _ in taxon_entries))
     if "" in s_list:
