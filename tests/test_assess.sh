@@ -9,6 +9,8 @@ echo "Checking assess"
 thapbi_pict assess 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
+# Simple examples with expected output to compare against:
+diff tests/assess/ex1.assess.tsv <(thapbi_pict assess tests/assess/ex1.known.tsv tests/assess/ex1.identity.tsv)
 
 if [ ! -f $TMP/thapbi_swarm/DNAMIX_S95_L001.swarm.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi

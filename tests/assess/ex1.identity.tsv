@@ -1,0 +1,5 @@
+#sequence-name	taxid	genus	species	clade	note
+seqA_12345	1771973	Phytophthora	crassamura	6	Unique taxonomy match
+seqB_2345	4788	Phytophthora	megasperma	6	Unique taxonomy match
+seqC_1234	0				No ITS1 database match
+seqD_1000	0				No ITS1 database match
