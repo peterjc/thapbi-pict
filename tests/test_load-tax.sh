@@ -31,4 +31,4 @@ set +o pipefail
 thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 12908 2>&1 | grep "Could not identify any genus names"
 set -o pipefail
 
-echo "$0 passed"
+echo "$0 - test_load-tax.sh passed"

@@ -76,4 +76,4 @@ thapbi_pict dump -d $DB -o /dev/null -g "Phytopthora" 2>&1 | grep "not in databa
 thapbi_pict dump -d $DB -o /dev/null -c "123" 2>&1 | grep "not in database"
 set -o pipefail
 
-echo "$0 passed"
+echo "$0 - test_legacy-import.sh passed"

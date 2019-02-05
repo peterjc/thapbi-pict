@@ -30,4 +30,4 @@ diff $TMP/stdout.txt $TMP/assess_swarm_vs_identity.tsv
 thapbi_pict assess $TMP/thapbi_swarm $TMP/DNAMIX_S95_L001.identity.tsv -m swarm -k identity -o $TMP/assess_swarm_vs_identity.tsv -c - > $TMP/stdout.txt
 diff $TMP/stdout.txt $TMP/confusion_swarm_vs_identity.tsv
 
-echo "$0 passed"
+echo "$0 - test_assess.sh passed"
