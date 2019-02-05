@@ -25,3 +25,7 @@ dist
 
 #Ignore these hidden files from Mac OS X
 .DS_Store
+
+#Ignore random data files
+*.fastq
+*.fastq.gz
