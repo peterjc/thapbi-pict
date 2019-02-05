@@ -38,4 +38,4 @@ mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB database/legacy/ -o $TMP/legacy
 if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "3" ]; then echo "Expected 3 files;" false; fi
 
-echo "$0 passed"
+echo "$0 - test_classify.sh passed"

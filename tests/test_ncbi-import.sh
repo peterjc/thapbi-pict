@@ -53,4 +53,4 @@ thapbi_pict dump -d $DB -o /dev/null
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
-echo "$0 passed"
+echo "$0 - test_ncbi-import.sh passed"

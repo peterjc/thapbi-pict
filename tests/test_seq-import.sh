@@ -13,4 +13,4 @@ thapbi_pict seq-import 2>&1 | grep "the following arguments are required"
 thapbi_pict seq-import -d "sqlite:///:memory:" tests/legacy-import/dup_seqs.fasta 2>&1 | grep "but missing"
 set -o pipefail
 
-echo "$0 passed"
+echo "$0 - test_seq-import.sh passed"
