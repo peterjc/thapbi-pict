@@ -81,8 +81,10 @@ def class_list_from_tally(tally):
     """Sorted list of all class names used in a confusion table dict."""
     classes = set()
     for expt, pred in tally:
-        classes.add(expt)
-        classes.add(pred)
+        for sp in expt.split(";"):
+            classes.add(sp)
+        for sp in pred.split(";"):
+            classes.add(sp)
     return sorted(classes)
 
 
@@ -133,7 +135,7 @@ def extract_binary_tally(class_name, tally):
     """
     bt = Counter()
     for (expt, pred), count in tally.items():
-        bt[expt == class_name, pred == class_name] += count
+        bt[class_name in expt.split(";"), class_name in pred.split(";")] += count
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
 
 
@@ -151,6 +153,7 @@ def extract_global_tally(tally):
     """
     tp = fp = fn = tn = 0
     for (expt, pred), count in tally.items():
+        # TODO - Handle multi-label classifications!
         if species_level(expt):
             # Have species level expectation...
             if species_level(pred):
@@ -226,14 +229,18 @@ def main(
         handle = open(assess_output, "w")
 
     handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
-    sp_list = [_ for _ in class_list_from_tally(global_tally) if species_level(_)]
-    for species in [None] + sp_list:
-        if species is None:
+    sp_list = class_list_from_tally(global_tally)
+    assert "" in sp_list
+    for sp in sp_list:
+        if sp:
+            assert species_level(sp)
+    for sp in sp_list:
+        if not sp:
             # Special case flag to report global values at end
             tp, fp, fn, tn = extract_global_tally(global_tally)
-            species = "OVERALL"
+            sp = "OVERALL"
         else:
-            tp, fp, fn, tn = extract_binary_tally(species, global_tally)
+            tp, fp, fn, tn = extract_binary_tally(sp, global_tally)
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
         # specificity, selectivity or true negative rate (TNR)
@@ -244,7 +251,7 @@ def main(
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
         handle.write(
             "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\n"
-            % (species, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
+            % (sp, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
         )
     if assess_output != "-":
         handle.close()
