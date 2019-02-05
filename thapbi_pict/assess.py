@@ -106,10 +106,18 @@ def save_confusion_matrix(tally, filename, debug=False):
     species = class_list_from_tally(tally)
     with open(filename, "w") as handle:
         handle.write("#\t%s\n" % "\t".join(species))
+        # TODO - multiple values in the expt
         for expt in species:
+            values = Counter()
+            for (e, p), count in tally.items():
+                if expt == e:
+                    for pred in p.split(";"):
+                        values[pred] += count
+                    # if expt not in p.split(";"):
+                    #     vales[""] += count
+            assert values[""] >= tally.get((expt, ""), 0), values
             handle.write(
-                "%s\t%s\n"
-                % (expt, "\t".join(str(tally[expt, pred]) for pred in species))
+                "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
             )
     if debug:
         sys.stderr.write(
@@ -140,10 +148,7 @@ def extract_binary_tally(class_name, tally):
 
 
 def extract_global_tally(tally):
-    """Compress multi-class confusion matrix to global binary one.
-
-    Treats no prediction and genus level only prediction as negatives,
-    trests species level prediction as positives.
+    """Process multi-label confusion matrix (tally dict) to TP, FP, DN, TN.
 
     If the input data has no negative controls, all there will be no
     true negatives.
@@ -153,26 +158,47 @@ def extract_global_tally(tally):
     """
     tp = fp = fn = tn = 0
     for (expt, pred), count in tally.items():
-        # TODO - Handle multi-label classifications!
-        if species_level(expt):
-            # Have species level expectation...
-            if species_level(pred):
-                # this is either TP or FP
-                if expt == pred:
-                    tp += count
-                else:
-                    fp += count
+        expt_sp_list = expt.split(";") if expt else []
+        pred_sp_list = pred.split(";") if pred else []
+
+        if expt_sp_list:
+            # Hopefully some TP...
+            if pred_sp_list:
+                # Have TP, FP, mabye even FN?
+                # On both lists: True Positive (TP)
+                # Just on prediction list: False Positive (FP)
+                # Just on expected list: False negative... count it?
+                #
+                # Consider expected Sp A, but prediction Sp B (only)
+                # Is this 1xFP only, or 1xFP and 1xFN too?
+                #
+                # Likewise, expected Sp A, but prediction B & C, is this
+                # 2xFP only; or 2xFP (B&C) and 1xFN too (missing A)?
+                #
+                # What if expect Sp A & B, prediction B & C, is this
+                # 1xFP (the C), 1xTP (the B), 1xFN (missing A)
+                for sp in expt_sp_list:
+                    if sp in pred_sp_list:
+                        tp += count
+                    else:
+                        # Don't count at global level, counting TP/FP instead?
+                        # fn += count
+                        pass
+                for sp in pred_sp_list:
+                    if sp not in expt_sp_list:
+                        fp += count
             else:
-                # No species level prediction, FN
-                fn += count
-        elif species_level(pred):
-            # Have no species level expectation, but a (false) species
-            # level prediction was made - FP
-            fp += count
+                # No predictions, these all FN
+                fn += count * len(expt_sp_list)
         else:
-            # Have no species level expectation, no species
-            # level prediction was made - TN
-            tn += count
+            # Have no species level expectation,
+            if pred_sp_list:
+                # False predictions made - FP
+                fp += count * len(pred_sp_list)
+            else:
+                # No species level prediction was made - TN
+                tn += count
+
     return tp, fp, fn, tn
 
 
