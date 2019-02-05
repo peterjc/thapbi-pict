@@ -4,7 +4,6 @@
 #
 
 blast
-entrez-direct
 hmmer
 pear=0.9.6
 swarm
