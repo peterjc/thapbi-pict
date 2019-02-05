@@ -38,9 +38,11 @@ def tally_files(expected_file, predicted_file):
                 "Sequence name mismatch in %s vs %s, %s vs %s\n"
                 % (expected_file, predicted_file, expt[0], pred[0])
             )
-        # Might only have genus with species "", thus strip whitespace:
-        expt_sp = ("%s %s" % (expt[1], expt[2])).strip()
-        pred_sp = ("%s %s" % (pred[1], pred[2])).strip()
+        # Might only have genus, if so map to ""
+        expt_sp = ("%s %s" % (expt[1], expt[2])) if expt[2] else ""
+        assert species_level(expt_sp) or not expt_sp, expt_sp
+        pred_sp = ("%s %s" % (pred[1], pred[2])) if pred[2] else ""
+        assert species_level(pred_sp) or not pred_sp, pred_sp
         # TODO: Look at taxid, expt[3] and pred[3]
         counter[expt_sp, pred_sp] += 1
     return counter
