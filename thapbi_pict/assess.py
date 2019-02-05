@@ -106,10 +106,10 @@ def save_confusion_matrix(tally, filename, debug=False):
     species = class_list_from_tally(tally)
     with open(filename, "w") as handle:
         handle.write("#\t%s\n" % "\t".join(species))
-        for pred in species:
+        for expt in species:
             handle.write(
                 "%s\t%s\n"
-                % (pred, "\t".join(str(tally[pred, expt]) for expt in species))
+                % (expt, "\t".join(str(tally[expt, pred]) for pred in species))
             )
     if debug:
         sys.stderr.write(
