@@ -57,6 +57,19 @@ def class_list_from_tally(tally):
     return sorted(classes)
 
 
+def save_mapping(tally, filename, debug=False):
+    """Output tally table of expected species to predicted sp."""
+    with open(filename, "w") as handle:
+        handle.write("#Count\tExpected\tPredicted\n")
+        for expt, pred in sorted(tally):
+            handle.write("%i\t%s\t%s\n" % (tally[expt, pred], expt, pred))
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Wrote %i entry mapping table (total %i) to %s\n"
+            % (len(tally), sum(tally.values()), filename)
+        )
+
+
 def save_confusion_matrix(tally, filename, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
     species = class_list_from_tally(tally)
@@ -131,7 +144,9 @@ def extract_global_tally(tally):
     return tp, fp, fn, tn
 
 
-def main(inputs, known, method, assess_output, confusion_output, debug=False):
+def main(
+    inputs, known, method, assess_output, map_output, confusion_output, debug=False
+):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
 
@@ -139,7 +154,7 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
         inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
     )
 
-    count = 0
+    file_count = 0
     global_tally = Counter()
 
     # Context manager should remove the temp dir:
@@ -151,18 +166,23 @@ def main(inputs, known, method, assess_output, confusion_output, debug=False):
                 sys.stderr.write(
                     "Assessing %s vs %s\n" % (predicted_file, expected_file)
                 )
+            file_count += 1
+            global_tally.update(tally_files(expected_file, predicted_file))
 
-            file_tally = tally_files(expected_file, predicted_file)
-            count += 1
-            # print(file_tally)
-            global_tally.update(file_tally)
+    sys.stderr.write(
+        "Assessed %s vs %s in %i files (%i sequence entries)\n"
+        % (method, known, file_count, sum(global_tally.values()))
+    )
 
-    sys.stderr.write("Assessed %s vs %s in %i files\n" % (method, known, count))
+    assert file_count == len(input_list)
 
-    assert count == len(input_list)
-
-    if not count:
+    if not file_count:
         sys.exit("ERROR: Could not find files to assess\n")
+
+    if map_output == "-":
+        save_mapping(global_tally, "/dev/stdout", debug=debug)
+    elif map_output:
+        save_mapping(global_tally, map_output, debug=debug)
 
     if confusion_output == "-":
         save_confusion_matrix(global_tally, "/dev/stdout", debug=debug)

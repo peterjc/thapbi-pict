@@ -143,6 +143,7 @@ def assess_classification(args=None):
         known=args.known,
         method=args.method,
         assess_output=args.output,
+        map_output=args.table,
         confusion_output=args.confusion,
         debug=args.verbose,
     )
@@ -566,6 +567,14 @@ comma.
         metavar="FILENAME",
         help="File to write species level classification assessment table to. "
         "Default is '-' meaning to stdout.",
+    )
+    parser_assess.add_argument(
+        "-t",
+        "--table",
+        type=str,
+        metavar="FILENAME",
+        help="File to write expected-to-predicted mapping tally table to. "
+        "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     parser_assess.add_argument(
         "-c",
