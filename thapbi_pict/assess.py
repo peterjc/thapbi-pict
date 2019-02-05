@@ -18,7 +18,38 @@ def parse_species_tsv(tabular_file):
             if line.startswith("#"):
                 continue
             name, taxid, genus, species, etc = line.split("\t", 4)
-            yield name, genus, species, taxid
+            yield name, taxid, genus, species
+
+
+def untangle_species(taxid, genus, species):
+    """Untangle classifier predictions which might have ; entries.
+
+    Returns semi-colon separated string of species names (in the
+    binomial form, genus-species).
+
+    Does not currently use the taxid.
+    """
+    if ";" in taxid:
+        assert ";" in species, "%s %s %s" % (taxid, genus, species)
+    if ";" in species:
+        assert ";" in taxid or taxid == 0, "%s %s %s" % (taxid, genus, species)
+    if ";" in genus:
+        assert ";" in taxid or taxid == 0, "%s %s %s" % (taxid, genus, species)
+
+    if not species:
+        return ""  # No species level predictions
+
+    answer = set()
+    if ";" in genus:
+        assert species.count(";") == genus.count(";")
+        for s, g in zip(species.split(";"), genus.split(";")):
+            assert s.strip()
+            answer.add("%s %s" % (g, s))
+    else:
+        for s in species.split(";"):
+            assert s.strip()
+            answer.add("%s %s" % (genus, s))
+    return ";".join(sorted(answer))
 
 
 def tally_files(expected_file, predicted_file):
@@ -37,13 +68,11 @@ def tally_files(expected_file, predicted_file):
                 "Sequence name mismatch in %s vs %s, %s vs %s\n"
                 % (expected_file, predicted_file, expt[0], pred[0])
             )
-        # Might only have genus, if so map to ""
-        expt_sp = ("%s %s" % (expt[1], expt[2])) if expt[2] else ""
-        assert species_level(expt_sp) or not expt_sp, expt_sp
-        pred_sp = ("%s %s" % (pred[1], pred[2])) if pred[2] else ""
-        assert species_level(pred_sp) or not pred_sp, pred_sp
-        # TODO: Look at taxid, expt[3] and pred[3]
-        # TODO: Handle ambiguous entries with ; separated entries
+        # TODO: Look at taxid?
+        # This has dealt with ambiguous entries with ; separated entries
+        # Should now have (possibly empty) string of genus-species;...
+        expt_sp = untangle_species(*expt[1:])
+        pred_sp = untangle_species(*pred[1:])
         counter[expt_sp, pred_sp] += 1
     return counter
 
