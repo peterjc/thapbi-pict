@@ -69,17 +69,18 @@ def taxonomy_summary(taxon_entries):
         t = taxon_entries[0]
         return t.ncbi_taxid, t.genus, t.species, t.clade, "Unique taxonomy match"
 
-    taxon_entries.sort(key=lambda t: (t.ncbi_taxid, t.genus, t.species))
-
     # e.g. Clades of "", "8a" --> "8a", but any conflict -> ""
     clade = clade_consensus(t.clade for t in taxon_entries)
     if not clade:
         clade = unique_or_separated([t.clade for t in taxon_entries])
 
+    # Discard clade, and now remove duplicates
+    tax = sorted(set((t.ncbi_taxid, t.genus, t.species) for t in taxon_entries))
+
     return (
-        unique_or_separated([t.ncbi_taxid for t in taxon_entries]),
-        unique_or_separated([t.genus for t in taxon_entries]),
-        unique_or_separated([t.species for t in taxon_entries]),
+        unique_or_separated([t[0] for t in tax]),
+        unique_or_separated([t[1] for t in tax]),
+        unique_or_separated([t[2] for t in tax]),
         clade,
         "",  # Not useful to report # of entries as redundant info
     )
