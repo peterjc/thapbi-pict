@@ -268,7 +268,10 @@ def main(
 
     handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
     sp_list = class_list_from_tally(global_tally)
-    assert "" in sp_list
+    # Ensure "" special case is at the start of the list (will be first if sorted)
+    if "" in sp_list:
+        sp_list.remove("")
+    sp_list = [""] + sp_list
     for sp in sp_list:
         if sp:
             assert species_level(sp)
