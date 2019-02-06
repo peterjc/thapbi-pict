@@ -357,7 +357,13 @@ def main(
     if assess_output != "-":
         handle.close()
 
-    sys.stdout.flush()
-    sys.stderr.flush()
+    try:
+        sys.stdout.flush()
+    except BrokenPipeError:
+        pass
+    try:
+        sys.stderr.flush()
+    except BrokenPipeError:
+        pass
 
     return 0
