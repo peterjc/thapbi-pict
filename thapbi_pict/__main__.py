@@ -504,10 +504,10 @@ comma.
         "-o",
         "--output",
         type=str,
-        default="-",
+        default="",
         metavar="DIRNAME",
-        help="Directory to write output reports to, default "
-        "is next to each input file.",
+        help="Directory to write output reports to, default (empty "
+        "string) is next to each input file. Use '-' for stdout.",
     )
     parser_classify.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"

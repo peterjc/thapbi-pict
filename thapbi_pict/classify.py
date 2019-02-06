@@ -511,11 +511,15 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
 
             folder, stem = os.path.split(filename)
             stem = os.path.splitext(stem)[0]
-            if out_dir and out_dir != "-":
-                folder = out_dir
-            output_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
+            if not out_dir:
+                # Use input folder
+                output_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
+            elif out_dir == "-":
+                output_name = None
+            else:
+                output_name = os.path.join(out_dir, "%s.%s.tsv" % (stem, method))
 
-            if os.path.isfile(output_name):
+            if output_name is not None and os.path.isfile(output_name):
                 sys.stderr.write(
                     "WARNING: Skipping %s as already exists\n" % output_name
                 )
@@ -532,37 +536,44 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 # Using same file names, but in tmp folder:
                 tmp_pred = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
                 # Run the classifier and write the sequence report:
-                with open(tmp_pred, "w") as pred_handle:
-                    pred_handle.write(
-                        "#sequence-name\ttaxid\tgenus\tspecies\tclade\tnote\n"
+                if output_name is None:
+                    pred_handle = sys.stdout
+                else:
+                    pred_handle = open(tmp_pred, "w")
+
+                pred_handle.write(
+                    "#sequence-name\ttaxid\tgenus\tspecies\tclade\tnote\n"
+                )
+                if os.path.getsize(filename):
+                    # There are sequences to classify
+                    tax_counts = method_fn(
+                        filename,
+                        session,
+                        pred_handle,
+                        tmp,
+                        shared_tmp,
+                        take_lca,
+                        debug,
+                        cpu,
                     )
-                    if os.path.getsize(filename):
-                        # There are sequences to classify
-                        tax_counts = method_fn(
-                            filename,
-                            session,
-                            pred_handle,
-                            tmp,
-                            shared_tmp,
-                            take_lca,
-                            debug,
-                            cpu,
-                        )
-                    else:
-                        # No sequences, no taxonomy assignments
-                        sys.stderr.write(
-                            "WARNING: Skipping %s classifier on %s as zero sequences\n"
-                            % (method, filename)
-                        )
-                        tax_counts = Counter()
-                        pred_handle.write("#(no sequences to classify)\n")
+                else:
+                    # No sequences, no taxonomy assignments
+                    sys.stderr.write(
+                        "WARNING: Skipping %s classifier on %s as zero sequences\n"
+                        % (method, filename)
+                    )
+                    tax_counts = Counter()
+                    pred_handle.write("#(no sequences to classify)\n")
+
                 # Record the taxonomy counts
                 count = sum(tax_counts.values())
                 seq_count += count
                 match_count += count - tax_counts.get(("", "", ""), 0)
 
-                # Move our temp file into position...
-                shutil.move(tmp_pred, output_name)
+                if output_name is not None:
+                    pred_handle.close()
+                    # Move our temp file into position...
+                    shutil.move(tmp_pred, output_name)
 
     sys.stderr.write(
         "%s classifier assigned species/genus to %i of %i sequences from %i files\n"
