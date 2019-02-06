@@ -1,0 +1,2 @@
+#sequence-name	taxid	genus	species	clade	note
+tricky_1000	4784;4787	Phytophthora	capsici;infestans	2	one right (Pc), one wrong (Pi), one missed (Pg)
