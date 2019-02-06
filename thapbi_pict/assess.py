@@ -214,6 +214,17 @@ def extract_global_tally(tally):
     return tp, fp, fn, tn
 
 
+assert extract_global_tally({("", ""): 1}) == (0, 0, 0, 1)
+assert extract_global_tally({("", "A"): 1}) == (0, 1, 0, 0)
+assert extract_global_tally({("A", ""): 1}) == (0, 0, 1, 0)
+assert extract_global_tally({("A", "A"): 1}) == (1, 0, 0, 0)
+assert extract_global_tally({("A", "B"): 1}) == (0, 1, 0, 0)  # Bubious
+assert extract_global_tally({("A", "A;B"): 1}) == (1, 1, 0, 0)
+assert extract_global_tally({("A;B", "A;B"): 1}) == (2, 0, 0, 0)
+assert extract_global_tally({("A;B", "A"): 1}) == (1, 0, 0, 0)  # Wrong?
+assert extract_global_tally({("A;B", "A;C"): 1}) == (1, 1, 0, 0)  # Dubious
+
+
 def main(
     inputs, known, method, assess_output, map_output, confusion_output, debug=False
 ):
