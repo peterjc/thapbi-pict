@@ -118,50 +118,41 @@ def save_mapping(tally, filename, debug=False):
 def save_confusion_matrix(tally, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
     total = 0
-    species = class_list_from_tally(tally)
-    if "" not in species:
-        species = [""] + species
-    assert species[0] == ""
-    extra_rows = sorted(set(expt for (expt, pred) in tally if expt not in species))
+
+    cols = class_list_from_tally(tally)
+    if "" not in cols:
+        cols = [""] + cols
+    rows = cols + sorted(set(expt for (expt, pred) in tally if expt not in cols))
+
+    values = Counter()
+    for (expt, pred), count in tally.items():
+        assert expt in rows
+        if expt or pred:
+            e_list = expt.split(";") if expt else []
+            p_list = pred.split(";") if pred else []
+            for p in p_list:
+                # The TP and FP
+                values[expt, p] += count
+            for e in e_list:
+                if e not in p_list:
+                    # FN
+                    values[expt, ""] += count
+        else:
+            # TN
+            values[expt, ""] += count
+    total = sum(values.values())
+
     with open(filename, "w") as handle:
-        handle.write("#\t%s\n" % "\t".join(species))
-        for expt in species:
-            values = Counter()
-            assert ";" not in expt
-            for (e, p), count in tally.items():
-                p_list = p.split(";") if p else []
-                if expt == e:
-                    for pred in p_list:
-                        values[pred] += count
-                    if expt not in p_list:
-                        values[""] += count
-            assert values[""] >= tally.get((expt, ""), 0), values
+        handle.write("#\t%s\n" % "\t".join(cols))
+        for expt in rows:
             handle.write(
-                "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
+                "%s\t%s\n" % (expt, "\t".join(str(values[expt, pred]) for pred in cols))
             )
-            total += sum(values.values())
-        for expt in extra_rows:
-            # These are the multi-species expected entries
-            values = Counter()
-            assert ";" in expt
-            for (e, p), count in tally.items():
-                if expt == e:
-                    e_list = e.split(";")  # know not ""
-                    p_list = p.split(";") if p else []
-                    for pred in p_list:
-                        values[pred] += count
-                    for e in e_list:
-                        if e not in p_list:
-                            values[""] += count
-            assert values[""] >= tally.get((expt, ""), 0), values
-            handle.write(
-                "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
-            )
-            total += sum(values.values())
+
     if debug:
         sys.stderr.write(
             "DEBUG: Wrote %i x %i confusion matrix (total %i) to %s\n"
-            % (len(species) + len(extra_rows), len(species), total, filename)
+            % (len(rows), len(cols), total, filename)
         )
     assert total >= sum(tally.values())
     if total != exp_total:
