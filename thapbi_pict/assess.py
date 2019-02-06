@@ -127,7 +127,7 @@ def save_confusion_matrix(tally, filename, debug=False):
 
 
 def species_level(prediction):
-    """Is this prediction atspecies level.
+    """Is this prediction at species level.
 
     Returns True for a binomial name (at least one space), false for genus
     only or no prediction.
@@ -136,10 +136,13 @@ def species_level(prediction):
 
 
 def extract_binary_tally(class_name, tally):
-    """Compress a multi-class confusion matrix to a single-species binary one.
+    """Extact single-class TP, FP, FN, TN from multi-class confusion tally.
+
+    Reduces the mutli-class expectation/prediction to binary - did they
+    include the class of interest, or not?
 
     Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
-    False Negatives (FN), True Negatives (TN)
+    False Negatives (FN), True Negatives (TN), which sum to the tally total.
     """
     bt = Counter()
     for (expt, pred), count in tally.items():
@@ -151,10 +154,19 @@ def extract_global_tally(tally):
     """Process multi-label confusion matrix (tally dict) to TP, FP, DN, TN.
 
     If the input data has no negative controls, all there will be no
-    true negatives.
+    true negatives (TN).
 
     Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
     False Negatives (FN), True Negatives (TN).
+
+    These values are analagous to the classical binary classifier approach,
+    but are NOT the same.
+
+    The TP, FP, FN, TN sum will exceed the tally total.  For each tally
+    entry, rather than one of TP, FP, FN, TN being incremented (weighted
+    by the tally count), several can be increased.
+
+    If the input data has no negative controls, all there will be no TN.
     """
     tp = fp = fn = tn = 0
     for (expt, pred), count in tally.items():
