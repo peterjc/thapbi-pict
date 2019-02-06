@@ -160,7 +160,18 @@ def extract_global_tally(tally):
     False Negatives (FN), True Negatives (TN).
 
     These values are analagous to the classical binary classifier approach,
-    but are NOT the same.
+    but are NOT the same. Even if applied to single class expected and
+    predicted values, results differ:
+
+    - Expect none, predict none - 1xTN
+    - Expect none, predict A - 1xFP
+    - Expect A, predict none - 1xFN
+    - Expect A, predict A - 1xTP
+    - Expect A, predict B - 1xFP (the B), 1xFN (missing A)
+    - Expect A, predict A&B - 1xTP (the A), 1xFP (the B)
+    - Expect A&B, predict A&B - 2xTP
+    - Expect A&B, predict A - 1xTP, 1xFN (missing B)
+    - Expect A&B, predict A&C - 1xTP (the A), 1xFP (the C), 1xFN (missing B)
 
     The TP, FP, FN, TN sum will exceed the tally total.  For each tally
     entry, rather than one of TP, FP, FN, TN being incremented (weighted
@@ -176,26 +187,12 @@ def extract_global_tally(tally):
         if expt_sp_list:
             # Hopefully some TP...
             if pred_sp_list:
-                # Have TP, FP, mabye even FN?
-                # On both lists: True Positive (TP)
-                # Just on prediction list: False Positive (FP)
-                # Just on expected list: False negative... count it?
-                #
-                # Consider expected Sp A, but prediction Sp B (only)
-                # Is this 1xFP only, or 1xFP and 1xFN too?
-                #
-                # Likewise, expected Sp A, but prediction B & C, is this
-                # 2xFP only; or 2xFP (B&C) and 1xFN too (missing A)?
-                #
-                # What if expect Sp A & B, prediction B & C, is this
-                # 1xFP (the C), 1xTP (the B), 1xFN (missing A)
+                # Have some combination of TP, FP, FN
                 for sp in expt_sp_list:
                     if sp in pred_sp_list:
                         tp += count
                     else:
-                        # Don't count at global level, counting TP/FP instead?
-                        # fn += count
-                        pass
+                        fn += count
                 for sp in pred_sp_list:
                     if sp not in expt_sp_list:
                         fp += count
@@ -218,11 +215,11 @@ assert extract_global_tally({("", ""): 1}) == (0, 0, 0, 1)
 assert extract_global_tally({("", "A"): 1}) == (0, 1, 0, 0)
 assert extract_global_tally({("A", ""): 1}) == (0, 0, 1, 0)
 assert extract_global_tally({("A", "A"): 1}) == (1, 0, 0, 0)
-assert extract_global_tally({("A", "B"): 1}) == (0, 1, 0, 0)  # Bubious
+assert extract_global_tally({("A", "B"): 1}) == (0, 1, 1, 0)
 assert extract_global_tally({("A", "A;B"): 1}) == (1, 1, 0, 0)
 assert extract_global_tally({("A;B", "A;B"): 1}) == (2, 0, 0, 0)
-assert extract_global_tally({("A;B", "A"): 1}) == (1, 0, 0, 0)  # Wrong?
-assert extract_global_tally({("A;B", "A;C"): 1}) == (1, 1, 0, 0)  # Dubious
+assert extract_global_tally({("A;B", "A"): 1}) == (1, 0, 1, 0)
+assert extract_global_tally({("A;B", "A;C"): 1}) == (1, 1, 1, 0)
 
 
 def main(
