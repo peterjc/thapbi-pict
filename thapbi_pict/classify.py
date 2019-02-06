@@ -476,7 +476,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
         setup_fn = None
 
     # Connect to the DB,
-    Session = connect_to_db(db_url, echo=debug)
+    Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
     session = Session()
 
     count = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
