@@ -103,10 +103,11 @@ def save_mapping(tally, filename, debug=False):
 
 def save_confusion_matrix(tally, filename, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
+    total = 0
     species = class_list_from_tally(tally)
+    extra_rows = sorted(set(expt for (expt, pred) in tally if expt not in species))
     with open(filename, "w") as handle:
         handle.write("#\t%s\n" % "\t".join(species))
-        # TODO - multiple values in the expt
         for expt in species:
             values = Counter()
             for (e, p), count in tally.items():
@@ -114,16 +115,30 @@ def save_confusion_matrix(tally, filename, debug=False):
                     for pred in p.split(";"):
                         values[pred] += count
                     # if expt not in p.split(";"):
-                    #     vales[""] += count
+                    #     values[""] += count
             assert values[""] >= tally.get((expt, ""), 0), values
             handle.write(
                 "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
             )
+            total += sum(values.values())
+        for expt in extra_rows:
+            # These are the multi-species expected entries
+            values = Counter()
+            for (e, p), count in tally.items():
+                if expt == e:
+                    for pred in p.split(";"):
+                        values[pred] += count
+            assert values[""] >= tally.get((expt, ""), 0), values
+            handle.write(
+                "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
+            )
+            total += sum(values.values())
     if debug:
         sys.stderr.write(
-            "DEBUG: Wrote %i x %i confusion matrix to %s\n"
-            % (len(species), len(species), filename)
+            "DEBUG: Wrote %i x %i confusion matrix (total %i) to %s\n"
+            % (len(species) + len(extra_rows), len(species), total, filename)
         )
+    assert total >= sum(tally.values())
 
 
 def species_level(prediction):
