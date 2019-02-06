@@ -88,6 +88,20 @@ def class_list_from_tally(tally):
     return sorted(classes)
 
 
+def compute_expected_multi_class_total(tally):
+    """Find expected FP+FN+FN+TN or the multi-class confusion matrix total."""
+    total = 0
+    for (expt, pred), count in tally.items():
+        sp = set(expt.split(";") + pred.split(";"))
+        if "" in sp:
+            sp.remove("")
+        if sp:
+            total += len(sp) * count
+        else:
+            total += count
+    return total
+
+
 def save_mapping(tally, filename, debug=False):
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
@@ -101,21 +115,26 @@ def save_mapping(tally, filename, debug=False):
         )
 
 
-def save_confusion_matrix(tally, filename, debug=False):
+def save_confusion_matrix(tally, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
     total = 0
     species = class_list_from_tally(tally)
+    if "" not in species:
+        species = [""] + species
+    assert species[0] == ""
     extra_rows = sorted(set(expt for (expt, pred) in tally if expt not in species))
     with open(filename, "w") as handle:
         handle.write("#\t%s\n" % "\t".join(species))
         for expt in species:
             values = Counter()
+            assert ";" not in expt
             for (e, p), count in tally.items():
+                p_list = p.split(";") if p else []
                 if expt == e:
-                    for pred in p.split(";"):
+                    for pred in p_list:
                         values[pred] += count
-                    # if expt not in p.split(";"):
-                    #     values[""] += count
+                    if expt not in p_list:
+                        values[""] += count
             assert values[""] >= tally.get((expt, ""), 0), values
             handle.write(
                 "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
@@ -124,10 +143,16 @@ def save_confusion_matrix(tally, filename, debug=False):
         for expt in extra_rows:
             # These are the multi-species expected entries
             values = Counter()
+            assert ";" in expt
             for (e, p), count in tally.items():
                 if expt == e:
-                    for pred in p.split(";"):
+                    e_list = e.split(";")  # know not ""
+                    p_list = p.split(";") if p else []
+                    for pred in p_list:
                         values[pred] += count
+                    for e in e_list:
+                        if e not in p_list:
+                            values[""] += count
             assert values[""] >= tally.get((expt, ""), 0), values
             handle.write(
                 "%s\t%s\n" % (expt, "\t".join(str(values[pred]) for pred in species))
@@ -139,6 +164,10 @@ def save_confusion_matrix(tally, filename, debug=False):
             % (len(species) + len(extra_rows), len(species), total, filename)
         )
     assert total >= sum(tally.values())
+    if total != exp_total:
+        sys.exit(
+            "ERROR: Expected %i but confusion matrix total %i" % (exp_total, total)
+        )
 
 
 def species_level(prediction):
@@ -272,15 +301,26 @@ def main(
     if not file_count:
         sys.exit("ERROR: Could not find files to assess\n")
 
+    multi_class_total = compute_expected_multi_class_total(global_tally)
+    if debug:
+        sys.stderr.write(
+            "Expected multi-class confusion matrix or FP+FN+FN+TN total is %i\n"
+            % multi_class_total
+        )
+
     if map_output == "-":
         save_mapping(global_tally, "/dev/stdout", debug=debug)
     elif map_output:
         save_mapping(global_tally, map_output, debug=debug)
 
     if confusion_output == "-":
-        save_confusion_matrix(global_tally, "/dev/stdout", debug=debug)
+        save_confusion_matrix(
+            global_tally, "/dev/stdout", multi_class_total, debug=debug
+        )
     elif confusion_output:
-        save_confusion_matrix(global_tally, confusion_output, debug=debug)
+        save_confusion_matrix(
+            global_tally, confusion_output, multi_class_total, debug=debug
+        )
 
     if assess_output == "-":
         if debug:
@@ -303,6 +343,12 @@ def main(
             # Special case flag to report global values at end
             tp, fp, fn, tn = extract_global_tally(global_tally)
             sp = "OVERALL"
+            if multi_class_total != tp + fp + fn + tn:
+                sys.exit(
+                    "ERROR: %i TP + %i FN + %i FN + %i TN = %i, "
+                    "but confusion matrix total %i\n"
+                    % (tp, fp, fn, tn, tp + fp + fn + tn, multi_class_total)
+                )
         else:
             tp, fp, fn, tn = extract_binary_tally(sp, global_tally)
         # sensitivity, recall, hit rate, or true positive rate (TPR):
