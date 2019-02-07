@@ -427,14 +427,17 @@ def method_swarm(
                 else:
                     taxid, genus, species, clade, note = taxonomy_summary(t)
                 note = (
-                    "Cluster of %i seqs and %i DB entries. %s"
-                    % (len(read_idns), len(db_md5s), note)
+                    "Cluster #%i - %i seqs and %i DB entries. %s"
+                    % (cluster_count, len(read_idns), len(db_md5s), note)
                 ).strip()
             else:
                 # Cannot classify, report
                 taxid = 0
                 genus = species = clade = ""
-                note = "Cluster of %i seqs but no DB entry" % len(read_idns)
+                note = "Cluster #%i - %i seqs but no DB entry" % (
+                    cluster_count,
+                    len(read_idns),
+                )
             for idn in read_idns:
                 read_report.write(
                     "%s\t%s\t%s\t%s\t%s\t%s\n"
