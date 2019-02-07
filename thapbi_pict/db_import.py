@@ -260,6 +260,10 @@ def import_fasta_file(
                 continue
             assert isinstance(name, str), name
             assert isinstance(name_etc, str), name_etc
+            if not taxid and not clade and not name:
+                bad_entries += 1
+                sys.stderr.write("WARNING: No species information: %r\n" % idn)
+                continue
             # Load into the DB
             # Store "Phytophthora aff infestans" as
             # genus "Phytophthora", species "aff infestans"
