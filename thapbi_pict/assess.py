@@ -8,16 +8,19 @@ import tempfile
 
 from collections import Counter
 
+from .utils import abundance_from_read_name
 from .utils import find_paired_files
 
 
-def parse_species_tsv(tabular_file):
+def parse_species_tsv(tabular_file, min_abundance=0):
     """Parse file of species assignments/predictions by sequence."""
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):
                 continue
             name, taxid, genus, species, etc = line.split("\t", 4)
+            if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
+                continue
             yield name, taxid, genus, species
 
 
@@ -53,7 +56,7 @@ def untangle_species(taxid, genus, species):
     return ";".join(sorted(answer))
 
 
-def tally_files(expected_file, predicted_file):
+def tally_files(expected_file, predicted_file, min_abundance=0):
     """Make dictionary tally confusion matrix of species assignements."""
     counter = Counter()
     # Sorting because currently not all the classifiers produce out in
@@ -61,8 +64,8 @@ def tally_files(expected_file, predicted_file):
     # order (which is by decreasing abundance), while the swarm classifier
     # uses the cluster order. Currently the outputs are all small, so fine.
     for expt, pred in zip(
-        sorted(parse_species_tsv(expected_file)),
-        sorted(parse_species_tsv(predicted_file)),
+        sorted(parse_species_tsv(expected_file, min_abundance)),
+        sorted(parse_species_tsv(predicted_file, min_abundance)),
     ):
         if not expt[0] == pred[0]:
             sys.exit(
@@ -259,7 +262,14 @@ assert extract_global_tally({("A;B", "A;C"): 1}) == (1, 1, 1, 0)
 
 
 def main(
-    inputs, known, method, assess_output, map_output, confusion_output, debug=False
+    inputs,
+    known,
+    method,
+    min_abundance,
+    assess_output,
+    map_output,
+    confusion_output,
+    debug=False,
 ):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
@@ -281,7 +291,9 @@ def main(
                     "Assessing %s vs %s\n" % (predicted_file, expected_file)
                 )
             file_count += 1
-            global_tally.update(tally_files(expected_file, predicted_file))
+            global_tally.update(
+                tally_files(expected_file, predicted_file, min_abundance)
+            )
 
     sys.stderr.write(
         "Assessed %s vs %s in %i files (%i sequence entries)\n"

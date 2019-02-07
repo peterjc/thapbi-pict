@@ -142,6 +142,7 @@ def assess_classification(args=None):
         inputs=args.inputs,
         known=args.known,
         method=args.method,
+        min_abundance=args.abundance,
         assess_output=args.output,
         map_output=args.table,
         confusion_output=args.confusion,
@@ -558,6 +559,15 @@ comma.
         default="identity",
         choices=list(method_classifier),
         help="Method to assess (used to infer filenames), default is identity.",
+    )
+    parser_assess.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="1",
+        help="Mininum abundance to require before considering a classification. "
+        "Default is one meaning look at everything, but rather than re-running "
+        "the classifier with a stricter minimum abundance you can apply it here.",
     )
     parser_assess.add_argument(
         "-o",
