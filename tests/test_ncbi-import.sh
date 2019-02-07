@@ -21,7 +21,7 @@ thapbi_pict ncbi-import -x -d $DB tests/ncbi-import/20th_Century_ITS1.fasta
 
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "96" ]; then echo "Wrong its1_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "43" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "42" ]; then echo "Wrong taxonomy count"; false; fi
 # Other values subject to change
 
 thapbi_pict dump -d $DB -o /dev/null
