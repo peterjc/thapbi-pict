@@ -295,9 +295,14 @@ def main(
                 tally_files(expected_file, predicted_file, min_abundance)
             )
 
+    sp_list = class_list_from_tally(global_tally)
+    if "" in sp_list:
+        sp_list.remove("")
+    number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
+
     sys.stderr.write(
-        "Assessed %s vs %s in %i files (%i sequence entries)\n"
-        % (method, known, file_count, sum(global_tally.values()))
+        "Assessed %s vs %s in %i files (%i species; %i sequence entries)\n"
+        % (method, known, file_count, len(sp_list), sum(global_tally.values()))
     )
 
     assert file_count == len(input_list)
@@ -333,17 +338,12 @@ def main(
     else:
         handle = open(assess_output, "w")
 
-    handle.write("#Species\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\n")
-    sp_list = class_list_from_tally(global_tally)
-    # Ensure "" special case is at the start of the list (will be first if sorted)
-    if "" in sp_list:
-        sp_list.remove("")
-    sp_list = [""] + sp_list
-    for sp in sp_list:
-        if sp:
-            assert species_level(sp)
-    for sp in sp_list:
-        if not sp:
+    handle.write(
+        "#Species\tTP\tFP\tFN\tTN\t"
+        "sensitivity\tspecificity\tprecision\tF1\tHamming-loss\n"
+    )
+    for sp in [None] + sp_list:
+        if sp is None:
             # Special case flag to report global values at end
             tp, fp, fn, tn = extract_global_tally(global_tally)
             sp = "OVERALL"
@@ -354,6 +354,7 @@ def main(
                     % (tp, fp, fn, tn, tp + fp + fn + tn, multi_class_total)
                 )
         else:
+            assert species_level(sp)
             tp, fp, fn, tn = extract_binary_tally(sp, global_tally)
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
@@ -363,9 +364,23 @@ def main(
         precision = float(tp) / (tp + fp) if tp else 0.0
         # F1 score
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
+        # Hamming Loss = (total number of mis-predicted class entries
+        #                 / number of class-level predictions)
+        hamming_loss = float(fp + fn) / number_of_classes_and_examples
         handle.write(
-            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\n"
-            % (sp, tp, fp, fn, tn, sensitivity, specificity, precision, f1)
+            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\n"
+            % (
+                sp,
+                tp,
+                fp,
+                fn,
+                tn,
+                sensitivity,
+                specificity,
+                precision,
+                f1,
+                hamming_loss,
+            )
         )
     if assess_output != "-":
         handle.close()
