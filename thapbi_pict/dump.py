@@ -78,28 +78,42 @@ def main(
         ):
             sys.stderr.write("WARNING: '%s %s' not in database\n" % (genus_list[0], x))
 
+    if output_format == "fasta":
+        # no header
+        pass
+    else:
+        out_handle.write(
+            "#Identifier\tClade\tGenus\tSpecies\tTaxID\tITS1-seq\tSequence\n"
+        )
     for seq_source in view:
         entry_count += 1
+        taxid = (
+            str(seq_source.current_taxonomy.ncbi_taxid)
+            if seq_source.current_taxonomy.ncbi_taxid
+            else ""
+        )
         try:
             if output_format == "fasta":
                 out_handle.write(
-                    ">%s [clade=%s] [species=%s %s]\n%s\n"
+                    ">%s [clade=%s] [species=%s %s] [taxid=%s]\n%s\n"
                     % (
                         seq_source.source_accession,
                         seq_source.current_taxonomy.clade,
                         seq_source.current_taxonomy.genus,
                         seq_source.current_taxonomy.species,
+                        taxid,
                         seq_source.its1.sequence,
                     )
                 )
             else:
                 out_handle.write(
-                    "%s\t%s\t%s\t%s\t%s\t%s\n"
+                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
                     % (
                         seq_source.source_accession,
                         seq_source.current_taxonomy.clade,
                         seq_source.current_taxonomy.genus,
                         seq_source.current_taxonomy.species,
+                        taxid,
                         seq_source.its1.sequence,
                         seq_source.sequence,
                     )
