@@ -159,6 +159,12 @@ def parse_fasta_entry(text):
 
     if name[0] == "P.":
         name[0] = "Phytophthora"
+
+    # Crop species name at "voucher", e.g. 1_Phytophthora_idaei_voucher_HQ643246
+    for crop in ["Voucher", "voucher"]:
+        if crop in name:
+            name = name[: name.index(crop)]
+
     # NCBI uses lower case "x" for hybrid species names,
     # while the legacy FASTA files used upper case "X":
     for i in range(len(name)):
@@ -205,6 +211,12 @@ assert parse_fasta_entry("P._amnicola_CBS131652") == (
     0,
     "",
     "Phytophthora amnicola",
+    "",
+)
+assert parse_fasta_entry("10_Phytophthora_boehmeriae_Voucher_HQ643149") == (
+    0,
+    "10",
+    "Phytophthora boehmeriae",
     "",
 )
 assert parse_fasta_entry("ACC-ONLY") == (0, "", "", "")
