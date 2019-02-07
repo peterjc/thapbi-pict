@@ -29,12 +29,13 @@ def untangle_species(taxid, genus, species):
 
     Does not currently use the taxid.
     """
+    taxid = str(taxid)
     if ";" in taxid:
         assert ";" in species, "%s %s %s" % (taxid, genus, species)
     if ";" in species:
-        assert ";" in taxid or taxid == 0, "%s %s %s" % (taxid, genus, species)
+        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
     if ";" in genus:
-        assert ";" in taxid or taxid == 0, "%s %s %s" % (taxid, genus, species)
+        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
 
     if not species:
         return ""  # No species level predictions
