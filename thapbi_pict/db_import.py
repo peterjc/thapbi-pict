@@ -79,11 +79,38 @@ def lookup_taxonomy(session, clade, genus, species):
 
 def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species):
     """Fuzzy search for this entry in the taxonomy table (if present)."""
-    if taxid:
-        raise NotImplementedError("TODO - currently assumes unknown.")
     assert isinstance(clade, str), clade
     assert isinstance(sp_name, str), sp_name
     assert isinstance(sp_name_etc, str), sp_name_etc
+
+    if taxid:
+        # Perfect match?
+        genus, species = sp_name.split(" ", 1) if sp_name else ("", "")
+        taxonomy = (
+            session.query(Taxonomy)
+            .filter_by(ncbi_taxid=taxid, clade=clade, genus=genus, species=species)
+            .one_or_none()
+        )
+        if taxonomy is not None:
+            return taxonomy
+        # Ignoring clade?
+        taxonomy = (
+            session.query(Taxonomy)
+            .filter_by(ncbi_taxid=taxid, genus=genus, species=species)
+            .one_or_none()
+        )
+        if taxonomy is not None:
+            return taxonomy
+        # Ignoring species name
+        taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
+        if taxonomy is not None and taxonomy.species:
+            sys.stderr.write(
+                "WARNING: Using taxid %i, mapped %r to %s %s"
+                % (taxid, sp_name, taxonomy.genus, taxonomy.species)
+            )
+            return taxonomy
+        sys.exit("WARNING: Could not uniquely match taxid %i\n" % taxid)
+
     # First loop removes words (until just one word for species)
     # in the hope of finding a match. This is for our legacy files.
     # Second loop adds words (from the species_etc string) in the
