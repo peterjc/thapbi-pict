@@ -45,11 +45,15 @@ def main(
     )
 
     for fasta_file, tsv_file in input_list:
-
+        if debug:
+            sys.stderr.write("DEBUG: Loading meta-data from %s\n" % tsv_file)
         meta_data = dict()
         with open(tsv_file) as handle:
             for line in handle:
-                idn, taxid, genus, species, clade, etc = line.split("\t", 4)
+                try:
+                    idn, taxid, genus, species, clade, etc = line.split("\t", 5)
+                except ValueError:
+                    sys.exit("Problem with line in %s: %r\n" % (tsv_file, line))
                 if idn in meta_data:
                     sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
                 genus_species = genus + " " + species if species else genus
