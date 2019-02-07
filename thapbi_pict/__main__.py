@@ -563,7 +563,6 @@ comma.
         "--method",
         type=str,
         default="identity",
-        choices=list(method_classifier),
         help="Method to assess (used to infer filenames), default is identity.",
     )
     parser_assess.add_argument(
