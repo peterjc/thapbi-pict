@@ -123,7 +123,8 @@ def classify(args=None):
     """Subcommand to classify ITS1 sequences using a database."""
     from .classify import main
 
-    check_output_directory(args.output)
+    if args.output:
+        check_output_directory(args.output)
     return main(
         fasta=args.fasta,
         db_url=expand_database_argument(args.database),
