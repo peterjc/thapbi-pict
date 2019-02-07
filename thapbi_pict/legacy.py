@@ -173,22 +173,33 @@ def parse_fasta_entry(text):
 
     # Handle a couple of synonyms here, where our legacy file and the NCBI
     # do not agree. This is a temporary stop-gap without full synonym support.
-    if name[0:2] == ["Phytophthora", "austrocedri"]:
-        name[1] = "austrocedrae"
-    if name[0:3] == ["Phytophthora", "taxon", "cyperaceae"]:
-        name = ["Phytophthora", "balyanboodja"] + name[3:]
+    synonyms = {
+        "Phytophthora_austrocedri": "Phytophthora austrocedrae",  # taxid 631361
+        "Phytophthora_taxon_cyperaceae": "Phytophthora balyanboodja",  # taxid 2054050
+        "Phytophthora_alni_subsp._multiformis": "Phytophthora x multiformis",  # 299394
+        "Phytophthora_alni_subsp._uniformis": "Phytophthora uniformis",  # taxid 299393
+        "Phytophthora_alni_subsp._alni": "Phytophthora x alni",  # taxid 299392
+    }
+    if "_".join(name) in synonyms:
+        name = synonyms["_".join(name)].split()
 
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
     return (taxid, clade, " ".join(name), "")
 
 
+assert parse_fasta_entry("7a_Phytophthora_alni_subsp._uniformis_AF139367") == (
+    0,
+    "7a",
+    "Phytophthora uniformis",
+    "",
+)
 assert parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184") == (
     0,
     "8d",
     "Phytophthora austrocedrae",
     "",
-), parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184")
+)
 assert parse_fasta_entry("6_Phytophthora_taxon_cyperaceae_KJ372258") == (
     0,
     "6",
