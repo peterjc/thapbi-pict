@@ -1,4 +1,4 @@
-#Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1
-OVERALL	0	0	2	0	0.00	0.00	0.00	0.00
-Phytophthora europaea	0	0	1	0	0.00	0.00	0.00	0.00
-Phytophthora flexuosa	0	0	1	0	0.00	0.00	0.00	0.00
+#Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss
+OVERALL	0	0	2	0	0.00	0.00	0.00	0.00	1.0000
+Phytophthora europaea	0	0	1	0	0.00	0.00	0.00	0.00	0.5000
+Phytophthora flexuosa	0	0	1	0	0.00	0.00	0.00	0.00	0.5000
