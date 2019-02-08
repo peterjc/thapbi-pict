@@ -23,7 +23,7 @@ def check_output_directory(out_dir):
         sys.exit("ERROR: Output directory does not exist")
 
 
-def expand_database_argument(text):
+def expand_database_argument(text, exist=False):
     """Expand an SQLite3 filename to an SQLalchemy URL."""
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
@@ -32,8 +32,13 @@ def expand_database_argument(text):
         sys.exit("The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
-        return text
-    return prefix + text
+        db = text[len(prefix) :]
+        assert text == prefix + db
+    else:
+        db = text
+    if exist and db != ":memory:" and not os.path.isfile(db):
+        sys.exit("The database %s was not found.\n" % db)
+    return prefix + db
 
 
 def load_tax(args=None):
@@ -94,7 +99,7 @@ def dump(args=None):
     from .dump import main
 
     return main(
-        db_url=expand_database_argument(args.database),
+        db_url=expand_database_argument(args.database, exist=True),
         output_filename=args.output,
         output_format=args.format,
         clade=args.clade,
@@ -127,7 +132,7 @@ def classify(args=None):
         check_output_directory(args.output)
     return main(
         fasta=args.fasta,
-        db_url=expand_database_argument(args.database),
+        db_url=expand_database_argument(args.database, exist=True),
         method=args.method,
         out_dir=args.output,
         debug=args.verbose,
