@@ -1,10 +1,16 @@
 """Helper functions for THAPB-PICT code."""
 
 import os
+import hashlib
 import subprocess
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+
+
+def md5seq(seq):
+    """Return MD5 hash of the (upper case) sequence."""
+    return hashlib.md5(seq.upper().encode("ascii")).hexdigest()
 
 
 def cmd_as_string(cmd):
