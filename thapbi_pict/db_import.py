@@ -15,6 +15,7 @@ from .db_orm import DataSource, ITS1, SequenceSource
 from .db_orm import Taxonomy
 from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
+from .utils import md5seq
 
 
 def md5_hexdigest(filename, chunk_size=1024):
@@ -258,7 +259,7 @@ def import_fasta_file(
 
         its1_seq_count += 1
 
-        its1_md5 = hashlib.md5(its1_seq.upper().encode("ascii")).hexdigest()
+        its1_md5 = md5seq(its1_seq)
 
         # Is is already there? e.g. duplicate sequences in FASTA file
         its1 = (

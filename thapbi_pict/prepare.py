@@ -3,7 +3,6 @@
 This implementes the ``thapbi_pict prepare-reads ...`` command.
 """
 
-import hashlib
 import os
 import subprocess
 import shutil
@@ -15,6 +14,7 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
+from .utils import md5seq
 from .utils import run
 
 
@@ -149,8 +149,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
             if -count < min_abundance:
                 # Sorted, so everything hereafter is too rare
                 break
-            md5 = hashlib.md5(seq.encode("ascii")).hexdigest()
-            out_handle.write(">%s_%i\n%s\n" % (md5, -count, seq))
+            out_handle.write(">%s_%i\n%s\n" % (md5seq(seq), -count, seq))
             accepted += 1
     return len(counts), accepted  # number of unique seqs, accepted
 
