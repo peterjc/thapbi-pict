@@ -4,6 +4,7 @@ import os
 import hashlib
 import subprocess
 import sys
+import time
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -25,40 +26,54 @@ def cmd_as_string(cmd):
         return cmd
 
 
-def run(cmd, debug=False):
+def run(cmd, debug=False, attempts=1):
     """Run a command via subprocess, abort if fails."""
-    if debug:
-        sys.stderr.write("Calling command: %s\n" % cmd_as_string(cmd))
-    try:
-        # On Python 3.7 onwards, could use capture_output=True
-        # rather than stdout=PIPE and stderr=PIPE
-        if isinstance(cmd, list):
-            return subprocess.run(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True,
-                check=True,
-            )
-        else:
-            return subprocess.run(
-                cmd,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True,
-                check=True,
-            )
-    except subprocess.CalledProcessError as e:
+    for i in range(attempts):
         if debug:
-            # Used universal_newlines=True above so that this just works
-            # (equivalent to text=True in Python 3.7 onwards):
-            sys.stdout.write(e.stdout)
-            sys.stderr.write(e.stderr)
-        sys.exit(
-            "This command failed with return code %i:\n%s\n"
-            % (e.returncode, cmd_as_string(cmd))
-        )
+            if attempts:
+                sys.stderr.write(
+                    "Attempt %i of %i calling command: %s\n"
+                    % (i, attempts, cmd_as_string(cmd))
+                )
+            else:
+                sys.stderr.write("Calling command: %s\n" % cmd_as_string(cmd))
+        try:
+            # On Python 3.7 onwards, could use capture_output=True
+            # rather than stdout=PIPE and stderr=PIPE
+            if isinstance(cmd, list):
+                return subprocess.run(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    check=True,
+                )
+            else:
+                return subprocess.run(
+                    cmd,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    check=True,
+                )
+        except subprocess.CalledProcessError as e:
+            if i + 1 < attempts:
+                sys.stderr.write(
+                    "WARNING: Attempt %i of %i failed with return code %i, cmd:\n%s\n"
+                    % (i + 1, attempts, e.returncode, cmd_as_string(cmd))
+                )
+                time.sleep(min(5, i + 1))
+            else:
+                if debug:
+                    # Used universal_newlines=True above so that this just works
+                    # (equivalent to text=True in Python 3.7 onwards):
+                    sys.stdout.write(e.stdout)
+                    sys.stderr.write(e.stderr)
+                sys.exit(
+                    "ERROR: Attempt %i of %i failed with return code %i, cmd:\n%s\n"
+                    % (i + 1, attempts, e.returncode, cmd_as_string(cmd))
+                )
 
 
 def abundance_from_read_name(text, debug=False):

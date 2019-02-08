@@ -18,10 +18,11 @@ command line tool hmmscan from the hmmer3 suite.
 
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 import warnings
+
+from ..utils import run
 
 from Bio import BiopythonExperimentalWarning
 from Bio import SeqIO
@@ -58,9 +59,7 @@ def run_and_parse_hmmscan(
     cmd += ["-o", hmm_out, hmm_file, fasta_input_file]
     # cmd = "'%s' --noali -o '%s' '%s' '%s'" % (hmmscan, hmm_out, hmm_file,
     #                                           fasta_input_file)
-    if debug:
-        sys.stderr.write("DEBUG: Executing command: %s\n" % " ".join(cmd))
-    subprocess.check_call(cmd)
+    run(cmd, debug=debug, attempts=5)
 
     if debug:
         sys.stderr.write("DEBUG: hmmscan finished, about to parse the output\n")
