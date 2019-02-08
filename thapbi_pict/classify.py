@@ -21,6 +21,10 @@ from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 from .utils import find_requested_files
+from .utils import md5seq
+
+
+fuzzy_matches = None  # global variable for onebp classifier
 
 
 def md5_to_taxon(md5_list, session):
@@ -201,6 +205,165 @@ def method_identity(
                     taxid, genus, species, clade, note = taxonomy_consensus(t)
                 else:
                     taxid, genus, species, clade, note = taxonomy_summary(t)
+        tax_counts[(genus, species, clade)] += abundance
+        read_report.write(
+            "%s\t%s\t%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus, species, clade, note)
+        )
+    assert count == sum(tax_counts.values())
+    return tax_counts
+
+
+def onebp_variants(seq):
+    """Generate all 1bp variants of the sequence (substitution, deletion or insertion).
+
+    Assumes unambiguous IUPAC codes A, C, G, T only.
+    """
+    seq = seq.upper()
+    variants = set()
+    for i in range(len(seq)):
+        # One base deletion
+        variants.add(seq[:i] + seq[i + 1 :])
+        for s in "ACGT":
+            # One base substitions
+            variants.add(seq[:i] + s + seq[i + 1 :])
+            # One base insertions
+            variants.add(seq[:i] + s + seq[i:])
+    for s in "ACGT":
+        # One base "insertion" at the end
+        variants.add(seq + s)
+    variants.remove(seq)
+    return variants
+
+
+assert set(onebp_variants("A")) == set(
+    ["", "C", "G", "T", "AA", "CA", "GA", "TA", "AC", "AG", "AT"]
+)
+assert set(onebp_variants("AA")) == set(
+    [
+        "A",
+        "CA",
+        "GA",
+        "TA",
+        "AC",
+        "AG",
+        "AT",
+        "AAA",
+        "CAA",
+        "GAA",
+        "TAA",
+        "ACA",
+        "AGA",
+        "ATA",
+        "AAC",
+        "AAG",
+        "AAT",
+    ]
+)
+
+
+def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a dictionary of DB variants from the ITS1 DB entries."""
+    global fuzzy_matches
+    fuzzy_matches = dict()
+
+    view = session.query(ITS1)
+    count = 0
+    for its1 in view:
+        count += 1
+        its1_seq = its1.sequence
+        for variant in onebp_variants(its1_seq):
+            try:
+                # This variant is 1bp different to multiple DB entries...
+                fuzzy_matches[variant].append(its1_seq)
+            except KeyError:
+                # Thus far this variant is only next to one DB entry:
+                fuzzy_matches[variant] = [its1_seq]
+
+    sys.stderr.write(
+        "Expanded %i ITS1 sequences from DB into cloud of %i 1bp different variants\n"
+        % (count, len(fuzzy_matches))
+    )
+
+
+def method_onebp(
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    take_lca,
+    debug=False,
+    cpu=0,
+):
+    """Classify using identity or 1bp difference.
+
+    This is a deliberately simple approach, based on the perfect
+    identity classifier. It uses HMMER3 to find any ITS1 match,
+    and then compares it to a dictionary of all the database
+    entries and their 1bp variants.
+
+    This assumes the same HMM was used to trim the entries in our
+    database, and thus an exact match is resonable to expect
+    (without having to worry about trimming for a partial match).
+    """
+    global fuzzy_matches
+
+    count = 0
+    tax_counts = Counter()
+
+    for title, _, seq in filter_for_ITS1(fasta_file):
+        idn = title.split(None, 1)[0]
+        abundance = abundance_from_read_name(idn)
+        count += abundance
+        taxid = 0
+        genus = species = clade = note = ""
+        if not seq:
+            note = "No ITS1 HMM match"
+        else:
+            assert seq == seq.upper(), seq
+            # Now, does this match any of the ITS1 seq in our DB?
+            its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+            if its1:
+                # its1 -> one or more SequenceSource, each has -> taxonomy
+                t = list(
+                    set(
+                        _.current_taxonomy
+                        for _ in session.query(SequenceSource).filter_by(its1=its1)
+                    )
+                )
+                note = "%i perfect matches" % len(t)
+            elif seq in fuzzy_matches:
+                # Not exact, but we do have 1bp off match(es)
+                t = []
+                # TODO - Refactor this 2-query-per-loop into one lookup?
+                for db_seq in fuzzy_matches[seq]:
+                    its1 = (
+                        session.query(ITS1)
+                        .filter(ITS1.sequence == db_seq)
+                        .one_or_none()
+                    )
+                    assert db_seq, "Could not find %s (%s) in DB?" % (
+                        db_seq,
+                        md5seq(db_seq),
+                    )
+                    t.extend(
+                        _.current_taxonomy
+                        for _ in session.query(SequenceSource).filter_by(its1=its1)
+                    )
+                t = list(set(t))
+                note = "%i ITS1 matches with 1bp diff, %i taxonomy entries" % (
+                    len(fuzzy_matches[seq]),
+                    len(t),
+                )
+            else:
+                note = "No DB matches, even with 1bp diff"
+                t = []
+            if not t:
+                pass
+            elif take_lca:
+                taxid, genus, species, clade, _ = taxonomy_consensus(t)
+            else:
+                taxid, genus, species, clade, _ = taxonomy_summary(t)
         tax_counts[(genus, species, clade)] += abundance
         read_report.write(
             "%s\t%s\t%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus, species, clade, note)
@@ -452,12 +615,14 @@ def method_swarm(
 method_classifier = {
     "blast": method_blast,
     "identity": method_identity,
+    "onebp": method_onebp,
     "swarm": method_swarm,
 }
 
 method_setup = {
     "blast": setup_blast,
     # "identify": setup_identify,
+    "onebp": setup_onebp,
     "swarm": setup_swarm,
 }
 
