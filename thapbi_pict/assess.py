@@ -298,7 +298,9 @@ def main(
     sp_list = class_list_from_tally(global_tally)
     if "" in sp_list:
         sp_list.remove("")
-    number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
+    # TODO - Should we really use max of number of species expected
+    # and number of species in the DB for Hamming Loss?
+    number_of_classes_and_examples = max(1, len(sp_list)) * sum(global_tally.values())
 
     sys.stderr.write(
         "Assessed %s vs %s in %i files (%i species; %i sequence entries)\n"
