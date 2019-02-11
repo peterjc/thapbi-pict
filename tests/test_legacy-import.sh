@@ -63,7 +63,7 @@ if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "348" ]; then echo "W
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
 thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
 
-export DB=database/legacy/database.sqlite
+export DB=database/legacy/database_lax.sqlite
 thapbi_pict dump -d $DB -o /dev/null -c -
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
