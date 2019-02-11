@@ -157,7 +157,7 @@ def assess_classification(args=None):
 
 
 def plate_summary(args=None):
-    """Subcommand to run per-output-folder summary of classifiers."""
+    """Subcommand to run per-output-folder summary at sequence level."""
     from .summary import main
 
     return main(
@@ -628,18 +628,21 @@ comma.
     # plate-summary
     parser_plate_summary = subparsers.add_parser(
         "plate-summary",
-        description="Summary report on classifier output (per folder).",
-        epilog="Assumes you have run one or more classifier methods, "
-        "giving output folder(s) containing XXX.method-reads.tsv and "
-        "XXX.method-tax.tsv files. Expects one plate per folder.",
+        description="Sequence-level summary report on classifier output.",
+        epilog="Assumes you've run prepare-reads and classify, and have "
+        "folders with XXX.fasta and XXX.method.tsv files from your plate(s). "
+        "The output is a table with one row per unique sequence (as trimmed "
+        "by the prepare-reads step, can be 1000s of rows) and one column "
+        "per sample (typically 96 samples).",
     )
     parser_plate_summary.add_argument(
         "inputs",
         type=str,
         nargs="+",
         help="One or more prepared read files (*.fasta), prediction "
-        "files (*.method.fasta)  or folder names. Expects to find "
-        "where the method extension can be set via -m / --method.",
+        "files (*.method.tsv) or folder names. If passing folder names, "
+        "it expects to find paired files using these extensions. "
+        "The classifier method extension can be set via -m / --method.",
     )
     parser_plate_summary.add_argument(
         "-m",
@@ -656,7 +659,8 @@ comma.
         help="Mininum sample level abundance to require for the report. "
         "Default 100 reflects default in prepare-reads. Rather than re-running "
         "the prepare or classifier steps with a stricter minimum abundance you "
-        "can apply it here. Use zero or one look at everything.",
+        "can apply it here. Use zero or one look at everything (but beware that "
+        "negative control samples will include low abundance entries).",
     )
     parser_plate_summary.add_argument(
         "-o",
