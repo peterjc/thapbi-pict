@@ -81,7 +81,8 @@ def main(inputs, output, method, min_abundance=1, debug=False):
             handle = open(output, "w")
 
         handle.write(
-            "#ITS1-MD5\tSample-count\tTotal-abundance\t%s-predictions\n" % method
+            "#ITS1-MD5\tSample-count\tTotal-abundance\t%s\t%s-predictions\tSequence\n"
+            % ("\t".join(samples), method)
         )
         for total_abundance, md5 in reversed(
             sorted((v, k) for (k, v) in md5_abundance.items())
@@ -90,12 +91,16 @@ def main(inputs, output, method, min_abundance=1, debug=False):
                 1 for _ in samples if (md5, _) in abundance_by_samples
             )
             handle.write(
-                "%s\t%i\t%i\t%s\n"
+                "%s\t%i\t%i\t%s\t%s\t%s\n"
                 % (
                     md5,
                     md5_in_xxx_samples,
                     total_abundance,
+                    "\t".join(
+                        str(abundance_by_samples.get((md5, _), 0)) for _ in samples
+                    ),
                     ";".join(sorted(md5_species[md5])),
+                    md5_to_seq[md5],
                 )
             )
 
