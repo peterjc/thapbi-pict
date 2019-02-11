@@ -79,7 +79,7 @@ def run(cmd, debug=False, attempts=1):
 def abundance_from_read_name(text, debug=False):
     """Extract abundance from SWARM style read name.
 
-    >>> abundance_from_read_name(">9e8f051c64c2b9cc3b6fcb27559418ca_988")
+    >>> abundance_from_read_name("9e8f051c64c2b9cc3b6fcb27559418ca_988")
     988
 
     If fails, will return one.
@@ -90,6 +90,24 @@ def abundance_from_read_name(text, debug=False):
         if debug:
             sys.stderr.write("WARNING: No abundance suffix in %r\n" % text)
         return 1
+
+
+def split_read_name_abundance(text, debug=False):
+    """Split SWARM style read name into prefix and abundance.
+
+    >>> abundance_from_read_name("9e8f051c64c2b9cc3b6fcb27559418ca_988")
+    '9e8f051c64c2b9cc3b6fcb27559418ca', 988
+
+    If fails to detect the abundance, will return the original text
+    as the prefix with an abundance of 1.
+    """
+    try:
+        prefix, abundance = text.rsplit("_", 1)
+        return prefix, int(abundance)
+    except (ValueError, IndexError):
+        if debug:
+            sys.stderr.write("WARNING: No abundance suffix in %r\n" % text)
+        return text, 1
 
 
 def abundance_values_in_fasta(fasta_file):
