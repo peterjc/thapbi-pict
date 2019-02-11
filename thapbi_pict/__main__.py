@@ -652,10 +652,11 @@ comma.
         "-a",
         "--abundance",
         type=int,
-        default="1",
+        default="100",
         help="Mininum sample level abundance to require for the report. "
-        "Default is one meaning look at everything, but rather than re-running "
-        "the classifier with a stricter minimum abundance you can apply it here.",
+        "Default 100 reflects default in prepare-reads. Rather than re-running "
+        "the prepare or classifier steps with a stricter minimum abundance you "
+        "can apply it here. Use zero or one look at everything.",
     )
     parser_plate_summary.add_argument(
         "-o",
