@@ -55,6 +55,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
                 predicted_file, min_abundance
             ):
                 md5, abundance = split_read_name_abundance(name)
+                assert min_abundance < 1 or min_abundance <= abundance, name
                 sp_list = untangle_species(taxid, genus, species).split(";")
                 try:
                     md5_species[md5].union(sp_list)
@@ -66,6 +67,8 @@ def main(inputs, output, method, min_abundance=1, debug=False):
             with open(fasta_file) as handle:
                 for title, seq in SimpleFastaParser(handle):
                     md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
+                    if min_abundance > 1 and abundance < min_abundance:
+                        continue
                     assert abundance_by_samples[md5, sample] == abundance
                     md5_to_seq[md5] = seq
         samples = sorted(samples)
