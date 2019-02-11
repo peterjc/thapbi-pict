@@ -8,52 +8,9 @@ import tempfile
 
 from collections import Counter
 
-from .utils import abundance_from_read_name
 from .utils import find_paired_files
-
-
-def parse_species_tsv(tabular_file, min_abundance=0):
-    """Parse file of species assignments/predictions by sequence."""
-    with open(tabular_file) as handle:
-        for line in handle:
-            if line.startswith("#"):
-                continue
-            name, taxid, genus, species, etc = line.split("\t", 4)
-            if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
-                continue
-            yield name, taxid, genus, species
-
-
-def untangle_species(taxid, genus, species):
-    """Untangle classifier predictions which might have ; entries.
-
-    Returns semi-colon separated string of species names (in the
-    binomial form, genus-species).
-
-    Does not currently use the taxid.
-    """
-    taxid = str(taxid)
-    if ";" in taxid:
-        assert ";" in species, "%s %s %s" % (taxid, genus, species)
-    if ";" in species:
-        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
-    if ";" in genus:
-        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
-
-    if not species:
-        return ""  # No species level predictions
-
-    answer = set()
-    if ";" in genus:
-        assert species.count(";") == genus.count(";")
-        for s, g in zip(species.split(";"), genus.split(";")):
-            assert s.strip()
-            answer.add("%s %s" % (g, s))
-    else:
-        for s in species.split(";"):
-            assert s.strip()
-            answer.add("%s %s" % (genus, s))
-    return ";".join(sorted(answer))
+from .utils import parse_species_tsv
+from .utils import untangle_species
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
