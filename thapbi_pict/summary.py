@@ -3,6 +3,7 @@
 This implements the ``thapbi_pict plate-summary ...`` command.
 """
 
+import os
 import sys
 import tempfile
 
@@ -36,6 +37,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
 
+        samples = set()
         md5_abundance = Counter()
         abundance_by_samples = dict()
         md5_species = dict()
@@ -46,7 +48,8 @@ def main(inputs, output, method, min_abundance=1, debug=False):
                 sys.stderr.write(
                     "DEBUG: Reading %s %s\n" % (fasta_file, predicted_file)
                 )
-            sample = fasta_file.rsplit(".", 1)[0]
+            sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
+            samples.add(sample)
             # Load the TSV
             for name, taxid, genus, species in parse_species_tsv(
                 predicted_file, min_abundance
@@ -65,6 +68,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
                     md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                     assert abundance_by_samples[md5, sample] == abundance
                     md5_to_seq[md5] = seq
+        samples = sorted(samples)
 
         if output == "-":
             if debug:
@@ -73,13 +77,23 @@ def main(inputs, output, method, min_abundance=1, debug=False):
         else:
             handle = open(output, "w")
 
-        handle.write("#ITS1-MD5\tTotal-abundance\t%s-predictions\n" % method)
+        handle.write(
+            "#ITS1-MD5\tSample-count\tTotal-abundance\t%s-predictions\n" % method
+        )
         for total_abundance, md5 in reversed(
             sorted((v, k) for (k, v) in md5_abundance.items())
         ):
+            md5_in_xxx_samples = sum(
+                1 for _ in samples if (md5, _) in abundance_by_samples
+            )
             handle.write(
-                "%s\t%i\t%s\n"
-                % (md5, total_abundance, ";".join(sorted(md5_species[md5])))
+                "%s\t%i\t%i\t%s\n"
+                % (
+                    md5,
+                    md5_in_xxx_samples,
+                    total_abundance,
+                    ";".join(sorted(md5_species[md5])),
+                )
             )
 
         if output != "-":
