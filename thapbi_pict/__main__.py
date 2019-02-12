@@ -649,7 +649,8 @@ comma.
         "--method",
         type=str,
         default="identity",
-        help="Method to report (used to infer filenames), default is identity.",
+        help="Method(s) to report, comma separaed list (used to infer "
+        "filenames), default is identity (only).",
     )
     parser_plate_summary.add_argument(
         "-a",

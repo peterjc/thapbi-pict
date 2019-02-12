@@ -11,7 +11,7 @@ from collections import Counter
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .utils import find_paired_files
+from .utils import find_requested_files
 from .utils import parse_species_tsv
 from .utils import split_read_name_abundance
 from .utils import untangle_species
@@ -25,13 +25,6 @@ def main(inputs, output, method, min_abundance=1, debug=False):
     """
     assert isinstance(inputs, list)
 
-    input_list = find_paired_files(inputs, ".fasta", ".%s.tsv" % method, debug=False)
-
-    if debug:
-        sys.stderr.write(
-            "Reporting on %i samples using %s classifier\n" % (len(input_list), method)
-        )
-
     # Context manager should remove the temp dir:
     with tempfile.TemporaryDirectory() as shared_tmp:
         if debug:
@@ -43,35 +36,52 @@ def main(inputs, output, method, min_abundance=1, debug=False):
         md5_species = dict()
         md5_to_seq = dict()
 
-        for fasta_file, predicted_file in input_list:
-            if debug:
-                sys.stderr.write(
-                    "DEBUG: Reading %s %s\n" % (fasta_file, predicted_file)
-                )
+        if debug:
+            sys.stderr.write("Loading FASTA sequences and abundances\n")
+        for fasta_file in find_requested_files(
+            [_ for _ in inputs if not _.endswith(".tsv")], ".fasta", debug
+        ):
             sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
             samples.add(sample)
-            # Load the TSV
-            for name, taxid, genus, species in parse_species_tsv(
-                predicted_file, min_abundance
-            ):
-                md5, abundance = split_read_name_abundance(name)
-                assert min_abundance < 1 or min_abundance <= abundance, name
-                sp_list = untangle_species(taxid, genus, species).split(";")
-                try:
-                    md5_species[md5].union(sp_list)
-                except KeyError:
-                    md5_species[md5] = set(sp_list)
-                abundance_by_samples[md5, sample] = abundance
-                md5_abundance[md5] += abundance
-            # Load the FASTA
             with open(fasta_file) as handle:
                 for title, seq in SimpleFastaParser(handle):
                     md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                     if min_abundance > 1 and abundance < min_abundance:
                         continue
-                    assert abundance_by_samples[md5, sample] == abundance
+                    abundance_by_samples[md5, sample] = abundance
+                    md5_abundance[md5] += abundance
                     md5_to_seq[md5] = seq
+                    md5_species[md5] = set()
         samples = sorted(samples)
+
+        methods = method.split(",")
+        for method in methods:
+            if debug:
+                sys.stderr.write("Loading predictions for %s\n" % method)
+            tsv_files = find_requested_files(
+                [_ for _ in inputs if not _.endswith(".fasta")],
+                ".%s.tsv" % method,
+                debug,
+            )
+            if len(samples) != len(tsv_files):
+                sys.exit(
+                    "Identified %i samples from FASTA files, but %i TSV files for %s"
+                    % (len(samples), len(tsv_files), method)
+                )
+            for predicted_file in tsv_files:
+                sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
+                assert sample in samples, predicted_file
+                for name, taxid, genus, species in parse_species_tsv(
+                    predicted_file, min_abundance
+                ):
+                    md5, abundance = split_read_name_abundance(name)
+                    if min_abundance > 1 and abundance < min_abundance:
+                        continue
+                    assert abundance_by_samples[md5, sample] == abundance, name
+                    # Combining over all methods!
+                    sp = untangle_species(taxid, genus, species)
+                    if sp:
+                        md5_species[md5].update(sp.split(";"))
 
         if output == "-":
             if debug:
@@ -82,7 +92,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
 
         handle.write(
             "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
-            % (method, "\t".join(samples))
+            % (",".join(methods), "\t".join(samples))
         )
         for total_abundance, md5 in reversed(
             sorted((v, k) for (k, v) in md5_abundance.items())
