@@ -213,6 +213,7 @@ def main(args=None):
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_load_tax.set_defaults(func=load_tax)
+    del parser_load_tax  # To prevent acidentally adding more
 
     # ncbi-import
     parser_ncbi_import = subparsers.add_parser(
@@ -247,6 +248,7 @@ def main(args=None):
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_ncbi_import.set_defaults(func=ncbi_import)
+    del parser_ncbi_import  # To prevent acidentally adding more
 
     # seq-import
     parser_seq_import = subparsers.add_parser(
@@ -313,6 +315,7 @@ def main(args=None):
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_seq_import.set_defaults(func=seq_import)
+    del parser_seq_import  # To prevent acidentally adding more
 
     # legacy-import
     parser_legacy_import = subparsers.add_parser(
@@ -349,6 +352,7 @@ def main(args=None):
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_legacy_import.set_defaults(func=legacy_import)
+    del parser_legacy_import  # To prevent acidentally adding more
 
     # dump
     parser_dump = subparsers.add_parser(
@@ -416,6 +420,7 @@ comma.
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_dump.set_defaults(func=dump)
+    del parser_dump  # To prevent acidentally adding more
 
     # prepare reads
     parser_prepare_reads = subparsers.add_parser(
@@ -476,6 +481,7 @@ comma.
         help="Number of parallel threads to use in called tools.",
     )
     parser_prepare_reads.set_defaults(func=prepare_reads)
+    del parser_prepare_reads  # To prevent acidentally adding more
 
     # classify
     parser_classify = subparsers.add_parser(
@@ -526,6 +532,7 @@ comma.
         help="Max number of parallel threads to use in called tools.",
     )
     parser_classify.set_defaults(func=classify)
+    del parser_classify  # To prevent acidentally adding more
 
     # assess-classification
     parser_assess = subparsers.add_parser(
@@ -603,6 +610,7 @@ comma.
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_assess.set_defaults(func=assess_classification)
+    del parser_assess  # To prevent acidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
