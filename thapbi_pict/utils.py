@@ -203,7 +203,12 @@ def parse_species_tsv(tabular_file, min_abundance=0):
         for line in handle:
             if line.startswith("#"):
                 continue
-            name, taxid, genus, species, etc = line.split("\t", 4)
+            try:
+                name, taxid, genus, species, etc = line.split("\t", 4)
+            except ValueError:
+                sys.exit(
+                    "Error parsing TSV file %s at line:\n%s\n" % (tabular_file, line)
+                )
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue
             yield name, taxid, genus, species
