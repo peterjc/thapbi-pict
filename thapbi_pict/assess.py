@@ -10,7 +10,6 @@ from collections import Counter
 
 from .utils import find_paired_files
 from .utils import parse_species_tsv
-from .utils import untangle_species
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
@@ -30,11 +29,8 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
                 % (expected_file, predicted_file, expt[0], pred[0])
             )
         # TODO: Look at taxid?
-        # This has dealt with ambiguous entries with ; separated entries
         # Should now have (possibly empty) string of genus-species;...
-        expt_sp = untangle_species(*expt[1:])
-        pred_sp = untangle_species(*pred[1:])
-        counter[expt_sp, pred_sp] += 1
+        counter[expt[2], pred[2]] += 1
     return counter
 
 

@@ -14,7 +14,6 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from .utils import find_requested_files
 from .utils import parse_species_tsv
 from .utils import split_read_name_abundance
-from .utils import untangle_species
 
 
 def main(inputs, output, method, min_abundance=1, debug=False):
@@ -71,15 +70,13 @@ def main(inputs, output, method, min_abundance=1, debug=False):
             for predicted_file in tsv_files:
                 sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
                 assert sample in samples, predicted_file
-                for name, taxid, genus, species in parse_species_tsv(
-                    predicted_file, min_abundance
-                ):
+                # TODO: Look at taxid here?
+                for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
                     md5, abundance = split_read_name_abundance(name)
                     if min_abundance > 1 and abundance < min_abundance:
                         continue
                     assert abundance_by_samples[md5, sample] == abundance, name
                     # Combining over all methods!
-                    sp = untangle_species(taxid, genus, species)
                     if sp:
                         md5_species[md5].update(sp.split(";"))
 
