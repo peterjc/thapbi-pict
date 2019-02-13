@@ -9,7 +9,6 @@ import sys
 import tempfile
 
 from collections import Counter
-from string import ascii_lowercase
 
 from sqlalchemy.orm import aliased, contains_eager
 
@@ -58,104 +57,37 @@ def unique_or_separated(values, sep=";"):
         return sep.join(str(_) for _ in values)
 
 
-def taxonomy_summary(taxon_entries):
+def taxid_and_sp_lists(taxon_entries):
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
-    If there is a single result, returns a tuple of taxid (integer), genus,
-    species, clade, and debugging comment (strings).
+    If there is a single result, returns a tuple of taxid (integer), genus-species,
+    and debugging comment (strings).
 
     If any of the fields has conflicting values, returns a semi-colon separated
-    string instead (in the same order so you can match taxid to species etc).
+    string instead (in the same order so you can match taxid to species).
     """
     if not taxon_entries:
-        return 0, "", "", "", "No taxonomy entries"
+        return 0, "", "No taxonomy entries"
     if len(taxon_entries) == 1:
         t = taxon_entries[0]
-        return t.ncbi_taxid, t.genus, t.species, t.clade, "Unique taxonomy match"
-
-    # e.g. Clades of "", "8a" --> "8a", but any conflict -> ""
-    clade = clade_consensus(t.clade for t in taxon_entries)
-    if not clade:
-        clade = unique_or_separated([t.clade for t in taxon_entries])
+        return (
+            t.ncbi_taxid,
+            ("%s %s" % (t.genus, t.species)).strip(),
+            "Unique taxonomy match",
+        )
 
     # Discard clade, and now remove duplicates
     tax = sorted(set((t.ncbi_taxid, t.genus, t.species) for t in taxon_entries))
 
     return (
         unique_or_separated([t[0] for t in tax]),
-        unique_or_separated([t[1] for t in tax]),
-        unique_or_separated([t[2] for t in tax]),
-        clade,
+        unique_or_separated([("%s %s" % (t[1], t[2])).strip() for t in tax]),
         "",  # Not useful to report # of entries as redundant info
     )
 
 
-def clade_consensus(clades):
-    """Determine clade consensus, dropping alpha suffix if needed.
-
-    e.g. Clades of "", "8a" --> "8a", or "2a", "2b" --> "2",
-    but any conflict -> "".
-
-    Ignores empty clade as for most of our data sources, don't have
-    any clade information.
-    """
-    c_list = list(set(clades))
-    if "" in c_list:
-        c_list.remove("")
-    if len(c_list) > 1:
-        # Try dropping the letter suffix, 2,2a -> 2, or 6a,6b -> 6
-        c_list = list(set(_.rstrip(ascii_lowercase) for _ in c_list))
-        assert "" not in c_list
-    return c_list[0] if len(c_list) == 1 else ""
-
-
-def taxonomy_consensus(taxon_entries):
-    """Return LCA summary of the taxonomy objects from DB.
-
-    Expects a de-duplicated list of Taxonomy table entries.
-
-    Returns a tuple of taxid (integer), genus, species, clade,
-    debugging comment (strings).
-    """
-    if not taxon_entries:
-        return 0, "", "", "", "No taxonomy entries"
-    if len(taxon_entries) == 1:
-        t = taxon_entries[0]
-        return t.ncbi_taxid, t.genus, t.species, t.clade, "Unique taxonomy match"
-
-    tmp = list(set(_.genus for _ in taxon_entries))
-    if "" in tmp:
-        tmp.remove("")
-    genus = tmp[0] if len(tmp) == 1 else ""
-
-    if not genus:
-        return 0, "", "", "", "Conflicting genera"
-
-    note = "Consensus from %i taxonomy entries" % len(taxon_entries)
-
-    # e.g. Clades of "", "8a" --> "8a", but any conflict -> ""
-    clade = clade_consensus(_.clade for _ in taxon_entries)
-
-    s_list = list(set(_.species for _ in taxon_entries))
-    if "" in s_list:
-        s_list.remove("")
-    species = s_list[0] if len(s_list) == 1 else ""
-    if not species:
-        note += " (species: %s)" % ", ".join(sorted(s_list))
-
-    # TODO: Return genus level taxid
-    return (0, genus, species, clade, note)
-
-
 def method_identity(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    take_lca,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using perfect identity.
 
@@ -182,7 +114,8 @@ def method_identity(
         abundance = abundance_from_read_name(idn)
         count += abundance
         taxid = 0
-        genus = species = clade = note = ""
+        genus_species = ""
+        note = ""
         if not seq:
             note = "No ITS1 HMM match"
         else:
@@ -201,14 +134,9 @@ def method_identity(
                         for _ in session.query(SequenceSource).filter_by(its1=its1)
                     )
                 )
-                if take_lca:
-                    taxid, genus, species, clade, note = taxonomy_consensus(t)
-                else:
-                    taxid, genus, species, clade, note = taxonomy_summary(t)
-        tax_counts[(genus, species, clade)] += abundance
-        read_report.write(
-            "%s\t%s\t%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus, species, clade, note)
-        )
+                taxid, genus_species, note = taxid_and_sp_lists(t)
+        tax_counts[genus_species] += abundance
+        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -286,14 +214,7 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_onebp(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    take_lca,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using identity or 1bp difference.
 
@@ -316,7 +237,8 @@ def method_onebp(
         abundance = abundance_from_read_name(idn)
         count += abundance
         taxid = 0
-        genus = species = clade = note = ""
+        genus_species = ""
+        note = ""
         if not seq:
             note = "No ITS1 HMM match"
         else:
@@ -360,14 +282,9 @@ def method_onebp(
                 t = []
             if not t:
                 pass
-            elif take_lca:
-                taxid, genus, species, clade, _ = taxonomy_consensus(t)
-            else:
-                taxid, genus, species, clade, _ = taxonomy_summary(t)
-        tax_counts[(genus, species, clade)] += abundance
-        read_report.write(
-            "%s\t%s\t%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus, species, clade, note)
-        )
+            taxid, genus_species, _ = taxid_and_sp_lists(t)
+        tax_counts[genus_species] += abundance
+        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -392,14 +309,7 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    take_lca,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using BLAST.
 
@@ -462,20 +372,16 @@ def method_blast(
             if idn in blast_hits:
                 db_md5s = blast_hits[idn]
                 t = md5_to_taxon(db_md5s, session)
-                if take_lca:
-                    taxid, genus, species, clade, note = taxonomy_consensus(t)
-                else:
-                    taxid, genus, species, clade, note = taxonomy_summary(t)
+                taxid, genus_species, note = taxid_and_sp_lists(t)
                 note = ("%i BLAST hits. %s" % (len(db_md5s), note)).strip()
             else:
                 taxid = 0
-                genus = species = clade = ""
+                genus_species = ""
                 note = "No BLAST hit"
             read_report.write(
-                "%s\t%s\t%s\t%s\t%s\t%s\n"
-                % (idn, str(taxid), genus, species, clade, note)
+                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
             )
-            tax_counts[(genus, species, clade)] += abundance
+            tax_counts[genus_species] += abundance
     return tax_counts
 
 
@@ -541,14 +447,7 @@ def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_swarm(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    take_lca,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using SWARM.
 
@@ -585,10 +484,7 @@ def method_swarm(
                 continue
             if db_md5s:
                 t = md5_to_taxon(db_md5s, session)
-                if take_lca:
-                    taxid, genus, species, clade, note = taxonomy_consensus(t)
-                else:
-                    taxid, genus, species, clade, note = taxonomy_summary(t)
+                taxid, genus_species, note = taxid_and_sp_lists(t)
                 note = (
                     "Cluster #%i - %i seqs and %i DB entries. %s"
                     % (cluster_count, len(read_idns), len(db_md5s), note)
@@ -596,17 +492,16 @@ def method_swarm(
             else:
                 # Cannot classify, report
                 taxid = 0
-                genus = species = clade = ""
+                genus_species = ""
                 note = "Cluster #%i - %i seqs but no DB entry" % (
                     cluster_count,
                     len(read_idns),
                 )
             for idn in read_idns:
                 read_report.write(
-                    "%s\t%s\t%s\t%s\t%s\t%s\n"
-                    % (idn, str(taxid), genus, species, clade, note)
+                    "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
                 )
-            tax_counts[(genus, species, clade)] += abundance
+            tax_counts[genus_species] += abundance
     sys.stderr.write("Swarm generated %i clusters\n" % cluster_count)
     assert count == sum(tax_counts.values())
     return tax_counts
@@ -630,8 +525,6 @@ method_setup = {
 def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify command."""
     assert isinstance(fasta, list)
-
-    take_lca = False
 
     if method not in method_classifier:
         sys.exit(
@@ -710,20 +603,11 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 else:
                     pred_handle = open(tmp_pred, "w")
 
-                pred_handle.write(
-                    "#sequence-name\ttaxid\tgenus\tspecies\tclade\tnote\n"
-                )
+                pred_handle.write("#sequence-name\ttaxid\tgenus-species\tnote\n")
                 if os.path.getsize(filename):
                     # There are sequences to classify
                     tax_counts = method_fn(
-                        filename,
-                        session,
-                        pred_handle,
-                        tmp,
-                        shared_tmp,
-                        take_lca,
-                        debug,
-                        cpu,
+                        filename, session, pred_handle, tmp, shared_tmp, debug, cpu
                     )
                 else:
                     # No sequences, no taxonomy assignments
