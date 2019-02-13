@@ -203,44 +203,12 @@ def parse_species_tsv(tabular_file, min_abundance=0):
         for line in handle:
             if line.startswith("#"):
                 continue
-            try:
-                name, taxid, genus, species, etc = line.split("\t", 4)
-            except ValueError:
+            if line.count("\t") != 3:
                 sys.exit(
-                    "Error parsing TSV file %s at line:\n%s\n" % (tabular_file, line)
+                    "%s is not 4 column TSV (name, taxid, genus-species, note):\n%s"
+                    % (tabular_file, line)
                 )
+            name, taxid, genus_species, _ = line.split("\t", 3)
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue
-            yield name, taxid, genus, species
-
-
-def untangle_species(taxid, genus, species):
-    """Untangle classifier predictions which might have ; entries.
-
-    Returns semi-colon separated string of species names (in the
-    binomial form, genus-species).
-
-    Does not currently use the taxid.
-    """
-    taxid = str(taxid)
-    if ";" in taxid:
-        assert ";" in species, "%s %s %s" % (taxid, genus, species)
-    if ";" in species:
-        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
-    if ";" in genus:
-        assert ";" in taxid or taxid == "0", "%s %s %s" % (taxid, genus, species)
-
-    if not species:
-        return ""  # No species level predictions
-
-    answer = set()
-    if ";" in genus:
-        assert species.count(";") == genus.count(";")
-        for s, g in zip(species.split(";"), genus.split(";")):
-            assert s.strip()
-            answer.add("%s %s" % (g, s))
-    else:
-        for s in species.split(";"):
-            assert s.strip()
-            answer.add("%s %s" % (genus, s))
-    return ";".join(sorted(answer))
+            yield name, taxid, genus_species
