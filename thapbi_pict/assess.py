@@ -51,6 +51,7 @@ def class_list_from_tally(tally):
 
 def compute_expected_multi_class_total(tally):
     """Find expected FP+FN+FN+TN or the multi-class confusion matrix total."""
+    # TODO: This is missing most of the TN.
     total = 0
     for (expt, pred), count in tally.items():
         sp = set(expt.split(";") + pred.split(";"))
@@ -59,7 +60,7 @@ def compute_expected_multi_class_total(tally):
         if sp:
             total += len(sp) * count
         else:
-            total += count
+            total += count  # TN special case
     return total
 
 
@@ -78,6 +79,8 @@ def save_mapping(tally, filename, debug=False):
 
 def save_confusion_matrix(tally, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
+    # TODO: Explicit row when expect no species assignment
+    # TODO: How to record the missing TN?
     total = 0
 
     cols = class_list_from_tally(tally)
@@ -147,7 +150,7 @@ def extract_binary_tally(class_name, tally):
 
 
 def extract_global_tally(tally):
-    """Process multi-label confusion matrix (tally dict) to TP, FP, DN, TN.
+    """Process multi-label confusion matrix (tally dict) to TP, FP, FN, TN.
 
     If the input data has no negative controls, all there will be no
     true negatives (TN).
@@ -175,38 +178,27 @@ def extract_global_tally(tally):
 
     If the input data has no negative controls, all there will be no TN.
     """
-    tp = fp = fn = tn = 0
+    all_sp = set()
+    for (expt, pred) in tally:
+        if expt:
+            all_sp.update(expt.split(";"))
+        if pred:
+            all_sp.update(pred.split(";"))
+    assert "" not in all_sp
+
+    x = Counter()
     for (expt, pred), count in tally.items():
-        expt_sp_list = expt.split(";") if expt else []
-        pred_sp_list = pred.split(";") if pred else []
-
-        if expt_sp_list:
-            # Hopefully some TP...
-            if pred_sp_list:
-                # Have some combination of TP, FP, FN
-                for sp in expt_sp_list:
-                    if sp in pred_sp_list:
-                        tp += count
-                    else:
-                        fn += count
-                for sp in pred_sp_list:
-                    if sp not in expt_sp_list:
-                        fp += count
-            else:
-                # No predictions, these all FN
-                fn += count * len(expt_sp_list)
+        if expt == "" and pred == "":
+            # TN special case
+            x[False, False] += count
         else:
-            # Have no species level expectation,
-            if pred_sp_list:
-                # False predictions made - FP
-                fp += count * len(pred_sp_list)
-            else:
-                # No species level prediction was made - TN
-                tn += count
+            for class_name in all_sp:
+                x[class_name in expt.split(";"), class_name in pred.split(";")] += count
 
-    return tp, fp, fn, tn
+    return x[True, True], x[False, True], x[True, False], x[False, False]
 
 
+# TODO: TN should depend on full class count!
 assert extract_global_tally({("", ""): 1}) == (0, 0, 0, 1)
 assert extract_global_tally({("", "A"): 1}) == (0, 1, 0, 0)
 assert extract_global_tally({("A", ""): 1}) == (0, 0, 1, 0)
@@ -301,20 +293,17 @@ def main(
         "#Species\tTP\tFP\tFN\tTN\t"
         "sensitivity\tspecificity\tprecision\tF1\tHamming-loss\n"
     )
+    multi_class_total1 = multi_class_total2 = 0
     for sp in [None] + sp_list:
         if sp is None:
             # Special case flag to report global values at end
             tp, fp, fn, tn = extract_global_tally(global_tally)
             sp = "OVERALL"
-            if multi_class_total != tp + fp + fn + tn:
-                sys.exit(
-                    "ERROR: %i TP + %i FN + %i FN + %i TN = %i, "
-                    "but confusion matrix total %i\n"
-                    % (tp, fp, fn, tn, tp + fp + fn + tn, multi_class_total)
-                )
+            multi_class_total1 = tp + fp + fn + tn
         else:
             assert species_level(sp)
             tp, fp, fn, tn = extract_binary_tally(sp, global_tally)
+            multi_class_total2 += tp + fp + fn + tn
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
         # specificity, selectivity or true negative rate (TNR)
@@ -341,6 +330,13 @@ def main(
                 hamming_loss,
             )
         )
+
+    if multi_class_total1 != multi_class_total2 and multi_class_total2:
+        sys.exit(
+            "ERROR: Overall TP+FP+FN+TP = %i, but sum for species was %i\n"
+            % (multi_class_total1, multi_class_total2)
+        )
+
     if assess_output != "-":
         handle.close()
 
