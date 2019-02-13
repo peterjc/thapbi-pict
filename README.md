@@ -49,6 +49,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.5  | 2019-02-06 | Hamming Loss in assessement output.                                          |
 | v0.0.6  | 2019-02-07 | Misc. cleanup and import fixes.                                              |
 | v0.0.7  | 2019-02-12 | Added ``plate-summary`` command, ``onebp`` classifier.                       |
+| v0.0.8  | *pending*  | Changed classifier output, fixed TN under-counting in multi-class assessment.|
 
 
 # Development Notes
