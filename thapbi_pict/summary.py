@@ -94,6 +94,27 @@ def main(inputs, output, method, min_abundance=1, debug=False):
             "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
             % (",".join(methods), "\t".join(samples))
         )
+        handle.write(
+            "TOTAL\t-\t-\t%i\t%i\t%s\n"
+            % (
+                sum(
+                    1
+                    for md5 in md5_to_seq
+                    for sample in samples
+                    if (md5, sample) in abundance_by_samples
+                ),
+                sum(md5_abundance.values()),
+                "\t".join(
+                    str(
+                        sum(
+                            abundance_by_samples.get((md5, sample), 0)
+                            for md5 in md5_to_seq
+                        )
+                    )
+                    for sample in samples
+                ),
+            )
+        )
         for total_abundance, md5 in reversed(
             sorted((v, k) for (k, v) in md5_abundance.items())
         ):
