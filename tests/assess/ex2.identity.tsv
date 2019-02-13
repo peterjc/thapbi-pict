@@ -1,5 +1,5 @@
-#sequence-name	taxid	genus	species	clade	note
-pf1_100000	0				No ITS1 database match
-pf2_10000	0				No ITS1 database match
-pf3_2000	0				No ITS1 database match
-pf4_1000	4784;132615	Phytophthora	capsici;glovera	2	
+#sequence-name	taxid	genus-species	note
+pf1_100000	0		No ITS1 database match
+pf2_10000	0		No ITS1 database match
+pf3_2000	0		No ITS1 database match
+pf4_1000	4784;132615	Phytophthora capsici;Phytophthora glovera	

@@ -1,2 +1,2 @@
-#sequence-name	taxid	genus	species	clade	note
-tricky_1000	4784;132615	Phytophthora	capsici;glovera	2	
+#sequence-name	taxid	genus	species	note
+tricky_1000	4784;132615	Phytophthora capsici;Phytophthora glovera	

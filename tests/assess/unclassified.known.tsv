@@ -1,2 +1,2 @@
-#sequence-name	taxid	genus	species	clade	note
-unknown_1000	0				No ITS1 database match
+#sequence-name	taxid	genus-species	note
+unknown_1000	0		No ITS1 database match
