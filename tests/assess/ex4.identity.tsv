@@ -1,2 +1,2 @@
-#sequence-name	taxid	genus-speciese	note
+#sequence-name	taxid	genus-species:Phytophthora capsici;Phytophthora crassamura;Phytophthora europaea;Phytophthora flexuosa;Phytophthora glovera;Phytophthora infestans;Phytophthora megasperma	note
 tricky_1000	4784;4787	Phytophthora capsici;Phytophthora infestans	one right (Pc), one wrong (Pi), one missed (Pg)

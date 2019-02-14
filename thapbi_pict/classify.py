@@ -629,7 +629,11 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 else:
                     pred_handle = open(tmp_pred, "w")
 
-                pred_handle.write("#sequence-name\ttaxid\tgenus-species\tnote\n")
+                # Could write one column per db_sp_list entry, but would be very sparse.
+                pred_handle.write(
+                    "#sequence-name\ttaxid\tgenus-species:%s\tnote\n"
+                    % ";".join(db_sp_list)
+                )
                 if os.path.getsize(filename):
                     # There are sequences to classify
                     tax_counts = method_fn(
