@@ -547,6 +547,32 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     if not count:
         sys.exit("ERROR: Taxonomy table empty, cannot classify anything.\n")
 
+    # Now want to get the number of species associated with ITS1 DB entries,
+    #
+    # $ sqlite3 L5-2019-01-01.sqlite "SELECT DISTINCT taxonomy.genus, taxonomy.species
+    # FROM taxonomy JOIN its1_source ON taxonomy.id == its1_source.current_taxonomy_id
+    # ORDER BY taxonomy.genus, taxonomy.species;" | wc -l
+    # 143
+    #
+    # $ sqlite3 L5-2019-01-01.sqlite "SELECT DISTINCT taxonomy.genus, taxonomy.species
+    # FROM taxonomy ORDER BY taxonomy.genus, taxonomy.species;" | wc -l
+    # 253
+    #
+    # Note the number with an NCBI taxid could be lower...
+    view = (
+        session.query(Taxonomy)
+        .distinct(Taxonomy.genus, Taxonomy.species)
+        .join(SequenceSource, SequenceSource.current_taxonomy_id == Taxonomy.id)
+    )
+    db_sp_list = sorted(set(("%s %s" % (t.genus, t.species)).strip() for t in view))
+    assert "" not in db_sp_list
+    if debug:
+        sys.stderr.write(
+            "ITS1 entries in DB linked to %i distrinct species.\n" % len(db_sp_list)
+        )
+    if not db_sp_list:
+        sys.exit("ERROR: Have no ITS1 entries in DB with species information.\n")
+
     count = session.query(ITS1).count()
     if debug:
         sys.stderr.write("ITS1 table contains %i distinct sequences.\n" % count)
