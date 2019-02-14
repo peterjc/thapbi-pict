@@ -17,6 +17,12 @@ diff tests/assess/ex4.assess.tsv <(thapbi_pict assess tests/assess/ex4.known.tsv
 diff tests/assess/unclassified.assess.tsv <(thapbi_pict assess tests/assess/unclassified.known.tsv tests/assess/unclassified.identity.tsv -c /dev/null)
 diff tests/assess/fp.assess.tsv <(thapbi_pict assess tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
 
+echo "Checking warning for unexpected species"
+set +o pipefail
+thapbi_pict assess tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "Expected species Phytophthora fallax was not a possible prediction"
+set -o pipefail
+
+
 if [ ! -f $TMP/thapbi_swarm/DNAMIX_S95_L001.swarm.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 
