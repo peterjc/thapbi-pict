@@ -10,6 +10,7 @@ from collections import Counter
 
 from .utils import find_paired_files
 from .utils import parse_species_tsv
+from .utils import parse_species_list_from_tsv
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
@@ -34,14 +35,27 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
     return counter
 
 
-def class_list_from_tally(tally):
+def class_list_from_tally_and_db_list(tally, db_sp_list):
     """Sorted list of all class names used in a confusion table dict."""
     classes = set()
     for expt, pred in tally:
-        for sp in expt.split(";"):
-            classes.add(sp)
-        for sp in pred.split(";"):
-            classes.add(sp)
+        if expt:
+            for sp in expt.split(";"):
+                classes.add(sp)
+                if sp not in db_sp_list:
+                    sys.stderr.write(
+                        "WARNING: Expected species %s was not a possible prediction.\n"
+                        % sp
+                    )
+        if pred:
+            for sp in pred.split(";"):
+                classes.add(sp)
+                if sp and sp not in db_sp_list:
+                    sys.exit(
+                        "ERROR: Species %s was not in the prediction file's header!"
+                        % sp
+                    )
+    classes.update(db_sp_list)
     return sorted(classes)
 
 
@@ -73,15 +87,14 @@ def save_mapping(tally, filename, debug=False):
         )
 
 
-def save_confusion_matrix(tally, filename, exp_total, debug=False):
+def save_confusion_matrix(tally, db_sp_list, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
     # TODO: Explicit row when expect no species assignment
     # TODO: How to record the missing TN?
     total = 0
 
-    cols = class_list_from_tally(tally)
-    if "" not in cols:
-        cols = [""] + cols
+    assert "" not in db_sp_list
+    cols = [""] + db_sp_list
     rows = cols + sorted(set(expt for (expt, pred) in tally if expt not in cols))
 
     values = Counter()
@@ -145,7 +158,7 @@ def extract_binary_tally(class_name, tally):
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
 
 
-def extract_global_tally(tally):
+def extract_global_tally(tally, sp_list):
     """Process multi-label confusion matrix (tally dict) to TP, FP, FN, TN.
 
     If the input data has no negative controls, all there will be no
@@ -181,29 +194,35 @@ def extract_global_tally(tally):
         if pred:
             all_sp.update(pred.split(";"))
     assert "" not in all_sp
+    for sp in sp_list:
+        assert sp in sp_list, sp
 
     x = Counter()
     for (expt, pred), count in tally.items():
         if expt == "" and pred == "":
             # TN special case
-            x[False, False] += count
+            x[False, False] += count * len(sp_list)
         else:
-            for class_name in all_sp:
+            for class_name in sp_list:
                 x[class_name in expt.split(";"), class_name in pred.split(";")] += count
 
     return x[True, True], x[False, True], x[True, False], x[False, False]
 
 
 # TODO: TN should depend on full class count!
-assert extract_global_tally({("", ""): 1}) == (0, 0, 0, 1)
-assert extract_global_tally({("", "A"): 1}) == (0, 1, 0, 0)
-assert extract_global_tally({("A", ""): 1}) == (0, 0, 1, 0)
-assert extract_global_tally({("A", "A"): 1}) == (1, 0, 0, 0)
-assert extract_global_tally({("A", "B"): 1}) == (0, 1, 1, 0)
-assert extract_global_tally({("A", "A;B"): 1}) == (1, 1, 0, 0)
-assert extract_global_tally({("A;B", "A;B"): 1}) == (2, 0, 0, 0)
-assert extract_global_tally({("A;B", "A"): 1}) == (1, 0, 1, 0)
-assert extract_global_tally({("A;B", "A;C"): 1}) == (1, 1, 1, 0)
+assert extract_global_tally({("", ""): 1}, ["A"]) == (0, 0, 0, 1)
+assert extract_global_tally({("", ""): 1}, ["A", "B", "C", "D"]) == (0, 0, 0, 4)
+assert extract_global_tally({("", "A"): 1}, ["A"]) == (0, 1, 0, 0)
+assert extract_global_tally({("", "A"): 1}, ["A", "B", "C", "D"]) == (0, 1, 0, 3)
+assert extract_global_tally({("A", ""): 1}, ["A"]) == (0, 0, 1, 0)
+assert extract_global_tally({("A", "A"): 1}, ["A"]) == (1, 0, 0, 0)
+assert extract_global_tally({("A", "A"): 1}, ["A", "B", "C", "D"]) == (1, 0, 0, 3)
+assert extract_global_tally({("A", "B"): 1}, ["A", "B"]) == (0, 1, 1, 0)
+assert extract_global_tally({("A", "A;B"): 1}, ["A", "B"]) == (1, 1, 0, 0)
+assert extract_global_tally({("A;B", "A;B"): 1}, ["A", "B"]) == (2, 0, 0, 0)
+assert extract_global_tally({("A;B", "A"): 1}, ["A", "B"]) == (1, 0, 1, 0)
+assert extract_global_tally({("A;B", "A;C"): 1}, ["A", "B", "C"]) == (1, 1, 1, 0)
+assert extract_global_tally({("A;B", "A;C"): 1}, ["A", "B", "C", "D"]) == (1, 1, 1, 1)
 
 
 def main(
@@ -223,6 +242,7 @@ def main(
         inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
     )
 
+    db_sp_list = None
     file_count = 0
     global_tally = Counter()
 
@@ -235,17 +255,36 @@ def main(
                 sys.stderr.write(
                     "Assessing %s vs %s\n" % (predicted_file, expected_file)
                 )
+            if db_sp_list is None:
+                db_sp_list = parse_species_list_from_tsv(predicted_file)
+            elif db_sp_list != parse_species_list_from_tsv(predicted_file):
+                sys.exit("ERROR: Inconsistent species lists in predicted file headers")
+            if debug:
+                assert db_sp_list is not None, db_sp_list
+                sys.stderr.write("DEBUG: %s says DB had %i species\n" % len(db_sp_list))
+
             file_count += 1
             global_tally.update(
                 tally_files(expected_file, predicted_file, min_abundance)
             )
 
-    sp_list = class_list_from_tally(global_tally)
+    if db_sp_list is None:
+        sys.exit("ERROR: Failed to load DB species list from headers")
+    if debug and db_sp_list:
+        sys.stderr.write(
+            "Classifier DB had %i species: %s\n"
+            % (len(db_sp_list), ", ".join(db_sp_list))
+        )
+    sp_list = class_list_from_tally_and_db_list(global_tally, db_sp_list)
     if "" in sp_list:
         sp_list.remove("")
-    # TODO - Should we really use max of number of species expected
-    # and number of species in the DB for Hamming Loss?
-    number_of_classes_and_examples = max(1, len(sp_list)) * sum(global_tally.values())
+    assert sp_list
+    if debug:
+        sys.stderr.write(
+            "Classifier DB had %i species, including expected values have %i species\n"
+            % (len(db_sp_list), len(sp_list))
+        )
+    number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
 
     sys.stderr.write(
         "Assessed %s vs %s in %i files (%i species; %i sequence entries)\n"
@@ -271,11 +310,11 @@ def main(
 
     if confusion_output == "-":
         save_confusion_matrix(
-            global_tally, "/dev/stdout", multi_class_total, debug=debug
+            global_tally, db_sp_list, "/dev/stdout", multi_class_total, debug=debug
         )
     elif confusion_output:
         save_confusion_matrix(
-            global_tally, confusion_output, multi_class_total, debug=debug
+            global_tally, db_sp_list, confusion_output, multi_class_total, debug=debug
         )
 
     if assess_output == "-":
@@ -293,7 +332,7 @@ def main(
     for sp in [None] + sp_list:
         if sp is None:
             # Special case flag to report global values at end
-            tp, fp, fn, tn = extract_global_tally(global_tally)
+            tp, fp, fn, tn = extract_global_tally(global_tally, sp_list)
             sp = "OVERALL"
             multi_class_total1 = tp + fp + fn + tn
         else:
