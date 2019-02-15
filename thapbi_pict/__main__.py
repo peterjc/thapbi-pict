@@ -555,7 +555,7 @@ comma.
         "and matching expected classifications in XXX.known.tsv "
         "(which can be in different directories) to produce a "
         "multi-species confusion matrix (output on request) and "
-        "classifier performance metrics (to stdout by default)."
+        "classifier performance metrics (to stdout by default). "
         "You can deliberately compare two prediction methods to "
         "each other using this, but a known set of positive controls "
         "is the expected benchmark.",
