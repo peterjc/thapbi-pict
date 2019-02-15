@@ -83,7 +83,9 @@ def save_mapping(tally, filename, debug=False):
         )
 
 
-def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug=False):
+def save_confusion_matrix(
+    tally, db_sp_list, sp_list, filename, exp_total, level, debug=False
+):
     """Output a multi-class confusion matrix as a tab-separated table."""
     total = 0
 
@@ -136,10 +138,23 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
     total = sum(values.values())
 
     with open(filename, "w") as handle:
-        handle.write("#Expected vs predicted\t%s\n" % "\t".join(cols))
+        handle.write(
+            "#Expected vs predicted\t%s count\t%s\n" % (level, "\t".join(cols))
+        )
         for expt in rows:
+            if expt == "(None)":
+                level_count = sum(count for ((e, _), count) in tally.items() if not e)
+            else:
+                level_count = sum(
+                    count for ((e, _), count) in tally.items() if e == expt
+                )
             handle.write(
-                "%s\t%s\n" % (expt, "\t".join(str(values[expt, pred]) for pred in cols))
+                "%s\t%i\t%s\n"
+                % (
+                    expt,
+                    level_count,
+                    "\t".join(str(values[expt, pred]) for pred in cols),
+                )
             )
 
     if debug:
@@ -328,6 +343,7 @@ def main(
             sp_list,
             "/dev/stdout",
             number_of_classes_and_examples,
+            level,
             debug=debug,
         )
     elif confusion_output:
@@ -337,6 +353,7 @@ def main(
             sp_list,
             confusion_output,
             number_of_classes_and_examples,
+            level,
             debug=debug,
         )
 
