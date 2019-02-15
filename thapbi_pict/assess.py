@@ -59,21 +59,6 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     return sorted(classes)
 
 
-def compute_expected_multi_class_total(tally):
-    """Find expected FP+FN+FN+TN or the multi-class confusion matrix total."""
-    # TODO: This is missing most of the TN.
-    total = 0
-    for (expt, pred), count in tally.items():
-        sp = set(expt.split(";") + pred.split(";"))
-        if "" in sp:
-            sp.remove("")
-        if sp:
-            total += len(sp) * count
-        else:
-            total += count  # TN special case
-    return total
-
-
 def save_mapping(tally, filename, debug=False):
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
@@ -87,32 +72,48 @@ def save_mapping(tally, filename, debug=False):
         )
 
 
-def save_confusion_matrix(tally, db_sp_list, filename, exp_total, debug=False):
+def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
-    # TODO: Explicit row when expect no species assignment
-    # TODO: How to record the missing TN?
     total = 0
 
     assert "" not in db_sp_list
-    cols = [""] + db_sp_list
-    rows = cols + sorted(set(expt for (expt, pred) in tally if expt not in cols))
+    assert "" not in sp_list
+    for sp in db_sp_list:
+        assert sp in sp_list
+
+    # leaving out empty cols where can't predict expt:
+    cols = ["(TN)", "(FN)"] + db_sp_list
+
+    # Will report one row per possible combination of expected species
+    # None entry (if expected), then single sp (A, B, C), then multi-species (A;B;C etc)
+    rows = (
+        list(set("(None)" for (expt, pred) in tally if expt == ""))
+        + sorted(set(expt for (expt, pred) in tally if expt in sp_list))
+        + sorted(set(expt for (expt, pred) in tally if expt and expt not in sp_list))
+    )
+
+    assert len(sp_list) * sum(tally.values()) == exp_total
 
     values = Counter()
     for (expt, pred), count in tally.items():
-        assert expt in rows
-        if expt or pred:
-            e_list = expt.split(";") if expt else []
-            p_list = pred.split(";") if pred else []
-            for p in p_list:
-                # The TP and FP
-                values[expt, p] += count
-            for e in e_list:
-                if e not in p_list:
-                    # FN
-                    values[expt, ""] += count
+        if expt:
+            assert expt in rows
+            e_list = expt.split(";")
         else:
-            # TN
-            values[expt, ""] += count
+            expt = "(None)"
+            e_list = []
+        if pred:
+            p_list = pred.split(";")
+        else:
+            p_list = []
+        for sp in sp_list:
+            if sp in p_list:
+                # The TP and FP
+                values[expt, sp] += count
+            elif sp in e_list:
+                values[expt, "(FN)"] += count
+            else:
+                values[expt, "(TN)"] += count
     total = sum(values.values())
 
     with open(filename, "w") as handle:
@@ -296,13 +297,6 @@ def main(
     if not file_count:
         sys.exit("ERROR: Could not find files to assess\n")
 
-    multi_class_total = compute_expected_multi_class_total(global_tally)
-    if debug:
-        sys.stderr.write(
-            "Expected multi-class confusion matrix or FP+FN+FN+TN total is %i\n"
-            % multi_class_total
-        )
-
     if map_output == "-":
         save_mapping(global_tally, "/dev/stdout", debug=debug)
     elif map_output:
@@ -310,11 +304,21 @@ def main(
 
     if confusion_output == "-":
         save_confusion_matrix(
-            global_tally, db_sp_list, "/dev/stdout", multi_class_total, debug=debug
+            global_tally,
+            db_sp_list,
+            sp_list,
+            "/dev/stdout",
+            number_of_classes_and_examples,
+            debug=debug,
         )
     elif confusion_output:
         save_confusion_matrix(
-            global_tally, db_sp_list, confusion_output, multi_class_total, debug=debug
+            global_tally,
+            db_sp_list,
+            sp_list,
+            confusion_output,
+            number_of_classes_and_examples,
+            debug=debug,
         )
 
     if assess_output == "-":
