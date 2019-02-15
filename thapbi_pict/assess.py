@@ -262,7 +262,9 @@ def main(
             sys.exit("ERROR: Inconsistent species lists in predicted file headers")
         if debug:
             assert db_sp_list is not None, db_sp_list
-            sys.stderr.write("DEBUG: %s says DB had %i species\n" % len(db_sp_list))
+            sys.stderr.write(
+                "DEBUG: %s says DB had %i species\n" % (predicted_file, len(db_sp_list))
+            )
 
         file_count += 1
         global_tally.update(tally_files(expected_file, predicted_file, min_abundance))
