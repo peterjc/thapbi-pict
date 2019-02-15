@@ -234,6 +234,7 @@ assert extract_global_tally({("A;B", "A;C"): 1}, ["A", "B", "C", "D"]) == (1, 1,
 
 def main(
     inputs,
+    level,
     known,
     method,
     min_abundance,
@@ -244,6 +245,7 @@ def main(
 ):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
+    assert level in ["sequence", "sample"], level
 
     input_list = find_paired_files(
         inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False

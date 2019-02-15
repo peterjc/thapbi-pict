@@ -146,6 +146,7 @@ def assess_classification(args=None):
 
     return main(
         inputs=args.inputs,
+        level=args.level,
         known=args.known,
         method=args.method,
         min_abundance=args.abundance,
@@ -568,6 +569,15 @@ comma.
         "find matching files *.method.tsv to be assessed against "
         "*.known.tsv, where these filenames can be set via "
         "-m / --method and -k / --known arguments. ",
+    )
+    parser_assess.add_argument(
+        "-l",
+        "--level",
+        type=str,
+        default="sequence",
+        choices=["sequence", "sample"],
+        help="Assess at unique sequence level, or at sample level (taking "
+        "the union of the speces predicted by sequences from each sample).",
     )
     parser_assess.add_argument(
         "-k",
