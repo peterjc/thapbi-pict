@@ -81,8 +81,16 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
     for sp in db_sp_list:
         assert sp in sp_list
 
-    # leaving out empty cols where can't predict expt:
-    cols = ["(TN)", "(FN)"] + db_sp_list
+    # leaving out empty cols where can't predict expt (thus dp_sp_list over sp_list)
+    # leaving out possible predictions where column would be all zeros
+    predicted = set()
+    for _, pred in tally:
+        if pred:
+            for sp in pred.split(";"):
+                assert sp in db_sp_list
+                predicted.add(sp)
+    cols = ["(TN)", "(FN)"] + sorted(predicted)
+    del predicted
 
     # Will report one row per possible combination of expected species
     # None entry (if expected), then single sp (A, B, C), then multi-species (A;B;C etc)
@@ -117,7 +125,7 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
     total = sum(values.values())
 
     with open(filename, "w") as handle:
-        handle.write("#\t%s\n" % "\t".join(cols))
+        handle.write("#Expected vs predicted\t%s\n" % "\t".join(cols))
         for expt in rows:
             handle.write(
                 "%s\t%s\n" % (expt, "\t".join(str(values[expt, pred]) for pred in cols))
