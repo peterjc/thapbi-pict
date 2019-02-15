@@ -17,6 +17,14 @@ diff tests/assess/ex4.assess.tsv <(thapbi_pict assess tests/assess/ex4.known.tsv
 diff tests/assess/unclassified.assess.tsv <(thapbi_pict assess tests/assess/unclassified.known.tsv tests/assess/unclassified.identity.tsv -c /dev/null)
 diff tests/assess/fp.assess.tsv <(thapbi_pict assess tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
 
+echo "Checking sequence level vs sample level assessment"
+for LEVEL in sequence sample; do
+    thapbi_pict assess tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -l $LEVEL
+    diff tests/assess/tally_$LEVEL.tsv $TMP/tally.tsv
+    diff tests/assess/assess_$LEVEL.tsv $TMP/assess.tsv
+    diff tests/assess/confusion_$LEVEL.tsv $TMP/confusion.tsv
+done
+
 echo "Checking warning for unexpected species"
 set +o pipefail
 thapbi_pict assess tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "Expected species Phytophthora fallax was not a possible prediction"
