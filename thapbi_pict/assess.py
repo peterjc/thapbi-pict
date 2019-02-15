@@ -12,6 +12,18 @@ from .utils import parse_species_tsv
 from .utils import parse_species_list_from_tsv
 
 
+def sp_in_tsv(classifier_file):
+    """Return semi-colon separated list of species in column 2."""
+    species = set()
+    for line in open(classifier_file):
+        if line.startswith("#"):
+            continue
+        name, taxid, sp, etc = line.split("\t", 3)
+        if sp:
+            species.update(sp.split(";"))
+    return ";".join(sorted(species))
+
+
 def tally_files(expected_file, predicted_file, min_abundance=0):
     """Make dictionary tally confusion matrix of species assignements."""
     counter = Counter()
@@ -269,7 +281,12 @@ def main(
             )
 
         file_count += 1
-        global_tally.update(tally_files(expected_file, predicted_file, min_abundance))
+        if level == "sequence":
+            global_tally.update(
+                tally_files(expected_file, predicted_file, min_abundance)
+            )
+        else:
+            global_tally[sp_in_tsv(expected_file), sp_in_tsv(predicted_file)] += 1
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")
@@ -290,8 +307,8 @@ def main(
     number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
 
     sys.stderr.write(
-        "Assessed %s vs %s in %i files (%i species; %i sequence entries)\n"
-        % (method, known, file_count, len(sp_list), sum(global_tally.values()))
+        "Assessed %s vs %s in %i files (%i species; %i %s level predictions)\n"
+        % (method, known, file_count, len(sp_list), sum(global_tally.values()), level)
     )
 
     assert file_count == len(input_list)
