@@ -218,7 +218,6 @@ def extract_global_tally(tally, sp_list):
     return x[True, True], x[False, True], x[True, False], x[False, False]
 
 
-# TODO: TN should depend on full class count!
 assert extract_global_tally({("", ""): 1}, ["A"]) == (0, 0, 0, 1)
 assert extract_global_tally({("", ""): 1}, ["A", "B", "C", "D"]) == (0, 0, 0, 4)
 assert extract_global_tally({("", "A"): 1}, ["A"]) == (0, 1, 0, 0)
