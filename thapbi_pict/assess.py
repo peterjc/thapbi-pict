@@ -4,7 +4,6 @@ This implements the ``thapbi_pict assess ...`` command.
 """
 
 import sys
-import tempfile
 
 from collections import Counter
 
@@ -254,27 +253,19 @@ def main(
     file_count = 0
     global_tally = Counter()
 
-    # Context manager should remove the temp dir:
-    with tempfile.TemporaryDirectory() as shared_tmp:
+    for predicted_file, expected_file in input_list:
         if debug:
-            sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
-        for predicted_file, expected_file in input_list:
-            if debug:
-                sys.stderr.write(
-                    "Assessing %s vs %s\n" % (predicted_file, expected_file)
-                )
-            if db_sp_list is None:
-                db_sp_list = parse_species_list_from_tsv(predicted_file)
-            elif db_sp_list != parse_species_list_from_tsv(predicted_file):
-                sys.exit("ERROR: Inconsistent species lists in predicted file headers")
-            if debug:
-                assert db_sp_list is not None, db_sp_list
-                sys.stderr.write("DEBUG: %s says DB had %i species\n" % len(db_sp_list))
+            sys.stderr.write("Assessing %s vs %s\n" % (predicted_file, expected_file))
+        if db_sp_list is None:
+            db_sp_list = parse_species_list_from_tsv(predicted_file)
+        elif db_sp_list != parse_species_list_from_tsv(predicted_file):
+            sys.exit("ERROR: Inconsistent species lists in predicted file headers")
+        if debug:
+            assert db_sp_list is not None, db_sp_list
+            sys.stderr.write("DEBUG: %s says DB had %i species\n" % len(db_sp_list))
 
-            file_count += 1
-            global_tally.update(
-                tally_files(expected_file, predicted_file, min_abundance)
-            )
+        file_count += 1
+        global_tally.update(tally_files(expected_file, predicted_file, min_abundance))
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")
