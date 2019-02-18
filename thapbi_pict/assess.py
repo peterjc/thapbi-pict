@@ -70,10 +70,10 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     return sorted(classes)
 
 
-def save_mapping(tally, filename, debug=False):
+def save_mapping(tally, filename, level, debug=False):
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
-        handle.write("#Count\tExpected\tPredicted\n")
+        handle.write("#%s-count\tExpected\tPredicted\n" % level)
         for expt, pred in sorted(tally):
             handle.write("%i\t%s\t%s\n" % (tally[expt, pred], expt, pred))
     if debug:
@@ -332,9 +332,9 @@ def main(
         sys.exit("ERROR: Could not find files to assess\n")
 
     if map_output == "-":
-        save_mapping(global_tally, "/dev/stdout", debug=debug)
+        save_mapping(global_tally, "/dev/stdout", level, debug=debug)
     elif map_output:
-        save_mapping(global_tally, map_output, debug=debug)
+        save_mapping(global_tally, map_output, level, debug=debug)
 
     if confusion_output == "-":
         save_confusion_matrix(
