@@ -366,7 +366,8 @@ def main(
 
     handle.write(
         "#Species\tTP\tFP\tFN\tTN\t"
-        "sensitivity\tspecificity\tprecision\tF1\tHamming-loss\n"
+        "sensitivity\tspecificity\tprecision\tF1\t"
+        "Hamming-loss\tAd-hoc-loss\n"
     )
     multi_class_total1 = multi_class_total2 = 0
     for sp in [None] + sp_list:
@@ -390,8 +391,14 @@ def main(
         # Hamming Loss = (total number of mis-predicted class entries
         #                 / number of class-level predictions)
         hamming_loss = float(fp + fn) / (tp + fp + fn + tn)
+        # Ad-hoc Loss = (total number of mis-predicted class entries
+        #                 / number of class-level predictions ignoring TN
+        try:
+            ad_hoc_loss = float(fp + fn) / (tp + fp + fn)
+        except ZeroDivisionError:
+            ad_hoc_loss = 0.0
         handle.write(
-            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\n"
+            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\t%0.2f\n"
             % (
                 sp,
                 tp,
@@ -403,6 +410,7 @@ def main(
                 precision,
                 f1,
                 hamming_loss,
+                ad_hoc_loss,
             )
         )
 
