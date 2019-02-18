@@ -389,7 +389,7 @@ def main(
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
         # Hamming Loss = (total number of mis-predicted class entries
         #                 / number of class-level predictions)
-        hamming_loss = float(fp + fn) / number_of_classes_and_examples
+        hamming_loss = float(fp + fn) / (tp + fp + fn + tn)
         handle.write(
             "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\n"
             % (
@@ -406,6 +406,11 @@ def main(
             )
         )
 
+    if multi_class_total1 != number_of_classes_and_examples:
+        sys.exit(
+            "ERROR: Overall TP+FP+FN+TP = %i, but species times samples = %i\n"
+            % (multi_class_total1, number_of_classes_and_examples)
+        )
     if multi_class_total1 != multi_class_total2 and multi_class_total2:
         sys.exit(
             "ERROR: Overall TP+FP+FN+TP = %i, but sum for species was %i\n"
