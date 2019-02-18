@@ -1,9 +1,9 @@
-#Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss
-OVERALL	0	2	0	5	0.00	0.71	0.00	0.00	0.2857
-Phytophthora capsici	0	1	0	0	0.00	0.00	0.00	0.00	1.0000
-Phytophthora crassamura	0	0	0	1	0.00	1.00	0.00	0.00	0.0000
-Phytophthora europaea	0	0	0	1	0.00	1.00	0.00	0.00	0.0000
-Phytophthora flexuosa	0	0	0	1	0.00	1.00	0.00	0.00	0.0000
-Phytophthora glovera	0	1	0	0	0.00	0.00	0.00	0.00	1.0000
-Phytophthora infestans	0	0	0	1	0.00	1.00	0.00	0.00	0.0000
-Phytophthora megasperma	0	0	0	1	0.00	1.00	0.00	0.00	0.0000
+#Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
+OVERALL	0	2	0	5	0.00	0.71	0.00	0.00	0.2857	1.00
+Phytophthora capsici	0	1	0	0	0.00	0.00	0.00	0.00	1.0000	1.00
+Phytophthora crassamura	0	0	0	1	0.00	1.00	0.00	0.00	0.0000	0.00
+Phytophthora europaea	0	0	0	1	0.00	1.00	0.00	0.00	0.0000	0.00
+Phytophthora flexuosa	0	0	0	1	0.00	1.00	0.00	0.00	0.0000	0.00
+Phytophthora glovera	0	1	0	0	0.00	0.00	0.00	0.00	1.0000	1.00
+Phytophthora infestans	0	0	0	1	0.00	1.00	0.00	0.00	0.0000	0.00
+Phytophthora megasperma	0	0	0	1	0.00	1.00	0.00	0.00	0.0000	0.00
