@@ -12,6 +12,7 @@ from collections import Counter
 
 from sqlalchemy.orm import aliased, contains_eager
 
+from Bio import SeqIO
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
@@ -451,8 +452,15 @@ def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
     make_swarm_db_fasta(db_fasta, session)
 
 
-def method_swarm(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+def method_swarm_core(
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    identity=False,
+    debug=False,
+    cpu=0,
 ):
     """Classify using SWARM.
 
@@ -462,7 +470,16 @@ def method_swarm(
 
     Uses the database sequences to assign species to clusters,
     and thus input sequences within a cluster to that species.
+
+    If identity=True (i.e. the 'swarmid' classifier), it will
+    override the species for individual sequences with that of
+    any 100% identical matches in the DB. In this mode, acts
+    like the 'identity' classifier with the 'swarm' classifier
+    as a fallback.
     """
+    if identity:
+        seq_dict = SeqIO.index(fasta_file, "fasta")
+
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
         sys.exit("ERROR: Missing generated file %s\n" % db_fasta)
@@ -503,6 +520,13 @@ def method_swarm(
                     len(read_idns),
                 )
             for idn in read_idns:
+                if identity:
+                    # Does this match any of the ITS1 seq in our DB?
+                    seq = str(seq_dict[idn].seq).upper()
+                    taxid2, genus_species2, note2 = perfect_match_in_db(session, seq)
+                    if genus_species2:
+                        # Found perfect match(es), these take priority
+                        taxid, genus_species, note = taxid2, genus_species2, note2
                 read_report.write(
                     "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
                 )
@@ -512,11 +536,60 @@ def method_swarm(
     return tax_counts
 
 
+def method_swarm(
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+):
+    """SWARM classifier.
+
+    Uses the previously generated dump of the database to a
+    swarm-ready FASTA file, and the prepared non-redundant input
+    FASTA to input to swarm.
+
+    Uses the database sequences to assign species to clusters,
+    and thus input sequences within a cluster to that species.
+    """
+    return method_swarm_core(
+        fasta_file,
+        session,
+        read_report,
+        tmp_dir,
+        shared_tmp_dir,
+        identity=False,
+        debug=debug,
+        cpu=cpu,
+    )
+
+
+def method_swarmid(
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+):
+    """SWARM classifier with 100% identity special case.
+
+    Proceeds as per the simple SWARM classifier, with each cluster
+    being assigned species. However, before using the cluster species,
+    checks if the sequence has a 100% identical match in the DB and
+    if so, uses that in preference.
+
+    i.e. This is like method_identity falling back on method_swarm.
+    """
+    return method_swarm_core(
+        fasta_file,
+        session,
+        read_report,
+        tmp_dir,
+        shared_tmp_dir,
+        identity=True,
+        debug=debug,
+        cpu=cpu,
+    )
+
+
 method_classifier = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
     "swarm": method_swarm,
+    "swarmid": method_swarmid,
 }
 
 method_setup = {
@@ -524,6 +597,7 @@ method_setup = {
     # "identify": setup_identify,
     "onebp": setup_onebp,
     "swarm": setup_swarm,
+    "swarmid": setup_swarm,  # can share the setup
 }
 
 
