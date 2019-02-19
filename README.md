@@ -16,6 +16,7 @@ project, funded by the UK's [BBSRC](https://www.bbsrc.ac.uk).
 
 This continues earlier work including:
 
+* https://github.com/widdowquinn/THAPBI
 * https://github.com/widdowquinn/THAPBI-pycits
 * https://github.com/peterthorpe5/THAPBI-pycits
 * https://github.com/peterthorpe5/public_scripts/tree/master/metapy
@@ -43,12 +44,19 @@ This should automatically find the installed copy of the Python code.
 | Version | Date       | Notes                                                                        |
 |---------|------------|------------------------------------------------------------------------------|
 | v0.0.1  | 2019-01-17 | Initial framework with ``identity`` and ``swarm`` classifiers.               |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.2  | 2019-01-21 | Added ``assess`` command.                                                    |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.3  | 2019-01-22 | Simplified generated filenames.                                              |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.4  | 2019-01-24 | Added ``seq-import`` command, ``blast`` classifier, multi-taxon predictions. |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.5  | 2019-02-06 | Hamming Loss in assessement output.                                          |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.6  | 2019-02-07 | Misc. cleanup and import fixes.                                              |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.7  | 2019-02-12 | Added ``plate-summary`` command, ``onebp`` classifier.                       |
+|---------|------------|------------------------------------------------------------------------------|
 | v0.0.8  | *pending*  | Changed classifier output, fixed TN under-counting in multi-class assessment.|
 
 
