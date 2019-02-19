@@ -33,7 +33,7 @@ thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/
 thapbi_pict classify -m onebp -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
 thapbi_pict classify -m blast -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
 thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
-cut -f 5 $TMP/thapbi_swarm/DNAMIX_S95_L001.swarm.tsv | sort | uniq -c
+thapbi_pict classify -m swarmid -d $DB $TMP/DNAMIX_S95_L001.fasta
 
 # Passing one directory name (should get all three FASTA files):
 rm -rf $TMP/legacy/*.identity.tsv
