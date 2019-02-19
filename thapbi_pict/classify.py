@@ -86,6 +86,29 @@ def taxid_and_sp_lists(taxon_entries):
     )
 
 
+def perfect_match_in_db(session, seq):
+    """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
+
+    If the 100% matches in the DB give multiple species, then taxid and
+    genus_species will be semi-colon separated strings.
+    """
+    assert seq == seq.upper(), seq
+    # Now, does this match any of the ITS1 seq in our DB?
+    its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+    if its1 is None:
+        return 0, "", "No ITS1 database match"
+    # its1 -> one or more SequenceSource
+    # each SequenceSource -> one current taxonomy
+    # TODO: Refactor the query to get the DB to apply disinct?
+    t = list(
+        set(
+            _.current_taxonomy
+            for _ in session.query(SequenceSource).filter_by(its1=its1)
+        )
+    )
+    return taxid_and_sp_lists(t)
+
+
 def method_identity(
     fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
@@ -125,16 +148,7 @@ def method_identity(
             if its1 is None:
                 note = "No ITS1 database match"
             else:
-                # its1 -> one or more SequenceSource
-                # each SequenceSource -> one current taxonomy
-                # TODO: Refactor the query to get the DB to apply disinct?
-                t = list(
-                    set(
-                        _.current_taxonomy
-                        for _ in session.query(SequenceSource).filter_by(its1=its1)
-                    )
-                )
-                taxid, genus_species, note = taxid_and_sp_lists(t)
+                taxid, genus_species, note = perfect_match_in_db(session, seq)
         tax_counts[genus_species] += abundance
         read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
@@ -244,16 +258,10 @@ def method_onebp(
         else:
             assert seq == seq.upper(), seq
             # Now, does this match any of the ITS1 seq in our DB?
-            its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
-            if its1:
-                # its1 -> one or more SequenceSource, each has -> taxonomy
-                t = list(
-                    set(
-                        _.current_taxonomy
-                        for _ in session.query(SequenceSource).filter_by(its1=its1)
-                    )
-                )
-                note = "%i perfect matches" % len(t)
+            taxid, genus_species, note = perfect_match_in_db(session, seq)
+            if genus_species:
+                # Found 100% identical match(es) in the DB.
+                pass
             elif seq in fuzzy_matches:
                 # Not exact, but we do have 1bp off match(es)
                 t = []
@@ -277,12 +285,9 @@ def method_onebp(
                     len(fuzzy_matches[seq]),
                     len(t),
                 )
+                taxid, genus_species, _ = taxid_and_sp_lists(t)
             else:
                 note = "No DB matches, even with 1bp diff"
-                t = []
-            if not t:
-                pass
-            taxid, genus_species, _ = taxid_and_sp_lists(t)
         tax_counts[genus_species] += abundance
         read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
