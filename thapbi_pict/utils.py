@@ -33,7 +33,7 @@ def run(cmd, debug=False, attempts=1):
             if attempts:
                 sys.stderr.write(
                     "Attempt %i of %i calling command: %s\n"
-                    % (i, attempts, cmd_as_string(cmd))
+                    % (i + 1, attempts, cmd_as_string(cmd))
                 )
             else:
                 sys.stderr.write("Calling command: %s\n" % cmd_as_string(cmd))
