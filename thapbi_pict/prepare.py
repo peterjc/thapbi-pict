@@ -157,98 +157,79 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     return len(counts), accepted  # number of unique seqs, accepted
 
 
-def make_nr_fastq_to_fasta(input_fastq, output_fasta, min_abundance=0):
-    """Make non-redundant FASTA file from FASTQ inputs, named MD5_abundance.
+def make_nr_fastq_to_fasta(
+    input_fastq, output_fasta, min_abundance=0, trim_left=53, trim_right=20
+):
+    """Trim and make non-redundant FASTA file from FASTQ inputs.
 
     The FASTQ read names are ignored and treated as abundance one!
 
-    Returns the number of unique sequences (integer), and the number
-    of those which passed the minimum abundance threshold.
-    """
-    counts = dict()  # OrderedDict on older Python?
-    with open(input_fastq) as handle:
-        for _, seq, _ in FastqGeneralIterator(handle):
-            seq = seq.upper()
-            try:
-                counts[seq] += 1
-            except KeyError:
-                counts[seq] = 1
-    return save_nr_fasta(counts, output_fasta, min_abundance)
-
-
-def make_nr_its1(input_fasta, output_fasta, stem, min_abundance=0, debug=False):
-    """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
-
-    Applies HMM with hmmscan to identify any ITS1 region in the
-    input reads, applies trimming, then makes these into a
-    non-redundant output FASTA file names using a checksum.
-
-    Assumes the input reads also follow this naming, and takes
-    the infered abundance into account.
-
-    This naming convention is suitable for SWARM.
+    Applies the specified fixed triming, then makes a non-redundant
+    FASTA file with the sequences named MD5_abundance.
 
     Returns the number of unique ITS1 sequences (integer),
     and the number of those which passed the minimum abundance
     threshold, and the maximum abundance of any one read (for
     use with controls for setting the threshold).
     """
-    exp_left = 53
-    exp_right = 20
-    margin = 10
-    file_hmm_cropping_warning = 0
-    global hmm_cropping_warning
-    # This could be generalised if need something else, e.g.
-    # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    for title, full_seq, hmm_seq in filter_for_ITS1(input_fasta, debug=debug):
-        if not hmm_seq:
-            # Using HMM match as a presense/absense filter
-            continue
-        seq = full_seq[exp_left:-exp_right].upper()  # using fix trimming
-        abundance = abundance_from_read_name(title.split(None, 1)[0])
-        left = full_seq.index(hmm_seq)
-        right = len(full_seq) - left - len(hmm_seq)
-        if not (
-            exp_left - margin < left < exp_left + margin
-            and exp_right - margin < right < exp_right + margin
-        ):
-            file_hmm_cropping_warning += 1
-            if debug:
-                sys.stderr.write(
-                    "WARNING: %r has HMM cropping %i left, %i right, "
-                    "giving %i, vs %i bp from fixed trimming\n"
-                    % (
-                        title.split(None, 1)[0],
-                        left,
-                        right,
-                        len(hmm_seq),
-                        len(full_seq) - exp_left - exp_right,
-                    )
-                )
-                sys.stderr.write("Full:  %s (len %i)\n" % (full_seq, len(full_seq)))
-                sys.stderr.write(
-                    "HMM:   %s%s%s (len %i)\n"
-                    % ("-" * left, hmm_seq, "-" * right, len(hmm_seq))
-                )
-                sys.stderr.write(
-                    "Fixed: %s%s%s (len %i)\n"
-                    % ("-" * exp_left, seq, "-" * exp_right, len(seq))
-                )
-        try:
-            counts[seq] += abundance
-        except KeyError:
-            counts[seq] = abundance
-
-    if file_hmm_cropping_warning:
-        sys.stderr.write(
-            "WARNING: HMM cropping very different from fixed trimming "
-            "in %i sequences in %s\n" % (file_hmm_cropping_warning, stem)
-        )
-        hmm_cropping_warning += file_hmm_cropping_warning
-
+    with open(input_fastq) as handle:
+        for _, seq, _ in FastqGeneralIterator(handle):
+            seq = seq.upper()[trim_left:-trim_right]
+            try:
+                counts[seq] += 1
+            except KeyError:
+                counts[seq] = 1
     a, b = save_nr_fasta(counts, output_fasta, min_abundance)
     return a, b, max(counts.values())
+
+
+def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
+    """Filter for ITS1 regions.
+
+    Assumes you have already applied trimming (and are not using
+    the HMM results for this).
+
+    Assumes the SWARM naming convention.
+
+    Returns the number of unique ITS1 sequences (integer),
+    """
+    margin = 10
+    cropping_warning = 0
+    max_indiv_abundance = 0
+    # This could be generalised if need something else, e.g.
+    # >name;size=6; for VSEARCH.
+    count = 0
+    with open(output_fasta, "w") as out_handle:
+        for title, full_seq, hmm_seq in filter_for_ITS1(input_fasta, debug=debug):
+            if not hmm_seq:
+                # Using HMM match as a presense/absense filter
+                continue
+            out_handle.write(">%s\n%s\n" % (title, full_seq))
+            count += 1
+            max_indiv_abundance = max(
+                max_indiv_abundance, abundance_from_read_name(title.split(None, 1)[0])
+            )
+
+            left = full_seq.index(hmm_seq)
+            right = len(full_seq) - left - len(hmm_seq)
+            if margin < left or margin < right:
+                cropping_warning += 1
+                if debug:
+                    sys.stderr.write(
+                        "WARNING: %s has HMM cropping %i left, %i right "
+                        "(on top of fixed trimming)\n"
+                        "giving %i, vs %i bp from fixed trimming\n"
+                        % (title.split(None, 1)[0], left, right)
+                    )
+
+    if cropping_warning:
+        sys.stderr.write(
+            "WARNING: HMM cropping very different from fixed trimming "
+            "in %i sequences in %s\n" % (cropping_warning, stem)
+        )
+
+    return count, max_indiv_abundance, cropping_warning
 
 
 def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
@@ -345,26 +326,25 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
             if not os.path.isfile(merged_fastq):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
-            merged_fasta = os.path.join(tmp, "dedup_long.fasta")
-            # Do not apply min_abundance threshold here as after ITS1
-            # trimming pooling entries would increase their counts.
-            count, _ = make_nr_fastq_to_fasta(
-                merged_fastq, merged_fasta, min_abundance=0
+            merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+            count, _, _ = make_nr_fastq_to_fasta(
+                merged_fastq,
+                merged_fasta,
+                min_abundance=0 if control else min_abundance,
             )
             if debug:
                 sys.stderr.write(
-                    "Merged paired FASTQ reads into %i unique sequences\n" % count
+                    "Merged paired FASTQ reads into %i unique trimmed sequences\n"
+                    % count
                 )
 
             # Find the ITS1 region (if present) using hmmscan,
-            # make NR, and name as MD5_abundance
-            # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
-            uniq_count, acc_uniq_count, max_indiv_abundance = make_nr_its1(
-                merged_fasta, dedup, stem, 0 if control else min_abundance, debug
+            uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
+                merged_fasta, dedup, stem, debug=debug
             )
+            hmm_cropping_warning += cropping
             if control:
-                assert uniq_count == acc_uniq_count
                 sys.stderr.write(
                     "Control %s has %i unique ITS1 sequences, "
                     "%i of most abundant, " % (stem, uniq_count, max_indiv_abundance)
@@ -380,28 +360,22 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                 min_abundance = max(min_abundance, max_indiv_abundance)
             elif debug:
                 sys.stderr.write(
-                    "Cropped %s down to %i unique ITS1 sequences, "
-                    "%i of which passed abundance threshold %i, "
+                    "Filtered %s down to %i unique ITS1 sequences, "
+                    "passing abundance threshold %i, "
                     "with top abundance %i\n"
-                    % (
-                        stem,
-                        uniq_count,
-                        acc_uniq_count,
-                        min_abundance,
-                        max_indiv_abundance,
-                    )
+                    % (stem, uniq_count, min_abundance, max_indiv_abundance)
                 )
 
             # File done
             shutil.move(dedup, fasta_name)
             if control:
                 sys.stderr.write(
-                    "Wrote %s with %i unique control reads\n" % (stem, acc_uniq_count)
+                    "Wrote %s with %i unique control reads\n" % (stem, uniq_count)
                 )
             else:
                 sys.stderr.write(
                     "Wrote %s with %i unique reads over abundance %i\n"
-                    % (stem, acc_uniq_count, min_abundance)
+                    % (stem, uniq_count, min_abundance)
                 )
 
     if hmm_cropping_warning:
