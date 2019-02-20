@@ -730,7 +730,7 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                 # Record the taxonomy counts
                 count = sum(tax_counts.values())
                 seq_count += count
-                match_count += count - tax_counts.get(("", "", ""), 0)
+                match_count += count - tax_counts.get("", 0)
 
                 if output_name is not None:
                     pred_handle.close()
