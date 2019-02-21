@@ -464,7 +464,7 @@ comma.
         nargs="+",
         help="One or more control FASTQ filenames or folder names "
         "(which can also be included in the FASTQ argument). "
-        "The paired FASTQ controls reads are processed in order to"
+        "The paired FASTQ controls reads are processed in order to "
         "determine the minimal abundance threshold automatically.",
     )
     parser_prepare_reads.add_argument(
