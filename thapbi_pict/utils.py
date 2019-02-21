@@ -6,7 +6,53 @@ import subprocess
 import sys
 import time
 
+from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+
+
+def expand_IUPAC_ambiguity_codes(seq):
+    """Convert to upper case and iterate over possible unabmigous interpretations.
+
+    This is a crude recursive implementation, intended for use on sequences with
+    just a few ambiguity codes in them - it may not scale very well!
+    """
+    seq = seq.upper()
+    ambig_letters = set(seq).difference(["A", "C", "G", "T"])
+    for nuc in ambig_letters:
+        if nuc not in ambiguous_dna_values:
+            raise ValueError("%r is not an IUPAC ambiguous DNA letter" % nuc)
+    if not ambig_letters:
+        yield seq
+    else:
+        # Recursive!
+        nuc = list(ambig_letters)[0]
+        i = seq.index(nuc)  # first appearance of nuc
+        before = seq[:i]
+        after = seq[i + 1 :]
+        for alt in ambiguous_dna_values[nuc]:
+            yield from expand_IUPAC_ambiguity_codes(before + alt + after)
+
+
+# Example has 4 ambiguity codes, each has 2 possible values,
+# thus expect 2**4 = 16 interpretations:
+assert sorted(expand_IUPAC_ambiguity_codes("GYRGGGACGAAAGTCYYTGC")) == [
+    "GCAGGGACGAAAGTCCCTGC",
+    "GCAGGGACGAAAGTCCTTGC",
+    "GCAGGGACGAAAGTCTCTGC",
+    "GCAGGGACGAAAGTCTTTGC",
+    "GCGGGGACGAAAGTCCCTGC",
+    "GCGGGGACGAAAGTCCTTGC",
+    "GCGGGGACGAAAGTCTCTGC",
+    "GCGGGGACGAAAGTCTTTGC",
+    "GTAGGGACGAAAGTCCCTGC",
+    "GTAGGGACGAAAGTCCTTGC",
+    "GTAGGGACGAAAGTCTCTGC",
+    "GTAGGGACGAAAGTCTTTGC",
+    "GTGGGGACGAAAGTCCCTGC",
+    "GTGGGGACGAAAGTCCTTGC",
+    "GTGGGGACGAAAGTCTCTGC",
+    "GTGGGGACGAAAGTCTTTGC",
+]
 
 
 def md5seq(seq):
