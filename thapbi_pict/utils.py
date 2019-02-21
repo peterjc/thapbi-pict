@@ -10,6 +10,51 @@ from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 
+def onebp_substitutions(seq):
+    """Generate all 1bp substitutions of the sequence.
+
+    Assumes unambiguous IUPAC codes A, C, G, T only.
+    """
+    seq = seq.upper()
+    variants = set()
+    for i in range(len(seq)):
+        for s in "ACGT":
+            # One base substitions
+            variants.add(seq[:i] + s + seq[i + 1 :])
+    variants.remove(seq)
+    return variants
+
+
+def onebp_deletions(seq):
+    """Generate all variants of sequence with 1bp deletion.
+
+    Assumes unambiguous IUPAC codes A, C, G, T only.
+    """
+    seq = seq.upper()
+    variants = set()
+    for i in range(len(seq)):
+        # One base deletion
+        variants.add(seq[:i] + seq[i + 1 :])
+    return variants
+
+
+def onebp_inserts(seq):
+    """Generate all variants of sequence with 1bp insert.
+
+    Assumes unambiguous IUPAC codes A, C, G, T only.
+    """
+    seq = seq.upper()
+    variants = set()
+    for i in range(len(seq)):
+        for s in "ACGT":
+            # One base insertions
+            variants.add(seq[:i] + s + seq[i:])
+    for s in "ACGT":
+        # One base "insertion" at the end
+        variants.add(seq + s)
+    return variants
+
+
 def onebp_variants(seq):
     """Generate all 1bp variants of the sequence (substitution, deletion or insertion).
 

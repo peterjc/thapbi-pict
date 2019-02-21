@@ -495,8 +495,11 @@ comma.
         metavar="PRIMER",
         help="Left primer sequence, expected to form start of merged "
         "read pairs, and will be removed. This can be defined with IUPAC "
-        "ambiguity codes, as in the default 53bp left primer sequence, "
-        "GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA.",
+        "ambiguity codes. Default 53bp left value "
+        "GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA "
+        "consists of 21bp primer GAAGGTGAAGTCGTAACAAGG followed by "
+        "32bp near-static TTTCCGTAGGTGAACCTGCGGAAGGATCATTA from the "
+        "18S gene (which we remove).",
     )
     parser_prepare_reads.add_argument(
         "-r",
