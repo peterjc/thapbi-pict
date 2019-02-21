@@ -118,6 +118,8 @@ def prepare_reads(args=None):
         fastq=args.fastq,
         controls=args.controls,
         out_dir=args.output,
+        left_primer=args.left,
+        right_primer=args.right,
         min_abundance=args.abundance,
         debug=args.verbose,
         cpu=args.cpu,
@@ -484,6 +486,28 @@ comma.
         help="Mininum abundance to apply to final candidate ITS1 "
         "sequences in the output FASTA file (default 100). "
         "This may be increased based on any FASTQ controls.",
+    )
+    parser_prepare_reads.add_argument(
+        "-l",
+        "--left",
+        type=str,
+        default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
+        metavar="PRIMER",
+        help="Left primer sequence, expected to form start of merged "
+        "read pairs, and will be removed. This can be defined with IUPAC "
+        "ambiguity codes, as in the default 53bp left primer sequence, "
+        "GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA.",
+    )
+    parser_prepare_reads.add_argument(
+        "-r",
+        "--right",
+        type=str,
+        default="GYRGGGACGAAAGTCYYTGC",
+        metavar="PRIMER",
+        help="Right primer sequence, expected to form end of merged "
+        "read pairs, and will be removed. This can be defined with IUPAC "
+        "ambiguity codes, as in the default 20bp value using Y and R "
+        "characters, GYRGGGACGAAAGTCYYTGC.",
     )
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
