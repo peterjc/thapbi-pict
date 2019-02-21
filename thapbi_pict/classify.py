@@ -22,6 +22,7 @@ from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 from .utils import find_requested_files
 from .utils import md5seq
+from .utils import onebp_variants
 
 
 fuzzy_matches = None  # global variable for onebp classifier
@@ -154,54 +155,6 @@ def method_identity(
         read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
     return tax_counts
-
-
-def onebp_variants(seq):
-    """Generate all 1bp variants of the sequence (substitution, deletion or insertion).
-
-    Assumes unambiguous IUPAC codes A, C, G, T only.
-    """
-    seq = seq.upper()
-    variants = set()
-    for i in range(len(seq)):
-        # One base deletion
-        variants.add(seq[:i] + seq[i + 1 :])
-        for s in "ACGT":
-            # One base substitions
-            variants.add(seq[:i] + s + seq[i + 1 :])
-            # One base insertions
-            variants.add(seq[:i] + s + seq[i:])
-    for s in "ACGT":
-        # One base "insertion" at the end
-        variants.add(seq + s)
-    variants.remove(seq)
-    return variants
-
-
-assert set(onebp_variants("A")) == set(
-    ["", "C", "G", "T", "AA", "CA", "GA", "TA", "AC", "AG", "AT"]
-)
-assert set(onebp_variants("AA")) == set(
-    [
-        "A",
-        "CA",
-        "GA",
-        "TA",
-        "AC",
-        "AG",
-        "AT",
-        "AAA",
-        "CAA",
-        "GAA",
-        "TAA",
-        "ACA",
-        "AGA",
-        "ATA",
-        "AAC",
-        "AAG",
-        "AAT",
-    ]
-)
 
 
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
