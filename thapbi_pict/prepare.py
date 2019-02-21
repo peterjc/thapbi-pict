@@ -9,6 +9,8 @@ import shutil
 import sys
 import tempfile
 
+from collections import Counter
+
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_ITS1
@@ -16,6 +18,9 @@ from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import expand_IUPAC_ambiguity_codes
 from .utils import md5seq
+from .utils import onebp_deletions
+from .utils import onebp_inserts
+from .utils import onebp_substitutions
 from .utils import run
 
 
@@ -136,6 +141,45 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix, debug=False, cpu=0):
     return run(cmd, debug=debug)
 
 
+def save_nr_primers(
+    counts,
+    output_fasta,
+    primer_perfect,
+    primer_1sub,
+    primer_1del,
+    primer_1ins,
+    min_abundance=0,
+):
+    """Save a dictionary of primer seqs as a FASTA file.
+
+    Results are sorted by decreasing abundance then alphabetically by
+    sequence.
+
+    Returns the number of sequences accepted (above any minimum
+    abundance specified).
+    """
+    accepted = 0
+    values = sorted((-count, seq) for seq, count in counts.items())
+    with open(output_fasta, "w") as out_handle:
+        for count, seq in values:
+            if -count < min_abundance:
+                # Sorted, so everything hereafter is too rare
+                break
+            if seq in primer_perfect:
+                msg = "matches"
+            elif seq in primer_1sub:
+                msg = "1bp substitution"
+            elif seq in primer_1del:
+                msg = "1bp deletion"
+            elif seq in primer_1ins:
+                msg = "1bp insert"
+            else:
+                msg = "no match"
+            out_handle.write(">%s_%i %s\n%s\n" % (md5seq(seq), -count, msg, seq))
+            accepted += 1
+    return accepted
+
+
 def save_nr_fasta(counts, output_fasta, min_abundance=0):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -162,7 +206,14 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fastq_to_fasta(
-    input_fastq, output_fasta, left_primer, right_primer, min_abundance=0, debug=False
+    input_fastq,
+    output_fasta,
+    left_primer,
+    right_primer,
+    left_out,
+    right_out,
+    min_abundance=0,
+    debug=False,
 ):
     """Trim and make non-redundant FASTA file from FASTQ inputs.
 
@@ -177,30 +228,148 @@ def make_nr_fastq_to_fasta(
     abundance of any one read (for use with controls for setting
     the threshold).
     """
-    bad_start = 0
-    bad_end = 0
+    too_short = 0
+    good_start = fuzzy_start = del_start = ins_start = 0
+    bad_start = Counter()
+    good_end = fuzzy_end = del_end = ins_end = 0
+    bad_end = Counter()
+
     trim_left = len(left_primer)
     trim_right = len(right_primer)
     trim_starts = tuple(expand_IUPAC_ambiguity_codes(left_primer))
     trim_ends = tuple(expand_IUPAC_ambiguity_codes(right_primer))
-    counts = dict()  # OrderedDict on older Python?
+
+    trim_starts_1s = set()
+    trim_starts_1del = set()
+    trim_starts_1ins = set()
+    for x in trim_starts:
+        trim_starts_1s.update(onebp_substitutions(x))
+        trim_starts_1del.update(onebp_deletions(x))
+        trim_starts_1ins.update(onebp_inserts(x))
+    trim_starts_1s = tuple(sorted(trim_starts_1s))
+    trim_starts_1del = tuple(sorted(trim_starts_1del))
+    trim_starts_1ins = tuple(sorted(trim_starts_1ins))
+
+    trim_ends_1s = set()
+    trim_ends_1del = set()
+    trim_ends_1ins = set()
+    for x in trim_ends:
+        trim_ends_1s.update(onebp_substitutions(x))
+        trim_ends_1del.update(onebp_deletions(x))
+        trim_ends_1ins.update(onebp_inserts(x))
+    trim_ends_1s = tuple(sorted(trim_ends_1s))
+    trim_ends_1del = tuple(sorted(trim_ends_1del))
+    trim_ends_1ins = tuple(sorted(trim_ends_1ins))
+
+    # if debug:
+    #    sys.stderr.write(
+    #        "DEBUG: Start primer len %i, %i forms, "
+    #        "%i with 1bp substitution, %i with 1bp deletion\n"
+    #        % (trim_left, len(trim_starts), len(trim_starts_1s), len(trim_starts_1del))
+    #    )
+    #    sys.stderr.write(
+    #        "DEBUG: End primer len %i, %i forms, "
+    #        "%i with 1bp substitution, %i with 1bp deletion\n"
+    #        % (trim_right, len(trim_ends), len(trim_ends_1s), len(trim_ends_1del))
+    #    )
+
+    counts = Counter()
+    left_primers = Counter()
+    right_primers = Counter()
     with open(input_fastq) as handle:
         for _, seq, _ in FastqGeneralIterator(handle):
+            if len(seq) < trim_left + trim_right:
+                too_short += 1
+                continue
             seq = seq.upper()
-            if not seq.startswith(trim_starts):
-                bad_start += 1
-            if not seq.endswith(trim_ends):
-                bad_end += 1
-            seq = seq[trim_left:-trim_right]
-            try:
-                counts[seq] += 1
-            except KeyError:
-                counts[seq] = 1
+            if seq.startswith(trim_starts):
+                good_start += 1
+                left_primers[seq[:trim_left]] += 1
+                seq = seq[trim_left:]
+            elif seq.startswith(trim_starts_1s):
+                fuzzy_start += 1
+                left_primers[seq[:trim_left]] += 1
+                seq = seq[trim_left:]
+            elif seq.startswith(trim_starts_1del):
+                del_start += 1
+                left_primers[seq[: trim_left - 1]] += 1
+                seq = seq[trim_left - 1 :]  # trim less
+            elif seq.startswith(trim_starts_1ins):
+                ins_start += 1
+                left_primers[seq[: trim_left - 1]] += 1
+                seq = seq[trim_left - 1 :]  # trim more
+            else:
+                left_primers[seq[:trim_left]] += 1
+                bad_start[seq[:trim_left]] += 1
+                seq = seq[trim_left:]  # TODO - drop it?
+            if seq.endswith(trim_ends):
+                good_end += 1
+                right_primers[seq[-trim_right:]] += 1
+                seq = seq[:-trim_right]
+            elif seq.endswith(trim_ends_1s):
+                fuzzy_end += 1
+                right_primers[seq[-trim_right:]] += 1
+                seq = seq[:-trim_right]
+            elif seq.endswith(trim_ends_1del):
+                del_end += 1
+                right_primers[seq[-trim_right + 1 :]] += 1
+                seq = seq[: -trim_right + 1]  # trim less
+            elif seq.endswith(trim_ends_1ins):
+                ins_end += 1
+                right_primers[seq[-trim_right - 1 :]] += 1
+                seq = seq[: -trim_right - 1]  # trim extra
+            else:
+                right_primers[seq[-trim_right:]] += 1
+                bad_end[seq[-trim_right:]] += 1
+                seq = seq[:-trim_right]  # TODO - drop it?
+            counts[seq] += 1
+
+    # Should we apply (the same) minimum abundance to the primer output?
+    if left_out:
+        a = save_nr_primers(
+            left_primers,
+            left_out,
+            trim_starts,
+            trim_starts_1s,
+            trim_starts_1del,
+            trim_starts_1ins,
+            min_abundance=0,
+        )
+        sys.stderr.write("%i unique left primer sequences\n" % a)
+        assert a == len(left_primers)
+    if right_out:
+        a = save_nr_primers(
+            right_primers,
+            right_out,
+            trim_ends,
+            trim_ends_1s,
+            trim_ends_1del,
+            trim_ends_1ins,
+            min_abundance=0,
+        )
+        sys.stderr.write("%i unique right primer sequences\n" % a)
+        assert a == len(right_primers)
+
     if debug:
         sys.stderr.write(
-            "DEBUG: %i unique from %i merged FASTQ reads, "
-            "%i and %i didn't have expected primer-based start and end\n"
-            % (len(counts), sum(counts.values()), bad_start, bad_end)
+            "DEBUG: %i unique, and %i too short, from %i merged FASTQ reads, "
+            "good/1bp-subst/1bp-del/1bp-ins/bad "
+            "starts %i/%i/%i/%i/%i, ends %i/%i/%i/%i/%i\n"
+            % (
+                len(counts),
+                too_short,
+                sum(counts.values()),
+                good_start,
+                fuzzy_start,
+                del_start,
+                ins_start,
+                sum(bad_start.values()),
+                good_end,
+                fuzzy_end,
+                del_end,
+                ins_end,
+                sum(bad_end.values()),
+            )
         )
     return (
         sum(counts.values()),
@@ -361,6 +530,12 @@ def main(
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+            if debug:
+                left_out = os.path.join(tmp, "left_primer.fasta")
+                right_out = os.path.join(tmp, "right_primer.fasta")
+            else:
+                left_out = None
+                right_out = None
             (
                 count,
                 uniq_count,
@@ -371,6 +546,8 @@ def main(
                 merged_fasta,
                 left_primer,
                 right_primer,
+                left_out,
+                right_out,
                 min_abundance=0 if control else min_abundance,
                 debug=debug,
             )
@@ -426,6 +603,9 @@ def main(
 
             # File done
             shutil.move(dedup, fasta_name)
+            if debug:
+                shutil.move(left_out, fasta_name[:-6] + ".left-primer.fasta")
+                shutil.move(right_out, fasta_name[:-6] + ".right-primer.fasta")
             if control:
                 sys.stderr.write(
                     "Wrote %s with %i unique control reads\n" % (stem, uniq_count)
