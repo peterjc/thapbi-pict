@@ -14,6 +14,7 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
+from .utils import expand_IUPAC_ambiguity_codes
 from .utils import md5seq
 from .utils import run
 
@@ -161,7 +162,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fastq_to_fasta(
-    input_fastq, output_fasta, min_abundance=0, trim_left=53, trim_right=20
+    input_fastq, output_fasta, left_primer, right_primer, min_abundance=0, debug=False
 ):
     """Trim and make non-redundant FASTA file from FASTQ inputs.
 
@@ -176,14 +177,31 @@ def make_nr_fastq_to_fasta(
     abundance of any one read (for use with controls for setting
     the threshold).
     """
+    bad_start = 0
+    bad_end = 0
+    trim_left = len(left_primer)
+    trim_right = len(right_primer)
+    trim_starts = tuple(expand_IUPAC_ambiguity_codes(left_primer))
+    trim_ends = tuple(expand_IUPAC_ambiguity_codes(right_primer))
     counts = dict()  # OrderedDict on older Python?
     with open(input_fastq) as handle:
         for _, seq, _ in FastqGeneralIterator(handle):
-            seq = seq.upper()[trim_left:-trim_right]
+            seq = seq.upper()
+            if not seq.startswith(trim_starts):
+                bad_start += 1
+            if not seq.endswith(trim_ends):
+                bad_end += 1
+            seq = seq[trim_left:-trim_right]
             try:
                 counts[seq] += 1
             except KeyError:
                 counts[seq] = 1
+    if debug:
+        sys.stderr.write(
+            "DEBUG: %i unique from %i merged FASTQ reads, "
+            "%i and %i didn't have expected primer-based start and end\n"
+            % (len(counts), sum(counts.values()), bad_start, bad_end)
+        )
     return (
         sum(counts.values()),
         len(counts),
@@ -239,7 +257,16 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
     return count, max_indiv_abundance, cropping_warning
 
 
-def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
+def main(
+    fastq,
+    controls,
+    out_dir,
+    left_primer,
+    right_primer,
+    min_abundance=100,
+    debug=False,
+    cpu=0,
+):
     """Implement the thapbi_pict prepare-reads command.
 
     If there are controls, they will be used to potentially increase
@@ -342,7 +369,10 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
             ) = make_nr_fastq_to_fasta(
                 merged_fastq,
                 merged_fasta,
+                left_primer,
+                right_primer,
                 min_abundance=0 if control else min_abundance,
+                debug=debug,
             )
             if control:
                 assert uniq_count == acc_uniq_count
