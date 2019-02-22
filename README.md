@@ -1,5 +1,5 @@
-[![THAPBI PICT TravisCI build status](https://api.travis-ci.org/peterjc/thapbi-pict.svg?branch=master)](https://travis-ci.org/peterjc/thapbi-pict/branches)
-[![THAPBI PICT CircleCI build status](https://circleci.com/gh/peterjc/thapbi-pict/tree/master.svg?style=svg)](https://circleci.com/gh/peterjc/thapbi-pict/tree/master)
+[![THAPBI PICT TravisCI build status](https://img.shields.io/travis/peterjc/thapbi-pict/master.svg?label=master&logo=travis)](https://travis-ci.org/peterjc/thapbi-pict/branches)
+[![THAPBI PICT CircleCI build status](https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=master&logo=CircleCI)](https://circleci.com/gh/peterjc/thapbi-pict/tree/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 # THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
