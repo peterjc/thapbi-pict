@@ -34,7 +34,9 @@ our Python dependencies.
 
 Once installed, you should be able to run the tool using:
 
-   thapbi_pict
+```bash
+$ thapbi_pict
+```
 
 This should automatically find the installed copy of the Python code.
 
