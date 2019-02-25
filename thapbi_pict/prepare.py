@@ -219,7 +219,6 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
                     sys.stderr.write(
                         "WARNING: %s has HMM cropping %i left, %i right "
                         "(on top of fixed trimming)\n"
-                        "giving %i, vs %i bp from fixed trimming\n"
                         % (title.split(None, 1)[0], left, right)
                     )
 
