@@ -11,6 +11,7 @@ import tempfile
 
 from collections import Counter
 
+from Bio.Seq import reverse_complement
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_ITS1
@@ -219,6 +220,10 @@ def make_nr_fastq_to_fasta(
 
     The FASTQ read names are ignored and treated as abundance one!
 
+    Expects to find the left-primer at the start of each merged read.
+    Expects to find the reverse complement of the right-primer at the
+    end of each read.
+
     Applies the specified fixed triming, then makes a non-redundant
     FASTA file with the sequences named MD5_abundance.
 
@@ -231,7 +236,7 @@ def make_nr_fastq_to_fasta(
     trim_left = len(left_primer)
     trim_right = len(right_primer)
     trim_starts = tuple(expand_IUPAC_ambiguity_codes(left_primer))
-    trim_ends = tuple(expand_IUPAC_ambiguity_codes(right_primer))
+    trim_ends = tuple(expand_IUPAC_ambiguity_codes(reverse_complement(right_primer)))
 
     trim_starts_1s = set()
     trim_starts_1del = set()
