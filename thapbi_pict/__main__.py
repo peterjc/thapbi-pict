@@ -493,9 +493,9 @@ comma.
         type=str,
         default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
         metavar="PRIMER",
-        help="Left primer sequence, expected to form start of merged "
+        help="Left primer sequence, expected to form the start of merged "
         "read pairs, and will be removed. This can be defined with IUPAC "
-        "ambiguity codes. Default 53bp left value "
+        "ambiguity codes. Default 53bp value "
         "GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA "
         "consists of 21bp primer GAAGGTGAAGTCGTAACAAGG followed by "
         "32bp near-static TTTCCGTAGGTGAACCTGCGGAAGGATCATTA from the "
@@ -505,12 +505,13 @@ comma.
         "-r",
         "--right",
         type=str,
-        default="GYRGGGACGAAAGTCYYTGC",
+        default="GCARRGACTTTCGTCCCYRC",
         metavar="PRIMER",
-        help="Right primer sequence, expected to form end of merged "
-        "read pairs, and will be removed. This can be defined with IUPAC "
-        "ambiguity codes, as in the default 20bp value using Y and R "
-        "characters, GYRGGGACGAAAGTCYYTGC.",
+        help="Right primer sequence, we expect to find its reverse "
+        "complement at the end of merged read pairs, and remove this. "
+        "Can be defined with IUPAC ambiguity codes, as in 20bp "
+        "default GCARRGACTTTCGTCCCYRC, meaning we look for the reverse "
+        "complement GYRGGGACGAAAGTCYYTGC.",
     )
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
