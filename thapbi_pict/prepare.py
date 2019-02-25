@@ -228,12 +228,6 @@ def make_nr_fastq_to_fasta(
     abundance of any one read (for use with controls for setting
     the threshold).
     """
-    too_short = 0
-    good_start = fuzzy_start = del_start = ins_start = 0
-    bad_start = Counter()
-    good_end = fuzzy_end = del_end = ins_end = 0
-    bad_end = Counter()
-
     trim_left = len(left_primer)
     trim_right = len(right_primer)
     trim_starts = tuple(expand_IUPAC_ambiguity_codes(left_primer))
@@ -261,66 +255,44 @@ def make_nr_fastq_to_fasta(
     trim_ends_1del = tuple(sorted(trim_ends_1del))
     trim_ends_1ins = tuple(sorted(trim_ends_1ins))
 
-    # if debug:
-    #    sys.stderr.write(
-    #        "DEBUG: Start primer len %i, %i forms, "
-    #        "%i with 1bp substitution, %i with 1bp deletion\n"
-    #        % (trim_left, len(trim_starts), len(trim_starts_1s), len(trim_starts_1del))
-    #    )
-    #    sys.stderr.write(
-    #        "DEBUG: End primer len %i, %i forms, "
-    #        "%i with 1bp substitution, %i with 1bp deletion\n"
-    #        % (trim_right, len(trim_ends), len(trim_ends_1s), len(trim_ends_1del))
-    #    )
-
     counts = Counter()
     left_primers = Counter()
     right_primers = Counter()
     with open(input_fastq) as handle:
         for _, seq, _ in FastqGeneralIterator(handle):
             if len(seq) < trim_left + trim_right:
-                too_short += 1
+                # Too short
                 continue
             seq = seq.upper()
             if seq.startswith(trim_starts):
-                good_start += 1
                 left_primers[seq[:trim_left]] += 1
                 seq = seq[trim_left:]
             elif seq.startswith(trim_starts_1s):
-                fuzzy_start += 1
                 left_primers[seq[:trim_left]] += 1
                 seq = seq[trim_left:]
             elif seq.startswith(trim_starts_1del):
-                del_start += 1
                 left_primers[seq[: trim_left - 1]] += 1
                 seq = seq[trim_left - 1 :]  # trim less
             elif seq.startswith(trim_starts_1ins):
-                ins_start += 1
                 left_primers[seq[: trim_left - 1]] += 1
                 seq = seq[trim_left - 1 :]  # trim more
             else:
                 left_primers[seq[:trim_left]] += 1
-                bad_start[seq[:trim_left]] += 1
                 seq = seq[trim_left:]  # TODO - drop it?
             if seq.endswith(trim_ends):
-                good_end += 1
                 right_primers[seq[-trim_right:]] += 1
                 seq = seq[:-trim_right]
             elif seq.endswith(trim_ends_1s):
-                fuzzy_end += 1
                 right_primers[seq[-trim_right:]] += 1
                 seq = seq[:-trim_right]
             elif seq.endswith(trim_ends_1del):
-                del_end += 1
                 right_primers[seq[-trim_right + 1 :]] += 1
                 seq = seq[: -trim_right + 1]  # trim less
             elif seq.endswith(trim_ends_1ins):
-                ins_end += 1
                 right_primers[seq[-trim_right - 1 :]] += 1
                 seq = seq[: -trim_right - 1]  # trim extra
             else:
                 right_primers[seq[-trim_right:]] += 1
-                bad_end[seq[-trim_right:]] += 1
                 seq = seq[:-trim_right]  # TODO - drop it?
             counts[seq] += 1
 
@@ -350,27 +322,6 @@ def make_nr_fastq_to_fasta(
         sys.stderr.write("%i unique right primer sequences\n" % a)
         assert a == len(right_primers)
 
-    if debug:
-        sys.stderr.write(
-            "DEBUG: %i unique, and %i too short, from %i merged FASTQ reads, "
-            "good/1bp-subst/1bp-del/1bp-ins/bad "
-            "starts %i/%i/%i/%i/%i, ends %i/%i/%i/%i/%i\n"
-            % (
-                len(counts),
-                too_short,
-                sum(counts.values()),
-                good_start,
-                fuzzy_start,
-                del_start,
-                ins_start,
-                sum(bad_start.values()),
-                good_end,
-                fuzzy_end,
-                del_end,
-                ins_end,
-                sum(bad_end.values()),
-            )
-        )
     return (
         sum(counts.values()),
         len(counts),
