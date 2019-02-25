@@ -144,6 +144,9 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
     Results are sorted by decreasing abundance then alphabetically by
     sequence.
+
+    Returns the number of sequences accepted (above any minimum
+    abundance specified).
     """
     accepted = 0
     values = sorted((-count, seq) for seq, count in counts.items())
@@ -154,7 +157,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
                 break
             out_handle.write(">%s_%i\n%s\n" % (md5seq(seq), -count, seq))
             accepted += 1
-    return len(counts), accepted  # number of unique seqs, accepted
+    return accepted
 
 
 def make_nr_fastq_to_fasta(
@@ -167,10 +170,11 @@ def make_nr_fastq_to_fasta(
     Applies the specified fixed triming, then makes a non-redundant
     FASTA file with the sequences named MD5_abundance.
 
-    Returns the number of unique ITS1 sequences (integer),
-    and the number of those which passed the minimum abundance
-    threshold, and the maximum abundance of any one read (for
-    use with controls for setting the threshold).
+    Returns the number of sequences before de-duplication (integer),
+    number of unique sequences (integer), and the number of those
+    which passed the minimum abundance threshold, and the maximum
+    abundance of any one read (for use with controls for setting
+    the threshold).
     """
     counts = dict()  # OrderedDict on older Python?
     with open(input_fastq) as handle:
@@ -180,8 +184,12 @@ def make_nr_fastq_to_fasta(
                 counts[seq] += 1
             except KeyError:
                 counts[seq] = 1
-    a, b = save_nr_fasta(counts, output_fasta, min_abundance)
-    return a, b, max(counts.values())
+    return (
+        sum(counts.values()),
+        len(counts),
+        save_nr_fasta(counts, output_fasta, min_abundance),
+        max(counts.values()),
+    )
 
 
 def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
@@ -326,16 +334,37 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-            count, _, _ = make_nr_fastq_to_fasta(
+            (
+                count,
+                uniq_count,
+                acc_uniq_count,
+                max_indiv_abundance,
+            ) = make_nr_fastq_to_fasta(
                 merged_fastq,
                 merged_fasta,
                 min_abundance=0 if control else min_abundance,
             )
-            if debug:
-                sys.stderr.write(
-                    "Merged paired FASTQ reads into %i unique trimmed sequences\n"
-                    % count
-                )
+            if control:
+                assert uniq_count == acc_uniq_count
+                if debug:
+                    sys.stderr.write(
+                        "Merged %i paired FASTQ reads into %i unique sequences "
+                        "(max abundance %i)\n"
+                        % (count, uniq_count, acc_uniq_count, max_indiv_abundance)
+                    )
+            else:
+                if debug:
+                    sys.stderr.write(
+                        "Merged %i paired FASTQ reads into %i unique sequences, "
+                        "%i above min abundance %i (max abundance %i)\n"
+                        % (
+                            count,
+                            uniq_count,
+                            acc_uniq_count,
+                            min_abundance,
+                            max_indiv_abundance,
+                        )
+                    )
 
             # Find the ITS1 region (if present) using hmmscan,
             dedup = os.path.join(tmp, "dedup_its1.fasta")
