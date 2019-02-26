@@ -142,45 +142,6 @@ def run_pear(trimmed_R1, trimmed_R2, output_prefix, debug=False, cpu=0):
     return run(cmd, debug=debug)
 
 
-def save_nr_primers(
-    counts,
-    output_fasta,
-    primer_perfect,
-    primer_1sub,
-    primer_1del,
-    primer_1ins,
-    min_abundance=0,
-):
-    """Save a dictionary of primer seqs as a FASTA file.
-
-    Results are sorted by decreasing abundance then alphabetically by
-    sequence.
-
-    Returns the number of sequences accepted (above any minimum
-    abundance specified).
-    """
-    accepted = 0
-    values = sorted((-count, seq) for seq, count in counts.items())
-    with open(output_fasta, "w") as out_handle:
-        for count, seq in values:
-            if -count < min_abundance:
-                # Sorted, so everything hereafter is too rare
-                break
-            if seq in primer_perfect:
-                msg = "matches"
-            elif seq in primer_1sub:
-                msg = "1bp substitution"
-            elif seq in primer_1del:
-                msg = "1bp deletion"
-            elif seq in primer_1ins:
-                msg = "1bp insert"
-            else:
-                msg = "no match"
-            out_handle.write(">%s_%i %s\n%s\n" % (md5seq(seq), -count, msg, seq))
-            accepted += 1
-    return accepted
-
-
 def save_nr_fasta(counts, output_fasta, min_abundance=0):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -207,14 +168,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fastq_to_fasta(
-    input_fastq,
-    output_fasta,
-    left_primer,
-    right_primer,
-    left_out,
-    right_out,
-    min_abundance=0,
-    debug=False,
+    input_fastq, output_fasta, left_primer, right_primer, min_abundance=0, debug=False
 ):
     """Trim and make non-redundant FASTA file from FASTQ inputs.
 
@@ -300,32 +254,6 @@ def make_nr_fastq_to_fasta(
                 right_primers[seq[-trim_right:]] += 1
                 seq = seq[:-trim_right]  # TODO - drop it?
             counts[seq] += 1
-
-    # Should we apply (the same) minimum abundance to the primer output?
-    if left_out:
-        a = save_nr_primers(
-            left_primers,
-            left_out,
-            trim_starts,
-            trim_starts_1s,
-            trim_starts_1del,
-            trim_starts_1ins,
-            min_abundance=0,
-        )
-        sys.stderr.write("%i unique left primer sequences\n" % a)
-        assert a == len(left_primers)
-    if right_out:
-        a = save_nr_primers(
-            right_primers,
-            right_out,
-            trim_ends,
-            trim_ends_1s,
-            trim_ends_1del,
-            trim_ends_1ins,
-            min_abundance=0,
-        )
-        sys.stderr.write("%i unique right primer sequences\n" % a)
-        assert a == len(right_primers)
 
     return (
         sum(counts.values()),
@@ -486,12 +414,6 @@ def main(
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-            if debug:
-                left_out = os.path.join(tmp, "left_primer.fasta")
-                right_out = os.path.join(tmp, "right_primer.fasta")
-            else:
-                left_out = None
-                right_out = None
             (
                 count,
                 uniq_count,
@@ -502,8 +424,6 @@ def main(
                 merged_fasta,
                 left_primer,
                 right_primer,
-                left_out,
-                right_out,
                 min_abundance=0 if control else min_abundance,
                 debug=debug,
             )
@@ -559,9 +479,6 @@ def main(
 
             # File done
             shutil.move(dedup, fasta_name)
-            if debug:
-                shutil.move(left_out, fasta_name[:-6] + ".left-primer.fasta")
-                shutil.move(right_out, fasta_name[:-6] + ".right-primer.fasta")
             if control:
                 sys.stderr.write(
                     "Wrote %s with %i unique control reads\n" % (stem, uniq_count)
