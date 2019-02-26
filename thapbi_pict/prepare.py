@@ -1,6 +1,6 @@
 """Prepare raw ITS1 sequencing reads (trimming, merging, etc).
 
-This implementes the ``thapbi_pict prepare-reads ...`` command.
+This implements the ``thapbi_pict prepare-reads ...`` command.
 """
 
 import os
