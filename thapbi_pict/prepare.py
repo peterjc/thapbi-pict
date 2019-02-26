@@ -168,7 +168,13 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fastq_to_fasta(
-    input_fastq, output_fasta, left_primer, right_primer, min_abundance=0, debug=False
+    input_fastq,
+    output_fasta,
+    bad_fasta,
+    left_primer,
+    right_primer,
+    min_abundance=0,
+    debug=False,
 ):
     """Trim and make non-redundant FASTA file from FASTQ inputs.
 
@@ -178,14 +184,18 @@ def make_nr_fastq_to_fasta(
     Expects to find the reverse complement of the right-primer at the
     end of each read.
 
-    Applies the specified fixed triming, then makes a non-redundant
-    FASTA file with the sequences named MD5_abundance.
+    Looks for the primer pair, and if found removes them and saves
+    the trimmed sequences in a non-redundant FASTA file with the
+    trimmed sequences named MD5_abundance.
 
-    Returns the number of sequences before de-duplication (integer),
-    number of unique sequences (integer), and the number of those
-    which passed the minimum abundance threshold, and the maximum
-    abundance of any one read (for use with controls for setting
-    the threshold).
+    If either primer cannot be found, the sequence is excluded from
+    the main output, and instead recorded in the bad sequence output.
+
+    Returns the number of accepted sequences before de-duplication
+    (integer), number of unique accepted sequences (integer), and
+    the number of those which passed the minimum abundance threshold,
+    and the maximum abundance of any one read (for use with controls
+    for setting the threshold).
     """
     trim_left = len(left_primer)
     trim_right = len(right_primer)
@@ -215,14 +225,15 @@ def make_nr_fastq_to_fasta(
     trim_ends_1ins = tuple(sorted(trim_ends_1ins))
 
     counts = Counter()
+    bad = Counter()
     left_primers = Counter()
     right_primers = Counter()
     with open(input_fastq) as handle:
-        for _, seq, _ in FastqGeneralIterator(handle):
-            if len(seq) < trim_left + trim_right:
+        for _, sequence, _ in FastqGeneralIterator(handle):
+            if len(sequence) < trim_left + trim_right:
                 # Too short
                 continue
-            seq = seq.upper()
+            seq = sequence.upper()
             if seq.startswith(trim_starts):
                 left_primers[seq[:trim_left]] += 1
                 seq = seq[trim_left:]
@@ -236,8 +247,8 @@ def make_nr_fastq_to_fasta(
                 left_primers[seq[: trim_left - 1]] += 1
                 seq = seq[trim_left - 1 :]  # trim more
             else:
-                left_primers[seq[:trim_left]] += 1
-                seq = seq[trim_left:]  # TODO - drop it?
+                bad[sequence] += 1
+                continue
             if seq.endswith(trim_ends):
                 right_primers[seq[-trim_right:]] += 1
                 seq = seq[:-trim_right]
@@ -251,9 +262,16 @@ def make_nr_fastq_to_fasta(
                 right_primers[seq[-trim_right - 1 :]] += 1
                 seq = seq[: -trim_right - 1]  # trim extra
             else:
-                right_primers[seq[-trim_right:]] += 1
-                seq = seq[:-trim_right]  # TODO - drop it?
+                bad[sequence] += 1
+                continue
             counts[seq] += 1
+
+    save_nr_fasta(bad, bad_fasta)
+    if bad:
+        sys.stderr.write(
+            "WARNING: %i sequences (%i unique) did not have both primers, "
+            "max abundance %i\n" % (sum(bad.values()), len(bad), max(bad.values()))
+        )
 
     return (
         sum(counts.values()),
@@ -414,6 +432,7 @@ def main(
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+            bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
             (
                 count,
                 uniq_count,
@@ -422,6 +441,7 @@ def main(
             ) = make_nr_fastq_to_fasta(
                 merged_fastq,
                 merged_fasta,
+                bad_primer_fasta,
                 left_primer,
                 right_primer,
                 min_abundance=0 if control else min_abundance,
