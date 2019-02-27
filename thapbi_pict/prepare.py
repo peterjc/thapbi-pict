@@ -269,8 +269,9 @@ def make_nr_fastq_to_fasta(
     save_nr_fasta(bad, bad_fasta)
     if bad:
         sys.stderr.write(
-            "WARNING: %i sequences (%i unique) did not have both primers, "
-            "max abundance %i\n" % (sum(bad.values()), len(bad), max(bad.values()))
+            "WARNING: %s%i sequences (%i unique) did not have both primers, "
+            "max abundance %i\n"
+            % ("" if counts else "ALL ", sum(bad.values()), len(bad), max(bad.values()))
         )
 
     return (
@@ -479,6 +480,17 @@ def main(
                             max_indiv_abundance,
                         )
                     )
+
+            if not acc_uniq_count:
+                sys.stderr.write(
+                    "%s has no sequences above minimum abundance threshold %i\n"
+                    % (stem, min_abundance)
+                )
+                with open(fasta_name, "w"):
+                    # Write empty file
+                    pass
+                shutil.move(bad_primer_fasta, failed_primer_name)
+                continue
 
             # Find the ITS1 region (if present) using hmmscan,
             dedup = os.path.join(tmp, "dedup_its1.fasta")
