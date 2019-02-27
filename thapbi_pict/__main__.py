@@ -491,15 +491,12 @@ comma.
         "-l",
         "--left",
         type=str,
-        default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
+        default="GAAGGTGAAGTCGTAACAAGG",
         metavar="PRIMER",
-        help="Left primer sequence, expected to form the start of merged "
-        "read pairs, and will be removed. This can be defined with IUPAC "
-        "ambiguity codes. Default 53bp value "
-        "GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA "
-        "consists of 21bp primer GAAGGTGAAGTCGTAACAAGG followed by "
-        "32bp near-static TTTCCGTAGGTGAACCTGCGGAAGGATCATTA from the "
-        "18S gene (which we remove).",
+        help="Left primer sequence, finds and removes from start of "
+        "merged read pairs. Can use IUPAC ambiguity codes. "
+        "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
+        "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
     )
     parser_prepare_reads.add_argument(
         "-r",
@@ -507,11 +504,12 @@ comma.
         type=str,
         default="GCARRGACTTTCGTCCCYRC",
         metavar="PRIMER",
-        help="Right primer sequence, we expect to find its reverse "
-        "complement at the end of merged read pairs, and remove this. "
-        "Can be defined with IUPAC ambiguity codes, as in 20bp "
-        "default GCARRGACTTTCGTCCCYRC, meaning we look for the reverse "
-        "complement GYRGGGACGAAAGTCYYTGC.",
+        help="Right primer sequence, finds and removes reverse "
+        "complement from end of merged read pairs. Can use "
+        "IUPAC ambiguity codes. Default 20bp 5.8S-1R primer "
+        "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
+        "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
+        "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
     )
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
