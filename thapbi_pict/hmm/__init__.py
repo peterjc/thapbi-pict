@@ -59,7 +59,7 @@ def run_and_parse_hmmscan(
     cmd += ["-o", hmm_out, hmm_file, fasta_input_file]
     # cmd = "'%s' --noali -o '%s' '%s' '%s'" % (hmmscan, hmm_out, hmm_file,
     #                                           fasta_input_file)
-    run(cmd, debug=debug, attempts=8)
+    run(cmd, debug=debug, attempts=10)
 
     if debug:
         sys.stderr.write("DEBUG: hmmscan finished, about to parse the output\n")
