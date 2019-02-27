@@ -291,6 +291,8 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
 
     Returns the number of unique ITS1 sequences (integer),
     """
+    exp_left = 32
+    exp_right = 0
     margin = 10
     cropping_warning = 0
     max_indiv_abundance = 0
@@ -310,14 +312,22 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
 
             left = full_seq.index(hmm_seq)
             right = len(full_seq) - left - len(hmm_seq)
-            if margin < left or margin < right:
+            if not (
+                exp_left - margin < left < exp_left + margin
+                and exp_right - margin < right < exp_right + margin
+            ):
                 cropping_warning += 1
-                if debug:
-                    sys.stderr.write(
-                        "WARNING: %s has HMM cropping %i left, %i right "
-                        "(on top of fixed trimming)\n"
-                        % (title.split(None, 1)[0], left, right)
+                sys.stderr.write(
+                    "WARNING: %r has HMM cropping %i left, %i right, "
+                    "giving %i, vs %i bp from fixed trimming\n"
+                    % (
+                        title.split(None, 1)[0],
+                        left,
+                        right,
+                        len(hmm_seq),
+                        len(full_seq) - exp_left - exp_right,
                     )
+                )
 
     if cropping_warning:
         sys.stderr.write(

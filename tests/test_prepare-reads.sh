@@ -12,7 +12,7 @@ set -o pipefail
 # Try a real example
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 0
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "867" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "919" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5
