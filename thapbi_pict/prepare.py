@@ -390,8 +390,9 @@ def main(
         if out_dir and out_dir != "-":
             folder = out_dir
         fasta_name = os.path.join(folder, "%s.fasta" % stem)
+        failed_primer_name = os.path.join(folder, "%s.failed-primers.fasta" % stem)
 
-        if os.path.isfile(fasta_name):
+        if os.path.isfile(fasta_name) and os.path.isfile(failed_primer_name):
             if control:
                 (uniq_count, max_indiv_abundance) = abundance_values_in_fasta(
                     fasta_name
@@ -509,6 +510,7 @@ def main(
 
             # File done
             shutil.move(dedup, fasta_name)
+            shutil.move(bad_primer_fasta, failed_primer_name)
             if control:
                 sys.stderr.write(
                     "Wrote %s with %i unique control reads\n" % (stem, uniq_count)
