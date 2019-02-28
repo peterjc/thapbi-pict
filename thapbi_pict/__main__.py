@@ -492,9 +492,9 @@ comma.
         "-p",
         "--primers",
         type=str,
-        default="-",
+        default="",
         metavar="DIRNAME",
-        help="Where write output optional primer FASTA files.",
+        help="Where to write optional failed primer FASTA files.",
     )
     parser_prepare_reads.add_argument(
         "-l",
