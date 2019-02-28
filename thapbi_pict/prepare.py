@@ -465,7 +465,7 @@ def main(
                     sys.stderr.write(
                         "Merged %i paired FASTQ reads into %i unique sequences "
                         "(max abundance %i)\n"
-                        % (count, uniq_count, acc_uniq_count, max_indiv_abundance)
+                        % (count, uniq_count, max_indiv_abundance)
                     )
             else:
                 if debug:
