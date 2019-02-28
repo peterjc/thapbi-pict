@@ -118,6 +118,7 @@ def prepare_reads(args=None):
         fastq=args.fastq,
         controls=args.controls,
         out_dir=args.output,
+        primer_dir=args.primers,
         left_primer=args.left,
         right_primer=args.right,
         min_abundance=args.abundance,
@@ -486,6 +487,14 @@ comma.
         help="Mininum abundance to apply to final candidate ITS1 "
         "sequences in the output FASTA file (default 100). "
         "This may be increased based on any FASTQ controls.",
+    )
+    parser_prepare_reads.add_argument(
+        "-p",
+        "--primers",
+        type=str,
+        default="-",
+        metavar="DIRNAME",
+        help="Where write output optional primer FASTA files.",
     )
     parser_prepare_reads.add_argument(
         "-l",

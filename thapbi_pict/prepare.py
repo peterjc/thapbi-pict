@@ -266,13 +266,19 @@ def make_nr_fastq_to_fasta(
                 continue
             counts[seq] += 1
 
-    save_nr_fasta(bad, bad_fasta)
     if bad:
         sys.stderr.write(
             "WARNING: %s%i sequences (%i unique) did not have both primers, "
             "max abundance %i\n"
             % ("" if counts else "ALL ", sum(bad.values()), len(bad), max(bad.values()))
         )
+    elif debug:
+        sys.stderr.write("DEBUG: Found both primers in all the sequences.\n")
+    if bad_fasta:
+        # Avoid really massive file with e.g. Undetermined barcode file
+        save_nr_fasta(bad, bad_fasta)
+        if debug:
+            sys.stderr.write("DEBUG: Wrote %s\n" % bad_fasta)
 
     return (
         sum(counts.values()),
@@ -343,6 +349,7 @@ def main(
     fastq,
     controls,
     out_dir,
+    primer_dir,
     left_primer,
     right_primer,
     min_abundance=100,
@@ -391,9 +398,16 @@ def main(
         if out_dir and out_dir != "-":
             folder = out_dir
         fasta_name = os.path.join(folder, "%s.fasta" % stem)
-        failed_primer_name = os.path.join(folder, "%s.failed-primers.fasta" % stem)
+        if primer_dir:
+            failed_primer_name = os.path.join(
+                primer_dir, "%s.failed-primers.fasta" % stem
+            )
+        else:
+            failed_primer_name = None
 
-        if os.path.isfile(fasta_name) and os.path.isfile(failed_primer_name):
+        if os.path.isfile(fasta_name) and (
+            failed_primer_name is None or os.path.isfile(failed_primer_name)
+        ):
             if control:
                 (uniq_count, max_indiv_abundance) = abundance_values_in_fasta(
                     fasta_name
@@ -444,7 +458,10 @@ def main(
                 sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
             merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-            bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
+            if failed_primer_name:
+                bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
+            else:
+                bad_primer_fasta = None
             (
                 count,
                 uniq_count,
@@ -489,7 +506,8 @@ def main(
                 with open(fasta_name, "w"):
                     # Write empty file
                     pass
-                shutil.move(bad_primer_fasta, failed_primer_name)
+                if failed_primer_name:
+                    shutil.move(bad_primer_fasta, failed_primer_name)
                 continue
 
             # Find the ITS1 region (if present) using hmmscan,
@@ -522,7 +540,8 @@ def main(
 
             # File done
             shutil.move(dedup, fasta_name)
-            shutil.move(bad_primer_fasta, failed_primer_name)
+            if failed_primer_name:
+                shutil.move(bad_primer_fasta, failed_primer_name)
             if control:
                 sys.stderr.write(
                     "Wrote %s with %i unique control reads\n" % (stem, uniq_count)
