@@ -554,7 +554,7 @@ method_setup = {
 }
 
 
-def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
+def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
     """Implement the thapbi_pict classify command."""
     assert isinstance(fasta, list)
 
@@ -615,8 +615,15 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
     if debug:
         sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
 
-    # Context manager should remove the temp dir:
-    with tempfile.TemporaryDirectory() as shared_tmp:
+    if tmp_dir:
+        # Up to the user to remove the files
+        tmp_obj = None
+        shared_tmp = tmp_dir
+    else:
+        tmp_obj = tempfile.TemporaryDirectory()
+        shared_tmp = tmp_obj.name
+
+    if True:
         if debug:
             sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
         if setup_fn:
@@ -649,8 +656,8 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
             if debug:
                 sys.stderr.write("DEBUG: Output %s\n" % output_name)
 
-            # Context manager should remove the temp dir:
-            with tempfile.TemporaryDirectory() as tmp:
+            # Context manager should remove this temp dir:
+            with tempfile.TemporaryDirectory(dir=shared_tmp) as tmp:
                 if debug:
                     sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
                 # Using same file names, but in tmp folder:
@@ -689,6 +696,13 @@ def main(fasta, db_url, method, out_dir, debug=False, cpu=0):
                     pred_handle.close()
                     # Move our temp file into position...
                     shutil.move(tmp_pred, output_name)
+
+    if tmp_dir:
+        sys.stderr.write(
+            "WARNING: Please remove temporary files written to %s\n" % tmp_dir
+        )
+    else:
+        tmp_obj.cleanup()
 
     sys.stderr.write(
         "%s classifier assigned species/genus to %i of %i sequences from %i files\n"

@@ -133,11 +133,14 @@ def classify(args=None):
 
     if args.output:
         check_output_directory(args.output)
+    if args.temp:
+        check_output_directory(args.temp)
     return main(
         fasta=args.fasta,
         db_url=expand_database_argument(args.database, exist=True),
         method=args.method,
         out_dir=args.output,
+        tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
     )
@@ -570,6 +573,15 @@ comma.
         metavar="DIRNAME",
         help="Directory to write output reports to, default (empty "
         "string) is next to each input file. Use '-' for stdout.",
+    )
+    parser_classify.add_argument(
+        "-t",
+        "--temp",
+        type=str,
+        required=False,
+        metavar="DIRNAME",
+        help="Debug option. Specify an (ideally empty) directory to "
+        "use for temporary files, which will not be deleted.",
     )
     parser_classify.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
