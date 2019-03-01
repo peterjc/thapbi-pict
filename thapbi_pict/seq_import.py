@@ -21,6 +21,7 @@ import sys
 from .db_import import import_fasta_file
 from .utils import abundance_from_read_name
 from .utils import find_paired_files
+from .utils import parse_species_tsv
 
 
 def main(
@@ -48,16 +49,11 @@ def main(
         if debug:
             sys.stderr.write("DEBUG: Loading meta-data from %s\n" % tsv_file)
         meta_data = dict()
-        with open(tsv_file) as handle:
-            for line in handle:
-                try:
-                    idn, taxid, genus, species, clade, etc = line.split("\t", 5)
-                except ValueError:
-                    sys.exit("Problem with line in %s: %r\n" % (tsv_file, line))
-                if idn in meta_data:
-                    sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
-                genus_species = genus + " " + species if species else genus
-                meta_data[idn] = (int(taxid), clade, genus_species, "")
+        # Apply minimum abundance threshold during FASTA loading
+        for idn, taxid, genus_species in parse_species_tsv(tsv_file):
+            if idn in meta_data:
+                sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
+            meta_data[idn] = (int(taxid), "", genus_species, "")
 
         if not meta_data:
             sys.stderr.write(
