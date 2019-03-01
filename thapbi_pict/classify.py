@@ -418,8 +418,9 @@ def method_swarm_core(
     """Classify using SWARM.
 
     Uses the previously generated dump of the database to a
-    swarm-ready FASTA file, and the prepared non-redundant input
-    FASTA to input to swarm.
+    swarm-ready FASTA file, and the ITS1 subsequences found
+    via HMM from the prepared non-redundant input FASTA, as
+    input to swarm.
 
     Uses the database sequences to assign species to clusters,
     and thus input sequences within a cluster to that species.
@@ -430,14 +431,23 @@ def method_swarm_core(
     like the 'identity' classifier with the 'swarm' classifier
     as a fallback.
     """
-    if identity:
-        seq_dict = SeqIO.index(fasta_file, "fasta")
-
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
         sys.exit("ERROR: Missing generated file %s\n" % db_fasta)
+
+    # Trim down the sequences to the same HMM matched subsequence
+    # used in the DB entries
+    its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
+    with open(its_fasta, "w") as handle:
+        for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
+            # Note leaving the MD5 based name as is (MD5 of full seq)
+            handle.write(">%s\n%s\n" % (title, seq))
+
+    if identity:
+        seq_dict = SeqIO.index(its_fasta, "fasta")
+
     swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
-    run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
+    run_swarm([its_fasta, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
 
     if not os.path.isfile(swarm_clusters):
         sys.exit("Swarm did not produce expected output file %s\n" % swarm_clusters)
