@@ -262,6 +262,11 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
 
     assert isinstance(fastq, list)
 
+    # Will keep control_min_abundance fixed,
+    # will increase min_abundance using max from the controls
+    control_min_abundance = min_abundance
+    sample_min_abundance = min_abundance
+
     if not controls:
         control_file_pairs = []
     else:
@@ -302,16 +307,18 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                 )
                 # TODO - Refactor this duplicated logging?
                 sys.stderr.write(
-                    "Control %s had %i unique ITS1 sequences, "
-                    "%i of most abundant, " % (stem, uniq_count, max_indiv_abundance)
+                    "Control %s had %i unique ITS1 sequences "
+                    "over control abundance threshold %i (max abundance %i), "
+                    % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
                 )
                 if min_abundance < max_indiv_abundance:
                     sys.stderr.write(
-                        "increasing abundance threshold from %i\n" % min_abundance
+                        "increasing sample abundance threshold from %i\n"
+                        % min_abundance
                     )
                 else:
                     sys.stderr.write(
-                        "keeping abundance threshold at %i\n" % min_abundance
+                        "keeping sample abundance threshold at %i\n" % min_abundance
                     )
                 min_abundance = max(min_abundance, max_indiv_abundance)
                 continue
@@ -321,7 +328,12 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                 )
                 continue
 
-        sys.stderr.write("Starting to prepare %s\n" % fasta_name)
+        min_abundance = control_min_abundance if control else sample_min_abundance
+
+        sys.stderr.write(
+            "Starting to prepare %s %s (min abundance set to %i)\n"
+            % ("control" if control else "sample", fasta_name, min_abundance)
+        )
         sys.stdout.flush()
         sys.stderr.flush()
 
@@ -361,47 +373,35 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
             # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
             uniq_count, acc_uniq_count, max_indiv_abundance = make_nr_its1(
-                merged_fasta, dedup, stem, 0 if control else min_abundance, debug
+                merged_fasta, dedup, stem, min_abundance, debug
             )
-            if control:
-                assert uniq_count == acc_uniq_count
-                sys.stderr.write(
-                    "Control %s has %i unique ITS1 sequences, "
-                    "%i of most abundant, " % (stem, uniq_count, max_indiv_abundance)
-                )
-                if min_abundance < max_indiv_abundance:
-                    sys.stderr.write(
-                        "increasing abundance threshold from %i\n" % min_abundance
-                    )
-                else:
-                    sys.stderr.write(
-                        "keeping abundance threshold at %i\n" % min_abundance
-                    )
-                min_abundance = max(min_abundance, max_indiv_abundance)
-            elif debug:
-                sys.stderr.write(
-                    "Cropped %s down to %i unique ITS1 sequences, "
-                    "%i of which passed abundance threshold %i, "
-                    "with top abundance %i\n"
-                    % (
-                        stem,
-                        uniq_count,
-                        acc_uniq_count,
-                        min_abundance,
-                        max_indiv_abundance,
-                    )
-                )
 
             # File done
             shutil.move(dedup, fasta_name)
+
+            # Update threshold and logging
             if control:
                 sys.stderr.write(
-                    "Wrote %s with %i unique control reads\n" % (stem, acc_uniq_count)
+                    "Control %s has %i unique ITS1 sequences "
+                    "over control abundance threshold %i (max abundance %i), "
+                    % (stem, acc_uniq_count, control_min_abundance, max_indiv_abundance)
                 )
+                if sample_min_abundance < max_indiv_abundance:
+                    sys.stderr.write(
+                        "increasing sample abundance threshold from %i\n"
+                        % sample_min_abundance
+                    )
+                else:
+                    sys.stderr.write(
+                        "keeping sample abundance threshold at %i\n"
+                        % sample_min_abundance
+                    )
+                sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
             else:
                 sys.stderr.write(
-                    "Wrote %s with %i unique reads over abundance %i\n"
-                    % (stem, acc_uniq_count, min_abundance)
+                    "Wrote %s with %i unique sequences "
+                    "over sample abundance theshold %i (max abundance %i)\n"
+                    % (stem, acc_uniq_count, sample_min_abundance, max_indiv_abundance)
                 )
 
     if hmm_cropping_warning:

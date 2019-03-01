@@ -29,7 +29,7 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/MOCK_CONTROL.fasta
 # Starting low threshold, should be increased to 19, so get new output count...
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5 -c $TMP/MOCK_CONTROL_R?.fastq
-if [ `grep -c "^>" $TMP/MOCK_CONTROL.fasta` -ne "16" ]; then echo "Wrong FASTA control output count"; false; fi
+if [ `grep -c "^>" $TMP/MOCK_CONTROL.fasta` -ne "1" ]; then echo "Wrong FASTA control output count"; false; fi
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "9" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
