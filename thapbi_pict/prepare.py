@@ -353,6 +353,7 @@ def main(
     left_primer,
     right_primer,
     min_abundance=100,
+    tmp_dir=None,
     debug=False,
     cpu=0,
 ):
@@ -394,6 +395,17 @@ def main(
             "WARNING: %i control FASTQ pairs, no non-control reads!\n"
             % len(control_file_pairs)
         )
+
+    if tmp_dir:
+        # Up to the user to remove the files
+        tmp_obj = None
+        shared_tmp = tmp_dir
+    else:
+        tmp_obj = tempfile.TemporaryDirectory()
+        shared_tmp = tmp_obj.name
+
+    if debug:
+        sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
 
     for control, stem, raw_R1, raw_R2 in file_pairs:
         sys.stdout.flush()
@@ -450,8 +462,13 @@ def main(
         sys.stdout.flush()
         sys.stderr.flush()
 
-        # Context manager should remove the temp dir:
-        with tempfile.TemporaryDirectory() as tmp:
+        tmp = os.path.join(shared_tmp, stem)
+        if not os.path.isdir(tmp):
+            # If using tempfile.TemporaryDirectory() for shared_tmp
+            # this will be deleted automatically, otherwise user must:
+            os.mkdir(tmp)
+
+        if True:
             if debug:
                 sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
 
@@ -557,6 +574,13 @@ def main(
                     "over sample abundance theshold %i (max abundance %i)\n"
                     % (stem, uniq_count, sample_min_abundance, max_indiv_abundance)
                 )
+
+    if tmp_dir:
+        sys.stderr.write(
+            "WARNING: Please remove temporary files written to %s\n" % tmp_dir
+        )
+    else:
+        tmp_obj.cleanup()
 
     if hmm_cropping_warning:
         sys.stderr.write(
