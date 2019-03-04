@@ -56,7 +56,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
                     _, _, expt_sp_genus, _ = line.split("\t", 3)
         assert expt_sp_genus, "Didn't find expected wildcard species line"
         for pred in parse_species_tsv(predicted_file, min_abundance):
-            counter[expt_sp_genus, pred[0]] += 1
+            counter[expt_sp_genus, pred[2]] += 1
     return counter
 
 
