@@ -468,112 +468,105 @@ def main(
             # this will be deleted automatically, otherwise user must:
             os.mkdir(tmp)
 
-        if True:
-            if debug:
-                sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+        if debug:
+            sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
 
-            # trimmomatic
-            trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
-            trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-            run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
-            for _ in (trim_R1, trim_R2):
-                if not os.path.isfile(_):
-                    sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
+        # trimmomatic
+        trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
+        trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
+        run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
+        for _ in (trim_R1, trim_R2):
+            if not os.path.isfile(_):
+                sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
 
-            # pear
-            pear_prefix = os.path.join(tmp, "pear")
-            merged_fastq = os.path.join(tmp, "pear.assembled.fastq")
-            run_pear(trim_R1, trim_R2, pear_prefix, debug=debug, cpu=cpu)
-            if not os.path.isfile(merged_fastq):
-                sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
+        # pear
+        pear_prefix = os.path.join(tmp, "pear")
+        merged_fastq = os.path.join(tmp, "pear.assembled.fastq")
+        run_pear(trim_R1, trim_R2, pear_prefix, debug=debug, cpu=cpu)
+        if not os.path.isfile(merged_fastq):
+            sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
-            merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-            if failed_primer_name:
-                bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
-            else:
-                bad_primer_fasta = None
-            (
-                count,
-                uniq_count,
-                acc_uniq_count,
-                max_indiv_abundance,
-            ) = make_nr_fastq_to_fasta(
-                merged_fastq,
-                merged_fasta,
-                bad_primer_fasta,
-                left_primer,
-                right_primer,
-                min_abundance=min_abundance,
-                debug=debug,
+        merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+        if failed_primer_name:
+            bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
+        else:
+            bad_primer_fasta = None
+        (
+            count,
+            uniq_count,
+            acc_uniq_count,
+            max_indiv_abundance,
+        ) = make_nr_fastq_to_fasta(
+            merged_fastq,
+            merged_fasta,
+            bad_primer_fasta,
+            left_primer,
+            right_primer,
+            min_abundance=min_abundance,
+            debug=debug,
+        )
+        if not acc_uniq_count:
+            sys.stderr.write(
+                "%s had %i unique sequences, "
+                "but none above %s minimum abundance threshold %i\n"
+                % (stem, uniq_count, "control" if control else "sample", min_abundance)
             )
-            if not acc_uniq_count:
-                sys.stderr.write(
-                    "%s had %i unique sequences, "
-                    "but none above %s minimum abundance threshold %i\n"
-                    % (
-                        stem,
-                        uniq_count,
-                        "control" if control else "sample",
-                        min_abundance,
-                    )
-                )
-                with open(fasta_name, "w"):
-                    # Write empty file
-                    pass
-                if failed_primer_name:
-                    shutil.move(bad_primer_fasta, failed_primer_name)
-                continue
-            if debug:
-                sys.stderr.write(
-                    "Merged %s %i paired FASTQ reads into %i unique sequences, "
-                    "%i above %s min abundance %i (max abundance %i)\n"
-                    % (
-                        stem,
-                        count,
-                        uniq_count,
-                        acc_uniq_count,
-                        "control" if control else "sample",
-                        min_abundance,
-                        max_indiv_abundance,
-                    )
-                )
-
-            # Determine if ITS1 region is present using hmmscan,
-            dedup = os.path.join(tmp, "dedup_its1.fasta")
-            uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-                merged_fasta, dedup, stem, debug=debug
-            )
-            hmm_cropping_warning += cropping
-
-            # File done
-            shutil.move(dedup, fasta_name)
+            with open(fasta_name, "w"):
+                # Write empty file
+                pass
             if failed_primer_name:
                 shutil.move(bad_primer_fasta, failed_primer_name)
-
-            # Update threshold and logging
-            if control:
-                sys.stderr.write(
-                    "Control %s has %i unique ITS1 sequences "
-                    "over control abundance threshold %i (max abundance %i), "
-                    % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
+            continue
+        if debug:
+            sys.stderr.write(
+                "Merged %s %i paired FASTQ reads into %i unique sequences, "
+                "%i above %s min abundance %i (max abundance %i)\n"
+                % (
+                    stem,
+                    count,
+                    uniq_count,
+                    acc_uniq_count,
+                    "control" if control else "sample",
+                    min_abundance,
+                    max_indiv_abundance,
                 )
-                if sample_min_abundance < max_indiv_abundance:
-                    sys.stderr.write(
-                        "increasing sample abundance threshold from %i\n"
-                        % sample_min_abundance
-                    )
-                else:
-                    sys.stderr.write(
-                        "keeping sample abundance threshold at %i\n"
-                        % sample_min_abundance
-                    )
-                sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
+            )
+
+        # Determine if ITS1 region is present using hmmscan,
+        dedup = os.path.join(tmp, "dedup_its1.fasta")
+        uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
+            merged_fasta, dedup, stem, debug=debug
+        )
+        hmm_cropping_warning += cropping
+
+        # File done
+        shutil.move(dedup, fasta_name)
+        if failed_primer_name:
+            shutil.move(bad_primer_fasta, failed_primer_name)
+
+        # Update threshold and logging
+        if control:
+            sys.stderr.write(
+                "Control %s has %i unique ITS1 sequences "
+                "over control abundance threshold %i (max abundance %i), "
+                % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
+            )
+            if sample_min_abundance < max_indiv_abundance:
+                sys.stderr.write(
+                    "increasing sample abundance threshold from %i\n"
+                    % sample_min_abundance
+                )
             else:
                 sys.stderr.write(
-                    "Wrote %s with %i unique sequences "
-                    "over sample abundance theshold %i (max abundance %i)\n"
-                    % (stem, uniq_count, sample_min_abundance, max_indiv_abundance)
+                    "keeping sample abundance threshold at %i\n" % sample_min_abundance
                 )
+            sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
+        else:
+            sys.stderr.write(
+                "Wrote %s with %i unique sequences "
+                "over sample abundance theshold %i (max abundance %i)\n"
+                % (stem, uniq_count, sample_min_abundance, max_indiv_abundance)
+            )
 
     if tmp_dir:
         sys.stderr.write(
