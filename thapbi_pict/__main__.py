@@ -119,6 +119,7 @@ def prepare_reads(args=None):
         controls=args.controls,
         out_dir=args.output,
         min_abundance=args.abundance,
+        tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
     )
@@ -484,6 +485,15 @@ comma.
         help="Mininum abundance to apply to final candidate ITS1 "
         "sequences in the output FASTA file (default 100). "
         "This may be increased based on any FASTQ controls.",
+    )
+    parser_prepare_reads.add_argument(
+        "-t",
+        "--temp",
+        type=str,
+        required=False,
+        metavar="DIRNAME",
+        help="Debug option. Specify an (ideally empty) directory to "
+        "use for temporary files, which will not be deleted.",
     )
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
