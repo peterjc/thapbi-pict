@@ -246,7 +246,7 @@ def import_fasta_file(
     good_entries = 0
     idn_set = set()
 
-    for title, seq, its1_seq in filter_for_ITS1(fasta_file):
+    for title, seq, its1_seq in filter_for_ITS1(fasta_file, cache_dir=None):
         seq_count += 1
         if title.startswith("Control_"):
             if debug:

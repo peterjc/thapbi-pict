@@ -288,7 +288,7 @@ def make_nr_fastq_to_fasta(
     )
 
 
-def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
+def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug=False):
     """Filter for ITS1 regions.
 
     Assumes you have already applied trimming (and are not using
@@ -307,7 +307,9 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, debug=False):
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_seq in filter_for_ITS1(input_fasta, debug=debug):
+        for title, full_seq, hmm_seq in filter_for_ITS1(
+            input_fasta, shared_tmp_dir, debug=debug
+        ):
             if not hmm_seq:
                 # Using HMM match as a presense/absense filter
                 continue
@@ -535,7 +537,7 @@ def main(
         # Determine if ITS1 region is present using hmmscan,
         dedup = os.path.join(tmp, "dedup_its1.fasta")
         uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-            merged_fasta, dedup, stem, debug=debug
+            merged_fasta, dedup, stem, shared_tmp, debug=debug
         )
         hmm_cropping_warning += cropping
 

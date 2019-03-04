@@ -75,7 +75,30 @@ def run_and_parse_hmmscan(
     shutil.rmtree(tmp_dir)
 
 
-def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
+def hmm_cache(hmm_file, cache_dir, debug=False):
+    """Cache HMM files for calling hmmscan."""
+    old_dir, stem = os.path.split(hmm_file)
+
+    new = os.path.join(cache_dir, stem)
+    if os.path.isfile(new):
+        # Already cached
+        return new
+
+    if debug:
+        sys.stderr.write("DEBUG: Caching HMM at %s\n" % new)
+
+    # Copy the extra files first:
+    for f in os.listdir(old_dir):
+        if f.startswith(stem + ".h"):
+            shutil.copyfile(os.path.join(old_dir, f), os.path.join(cache_dir, f))
+
+    # Do this last in case interupted (as later only check this exists):
+    shutil.copyfile(hmm_file, new)
+
+    return new
+
+
+def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
     The arbitrary low bitscore_threshold default is based on ensuring
@@ -83,6 +106,9 @@ def filter_for_ITS1(input_fasta, bitscore_threshold="6", debug=False):
     positive additional weak hits complicating things.
     """
     hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
+    if cache_dir:
+        hmm = hmm_cache(hmm, cache_dir, debug=debug)
+
     for record, result in run_and_parse_hmmscan(
         hmm, input_fasta, bitscore_threshold=bitscore_threshold, debug=debug
     ):
