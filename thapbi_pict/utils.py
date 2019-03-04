@@ -377,6 +377,8 @@ def parse_species_tsv(tabular_file, min_abundance=0):
                     % (tabular_file, line)
                 )
             name, taxid, genus_species, _ = line.split("\t", 3)
+            if name == "*":
+                raise ValueError("Wildcard species name found")
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue
             yield name, taxid, genus_species

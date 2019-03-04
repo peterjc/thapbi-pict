@@ -31,18 +31,32 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
     # the same order. The identify classifier respects the input FASTA
     # order (which is by decreasing abundance), while the swarm classifier
     # uses the cluster order. Currently the outputs are all small, so fine.
-    for expt, pred in zip(
-        sorted(parse_species_tsv(expected_file, min_abundance)),
-        sorted(parse_species_tsv(predicted_file, min_abundance)),
-    ):
-        if not expt[0] == pred[0]:
-            sys.exit(
-                "Sequence name mismatch in %s vs %s, %s vs %s\n"
-                % (expected_file, predicted_file, expt[0], pred[0])
-            )
-        # TODO: Look at taxid?
-        # Should now have (possibly empty) string of genus-species;...
-        counter[expt[2], pred[2]] += 1
+    try:
+        for expt, pred in zip(
+            sorted(parse_species_tsv(expected_file, min_abundance)),
+            sorted(parse_species_tsv(predicted_file, min_abundance)),
+        ):
+            if not expt[0] == pred[0]:
+                sys.exit(
+                    "Sequence name mismatch in %s vs %s, %s vs %s\n"
+                    % (expected_file, predicted_file, expt[0], pred[0])
+                )
+            # TODO: Look at taxid?
+            # Should now have (possibly empty) string of genus-species;...
+            counter[expt[2], pred[2]] += 1
+    except ValueError as e:
+        # This is used for single sample controls,
+        # where all reads are expected to be from species X.
+        if str(e) != "Wildcard species name found":
+            raise
+        expt_sp_genus = None
+        with open(expected_file) as handle:
+            for line in handle:
+                if line.startswith("*\t"):
+                    _, _, expt_sp_genus, _ = line.split("\t", 3)
+        assert expt_sp_genus, "Didn't find expected wildcard species line"
+        for pred in parse_species_tsv(predicted_file, min_abundance):
+            counter[expt_sp_genus, pred[2]] += 1
     return counter
 
 
