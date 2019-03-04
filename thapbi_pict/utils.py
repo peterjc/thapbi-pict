@@ -207,7 +207,9 @@ def run(cmd, debug=False, attempts=1):
                 if debug:
                     # Used universal_newlines=True above so that this just works
                     # (equivalent to text=True in Python 3.7 onwards):
+                    sys.stdout.flush()
                     sys.stdout.write(e.stdout)
+                    sys.stdout.flush()
                     sys.stderr.write(e.stderr)
                 sys.exit(
                     "ERROR: Attempt %i of %i failed with return code %i, cmd:\n%s\n"
