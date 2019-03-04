@@ -53,7 +53,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.6  | 2019-02-07 | Misc. cleanup and import fixes.                                              |
 | v0.0.7  | 2019-02-12 | Added ``plate-summary`` command, ``onebp`` classifier.                       |
 | v0.0.8  | 2019-02-21 | Fix multi-class TN under-counting. New loss metric, ``swarmid`` classifier.  |
-| v0.0.9  | *Pending*  | Read preparation step now Looks for expected primers, discards mismatches.   |
+| v0.0.9  | *Pending*  | Looks for expected primers, discards mismatches. Caches HMM files locally.   |
 
 
 # Development Notes
