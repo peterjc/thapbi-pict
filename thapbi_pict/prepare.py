@@ -176,7 +176,9 @@ def make_nr_fastq_to_fasta(input_fastq, output_fasta, min_abundance=0):
     return save_nr_fasta(counts, output_fasta, min_abundance)
 
 
-def make_nr_its1(input_fasta, output_fasta, stem, min_abundance=0, debug=False):
+def make_nr_its1(
+    input_fasta, output_fasta, stem, min_abundance=0, shared_tmp_dir=None, debug=False
+):
     """Make non-redundant FASTA of ITS1 regions, named MD5_abundance.
 
     Applies HMM with hmmscan to identify any ITS1 region in the
@@ -201,7 +203,9 @@ def make_nr_its1(input_fasta, output_fasta, stem, min_abundance=0, debug=False):
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     counts = dict()  # OrderedDict on older Python?
-    for title, full_seq, hmm_seq in filter_for_ITS1(input_fasta, debug=debug):
+    for title, full_seq, hmm_seq in filter_for_ITS1(
+        input_fasta, shared_tmp_dir, debug=debug
+    ):
         if not hmm_seq:
             # Using HMM match as a presense/absense filter
             continue
@@ -390,7 +394,7 @@ def main(fastq, controls, out_dir, min_abundance=100, tmp_dir=None, debug=False,
             # Apply the min_abundance threshold here (at the final step)
             dedup = os.path.join(tmp, "dedup_its1.fasta")
             uniq_count, acc_uniq_count, max_indiv_abundance = make_nr_its1(
-                merged_fasta, dedup, stem, min_abundance, debug
+                merged_fasta, dedup, stem, min_abundance, shared_tmp, debug
             )
 
             # File done

@@ -133,7 +133,7 @@ def method_identity(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file):
+    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -247,7 +247,7 @@ def method_onebp(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file):
+    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
