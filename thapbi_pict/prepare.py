@@ -471,8 +471,7 @@ def main(
     If there are controls, they will be used to potentially increase
     the minimum abundance threshold used for the non-control files.
     """
-    global hmm_cropping_warning
-    hmm_cropping_warning = 0  # reset for each job
+    hmm_cropping_warning = 0
 
     assert isinstance(fastq, list)
 
