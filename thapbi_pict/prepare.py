@@ -314,13 +314,14 @@ def main(fastq, controls, out_dir, min_abundance=100, debug=False, cpu=0):
                 if min_abundance < max_indiv_abundance:
                     sys.stderr.write(
                         "increasing sample abundance threshold from %i\n"
-                        % min_abundance
+                        % sample_min_abundance
                     )
                 else:
                     sys.stderr.write(
-                        "keeping sample abundance threshold at %i\n" % min_abundance
+                        "keeping sample abundance threshold at %i\n"
+                        % sample_min_abundance
                     )
-                min_abundance = max(min_abundance, max_indiv_abundance)
+                sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
                 continue
             else:
                 sys.stderr.write(
