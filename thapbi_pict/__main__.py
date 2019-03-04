@@ -122,6 +122,7 @@ def prepare_reads(args=None):
         left_primer=args.left,
         right_primer=args.right,
         min_abundance=args.abundance,
+        tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
     )
@@ -522,6 +523,15 @@ comma.
         "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
         "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
         "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
+    )
+    parser_prepare_reads.add_argument(
+        "-t",
+        "--temp",
+        type=str,
+        required=False,
+        metavar="DIRNAME",
+        help="Debug option. Specify an (ideally empty) directory to "
+        "use for temporary files, which will not be deleted.",
     )
     parser_prepare_reads.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
