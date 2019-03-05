@@ -50,33 +50,57 @@ def main(
             sys.stderr.write("DEBUG: Loading meta-data from %s\n" % tsv_file)
         meta_data = dict()
         # Apply minimum abundance threshold during FASTA loading
-        for idn, taxid, genus_species in parse_species_tsv(tsv_file):
-            if idn in meta_data:
-                sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
-            meta_data[idn] = (int(taxid), "", genus_species, "")
+        try:
+            for idn, taxid, genus_species in parse_species_tsv(tsv_file):
+                if idn in meta_data:
+                    sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
+                meta_data[idn] = (int(taxid), "", genus_species, "")
+            if not meta_data:
+                sys.stderr.write(
+                    "File %s has no sequences, ignoring %s\n" % (tsv_file, fasta_file)
+                )
+                continue
+            meta_fn = meta_data.get
 
-        if not meta_data:
-            sys.stderr.write(
-                "File %s has no sequences, ignoring %s\n" % (tsv_file, fasta_file)
-            )
-            continue
+            def sequence_wanted(title):
+                """Check if identifier in TSV file, and passess abundance level."""
+                idn = title.split(None, 1)[0]
+                if idn not in meta_data:
+                    return []
+                elif abundance_from_read_name(idn) < min_abundance:
+                    return []
+                else:
+                    return [idn]
 
-        def sequence_wanted(title):
-            """Check if identifier was in the TSV file, and passess abundance level."""
-            idn = title.split(None, 1)[0]
-            if idn not in meta_data:
-                return []
-            elif abundance_from_read_name(idn) < min_abundance:
-                return []
-            else:
-                return [idn]
+        except ValueError as e:
+            if str(e) != "Wildcard species name found":
+                raise
+            genus_species = None
+            with open(tsv_file) as handle:
+                for line in handle:
+                    if line.startswith("*\t"):
+                        _, taxid, genus_species, _ = line.split("\t", 3)
+            assert genus_species, "Didn't find expected wildcard species line"
+
+            def meta_fn(text):
+                return (int(taxid), "", genus_species, "")
+
+            def sequence_wanted(title):
+                """Check if identifier passess abundance level."""
+                idn = title.split(None, 1)[0]
+                if abundance_from_read_name(idn) < min_abundance:
+                    return []
+                else:
+                    return [idn]
+
+            sys.stderr.write("File %s wild card for %s\n" % (tsv_file, genus_species))
 
         import_fasta_file(
             fasta_file,
             db_url,
             name,
             fasta_entry_fn=sequence_wanted,
-            entry_taxonomy_fn=meta_data.get,
+            entry_taxonomy_fn=meta_fn,
             debug=debug,
             validate_species=validate_species,
         )
