@@ -12,16 +12,12 @@ import tempfile
 from collections import Counter
 
 from Bio.Seq import reverse_complement
-from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
-from .utils import expand_IUPAC_ambiguity_codes
 from .utils import md5seq
-from .utils import onebp_deletions
-from .utils import onebp_inserts
-from .utils import onebp_substitutions
 from .utils import run
 
 
@@ -134,6 +130,34 @@ def run_trimmomatic(
     return run(cmd, debug=debug)
 
 
+def run_cutadapt(
+    long_in, trimmed_out, bad_out, left_primer, right_primer, debug=False, cpu=0
+):
+    """Run cutadapt on a single file (i.e. after merging paired FASTQ).
+
+    The input and/or output files may be compressed as long as they
+    have an appropriate suffix (e.g. gzipped with ``.gz`` suffix).
+    """
+    cmd = ["cutadapt"]
+    if bad_out:
+        cmd += ["--untrimmed-output", bad_out]
+    else:
+        cmd += ["--discard-untrimmed"]
+        if cpu:
+            # Not compatible with --untrimmed-output
+            cmd += ["-j", str(cpu)]
+    cmd += [
+        # -a LEFT...RIGHT = left-anchored
+        # -g LEFT...RIGHT = non-anchored
+        "-g",
+        "%s...%s" % (left_primer, reverse_complement(right_primer)),
+        "-o",
+        trimmed_out,
+        long_in,
+    ]
+    return run(cmd, debug=debug)
+
+
 def run_pear(trimmed_R1, trimmed_R2, output_prefix, debug=False, cpu=0):
     """Run pear on a pair of trimmed FASTQ files."""
     cmd = ["pear", "-f", trimmed_R1, "-r", trimmed_R2, "-o", output_prefix]
@@ -167,29 +191,12 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     return accepted
 
 
-def make_nr_fastq_to_fasta(
-    input_fastq,
-    output_fasta,
-    bad_fasta,
-    left_primer,
-    right_primer,
-    min_abundance=0,
-    debug=False,
-):
-    """Trim and make non-redundant FASTA file from FASTQ inputs.
+def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
+    """Trim and make non-redundant FASTA file from FASTA input.
 
-    The FASTQ read names are ignored and treated as abundance one!
-
-    Expects to find the left-primer at the start of each merged read.
-    Expects to find the reverse complement of the right-primer at the
-    end of each read.
-
-    Looks for the primer pair, and if found removes them and saves
-    the trimmed sequences in a non-redundant FASTA file with the
-    trimmed sequences named MD5_abundance.
-
-    If either primer cannot be found, the sequence is excluded from
-    the main output, and instead recorded in the bad sequence output.
+    The read names are ignored and treated as abundance one!
+    Makes a non-redundant FASTA file with the sequences named
+    MD5_abundance.
 
     Returns the number of accepted sequences before de-duplication
     (integer), number of unique accepted sequences (integer), and
@@ -197,89 +204,10 @@ def make_nr_fastq_to_fasta(
     and the maximum abundance of any one read (for use with controls
     for setting the threshold).
     """
-    trim_left = len(left_primer)
-    trim_right = len(right_primer)
-    trim_starts = tuple(expand_IUPAC_ambiguity_codes(left_primer))
-    trim_ends = tuple(expand_IUPAC_ambiguity_codes(reverse_complement(right_primer)))
-
-    trim_starts_1s = set()
-    trim_starts_1del = set()
-    trim_starts_1ins = set()
-    for x in trim_starts:
-        trim_starts_1s.update(onebp_substitutions(x))
-        trim_starts_1del.update(onebp_deletions(x))
-        trim_starts_1ins.update(onebp_inserts(x))
-    trim_starts_1s = tuple(sorted(trim_starts_1s))
-    trim_starts_1del = tuple(sorted(trim_starts_1del))
-    trim_starts_1ins = tuple(sorted(trim_starts_1ins))
-
-    trim_ends_1s = set()
-    trim_ends_1del = set()
-    trim_ends_1ins = set()
-    for x in trim_ends:
-        trim_ends_1s.update(onebp_substitutions(x))
-        trim_ends_1del.update(onebp_deletions(x))
-        trim_ends_1ins.update(onebp_inserts(x))
-    trim_ends_1s = tuple(sorted(trim_ends_1s))
-    trim_ends_1del = tuple(sorted(trim_ends_1del))
-    trim_ends_1ins = tuple(sorted(trim_ends_1ins))
-
     counts = Counter()
-    bad = Counter()
-    left_primers = Counter()
-    right_primers = Counter()
-    with open(input_fastq) as handle:
-        for _, sequence, _ in FastqGeneralIterator(handle):
-            if len(sequence) < trim_left + trim_right:
-                # Too short
-                continue
-            seq = sequence.upper()
-            if seq.startswith(trim_starts):
-                left_primers[seq[:trim_left]] += 1
-                seq = seq[trim_left:]
-            elif seq.startswith(trim_starts_1s):
-                left_primers[seq[:trim_left]] += 1
-                seq = seq[trim_left:]
-            elif seq.startswith(trim_starts_1del):
-                left_primers[seq[: trim_left - 1]] += 1
-                seq = seq[trim_left - 1 :]  # trim less
-            elif seq.startswith(trim_starts_1ins):
-                left_primers[seq[: trim_left - 1]] += 1
-                seq = seq[trim_left - 1 :]  # trim more
-            else:
-                bad[sequence] += 1
-                continue
-            if seq.endswith(trim_ends):
-                right_primers[seq[-trim_right:]] += 1
-                seq = seq[:-trim_right]
-            elif seq.endswith(trim_ends_1s):
-                right_primers[seq[-trim_right:]] += 1
-                seq = seq[:-trim_right]
-            elif seq.endswith(trim_ends_1del):
-                right_primers[seq[-trim_right + 1 :]] += 1
-                seq = seq[: -trim_right + 1]  # trim less
-            elif seq.endswith(trim_ends_1ins):
-                right_primers[seq[-trim_right - 1 :]] += 1
-                seq = seq[: -trim_right - 1]  # trim extra
-            else:
-                bad[sequence] += 1
-                continue
-            counts[seq] += 1
-
-    if bad:
-        sys.stderr.write(
-            "WARNING: %s%i sequences (%i unique) did not have both primers, "
-            "max abundance %i\n"
-            % ("" if counts else "ALL ", sum(bad.values()), len(bad), max(bad.values()))
-        )
-    elif debug:
-        sys.stderr.write("DEBUG: Found both primers in all the sequences.\n")
-    if bad_fasta:
-        # Avoid really massive file with e.g. Undetermined barcode file
-        save_nr_fasta(bad, bad_fasta)
-        if debug:
-            sys.stderr.write("DEBUG: Wrote %s\n" % bad_fasta)
-
+    with open(input_fasta) as handle:
+        for _, seq in SimpleFastaParser(handle):
+            counts[seq.upper()] += 1
     return (
         sum(counts.values()),
         len(counts),
@@ -398,20 +326,36 @@ def prepare_sample(
     if not os.path.isfile(merged_fastq):
         sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
 
-    merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+    # trim
+    trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
     if failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
         bad_primer_fasta = None
-    (count, uniq_count, acc_uniq_count, max_indiv_abundance) = make_nr_fastq_to_fasta(
+    run_cutadapt(
         merged_fastq,
-        merged_fasta,
+        trimmed_fasta,
         bad_primer_fasta,
         left_primer,
         right_primer,
-        min_abundance=min_abundance,
         debug=debug,
+        cpu=cpu,
     )
+    if not os.path.isfile(trimmed_fasta):
+        sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_fasta)
+
+    # deduplicate and apply minimum abundance threshold
+    merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+    (count, uniq_count, acc_uniq_count, max_indiv_abundance) = make_nr_fasta(
+        trimmed_fasta, merged_fasta, min_abundance=min_abundance, debug=debug
+    )
+    if debug:
+        sys.stderr.write(
+            "Merged %i paired FASTQ reads into %i unique sequences, "
+            "%i above min abundance %i (max abundance %i)\n"
+            % (count, uniq_count, acc_uniq_count, min_abundance, max_indiv_abundance)
+        )
+
     if not acc_uniq_count:
         sys.stderr.write(
             "%s had %i unique sequences, "
@@ -445,6 +389,18 @@ def prepare_sample(
     uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
         merged_fasta, dedup, stem, shared_tmp, debug=debug
     )
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Filtered %s down to %i unique ITS1 sequences "
+            "above %s min abundance threshold %i, (max abundance %i)\n"
+            % (
+                stem,
+                uniq_count,
+                "control" if control else "sample",
+                min_abundance,
+                max_indiv_abundance,
+            )
+        )
 
     # File done
     shutil.move(dedup, fasta_name)

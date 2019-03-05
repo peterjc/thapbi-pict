@@ -54,6 +54,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.7  | 2019-02-12 | Added ``plate-summary`` command, ``onebp`` classifier.                       |
 | v0.0.8  | 2019-02-21 | Fix multi-class TN under-counting. New loss metric, ``swarmid`` classifier.  |
 | v0.0.9  | 2019-03-05 | Looks for expected primers, discards mismatches. Caches HMM files locally.   |
+| v0.0.10 | *Pending*  | Replace primer code allowing only 1bp differences with ``cutadapt``.         |
 
 
 # Development Notes
