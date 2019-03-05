@@ -208,6 +208,11 @@ def import_fasta_file(
     if entry_taxonomy_fn is None:
         raise ValueError("Need function to get meta-data from FASTA title.")
 
+    if os.stat(fasta_file).st_size == 0:
+        if debug:
+            sys.stderr.write("Ignoring empty FASTA file %s\n" % fasta_file)
+        return
+
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
