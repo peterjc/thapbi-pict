@@ -12,11 +12,11 @@ set -o pipefail
 # Try a real example
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 0
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "929" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "643" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "23" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "Generating mock control file"
 # Using just 50 real reads (50 * 4 = 200 lines)
