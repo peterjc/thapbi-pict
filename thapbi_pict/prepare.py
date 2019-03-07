@@ -158,11 +158,14 @@ def run_cutadapt(
     return run(cmd, debug=debug)
 
 
-def run_pear(trimmed_R1, trimmed_R2, output_prefix, debug=False, cpu=0):
+def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
     """Run pear on a pair of trimmed FASTQ files."""
-    cmd = ["pear", "-f", trimmed_R1, "-r", trimmed_R2, "-o", output_prefix]
+    cmd = ["flash", "-M", "300"]  # Note our reads tend to overlap a lot!
     if cpu:
         cmd += ["--threads", str(cpu)]
+    else:
+        cmd += ["-t", "1"]  # Default is all CPUs
+    cmd += ["-d", output_dir, "-o", output_prefix, trimmed_R1, trimmed_R2]
     return run(cmd, debug=debug)
 
 
@@ -319,12 +322,11 @@ def prepare_sample(
         if not os.path.isfile(_):
             sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
 
-    # pear
-    pear_prefix = os.path.join(tmp, "pear")
-    merged_fastq = os.path.join(tmp, "pear.assembled.fastq")
-    run_pear(trim_R1, trim_R2, pear_prefix, debug=debug, cpu=cpu)
+    # flash
+    merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
+    run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
     if not os.path.isfile(merged_fastq):
-        sys.exit("ERROR: Expected file %r from pear\n" % merged_fastq)
+        sys.exit("ERROR: Expected file %r from flash\n" % merged_fastq)
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
