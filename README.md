@@ -55,7 +55,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.8  | 2019-02-21 | Fix multi-class TN under-counting. New loss metric, ``swarmid`` classifier.  |
 | v0.0.9  | 2019-03-05 | Looks for expected primers, discards mismatches. Caches HMM files locally.   |
 | v0.0.10 | 2019-03-06 | Replace primer code allowing only 1bp differences with ``cutadapt``.         |
-| v0.0.11 | *Pending*  | Speed up FASTQ preparation by using ``flash`` instead of ``pear`` v0.9.6.    |
+| v0.0.11 | 2019-03-08 | Speed up FASTQ preparation by using ``flash`` instead of ``pear`` v0.9.6.    |
 
 
 # Development Notes
