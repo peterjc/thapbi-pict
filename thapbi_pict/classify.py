@@ -486,10 +486,19 @@ def method_swarm_core(
                 if identity:
                     # Does this match any of the ITS1 seq in our DB?
                     seq = str(seq_dict[idn].seq).upper()
-                    taxid2, genus_species2, note2 = perfect_match_in_db(session, seq)
+                    taxid2, genus_species2, _ = perfect_match_in_db(session, seq)
                     if genus_species2:
-                        # Found perfect match(es), these take priority
-                        taxid, genus_species, note = taxid2, genus_species2, note2
+                        read_report.write(
+                            "%s\t%s\t%s\t%s\n"
+                            % (
+                                idn,
+                                str(taxid2),
+                                genus_species2,
+                                "Cluster #%i - %i seqs, but this seq itself in DB"
+                                % (cluster_count, len(read_idns)),
+                            )
+                        )
+                        continue
                 read_report.write(
                     "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
                 )
