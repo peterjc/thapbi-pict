@@ -41,4 +41,12 @@ mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB database/legacy/ -o $TMP/legacy
 if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "3" ]; then echo "Expected 3 files;" false; fi
 
+# Test using sequences from a single isolate control,
+rm -rf $TMP/P-infestans-T30-4.*.tsv
+for M in identity onebp blast swarm swarmid; do
+    echo "Checking single isolate control with $M"
+    thapbi_pict classify -d $DB tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
+    diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
+done
+
 echo "$0 - test_classify.sh passed"
