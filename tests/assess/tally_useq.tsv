@@ -1,0 +1,10 @@
+#useq-count	Expected	Predicted
+1		
+1		Phytophthora capsici;Phytophthora glovera
+1	Phytophthora capsici;Phytophthora glovera	Phytophthora capsici;Phytophthora infestans
+1	Phytophthora europaea;Phytophthora flexuosa	
+3	Phytophthora fallax	
+1	Phytophthora fallax	Phytophthora capsici;Phytophthora glovera
+2	Phytophthora megasperma	
+1	Phytophthora megasperma	Phytophthora crassamura
+1	Phytophthora megasperma	Phytophthora megasperma

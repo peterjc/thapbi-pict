@@ -1,0 +1,6 @@
+#Expected vs predicted	useq count	(TN)	(FN)	Phytophthora capsici	Phytophthora crassamura	Phytophthora glovera	Phytophthora infestans	Phytophthora megasperma
+(None)	2	14	0	1	0	1	0	0
+Phytophthora fallax	4	26	4	1	0	1	0	0
+Phytophthora megasperma	4	27	3	0	1	0	0	1
+Phytophthora capsici;Phytophthora glovera	1	5	1	1	0	0	1	0
+Phytophthora europaea;Phytophthora flexuosa	1	6	2	0	0	0	0	0
