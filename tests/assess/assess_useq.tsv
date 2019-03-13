@@ -1,0 +1,10 @@
+#Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
+OVERALL	2	6	10	78	0.17	0.93	0.25	0.20	0.1667	0.89
+Phytophthora capsici	1	2	0	9	1.00	0.82	0.33	0.50	0.1667	0.67
+Phytophthora crassamura	0	1	0	11	0.00	0.92	0.00	0.00	0.0833	1.00
+Phytophthora europaea	0	0	1	11	0.00	1.00	0.00	0.00	0.0833	1.00
+Phytophthora fallax	0	0	4	8	0.00	1.00	0.00	0.00	0.3333	1.00
+Phytophthora flexuosa	0	0	1	11	0.00	1.00	0.00	0.00	0.0833	1.00
+Phytophthora glovera	0	2	1	9	0.00	0.82	0.00	0.00	0.2500	1.00
+Phytophthora infestans	0	1	0	11	0.00	0.92	0.00	0.00	0.0833	1.00
+Phytophthora megasperma	1	0	3	8	0.25	1.00	1.00	0.40	0.2500	0.75
