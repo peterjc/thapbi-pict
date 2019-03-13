@@ -286,7 +286,7 @@ def main(
 ):
     """Implement the thapbi_pict assess command."""
     assert isinstance(inputs, list)
-    assert level in ["sequence", "sample"], level
+    assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
         inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
@@ -310,12 +310,14 @@ def main(
             )
 
         file_count += 1
-        if level == "sequence":
+        if level == "sseq":
             global_tally.update(
                 tally_files(expected_file, predicted_file, min_abundance)
             )
-        else:
+        elif level == "sample":
             global_tally[sp_in_tsv(expected_file), sp_in_tsv(predicted_file)] += 1
+        else:
+            sys.exit("Sorry, unique sequence level assessment not implemented yet.")
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")

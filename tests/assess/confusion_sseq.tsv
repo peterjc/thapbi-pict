@@ -1,4 +1,4 @@
-#Expected vs predicted	sequence count	(TN)	(FN)	Phytophthora capsici	Phytophthora crassamura	Phytophthora glovera	Phytophthora infestans	Phytophthora megasperma
+#Expected vs predicted	sseq count	(TN)	(FN)	Phytophthora capsici	Phytophthora crassamura	Phytophthora glovera	Phytophthora infestans	Phytophthora megasperma
 (None)	2	14	0	1	0	1	0	0
 Phytophthora fallax	4	26	4	1	0	1	0	0
 Phytophthora megasperma	4	27	3	0	1	0	0	1

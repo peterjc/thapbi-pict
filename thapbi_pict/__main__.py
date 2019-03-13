@@ -631,10 +631,11 @@ comma.
         "-l",
         "--level",
         type=str,
-        default="sequence",
-        choices=["sequence", "sample"],
-        help="Assess at unique sequence level, or at sample level (taking "
-        "the union of the speces predicted by sequences from each sample).",
+        default="sample",
+        choices=["sample", "sseq", "useq"],
+        help="Assess at sample level (taking union of species predicted "
+        "by sequences from each sample), sequence level within samples, "
+        "or at unique sequence level (over all samples).",
     )
     parser_assess.add_argument(
         "-k",

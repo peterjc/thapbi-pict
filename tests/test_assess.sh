@@ -10,15 +10,15 @@ thapbi_pict assess 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # Simple examples with expected output to compare against:
-diff tests/assess/ex1.assess.tsv <(thapbi_pict assess tests/assess/ex1.known.tsv tests/assess/ex1.identity.tsv -c /dev/null)
-diff tests/assess/ex2.assess.tsv <(thapbi_pict assess tests/assess/ex2.known.tsv tests/assess/ex2.identity.tsv -c /dev/null)
-diff tests/assess/ex3.assess.tsv <(thapbi_pict assess tests/assess/ex3.known.tsv tests/assess/ex3.identity.tsv -c /dev/null)
-diff tests/assess/ex4.assess.tsv <(thapbi_pict assess tests/assess/ex4.known.tsv tests/assess/ex4.identity.tsv -c /dev/null)
-diff tests/assess/unclassified.assess.tsv <(thapbi_pict assess tests/assess/unclassified.known.tsv tests/assess/unclassified.identity.tsv -c /dev/null)
-diff tests/assess/fp.assess.tsv <(thapbi_pict assess tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
+diff tests/assess/ex1.assess.tsv <(thapbi_pict assess -l sseq tests/assess/ex1.known.tsv tests/assess/ex1.identity.tsv -c /dev/null)
+diff tests/assess/ex2.assess.tsv <(thapbi_pict assess -l sseq tests/assess/ex2.known.tsv tests/assess/ex2.identity.tsv -c /dev/null)
+diff tests/assess/ex3.assess.tsv <(thapbi_pict assess -l sseq tests/assess/ex3.known.tsv tests/assess/ex3.identity.tsv -c /dev/null)
+diff tests/assess/ex4.assess.tsv <(thapbi_pict assess -l sseq tests/assess/ex4.known.tsv tests/assess/ex4.identity.tsv -c /dev/null)
+diff tests/assess/unclassified.assess.tsv <(thapbi_pict assess -l sseq tests/assess/unclassified.known.tsv tests/assess/unclassified.identity.tsv -c /dev/null)
+diff tests/assess/fp.assess.tsv <(thapbi_pict assess -l sseq tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
 
-echo "Checking sequence level vs sample level assessment"
-for LEVEL in sequence sample; do
+echo "Checking sample-sequence level vs sample level assessment"
+for LEVEL in sseq sample; do
     thapbi_pict assess tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -l $LEVEL
     diff tests/assess/tally_$LEVEL.tsv $TMP/tally.tsv
     diff tests/assess/assess_$LEVEL.tsv $TMP/assess.tsv
