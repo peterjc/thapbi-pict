@@ -10,6 +10,7 @@ from collections import Counter
 from .utils import find_paired_files
 from .utils import parse_species_tsv
 from .utils import parse_species_list_from_tsv
+from .utils import split_read_name_abundance
 
 
 def sp_in_tsv(classifier_file):
@@ -25,25 +26,35 @@ def sp_in_tsv(classifier_file):
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
-    """Make dictionary tally confusion matrix of species assignements."""
-    counter = Counter()
+    """Make dictionary tally confusion matrix of species assignements.
+
+    Rather than the values simply being an integer count, they are
+    the set of MD5 identifiers (take the length for the count).
+    """
+    counter = dict()
     # Sorting because currently not all the classifiers produce out in
     # the same order. The identify classifier respects the input FASTA
     # order (which is by decreasing abundance), while the swarm classifier
     # uses the cluster order. Currently the outputs are all small, so fine.
     try:
         for expt, pred in zip(
-            sorted(parse_species_tsv(expected_file, min_abundance)),
-            sorted(parse_species_tsv(predicted_file, min_abundance)),
+            sorted(parse_species_tsv(expected_file)),
+            sorted(parse_species_tsv(predicted_file)),
         ):
             if not expt[0] == pred[0]:
                 sys.exit(
                     "Sequence name mismatch in %s vs %s, %s vs %s\n"
                     % (expected_file, predicted_file, expt[0], pred[0])
                 )
+            md5, abundance = split_read_name_abundance(expt[0])
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
             # TODO: Look at taxid?
             # Should now have (possibly empty) string of genus-species;...
-            counter[expt[2], pred[2]] += 1
+            try:
+                counter[expt[2], pred[2]].add(md5)
+            except KeyError:
+                counter[expt[2], pred[2]] = set([md5])
     except ValueError as e:
         # This is used for single sample controls,
         # where all reads are expected to be from species X.
@@ -56,7 +67,13 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
                     _, _, expt_sp_genus, _ = line.split("\t", 3)
         assert expt_sp_genus, "Didn't find expected wildcard species line"
         for pred in parse_species_tsv(predicted_file, min_abundance):
-            counter[expt_sp_genus, pred[2]] += 1
+            md5, abundance = split_read_name_abundance(pred[0])
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
+            try:
+                counter[expt_sp_genus, pred[2]].add(md5)
+            except KeyError:
+                counter[expt_sp_genus, pred[2]] = set([md5])
     return counter
 
 
@@ -294,7 +311,7 @@ def main(
 
     db_sp_list = None
     file_count = 0
-    global_tally = Counter()
+    global_tally = dict()
 
     for predicted_file, expected_file in input_list:
         if debug:
@@ -310,14 +327,83 @@ def main(
             )
 
         file_count += 1
-        if level == "sseq":
-            global_tally.update(
-                tally_files(expected_file, predicted_file, min_abundance)
-            )
-        elif level == "sample":
-            global_tally[sp_in_tsv(expected_file), sp_in_tsv(predicted_file)] += 1
+        if level == "sample":
+            expt = sp_in_tsv(expected_file)
+            pred = sp_in_tsv(predicted_file)
+            global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
+        elif level == "sseq":
+            for (expt, pred), values in tally_files(
+                expected_file, predicted_file, min_abundance
+            ).items():
+                # Values is set of MD5s, but only want count
+                global_tally[expt, pred] = global_tally.get((expt, pred), 0) + len(
+                    values
+                )
+        elif level == "useq":
+            for (expt, pred), values in tally_files(
+                expected_file, predicted_file, min_abundance
+            ).items():
+                # Values is set of MD5s, add to set
+                try:
+                    global_tally[expt, pred].update(values)
+                except KeyError:
+                    global_tally[expt, pred] = values
         else:
-            sys.exit("Sorry, unique sequence level assessment not implemented yet.")
+            sys.exit("ERROR: Invalid level value %r" % level)
+
+    # Consistency check - we know swarm classifer breaks this, important at useq level
+    if level in ["useq"]:
+        md5_pred = dict()
+        md5_expt = dict()
+        for (expt, pred), values in global_tally.items():
+            assert isinstance(values, set), values
+            for md5 in values:
+                if md5 in md5_pred:
+                    if pred != md5_pred[md5]:
+                        sys.stderr.write(
+                            "WARNING: Conflicting predictions for %s, %s vs %s\n"
+                            "Cannot do unique sequence classifier assessment.\n"
+                            % (md5, pred, md5_pred[md5])
+                        )
+                        sys.exit(0)  # Deliberately not an error
+                else:
+                    md5_pred[md5] = pred
+                if md5 in md5_expt:
+                    if expt != md5_expt[md5]:
+                        sys.stderr.write(
+                            "WARNING: Conflicting expectations for %s, %s vs %s\n"
+                            "Cannot do unique sequence classifier assessment.\n"
+                            % (md5, expt, md5_expt[md5])
+                        )
+                        sys.exit(0)  # Deliberately not an error
+                else:
+                    md5_expt[md5] = expt
+        assert sorted(md5_pred) == sorted(md5_expt), (
+            "Unique sequence species assignements: %i expected vs %i predicted"
+            % (len(md5_expt), len(md5_pred))
+        )
+        if debug:
+            sys.stderr.write(
+                "DEBUG: %i unique sequences with predictions/expectations\n"
+                % len(md5_pred)
+            )
+        del md5_pred
+        # Convert from sets of values to integer counts
+        tmp_list = []
+        for _ in global_tally.values():
+            tmp_list += list(_)
+        tmp_list.sort()
+        assert len(tmp_list) == len(set(tmp_list))
+        del tmp_list
+        # Convert from sets of values to integer counts
+        for expt, pred in global_tally:
+            global_tally[expt, pred] = len(global_tally[expt, pred])
+
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Assessing %i %s level predictions\n"
+            % (sum(global_tally.values()), level)
+        )
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")
