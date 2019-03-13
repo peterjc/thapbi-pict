@@ -20,7 +20,7 @@ for LEVEL in sseq useq; do
     diff tests/assess/fp.assess.tsv <(thapbi_pict assess -l $LEVEL tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
 done
 
-echo "Checking sample-sequence level vs sample level assessment"
+echo "Checking classifier assessment at different levels"
 for LEVEL in sample sseq useq; do
     thapbi_pict assess tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -l $LEVEL
     diff tests/assess/tally_$LEVEL.tsv $TMP/tally.tsv
