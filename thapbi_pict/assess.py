@@ -7,21 +7,30 @@ import sys
 
 from collections import Counter
 
+from .utils import abundance_from_read_name
 from .utils import find_paired_files
 from .utils import parse_species_tsv
 from .utils import parse_species_list_from_tsv
 from .utils import split_read_name_abundance
 
 
-def sp_in_tsv(classifier_file):
+def sp_in_tsv(classifier_file, min_abundance):
     """Return semi-colon separated list of species in column 2."""
     species = set()
     for line in open(classifier_file):
         if line.startswith("#"):
             continue
         name, taxid, sp, etc = line.split("\t", 3)
-        if sp:
-            species.update(sp.split(";"))
+        if not sp:
+            continue
+        # Using "*" as name (without abundance) as wildcard
+        if (
+            name != "*"
+            and min_abundance > 1
+            and abundance_from_read_name(name) < min_abundance
+        ):
+            continue
+        species.update(sp.split(";"))
     return ";".join(sorted(species))
 
 
@@ -328,8 +337,8 @@ def main(
 
         file_count += 1
         if level == "sample":
-            expt = sp_in_tsv(expected_file)
-            pred = sp_in_tsv(predicted_file)
+            expt = sp_in_tsv(expected_file, min_abundance)
+            pred = sp_in_tsv(predicted_file, min_abundance)
             global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
         elif level == "sseq":
             for (expt, pred), values in tally_files(
