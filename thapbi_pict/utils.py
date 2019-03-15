@@ -326,7 +326,7 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
     for stem in ext1_dict:
         if stem in ext2_dict:
             input_list.append((ext1_dict[stem], ext2_dict[stem]))
-        else:
+        elif debug:
             # Acceptable in motivating use case where on a given plate
             # only some of the samples would be known positive controls:
             sys.stderr.write(
