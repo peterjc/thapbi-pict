@@ -222,7 +222,7 @@ def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
 
 
 def filter_fasta_for_its1(
-    input_fasta, output_fasta, stem, shared_tmp_dir, min_abundance, debug=False
+    input_fasta, output_fasta, stem, shared_tmp_dir, min_abundance, debug=False, cpu=0
 ):
     """Filter for ITS1 regions.
 
@@ -240,7 +240,7 @@ def filter_fasta_for_its1(
     margin = 10
     cropping_warning = 0
     for title, full_seq, hmm_seq in filter_for_ITS1(
-        input_fasta, shared_tmp_dir, debug=debug
+        input_fasta, shared_tmp_dir, debug=debug, cpu=cpu
     ):
         if not hmm_seq:
             # Using HMM match as a presense/absense filter
@@ -375,7 +375,7 @@ def prepare_sample(
     # ITS1 presence filter, and ITS1-trim, using hmmscan
     dedup = os.path.join(tmp, "dedup_its1.fasta")
     uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-        merged_fasta, dedup, stem, shared_tmp, min_abundance, debug=debug
+        merged_fasta, dedup, stem, shared_tmp, min_abundance, debug=debug, cpu=cpu
     )
     if debug:
         sys.stderr.write(

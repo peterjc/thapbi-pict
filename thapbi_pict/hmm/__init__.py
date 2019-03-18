@@ -34,7 +34,12 @@ with warnings.catch_warnings():
 
 
 def run_and_parse_hmmscan(
-    hmm_file, fasta_input_file, hmmscan="hmmscan", bitscore_threshold=None, debug=False
+    hmm_file,
+    fasta_input_file,
+    hmmscan="hmmscan",
+    bitscore_threshold=None,
+    debug=False,
+    cpu=0,
 ):
     """Run hmmscan and parse the output with Bio.SearchIO.
 
@@ -54,6 +59,8 @@ def run_and_parse_hmmscan(
     tmp_dir = tempfile.mkdtemp()
     hmm_out = os.path.join(tmp_dir, "hmmscan.txt")
     cmd = [hmmscan, "--noali"]
+    if cpu:
+        cmd += ["--cpu", str(cpu)]
     if bitscore_threshold is not None:
         cmd += ["-T", bitscore_threshold, "--domT", bitscore_threshold]
     cmd += ["-o", hmm_out, hmm_file, fasta_input_file]
@@ -98,7 +105,7 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
     return new
 
 
-def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False):
+def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False, cpu=0):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
     The arbitrary low bitscore_threshold default is based on ensuring
@@ -110,7 +117,7 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False)
         hmm = hmm_cache(hmm, cache_dir, debug=debug)
 
     for record, result in run_and_parse_hmmscan(
-        hmm, input_fasta, bitscore_threshold=bitscore_threshold, debug=debug
+        hmm, input_fasta, bitscore_threshold=bitscore_threshold, debug=debug, cpu=cpu
     ):
         title = record.description
         seq = str(record.seq).upper()
