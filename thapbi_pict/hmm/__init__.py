@@ -105,6 +105,104 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
     return new
 
 
+def load_result_cache(cached_results_file):
+    """Load simple TSV file of cached ITS1 trim results as a dict."""
+    answer = dict()
+    for line in open(cached_results_file):
+        seq, trimmed = line.rstrip("\n").split("\t")
+        answer[seq] = trimmed
+    return answer
+
+
+def save_result_cache(cached_results_file, value_dict):
+    """Save ITS1 trim results as a dict."""
+    with open(cached_results_file, "w") as handle:
+        for seq, trimmed in value_dict.items():
+            handle.write("%s\t%s\n" % (seq, trimmed))
+
+
+def update_result_cache(
+    cached_results_file,
+    value_dict,
+    missing_seqs,
+    tmp_dir,
+    model_cache_dir,
+    debug=False,
+    cpu=0,
+):
+    """Call hmmscan, update dict in memory, and write it to disk.
+
+    WARNING: No file locking, so race conditions are possible if there
+    is more than one script running using the same cache file.
+    """
+    if not missing_seqs:
+        return
+    tmp_fasta = os.path.join(tmp_dir, "input_to_hmmscan.fasta")
+    with open(tmp_fasta, "w") as handle:
+        for title, seq in missing_seqs:
+            handle.write(">%s\n%s\n" % (title, seq))
+    for _title, seq, trimmed in filter_for_ITS1(
+        tmp_fasta, model_cache_dir, bitscore_threshold="6", debug=debug, cpu=cpu
+    ):
+        value_dict[seq] = trimmed
+    save_result_cache(cached_results_file, value_dict)
+
+
+def cached_filter_for_ITS1(
+    title_and_seqs, cached_results_file, model_cache_dir, tmp_dir, debug=False, cpu=0
+):
+    """Return tuples of (input title, input sequence, ITS1 sequence) in arbitrary order.
+
+    Takes advantage of the specified cache (TSV file mapping full sequences to the
+    ITS1 region), and for novel sequences runs hmmscan and updates the cache.
+
+    If the ITS1 region is not found, then an empty string is used.
+    """
+    if os.path.isfile(cached_results_file):
+        result_cache = load_result_cache(cached_results_file)
+    else:
+        result_cache = dict()
+        if debug:
+            sys.stderr.write("DEBUG: No cache at %s\n" % cached_results_file)
+
+    cached_seqs = set()  # only for debug msg
+    missing_seqs = set()
+    for title, seq in title_and_seqs:
+        try:
+            yield title, seq, result_cache[seq]
+            cached_seqs.add(seq)
+        except KeyError:
+            missing_seqs.add((title, seq))
+
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Using hmmscan to trim %i unique sequences (%i cached, %i new)\n"
+            % (
+                len(cached_seqs) + len(missing_seqs),
+                len(cached_seqs),
+                len(missing_seqs),
+            )
+        )
+
+    if missing_seqs:
+        update_result_cache(
+            cached_results_file,
+            result_cache,
+            missing_seqs,
+            tmp_dir,
+            model_cache_dir,
+            debug=debug,
+            cpu=cpu,
+        )
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Now have %i cached ITS1 trim results from hmmscan\n"
+                % len(result_cache)
+            )
+        for title, seq in missing_seqs:
+            yield title, seq, result_cache[seq]
+
+
 def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False, cpu=0):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
@@ -122,7 +220,7 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False,
         title = record.description
         seq = str(record.seq).upper()
         if not result:
-            yield title, seq, None
+            yield title, seq, ""
             continue
 
         assert len(result) == 1
@@ -130,7 +228,7 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False,
         assert hit.id == "phytophthora_its1"
 
         if len(hit) == 0:
-            yield title, seq, None
+            yield title, seq, ""
         elif len(hit) == 1:
             hsp = hit[0]
             yield title, seq, seq[hsp.query_start : hsp.query_end]

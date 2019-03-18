@@ -14,7 +14,7 @@ from collections import Counter
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .hmm import filter_for_ITS1
+from .hmm import cached_filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import md5seq
@@ -222,7 +222,14 @@ def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
 
 
 def filter_fasta_for_its1(
-    input_fasta, output_fasta, stem, shared_tmp_dir, min_abundance, debug=False, cpu=0
+    input_fasta,
+    output_fasta,
+    stem,
+    tmp,
+    shared_tmp_dir,
+    min_abundance,
+    debug=False,
+    cpu=0,
 ):
     """Filter for ITS1 regions.
 
@@ -239,35 +246,43 @@ def filter_fasta_for_its1(
     exp_right = 0
     margin = 10
     cropping_warning = 0
-    for title, full_seq, hmm_seq in filter_for_ITS1(
-        input_fasta, shared_tmp_dir, debug=debug, cpu=cpu
-    ):
-        if not hmm_seq:
-            # Using HMM match as a presense/absense filter
-            # and to trim to the ITS region
-            continue
-        abundance = abundance_from_read_name(title.split(None, 1)[0])
-        counts[hmm_seq] += abundance
 
-        # Rest of loop is for cropping warning only
-        left = full_seq.index(hmm_seq)
-        right = len(full_seq) - left - len(hmm_seq)
-        if not (
-            exp_left - margin < left < exp_left + margin
-            and exp_right - margin < right < exp_right + margin
+    cached_results_file = os.path.join(shared_tmp_dir, "hmmscan_its1_cache.tsv")
+    with open(input_fasta) as fasta_handle:
+        for title, full_seq, hmm_seq in cached_filter_for_ITS1(
+            SimpleFastaParser(fasta_handle),
+            cached_results_file,
+            model_cache_dir=shared_tmp_dir,
+            tmp_dir=tmp,
+            debug=debug,
+            cpu=0,  # Multi-threading does not seem to help
         ):
-            cropping_warning += 1
-            sys.stderr.write(
-                "WARNING: %r has HMM cropping %i left, %i right, "
-                "giving %i, vs %i bp from fixed trimming\n"
-                % (
-                    title.split(None, 1)[0],
-                    left,
-                    right,
-                    len(hmm_seq),
-                    len(full_seq) - exp_left - exp_right,
+            if not hmm_seq:
+                # Using HMM match as a presense/absense filter
+                # and to trim to the ITS region
+                continue
+            abundance = abundance_from_read_name(title.split(None, 1)[0])
+            counts[hmm_seq] += abundance
+
+            # Rest of loop is for cropping warning only
+            left = full_seq.index(hmm_seq)
+            right = len(full_seq) - left - len(hmm_seq)
+            if not (
+                exp_left - margin < left < exp_left + margin
+                and exp_right - margin < right < exp_right + margin
+            ):
+                cropping_warning += 1
+                sys.stderr.write(
+                    "WARNING: %r has HMM cropping %i left, %i right, "
+                    "giving %i, vs %i bp from fixed trimming\n"
+                    % (
+                        title.split(None, 1)[0],
+                        left,
+                        right,
+                        len(hmm_seq),
+                        len(full_seq) - exp_left - exp_right,
+                    )
                 )
-            )
 
     if cropping_warning:
         sys.stderr.write(
@@ -375,7 +390,7 @@ def prepare_sample(
     # ITS1 presence filter, and ITS1-trim, using hmmscan
     dedup = os.path.join(tmp, "dedup_its1.fasta")
     uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-        merged_fasta, dedup, stem, shared_tmp, min_abundance, debug=debug, cpu=cpu
+        merged_fasta, dedup, stem, tmp, shared_tmp, min_abundance, debug=debug, cpu=cpu
     )
     if debug:
         sys.stderr.write(
