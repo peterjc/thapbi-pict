@@ -17,7 +17,6 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
-from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 from .utils import find_requested_files
@@ -131,25 +130,28 @@ def method_identity(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
-        idn = title.split(None, 1)[0]
-        abundance = abundance_from_read_name(idn)
-        count += abundance
-        taxid = 0
-        genus_species = ""
-        note = ""
-        if not seq:
-            note = "No ITS1 HMM match"
-        else:
-            assert seq == seq.upper(), seq
-            # Now, does this match any of the ITS1 seq in our DB?
-            its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
-            if its1 is None:
-                note = "No ITS1 database match"
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
+            abundance = abundance_from_read_name(idn)
+            count += abundance
+            taxid = 0
+            genus_species = ""
+            note = ""
+            if not seq:
+                note = "No ITS1 HMM match"
             else:
-                taxid, genus_species, note = perfect_match_in_db(session, seq)
-        tax_counts[genus_species] += abundance
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+                assert seq == seq.upper(), seq
+                # Now, does this match any of the ITS1 seq in our DB?
+                its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+                if its1 is None:
+                    note = "No ITS1 database match"
+                else:
+                    taxid, genus_species, note = perfect_match_in_db(session, seq)
+            tax_counts[genus_species] += abundance
+            read_report.write(
+                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
+            )
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -197,50 +199,53 @@ def method_onebp(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
-        idn = title.split(None, 1)[0]
-        abundance = abundance_from_read_name(idn)
-        count += abundance
-        taxid = 0
-        genus_species = ""
-        note = ""
-        if not seq:
-            note = "No ITS1 HMM match"
-        else:
-            assert seq == seq.upper(), seq
-            # Now, does this match any of the ITS1 seq in our DB?
-            taxid, genus_species, note = perfect_match_in_db(session, seq)
-            if genus_species:
-                # Found 100% identical match(es) in the DB.
-                pass
-            elif seq in fuzzy_matches:
-                # Not exact, but we do have 1bp off match(es)
-                t = []
-                # TODO - Refactor this 2-query-per-loop into one lookup?
-                for db_seq in fuzzy_matches[seq]:
-                    its1 = (
-                        session.query(ITS1)
-                        .filter(ITS1.sequence == db_seq)
-                        .one_or_none()
-                    )
-                    assert db_seq, "Could not find %s (%s) in DB?" % (
-                        db_seq,
-                        md5seq(db_seq),
-                    )
-                    t.extend(
-                        _.current_taxonomy
-                        for _ in session.query(SequenceSource).filter_by(its1=its1)
-                    )
-                t = list(set(t))
-                note = "%i ITS1 matches with 1bp diff, %i taxonomy entries" % (
-                    len(fuzzy_matches[seq]),
-                    len(t),
-                )
-                taxid, genus_species, _ = taxid_and_sp_lists(t)
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
+            abundance = abundance_from_read_name(idn)
+            count += abundance
+            taxid = 0
+            genus_species = ""
+            note = ""
+            if not seq:
+                note = "No ITS1 HMM match"
             else:
-                note = "No DB matches, even with 1bp diff"
-        tax_counts[genus_species] += abundance
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+                assert seq == seq.upper(), seq
+                # Now, does this match any of the ITS1 seq in our DB?
+                taxid, genus_species, note = perfect_match_in_db(session, seq)
+                if genus_species:
+                    # Found 100% identical match(es) in the DB.
+                    pass
+                elif seq in fuzzy_matches:
+                    # Not exact, but we do have 1bp off match(es)
+                    t = []
+                    # TODO - Refactor this 2-query-per-loop into one lookup?
+                    for db_seq in fuzzy_matches[seq]:
+                        its1 = (
+                            session.query(ITS1)
+                            .filter(ITS1.sequence == db_seq)
+                            .one_or_none()
+                        )
+                        assert db_seq, "Could not find %s (%s) in DB?" % (
+                            db_seq,
+                            md5seq(db_seq),
+                        )
+                        t.extend(
+                            _.current_taxonomy
+                            for _ in session.query(SequenceSource).filter_by(its1=its1)
+                        )
+                    t = list(set(t))
+                    note = "%i ITS1 matches with 1bp diff, %i taxonomy entries" % (
+                        len(fuzzy_matches[seq]),
+                        len(t),
+                    )
+                    taxid, genus_species, _ = taxid_and_sp_lists(t)
+                else:
+                    note = "No DB matches, even with 1bp diff"
+            tax_counts[genus_species] += abundance
+            read_report.write(
+                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
+            )
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -432,19 +437,11 @@ def method_swarm_core(
     if not os.path.isfile(db_fasta):
         sys.exit("ERROR: Missing generated file %s\n" % db_fasta)
 
-    # Trim down the sequences to the same HMM matched subsequence
-    # used in the DB entries
-    its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
-    with open(its_fasta, "w") as handle:
-        for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
-            # Note leaving the MD5 based name as is (MD5 of full seq)
-            handle.write(">%s\n%s\n" % (title, seq))
-
     if identity:
-        seq_dict = SeqIO.index(its_fasta, "fasta")
+        seq_dict = SeqIO.index(fasta_file, "fasta")
 
     swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
-    run_swarm([its_fasta, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
+    run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
 
     if not os.path.isfile(swarm_clusters):
         sys.exit("Swarm did not produce expected output file %s\n" % swarm_clusters)
