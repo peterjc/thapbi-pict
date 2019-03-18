@@ -359,7 +359,7 @@ def prepare_sample(
     assert uniq_count == acc_uniq_count
     if debug:
         sys.stderr.write(
-            "DEBUG: Merged %i paired FASTQ reads into %i unique sequences"
+            "DEBUG: Merged %i paired FASTQ reads into %i unique sequences "
             "(max abundance %i)\n" % (count, acc_uniq_count, max_indiv_abundance)
         )
 
