@@ -36,10 +36,10 @@ thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_s
 thapbi_pict classify -m swarmid -d $DB $TMP/DNAMIX_S95_L001.fasta
 
 # Passing one directory name (should get all three FASTA files):
-rm -rf $TMP/legacy/*.identity.tsv
+rm -rf $TMP/legacy
 mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB database/legacy/ -o $TMP/legacy
-if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "3" ]; then echo "Expected 3 files;" false; fi
+if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "3" ]; then echo "Expected 3 files"; false; fi
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
