@@ -221,7 +221,9 @@ def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
     )
 
 
-def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug=False):
+def filter_fasta_for_its1(
+    input_fasta, output_fasta, stem, shared_tmp_dir, min_abundance, debug=False
+):
     """Filter for ITS1 regions.
 
     Assumes you have already applied trimming (and are not using
@@ -232,45 +234,40 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
     Returns the number of unique ITS1 sequences (integer),
     maximum abundance, and number of cropping warnings.
     """
+    counts = Counter()
     exp_left = 32
     exp_right = 0
     margin = 10
     cropping_warning = 0
-    max_indiv_abundance = 0
-    # This could be generalised if need something else, e.g.
-    # >name;size=6; for VSEARCH.
-    count = 0
-    with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_seq in filter_for_ITS1(
-            input_fasta, shared_tmp_dir, debug=debug
-        ):
-            if not hmm_seq:
-                # Using HMM match as a presense/absense filter
-                continue
-            out_handle.write(">%s\n%s\n" % (title, full_seq))
-            count += 1
-            max_indiv_abundance = max(
-                max_indiv_abundance, abundance_from_read_name(title.split(None, 1)[0])
-            )
+    for title, full_seq, hmm_seq in filter_for_ITS1(
+        input_fasta, shared_tmp_dir, debug=debug
+    ):
+        if not hmm_seq:
+            # Using HMM match as a presense/absense filter
+            # and to trim to the ITS region
+            continue
+        abundance = abundance_from_read_name(title.split(None, 1)[0])
+        counts[hmm_seq] += abundance
 
-            left = full_seq.index(hmm_seq)
-            right = len(full_seq) - left - len(hmm_seq)
-            if not (
-                exp_left - margin < left < exp_left + margin
-                and exp_right - margin < right < exp_right + margin
-            ):
-                cropping_warning += 1
-                sys.stderr.write(
-                    "WARNING: %r has HMM cropping %i left, %i right, "
-                    "giving %i, vs %i bp from fixed trimming\n"
-                    % (
-                        title.split(None, 1)[0],
-                        left,
-                        right,
-                        len(hmm_seq),
-                        len(full_seq) - exp_left - exp_right,
-                    )
+        # Rest of loop is for cropping warning only
+        left = full_seq.index(hmm_seq)
+        right = len(full_seq) - left - len(hmm_seq)
+        if not (
+            exp_left - margin < left < exp_left + margin
+            and exp_right - margin < right < exp_right + margin
+        ):
+            cropping_warning += 1
+            sys.stderr.write(
+                "WARNING: %r has HMM cropping %i left, %i right, "
+                "giving %i, vs %i bp from fixed trimming\n"
+                % (
+                    title.split(None, 1)[0],
+                    left,
+                    right,
+                    len(hmm_seq),
+                    len(full_seq) - exp_left - exp_right,
                 )
+            )
 
     if cropping_warning:
         sys.stderr.write(
@@ -278,7 +275,11 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
             "in %i sequences in %s\n" % (cropping_warning, stem)
         )
 
-    return count, max_indiv_abundance, cropping_warning
+    return (
+        save_nr_fasta(counts, output_fasta, min_abundance),
+        max(counts.values()),
+        cropping_warning,
+    )
 
 
 def prepare_sample(
@@ -331,7 +332,7 @@ def prepare_sample(
     if not os.path.isfile(merged_fastq):
         sys.exit("ERROR: Expected file %r from flash\n" % merged_fastq)
 
-    # trim
+    # primer-trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
     if failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
@@ -349,24 +350,21 @@ def prepare_sample(
     if not os.path.isfile(trimmed_fasta):
         sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_fasta)
 
-    # deduplicate and apply minimum abundance threshold
+    # deduplicate BUT do not apply minimum abundance threshold yet
+    # (do that after HMM trimming)
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
     (count, uniq_count, acc_uniq_count, max_indiv_abundance) = make_nr_fasta(
-        trimmed_fasta, merged_fasta, min_abundance=min_abundance, debug=debug
+        trimmed_fasta, merged_fasta, min_abundance=0, debug=debug
     )
+    assert uniq_count == acc_uniq_count
     if debug:
         sys.stderr.write(
-            "Merged %i paired FASTQ reads into %i unique sequences, "
-            "%i above min abundance %i (max abundance %i)\n"
-            % (count, uniq_count, acc_uniq_count, min_abundance, max_indiv_abundance)
+            "DEBUG: Merged %i paired FASTQ reads into %i unique sequences"
+            "(max abundance %i)\n" % (count, acc_uniq_count, max_indiv_abundance)
         )
 
     if not acc_uniq_count:
-        sys.stderr.write(
-            "%s had %i unique sequences, "
-            "but none above %s minimum abundance threshold %i\n"
-            % (stem, uniq_count, "control" if control else "sample", min_abundance)
-        )
+        # No point calling hmmscan, can abort now
         with open(fasta_name, "w"):
             # Write empty file
             pass
@@ -374,30 +372,15 @@ def prepare_sample(
             shutil.move(bad_primer_fasta, failed_primer_name)
         return 0, 0, 0
 
-    if debug:
-        sys.stderr.write(
-            "Merged %s %i paired FASTQ reads into %i unique sequences, "
-            "%i above %s min abundance %i (max abundance %i)\n"
-            % (
-                stem,
-                count,
-                uniq_count,
-                acc_uniq_count,
-                "control" if control else "sample",
-                min_abundance,
-                max_indiv_abundance,
-            )
-        )
-
-    # Determine if ITS1 region is present using hmmscan,
+    # ITS1 presence filter, and ITS1-trim, using hmmscan
     dedup = os.path.join(tmp, "dedup_its1.fasta")
     uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-        merged_fasta, dedup, stem, shared_tmp, debug=debug
+        merged_fasta, dedup, stem, shared_tmp, min_abundance, debug=debug
     )
     if debug:
         sys.stderr.write(
             "DEBUG: Filtered %s down to %i unique ITS1 sequences "
-            "above %s min abundance threshold %i, (max abundance %i)\n"
+            "above %s min abundance threshold %i (max abundance %i)\n"
             % (
                 stem,
                 uniq_count,
