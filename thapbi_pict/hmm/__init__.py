@@ -20,6 +20,7 @@ import os
 import shutil
 import sys
 import tempfile
+import time
 import warnings
 
 from ..utils import run
@@ -108,17 +109,56 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
 def load_result_cache(cached_results_file):
     """Load simple TSV file of cached ITS1 trim results as a dict."""
     answer = dict()
+    claim_lock(cached_results_file)
     for line in open(cached_results_file):
         seq, trimmed = line.rstrip("\n").split("\t")
         answer[seq] = trimmed
+    release_lock(cached_results_file)
     return answer
 
 
-def save_result_cache(cached_results_file, value_dict):
+def claim_lock(cached_results_file, timeout=120, debug=False):
+    """Wait until can creat log file, or abort."""
+    wait = 0
+    pause = 1
+    while wait < timeout and os.path.isfile(cached_results_file + ".lock"):
+        if debug:
+            sys.stderr.write("Waiting for lock to write to %s\n" % cached_results_file)
+        time.sleep(pause)
+        wait += pause
+        pause = max(60, pause * 2)
+    if os.path.isfile(cached_results_file + ".lock"):
+        sys.exit("Could not acquire lock to update %s" % cached_results_file)
+    with open(cached_results_file + ".lock", "w") as handle:
+        handle.write("In use\n")
+
+
+def release_lock(cached_results_file):
+    """Delete lock file."""
+    try:
+        os.remove(cached_results_file + ".lock")
+    except OSError:
+        # Probably a race condition... cache could be incomplete now
+        sys.stderr.write("ERROR: Problem releasing %s.lock\n" % cached_results_file)
+
+
+def save_result_cache(cached_results_file, value_dict, timeout=60, debug=False):
     """Save ITS1 trim results as a dict."""
+    claim_lock(cached_results_file, timeout=60, debug=debug)
+    if os.path.isfile(cached_results_file):
+        # Reload first in case altered in meantime
+        for line in open(cached_results_file):
+            seq, trimmed = line.rstrip("\n").split("\t")
+            value_dict[seq] = trimmed
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Updating %s to have %i entries\n"
+            % (cached_results_file, len(value_dict))
+        )
     with open(cached_results_file, "w") as handle:
         for seq, trimmed in value_dict.items():
             handle.write("%s\t%s\n" % (seq, trimmed))
+    release_lock(cached_results_file)
 
 
 def update_result_cache(
@@ -132,8 +172,7 @@ def update_result_cache(
 ):
     """Call hmmscan, update dict in memory, and write it to disk.
 
-    WARNING: No file locking, so race conditions are possible if there
-    is more than one script running using the same cache file.
+    Has simple file locking.
     """
     if not missing_seqs:
         return
@@ -141,11 +180,17 @@ def update_result_cache(
     with open(tmp_fasta, "w") as handle:
         for title, seq in missing_seqs:
             handle.write(">%s\n%s\n" % (title, seq))
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Created temp file %s for calling hmmscan\n" % tmp_fasta
+        )
     for _title, seq, trimmed in filter_for_ITS1(
         tmp_fasta, model_cache_dir, bitscore_threshold="6", debug=debug, cpu=cpu
     ):
         value_dict[seq] = trimmed
-    save_result_cache(cached_results_file, value_dict)
+    if debug:
+        sys.stderr.write("DEBUG: About to update cache %s\n" % cached_results_file)
+    save_result_cache(cached_results_file, value_dict, debug=debug)
 
 
 def cached_filter_for_ITS1(

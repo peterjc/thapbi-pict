@@ -228,6 +228,7 @@ def filter_fasta_for_its1(
     tmp,
     shared_tmp_dir,
     min_abundance,
+    hmmscan_cache=None,
     debug=False,
     cpu=0,
 ):
@@ -247,7 +248,10 @@ def filter_fasta_for_its1(
     margin = 10
     cropping_warning = 0
 
-    cached_results_file = os.path.join(shared_tmp_dir, "hmmscan_its1_cache.tsv")
+    if hmmscan_cache:
+        cached_results_file = hmmscan_cache
+    else:
+        cached_results_file = os.path.join(shared_tmp_dir, "hmmscan_its1_cache.tsv")
     with open(input_fasta) as fasta_handle:
         for title, full_seq, hmm_seq in cached_filter_for_ITS1(
             SimpleFastaParser(fasta_handle),
@@ -307,6 +311,7 @@ def prepare_sample(
     right_primer,
     min_abundance,
     control,
+    hmmscan_cache,
     shared_tmp,
     debug=False,
     cpu=0,
@@ -390,7 +395,15 @@ def prepare_sample(
     # ITS1 presence filter, and ITS1-trim, using hmmscan
     dedup = os.path.join(tmp, "dedup_its1.fasta")
     uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
-        merged_fasta, dedup, stem, tmp, shared_tmp, min_abundance, debug=debug, cpu=cpu
+        merged_fasta,
+        dedup,
+        stem,
+        tmp,
+        shared_tmp,
+        min_abundance,
+        hmmscan_cache,
+        debug=debug,
+        cpu=cpu,
     )
     if debug:
         sys.stderr.write(
@@ -421,6 +434,7 @@ def main(
     left_primer,
     right_primer,
     min_abundance=100,
+    hmmscan_cache=None,
     tmp_dir=None,
     debug=False,
     cpu=0,
@@ -530,6 +544,7 @@ def main(
             right_primer,
             control_min_abundance if control else sample_min_abundance,
             control,
+            hmmscan_cache,
             shared_tmp,
             debug=debug,
             cpu=cpu,
