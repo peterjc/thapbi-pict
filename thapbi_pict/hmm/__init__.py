@@ -111,8 +111,8 @@ def load_result_cache(cached_results_file):
     answer = dict()
     claim_lock(cached_results_file)
     for line in open(cached_results_file):
-        seq, trimmed = line.rstrip("\n").split("\t")
-        answer[seq] = trimmed
+        seq, start, end = line.rstrip("\n").split("\t")
+        answer[seq] = (int(start), int(end))
     release_lock(cached_results_file)
     return answer
 
@@ -148,16 +148,16 @@ def save_result_cache(cached_results_file, value_dict, timeout=60, debug=False):
     if os.path.isfile(cached_results_file):
         # Reload first in case altered in meantime
         for line in open(cached_results_file):
-            seq, trimmed = line.rstrip("\n").split("\t")
-            value_dict[seq] = trimmed
+            seq, start, end = line.rstrip("\n").split("\t")
+            value_dict[seq] = (int(start), int(end))
     if debug:
         sys.stderr.write(
             "DEBUG: Updating %s to have %i entries\n"
             % (cached_results_file, len(value_dict))
         )
     with open(cached_results_file, "w") as handle:
-        for seq, trimmed in value_dict.items():
-            handle.write("%s\t%s\n" % (seq, trimmed))
+        for seq, (start, end) in value_dict.items():
+            handle.write("%s\t%i\t%i\n" % (seq, start, end))
     release_lock(cached_results_file)
 
 
@@ -187,7 +187,9 @@ def update_result_cache(
     for _title, seq, trimmed in filter_for_ITS1(
         tmp_fasta, model_cache_dir, bitscore_threshold="6", debug=debug, cpu=cpu
     ):
-        value_dict[seq] = trimmed
+        start = seq.index(trimmed)
+        end = start + len(trimmed)
+        value_dict[seq] = (start, end)
     if debug:
         sys.stderr.write("DEBUG: About to update cache %s\n" % cached_results_file)
     save_result_cache(cached_results_file, value_dict, debug=debug)
@@ -214,7 +216,8 @@ def cached_filter_for_ITS1(
     missing_seqs = set()
     for title, seq in title_and_seqs:
         try:
-            yield title, seq, result_cache[seq]
+            start, end = result_cache[seq]
+            yield title, seq, seq[start:end]
             cached_seqs.add(seq)
         except KeyError:
             missing_seqs.add((title, seq))
@@ -245,7 +248,8 @@ def cached_filter_for_ITS1(
                 % len(result_cache)
             )
         for title, seq in missing_seqs:
-            yield title, seq, result_cache[seq]
+            start, end = result_cache[seq]
+            yield title, seq, seq[start:end]
 
 
 def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False, cpu=0):
