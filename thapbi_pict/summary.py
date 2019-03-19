@@ -31,9 +31,9 @@ def main(inputs, output, method, min_abundance=1, debug=False):
 
         samples = set()
         md5_abundance = Counter()
-        abundance_by_samples = dict()
-        md5_species = dict()
-        md5_to_seq = dict()
+        abundance_by_samples = {}
+        md5_species = {}
+        md5_to_seq = {}
 
         if debug:
             sys.stderr.write("Loading FASTA sequences and abundances\n")

@@ -48,7 +48,7 @@ def md5_to_taxon(md5_list, session):
         .filter(its1_seq.md5.in_(md5_list))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
-    return list(set(_.current_taxonomy for _ in view))  # depulicate
+    return list({_.current_taxonomy for _ in view})  # depulicate
 
 
 def unique_or_separated(values, sep=";"):
@@ -79,7 +79,7 @@ def taxid_and_sp_lists(taxon_entries):
         )
 
     # Discard clade, and now remove duplicates
-    tax = sorted(set((t.ncbi_taxid, t.genus, t.species) for t in taxon_entries))
+    tax = sorted({(t.ncbi_taxid, t.genus, t.species) for t in taxon_entries})
 
     return (
         unique_or_separated([t[0] for t in tax]),
@@ -103,10 +103,7 @@ def perfect_match_in_db(session, seq):
     # each SequenceSource -> one current taxonomy
     # TODO: Refactor the query to get the DB to apply disinct?
     t = list(
-        set(
-            _.current_taxonomy
-            for _ in session.query(SequenceSource).filter_by(its1=its1)
-        )
+        {_.current_taxonomy for _ in session.query(SequenceSource).filter_by(its1=its1)}
     )
     return taxid_and_sp_lists(t)
 
@@ -160,7 +157,7 @@ def method_identity(
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a dictionary of DB variants from the ITS1 DB entries."""
     global fuzzy_matches
-    fuzzy_matches = dict()
+    fuzzy_matches = {}
 
     view = session.query(ITS1)
     count = 0
@@ -308,7 +305,7 @@ def method_blast(
     # Therefore must look at the FASTA input file too.
 
     # Load the top-equal BLAST results into a dict,
-    blast_hits = dict()
+    blast_hits = {}
     score = None
     with open(blast_out) as handle:
         for line in handle:
@@ -615,7 +612,7 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
         .distinct(Taxonomy.genus, Taxonomy.species)
         .join(SequenceSource, SequenceSource.current_taxonomy_id == Taxonomy.id)
     )
-    db_sp_list = sorted(set(("%s %s" % (t.genus, t.species)).strip() for t in view))
+    db_sp_list = sorted({("%s %s" % (t.genus, t.species)).strip() for t in view})
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(

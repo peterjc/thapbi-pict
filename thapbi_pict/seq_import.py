@@ -48,7 +48,7 @@ def main(
     for fasta_file, tsv_file in input_list:
         if debug:
             sys.stderr.write("DEBUG: Loading meta-data from %s\n" % tsv_file)
-        meta_data = dict()
+        meta_data = {}
         # Apply minimum abundance threshold during FASTA loading
         try:
             for idn, taxid, genus_species in parse_species_tsv(tsv_file):

@@ -17,8 +17,8 @@ def load_nodes(nodes_dmp):
     Returns two dicts, the parent/child relationships, and the rank of
     each node.
     """
-    tree = dict()
-    ranks = dict()
+    tree = {}
+    ranks = {}
     with open(nodes_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -32,7 +32,7 @@ def load_nodes(nodes_dmp):
 
 def load_names(names_dmp):
     """Load scientific names of species from NCBI taxdump names.dmp file."""
-    names = dict()
+    names = {}
     with open(names_dmp) as handle:
         for line in handle:
             if not line.endswith("\t|\tscientific name\t|\n"):

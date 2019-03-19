@@ -40,7 +40,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
     Rather than the values simply being an integer count, they are
     the set of MD5 identifiers (take the length for the count).
     """
-    counter = dict()
+    counter = {}
     # Sorting because currently not all the classifiers produce out in
     # the same order. The identify classifier respects the input FASTA
     # order (which is by decreasing abundance), while the swarm classifier
@@ -148,9 +148,9 @@ def save_confusion_matrix(
     # Will report one row per possible combination of expected species
     # None entry (if expected), then single sp (A, B, C), then multi-species (A;B;C etc)
     rows = (
-        list(set("(None)" for (expt, pred) in tally if expt == ""))
-        + sorted(set(expt for (expt, pred) in tally if expt in sp_list))
-        + sorted(set(expt for (expt, pred) in tally if expt and expt not in sp_list))
+        list({"(None)" for (expt, pred) in tally if expt == ""})
+        + sorted({expt for (expt, pred) in tally if expt in sp_list})
+        + sorted({expt for (expt, pred) in tally if expt and expt not in sp_list})
     )
 
     assert len(sp_list) * sum(tally.values()) == exp_total
@@ -320,7 +320,7 @@ def main(
 
     db_sp_list = None
     file_count = 0
-    global_tally = dict()
+    global_tally = {}
 
     for predicted_file, expected_file in input_list:
         if debug:
@@ -362,8 +362,8 @@ def main(
 
     # Consistency check - we know swarm classifer breaks this, important at useq level
     if level in ["useq"]:
-        md5_pred = dict()
-        md5_expt = dict()
+        md5_pred = {}
+        md5_expt = {}
         for (expt, pred), values in global_tally.items():
             assert isinstance(values, set), values
             for md5 in values:
