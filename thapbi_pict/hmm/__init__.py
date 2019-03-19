@@ -107,7 +107,11 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
 
 
 def load_result_cache(cached_results_file):
-    """Load simple TSV file of cached ITS1 trim results as a dict."""
+    """Load simple TSV file of cached ITS1 trim results as a dict.
+
+    Will silently ignore duplicate entries, taking the later copy.
+    e.g. Rival processes appended the same entry.
+    """
     answer = dict()
     claim_lock(cached_results_file)
     for line in open(cached_results_file):
@@ -161,6 +165,24 @@ def save_result_cache(cached_results_file, value_dict, timeout=60, debug=False):
     release_lock(cached_results_file)
 
 
+def append_result_cache(cached_results_file, new_values, timeout=60, debug=False):
+    """Append new ITS1 trim results to the cache file.
+
+    This could lead to rival processess appending the same value,
+    however we discard duplicates on loading the cache.
+    """
+    claim_lock(cached_results_file, timeout=60, debug=debug)
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Updating %s with %i new entries\n"
+            % (cached_results_file, len(new_values))
+        )
+    with open(cached_results_file, "a") as handle:
+        for seq, start, end in new_values:
+            handle.write("%s\t%i\t%i\n" % (seq, start, end))
+    release_lock(cached_results_file)
+
+
 def update_result_cache(
     cached_results_file,
     value_dict,
@@ -184,15 +206,15 @@ def update_result_cache(
         sys.stderr.write(
             "DEBUG: Created temp file %s for calling hmmscan\n" % tmp_fasta
         )
+    new_values = []
     for _title, seq, trimmed in filter_for_ITS1(
         tmp_fasta, model_cache_dir, bitscore_threshold="6", debug=debug, cpu=cpu
     ):
         start = seq.index(trimmed)
         end = start + len(trimmed)
         value_dict[seq] = (start, end)
-    if debug:
-        sys.stderr.write("DEBUG: About to update cache %s\n" % cached_results_file)
-    save_result_cache(cached_results_file, value_dict, debug=debug)
+        new_values.append((seq, start, end))
+    append_result_cache(cached_results_file, new_values, debug=debug)
 
 
 def cached_filter_for_ITS1(
