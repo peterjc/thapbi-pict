@@ -321,8 +321,8 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
     del file_list
 
     # Dicts mapping stem to filename
-    ext1_dict = dict((os.path.basename(_)[: -len(ext1)], _) for _ in ext1_list)
-    ext2_dict = dict((os.path.basename(_)[: -len(ext2)], _) for _ in ext2_list)
+    ext1_dict = {os.path.basename(_)[: -len(ext1)]: _ for _ in ext1_list}
+    ext2_dict = {os.path.basename(_)[: -len(ext2)]: _ for _ in ext2_list}
 
     # This could happen if have same filename used in different folders:
     if len(ext1_dict) < len(ext1_list):
