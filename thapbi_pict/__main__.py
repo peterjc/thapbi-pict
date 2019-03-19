@@ -505,12 +505,13 @@ comma.
         "-l",
         "--left",
         type=str,
-        default="GAAGGTGAAGTCGTAACAAGG",
+        default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
         metavar="PRIMER",
         help="Left primer sequence, finds and removes from start of "
         "merged read pairs. Can use IUPAC ambiguity codes. "
         "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
-        "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
+        "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202 and "
+        "conserved 32bp 'TTTCCGTAGGTGAACCTGCGGAAGGATCATTA'.",
     )
     parser_prepare_reads.add_argument(
         "-r",

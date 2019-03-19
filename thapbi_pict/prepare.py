@@ -243,7 +243,7 @@ def filter_fasta_for_its1(
     maximum abundance, and number of cropping warnings.
     """
     counts = Counter()
-    exp_left = 32
+    exp_left = 0
     exp_right = 0
     margin = 10
     cropping_warning = 0
