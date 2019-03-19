@@ -232,7 +232,7 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
     Returns the number of unique ITS1 sequences (integer),
     maximum abundance, and number of cropping warnings.
     """
-    exp_left = 32
+    exp_left = 0
     exp_right = 0
     margin = 10
     cropping_warning = 0
