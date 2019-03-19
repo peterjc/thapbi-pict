@@ -77,30 +77,39 @@ def onebp_variants(seq):
     return variants
 
 
-assert set(onebp_variants("A")) == set(
-    ["", "C", "G", "T", "AA", "CA", "GA", "TA", "AC", "AG", "AT"]
-)
-assert set(onebp_variants("AA")) == set(
-    [
-        "A",
-        "CA",
-        "GA",
-        "TA",
-        "AC",
-        "AG",
-        "AT",
-        "AAA",
-        "CAA",
-        "GAA",
-        "TAA",
-        "ACA",
-        "AGA",
-        "ATA",
-        "AAC",
-        "AAG",
-        "AAT",
-    ]
-)
+assert set(onebp_variants("A")) == {
+    "",
+    "C",
+    "G",
+    "T",
+    "AA",
+    "CA",
+    "GA",
+    "TA",
+    "AC",
+    "AG",
+    "AT",
+}
+
+assert set(onebp_variants("AA")) == {
+    "A",
+    "CA",
+    "GA",
+    "TA",
+    "AC",
+    "AG",
+    "AT",
+    "AAA",
+    "CAA",
+    "GAA",
+    "TAA",
+    "ACA",
+    "AGA",
+    "ATA",
+    "AAC",
+    "AAG",
+    "AAT",
+}
 
 
 def expand_IUPAC_ambiguity_codes(seq):

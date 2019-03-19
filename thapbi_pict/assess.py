@@ -63,7 +63,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
             try:
                 counter[expt[2], pred[2]].add(md5)
             except KeyError:
-                counter[expt[2], pred[2]] = set([md5])
+                counter[expt[2], pred[2]] = {md5}
     except ValueError as e:
         # This is used for single sample controls,
         # where all reads are expected to be from species X.
@@ -82,7 +82,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
             try:
                 counter[expt_sp_genus, pred[2]].add(md5)
             except KeyError:
-                counter[expt_sp_genus, pred[2]] = set([md5])
+                counter[expt_sp_genus, pred[2]] = {md5}
     return counter
 
 
