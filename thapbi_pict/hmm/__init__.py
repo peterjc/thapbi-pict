@@ -112,7 +112,7 @@ def load_result_cache(cached_results_file):
     Will silently ignore duplicate entries, taking the later copy.
     e.g. Rival processes appended the same entry.
     """
-    answer = dict()
+    answer = {}
     claim_lock(cached_results_file)
     for line in open(cached_results_file):
         seq, start, end = line.rstrip("\n").split("\t")
@@ -230,7 +230,7 @@ def cached_filter_for_ITS1(
     if os.path.isfile(cached_results_file):
         result_cache = load_result_cache(cached_results_file)
     else:
-        result_cache = dict()
+        result_cache = {}
         if debug:
             sys.stderr.write("DEBUG: No cache at %s\n" % cached_results_file)
 
