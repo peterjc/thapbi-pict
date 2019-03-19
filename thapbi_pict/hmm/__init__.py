@@ -117,7 +117,7 @@ def load_result_cache(cached_results_file):
     return answer
 
 
-def claim_lock(cached_results_file, timeout=120, debug=False):
+def claim_lock(cached_results_file, timeout=240, debug=False):
     """Wait until can creat log file, or abort."""
     wait = 0
     pause = 1
