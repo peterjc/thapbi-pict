@@ -177,6 +177,19 @@ def plate_summary(args=None):
     )
 
 
+def sample_summary(args=None):
+    """Subcommand to run multiple-output-folder summary at sample level."""
+    from .sample_summary import main
+
+    return main(
+        inputs=args.inputs,
+        output=args.output,
+        method=args.method,
+        min_abundance=args.abundance,
+        debug=args.verbose,
+    )
+
+
 def main(args=None):
     """Execute the command line script thapbi_pict.
 
@@ -746,6 +759,57 @@ comma.
     )
     parser_plate_summary.set_defaults(func=plate_summary)
     del parser_plate_summary  # To prevent acidentally adding more
+
+    # sample-summary
+    parser_sample_summary = subparsers.add_parser(
+        "sample-summary",
+        description="Sample-level summary report on classifier output.",
+        epilog="Assumes you've run prepare-reads and classify, and have "
+        "folders with XXX.method.tsv files from your samples. The output "
+        "is a table with rows for each sample (XXX), describing the species"
+        "predicted to be present, and the associated sequence count. "
+        "Intended to be used for samples over multiple sequencing plates.",
+    )
+    parser_sample_summary.add_argument(
+        "inputs",
+        type=str,
+        nargs="+",
+        help="One or more prediction files (*.method.tsv) or folder names. "
+        "The files should follow this naming convention, where the classifer "
+        "method appearing in the extension can be set via -m / --method.",
+    )
+    parser_sample_summary.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default="identity",
+        help="Method to assess (used to infer filenames), default is identity.",
+    )
+    parser_sample_summary.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="100",
+        help="Mininum sample level abundance to require for the report. "
+        "Default 100 reflects default in prepare-reads. Rather than re-running "
+        "the prepare or classifier steps with a stricter minimum abundance you "
+        "can apply it here. Use zero or one to look at everything (but beware "
+        "that negative control samples will include low abundance entries).",
+    )
+    parser_sample_summary.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="File to write sample species classification summary table to. "
+        "Default is '-' meaning to stdout.",
+    )
+    parser_sample_summary.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_sample_summary.set_defaults(func=sample_summary)
+    del parser_sample_summary  # To prevent acidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
