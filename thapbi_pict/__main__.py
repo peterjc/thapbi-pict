@@ -729,8 +729,8 @@ comma.
         help="Mininum sample level abundance to require for the report. "
         "Default 100 reflects default in prepare-reads. Rather than re-running "
         "the prepare or classifier steps with a stricter minimum abundance you "
-        "can apply it here. Use zero or one look at everything (but beware that "
-        "negative control samples will include low abundance entries).",
+        "can apply it here. Use zero or one to look at everything (but beware "
+        "that negative control samples will include low abundance entries).",
     )
     parser_plate_summary.add_argument(
         "-o",
