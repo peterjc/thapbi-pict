@@ -21,6 +21,9 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
     """
     assert isinstance(inputs, list)
 
+    if not (output or human_output):
+        sys.exit("No output file specified.\n")
+
     samples = set()
     counts = Counter()
     sp_to_taxid = {}
@@ -53,8 +56,10 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
         if debug:
             sys.stderr.write("DEBUG: Output to stdout...\n")
         handle = sys.stdout
-    else:
+    elif output:
         handle = open(output, "w")
+    else:
+        handle = None
 
     if human_output == "-":
         if debug:
@@ -65,7 +70,8 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
     else:
         human = None
 
-    handle.write("#Sample\tTaxID\tSpecies\tUnambiguous\tSeq-count\n")
+    if handle:
+        handle.write("#Sample\tTaxID\tSpecies\tUnambiguous\tSeq-count\n")
     for sample in samples:
         all_sp = set()
         unambig_sp = set()
@@ -73,14 +79,15 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
             for unambig in [True, False]:
                 count = counts[sample, sp, unambig]
                 if count:
-                    handle.write(
-                        "%s\t%s\t%s\t%s\t%i\n"
-                        % (sample, sp_to_taxid[sp], sp, unambig, count)
-                    )
+                    if handle:
+                        handle.write(
+                            "%s\t%s\t%s\t%s\t%i\n"
+                            % (sample, sp_to_taxid[sp], sp, unambig, count)
+                        )
                     all_sp.add(sp)
                     if unambig:
                         unambig_sp.add(sp)
-        if not all_sp:
+        if not all_sp and handle:
             # Match unclassified count output: TaxID zero, blank species, True
             handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
         if human:
@@ -95,9 +102,9 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
                 human.write(" - No data\n")
             human.write("\n")
 
-    if output != "-":
+    if output != "-" and handle:
         handle.close()
-    if human_output and human_output != "-":
+    if human_output != "-" and human:
         human.close()
 
     try:
