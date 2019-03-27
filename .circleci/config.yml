@@ -59,3 +59,4 @@ jobs:
             tests/test_classify.sh
             tests/test_seq-import.sh
             tests/test_assess.sh
+            tests/test_sample-summary.sh
