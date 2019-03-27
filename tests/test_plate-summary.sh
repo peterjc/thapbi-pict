@@ -7,6 +7,7 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking plate-summary"
 thapbi_pict plate-summary 2>&1 | grep "the following arguments are required"
+thapbi_pict plate-summary -o '' tests/classify 2>&1 | grep "No output file specified"
 set -o pipefail
 
 # One method:

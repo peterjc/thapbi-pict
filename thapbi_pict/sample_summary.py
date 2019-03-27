@@ -22,7 +22,7 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
     assert isinstance(inputs, list)
 
     if not (output or human_output):
-        sys.exit("No output file specified.\n")
+        sys.exit("ERROR: No output file specified.\n")
 
     samples = set()
     counts = Counter()

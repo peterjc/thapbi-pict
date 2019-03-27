@@ -23,6 +23,9 @@ def main(inputs, output, method, min_abundance=1, debug=False):
     """
     assert isinstance(inputs, list)
 
+    if not output:
+        sys.exit("ERROR: No output file specified.\n")
+
     samples = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
