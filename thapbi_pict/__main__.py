@@ -184,6 +184,7 @@ def sample_summary(args=None):
     return main(
         inputs=args.inputs,
         output=args.output,
+        human_output=args.human,
         method=args.method,
         min_abundance=args.abundance,
         debug=args.verbose,
@@ -804,6 +805,14 @@ comma.
         metavar="FILENAME",
         help="File to write sample species classification summary table to. "
         "Default is '-' meaning to stdout.",
+    )
+    parser_sample_summary.add_argument(
+        "-r",
+        "--human",
+        type=str,
+        metavar="FILENAME",
+        help="File to write human readable smaple level species predictions to. "
+        "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     parser_sample_summary.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
