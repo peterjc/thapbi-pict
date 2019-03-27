@@ -279,7 +279,7 @@ def method_blast(
         and os.path.isfile(blast_db + ".nin")
         and os.path.isfile(blast_db + ".nsq")
     ):
-        sys.exit("Missing generated BLAST database %s.n*\n" % blast_db)
+        sys.exit("ERROR: Missing generated BLAST database %s.n*\n" % blast_db)
     cmd = [
         "blastn",
         "-db",
@@ -298,7 +298,7 @@ def method_blast(
     run(cmd, debug)
 
     if not os.path.isfile(blast_out):
-        sys.exit("BLAST did not produce expected output file %s\n" % blast_out)
+        sys.exit("ERROR: BLAST did not produce expected output file %s\n" % blast_out)
 
     # We want to report on entries without a BLAST hit,
     # and they will be missing in the BLAST output.
@@ -447,7 +447,9 @@ def method_swarm_core(
     run_swarm([its_fasta, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
 
     if not os.path.isfile(swarm_clusters):
-        sys.exit("Swarm did not produce expected output file %s\n" % swarm_clusters)
+        sys.exit(
+            "ERROR: Swarm did not produce expected output file %s\n" % swarm_clusters
+        )
     cluster_count = 0
     count = 0
     tax_counts = Counter()

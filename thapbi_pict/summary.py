@@ -59,7 +59,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
         )
         if len(samples) != len(tsv_files):
             sys.exit(
-                "Identified %i samples from FASTA files, but %i TSV files for %s"
+                "ERROR: Identified %i samples from FASTA files, but %i TSV files for %s"
                 % (len(samples), len(tsv_files), method)
             )
         for predicted_file in tsv_files:
