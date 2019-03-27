@@ -72,6 +72,12 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
 
     if handle:
         handle.write("#Sample\tTaxID\tSpecies\tUnambiguous\tSeq-count\n")
+    if human:
+        human.write(
+            "NOTE: Species listed in brackets are where sequences matched multiple "
+            "species equally well. For example, Phytophthora andina, P. infestans, "
+            "and P. ipomoeae, share an identical marker.\n\n"
+        )
     for sample in samples:
         all_sp = set()
         unambig_sp = set()
