@@ -84,15 +84,17 @@ def top_level_species(tree, ranks, names, genus_list):
 def main(tax, db_url, ancestors, debug=True):
     """Load an NCBI taxdump into an ITS1 database."""
     if not os.path.isdir(tax):
-        sys.exit("Could not find taxdump directory: %r\n" % tax)
+        sys.exit("ERROR: Could not find taxdump directory: %r\n" % tax)
     for filename in ("names.dmp", "nodes.dmp"):
         if not os.path.isfile(os.path.join(tax, filename)):
-            sys.exit("Missing %s in the taxdump directory: %r\n" % (filename, tax))
+            sys.exit(
+                "ERROR: Missing %s in the taxdump directory: %r\n" % (filename, tax)
+            )
 
     try:
         ancestors = [int(_) for _ in ancestors.split(",")]
     except ValueError:
-        sys.exit("Invalid ancestors argument: %r\n" % ancestors)
+        sys.exit("ERROR: Invalid ancestors argument: %r\n" % ancestors)
 
     tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
@@ -104,7 +106,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
     if not genus_list:
-        sys.exit("Could not identify any genus names under the given nodes\n")
+        sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
     if debug:
         sys.stderr.write(
             "Identified %i genera under specified ancestor node: %s\n"

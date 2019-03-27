@@ -52,7 +52,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
         ):
             if not expt[0] == pred[0]:
                 sys.exit(
-                    "Sequence name mismatch in %s vs %s, %s vs %s\n"
+                    "ERROR: Sequence name mismatch in %s vs %s, %s vs %s\n"
                     % (expected_file, predicted_file, expt[0], pred[0])
                 )
             md5, abundance = split_read_name_abundance(expt[0])

@@ -291,7 +291,7 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
                 answer.append(x)
             else:
                 sys.exit(
-                    "Specified filename %r does not have expected extension %r."
+                    "ERROR: Specified filename %r does not have expected extension %r."
                     % (x, ext)
                 )
         else:
@@ -352,7 +352,9 @@ def parse_species_list_from_tsv(tabular_file):
     with open(tabular_file) as handle:
         line = handle.readline()
     if not line.startswith("#") or line.count("\t") != 3:
-        sys.exit("%s does not have 4 column TSV header:\n%s" % (tabular_file, line))
+        sys.exit(
+            "ERROR: %s does not have 4 column TSV header:\n%s" % (tabular_file, line)
+        )
     parts = line.rstrip("\n").split("\t")
     if (
         parts[0] != "#sequence-name"
@@ -362,13 +364,13 @@ def parse_species_list_from_tsv(tabular_file):
     ):
         sys.stderr.write("%r\n" % parts)
         sys.exit(
-            "%s does not have expected 4 column TSV headers "
+            "ERROR: %s does not have expected 4 column TSV headers "
             "(sequence-name, taxid, genus-species:..., note):\n%s"
             % (tabular_file, line)
         )
     if not parts[2].startswith("genus-species:"):
         sys.exit(
-            "%s does not have species list in genus-species column header:\n%s"
+            "ERROR: %s does not have species list in genus-species column header:\n%s"
             % (tabular_file, line)
         )
     return parts[2][14:].split(";")
@@ -382,8 +384,8 @@ def parse_species_tsv(tabular_file, min_abundance=0):
                 continue
             if line.count("\t") != 3:
                 sys.exit(
-                    "%s is not 4 column TSV (name, taxid, genus-species, note):\n%s"
-                    % (tabular_file, line)
+                    "ERROR: %s is not 4 column TSV "
+                    "(name, taxid, genus-species, note):\n%s" % (tabular_file, line)
                 )
             name, taxid, genus_species, _ = line.split("\t", 3)
             if name == "*":

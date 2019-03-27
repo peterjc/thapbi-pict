@@ -39,7 +39,9 @@ def main(
     input_list = find_paired_files(inputs, ".fasta", ".%s.tsv" % method, debug=debug)
 
     if not input_list:
-        sys.exit("Need *.fasta files with matching *.%s.tsv classification\n" % method)
+        sys.exit(
+            "ERROR: Need *.fasta files with matching *.%s.tsv classification\n" % method
+        )
 
     sys.stderr.write(
         "Importing %i FASTA files with %s classifications\n" % (len(input_list), method)
@@ -53,7 +55,7 @@ def main(
         try:
             for idn, taxid, genus_species in parse_species_tsv(tsv_file):
                 if idn in meta_data:
-                    sys.exit("Duplicated identifier %r in %r" % (idn, tsv_file))
+                    sys.exit("ERROR: Duplicated identifier %r in %r" % (idn, tsv_file))
                 meta_data[idn] = (int(taxid), "", genus_species, "")
             if not meta_data:
                 sys.stderr.write(

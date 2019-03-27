@@ -68,7 +68,7 @@ def main(
     if sp_list and len(genus_list) != 1:
         # This is to avoid ambiguity as some species names are used
         # in more than one genus.
-        sys.exit("Using -s/--species requires a single genus via -g/--genus\n")
+        sys.exit("ERROR: Using -s/--species requires a single genus via -g/--genus\n")
 
     for x in sp_list:
         if (

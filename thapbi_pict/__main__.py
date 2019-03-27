@@ -29,7 +29,7 @@ def expand_database_argument(text, exist=False):
     # Note we are not currently checking file exists,
     # as we might be about to create it.
     if not text:
-        sys.exit("The database argument is required.\n")
+        sys.exit("ERROR: The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
         db = text[len(prefix) :]
@@ -37,7 +37,7 @@ def expand_database_argument(text, exist=False):
     else:
         db = text
     if exist and db != ":memory:" and not os.path.isfile(db):
-        sys.exit("The database %s was not found.\n" % db)
+        sys.exit("ERROR: The database %s was not found.\n" % db)
     return prefix + db
 
 

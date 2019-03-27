@@ -96,7 +96,7 @@ def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
     )
     if os.path.isfile(filename):
         return filename
-    sys.exit("Could not find %s installed with trimmomatic." % fasta_name)
+    sys.exit("ERROR: Could not find %s installed with trimmomatic." % fasta_name)
 
 
 def run_trimmomatic(
