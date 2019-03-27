@@ -1,0 +1,8 @@
+NOTE: Species listed in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+
+P-infestans-T30-4
+
+ - (Phytophthora andina)
+ - (Phytophthora infestans)
+ - (Phytophthora ipomoeae)
+
