@@ -32,6 +32,8 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
         sys.stderr.write(
             "Loading %i sample predictions using method %s\n" % (len(tsv_files), method)
         )
+    if not tsv_files:
+        sys.exit("ERROR: No input files found\n")
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
         if sample in samples:
