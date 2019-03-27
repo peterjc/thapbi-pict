@@ -34,7 +34,9 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
         )
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
-        samples.add(sample)  # Check for duplicates (aside from methods)
+        if sample in samples:
+            sys.exit("ERROR: Duplicate sample name: %s\n" % sample)
+        samples.add(sample)
         for name, taxid_list, sp_list in parse_species_tsv(
             predicted_file, min_abundance
         ):
@@ -78,7 +80,7 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
             "species equally well. For example, Phytophthora andina, P. infestans, "
             "and P. ipomoeae, share an identical marker.\n\n"
         )
-    for sample in samples:
+    for sample in sorted(samples):
         all_sp = set()
         unambig_sp = set()
         for sp in sp_to_taxid:
