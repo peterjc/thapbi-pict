@@ -7,6 +7,7 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking sample-summary"
 thapbi_pict sample-summary 2>&1 | grep "the following arguments are required"
+thapbi_pict sample-summary -o '' tests/classify 2>&1 | grep "No output file specified"
 set -o pipefail
 
 # Passing filename, default method, explicit min abundance
