@@ -78,9 +78,10 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
         handle.write("#Sample\tTaxID\tSpecies\tUnambiguous\tSeq-count\n")
     if human:
         human.write(
-            "NOTE: Species listed in brackets are where sequences matched multiple "
-            "species equally well. For example, Phytophthora andina, P. infestans, "
-            "and P. ipomoeae, share an identical marker.\n\n"
+            "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
+            "sequences matched multiple species equally well. For example, "
+            "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
+            "marker.\n\n"
         )
     for sample in sorted(samples):
         all_sp = set()
@@ -104,7 +105,7 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
             human.write("%s\n\n" % sample)
             for sp in sorted(all_sp):
                 if sp not in unambig_sp:
-                    sp = "(%s)" % sp
+                    sp = "%s (uncertain/ambiguous)" % sp
                 if not sp:
                     sp = "Unknown"
                 human.write(" - %s\n" % sp)
