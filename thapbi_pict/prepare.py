@@ -504,7 +504,7 @@ def main(
                     "over control abundance threshold %i (max abundance %i), "
                     % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
                 )
-                if min_abundance < max_indiv_abundance:
+                if sample_min_abundance < max_indiv_abundance:
                     sys.stderr.write(
                         "increasing sample abundance threshold from %i\n"
                         % sample_min_abundance
