@@ -91,27 +91,39 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
                 count = counts[sample, sp, unambig]
                 if count:
                     if handle:
-                        handle.write(
-                            "%s\t%s\t%s\t%s\t%i\n"
-                            % (sample, sp_to_taxid[sp], sp, unambig, count)
-                        )
+                        try:
+                            handle.write(
+                                "%s\t%s\t%s\t%s\t%i\n"
+                                % (sample, sp_to_taxid[sp], sp, unambig, count)
+                            )
+                        except BrokenPipeError:
+                            # Stop trying to write to stdout (eg piped to head)
+                            handle = None
                     all_sp.add(sp)
                     if unambig:
                         unambig_sp.add(sp)
         if not all_sp and handle:
-            # Match unclassified count output: TaxID zero, blank species, True
-            handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
+            try:
+                # Match unclassified count output: TaxID zero, blank species, True
+                handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
+            except BrokenPipeError:
+                handle = None
+
         if human:
-            human.write("%s\n\n" % sample)
-            for sp in sorted(all_sp):
-                if sp not in unambig_sp:
-                    sp = "%s (uncertain/ambiguous)" % sp
-                if not sp:
-                    sp = "Unknown"
-                human.write(" - %s\n" % sp)
-            if not all_sp:
-                human.write(" - No data\n")
-            human.write("\n")
+            try:
+                human.write("%s\n\n" % sample)
+                for sp in sorted(all_sp):
+                    if sp not in unambig_sp:
+                        sp = "%s (uncertain/ambiguous)" % sp
+                    if not sp:
+                        sp = "Unknown"
+                    human.write(" - %s\n" % sp)
+                if not all_sp:
+                    human.write(" - No data\n")
+                human.write("\n")
+            except BrokenPipeError:
+                # Stop trying to write to stdout (e.g. piped to head)
+                human = None
 
     if output != "-" and handle:
         handle.close()
