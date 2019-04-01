@@ -58,6 +58,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.11 | 2019-03-08 | Speed up FASTQ preparation by using ``flash`` instead of ``pear`` v0.9.6.    |
 | v0.0.12 | 2019-03-11 | Fixed bug in ``swarmid`` classifier.                                         |
 | v0.0.13 | 2019-03-22 | Remove conserved 32bp when primer trim. Assess at sample level by default.   |
+| v0.0.14 | *Pending*  | MD5 in dump output.                                                          |
 
 
 # Development Notes

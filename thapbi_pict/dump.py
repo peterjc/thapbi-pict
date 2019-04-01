@@ -83,7 +83,7 @@ def main(
         pass
     else:
         out_handle.write(
-            "#Identifier\tClade\tGenus\tSpecies\tTaxID\tITS1-seq\tSequence\n"
+            "#Identifier\tClade\tGenus\tSpecies\tTaxID\tITS1-MD5\tITS1-seq\tSequence\n"
         )
     for seq_source in view:
         entry_count += 1
@@ -107,13 +107,14 @@ def main(
                 )
             else:
                 out_handle.write(
-                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
                     % (
                         seq_source.source_accession,
                         seq_source.current_taxonomy.clade,
                         seq_source.current_taxonomy.genus,
                         seq_source.current_taxonomy.species,
                         taxid,
+                        seq_source.its1.md5,
                         seq_source.its1.sequence,
                         seq_source.sequence,
                     )
