@@ -263,16 +263,7 @@ def import_fasta_file(
             continue
 
         its1_seq_count += 1
-
         its1_md5 = md5seq(its1_seq)
-
-        # Is is already there? e.g. duplicate sequences in FASTA file
-        its1 = (
-            session.query(ITS1).filter_by(md5=its1_md5, sequence=its1_seq).one_or_none()
-        )
-        if its1 is None:
-            its1 = ITS1(md5=its1_md5, sequence=its1_seq)
-            session.add(its1)
 
         # One sequence can have multiple entries
         idn = title.split(None, 1)[0]
@@ -281,8 +272,7 @@ def import_fasta_file(
         idn_set.add(idn)
 
         entries = fasta_entry_fn(title)
-        if entries:
-            good_seq_count += 1
+        accepted_entries = []  # Some or all may fail species validation
         for entry in entries:
             entry_count += 1
             try:
@@ -309,25 +299,39 @@ def import_fasta_file(
             taxonomy = find_taxonomy(
                 session, taxid, clade, name, name_etc, validate_species
             )
+            if taxonomy is None and validate_species:
+                bad_sp_entries += 1
+                if name and debug:
+                    sys.stderr.write(
+                        "WARNING: Could not validate species %r from %r\n"
+                        % (name, entry)
+                    )
+                if not name:
+                    sys.stderr.write(
+                        "WARNING: Could not determine species from %r\n" % entry
+                    )
+                # Do NOT write it to the DB!
+            else:
+                accepted_entries.append((entry, clade, genus, species, taxid, taxonomy))
+
+        if accepted_entries:
+            # Is sequence already there? e.g. duplicate sequences in FASTA file
+            its1 = (
+                session.query(ITS1)
+                .filter_by(md5=its1_md5, sequence=its1_seq)
+                .one_or_none()
+            )
+            if its1 is None:
+                its1 = ITS1(md5=its1_md5, sequence=its1_seq)
+                session.add(its1)
+            good_seq_count += 1
+        for entry, clade, genus, species, taxid, taxonomy in accepted_entries:
             if taxonomy is None:
-                if validate_species:
-                    bad_sp_entries += 1
-                    if name and debug:
-                        sys.stderr.write(
-                            "WARNING: Could not validate species %r from %r\n"
-                            % (name, entry)
-                        )
-                    if not name:
-                        sys.stderr.write(
-                            "WARNING: Could not determine species from %r\n" % entry
-                        )
-                    # Do NOT write it to the DB
-                    continue
+                assert not validate_species
                 taxonomy = Taxonomy(
                     clade=clade, genus=genus, species=species, ncbi_taxid=taxid
                 )
                 session.add(taxonomy)
-
             # Note we use the original FASTA identifier for traceablity
             # but means the multi-entries get the same source accession
             record_entry = SequenceSource(
@@ -344,6 +348,7 @@ def import_fasta_file(
             session.add(record_entry)
             good_entries += 1
             # print(clade, species, acc)
+
     session.commit()
     sys.stderr.write(
         "File %s had %i sequences, %i of which have ITS1, of which %i accepted.\n"
