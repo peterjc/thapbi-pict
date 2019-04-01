@@ -325,13 +325,20 @@ def import_fasta_file(
                 its1 = ITS1(md5=its1_md5, sequence=its1_seq)
                 session.add(its1)
             good_seq_count += 1
+
         for entry, clade, genus, species, taxid, taxonomy in accepted_entries:
             if taxonomy is None:
                 assert not validate_species
-                taxonomy = Taxonomy(
-                    clade=clade, genus=genus, species=species, ncbi_taxid=taxid
-                )
-                session.add(taxonomy)
+                # A previous entry in this match could have had same sp,
+                assert not taxid
+                taxonomy = lookup_taxonomy(session, clade, genus, species)
+                if taxonomy is None:
+                    taxonomy = Taxonomy(
+                        clade=clade, genus=genus, species=species, ncbi_taxid=taxid
+                    )
+                    session.add(taxonomy)
+
+            assert taxonomy is not None
             # Note we use the original FASTA identifier for traceablity
             # but means the multi-entries get the same source accession
             record_entry = SequenceSource(
