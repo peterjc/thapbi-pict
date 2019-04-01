@@ -48,7 +48,7 @@ def md5_to_taxon(md5_list, session):
         .filter(its1_seq.md5.in_(md5_list))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
-    return list({_.current_taxonomy for _ in view})  # depulicate
+    return list({_.current_taxonomy for _ in view})  # dedulicate
 
 
 def unique_or_separated(values, sep=";"):
@@ -69,6 +69,7 @@ def taxid_and_sp_lists(taxon_entries):
     string instead (in the same order so you can match taxid to species).
     """
     if not taxon_entries:
+        # Unexpected - this is perhaps worth an assert statement / debug msg?
         return 0, "", "No taxonomy entries"
     if len(taxon_entries) == 1:
         t = taxon_entries[0]
@@ -99,12 +100,18 @@ def perfect_match_in_db(session, seq):
     its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
     if its1 is None:
         return 0, "", "No ITS1 database match"
+    assert its1.sequence == seq
     # its1 -> one or more SequenceSource
     # each SequenceSource -> one current taxonomy
     # TODO: Refactor the query to get the DB to apply disinct?
     t = list(
         {_.current_taxonomy for _ in session.query(SequenceSource).filter_by(its1=its1)}
     )
+    if not t:
+        sys.exit(
+            "ERROR: perfect_match_in_db, no taxonomy for id=%s md5=%s sequence=%s\n"
+            % (its1.id, its1.md5, its1.sequence)
+        )
     return taxid_and_sp_lists(t)
 
 
@@ -236,6 +243,11 @@ def method_onebp(
                     len(fuzzy_matches[seq]),
                     len(t),
                 )
+                if not t:
+                    sys.exit(
+                        "ERROR: onebp: %i matches but no taxonomy entries for %s\n"
+                        % (len(fuzzy_matches[seq]), seq)
+                    )
                 taxid, genus_species, _ = taxid_and_sp_lists(t)
             else:
                 note = "No DB matches, even with 1bp diff"
@@ -328,6 +340,8 @@ def method_blast(
             if idn in blast_hits:
                 db_md5s = blast_hits[idn]
                 t = md5_to_taxon(db_md5s, session)
+                if not t:
+                    sys.exit("ERROR: No taxon entry for %s" % idn)
                 taxid, genus_species, note = taxid_and_sp_lists(t)
                 note = ("%i BLAST hits. %s" % (len(db_md5s), note)).strip()
             else:
