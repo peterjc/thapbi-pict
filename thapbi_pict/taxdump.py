@@ -121,6 +121,23 @@ def main(tax, db_url, ancestors, debug=True):
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
 
+    g_old = 0
+    g_new = 0
+    for taxid in genus_list:
+        genus = names[taxid]
+        # Is is already there? e.g. prior import
+        taxonomy = (
+            session.query(Taxonomy)
+            .filter_by(clade=None, genus=genus, species=None, ncbi_taxid=taxid)
+            .one_or_none()
+        )
+        if taxonomy is None:
+            g_new += 1
+            taxonomy = Taxonomy(clade=None, genus=genus, species=None, ncbi_taxid=taxid)
+            session.add(taxonomy)
+        else:
+            g_old += 1
+
     old = 0
     new = 0
     for taxid, genus, species in genus_species:
@@ -152,13 +169,9 @@ def main(tax, db_url, ancestors, debug=True):
 
     session.commit()
 
-    if old:
-        sys.stderr.write(
-            "Loaded %i new species entries into DB (%i already there)\n" % (new, old)
-        )
-    else:
-        sys.stderr.write(
-            "Loaded %i species entries into DB (none already there)\n" % new
-        )
+    sys.stderr.write(
+        "Loaded %i new genera, and %i new species entries into DB "
+        "(%i and %i already there)\n" % (g_new, new, g_old, old)
+    )
 
     return 0
