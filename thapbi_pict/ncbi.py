@@ -69,7 +69,9 @@ assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
 )
 
 
-def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
+def main(
+    fasta_file, db_url, name=None, validate_species=False, genus_only=False, debug=True
+):
     """Implement the thapbi_pict ncbi-import command."""
     return import_fasta_file(
         fasta_file,
@@ -79,4 +81,5 @@ def main(fasta_file, db_url, name=None, validate_species=False, debug=True):
         # fasta_entry_fn=split_composite_entry,
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
+        genus_only=genus_only,
     )

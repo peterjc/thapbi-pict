@@ -31,6 +31,7 @@ def main(
     min_abundance=1000,
     name=None,
     validate_species=False,
+    genus_only=False,
     debug=True,
 ):
     """Implement the thapbi_pict seq-import command."""
@@ -105,6 +106,7 @@ def main(
             entry_taxonomy_fn=meta_fn,
             debug=debug,
             validate_species=validate_species,
+            genus_only=genus_only,
         )
 
     sys.stderr.write("Imported %i FASTA files\n" % len(input_list))

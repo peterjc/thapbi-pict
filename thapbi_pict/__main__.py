@@ -62,6 +62,7 @@ def ncbi_import(args=None):
         db_url=expand_database_argument(args.database),
         name=args.name,
         validate_species=not args.lax,
+        genus_only=args.genus,
         debug=args.verbose,
     )
 
@@ -77,6 +78,7 @@ def seq_import(args=None):
         min_abundance=args.abundance,
         name=args.name,
         validate_species=not args.lax,
+        genus_only=args.genus,
         debug=args.verbose,
     )
 
@@ -90,6 +92,7 @@ def legacy_import(args=None):
         db_url=expand_database_argument(args.database),
         name=args.name,
         validate_species=not args.lax,
+        genus_only=args.genus,
         debug=args.verbose,
     )
 
@@ -280,6 +283,14 @@ def main(args=None):
         help="Accept species names without pre-loaded taxonomy.",
     )
     parser_ncbi_import.add_argument(
+        "-g",
+        "--genus",
+        default=False,
+        action="store_true",
+        help="Record at genus level only (and only validate at genus level, "
+        "unless using -x / --lax in which case anything is accepted as genus).",
+    )
+    parser_ncbi_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_ncbi_import.set_defaults(func=ncbi_import)
@@ -347,6 +358,14 @@ def main(args=None):
         help="Accept species names without pre-loaded taxonomy.",
     )
     parser_seq_import.add_argument(
+        "-g",
+        "--genus",
+        default=False,
+        action="store_true",
+        help="Record at genus level only (and only validate at genus level, "
+        "unless using -x / --lax in which case anything is accepted as genus).",
+    )
+    parser_seq_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_seq_import.set_defaults(func=seq_import)
@@ -382,6 +401,14 @@ def main(args=None):
         default=False,
         action="store_true",
         help="Accept species names without pre-loaded taxonomy.",
+    )
+    parser_legacy_import.add_argument(
+        "-g",
+        "--genus",
+        default=False,
+        action="store_true",
+        help="Record at genus level only (and only validate at genus level, "
+        "unless using -x / --lax in which case anything is accepted as genus).",
     )
     parser_legacy_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"

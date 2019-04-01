@@ -167,6 +167,7 @@ def import_fasta_file(
     fasta_entry_fn=None,
     entry_taxonomy_fn=None,
     validate_species=False,
+    genus_only=False,
 ):
     """Import a FASTA file into the database.
 
