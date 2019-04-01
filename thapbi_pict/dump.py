@@ -10,6 +10,14 @@ from sqlalchemy.orm import aliased, contains_eager
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 
+def none_str(value, none_value=""):
+    """Turn value into a string, special case None to empty string."""
+    if value is None:
+        return none_value
+    else:
+        return str(value)
+
+
 def main(
     db_url, output_filename, output_format, clade="", genus="", species="", debug=True
 ):
@@ -94,13 +102,19 @@ def main(
         )
         try:
             if output_format == "fasta":
+                genus_species = (
+                    "%s %s"
+                    % (
+                        none_str(seq_source.current_taxonomy.genus),
+                        none_str(seq_source.current_taxonomy.species),
+                    )
+                ).strip()
                 out_handle.write(
-                    ">%s [clade=%s] [species=%s %s] [taxid=%s]\n%s\n"
+                    ">%s [clade=%s] [species=%s] [taxid=%s]\n%s\n"
                     % (
                         seq_source.source_accession,
-                        seq_source.current_taxonomy.clade,
-                        seq_source.current_taxonomy.genus,
-                        seq_source.current_taxonomy.species,
+                        none_str(seq_source.current_taxonomy.clade),
+                        genus_species,
                         taxid,
                         seq_source.its1.sequence,
                     )
@@ -110,9 +124,9 @@ def main(
                     "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
                     % (
                         seq_source.source_accession,
-                        seq_source.current_taxonomy.clade,
-                        seq_source.current_taxonomy.genus,
-                        seq_source.current_taxonomy.species,
+                        none_str(seq_source.current_taxonomy.clade),
+                        none_str(seq_source.current_taxonomy.genus),
+                        none_str(seq_source.current_taxonomy.species),
                         taxid,
                         seq_source.its1.md5,
                         seq_source.its1.sequence,
