@@ -51,12 +51,12 @@ thapbi_pict legacy-import -d $DB database/legacy/Phytophthora_ITS_database_v0.00
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "175" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "159" ]; then echo "Wrong its1_sequence count"; false; fi
 thapbi_pict legacy-import -d $DB database/legacy/Phytophthora_ITS_database_v0.004.fasta -n "Legacy DB v0.004"
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "348" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "159" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "348" ]; then echo "Wrong FASTA record count"; false; fi
 
 #thapbi_pict dump 2>&1 | grep "the following arguments are required"
