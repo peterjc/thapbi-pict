@@ -21,6 +21,7 @@ from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 from .utils import find_requested_files
+from .utils import genus_species_name
 from .utils import md5seq
 from .utils import onebp_variants
 
@@ -75,7 +76,7 @@ def taxid_and_sp_lists(taxon_entries):
         t = taxon_entries[0]
         return (
             t.ncbi_taxid,
-            ("%s %s" % (t.genus, t.species)).strip(),
+            genus_species_name(t.genus, t.species),
             "Unique taxonomy match",
         )
 
@@ -84,7 +85,7 @@ def taxid_and_sp_lists(taxon_entries):
 
     return (
         unique_or_separated([t[0] for t in tax]),
-        unique_or_separated([("%s %s" % (t[1], t[2])).strip() for t in tax]),
+        unique_or_separated([genus_species_name(t[1], t[2]) for t in tax]),
         "",  # Not useful to report # of entries as redundant info
     )
 
@@ -628,7 +629,7 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
         .distinct(Taxonomy.genus, Taxonomy.species)
         .join(SequenceSource, SequenceSource.current_taxonomy_id == Taxonomy.id)
     )
-    db_sp_list = sorted({("%s %s" % (t.genus, t.species)).strip() for t in view})
+    db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(

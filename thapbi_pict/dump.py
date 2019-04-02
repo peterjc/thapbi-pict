@@ -9,6 +9,8 @@ from sqlalchemy.orm import aliased, contains_eager
 
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
+from .utils import genus_species_name
+
 
 def none_str(value, none_value=""):
     """Turn value into a string, special case None to empty string."""
@@ -84,7 +86,9 @@ def main(
             .filter_by(species=x, genus=genus_list[0])
             .count()
         ):
-            sys.stderr.write("WARNING: '%s %s' not in database\n" % (genus_list[0], x))
+            sys.stderr.write(
+                "WARNING: '%s' not in database\n" % genus_species_name(genus_list[0], x)
+            )
 
     if output_format == "fasta":
         # no header
@@ -102,13 +106,10 @@ def main(
         )
         try:
             if output_format == "fasta":
-                genus_species = (
-                    "%s %s"
-                    % (
-                        none_str(seq_source.current_taxonomy.genus),
-                        none_str(seq_source.current_taxonomy.species),
-                    )
-                ).strip()
+                genus_species = genus_species_name(
+                    seq_source.current_taxonomy.genus,
+                    seq_source.current_taxonomy.species,
+                )
                 out_handle.write(
                     ">%s [clade=%s] [species=%s] [taxid=%s]\n%s\n"
                     % (

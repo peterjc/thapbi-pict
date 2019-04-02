@@ -15,6 +15,7 @@ from .db_orm import DataSource, ITS1, SequenceSource
 from .db_orm import Taxonomy
 from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
+from .utils import genus_species_name
 from .utils import md5seq
 
 
@@ -126,8 +127,8 @@ def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species)
         taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
         if taxonomy is not None and taxonomy.species:
             sys.stderr.write(
-                "WARNING: Using taxid %i, mapped %r to %s %s"
-                % (taxid, sp_name, taxonomy.genus, taxonomy.species)
+                "WARNING: Using taxid %i, mapped %r to %s"
+                % (taxid, sp_name, genus_species_name(taxonomy.genus, taxonomy.species))
             )
             return taxonomy
         sys.exit("WARNING: Could not uniquely match taxid %i\n" % taxid)

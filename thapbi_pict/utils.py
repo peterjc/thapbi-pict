@@ -10,6 +10,20 @@ from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 
+def genus_species_name(genus, species):
+    """Return name, genus with species if present.
+
+    Copes with species being None (or empty string).
+    """
+    # This is a simple function, centralising it for consistency
+    assert genus and genus == genus.strip()
+    if species:
+        assert species == species.strip()
+        return "%s %s" % (genus, species)
+    else:
+        return genus
+
+
 def onebp_substitutions(seq):
     """Generate all 1bp substitutions of the sequence.
 
