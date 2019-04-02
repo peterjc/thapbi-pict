@@ -24,6 +24,15 @@ def genus_species_name(genus, species):
         return genus
 
 
+def species_level(prediction):
+    """Is this prediction at species level.
+
+    Returns True for a binomial name (at least one space), False for genus
+    only or no prediction.
+    """
+    return prediction and " " in prediction
+
+
 def onebp_substitutions(seq):
     """Generate all 1bp substitutions of the sequence.
 
@@ -362,7 +371,7 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
 
 
 def parse_species_list_from_tsv(tabular_file):
-    """Extract species list from TSV header line."""
+    """Extract species list from TSV header line (ignores genus only)."""
     with open(tabular_file) as handle:
         line = handle.readline()
     if not line.startswith("#") or line.count("\t") != 3:
@@ -387,7 +396,7 @@ def parse_species_list_from_tsv(tabular_file):
             "ERROR: %s does not have species list in genus-species column header:\n%s"
             % (tabular_file, line)
         )
-    return parts[2][14:].split(";")
+    return [_ for _ in parts[2][14:].split(";") if species_level(_)]
 
 
 def parse_species_tsv(tabular_file, min_abundance=0):

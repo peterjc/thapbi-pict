@@ -1,4 +1,4 @@
-"""Assess classification of ITS1 reads.
+"""Assess classification of ITS1 reads at species level.
 
 This implements the ``thapbi_pict assess ...`` command.
 """
@@ -11,11 +11,15 @@ from .utils import abundance_from_read_name
 from .utils import find_paired_files
 from .utils import parse_species_tsv
 from .utils import parse_species_list_from_tsv
+from .utils import species_level
 from .utils import split_read_name_abundance
 
 
 def sp_in_tsv(classifier_file, min_abundance):
-    """Return semi-colon separated list of species in column 2."""
+    """Return semi-colon separated list of species in column 2.
+
+    Will ignore genus level predictions.
+    """
     species = set()
     for line in open(classifier_file):
         if line.startswith("#"):
@@ -31,7 +35,7 @@ def sp_in_tsv(classifier_file, min_abundance):
         ):
             continue
         species.update(sp.split(";"))
-    return ";".join(sorted(species))
+    return ";".join(sorted(_ for _ in species if species_level(_)))
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
@@ -92,6 +96,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     for expt, pred in tally:
         if expt:
             for sp in expt.split(";"):
+                assert species_level(sp), sp
                 classes.add(sp)
                 if sp not in db_sp_list:
                     sys.stderr.write(
@@ -100,6 +105,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                     )
         if pred:
             for sp in pred.split(";"):
+                assert species_level(sp), sp
                 classes.add(sp)
                 if sp and sp not in db_sp_list:
                     sys.exit(
@@ -132,7 +138,9 @@ def save_confusion_matrix(
     assert "" not in db_sp_list
     assert "" not in sp_list
     for sp in db_sp_list:
-        assert sp in sp_list
+        assert sp in sp_list, sp
+    for sp in sp_list:
+        assert species_level(sp), sp
 
     # leaving out empty cols where can't predict expt (thus dp_sp_list over sp_list)
     # leaving out possible predictions where column would be all zeros
@@ -140,7 +148,7 @@ def save_confusion_matrix(
     for _, pred in tally:
         if pred:
             for sp in pred.split(";"):
-                assert sp in db_sp_list
+                assert sp in db_sp_list, sp
                 predicted.add(sp)
     cols = ["(TN)", "(FN)"] + sorted(predicted)
     del predicted
@@ -207,15 +215,6 @@ def save_confusion_matrix(
         sys.exit(
             "ERROR: Expected %i but confusion matrix total %i" % (exp_total, total)
         )
-
-
-def species_level(prediction):
-    """Is this prediction at species level.
-
-    Returns True for a binomial name (at least one space), false for genus
-    only or no prediction.
-    """
-    return prediction and " " in prediction
 
 
 def extract_binary_tally(class_name, tally):
@@ -310,7 +309,7 @@ def main(
     confusion_output,
     debug=False,
 ):
-    """Implement the thapbi_pict assess command."""
+    """Implement the (species level) thapbi_pict assess command."""
     assert isinstance(inputs, list)
     assert level in ["sample", "sseq", "useq"], level
 
@@ -326,6 +325,7 @@ def main(
         if debug:
             sys.stderr.write("Assessing %s vs %s\n" % (predicted_file, expected_file))
         if db_sp_list is None:
+            # Note this will ignore genus level classifications:
             db_sp_list = parse_species_list_from_tsv(predicted_file)
         elif db_sp_list != parse_species_list_from_tsv(predicted_file):
             sys.exit("ERROR: Inconsistent species lists in predicted file headers")
@@ -421,6 +421,8 @@ def main(
             "Classifier DB had %i species: %s\n"
             % (len(db_sp_list), ", ".join(db_sp_list))
         )
+    for sp in db_sp_list:
+        assert species_level(sp), sp
     sp_list = class_list_from_tally_and_db_list(global_tally, db_sp_list)
     if "" in sp_list:
         sp_list.remove("")
@@ -430,6 +432,9 @@ def main(
             "Classifier DB had %i species, including expected values have %i species\n"
             % (len(db_sp_list), len(sp_list))
         )
+    for sp in sp_list:
+        assert species_level(sp), sp
+
     number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
 
     sys.stderr.write(
