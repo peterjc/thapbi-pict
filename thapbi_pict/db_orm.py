@@ -54,10 +54,11 @@ class Taxonomy(Base):
     )
 
     id = Column(Integer, primary_key=True)
-    clade = Column(String(10))  # TODO - Integer linked to table?
+    # Using empty string rather than Null (None) for clade, genus, species
+    clade = Column(String(10), nullable=False)  # TODO - Integer linked to table?
     ncbi_taxid = Column(Integer)
-    genus = Column(String(100))
-    species = Column(String(100))  # source may have variant/strain?
+    genus = Column(String(100), nullable=False)
+    species = Column(String(100), nullable=False)  # source may have variant/strain?
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""

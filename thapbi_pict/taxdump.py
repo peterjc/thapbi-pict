@@ -128,12 +128,12 @@ def main(tax, db_url, ancestors, debug=True):
         # Is is already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
-            .filter_by(clade=None, genus=genus, species=None, ncbi_taxid=taxid)
+            .filter_by(clade="", genus=genus, species="", ncbi_taxid=taxid)
             .one_or_none()
         )
         if taxonomy is None:
             g_new += 1
-            taxonomy = Taxonomy(clade=None, genus=genus, species=None, ncbi_taxid=taxid)
+            taxonomy = Taxonomy(clade="", genus=genus, species="", ncbi_taxid=taxid)
             session.add(taxonomy)
         else:
             g_old += 1

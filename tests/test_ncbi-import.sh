@@ -34,7 +34,7 @@ export DB=$TMP/20th_Century_ITS1_validated.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01 -a 4783
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "252" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "252" ]; then echo "Wrong taxonomy count"; false; fi
 thapbi_pict ncbi-import -d $DB tests/ncbi-import/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi

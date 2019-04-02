@@ -36,17 +36,13 @@ def lookup_genus_taxonomy(session, genus):
     """Find this genus in the taxonomy table (if present)."""
     assert isinstance(genus, str), genus
     # Can we find a match without knowing the taxid?
-    taxonomy = (
-        session.query(Taxonomy).filter_by(genus=genus, species=None).one_or_none()
-    )
+    taxonomy = session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
     if taxonomy is not None:
         # There was a unique entry already, use it.
         # It may even have an NCBI taxid?
         return taxonomy
     # Can we find a match with taxid=0?
-    taxonomy = (
-        session.query(Taxonomy).filter_by(genus=genus, species=None).one_or_none()
-    )
+    taxonomy = session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
     if taxonomy is not None:
         # There was a unique entry already, use it.
         return taxonomy
@@ -361,8 +357,8 @@ def import_fasta_file(
                 if genus_only:
                     taxonomy = lookup_genus_taxonomy(session, genus)
                     if taxonomy is None:
-                        clade = None
-                        species = None
+                        clade = ""
+                        species = ""
                         taxid = None
                         taxonomy = Taxonomy(
                             clade=clade, genus=genus, species=species, ncbi_taxid=taxid

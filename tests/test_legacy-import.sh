@@ -46,14 +46,14 @@ export DB=$TMP/legacy_004_and_005_validated.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01 -a 4783
 if [ `sqlite3 $DB "SELECT COUNT(DISTINCT genus) FROM taxonomy;"` -ne "1" ]; then echo "Wrong genus count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "252" ]; then echo "Wrong species count"; false; fi
 thapbi_pict legacy-import -d $DB database/legacy/Phytophthora_ITS_database_v0.005.fasta -n "Legacy DB v0.005"
-if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "252" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "175" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "159" ]; then echo "Wrong its1_sequence count"; false; fi
 thapbi_pict legacy-import -d $DB database/legacy/Phytophthora_ITS_database_v0.004.fasta -n "Legacy DB v0.004"
-if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "251" ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "252" ]; then echo "Wrong species count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "348" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "159" ]; then echo "Wrong its1_sequence count"; false; fi
