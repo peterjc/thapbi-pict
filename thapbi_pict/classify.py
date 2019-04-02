@@ -99,7 +99,7 @@ def perfect_match_in_db(session, seq):
     # Now, does this match any of the ITS1 seq in our DB?
     its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
     if its1 is None:
-        return 0, "", "No ITS1 database match"
+        return 0, "", "No DB match"
     assert its1.sequence == seq
     # its1 -> one or more SequenceSource
     # each SequenceSource -> one current taxonomy
@@ -152,7 +152,7 @@ def method_identity(
             # Now, does this match any of the ITS1 seq in our DB?
             its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
             if its1 is None:
-                note = "No ITS1 database match"
+                note = "No DB match"
             else:
                 taxid, genus_species, note = perfect_match_in_db(session, seq)
         tax_counts[genus_species] += abundance
