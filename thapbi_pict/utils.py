@@ -399,7 +399,7 @@ def parse_species_list_from_tsv(tabular_file):
     return [_ for _ in parts[2][14:].split(";") if species_level(_)]
 
 
-def parse_species_tsv(tabular_file, min_abundance=0):
+def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
     """Parse file of species assignments/predictions by sequence."""
     with open(tabular_file) as handle:
         for line in handle:
@@ -415,4 +415,13 @@ def parse_species_tsv(tabular_file, min_abundance=0):
                 raise ValueError("Wildcard species name found")
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue
+            if req_species_level:
+                assert taxid.count(";") == genus_species.count(";"), line
+                wanted = [
+                    (t, s)
+                    for (t, s) in zip(taxid.split(";"), genus_species.split(";"))
+                    if species_level(s)
+                ]
+                taxid = ";".join(t for (t, s) in wanted)
+                genus_species = ";".join(s for (t, s) in wanted)
             yield name, taxid, genus_species

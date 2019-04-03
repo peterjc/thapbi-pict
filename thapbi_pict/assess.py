@@ -51,8 +51,8 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
     # uses the cluster order. Currently the outputs are all small, so fine.
     try:
         for expt, pred in zip(
-            sorted(parse_species_tsv(expected_file)),
-            sorted(parse_species_tsv(predicted_file)),
+            sorted(parse_species_tsv(expected_file, req_species_level=True)),
+            sorted(parse_species_tsv(predicted_file, req_species_level=True)),
         ):
             if not expt[0] == pred[0]:
                 sys.exit(
@@ -64,6 +64,18 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
                 continue
             # TODO: Look at taxid?
             # Should now have (possibly empty) string of genus-species;...
+            for sp in expt[2].split(";"):
+                if sp:
+                    assert species_level(sp), (
+                        "Expectation %s is not all species level from %s"
+                        % (expt[2], expected_file)
+                    )
+            for sp in pred[2].split(";"):
+                if sp:
+                    assert species_level(sp), (
+                        "Prediction %s is not all species level from %s"
+                        % (pred[2], predicted_file)
+                    )
             try:
                 counter[expt[2], pred[2]].add(md5)
             except KeyError:
@@ -79,7 +91,9 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
                 if line.startswith("*\t"):
                     _, _, expt_sp_genus, _ = line.split("\t", 3)
         assert expt_sp_genus, "Didn't find expected wildcard species line"
-        for pred in parse_species_tsv(predicted_file, min_abundance):
+        for pred in parse_species_tsv(
+            predicted_file, min_abundance, req_species_level=True
+        ):
             md5, abundance = split_read_name_abundance(pred[0])
             if min_abundance > 1 and abundance < min_abundance:
                 continue
@@ -96,7 +110,9 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     for expt, pred in tally:
         if expt:
             for sp in expt.split(";"):
-                assert species_level(sp), sp
+                assert species_level(
+                    sp
+                ), "%s from expected value %s is not species-level" % (sp, pred)
                 classes.add(sp)
                 if sp not in db_sp_list:
                     sys.stderr.write(
@@ -105,7 +121,9 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                     )
         if pred:
             for sp in pred.split(";"):
-                assert species_level(sp), sp
+                assert species_level(
+                    sp
+                ), "%s from prediction %s is not species-level" % (sp, pred)
                 classes.add(sp)
                 if sp and sp not in db_sp_list:
                     sys.exit(
