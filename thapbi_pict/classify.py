@@ -63,6 +63,9 @@ def unique_or_separated(values, sep=";"):
 def taxid_and_sp_lists(taxon_entries):
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
+    Will discard genus level predictions (e.g. 'Phytophthora') if there is a
+    species level prediciton within that genus (e.g. 'Phytophthora infestans').
+
     If there is a single result, returns a tuple of taxid (integer), genus-species,
     and debugging comment (strings).
 
@@ -73,6 +76,19 @@ def taxid_and_sp_lists(taxon_entries):
     if not taxon_entries:
         # Unexpected - this is perhaps worth an assert statement / debug msg?
         return 0, "", "No taxonomy entries"
+
+    genus_with_species = {t.genus for t in taxon_entries if t.species}
+    if genus_with_species:
+        # Want either species level predictions, or genus level without a
+        # child species level prediction.
+        #
+        # Note ignoring the TaxID here - would need to know the parent/child
+        # relationship to confirm the genus we're removing does have species
+        # level children in the prediction set.
+        taxon_entries = [
+            t for t in taxon_entries if t.species or t.genus not in genus_with_species
+        ]
+
     if len(taxon_entries) == 1:
         t = taxon_entries[0]
         return (
