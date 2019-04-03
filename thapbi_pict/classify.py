@@ -66,8 +66,9 @@ def taxid_and_sp_lists(taxon_entries):
     If there is a single result, returns a tuple of taxid (integer), genus-species,
     and debugging comment (strings).
 
-    If any of the fields has conflicting values, returns a semi-colon separated
-    string instead (in the same order so you can match taxid to species).
+    If any of the fields has conflicting values, returns two semi-colon separated
+    string instead (in the same order so you can match taxid to species, sorting
+    on the genus-species string).
     """
     if not taxon_entries:
         # Unexpected - this is perhaps worth an assert statement / debug msg?
@@ -80,12 +81,12 @@ def taxid_and_sp_lists(taxon_entries):
             "Unique taxonomy match",
         )
 
-    # Discard clade, and now remove duplicates
-    tax = sorted({(t.ncbi_taxid, t.genus, t.species) for t in taxon_entries})
+    # Discard clade, and now remove duplicates, sort on genus-sepcies
+    tax = sorted({(t.genus, t.species, t.ncbi_taxid) for t in taxon_entries})
 
     return (
-        unique_or_separated([t[0] for t in tax]),
-        unique_or_separated([genus_species_name(t[1], t[2]) for t in tax]),
+        unique_or_separated([t[2] for t in tax]),
+        unique_or_separated([genus_species_name(t[0], t[1]) for t in tax]),
         "",  # Not useful to report # of entries as redundant info
     )
 
