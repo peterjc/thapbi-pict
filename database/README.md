@@ -19,7 +19,7 @@ using three sets of sequences.
 
  - Observed ITS1 sequences from single isolate positive controls
    run on a MiSeq plate via ``thapbi_pict prepare-reads`` with
-   default settings (plate level minimum abundance was 535,
+   default settings (plate level minimum abundance was 545,
    but in anycase import minimum default was 1000 copies).
 
  - This used the NCBI taxonomy as of 2019-01-01, which means
