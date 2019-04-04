@@ -60,6 +60,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.13 | 2019-03-22 | Remove conserved 32bp when primer trim. Assess at sample level by default.   |
 | v0.0.14 | 2019-04-01 | MD5 in dump output. Fixed importing sequences failing taxonomic validation.  |
 | v0.0.15 | 2019-04-03 | Support for genus-level only entries in the database.                        |
+| v0.1.0  | 2019-04-04 | Include a bundled ITS1 database.                                             |
 
 
 # Development Notes
