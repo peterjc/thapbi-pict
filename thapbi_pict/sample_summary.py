@@ -11,6 +11,7 @@ from collections import Counter
 from .utils import find_requested_files
 from .utils import parse_species_tsv
 from .utils import abundance_from_read_name
+from .utils import sample_sort
 
 
 def main(inputs, output, human_output, method, min_abundance=1, debug=False):
@@ -83,7 +84,7 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
             "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
             "marker.\n\n"
         )
-    for sample in sorted(samples):
+    for sample in sample_sort(samples):
         all_sp = set()
         unambig_sp = set()
         for sp in sp_to_taxid:

@@ -12,6 +12,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .utils import find_requested_files
 from .utils import parse_species_tsv
+from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
@@ -48,7 +49,7 @@ def main(inputs, output, method, min_abundance=1, debug=False):
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
-    samples = sorted(samples)
+    samples = sample_sort(samples)
 
     methods = method.split(",")
     for method in methods:
