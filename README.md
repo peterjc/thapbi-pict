@@ -32,6 +32,10 @@ However, for now you should download the source code from GitHub, decompress
 it if required, and run ``pip3 install .`` which should automatically get
 our Python dependencies.
 
+You will also need to load the plain text SQL dump of the default database
+into SQLite3 by running ``sqlite3 ITS1_DB.sqlite < ITS1_DB.sql`` in the
+``database/`` directory.
+
 Once installed, you should be able to run the tool using:
 
 ```bash
