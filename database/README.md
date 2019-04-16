@@ -1,6 +1,8 @@
 Database of ITS1 sequences for use as a molecular barcode.
+==========================================================
 
-Currently this folder only contains ITS1_DB.sql (plain text SQL
+The most important file in this folder is the default ITS1 database
+stored under version control as ``ITS1_DB.sql`` (plain text SQL
 dump from sqlite3), from which we generate the binary DB using:
 
 ```bash
