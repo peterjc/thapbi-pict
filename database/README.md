@@ -7,21 +7,20 @@ dump from sqlite3), from which we generate the binary DB using:
 $ sqlite3 ITS1_DB.sqlite < ITS1_DB.sql
 ```
 
-This database was initially created using thapbi_pict v0.0.15
-using the following three sets of sequences, and then called
-v0.1.0:
+This database was created using the following three sets of
+sequences:
 
  - Curated Phytophthora ITS1 sequences (at species level) from
    file ``legacy/Phytophthora_ITS_database_v0.005.fasta`` (in
    a subdirectory within the source code repository).
 
- - NCBI Peronosporaceae (including Phytophthora) at genus level,
-   file ``2019-04-03-ITS_Peronosporaceae_8336.fasta`` with 8336
-   entries created with and NCBI Entrez search run on 2019-04-03:
+ - NCBI Peronosporales (including Phytophthora) at genus level,
+   file ``2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
+   entries created with an NCBI Entrez search run on 2019-04-16:
 
 ```
 ((internal AND transcribed AND spacer) OR its1) AND
-150:800[sequence length] AND peronosporaceae[organism]
+150:10000[sequence length] AND Peronosporales[organism]
 ```
 
  - Observed ITS1 sequences from single isolate positive controls

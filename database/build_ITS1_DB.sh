@@ -8,7 +8,7 @@ rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
 thapbi_pict legacy-import -d "$DB.sqlite" legacy/Phytophthora_ITS_database_v0.005.fasta
-thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporaceae_8336.fasta -g
+thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporales_16394.fasta -g
 thapbi_pict seq-import -d "$DB.sqlite" thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
