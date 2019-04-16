@@ -53,6 +53,7 @@ def species_level(prediction):
     Returns True for a binomial name (at least one space), False for genus
     only or no prediction.
     """
+    assert ";" not in prediction, prediction
     return prediction and " " in prediction
 
 
