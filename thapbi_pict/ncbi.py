@@ -53,6 +53,10 @@ def parse_fasta_entry(text):
             "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], parts[0])
         )
         name = ["Phytophthora", name[0][2:]]
+    if name[0].lower() == "uncultured":
+        # e.g. "Uncultured Phytophthora" -> "genus (uncultured)"
+        # which will then work when importing at genus level.
+        name = [name[1], "(uncultured)"]
     if name[0] == "Sequence":
         # Another special case
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
