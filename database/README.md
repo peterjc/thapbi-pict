@@ -1,8 +1,15 @@
 Database of ITS1 sequences for use as a molecular barcode.
 
 Currently this folder only contains ITS1_DB.sql (plain text SQL
-dump from sqlite3) initially created using thapbi_pict v0.0.15
-using three sets of sequences.
+dump from sqlite3), from which we generate the binary DB using:
+
+```bash
+$ sqlite3 ITS1_DB.sqlite < ITS1_DB.sql
+```
+
+This database was initially created using thapbi_pict v0.0.15
+using the following three sets of sequences, and then called
+v0.1.0:
 
  - Curated Phytophthora ITS1 sequences (at species level) from
    file ``legacy/Phytophthora_ITS_database_v0.005.fasta`` (in
