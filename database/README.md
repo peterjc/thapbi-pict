@@ -32,24 +32,4 @@ v0.1.0:
  - This used the NCBI taxonomy as of 2019-01-01, which means
    we rejected some of the curated FASTA file entries.
 
-The DB was created via the following script:
-
-```bash
-#!/bin/bash
-VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
-echo "Using THAPBI PICT $VERSION"
-set -euo pipefail
-TAX=new_taxdump_2019-01-01
-DB=L5-and-8336-Peronosporaceae-and-PosCtrl-$VERSION
-rm -rf "$DB.sqlite" "$DB.fasta"
-
-thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict legacy-import -d "$DB.sqlite" $HOME/repositories/thapbi-pict/database/legacy/Phytophthora_ITS_database_v0.005.fasta
-thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporaceae_8336.fasta -g
-thapbi_pict seq-import -d "$DB.sqlite" thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
-
-thapbi_pict dump -d "$DB.sqlite" -o "$DB.txt"
-thapbi_pict dump -f fasta -d "$DB.sqlite" -o "$DB.fasta"
-
-sqlite3 "$DB.sqlite" .dump > ITS1_DB.sql
-```
+The DB was created via the ``build_ITS1_DB.sh`` script.
