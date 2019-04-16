@@ -24,6 +24,7 @@ from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
 from .utils import onebp_variants
+from .utils import species_level
 
 
 fuzzy_matches = None  # global variable for onebp classifier
@@ -235,14 +236,17 @@ def method_onebp(
             assert seq == seq.upper(), seq
             # Now, does this match any of the ITS1 seq in our DB?
             taxid, genus_species, note = perfect_match_in_db(session, seq)
-            if genus_species:
-                # Found 100% identical match(es) in the DB.
+            if any(species_level(_) for _ in genus_species.split(";")):
+                # Found 100% identical match(es) in DB at species level, done :)
                 pass
             elif seq in fuzzy_matches:
-                # Not exact, but we do have 1bp off match(es)
+                # No species level exact matches, so do we have 1bp off match(es)?
                 t = []
                 # TODO - Refactor this 2-query-per-loop into one lookup?
-                for db_seq in fuzzy_matches[seq]:
+                # Including [seq] here in order to retain any perfect genus match.
+                # If there are any *different* genus matches 1bp away, they'll be
+                # reported too, but that would most likely be a DB problem...
+                for db_seq in [seq] + fuzzy_matches[seq]:
                     its1 = (
                         session.query(ITS1)
                         .filter(ITS1.sequence == db_seq)
@@ -257,7 +261,7 @@ def method_onebp(
                         for _ in session.query(SequenceSource).filter_by(its1=its1)
                     )
                 t = list(set(t))
-                note = "%i ITS1 matches with 1bp diff, %i taxonomy entries" % (
+                note = "%i ITS1 matches with up to 1bp diff, %i taxonomy entries" % (
                     len(fuzzy_matches[seq]),
                     len(t),
                 )
