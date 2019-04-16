@@ -243,9 +243,9 @@ def main(args=None):
         "-a",
         "--ancestors",
         type=str,
-        default="4777",
+        default="4776",
         help="Comma separated lists of taxids at genus level or higher. "
-        "Default 4777 for Peronosporaceae, use 4783 for Phytophthora only.",
+        "Default 4776 for Peronosporales, use 4783 for Phytophthora only.",
     ),
     parser_load_tax.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"

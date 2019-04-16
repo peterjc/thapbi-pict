@@ -61,6 +61,7 @@ This should automatically find the installed copy of the Python code.
 | v0.0.14 | 2019-04-01 | MD5 in dump output. Fixed importing sequences failing taxonomic validation.  |
 | v0.0.15 | 2019-04-03 | Support for genus-level only entries in the database.                        |
 | v0.1.0  | 2019-04-04 | Include a bundled ITS1 database.                                             |
+| v0.1.1  | 2019-04-16 | Expand default taxonomy and database from Peronosporaceae to Peronosporales. |
 
 
 # Development Notes
