@@ -29,6 +29,7 @@ install:
  - python -c "import Bio; print(Bio.__version__)"
  - python -c "import sqlalchemy; print(sqlalchemy.__version__)"
  - pip install .
+ - sqlite3 database/ITS1_DB.sqlite < database/ITS1_DB.sql
 
 script:
  - python -c "import thapbi_pict; print(thapbi_pict.__version__)"

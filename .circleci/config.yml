@@ -46,6 +46,7 @@ jobs:
             conda install --file requirements-ext.txt
             conda install --file requirements.txt
             pip install .
+            sqlite3 database/ITS1_DB.sqlite < database/ITS1_DB.sql
       - run:
           name: Test
           command: |
