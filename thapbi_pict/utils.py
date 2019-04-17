@@ -458,8 +458,9 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     sample name index column, colon, comma separated list of columns to
     output. The column numbers are assumed to be one based.
 
-    Returns a dictionary indexed by sample name, and a default value
-    (list of empty strings).
+    Returns a dictionary indexed by sample name (with underscores and
+    spaces mapped to minus signs; see find_metadata function), and a
+    default value (list of empty strings).
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
@@ -494,23 +495,28 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
             if line.startswith("#"):
                 continue
             parts = line.rstrip("\n").split("\t")
-            sample = parts[sample_col]
+            sample = parts[sample_col].replace(" ", "-").replace("_", "-")
             values = [parts[_] for _ in value_cols]
             meta[sample] = values
     return meta, names, default
 
 
-def find_metadata(sample, metadata, default, sep="_"):
+def find_metadata(sample, metadata, default):
     """Lookup sample in metadata dictionary, trying stem as key.
 
-    Will match sample name of N01_160517_101_R_A12 to a metadata
-    entry N01_160517_101 (removing words using the given separator).
+    Maps any spaces or underscores in the sample name to minus signs,
+    and then breaks the name at minus signs removing one suffix at a
+    time until it finds a match.
+
+    e.g. Will match sample name of N01_160517_101_R_A12 to a metadata
+    entry N01_160517_101
     """
+    sample = sample.replace(" ", "-").replace("_", "-")
     if sample in metadata:
         return metadata[sample]
-    while sep in sample:
+    while "-" in sample:
         # Remove next chunk of name
-        sample = sample.rsplit(sep, 1)[0]
+        sample = sample.rsplit("-", 1)[0]
         if sample in metadata:
             return metadata[sample]
     return default
