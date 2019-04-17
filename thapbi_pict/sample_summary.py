@@ -9,12 +9,23 @@ import sys
 from collections import Counter
 
 from .utils import find_requested_files
+from .utils import find_metadata
+from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import abundance_from_read_name
 from .utils import sample_sort
 
 
-def main(inputs, output, human_output, method, min_abundance=1, debug=False):
+def main(
+    inputs,
+    output,
+    human_output,
+    method,
+    min_abundance=1,
+    metadata_file=None,
+    metadata_cols=None,
+    debug=False,
+):
     """Implement the thapbi_pict sample-summary command.
 
     The expectation is that the inputs represent all the samples from
@@ -24,6 +35,8 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
 
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
+
+    metadata, meta_default = load_metadata(metadata_file, metadata_cols)
 
     samples = set()
     counts = Counter()
@@ -112,7 +125,13 @@ def main(inputs, output, human_output, method, min_abundance=1, debug=False):
 
         if human:
             try:
-                human.write("%s\n\n" % sample)
+                human.write("%s\n" % sample)
+                if metadata:
+                    for value in find_metadata(sample, metadata, meta_default):
+                        # Don't currently have names of the meta-data fields
+                        if value:
+                            human.write("%s\n" % value)
+                human.write("\n")
                 for sp in sorted(all_sp):
                     if sp not in unambig_sp:
                         sp = "%s (uncertain/ambiguous)" % sp

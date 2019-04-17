@@ -13,6 +13,12 @@ from . import __version__
 from .classify import method_classifier
 
 
+def check_input_file(filename):
+    """Command line validation of an input filename."""
+    if not os.path.isfile(filename):
+        sys.exit("ERROR: Could not find input file: %s" % filename)
+
+
 def check_output_directory(out_dir):
     """Command line validation of output directory value."""
     if out_dir == "-" or os.path.isdir(out_dir):
@@ -171,11 +177,17 @@ def plate_summary(args=None):
     """Subcommand to run per-output-folder summary at sequence level."""
     from .summary import main
 
+    if args.metadata:
+        check_input_file(args.metadata)
+        if not args.metacols:
+            sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
         inputs=args.inputs,
         output=args.output,
         method=args.method,
         min_abundance=args.abundance,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
         debug=args.verbose,
     )
 
@@ -184,12 +196,18 @@ def sample_summary(args=None):
     """Subcommand to run multiple-output-folder summary at sample level."""
     from .sample_summary import main
 
+    if args.metadata:
+        check_input_file(args.metadata)
+        if not args.metacols:
+            sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
         inputs=args.inputs,
         output=args.output,
         human_output=args.human,
         method=args.method,
         min_abundance=args.abundance,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
         debug=args.verbose,
     )
 
@@ -783,6 +801,28 @@ comma.
         "Default is '-' meaning to stdout.",
     )
     parser_plate_summary.add_argument(
+        "-t",
+        "--metadata",
+        type=str,
+        default="",
+        metavar="FILENAME",
+        help="Optional tab separated table containing metadata indexed by "
+        "sample name. Must also specify the columns with -c / --metacols, "
+        "and then this information will be included as extra header rows.",
+    )
+    parser_plate_summary.add_argument(
+        "-c",
+        "--metacols",
+        type=str,
+        default="",
+        metavar="COLUMNS",
+        help="Optional description of the metadata columns to include in the "
+        "output (e.g, 1,3,5), and the column containing the sample name as "
+        "used in the filename stems (e.g. 2) expressed as '2:1,3,5' "
+        "(index column, colon, comma separated list of columns to output). "
+        "Use in conjunction with -m / --metadata argument.",
+    )
+    parser_plate_summary.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_plate_summary.set_defaults(func=plate_summary)
@@ -840,6 +880,29 @@ comma.
         metavar="FILENAME",
         help="File to write human readable smaple level species predictions to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
+    )
+    parser_sample_summary.add_argument(
+        "-t",
+        "--metadata",
+        type=str,
+        default="",
+        metavar="FILENAME",
+        help="Optional tab separated table containing metadata indexed by "
+        "sample name. Must also specify the columns with -c / --metacols, "
+        "and then this information will be included in the human readable "
+        "report output.",
+    )
+    parser_sample_summary.add_argument(
+        "-c",
+        "--metacols",
+        type=str,
+        default="",
+        metavar="COLUMNS",
+        help="Optional description of the metadata columns to include in the "
+        "human reable report (e.g, 1,3,5), and the column containing the sample "
+        "name as used in the filename stems (e.g. 2) expressed as '2:1,3,5' "
+        "(index column, colon, comma separated list of columns to output). "
+        "Use in conjunction with -m / --metadata argument.",
     )
     parser_sample_summary.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"

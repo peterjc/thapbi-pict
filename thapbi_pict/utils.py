@@ -449,3 +449,49 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
                 taxid = ";".join(t for (t, s) in wanted)
                 genus_species = ";".join(s for (t, s) in wanted)
             yield name, taxid, genus_species
+
+
+def load_metadata(metadata_file, metadata_cols):
+    """Load specified metadata into a dictionary.
+
+    The columns argument should be a string like "2:1,3,5" listing the
+    sample name index column, colon, comma separated list of columns to
+    output. The column numbers are assumed to be one based.
+
+    Returns a dictionary indexed by sample name, and a default value
+    (list of empty strings).
+    """
+    # TODO - Accept Excel style A, ..., Z, AA, ... column names?
+
+    if not metadata_file or not metadata_cols:
+        return {}, []
+
+    sample_col = int(metadata_cols.split(":", 1)[0]) - 1
+    value_cols = [int(_) - 1 for _ in metadata_cols.split(":", 1)[1].split(",")]
+    meta = {}
+    default = [""] * len(value_cols)
+    with open(metadata_file) as handle:
+        for line in handle:
+            if line.startswith("#"):
+                continue
+            parts = line.rstrip("\n").split("\t")
+            sample = parts[sample_col]
+            values = [parts[_] for _ in value_cols]
+            meta[sample] = values
+    return meta, default
+
+
+def find_metadata(sample, metadata, default, sep="_"):
+    """Lookup sample in metadata dictionary, trying stem as key.
+
+    Will match sample name of N01_160517_101_R_A12 to a metadata
+    entry N01_160517_101 (removing words using the given separator).
+    """
+    if sample in metadata:
+        return metadata[sample]
+    while sep in sample:
+        # Remove next chunk of name
+        sample = sample.rsplit(sep, 1)[0]
+        if sample in metadata:
+            return metadata[sample]
+    return default
