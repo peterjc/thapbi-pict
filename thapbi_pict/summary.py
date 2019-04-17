@@ -25,6 +25,7 @@ def main(
     min_abundance=1,
     metadata_file=None,
     metadata_cols=None,
+    metadata_name=None,
     debug=False,
 ):
     """Implement the thapbi_pict plate-summary command.
@@ -37,7 +38,9 @@ def main(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
-    metadata, meta_default = load_metadata(metadata_file, metadata_cols)
+    metadata, meta_names, meta_default = load_metadata(
+        metadata_file, metadata_cols, metadata_name, debug=debug
+    )
 
     samples = set()
     md5_abundance = Counter()
@@ -98,12 +101,15 @@ def main(
     if metadata:
         # Insert extra header rows at start for sample meta-data
         # Note currently we don't have the meta-data field names
-        for i in range(len(meta_default)):
+        for i, name in enumerate(meta_names):
             handle.write(
-                "#\t\t\t\t\t%s\n"
-                % "\t".join(
-                    find_metadata(sample, metadata, meta_default)[i]
-                    for sample in samples
+                "#\t\t\t\t%s\t%s\n"
+                % (
+                    name,
+                    "\t".join(
+                        find_metadata(sample, metadata, meta_default)[i]
+                        for sample in samples
+                    ),
                 )
             )
     handle.write(

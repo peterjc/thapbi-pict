@@ -188,6 +188,7 @@ def plate_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        metadata_name=args.metaname,
         debug=args.verbose,
     )
 
@@ -208,6 +209,7 @@ def sample_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        metadata_name=args.metaname,
         debug=args.verbose,
     )
 
@@ -823,6 +825,16 @@ comma.
         "Use in conjunction with -m / --metadata argument.",
     )
     parser_plate_summary.add_argument(
+        "-n",
+        "--metaname",
+        type=int,
+        default="1",
+        metavar="ROW",
+        help="If using metadata, which row should be used as the field names? "
+        "Default 1, use 0 for no labels. "
+        "Use in conjunction with -m / --metadata argument.",
+    )
+    parser_plate_summary.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )
     parser_plate_summary.set_defaults(func=plate_summary)
@@ -902,6 +914,16 @@ comma.
         "human reable report (e.g, 1,3,5), and the column containing the sample "
         "name as used in the filename stems (e.g. 2) expressed as '2:1,3,5' "
         "(index column, colon, comma separated list of columns to output). "
+        "Use in conjunction with -m / --metadata argument.",
+    )
+    parser_sample_summary.add_argument(
+        "-n",
+        "--metaname",
+        type=int,
+        default="1",
+        metavar="ROW",
+        help="If using metadata, which row should be used as the field names? "
+        "Default 1, use 0 for no labels. "
         "Use in conjunction with -m / --metadata argument.",
     )
     parser_sample_summary.add_argument(

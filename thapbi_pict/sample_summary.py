@@ -24,6 +24,7 @@ def main(
     min_abundance=1,
     metadata_file=None,
     metadata_cols=None,
+    metadata_name=None,
     debug=False,
 ):
     """Implement the thapbi_pict sample-summary command.
@@ -36,7 +37,9 @@ def main(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
-    metadata, meta_default = load_metadata(metadata_file, metadata_cols)
+    metadata, meta_names, meta_default = load_metadata(
+        metadata_file, metadata_cols, metadata_name, debug=debug
+    )
 
     samples = set()
     counts = Counter()
@@ -127,10 +130,11 @@ def main(
             try:
                 human.write("%s\n" % sample)
                 if metadata:
-                    for value in find_metadata(sample, metadata, meta_default):
-                        # Don't currently have names of the meta-data fields
+                    for name, value in zip(
+                        meta_names, find_metadata(sample, metadata, meta_default)
+                    ):
                         if value:
-                            human.write("%s\n" % value)
+                            human.write("%s: %s\n" % (name, value))
                 human.write("\n")
                 for sp in sorted(all_sp):
                     if sp not in unambig_sp:

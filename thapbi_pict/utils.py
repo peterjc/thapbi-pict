@@ -451,7 +451,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
             yield name, taxid, genus_species
 
 
-def load_metadata(metadata_file, metadata_cols):
+def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False):
     """Load specified metadata into a dictionary.
 
     The columns argument should be a string like "2:1,3,5" listing the
@@ -463,22 +463,41 @@ def load_metadata(metadata_file, metadata_cols):
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Loading metadata from %r, column specification %r, "
+            "field names from row %r\n"
+            % (metadata_file, metadata_cols, metadata_name_row)
+        )
+
     if not metadata_file or not metadata_cols:
+        if debug:
+            sys.stderr.write("DEBUG: Not loading any metadata\n")
         return {}, []
 
     sample_col = int(metadata_cols.split(":", 1)[0]) - 1
     value_cols = [int(_) - 1 for _ in metadata_cols.split(":", 1)[1].split(",")]
+    names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)
     with open(metadata_file) as handle:
-        for line in handle:
+        for i, line in enumerate(handle):
+            if i + 1 == metadata_name_row:
+                parts = line.rstrip("\n").split("\t")
+                names = [parts[_] for _ in value_cols]
+                if debug:
+                    sys.stderr.write(
+                        "DEBUG: Row %i gave metadata field names: %r\n"
+                        % (metadata_name_row, names)
+                    )
+                continue
             if line.startswith("#"):
                 continue
             parts = line.rstrip("\n").split("\t")
             sample = parts[sample_col]
             values = [parts[_] for _ in value_cols]
             meta[sample] = values
-    return meta, default
+    return meta, names, default
 
 
 def find_metadata(sample, metadata, default, sep="_"):
