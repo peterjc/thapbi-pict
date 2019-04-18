@@ -474,7 +474,7 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, []
+        return {}, [], []
 
     sample_col = int(metadata_cols.split(":", 1)[0]) - 1
     value_cols = [int(_) - 1 for _ in metadata_cols.split(":", 1)[1].split(",")]
