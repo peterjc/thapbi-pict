@@ -497,6 +497,18 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
             parts = line.rstrip("\n").split("\t")
             sample = parts[sample_col].replace(" ", "-").replace("_", "-")
             values = [parts[_] for _ in value_cols]
+            if sample in meta:
+                # Bad... note using the unedited sample name for the messages
+                if meta[sample] == values:
+                    sys.stderr.write(
+                        "WARNING: Duplicated metadata for %s\n" % parts[sample_col]
+                    )
+                    continue
+                else:
+                    sys.exit(
+                        "ERROR: Conflicting metadata for %s\nOld:%r\nNew:%r\n"
+                        % (parts[sample_col], meta[sample], values)
+                    )
             meta[sample] = values
     return meta, names, default
 
