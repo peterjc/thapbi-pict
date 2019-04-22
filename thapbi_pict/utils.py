@@ -505,10 +505,14 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
                     )
                     continue
                 else:
-                    sys.exit(
-                        "ERROR: Conflicting metadata for %s\nOld:%r\nNew:%r\n"
-                        % (parts[sample_col], meta[sample], values)
+                    sys.stderr.write(
+                        "WARNING: Dropping conflicting metadata for %s\n"
+                        "Old:%r\nNew:%r\n" % (parts[sample_col], meta[sample], values)
                     )
+                    values = [
+                        old if old == new else "ERROR"
+                        for (old, new) in zip(meta[sample], values)
+                    ]
             meta[sample] = values
     return meta, names, default
 
