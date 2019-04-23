@@ -481,22 +481,42 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)
-    with open(metadata_file) as handle:
+    # Loading in binary mode as on macOS, Excel often uses a strange encoding
+    with open(metadata_file, "rb") as handle:
         for i, line in enumerate(handle):
             if i + 1 == metadata_name_row:
-                parts = line.rstrip("\n").split("\t")
-                names = [parts[_] for _ in value_cols]
+                parts = line.rstrip(b"\n").split(b"\t")
+                # Only decode the fields we want
+                try:
+                    names = [parts[_].decode() for _ in value_cols]
+                except UnicodeDecodeError:
+                    sys.exit(
+                        "ERROR: Field captions not using system default encoding\n"
+                    )
                 if debug:
                     sys.stderr.write(
                         "DEBUG: Row %i gave metadata field names: %r\n"
                         % (metadata_name_row, names)
                     )
                 continue
-            if line.startswith("#"):
+            if line.startswith(b"#"):
                 continue
-            parts = line.rstrip("\n").split("\t")
-            sample = parts[sample_col].replace(" ", "-").replace("_", "-")
-            values = [parts[_] for _ in value_cols]
+            parts = line.rstrip(b"\n").split(b"\t")
+            # Only decode the fields we want
+            try:
+                sample = parts[sample_col].decode().replace(" ", "-").replace("_", "-")
+            except UnicodeDecodeError:
+                sys.exit(
+                    "ERROR: Sample column not using system default encoding: %r\n"
+                    % parts[sample_col]
+                )
+            try:
+                values = [parts[_].decode() for _ in value_cols]
+            except UnicodeDecodeError:
+                sys.exit(
+                    "ERROR: Metadata for sample %s not using system default encoding\n"
+                    % sample
+                )
             if sample in meta:
                 # Bad... note using the unedited sample name for the messages
                 if meta[sample] == values:
