@@ -107,7 +107,7 @@ def main(
                 % (
                     name,
                     "\t".join(
-                        find_metadata(sample, metadata, meta_default)[i]
+                        find_metadata(sample, metadata, meta_default, debug=debug)[i]
                         for sample in samples
                     ),
                 )

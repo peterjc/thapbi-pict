@@ -131,7 +131,8 @@ def main(
                 human.write("%s\n" % sample)
                 if metadata:
                     for name, value in zip(
-                        meta_names, find_metadata(sample, metadata, meta_default)
+                        meta_names,
+                        find_metadata(sample, metadata, meta_default, debug=debug),
                     ):
                         if value:
                             human.write("%s: %s\n" % (name, value))

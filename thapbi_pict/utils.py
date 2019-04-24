@@ -517,6 +517,9 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
                     "ERROR: Metadata for sample %s not using system default encoding\n"
                     % sample
                 )
+            if not sample:
+                # Not all our field samples will have been sequenced yet
+                continue
             if sample in meta:
                 # Bad... note using the unedited sample name for the messages
                 if meta[sample] == values:
@@ -537,7 +540,7 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     return meta, names, default
 
 
-def find_metadata(sample, metadata, default):
+def find_metadata(sample, metadata, default, debug=False):
     """Lookup sample in metadata dictionary, trying stem as key.
 
     Maps any spaces or underscores in the sample name to minus signs,
@@ -547,12 +550,14 @@ def find_metadata(sample, metadata, default):
     e.g. Will match sample name of N01_160517_101_R_A12 to a metadata
     entry N01_160517_101
     """
-    sample = sample.replace(" ", "-").replace("_", "-")
-    if sample in metadata:
-        return metadata[sample]
-    while "-" in sample:
+    key = sample.replace(" ", "-").replace("_", "-")
+    if key in metadata:
+        return metadata[key]
+    while "-" in key:
         # Remove next chunk of name
-        sample = sample.rsplit("-", 1)[0]
-        if sample in metadata:
-            return metadata[sample]
+        key = key.rsplit("-", 1)[0]
+        if key in metadata:
+            return metadata[key]
+    if debug:
+        sys.stderr.write("DEBUG: Missing metadata for %s\n" % sample)
     return default
