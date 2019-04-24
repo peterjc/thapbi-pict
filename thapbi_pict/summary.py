@@ -100,18 +100,13 @@ def main(
 
     if metadata:
         # Insert extra header rows at start for sample meta-data
-        # Note currently we don't have the meta-data field names
+        # Make a single metadata call for each sample
+        meta = [
+            find_metadata(sample, metadata, meta_default, debug=debug)
+            for sample in samples
+        ]
         for i, name in enumerate(meta_names):
-            handle.write(
-                "#\t\t\t\t%s\t%s\n"
-                % (
-                    name,
-                    "\t".join(
-                        find_metadata(sample, metadata, meta_default, debug=debug)[i]
-                        for sample in samples
-                    ),
-                )
-            )
+            handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
         % (",".join(methods), "\t".join(samples))
