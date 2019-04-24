@@ -455,6 +455,7 @@ def load_metadata(
     metadata_file,
     metadata_cols,
     metadata_name_row=1,
+    metadata_index=0,
     metadata_index_sep=";",
     debug=False,
 ):
@@ -486,8 +487,28 @@ def load_metadata(
             sys.stderr.write("DEBUG: Not loading any metadata\n")
         return {}, [], []
 
-    sample_col = int(metadata_cols.split(":", 1)[0]) - 1
-    value_cols = [int(_) - 1 for _ in metadata_cols.split(":", 1)[1].split(",")]
+    try:
+        value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
+    except ValueError:
+        sys.exit(
+            "ERROR: Output metadata columns should be a comma separated list "
+            "of positive integers, not %r." % metadata_cols
+        )
+    if min(value_cols) < 0:
+        sys.exit("ERROR: Invalid metadata output column, should all be positive.")
+    if metadata_index:
+        sample_col = int(metadata_index) - 1
+        if sample_col < 0:
+            sys.exit(
+                "ERROR: Invalid metadata index column, should be positive, not %r."
+                % metadata_index
+            )
+    else:
+        sample_col = value_cols[0]  # Default is first output column
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Matching sample names to metadata column %i\n" % (sample_col + 1)
+        )
     names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)

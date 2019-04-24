@@ -189,6 +189,7 @@ def plate_summary(args=None):
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
         metadata_name=args.metaname,
+        metadata_index=args.metaindex,
         debug=args.verbose,
     )
 
@@ -210,6 +211,7 @@ def sample_summary(args=None):
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
         metadata_name=args.metaname,
+        metadata_index=args.metaindex,
         debug=args.verbose,
     )
 
@@ -818,11 +820,22 @@ comma.
         type=str,
         default="",
         metavar="COLUMNS",
-        help="Optional description of the metadata columns to include in the "
-        "human reable report (e.g, 1,3,5), and index column containing semi-colon "
-        "separated sample name stem(s) as used in the sample filenames (e.g. 2) "
-        "expressed as '2:1,3,5' (index column, colon, comma separated list of "
-        "columns to output). Use in conjunction with -m / --metadata argument.",
+        help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
+        "table specified with the -m / --metadata argument to be included in the "
+        "human readable report. Use in conjunction with -m / --metadata argument.",
+    )
+    parser_plate_summary.add_argument(
+        "-x",
+        "--metaindex",
+        type=int,
+        default="0",
+        metavar="COL",
+        help="If using metadata, which column contains the (stem of) the sample "
+        "filenames. Default is the first column requested as metadata output "
+        "with the -c / --metacols argument. This column can contain multiple "
+        "semi-colon separated name stems catering to the fact that a field "
+        "sample could be sequenced multiple times with technical replicates. "
+        "Filenames are matched by removing underscore separated suffixes.",
     )
     parser_plate_summary.add_argument(
         "-n",
@@ -910,11 +923,22 @@ comma.
         type=str,
         default="",
         metavar="COLUMNS",
-        help="Optional description of the metadata columns to include in the "
-        "human reable report (e.g, 1,3,5), and index column containing semi-colon "
-        "separated sample name stem(s) as used in the sample filenames (e.g. 2) "
-        "expressed as '2:1,3,5' (index column, colon, comma separated list of "
-        "columns to output). Use in conjunction with -m / --metadata argument.",
+        help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
+        "table specified with the -m / --metadata argument to be included in the "
+        "report header. Use in conjunction with -m / --metadata argument.",
+    )
+    parser_sample_summary.add_argument(
+        "-x",
+        "--metaindex",
+        type=int,
+        default="0",
+        metavar="COL",
+        help="If using metadata, which column contains the (stem of) the sample "
+        "filenames. Default is the first column requested as metadata output "
+        "with the -c / --metacols argument. This column can contain multiple "
+        "semi-colon separated name stems catering to the fact that a field "
+        "sample could be sequenced multiple times with technical replicates. "
+        "Filenames are matched by removing underscore separated suffixes.",
     )
     parser_sample_summary.add_argument(
         "-n",

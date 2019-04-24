@@ -25,6 +25,7 @@ def main(
     metadata_file=None,
     metadata_cols=None,
     metadata_name=None,
+    metadata_index=None,
     debug=False,
 ):
     """Implement the thapbi_pict sample-summary command.
@@ -38,7 +39,7 @@ def main(
         sys.exit("ERROR: No output file specified.\n")
 
     metadata, meta_names, meta_default = load_metadata(
-        metadata_file, metadata_cols, metadata_name, debug=debug
+        metadata_file, metadata_cols, metadata_name, metadata_index, debug=debug
     )
 
     samples = set()
