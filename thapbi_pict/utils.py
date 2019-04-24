@@ -449,3 +449,155 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
                 taxid = ";".join(t for (t, s) in wanted)
                 genus_species = ";".join(s for (t, s) in wanted)
             yield name, taxid, genus_species
+
+
+def load_metadata(
+    metadata_file,
+    metadata_cols,
+    metadata_name_row=1,
+    metadata_index=0,
+    metadata_index_sep=";",
+    debug=False,
+):
+    """Load specified metadata into a dictionary.
+
+    The columns argument should be a string like "2:1,3,5" listing the
+    sample name index column, colon, comma separated list of columns to
+    output. The column numbers are assumed to be one based.
+
+    The index column is assumed to contain one or more sequenced sample
+    names which are semi-colon separated (reflecting that a single field
+    sample could be sequenced more than once). These sample names are
+    matched against the file name stems, see function find_metadata.
+
+    Returns a dictionary indexed by sample name, and a default value
+    (list of empty strings).
+    """
+    # TODO - Accept Excel style A, ..., Z, AA, ... column names?
+
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Loading metadata from %r, column specification %r, "
+            "field names from row %r\n"
+            % (metadata_file, metadata_cols, metadata_name_row)
+        )
+
+    if not metadata_file or not metadata_cols:
+        if debug:
+            sys.stderr.write("DEBUG: Not loading any metadata\n")
+        return {}, [], []
+
+    try:
+        value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
+    except ValueError:
+        sys.exit(
+            "ERROR: Output metadata columns should be a comma separated list "
+            "of positive integers, not %r." % metadata_cols
+        )
+    if min(value_cols) < 0:
+        sys.exit("ERROR: Invalid metadata output column, should all be positive.")
+    if metadata_index:
+        sample_col = int(metadata_index) - 1
+        if sample_col < 0:
+            sys.exit(
+                "ERROR: Invalid metadata index column, should be positive, not %r."
+                % metadata_index
+            )
+    else:
+        sample_col = value_cols[0]  # Default is first output column
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Matching sample names to metadata column %i\n" % (sample_col + 1)
+        )
+    names = [""] * len(value_cols)  # default
+    meta = {}
+    default = [""] * len(value_cols)
+    # Loading in binary mode as on macOS, Excel often uses a strange encoding
+    with open(metadata_file, "rb") as handle:
+        for i, line in enumerate(handle):
+            if i + 1 == metadata_name_row:
+                parts = line.rstrip(b"\n").split(b"\t")
+                # Only decode the fields we want
+                try:
+                    names = [parts[_].decode() for _ in value_cols]
+                except UnicodeDecodeError:
+                    sys.exit(
+                        "ERROR: Field captions not using system default encoding\n"
+                    )
+                if debug:
+                    sys.stderr.write(
+                        "DEBUG: Row %i gave metadata field names: %r\n"
+                        % (metadata_name_row, names)
+                    )
+                continue
+            if line.startswith(b"#"):
+                continue
+            parts = line.rstrip(b"\n").split(b"\t")
+            # Only decode the fields we want
+            try:
+                samples = parts[sample_col].decode().strip(metadata_index_sep)
+            except UnicodeDecodeError:
+                sys.exit(
+                    "ERROR: Sample column not using system default encoding: %r\n"
+                    % parts[sample_col]
+                )
+            samples = [
+                _.strip() for _ in samples.split(metadata_index_sep) if _.strip()
+            ]
+            if not samples:
+                # Not all our field samples will have been sequenced yet
+                continue
+            if debug and len(samples) > 1:
+                sys.stderr.write(
+                    "DEBUG: Multiply sequenced entry %r\n"
+                    % metadata_index_sep.join(samples)
+                )
+            try:
+                values = [parts[_].decode() for _ in value_cols]
+            except UnicodeDecodeError:
+                sys.exit(
+                    "ERROR: Metadata for sample %s not using system default encoding\n"
+                    % metadata_index_sep.join(samples)
+                )
+            for sample in samples:
+                assert sample, samples
+                if sample in meta:
+                    # Bad... note using the unedited sample name for the messages
+                    if meta[sample] == values:
+                        sys.stderr.write(
+                            "WARNING: Duplicated metadata for %s\n" % sample
+                        )
+                        continue
+                    else:
+                        sys.stderr.write(
+                            "WARNING: Dropping conflicting metadata for %s\n"
+                            "Old:%r\nNew:%r\n" % (sample, meta[sample], values)
+                        )
+                        values = [
+                            old if old == new else "ERROR"
+                            for (old, new) in zip(meta[sample], values)
+                        ]
+                meta[sample] = values
+    if debug:
+        sys.stderr.write("DEBUG: Loaded metadata for %i samples\n" % len(meta))
+    return meta, names, default
+
+
+def find_metadata(sample, metadata, default, sep="_", debug=False):
+    """Lookup sample in metadata dictionary, trying stem as key.
+
+    Will match sample name of N01_160517_101_R_A12 to a metadata
+    entry N01_160517_101 (removing words using the given separator).
+    In this example A12 was a well number on a 96-well plate.
+    """
+    key = sample
+    if key in metadata:
+        return metadata[key]
+    while sep in key:
+        # Remove next chunk of name
+        key = key.rsplit(sep, 1)[0]
+        if key in metadata:
+            return metadata[key]
+    if debug:
+        sys.stderr.write("DEBUG: Missing metadata for %s\n" % sample)
+    return default

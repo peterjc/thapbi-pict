@@ -11,12 +11,24 @@ from collections import Counter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .utils import find_requested_files
+from .utils import find_metadata
+from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
-def main(inputs, output, method, min_abundance=1, debug=False):
+def main(
+    inputs,
+    output,
+    method,
+    min_abundance=1,
+    metadata_file=None,
+    metadata_cols=None,
+    metadata_name=None,
+    metadata_index=None,
+    debug=False,
+):
     """Implement the thapbi_pict plate-summary command.
 
     The expectation is that the inputs represent all the samples
@@ -26,6 +38,10 @@ def main(inputs, output, method, min_abundance=1, debug=False):
 
     if not output:
         sys.exit("ERROR: No output file specified.\n")
+
+    metadata, meta_names, meta_default = load_metadata(
+        metadata_file, metadata_cols, metadata_name, metadata_index, debug=debug
+    )
 
     samples = set()
     md5_abundance = Counter()
@@ -83,6 +99,15 @@ def main(inputs, output, method, min_abundance=1, debug=False):
     else:
         handle = open(output, "w")
 
+    if metadata:
+        # Insert extra header rows at start for sample meta-data
+        # Make a single metadata call for each sample
+        meta = [
+            find_metadata(sample, metadata, meta_default, debug=debug)
+            for sample in samples
+        ]
+        for i, name in enumerate(meta_names):
+            handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
         % (",".join(methods), "\t".join(samples))
