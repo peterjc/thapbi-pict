@@ -458,9 +458,8 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     sample name index column, colon, comma separated list of columns to
     output. The column numbers are assumed to be one based.
 
-    Returns a dictionary indexed by sample name (with underscores and
-    spaces mapped to minus signs; see find_metadata function), and a
-    default value (list of empty strings).
+    Returns a dictionary indexed by sample name, and a default value
+    (list of empty strings).
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
@@ -504,7 +503,7 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
             parts = line.rstrip(b"\n").split(b"\t")
             # Only decode the fields we want
             try:
-                sample = parts[sample_col].decode().replace(" ", "-").replace("_", "-")
+                sample = parts[sample_col].decode()
             except UnicodeDecodeError:
                 sys.exit(
                     "ERROR: Sample column not using system default encoding: %r\n"
@@ -540,22 +539,18 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
     return meta, names, default
 
 
-def find_metadata(sample, metadata, default, debug=False):
+def find_metadata(sample, metadata, default, sep="_", debug=False):
     """Lookup sample in metadata dictionary, trying stem as key.
 
-    Maps any spaces or underscores in the sample name to minus signs,
-    and then breaks the name at minus signs removing one suffix at a
-    time until it finds a match.
-
-    e.g. Will match sample name of N01_160517_101_R_A12 to a metadata
-    entry N01_160517_101
+    Will match sample name of N01_160517_101_R_A12 to a metadata
+    entry N01_160517_101 (removing words using the given separator).
     """
-    key = sample.replace(" ", "-").replace("_", "-")
+    key = sample
     if key in metadata:
         return metadata[key]
-    while "-" in key:
+    while sep in key:
         # Remove next chunk of name
-        key = key.rsplit("-", 1)[0]
+        key = key.rsplit(sep, 1)[0]
         if key in metadata:
             return metadata[key]
     if debug:
