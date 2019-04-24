@@ -808,8 +808,8 @@ comma.
         type=str,
         default="",
         metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by "
-        "sample name. Must also specify the columns with -c / --metacols, "
+        help="Optional tab separated table containing metadata indexed by (stem "
+        "of) sample name. Must also specify the columns with -c / --metacols, "
         "and then this information will be included as extra header rows.",
     )
     parser_plate_summary.add_argument(
@@ -819,10 +819,10 @@ comma.
         default="",
         metavar="COLUMNS",
         help="Optional description of the metadata columns to include in the "
-        "output (e.g, 1,3,5), and the column containing the sample name as "
-        "used in the filename stems (e.g. 2) expressed as '2:1,3,5' "
-        "(index column, colon, comma separated list of columns to output). "
-        "Use in conjunction with -m / --metadata argument.",
+        "human reable report (e.g, 1,3,5), and index column containing semi-colon "
+        "separated sample name stem(s) as used in the sample filenames (e.g. 2) "
+        "expressed as '2:1,3,5' (index column, colon, comma separated list of "
+        "columns to output). Use in conjunction with -m / --metadata argument.",
     )
     parser_plate_summary.add_argument(
         "-n",
@@ -899,8 +899,8 @@ comma.
         type=str,
         default="",
         metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by "
-        "sample name. Must also specify the columns with -c / --metacols, "
+        help="Optional tab separated table containing metadata indexed by (stem "
+        "of) sample name. Must also specify the columns with -c / --metacols, "
         "and then this information will be included in the human readable "
         "report output.",
     )
@@ -911,10 +911,10 @@ comma.
         default="",
         metavar="COLUMNS",
         help="Optional description of the metadata columns to include in the "
-        "human reable report (e.g, 1,3,5), and the column containing the sample "
-        "name as used in the filename stems (e.g. 2) expressed as '2:1,3,5' "
-        "(index column, colon, comma separated list of columns to output). "
-        "Use in conjunction with -m / --metadata argument.",
+        "human reable report (e.g, 1,3,5), and index column containing semi-colon "
+        "separated sample name stem(s) as used in the sample filenames (e.g. 2) "
+        "expressed as '2:1,3,5' (index column, colon, comma separated list of "
+        "columns to output). Use in conjunction with -m / --metadata argument.",
     )
     parser_sample_summary.add_argument(
         "-n",
