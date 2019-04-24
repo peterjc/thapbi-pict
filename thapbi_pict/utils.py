@@ -451,12 +451,23 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
             yield name, taxid, genus_species
 
 
-def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False):
+def load_metadata(
+    metadata_file,
+    metadata_cols,
+    metadata_name_row=1,
+    metadata_index_sep=";",
+    debug=False,
+):
     """Load specified metadata into a dictionary.
 
     The columns argument should be a string like "2:1,3,5" listing the
     sample name index column, colon, comma separated list of columns to
     output. The column numbers are assumed to be one based.
+
+    The index column is assumed to contain one or more sequenced sample
+    names which are semi-colon separated (reflecting that a single field
+    sample could be sequenced more than once). These sample names are
+    matched against the file name stems, see function find_metadata.
 
     Returns a dictionary indexed by sample name, and a default value
     (list of empty strings).
@@ -503,39 +514,51 @@ def load_metadata(metadata_file, metadata_cols, metadata_name_row=1, debug=False
             parts = line.rstrip(b"\n").split(b"\t")
             # Only decode the fields we want
             try:
-                sample = parts[sample_col].decode()
+                samples = parts[sample_col].decode().strip(metadata_index_sep)
             except UnicodeDecodeError:
                 sys.exit(
                     "ERROR: Sample column not using system default encoding: %r\n"
                     % parts[sample_col]
+                )
+            samples = [
+                _.strip() for _ in samples.split(metadata_index_sep) if _.strip()
+            ]
+            if not samples:
+                # Not all our field samples will have been sequenced yet
+                continue
+            if debug and len(samples) > 1:
+                sys.stderr.write(
+                    "DEBUG: Multiply sequenced entry %r\n"
+                    % metadata_index_sep.join(samples)
                 )
             try:
                 values = [parts[_].decode() for _ in value_cols]
             except UnicodeDecodeError:
                 sys.exit(
                     "ERROR: Metadata for sample %s not using system default encoding\n"
-                    % sample
+                    % metadata_index_sep.join(samples)
                 )
-            if not sample:
-                # Not all our field samples will have been sequenced yet
-                continue
-            if sample in meta:
-                # Bad... note using the unedited sample name for the messages
-                if meta[sample] == values:
-                    sys.stderr.write(
-                        "WARNING: Duplicated metadata for %s\n" % parts[sample_col]
-                    )
-                    continue
-                else:
-                    sys.stderr.write(
-                        "WARNING: Dropping conflicting metadata for %s\n"
-                        "Old:%r\nNew:%r\n" % (parts[sample_col], meta[sample], values)
-                    )
-                    values = [
-                        old if old == new else "ERROR"
-                        for (old, new) in zip(meta[sample], values)
-                    ]
-            meta[sample] = values
+            for sample in samples:
+                assert sample, samples
+                if sample in meta:
+                    # Bad... note using the unedited sample name for the messages
+                    if meta[sample] == values:
+                        sys.stderr.write(
+                            "WARNING: Duplicated metadata for %s\n" % sample
+                        )
+                        continue
+                    else:
+                        sys.stderr.write(
+                            "WARNING: Dropping conflicting metadata for %s\n"
+                            "Old:%r\nNew:%r\n" % (sample, meta[sample], values)
+                        )
+                        values = [
+                            old if old == new else "ERROR"
+                            for (old, new) in zip(meta[sample], values)
+                        ]
+                meta[sample] = values
+    if debug:
+        sys.stderr.write("DEBUG: Loaded metadata for %i samples\n" % len(meta))
     return meta, names, default
 
 
@@ -544,6 +567,7 @@ def find_metadata(sample, metadata, default, sep="_", debug=False):
 
     Will match sample name of N01_160517_101_R_A12 to a metadata
     entry N01_160517_101 (removing words using the given separator).
+    In this example A12 was a well number on a 96-well plate.
     """
     key = sample
     if key in metadata:
