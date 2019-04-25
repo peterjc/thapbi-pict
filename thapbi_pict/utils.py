@@ -519,7 +519,7 @@ def load_metadata(
                 parts = line.rstrip(b"\n").split(b"\t")
                 # Only decode the fields we want
                 try:
-                    names = [parts[_].decode() for _ in value_cols]
+                    names = [parts[_].decode().strip() for _ in value_cols]
                 except UnicodeDecodeError:
                     sys.exit(
                         "ERROR: Field captions not using system default encoding\n"
@@ -535,7 +535,7 @@ def load_metadata(
             parts = line.rstrip(b"\n").split(b"\t")
             # Only decode the fields we want
             try:
-                samples = parts[sample_col].decode().strip(metadata_index_sep)
+                samples = parts[sample_col].decode().strip().strip(metadata_index_sep)
             except UnicodeDecodeError:
                 sys.exit(
                     "ERROR: Sample column not using system default encoding: %r\n"
@@ -553,7 +553,7 @@ def load_metadata(
                     % metadata_index_sep.join(samples)
                 )
             try:
-                values = [parts[_].decode() for _ in value_cols]
+                values = [parts[_].decode().strip() for _ in value_cols]
             except UnicodeDecodeError:
                 sys.exit(
                     "ERROR: Metadata for sample %s not using system default encoding\n"
