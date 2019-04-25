@@ -822,7 +822,8 @@ comma.
         metavar="COLUMNS",
         help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
         "table specified with the -m / --metadata argument to be included in the "
-        "human readable report. Use in conjunction with -m / --metadata argument.",
+        "human readable report, and use to sort the samples. Use in conjunction "
+        "with -m / --metadata argument.",
     )
     parser_plate_summary.add_argument(
         "-x",
@@ -925,7 +926,8 @@ comma.
         metavar="COLUMNS",
         help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
         "table specified with the -m / --metadata argument to be included in the "
-        "report header. Use in conjunction with -m / --metadata argument.",
+        "report header, and use to sort the samples. Use in conjunction with "
+        "-m / --metadata argument.",
     )
     parser_sample_summary.add_argument(
         "-x",
