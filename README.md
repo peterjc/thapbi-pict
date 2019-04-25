@@ -68,6 +68,7 @@ This should automatically find the installed copy of the Python code.
 | v0.1.1  | 2019-04-16 | Expand default taxonomy and database from Peronosporaceae to Peronosporales. |
 | v0.1.2  | 2019-04-17 | Keep searching if ``onebp`` classifier perfect match is at genus-level only. |
 | v0.1.3  | 2019-04-24 | Can optionally display sample metadata from TSV file in summary reports.     |
+| v0.1.4  | 2019-04-25 | Sort samples using the optional metadata fields requested in reports.        |
 
 
 # Development Notes
