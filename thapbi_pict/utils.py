@@ -10,8 +10,12 @@ from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 
-def sample_sort(sample_names):
-    """Sort sample names treating underscores and spaces like minus signs.
+def sample_sort(sample_names, metadata=None):
+    """Sort sample names like a human.
+
+    If metadata is provided, that is used as the primary sort key, falling back
+    on the sample names themselves but treating underscores and spaces like minus
+    signs.
 
     Our samples have occasionally used underscores and minus signs inconsistently
     in sample names as field separators or space substitutions. Therefore simple
@@ -30,6 +34,18 @@ def sample_sort(sample_names):
         ['N01-a', 'N01_b', 'N01 c', 'N011-a']
 
     """
+    # TODO: Clever sorting of e.g. A1, A2, ..., A10, A11, A99 or
+    # e.g. "Sample 1", "Sample 2", ... "Sample 10", "Sample 11", ...
+    # as values, or part of values.
+    if metadata:
+        assert len(sample_names) == len(metadata)
+        # Sort on meta data, falling back on munged sample name
+        both = sorted(
+            zip(metadata, sample_names),
+            key=lambda _: (_[0], _[1].replace("_", "-").replace(" ", "-")),
+        )
+        return [name for meta, name in both]
+    # Just sort on the munged sample name
     return sorted(sample_names, key=lambda _: _.replace("_", "-").replace(" ", "-"))
 
 

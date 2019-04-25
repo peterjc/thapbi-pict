@@ -67,6 +67,16 @@ def main(
                 md5_species[md5] = set()
     samples = sample_sort(samples)
 
+    sample_metadata = {}
+    if metadata:
+        for sample in samples:
+            sample_metadata[sample] = find_metadata(
+                sample, metadata, meta_default, debug=debug
+            )
+        # Sort samples using metadata:
+        samples = sample_sort(samples, [sample_metadata[_] for _ in samples])
+    del metadata
+
     methods = method.split(",")
     for method in methods:
         if debug:
@@ -99,13 +109,10 @@ def main(
     else:
         handle = open(output, "w")
 
-    if metadata:
+    if sample_metadata:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [
-            find_metadata(sample, metadata, meta_default, debug=debug)
-            for sample in samples
-        ]
+        meta = [sample_metadata[sample] for sample in samples]
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
     handle.write(

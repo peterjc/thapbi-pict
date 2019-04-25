@@ -74,6 +74,17 @@ def main(
     if debug:
         sys.stderr.write("Loaded predictions for %i samples\n" % len(samples))
 
+    samples = sample_sort(samples)
+    sample_metadata = {}
+    if metadata:
+        for sample in samples:
+            sample_metadata[sample] = find_metadata(
+                sample, metadata, meta_default, debug=debug
+            )
+        # Sort samples using metadata:
+        samples = sample_sort(samples, [sample_metadata[_] for _ in samples])
+    del metadata
+
     if output == "-":
         if debug:
             sys.stderr.write("DEBUG: Output to stdout...\n")
@@ -101,7 +112,7 @@ def main(
             "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
             "marker.\n\n"
         )
-    for sample in sample_sort(samples):
+    for sample in samples:
         all_sp = set()
         unambig_sp = set()
         for sp in sp_to_taxid:
@@ -130,11 +141,8 @@ def main(
         if human:
             try:
                 human.write("%s\n" % sample)
-                if metadata:
-                    for name, value in zip(
-                        meta_names,
-                        find_metadata(sample, metadata, meta_default, debug=debug),
-                    ):
+                if sample_metadata:
+                    for name, value in zip(meta_names, sample_metadata[sample]):
                         if value:
                             human.write("%s: %s\n" % (name, value))
                 human.write("\n")
