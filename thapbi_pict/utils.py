@@ -583,12 +583,16 @@ def load_metadata(
     return meta, names, default
 
 
-def find_metadata(sample, metadata, default, sep="_", debug=False):
+def find_metadata(sample, metadata, default=None, sep="_", debug=False):
     """Lookup sample in metadata dictionary, trying stem as key.
 
     Will match sample name of N01_160517_101_R_A12 to a metadata
     entry N01_160517_101 (removing words using the given separator).
     In this example A12 was a well number on a 96-well plate.
+
+    If fails to find a match, and a default is set, prints a warning
+    to stderr and returns the default value -- otherwise raises a
+    KeyError exception.
     """
     key = sample
     if key in metadata:
@@ -598,6 +602,8 @@ def find_metadata(sample, metadata, default, sep="_", debug=False):
         key = key.rsplit(sep, 1)[0]
         if key in metadata:
             return metadata[key]
-    if debug:
-        sys.stderr.write("DEBUG: Missing metadata for %s\n" % sample)
-    return default
+    if default:
+        sys.stderr.write("WARNING: Missing metadata for %s\n" % sample)
+        return default
+    else:
+        raise KeyError(sample)
