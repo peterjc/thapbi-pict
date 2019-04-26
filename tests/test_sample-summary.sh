@@ -22,6 +22,12 @@ for M in identity onebp blast swarmid swarm; do
     thapbi_pict sample-summary -m $M -r $TMP/human.txt -o $TMP/computer.tsv tests/classify/
     diff $TMP/human.txt tests/sample-summary/classify.$M.txt
     diff $TMP/computer.tsv tests/sample-summary/classify.$M.tsv
+    # And again, but with metadata
+    rm -rf $TMP/human.txt $TMP/computer.tsv
+    thapbi_pict sample-summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -r $TMP/human.txt -o $TMP/computer.tsv tests/classify/
+    diff $TMP/human.txt tests/sample-summary/classify-meta.$M.txt
+    # This currently does not include metadata:
+    diff $TMP/computer.tsv tests/sample-summary/classify.$M.tsv
 done
 
 echo "$0 - test_sample-summary.sh passed"
