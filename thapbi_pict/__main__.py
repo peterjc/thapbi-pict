@@ -810,8 +810,8 @@ comma.
         type=str,
         default="",
         metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by (stem "
-        "of) sample name. Must also specify the columns with -c / --metacols, "
+        help="Optional tab separated table containing metadata indexed by "
+        "sample name. Must also specify the columns with -c / --metacols, "
         "and then this information will be included as extra header rows.",
     )
     parser_plate_summary.add_argument(
@@ -831,12 +831,11 @@ comma.
         type=int,
         default="0",
         metavar="COL",
-        help="If using metadata, which column contains the (stem of) the sample "
-        "filenames. Default is the first column requested as metadata output "
+        help="If using metadata, which column contains the sequenced sample "
+        "names. Default is the first column requested as metadata output "
         "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated name stems catering to the fact that a field "
-        "sample could be sequenced multiple times with technical replicates. "
-        "Filenames are matched by removing underscore separated suffixes.",
+        "semi-colon separated name catering to the fact that a field sample "
+        "could be sequenced multiple times with technical replicates.",
     )
     parser_plate_summary.add_argument(
         "-n",
@@ -913,8 +912,8 @@ comma.
         type=str,
         default="",
         metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by (stem "
-        "of) sample name. Must also specify the columns with -c / --metacols, "
+        help="Optional tab separated table containing metadata indexed by "
+        "sample name. Must also specify the columns with -c / --metacols, "
         "and then this information will be included in the human readable "
         "report output.",
     )
@@ -935,12 +934,11 @@ comma.
         type=int,
         default="0",
         metavar="COL",
-        help="If using metadata, which column contains the (stem of) the sample "
-        "filenames. Default is the first column requested as metadata output "
+        help="If using metadata, which column contains the sequenced sample "
+        "names. Default is the first column requested as metadata output "
         "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated name stems catering to the fact that a field "
-        "sample could be sequenced multiple times with technical replicates. "
-        "Filenames are matched by removing underscore separated suffixes.",
+        "semi-colon separated name catering to the fact that a field sample "
+        "could be sequenced multiple times with technical replicates.",
     )
     parser_sample_summary.add_argument(
         "-n",

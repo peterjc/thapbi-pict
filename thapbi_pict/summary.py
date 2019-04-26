@@ -11,7 +11,6 @@ from collections import Counter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .utils import find_requested_files
-from .utils import find_metadata
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import sample_sort
@@ -67,15 +66,12 @@ def main(
                 md5_species[md5] = set()
     samples = sample_sort(samples)
 
-    sample_metadata = {}
     if metadata:
         for sample in samples:
-            sample_metadata[sample] = find_metadata(
-                sample, metadata, meta_default, debug=debug
-            )
+            if sample not in metadata:
+                sys.stderr.write("WARNING: Missing metadata for %s\n" % sample)
         # Sort samples using metadata:
-        samples = sample_sort(samples, [sample_metadata[_] for _ in samples])
-    del metadata
+        samples = sample_sort(samples, [metadata.get(_, meta_default) for _ in samples])
 
     methods = method.split(",")
     for method in methods:
@@ -109,10 +105,10 @@ def main(
     else:
         handle = open(output, "w")
 
-    if sample_metadata:
+    if metadata:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [sample_metadata[sample] for sample in samples]
+        meta = [metadata.get(sample, meta_default) for sample in samples]
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
     handle.write(

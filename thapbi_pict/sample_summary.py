@@ -9,7 +9,6 @@ import sys
 from collections import Counter
 
 from .utils import find_requested_files
-from .utils import find_metadata
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import abundance_from_read_name
@@ -75,15 +74,12 @@ def main(
         sys.stderr.write("Loaded predictions for %i samples\n" % len(samples))
 
     samples = sample_sort(samples)
-    sample_metadata = {}
     if metadata:
         for sample in samples:
-            sample_metadata[sample] = find_metadata(
-                sample, metadata, meta_default, debug=debug
-            )
+            if sample not in metadata:
+                sys.stderr.write("WARNING: Missing metadata for %s\n" % sample)
         # Sort samples using metadata:
-        samples = sample_sort(samples, [sample_metadata[_] for _ in samples])
-    del metadata
+        samples = sample_sort(samples, [metadata.get(_, meta_default) for _ in samples])
 
     if output == "-":
         if debug:
@@ -141,8 +137,8 @@ def main(
         if human:
             try:
                 human.write("%s\n" % sample)
-                if sample_metadata:
-                    for name, value in zip(meta_names, sample_metadata[sample]):
+                if sample in metadata:
+                    for name, value in zip(meta_names, metadata[sample]):
                         if value:
                             human.write("%s: %s\n" % (name, value))
                 human.write("\n")
