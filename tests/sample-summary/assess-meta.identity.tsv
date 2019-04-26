@@ -1,7 +1,7 @@
 #Sample	TaxID	Species	Unambiguous	Seq-count
+unclassified	0		True	1000
 fp	4784	Phytophthora capsici	False	1000
 fp	132615	Phytophthora glovera	False	1000
-unclassified	0		True	1000
 ex4	4784	Phytophthora capsici	False	1000
 ex4	4787	Phytophthora infestans	False	1000
 ex3	0		True	1000

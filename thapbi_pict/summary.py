@@ -38,16 +38,6 @@ def main(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
-    metadata_rows, metadata_samples, meta_names, meta_default = load_metadata(
-        metadata_file, metadata_cols, metadata_name, metadata_index, debug=debug
-    )
-    # Turn row-centric metadata into a dictionary keyed on sequenced sample name:
-    metadata = {}
-    for row, samples in zip(metadata_rows, metadata_samples):
-        for sample in samples:
-            metadata[sample] = row
-    del metadata_rows, metadata_samples
-
     samples = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
@@ -71,13 +61,40 @@ def main(
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
     samples = sample_sort(samples)
-
-    if metadata:
-        for sample in samples:
-            if sample not in metadata:
-                sys.stderr.write("WARNING: Missing metadata for %s\n" % sample)
-        # Sort samples using metadata:
-        samples = sample_sort(samples, [metadata.get(_, meta_default) for _ in samples])
+    (
+        metadata_rows,
+        metadata_samples,
+        meta_names,
+        meta_default,
+        missing_meta,
+    ) = load_metadata(
+        metadata_file,
+        metadata_cols,
+        metadata_name,
+        metadata_index,
+        sequenced_samples=samples,
+        debug=debug,
+    )
+    # Turn row-centric metadata into a dictionary keyed on sequenced sample name,
+    # and use for sorting order
+    metadata = {}
+    new = []
+    # Note we sort rows on the metadata values, discarding the order in the table
+    for row, r_samples in sorted(zip(metadata_rows, metadata_samples)):
+        for sample in r_samples:
+            if sample in samples:
+                # print(sample, row)
+                metadata[sample] = row
+                assert sample not in new, sample
+                new.append(sample)
+    for sample in missing_meta:
+        # print("Missing metadata for %s" % sample)
+        assert sample not in new, sample
+        new.append(sample)
+    assert set(samples) == set(new)
+    assert len(samples) == len(new)
+    samples = new
+    del metadata_rows, metadata_samples, new
 
     methods = method.split(",")
     for method in methods:

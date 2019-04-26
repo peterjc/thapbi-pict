@@ -473,6 +473,7 @@ def load_metadata(
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
+    sequenced_samples=None,
     debug=False,
 ):
     """Load specified metadata as several lists.
@@ -491,10 +492,17 @@ def load_metadata(
      - matching list of associated sequenced sample(s),
      - list of the N field names,
      - matching default value (list of N empty strings).
+     - samples without metadata
 
     Without labeling one of the metadata values as a field-sample ID,
     we cannot index the return values - instead expect caller to use
     the row number.
+
+    Optional argument sequenced_samples should be a set or list of
+    sample names which will be cross-checked against the metadata_index
+    column. Samples not in the metadata file will be included in a
+    dummy final row (with a warning). The other way round gives a
+    missing file warning too (but they are left in the returned data).
 
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
@@ -505,11 +513,15 @@ def load_metadata(
             "field names from row %r\n"
             % (metadata_file, metadata_cols, metadata_name_row)
         )
+        if sequenced_samples is not None:
+            sys.stderr.write(
+                "DEBUG: Have %i sequenced samples\n" % len(sequenced_samples)
+            )
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], []
+        return [], [], [], [], sequenced_samples
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
@@ -584,6 +596,22 @@ def load_metadata(
             % (len(meta), len(back))
         )
 
+    missing_meta = []
+    if sequenced_samples is not None and set(back) != set(sequenced_samples):
+        # Using list comprehensions to preserve any meaningful order
+        missing_files = [_ for _ in back if _ not in sequenced_samples]
+        if missing_files:
+            sys.stderr.write(
+                "WARNING: Missing %i sequenced samples listed in metadata, %s (etc)\n"
+                % (len(missing_files), missing_files[0])
+            )
+        missing_meta = [_ for _ in sequenced_samples if _ not in back]
+        if missing_meta:
+            sys.stderr.write(
+                "WARNING: %s sequenced samples without metadata, %s (etc)\n"
+                % (len(missing_meta), missing_meta[0])
+            )
+
     bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
     if bad:
         print(bad)
@@ -592,7 +620,4 @@ def load_metadata(
         )
     del back
 
-    if debug:
-        sys.stderr.write("DEBUG: Loaded metadata for %i samples\n" % len(meta))
-
-    return meta, index, names, default
+    return meta, index, names, default, missing_meta

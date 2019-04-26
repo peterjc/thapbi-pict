@@ -37,16 +37,6 @@ def main(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
-    metadata_rows, metadata_samples, meta_names, meta_default = load_metadata(
-        metadata_file, metadata_cols, metadata_name, metadata_index, debug=debug
-    )
-    # Turn row-centric metadata into a dictionary keyed on sequenced sample name:
-    metadata = {}
-    for row, samples in zip(metadata_rows, metadata_samples):
-        for sample in samples:
-            metadata[sample] = row
-    del metadata_rows, metadata_samples
-
     samples = set()
     counts = Counter()
     sp_to_taxid = {}
@@ -80,12 +70,20 @@ def main(
         sys.stderr.write("Loaded predictions for %i samples\n" % len(samples))
 
     samples = sample_sort(samples)
-    if metadata:
-        for sample in samples:
-            if sample not in metadata:
-                sys.stderr.write("WARNING: Missing metadata for %s\n" % sample)
-        # Sort samples using metadata:
-        samples = sample_sort(samples, [metadata.get(_, meta_default) for _ in samples])
+    (
+        metadata_rows,
+        metadata_samples,
+        meta_names,
+        meta_default,
+        missing_meta,
+    ) = load_metadata(
+        metadata_file,
+        metadata_cols,
+        metadata_name,
+        metadata_index,
+        sequenced_samples=samples,
+        debug=debug,
+    )
 
     if output == "-":
         if debug:
@@ -114,52 +112,61 @@ def main(
             "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
             "marker.\n\n"
         )
-    for sample in samples:
-        all_sp = set()
-        unambig_sp = set()
-        for sp in sp_to_taxid:
-            for unambig in [True, False]:
-                count = counts[sample, sp, unambig]
-                if count:
-                    if handle:
-                        try:
-                            handle.write(
-                                "%s\t%s\t%s\t%s\t%i\n"
-                                % (sample, sp_to_taxid[sp], sp, unambig, count)
-                            )
-                        except BrokenPipeError:
-                            # Stop trying to write to stdout (eg piped to head)
-                            handle = None
-                    all_sp.add(sp)
-                    if unambig:
-                        unambig_sp.add(sp)
-        if not all_sp and handle:
-            try:
-                # Match unclassified count output: TaxID zero, blank species, True
-                handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
-            except BrokenPipeError:
-                handle = None
 
-        if human:
-            try:
-                human.write("%s\n" % sample)
-                if sample in metadata:
-                    for name, value in zip(meta_names, metadata[sample]):
-                        if value:
-                            human.write("%s: %s\n" % (name, value))
-                human.write("\n")
-                for sp in sorted(all_sp):
-                    if sp not in unambig_sp:
-                        sp = "%s (uncertain/ambiguous)" % sp
-                    if not sp:
-                        sp = "Unknown"
-                    human.write(" - %s\n" % sp)
-                if not all_sp:
-                    human.write(" - No data\n")
-                human.write("\n")
-            except BrokenPipeError:
-                # Stop trying to write to stdout (e.g. piped to head)
-                human = None
+    # Note we sort rows on the metadata values, discarding the order in the table
+    batches = sorted(zip(metadata_rows, metadata_samples))
+    if missing_meta:
+        batches.append([meta_default, missing_meta])
+    for metadata, sample_batch in batches:
+        for sample in sample_batch:
+            if sample not in samples:
+                # TODO - include unsequenced sample in human readable report
+                continue
+            all_sp = set()
+            unambig_sp = set()
+            for sp in sp_to_taxid:
+                for unambig in [True, False]:
+                    count = counts[sample, sp, unambig]
+                    if count:
+                        if handle:
+                            try:
+                                handle.write(
+                                    "%s\t%s\t%s\t%s\t%i\n"
+                                    % (sample, sp_to_taxid[sp], sp, unambig, count)
+                                )
+                            except BrokenPipeError:
+                                # Stop trying to write to stdout (eg piped to head)
+                                handle = None
+                        all_sp.add(sp)
+                        if unambig:
+                            unambig_sp.add(sp)
+            if not all_sp and handle:
+                try:
+                    # Match unclassified count output: TaxID zero, blank species, True
+                    handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
+                except BrokenPipeError:
+                    handle = None
+
+            if human:
+                try:
+                    human.write("%s\n" % sample)
+                    if metadata:
+                        for name, value in zip(meta_names, metadata):
+                            if value:
+                                human.write("%s: %s\n" % (name, value))
+                    human.write("\n")
+                    for sp in sorted(all_sp):
+                        if sp not in unambig_sp:
+                            sp = "%s (uncertain/ambiguous)" % sp
+                        if not sp:
+                            sp = "Unknown"
+                        human.write(" - %s\n" % sp)
+                    if not all_sp:
+                        human.write(" - No data\n")
+                    human.write("\n")
+                except BrokenPipeError:
+                    # Stop trying to write to stdout (e.g. piped to head)
+                    human = None
 
     if output != "-" and handle:
         handle.close()
