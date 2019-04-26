@@ -38,9 +38,15 @@ def main(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
-    metadata, meta_names, meta_default = load_metadata(
+    metadata_rows, metadata_samples, meta_names, meta_default = load_metadata(
         metadata_file, metadata_cols, metadata_name, metadata_index, debug=debug
     )
+    # Turn row-centric metadata into a dictionary keyed on sequenced sample name:
+    metadata = {}
+    for row, samples in zip(metadata_rows, metadata_samples):
+        for sample in samples:
+            metadata[sample] = row
+    del metadata_rows, metadata_samples
 
     samples = set()
     md5_abundance = Counter()

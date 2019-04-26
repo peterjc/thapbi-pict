@@ -475,7 +475,7 @@ def load_metadata(
     metadata_index_sep=";",
     debug=False,
 ):
-    """Load specified metadata into a dictionary.
+    """Load specified metadata as several lists.
 
     The columns argument should be a string like "2:1,3,5" listing the
     sample name index column, colon, comma separated list of columns to
@@ -486,8 +486,16 @@ def load_metadata(
     sample could be sequenced more than once). These sample names are
     matched against the file name stems, see function find_metadata.
 
-    Returns a dictionary indexed by sample name, list of the field names,
-    and a matching default value (list of empty strings).
+    Returns:
+     - list of field sample metadata values (each a list of N values)
+     - matching list of associated sequenced sample(s),
+     - list of the N field names,
+     - matching default value (list of N empty strings).
+
+    Without labeling one of the metadata values as a field-sample ID,
+    we cannot index the return values - instead expect caller to use
+    the row number.
+
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
@@ -501,7 +509,7 @@ def load_metadata(
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, [], []
+        return [], [], [], []
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
@@ -537,55 +545,54 @@ def load_metadata(
         # default when save tab-delimited from macOS Excel
         with open(metadata_file, encoding="latin1") as handle:
             lines = list(handle)
-    if lines:
-        # TODO: Remove this level of indentation
-        for i, line in enumerate(lines):
-            if i + 1 == metadata_name_row:
-                if line.startswith("#"):
-                    line = line[1:]
-                parts = line.rstrip("\n").split("\t")
-                names = [parts[_].strip() for _ in value_cols]
-                if debug:
-                    sys.stderr.write(
-                        "DEBUG: Row %i gave metadata field names: %r\n"
-                        % (metadata_name_row, names)
-                    )
-                continue
-            if line.startswith("#"):
-                continue
-            parts = line.rstrip("\n").split("\t")
-            samples = parts[sample_col].strip().strip(metadata_index_sep)
-            samples = [
-                _.strip() for _ in samples.split(metadata_index_sep) if _.strip()
-            ]
-            if not samples:
-                # Not all our field samples will have been sequenced yet
-                continue
-            if debug and len(samples) > 1:
-                sys.stderr.write(
-                    "DEBUG: Multiply sequenced entry %r\n"
-                    % metadata_index_sep.join(samples)
-                )
-            values = [parts[_].strip() for _ in value_cols]
-            for sample in samples:
-                assert sample, samples
-                if sample in meta:
-                    # Bad... note using the unedited sample name for the messages
-                    if meta[sample] == values:
-                        sys.stderr.write(
-                            "WARNING: Duplicated metadata for %s\n" % sample
-                        )
-                        continue
-                    else:
-                        sys.stderr.write(
-                            "WARNING: Dropping conflicting metadata for %s\n"
-                            "Old:%r\nNew:%r\n" % (sample, meta[sample], values)
-                        )
-                        values = [
-                            old if old == new else "ERROR"
-                            for (old, new) in zip(meta[sample], values)
-                        ]
-                meta[sample] = values
+
+    if metadata_name_row:
+        line = lines[metadata_name_row - 1]
+        if line.startswith("#"):
+            line = line[1:]
+        parts = line.rstrip("\n").split("\t")
+        names = [parts[_].strip() for _ in value_cols]
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Row %i gave metadata field names: %r\n"
+                % (metadata_name_row, names)
+            )
+
+    # Remove header lines,
+    lines = [_ for _ in lines[metadata_name_row:] if not _.startswith("#")]
+
+    # Break up line into fields
+    lines = [_.rstrip("\n").split("\t") for _ in lines]
+
+    # Select desired columns,
+    meta = [[_[i].strip() for i in value_cols] for _ in lines]
+    # Pull out the index column too:
+    index = [_[sample_col].strip() for _ in lines]
+    index = [[s.strip() for s in _.split(";") if s.strip()] for _ in index]
+    del lines
+
+    back = {}
+    for i, samples in enumerate(index):
+        for sample in samples:
+            try:
+                back[sample].add(i)
+            except KeyError:
+                back[sample] = {i}
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Loaded metadata for %i field samples, %i sequenced samples\n"
+            % (len(meta), len(back))
+        )
+
+    bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
+    if bad:
+        print(bad)
+        sys.exit(
+            "ERROR: Duplicated metadata for %i samples, %s (etc)" % (len(bad), bad[1])
+        )
+    del back
+
     if debug:
         sys.stderr.write("DEBUG: Loaded metadata for %i samples\n" % len(meta))
-    return meta, names, default
+
+    return meta, index, names, default
