@@ -486,8 +486,8 @@ def load_metadata(
     sample could be sequenced more than once). These sample names are
     matched against the file name stems, see function find_metadata.
 
-    Returns a dictionary indexed by sample name, and a default value
-    (list of empty strings).
+    Returns a dictionary indexed by sample name, list of the field names,
+    and a matching default value (list of empty strings).
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
