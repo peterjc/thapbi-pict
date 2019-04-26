@@ -528,37 +528,33 @@ def load_metadata(
     names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)
-    # Loading in binary mode as on macOS, Excel often uses a strange encoding
-    with open(metadata_file, "rb") as handle:
-        for i, line in enumerate(handle):
+    try:
+        # Try with default encoding first...
+        with open(metadata_file) as handle:
+            lines = list(handle)
+    except UnicodeDecodeError:
+        # Automatically try latin1, which seems to be
+        # default when save tab-delimited from macOS Excel
+        with open(metadata_file, encoding="latin1") as handle:
+            lines = list(handle)
+    if lines:
+        # TODO: Remove this level of indentation
+        for i, line in enumerate(lines):
             if i + 1 == metadata_name_row:
-                if line.startswith(b"#"):
+                if line.startswith("#"):
                     line = line[1:]
-                parts = line.rstrip(b"\n").split(b"\t")
-                # Only decode the fields we want
-                try:
-                    names = [parts[_].decode().strip() for _ in value_cols]
-                except UnicodeDecodeError:
-                    sys.exit(
-                        "ERROR: Field captions not using system default encoding\n"
-                    )
+                parts = line.rstrip("\n").split("\t")
+                names = [parts[_].strip() for _ in value_cols]
                 if debug:
                     sys.stderr.write(
                         "DEBUG: Row %i gave metadata field names: %r\n"
                         % (metadata_name_row, names)
                     )
                 continue
-            if line.startswith(b"#"):
+            if line.startswith("#"):
                 continue
-            parts = line.rstrip(b"\n").split(b"\t")
-            # Only decode the fields we want
-            try:
-                samples = parts[sample_col].decode().strip().strip(metadata_index_sep)
-            except UnicodeDecodeError:
-                sys.exit(
-                    "ERROR: Sample column not using system default encoding: %r\n"
-                    % parts[sample_col]
-                )
+            parts = line.rstrip("\n").split("\t")
+            samples = parts[sample_col].strip().strip(metadata_index_sep)
             samples = [
                 _.strip() for _ in samples.split(metadata_index_sep) if _.strip()
             ]
@@ -570,13 +566,7 @@ def load_metadata(
                     "DEBUG: Multiply sequenced entry %r\n"
                     % metadata_index_sep.join(samples)
                 )
-            try:
-                values = [parts[_].decode().strip() for _ in value_cols]
-            except UnicodeDecodeError:
-                sys.exit(
-                    "ERROR: Metadata for sample %s not using system default encoding\n"
-                    % metadata_index_sep.join(samples)
-                )
+            values = [parts[_].strip() for _ in value_cols]
             for sample in samples:
                 assert sample, samples
                 if sample in meta:
