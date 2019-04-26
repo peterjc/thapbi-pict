@@ -1,0 +1,43 @@
+NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+
+fp
+Description: Negative
+
+ - Phytophthora capsici (uncertain/ambiguous)
+ - Phytophthora glovera (uncertain/ambiguous)
+
+unclassified
+Description: Negative
+
+ - Unknown
+
+ex4
+Description: Phytophthora capsici/glovera
+
+ - Phytophthora capsici (uncertain/ambiguous)
+ - Phytophthora infestans (uncertain/ambiguous)
+
+ex3
+Description: Phytophthora europaea/flexuosa
+
+ - Unknown
+
+ex2
+Description: Phytophthora fallax
+
+ - Unknown
+ - Phytophthora capsici (uncertain/ambiguous)
+ - Phytophthora glovera (uncertain/ambiguous)
+
+ex1
+Description: Phytophthora megasperma
+
+ - Unknown
+ - Phytophthora crassamura
+ - Phytophthora megasperma
+
+ex1a
+Description: Phytophthora megasperma
+
+ - Phytophthora megasperma
+

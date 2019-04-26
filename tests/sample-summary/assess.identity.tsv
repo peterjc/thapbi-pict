@@ -1,0 +1,14 @@
+#Sample	TaxID	Species	Unambiguous	Seq-count
+ex1	1771973	Phytophthora crassamura	True	12345
+ex1	4788	Phytophthora megasperma	True	2345
+ex1	0		True	2234
+ex1a	4788	Phytophthora megasperma	True	4321
+ex2	0		True	112000
+ex2	4784	Phytophthora capsici	False	1000
+ex2	132615	Phytophthora glovera	False	1000
+ex3	0		True	1000
+ex4	4784	Phytophthora capsici	False	1000
+ex4	4787	Phytophthora infestans	False	1000
+fp	4784	Phytophthora capsici	False	1000
+fp	132615	Phytophthora glovera	False	1000
+unclassified	0		True	1000
