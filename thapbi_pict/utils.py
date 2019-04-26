@@ -532,6 +532,8 @@ def load_metadata(
     with open(metadata_file, "rb") as handle:
         for i, line in enumerate(handle):
             if i + 1 == metadata_name_row:
+                if line.startswith(b"#"):
+                    line = line[1:]
                 parts = line.rstrip(b"\n").split(b"\t")
                 # Only decode the fields we want
                 try:
