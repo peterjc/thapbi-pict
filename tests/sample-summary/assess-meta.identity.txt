@@ -1,15 +1,15 @@
 NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
 
+unclassified
+Description: Negative
+
+ - Unknown
+
 fp
 Description: Negative
 
  - Phytophthora capsici (uncertain/ambiguous)
  - Phytophthora glovera (uncertain/ambiguous)
-
-unclassified
-Description: Negative
-
- - Unknown
 
 ex4
 Description: Phytophthora capsici/glovera
