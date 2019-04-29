@@ -26,6 +26,7 @@ Or start it as a module::
 
 Either should find the installed copy of the Python code.
 """
+from __future__ import with_statement
 from __future__ import print_function
 
 import sys
@@ -50,9 +51,11 @@ if sys.version_info[:2] < (3, 5):
 # Here we can't use "import thapbi_pict" then "thapbi_pict.__version__"
 # as that would tell us the version already installed (if any).
 __version__ = "Undefined"
-for line in open("thapbi_pict/__init__.py"):
-    if line.startswith("__version__"):
-        exec(line.strip())
+with open("thapbi_pict/__init__.py") as handle:
+    for line in handle:
+        if line.startswith("__version__"):
+            exec(line.strip())
+            break
 
 # Load our markdown file README.md as the long description.
 # Must tell PyPI this is not using reStructuredText
