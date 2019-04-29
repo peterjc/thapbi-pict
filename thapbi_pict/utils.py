@@ -487,8 +487,8 @@ def load_metadata(
 
     Optional argument sequenced_samples should be a set or list of
     sample names which will be cross-checked against the metadata_index
-    column. Samples not in the metadata file will be included in a
-    dummy final row (with a warning). The other way round gives a
+    column. Samples not in the metadata file are one of the return values
+    and will generate warning message. The other way round gives a
     missing file warning too (but they are left in the returned data).
 
     """
