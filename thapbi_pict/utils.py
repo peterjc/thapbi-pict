@@ -563,12 +563,17 @@ def load_metadata(
     # Break up line into fields
     lines = [_.rstrip("\n").split("\t") for _ in lines]
 
-    # Select desired columns,
-    meta = [[_[i].strip() for i in value_cols] for _ in lines]
-    # Pull out the index column too:
-    index = [_[sample_col].strip() for _ in lines]
-    index = [[s.strip() for s in _.split(";") if s.strip()] for _ in index]
+    # Select columns of interest
+    meta_plus_idx = [[_[i].strip() for i in value_cols + [sample_col]] for _ in lines]
+
+    # Remove blanks
+    meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
     del lines
+
+    # Select desired columns,
+    meta = [_[:-1] for _ in meta_plus_idx]
+    index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
+    del meta_plus_idx
 
     back = {}
     for i, samples in enumerate(index):
