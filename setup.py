@@ -98,4 +98,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["biopython", "sqlalchemy"],
+    python_requires=">=3.5",
 )
