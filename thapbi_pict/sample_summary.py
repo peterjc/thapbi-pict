@@ -118,10 +118,28 @@ def main(
     if missing_meta:
         batches.append([meta_default, missing_meta])
     for metadata, sample_batch in batches:
+        if human and meta_names:
+            # Write the metadata header
+            try:
+                human.write("-" * 60 + "\n\n")
+                if metadata:
+                    for name, value in zip(meta_names, metadata):
+                        if value:
+                            human.write("%s: %s\n" % (name, value))
+                    human.write("\n")
+                else:
+                    human.write("Missing metadata\n\n")
+                if not sample_batch:
+                    human.write("Has not been sequenced.\n\n")
+                # elif len(sample_batch) == 1:
+                #     human.write("Has been sequenced once:\n\n")
+                # else:
+                #     human.write("Has been sequenced %i times:\n\n")
+            except BrokenPipeError:
+                human = None
+        # Now do the samples in this batch
         for sample in sample_batch:
-            if sample not in samples:
-                # TODO - include unsequenced sample in human readable report
-                continue
+            assert sample in samples, sample
             all_sp = set()
             unambig_sp = set()
             for sp in sp_to_taxid:
@@ -149,12 +167,10 @@ def main(
 
             if human:
                 try:
-                    human.write("%s\n" % sample)
-                    if metadata:
-                        for name, value in zip(meta_names, metadata):
-                            if value:
-                                human.write("%s: %s\n" % (name, value))
-                    human.write("\n")
+                    if meta_names:
+                        human.write("Sequencing sample: %s\n\n" % sample)
+                    else:
+                        human.write("%s\n\n" % sample)
                     for sp in sorted(all_sp):
                         if sp not in unambig_sp:
                             sp = "%s (uncertain/ambiguous)" % sp
