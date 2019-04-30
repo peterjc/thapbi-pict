@@ -50,6 +50,12 @@ $ conda install blast cutadapt flash hmmer swarm trimmomatic
 On a typical Linux system most of the tools listed will be available via the
 default distribution packages, although not always under the same package name.
 
+On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
+
+```bash
+$ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
+```
+
 If you want to install the very latest unreleased code, you should download
 the source code from GitHub, and decompress it if required. Then load the
 plain text SQL dump of the default database into SQLite3 by running
