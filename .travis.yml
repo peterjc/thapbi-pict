@@ -5,7 +5,18 @@
 
 # We don't need sudo so can avoid slower legacy TravisCI infrastructure
 sudo: false
-
+dist: xenial
+addons:
+  apt:
+    # Would like to insert the requirements-ext.txt file but names differ...
+    packages:
+     - ncbi-blast+
+     # cutadapt
+     # flash
+     - hmmer
+     - swarm
+     - trimmomatic
+     - unzip
 language: python
 python: "3.6"
 cache: pip
@@ -23,8 +34,7 @@ before_install:
  - flake8 .
 
 install:
- # Thus far only using conda on CircleCI, can we used apt packages instead?
- # conda install --file requirements-test.txt
+ # Already installed external dependencies with apt packages (above)
  # Deliberatly not installing Python dependencies here, pip should do it...
  # pip install -r requirements.txt
  # Make a tar-ball, and try installing from that
