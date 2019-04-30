@@ -1,7 +1,7 @@
 #!/bin/bash
 IFS=$'\n\t'
 set -eux
-# Note not using "set -o pipefile" until after check error message with grep
+# Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
