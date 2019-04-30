@@ -55,20 +55,9 @@ jobs:
       - run:
           name: Test
           command: |
-            python -c "import thapbi_pict; print(thapbi_pict.__version__)"
-            thapbi_pict -v
-            python -m thapbi_pict -v
-            # Now unpack the tests from the sdist tar-ball
+            # Unpack the tests from the sdist tar-ball
             tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
             cd thapbi_pict-*/
             # Run the tests (and confirm the tar-ball is complete)
-            tests/test_load-tax.sh
-            tests/test_legacy-import.sh
-            tests/test_ncbi-import.sh
-            tests/test_prepare-reads.sh
-            tests/test_classify.sh
-            tests/test_seq-import.sh
-            tests/test_assess.sh
-            tests/test_sample-summary.sh
-            tests/test_plate-summary.sh
+            tests/run_tests.sh
