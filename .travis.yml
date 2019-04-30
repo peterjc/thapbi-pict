@@ -25,9 +25,8 @@ before_install:
 install:
  # Thus far only using conda on CircleCI, can we used apt packages instead?
  # conda install --file requirements-test.txt
- - pip install -r requirements.txt
- - python -c "import Bio; print(Bio.__version__)"
- - python -c "import sqlalchemy; print(sqlalchemy.__version__)"
+ # Deliberatly not installing Python dependencies here, pip should do it...
+ # pip install -r requirements.txt
  # Make a tar-ball, and try installing from that
  - rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
  - sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
