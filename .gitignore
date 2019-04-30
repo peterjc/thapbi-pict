@@ -1,5 +1,9 @@
+#Ignore the binary default DB (have SQL dump under tracking)
+thapbi_pict/ITS1_DB.sqlite
+
 #Ignore the build directory (and its sub-directories):
 build
+thapbi_pict.egg-info
 
 #Ignore the distribution directory
 dist
@@ -29,3 +33,8 @@ dist
 #Ignore random data files
 *.fastq
 *.fastq.gz
+*.sqlite
+*.zip
+
+#Ignore any local wheel files
+*.whl
