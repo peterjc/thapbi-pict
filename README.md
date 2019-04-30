@@ -108,7 +108,7 @@ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
 chmod a-w thapbi_pict/ITS1_DB.sqlite
 python setup.py sdist --formats=gztar
 python setup.py bdist_wheel
-twine upload thapbi_pict-X.Y.Z.tar.gz thapbi_pict-X.Y.Z-py3-none-any.whl
+twine upload dist/thapbi_pict-X.Y.Z.tar.gz dist/thapbi_pict-X.Y.Z-py3-none-any.whl
 git tag -vX.Y.Z
 git push origin master --tags
 ```
