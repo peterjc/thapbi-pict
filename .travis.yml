@@ -39,6 +39,11 @@ script:
  - python -c "import thapbi_pict; print(thapbi_pict.__version__)"
  - thapbi_pict -v
  - python -m thapbi_pict -v
+ # Now unpack the tar-ball, and use that for the tests
+ - tar -zxvf dist/thapbi_pict-*.tar.gz
+ - cd thapbi_pict-*/
+ - rm -rf thapbi-pict/
+ # Run the tests (and confirm the tar-ball is complete)
  - tests/test_load-tax.sh
  # Can't run tests/test_legacy-import.sh without hmmer
  # Can't run tests/test-ncbi_import.sh without hmmer
