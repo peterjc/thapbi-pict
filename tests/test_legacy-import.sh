@@ -69,7 +69,6 @@ thapbi_pict dump -d $DB -o /dev/null -g Phytophthora
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
 set +o pipefail
-thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d $DB -o /dev/null -s "ambiguous" 2>&1 | grep "requires a single genus"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytophthora" -s "ambiguous" 2>&1 | grep "not in database"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytopthora" 2>&1 | grep "not in database"
