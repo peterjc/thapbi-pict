@@ -3,10 +3,12 @@ Database of ITS1 sequences for use as a molecular barcode.
 
 The most important file in this folder is the default ITS1 database
 stored under version control as ``ITS1_DB.sql`` (plain text SQL
-dump from sqlite3), from which we generate the binary DB using:
+dump from sqlite3), from which we generate the binary DB using
+the following commands as part of the release process:
 
 ```bash
-$ sqlite3 ITS1_DB.sqlite < ITS1_DB.sql
+$ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+$ chmod a-w thapbi_pict/ITS1_DB.sqlite
 ```
 
 This database was created using the following three sets of
