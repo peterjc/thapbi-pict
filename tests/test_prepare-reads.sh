@@ -35,5 +35,6 @@ if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "9" ]; then echo "Wrong FASTA
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
+diff $TMP/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 
 echo "$0 - test_prepare-reads.sh passed"

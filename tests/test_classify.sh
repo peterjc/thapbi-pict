@@ -19,7 +19,6 @@ rm -rf database/legacy/*.identity.tsv
 thapbi_pict classify -m identity -d $DB database/legacy/database.fasta
 if [ "`grep -c -v '^#' database/legacy/database.identity.tsv`" -ne "`grep -c '^>' database/legacy/database.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
-if [ ! -f $TMP/DNAMIX_S95_L001.fasta ]; then echo "Run test_prepare-reads.sh to setup test input"; false; fi
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
 rm -rf $TMP/thapbi_swarm
@@ -29,11 +28,11 @@ mkdir -p $TMP/thapbi_swarm
 mkdir -p $TMP/thapbi_blast
 
 # Explicitly setting output directory, would be here anyway:
-thapbi_pict classify -m identity -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/
-thapbi_pict classify -m onebp -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
-thapbi_pict classify -m blast -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
-thapbi_pict classify -m swarm -d $DB $TMP/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
-thapbi_pict classify -m swarmid -d $DB $TMP/DNAMIX_S95_L001.fasta
+thapbi_pict classify -m identity -d $DB tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
+thapbi_pict classify -m onebp -d $DB tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
+thapbi_pict classify -m blast -d $DB tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
+thapbi_pict classify -m swarm -d $DB tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
+thapbi_pict classify -m swarmid -d $DB tests/prepare-reads/DNAMIX_S95_L001.fasta
 
 # Passing one directory name (should get all three FASTA files):
 rm -rf $TMP/legacy
