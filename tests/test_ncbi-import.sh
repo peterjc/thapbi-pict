@@ -7,7 +7,6 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking ncbi-import"
 thapbi_pict ncbi-import 2>&1 | grep "the following arguments are required"
-thapbi_pict dump 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # Cannot use validation without having some taxonomy entries
