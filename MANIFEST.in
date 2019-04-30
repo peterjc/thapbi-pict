@@ -6,7 +6,11 @@ include MANIFEST.in
 include *.md
 
 recursive-include thapbi_pict *.py
+
+# Placing the HMM and DB binary files within the Python tree as
+# the simplest way to get them included in a wheel for install:
 recursive-include thapbi_pict/hmm phytophthora_its1.*
+include thapbi_pict/ITS1_DB.sqlite
 
 # Deliberately not bothering to anything in database via wildcards.
 # e.g. NCBI taxonomy or symlinks to control plate positive controls.
