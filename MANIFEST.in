@@ -8,12 +8,14 @@ include *.md
 recursive-include thapbi_pict *.py
 recursive-include thapbi_pict/hmm phytophthora_its1.*
 
-# Deliberately not bothering to include legacy/ subdirectory
-# and anything else which might be present locally like an
-# NCBI taxonomy or symlinks to control plate positive controls.
+# Deliberately not bothering to anything in database via wildcards.
+# e.g. NCBI taxonomy or symlinks to control plate positive controls.
 include database/README.md
 include database/ITS1_DB.sql
+include database/legacy/database.fasta
+include database/legacy/Phytophthora_ITS_database_v0.004.fasta
+include database/legacy/Phytophthora_ITS_database_v0.005.fasta
 
-# Well better than a blanket include *
-# this still risks false includes of any working files:
+# The following is better than a blanket include wildcard * but
+# this still risks unwanted includes of any working files:
 recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz
