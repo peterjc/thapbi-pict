@@ -24,17 +24,18 @@ This continues earlier work including:
 
 # Installation
 
-In future we intend to release this software on PyPI to allow you to install
-with ``pip install thapbi_pict`` and on BioConda which would allow install
-with just ``conda install thapbi_pict``.
+In future we intend to release this software on PyPI and BioConda to allow
+you to install with ``pip install thapbi_pict`` (including Python dependencies)
+or ``conda install thapbi_pict`` (including Python and external dependencies).
 
 However, for now you should download the source code from GitHub, decompress
-it if required, and run ``pip3 install .`` which should automatically get
-our Python dependencies.
-
-You will also need to load the plain text SQL dump of the default database
-into SQLite3 by running ``sqlite3 ITS1_DB.sqlite < ITS1_DB.sql`` in the
-``database/`` directory.
+it if required. Then load the plain text SQL dump of the default database into
+SQLite3 by running ``sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql``
+at the command line. Next run ``pip3 install .`` which should automatically get
+our Python dependencies. The tool requires several command line tools as external
+dependencies, run ``conda install --file requirements-ext.txt`` on BioConda to
+get them. On a typical Linux system most but perhaps not all of the tools
+listed will be available, although not always under the same package name.
 
 Once installed, you should be able to run the tool using:
 
