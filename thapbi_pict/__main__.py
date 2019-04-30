@@ -29,13 +29,17 @@ def check_output_directory(out_dir):
         sys.exit("ERROR: Output directory does not exist")
 
 
-def expand_database_argument(text, exist=False):
+def expand_database_argument(text, exist=False, blank_default=False):
     """Expand an SQLite3 filename to an SQLalchemy URL."""
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
     # as we might be about to create it.
     if not text:
-        sys.exit("ERROR: The database argument is required.\n")
+        if blank_default:
+            # Expand to the default bundled DB
+            text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
+        else:
+            sys.exit("ERROR: The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
         db = text[len(prefix) :]
@@ -108,7 +112,7 @@ def dump(args=None):
     from .dump import main
 
     return main(
-        db_url=expand_database_argument(args.database, exist=True),
+        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         output_filename=args.output,
         output_format=args.format,
         clade=args.clade,
@@ -147,7 +151,7 @@ def classify(args=None):
         check_output_directory(args.temp)
     return main(
         fasta=args.fasta,
-        db_url=expand_database_argument(args.database, exist=True),
+        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         method=args.method,
         out_dir=args.output,
         tmp_dir=args.temp,
@@ -442,22 +446,16 @@ def main(args=None):
     parser_dump = subparsers.add_parser(
         "dump",
         description="Export an ITS1 database to a text file.",
-        epilog="""Examples:
-
-$ thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt
-
-$ thapbi_pict dump -d ... -g Phytophthora -s "ilicis, sp. aff. meadii" -o Phytophthora.txt
-
-Note that the -s or --species option allows spaces after the
-comma.
-""",  # noqa: E501
+        epilog="e.g. 'thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt'",
     )
     parser_dump.add_argument(
         "-d",
         "--database",
         type=str,
-        required=True,
-        help="Which database to export from",
+        default="",
+        help="Which database to export from. "
+        "Default is the bundled read-only ITS1_DB.sqlite database "
+        "included with the tool.",
     )
     parser_dump.add_argument(
         "-o",
@@ -496,8 +494,8 @@ comma.
         "--species",
         type=str,
         default="",
-        help="Which species to export (comma separated list). "
-        "Requires a single genus argument be given. "
+        help="Which species to export (comma separated list, ignores any "
+        "spaces after each comma). Requires a single genus argument be given. "
         "Default is not to filter by species.",
     )
     parser_dump.add_argument(
@@ -628,8 +626,10 @@ comma.
         "-d",
         "--database",
         type=str,
-        required=True,
-        help="Which ITS1 database to use for species classification.",
+        default="",
+        help="Which ITS1 database to use for species classification. "
+        "Default is the bundled read-only ITS1_DB.sqlite database "
+        "included with the tool.",
     )
     parser_classify.add_argument(
         "-m",
