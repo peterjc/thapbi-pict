@@ -57,10 +57,10 @@ jobs:
             python -c "import thapbi_pict; print(thapbi_pict.__version__)"
             thapbi_pict -v
             python -m thapbi_pict -v
-            # Now unpack the tar-ball, and use that for the tests
-            tar -zxvf dist/thapbi_pict-*.tar.gz
+            # Now unpack the tests from the sdist tar-ball
+            tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
+            tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
             cd thapbi_pict-*/
-            rm -rf thapbi-pict/
             # Run the tests (and confirm the tar-ball is complete)
             tests/test_load-tax.sh
             tests/test_legacy-import.sh
