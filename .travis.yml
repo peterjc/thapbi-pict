@@ -23,8 +23,8 @@ before_install:
  - flake8 .
 
 install:
- # Thus far only using conda on CircleCI, can we used apt packages instead?
- # conda install --file requirements-test.txt
+ # Installing external dependencies with apt-get (using conda on CircleCI)
+ grep '^[^#]' requirements-ext.txt | xargs apt-get install
  # Deliberatly not installing Python dependencies here, pip should do it...
  # pip install -r requirements.txt
  # Make a tar-ball, and try installing from that
