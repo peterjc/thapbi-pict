@@ -70,6 +70,7 @@ This should automatically find the installed copy of the Python code.
 | v0.1.3  | 2019-04-24 | Can optionally display sample metadata from TSV file in summary reports.     |
 | v0.1.4  | 2019-04-25 | Sort samples using the optional metadata fields requested in reports.        |
 | v0.1.5  | 2019-04-29 | Reworked optional metadata integration and its display in summary reports.   |
+| v0.1.6  | 2019-04-30 | Include ready to use binary ITS1 database in source tar-ball & wheel files.  |
 
 
 # Development Notes
