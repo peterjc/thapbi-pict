@@ -24,18 +24,36 @@ This continues earlier work including:
 
 # Installation
 
-In future we intend to release this software on PyPI and BioConda to allow
-you to install with ``pip install thapbi_pict`` (including Python dependencies)
-or ``conda install thapbi_pict`` (including Python and external dependencies).
+In the near future we intend to release this software as a BioConda package,
+meaning the follwing command will install it along with all the dependencies:
 
-However, for now you should download the source code from GitHub, decompress
-it if required. Then load the plain text SQL dump of the default database into
-SQLite3 by running ``sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql``
-at the command line. Next run ``pip3 install .`` which should automatically get
-our Python dependencies. The tool requires several command line tools as external
-dependencies, run ``conda install --file requirements-ext.txt`` on BioConda to
-get them. On a typical Linux system most but perhaps not all of the tools
-listed will be available, although not always under the same package name.
+```bash
+$ conda install thapbi_pict
+```
+
+Until then, since the software is on the Python Package Index (PyPI), the
+following command will install it along with its Python dependencies:
+
+```bash
+$ pip install thapbi_pict
+```
+
+However, in this case you will still need to install various external command
+line tools like ``hmmer``, and others which are only used for some classifiers
+(like ``blast`` and ``swarm``). If you have BioConda setup, use the following:
+
+```bash
+$ conda install blast cutadapt flash hmmer swarm trimmomatic
+```
+
+On a typical Linux system most of the tools listed will be available via the
+default distribution packages, although not always under the same package name.
+
+If you want to install the very latest unreleased code, you should download
+the source code from GitHub, and decompress it if required. Then load the
+plain text SQL dump of the default database into SQLite3 by running
+``sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql``, and next run
+``pip3 install .`` which should automatically get our Python dependencies.
 
 Once installed, you should be able to run the tool using:
 
@@ -43,7 +61,8 @@ Once installed, you should be able to run the tool using:
 $ thapbi_pict
 ```
 
-This should automatically find the installed copy of the Python code.
+This should automatically find the installed copy of the Python code. Use
+``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
 
 
 # Release History
