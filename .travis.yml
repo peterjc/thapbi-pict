@@ -30,6 +30,7 @@ install:
  # Make a tar-ball, and try installing from that
  - rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
  - sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+ - chmod a-w thapbi_pict/ITS1_DB.sqlite
  - python setup.py sdist --formats=gztar
  - python setup.py bdist_wheel
  - pip install dist/thapbi_pict-*.whl
