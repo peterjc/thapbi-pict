@@ -98,3 +98,17 @@ This should automatically find the installed copy of the Python code. Use
 Please see the ``CONTRIBUTING.md`` file for details of the development
 setup including Python style conventions, git pre-commit hook, continuous
 integration and test coverage.
+
+For a release, start from a clean git checkout (to reduce the chance of
+bundling any stray local files despite a cautious ``MANIFEST.in``).
+
+```bash
+rm -rf thapbi_pict/ITS1_DB.sqlite
+sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+chmod a-w thapbi_pict/ITS1_DB.sqlite
+python setup.py sdist --formats=gztar
+python setup.py bdist_wheel
+twine upload thapbi_pict-X.Y.Z.tar.gz thapbi_pict-X.Y.Z-py3-none-any.whl
+git tag -vX.Y.Z
+git push origin master --tags
+```
