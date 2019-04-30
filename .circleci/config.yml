@@ -45,10 +45,11 @@ jobs:
           command: |
             conda install --file requirements-ext.txt
             conda install --file requirements.txt
-            rm -rf dist/*.tar.gz thapbi_pict/ITS1_DB.sqlite
+            rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
             sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
             python setup.py sdist --formats=gztar
-            pip install dist/thapbi_pict-*.tar.gz
+            python setup.py bdist_wheel
+            pip install dist/thapbi_pict-*.whl
       - run:
           name: Test
           command: |
