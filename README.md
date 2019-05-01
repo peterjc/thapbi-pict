@@ -26,15 +26,17 @@ This continues earlier work including:
 
 # Installation
 
-In the near future we intend to release this software as a BioConda package,
-meaning the follwing command will install it along with all the dependencies:
+We recommend installing this tool using the [Conda](https://conda.io/)
+packaging system, via the [BioConda](https://bioconda.github.io/) channel,
+which will handle *all* the dependencies:
 
 ```bash
 $ conda install thapbi_pict
 ```
 
-Until then, since the software is on the Python Package Index (PyPI), the
-following command will install it along with its Python dependencies:
+Alternatively, since the software is on the [Python Package Index
+(PyPI)](https://pypi.python.org/), the following command will install it
+along with its Python dependencies:
 
 ```bash
 $ pip install thapbi_pict
