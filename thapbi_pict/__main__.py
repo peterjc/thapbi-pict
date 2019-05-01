@@ -14,6 +14,7 @@ from .classify import method_classifier
 
 
 DEFAULT_METHOD = "identity"
+DEFAULT_MIN_ABUNDANCE = 100
 
 
 def check_input_file(filename):
@@ -357,12 +358,12 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default="1000",
+        default=str(DEFAULT_MIN_ABUNDANCE * 10),
         help="Mininum abundance to require before importing a sequence, "
         "over-and-above whatever was used to prepare the FASTA file. "
-        "Default here is 1000, which is ten times the default of 100 used "
-        "for the classification pipeline - be cautious what goes in your "
-        "ITS1 database).",
+        "Default here is %i, ten times the default of %i used for the"
+        "classification pipeline - be cautious what goes in your "
+        "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
     parser_seq_import.add_argument(
         "-d",
@@ -551,10 +552,10 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default="100",
+        default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum abundance to apply to final candidate ITS1 "
-        "sequences in the output FASTA file (default 100). "
-        "This may be increased based on any FASTQ controls.",
+        "sequences in the output FASTA file (default %i). "
+        "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
     )
     parser_prepare_reads.add_argument(
         "-p",
@@ -792,12 +793,13 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default="100",
+        default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance to require for the report. "
-        "Default 100 reflects default in prepare-reads. Rather than re-running "
+        "Default %i reflects default in prepare-reads. Rather than re-running "
         "the prepare or classifier steps with a stricter minimum abundance you "
         "can apply it here. Use zero or one to look at everything (but beware "
-        "that negative control samples will include low abundance entries).",
+        "that negative control samples will include low abundance entries)."
+        % DEFAULT_MIN_ABUNDANCE,
     )
     parser_plate_summary.add_argument(
         "-o",
@@ -887,12 +889,13 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default="100",
+        default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance to require for the report. "
-        "Default 100 reflects default in prepare-reads. Rather than re-running "
+        "Default %i reflects default in prepare-reads. Rather than re-running "
         "the prepare or classifier steps with a stricter minimum abundance you "
         "can apply it here. Use zero or one to look at everything (but beware "
-        "that negative control samples will include low abundance entries).",
+        "that negative control samples will include low abundance entries)."
+        % DEFAULT_MIN_ABUNDANCE,
     )
     parser_sample_summary.add_argument(
         "-o",
