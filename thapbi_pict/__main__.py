@@ -238,6 +238,11 @@ def sample_summary(args=None):
     )
 
 
+def pipeline(args=None):
+    """Subcommand to run the default classification pipeline."""
+    pass
+
+
 # Common arguments
 # ================
 
@@ -359,7 +364,7 @@ def main(args=None):
         description=(
             "THAPBI Phytophthora ITS1 Classifier Tool (PICT), v%s." % __version__
         ),
-        epilog="e.g. run 'thapbi_pict dump -h' for the dump subcommand help.",
+        epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help.",
     )
     parser.add_argument(
         "-v", "--version", action="version", version="THAPBI PICT v%s" % __version__
@@ -367,6 +372,77 @@ def main(args=None):
     subparsers = parser.add_subparsers(
         title="subcommands", help="Each subcommand has its own additional help."
     )
+
+    # pipeline (listing first as likely to be the most used subcommand)
+    parser_pipeline = subparsers.add_parser(
+        "pipeline",
+        description="Run default classification pipeline on FASTQ files.",
+        epilog="This is equivalent to running the individual stages (prepare-reads, "
+        "classify, sample-summary, plate-summary) with their defaults, with only a "
+        "minority of settings available here.",
+    )
+    parser_pipeline.add_argument(
+        "fastq",
+        type=str,
+        nargs="+",
+        help="One or more ITS1 FASTQ filenames or folder names "
+        "(containing files named *.fastq or *.fastq.gz).",
+    )
+    parser_pipeline.add_argument(
+        "-c",
+        "--controls",
+        type=str,
+        nargs="+",
+        help="One or more negative control FASTQ filenames or folder "
+        "names (which can be duplicated in the FASTQ argument). "
+        "ITS1 levels in these paired reads are used to increase "
+        "the minimum abundance threshold automatically.",
+    )
+    parser_pipeline.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        required=True,
+        metavar="DIRNAME",
+        help="Directory to output to. Required.",
+    )
+    parser_pipeline.add_argument(
+        "-s",
+        "--sampleout",
+        type=str,
+        default="",
+        metavar="DIRNAME",
+        help="Directory to write intermediate files (FASTA and TSV) "
+        "for each sample (FASTQ pair) to. Defaults to -o / --output.",
+    )
+    parser_pipeline.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default=str(DEFAULT_MIN_ABUNDANCE),
+        help="Mininum abundance applied to the unique ITS1 sequences "
+        "in each sample (i.e. each FASTQ pair), default %i. "
+        "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
+    )
+    parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
+    parser_pipeline.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default=DEFAULT_METHOD,
+        choices=list(method_classifier),
+        help="Method to use, default is '%s'." % DEFAULT_METHOD,
+    )
+    parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
+    parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
+    parser_pipeline.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    parser_pipeline.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    # Can't use -t for --temp as already using for --metadata:
+    parser_pipeline.add_argument("--temp", **ARG_TEMPDIR)
+    parser_pipeline.add_argument("--cpu", **ARG_CPU)
+    parser_pipeline.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_pipeline.set_defaults(func=pipeline)
+    del parser_pipeline
 
     # load-tax
     parser_load_tax = subparsers.add_parser(
