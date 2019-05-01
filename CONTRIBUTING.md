@@ -57,7 +57,9 @@ https://travis-ci.org/peterjc/thapbi-pict/branches
 
 For end users, we recommend installing using the [Conda](https://conda.io/)
 packaging system, via the [BioConda](https://bioconda.github.io/) channel,
-which will handle *all* the dependencies.
+which will handle *all* the dependencies:
+
+https://anaconda.org/bioconda/thapbi-pict
 
 For development (and this is reflected in the contuinuous integration setup),
 we recommend installing via pip, which uses [PyPI](https://pypi.python.org/)
