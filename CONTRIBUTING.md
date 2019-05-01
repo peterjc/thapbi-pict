@@ -67,6 +67,45 @@ $ git config --bool flake8.strict true
 If your editor can be configured to run flake8 and/or black automatically,
 even better.
 
+## Installing from source
+
+First, download the code from GitHub and decompress it if required. The best
+way to do this if you are likely to contribute any changes is at the command
+line with ``git``.
+
+```bash
+$ git clone https://github.com/peterjc/thapbi-pict.git
+$ cd thapbi-pict
+```
+
+Then load the plain text SQL dump of the default database into SQLite3, see
+``database/README.md`` for more information on this. Make it read only to
+prevent accidental edits:
+
+```bash
+$ sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+$ chmod a-w thapbi_pict/ITS1_DB.sqlite
+```
+
+Assuming your default Python is at least version 3.5, to install the tool
+and automatically get our Python dependencies:
+
+```bash
+pip install .
+```
+
+If your system defaults to Python 2, try ``pip3 install .`` instead.
+
+Once installed, you should be able to run the tool using:
+
+```
+$ thapbi_pict
+```
+
+This should automatically find the installed copy of the Python code. Use
+``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
+
+
 ## Release process
 
 For a release, start from a clean git checkout (to reduce the chance of
