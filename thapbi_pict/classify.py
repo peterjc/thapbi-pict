@@ -25,6 +25,7 @@ from .utils import genus_species_name
 from .utils import md5seq
 from .utils import onebp_variants
 from .utils import species_level
+from .versions import check_tools
 
 
 fuzzy_matches = None  # global variable for onebp classifier
@@ -591,6 +592,14 @@ def method_swarmid(
     )
 
 
+method_tool_check = {
+    "blast": ["makeblastdb", "blastn"],
+    "identity": ["hmmscan"],
+    "onebp": ["hmmscan"],
+    "swarm": ["hmmscan", "swarm"],
+    "swarmid": ["hmmscan", "swarm"],
+}
+
 method_classifier = {
     "blast": method_blast,
     "identity": method_identity,
@@ -622,6 +631,11 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
         setup_fn = method_setup[method]
     except KeyError:
         setup_fn = None
+    try:
+        req_tools = method_tool_check[method]
+    except KeyError:
+        req_tools = []
+    check_tools(req_tools, debug)
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
