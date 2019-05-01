@@ -13,7 +13,7 @@ from . import __version__
 from .classify import method_classifier
 
 
-DEFAULT_METHOD = "identity"
+DEFAULT_METHOD = "onebp"
 DEFAULT_MIN_ABUNDANCE = 100
 
 
