@@ -278,7 +278,7 @@ def main(args=None):
         "Default 4776 for Peronosporales, use 4783 for Phytophthora only.",
     ),
     parser_load_tax.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_load_tax.set_defaults(func=load_tax)
     del parser_load_tax  # To prevent acidentally adding more
@@ -321,7 +321,7 @@ def main(args=None):
         "unless using -x / --lax in which case anything is accepted as genus).",
     )
     parser_ncbi_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_ncbi_import.set_defaults(func=ncbi_import)
     del parser_ncbi_import  # To prevent acidentally adding more
@@ -396,7 +396,7 @@ def main(args=None):
         "unless using -x / --lax in which case anything is accepted as genus).",
     )
     parser_seq_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_seq_import.set_defaults(func=seq_import)
     del parser_seq_import  # To prevent acidentally adding more
@@ -441,7 +441,7 @@ def main(args=None):
         "unless using -x / --lax in which case anything is accepted as genus).",
     )
     parser_legacy_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_legacy_import.set_defaults(func=legacy_import)
     del parser_legacy_import  # To prevent acidentally adding more
@@ -503,7 +503,7 @@ def main(args=None):
         "Default is not to filter by species.",
     )
     parser_dump.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_dump.set_defaults(func=dump)
     del parser_dump  # To prevent acidentally adding more
@@ -600,7 +600,7 @@ def main(args=None):
         "use for temporary files, which will not be deleted.",
     )
     parser_prepare_reads.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_prepare_reads.add_argument(
         "--cpu",
@@ -662,7 +662,7 @@ def main(args=None):
         "use for temporary files, which will not be deleted.",
     )
     parser_classify.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_classify.add_argument(
         "--cpu",
@@ -757,7 +757,7 @@ def main(args=None):
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     parser_assess.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_assess.set_defaults(func=assess_classification)
     del parser_assess  # To prevent acidentally adding more
@@ -854,7 +854,7 @@ def main(args=None):
         "Use in conjunction with -m / --metadata argument.",
     )
     parser_plate_summary.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_plate_summary.set_defaults(func=plate_summary)
     del parser_plate_summary  # To prevent acidentally adding more
@@ -959,7 +959,7 @@ def main(args=None):
         "Use in conjunction with -m / --metadata argument.",
     )
     parser_sample_summary.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging"
+        "-v", "--verbose", action="store_true", help="Verbose logging."
     )
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more
