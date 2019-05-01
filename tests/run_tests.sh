@@ -18,6 +18,7 @@ elif ! [ -x "$(command -v cutadapt)" ]; then
     echo 'WARNING: cutadapt not installed, skipping some tests'
 else
     tests/test_prepare-reads.sh
+    tests/test_pipeline.sh
 fi
 
 tests/test_classify.sh
