@@ -1,11 +1,31 @@
 # THAPBI *Phytophthora* ITS1 Classifier Tool (PICT) - Development Notes
 
+## Continuous Integration
+
+Currently setup to do automated testing under Linux on two free continuous
+integration services, CircleCI (using Conda for dependencies) and TravisCI
+(using apt-packages and PyPI).
+
+https://circleci.com/gh/peterjc/thapbi-pict/tree/master
+
+https://travis-ci.org/peterjc/thapbi-pict/branches
+
 ## Dependencies
 
-We will use the [Conda](https://conda.io/) packaging system, including the
-[BioConda](https://bioconda.github.io/) channel for bioinformatics packages,
-and [PyPI](https://pypi.python.org/) packages to define a reproducible
-environment for running this software.
+For end users, we recommend installing using the [Conda](https://conda.io/)
+packaging system, via the [BioConda](https://bioconda.github.io/) channel,
+which will handle *all* the dependencies.
+
+For development (and this is reflected in the contuinuous integration setup),
+we recommend installing via pip, which uses [PyPI](https://pypi.python.org/)
+for the Python dependencies. These are declared in the ``setup.py`` script
+and so will automatically be installed via ``pip``, but see also the
+``requirements.txt`` file.
+
+The two requirements files (``requirements.txt`` for Python dependencies -
+and ``requirements-ext.txt`` for external command line bioinformatics tools)
+can contain exact pinned dependency versions, allowing us to define a more
+reproducible environment for running this software as needed.
 
 ## Python style conventions
 
