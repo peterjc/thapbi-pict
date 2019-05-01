@@ -19,6 +19,7 @@ from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import md5seq
 from .utils import run
+from .versions import check_tools
 
 
 hmm_cropping_warning = 0  # global variable for warning msg
@@ -435,6 +436,8 @@ def main(
     hmm_cropping_warning = 0
 
     assert isinstance(fastq, list)
+
+    check_tools(["trimmomatic", "flash", "cutadapt", "hmmscan"], debug)
 
     # Will keep control_min_abundance fixed,
     # will increase min_abundance using max from the controls

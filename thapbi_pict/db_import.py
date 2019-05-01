@@ -17,6 +17,7 @@ from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
 from .utils import genus_species_name
 from .utils import md5seq
+from .versions import check_tools
 
 
 def md5_hexdigest(filename, chunk_size=1024):
@@ -212,6 +213,8 @@ def import_fasta_file(
     comes from a sister TSV file, and is cross-referenced by the
     FASTA sequence identifier.
     """
+    check_tools(["hmmscan"], debug)
+
     # Argument validation,
     if fasta_entry_fn is None:
 
