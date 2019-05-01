@@ -13,6 +13,9 @@ from . import __version__
 from .classify import method_classifier
 
 
+DEFAULT_METHOD = "identity"
+
+
 def check_input_file(filename):
     """Command line validation of an input filename."""
     if not os.path.isfile(filename):
@@ -635,9 +638,9 @@ def main(args=None):
         "-m",
         "--method",
         type=str,
-        default="identity",
+        default=DEFAULT_METHOD,
         choices=list(method_classifier),
-        help="Method to use, default uses simple identity.",
+        help="Method to use, default is '%s'." % DEFAULT_METHOD,
     )
     parser_classify.add_argument(
         "-o",
@@ -714,8 +717,9 @@ def main(args=None):
         "-m",
         "--method",
         type=str,
-        default="identity",
-        help="Method to assess (used to infer filenames), default is identity.",
+        default=DEFAULT_METHOD,
+        help="Method to assess (used to infer filenames), default is '%s'."
+        % DEFAULT_METHOD,
     )
     parser_assess.add_argument(
         "-a",
@@ -780,9 +784,9 @@ def main(args=None):
         "-m",
         "--method",
         type=str,
-        default="identity",
+        default=DEFAULT_METHOD,
         help="Method(s) to report, comma separaed list (used to infer "
-        "filenames), default is identity (only).",
+        "filenames), default is '%s' (only)." % DEFAULT_METHOD,
     )
     parser_plate_summary.add_argument(
         "-a",
@@ -875,8 +879,9 @@ def main(args=None):
         "-m",
         "--method",
         type=str,
-        default="identity",
-        help="Method to assess (used to infer filenames), default is identity.",
+        default=DEFAULT_METHOD,
+        help="Method to assess (used to infer filenames), default is '%s'."
+        % DEFAULT_METHOD,
     )
     parser_sample_summary.add_argument(
         "-a",
