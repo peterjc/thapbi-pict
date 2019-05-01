@@ -57,11 +57,9 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
 ```
 
-If you want to install the very latest unreleased code, you should download
-the source code from GitHub, and decompress it if required. Then load the
-plain text SQL dump of the default database into SQLite3 by running
-``sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql``, and next run
-``pip3 install .`` which should automatically get our Python dependencies.
+If you want to install the very latest unreleased code, you must download
+the source code from GitHub - see the ``CONTRIBUTING.md`` file for more
+details.
 
 Once installed, you should be able to run the tool using:
 
