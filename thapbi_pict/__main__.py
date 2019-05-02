@@ -248,7 +248,7 @@ def main(args=None):
         "-v", "--version", action="version", version="THAPBI PICT v%s" % __version__
     )
     subparsers = parser.add_subparsers(
-        title="subcommands", help="Each subcommand has its own additional help"
+        title="subcommands", help="Each subcommand has its own additional help."
     )
 
     # load-tax
@@ -260,22 +260,23 @@ def main(args=None):
         "--tax",
         type=str,
         required=True,
-        help="Folder containing NCBI taxonomy dump files names.dmp etc.",
+        metavar="DIRNAME",
+        help="Folder containing NCBI taxonomy files 'names.dmp' etc.",
     )
     parser_load_tax.add_argument(
         "-d",
         "--database",
         type=str,
         required=True,
-        help="Which database to write to (or create)",
+        help="Which database to write to (or create).",
     )
     parser_load_tax.add_argument(
         "-a",
         "--ancestors",
         type=str,
         default="4776",
-        help="Comma separated lists of taxids at genus level or higher. "
-        "Default 4776 for Peronosporales, use 4783 for Phytophthora only.",
+        help="Comma separated list of NCBI taxids at genus level or higher. "
+        "Default is 4776 for Peronosporales, use 4783 for Phytophthora only.",
     ),
     parser_load_tax.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging."
@@ -303,7 +304,7 @@ def main(args=None):
         "--name",
         type=str,
         default="",
-        help="Data source name (string, ideally avoiding spaces etc).",
+        help="Name to record for this data source (string).",
     )
     parser_ncbi_import.add_argument(
         "-x",
@@ -318,7 +319,7 @@ def main(args=None):
         default=False,
         action="store_true",
         help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as genus).",
+        "unless using -x / --lax in which case anything is accepted as a genus).",
     )
     parser_ncbi_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging."
@@ -331,8 +332,8 @@ def main(args=None):
         "seq-import",
         description="Load classified sequences from one or more processed "
         "FASTA files into an ITS1 database. e.g. Using 'known' classifier "
-        "results normally created for your positive controls for running "
-        "classifier assessment."
+        "results from single species culture samples, files which can also "
+        "be used for running classifier assessment. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
@@ -349,7 +350,7 @@ def main(args=None):
         "--method",
         type=str,
         default="known",
-        help="Method to used, determines the TSV files from which the "
+        help="Method name used to determines TSV filenames from which the "
         "species classification will be read. Default is 'known' matching "
         "the convention used in the classifier assessment command for "
         "known trusted species assignments (i.e. positive controls).",
@@ -361,7 +362,7 @@ def main(args=None):
         default=str(DEFAULT_MIN_ABUNDANCE * 10),
         help="Mininum abundance to require before importing a sequence, "
         "over-and-above whatever was used to prepare the FASTA file. "
-        "Default here is %i, ten times the default of %i used for the"
+        "Default here is %i, ten times the default of %i used for the "
         "classification pipeline - be cautious what goes in your "
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
@@ -370,15 +371,14 @@ def main(args=None):
         "--database",
         type=str,
         required=True,
-        help="Which ITS1 database to add the sequences to.",
+        help="Which database to write to (or create).",
     )
     parser_seq_import.add_argument(
         "-n",
         "--name",
         type=str,
         default="",
-        help="Name to record for this data source name (string, ideally "
-        "avoiding spaces etc).",
+        help="Name to record for this data source (string).",
     )
     parser_seq_import.add_argument(
         "-x",
@@ -393,7 +393,7 @@ def main(args=None):
         default=False,
         action="store_true",
         help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as genus).",
+        "unless using -x / --lax in which case anything is accepted as a genus).",
     )
     parser_seq_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging."
@@ -416,14 +416,14 @@ def main(args=None):
         "--database",
         type=str,
         required=True,
-        help="Which database to write to (or create)",
+        help="Which database to write to (or create).",
     )
     parser_legacy_import.add_argument(
         "-n",
         "--name",
         type=str,
         default="",
-        help="Data source name (string, ideally avoiding spaces etc)",
+        help="Name to record for this data source (string).",
     )
     parser_legacy_import.add_argument(
         "-x",
@@ -438,7 +438,7 @@ def main(args=None):
         default=False,
         action="store_true",
         help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as genus).",
+        "unless using -x / --lax in which case anything is accepted as a genus).",
     )
     parser_legacy_import.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging."
@@ -458,8 +458,7 @@ def main(args=None):
         type=str,
         default="",
         help="Which database to export from. "
-        "Default is the bundled read-only ITS1_DB.sqlite database "
-        "included with the tool.",
+        "Default is the bundled read-only database.",
     )
     parser_dump.add_argument(
         "-o",
@@ -490,7 +489,7 @@ def main(args=None):
         "--genus",
         type=str,
         default="",
-        help="Which genus (or genera) export (comma separated list). "
+        help="Which genus (or genera) to export (comma separated list). "
         "Default is not to filter by genus.",
     )
     parser_dump.add_argument(
@@ -534,10 +533,10 @@ def main(args=None):
         "--controls",
         type=str,
         nargs="+",
-        help="One or more control FASTQ filenames or folder names "
-        "(which can also be included in the FASTQ argument). "
-        "The paired FASTQ controls reads are processed in order to "
-        "determine the minimal abundance threshold automatically.",
+        help="One or more negative control FASTQ filenames or folder "
+        "names (which can be duplicated in the FASTQ argument). "
+        "ITS1 levels in these paired reads are used to increase "
+        "the minimum abundance threshold automatically.",
     )
     parser_prepare_reads.add_argument(
         "-o",
@@ -553,8 +552,8 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum abundance to apply to final candidate ITS1 "
-        "sequences in the output FASTA file (default %i). "
+        help="Mininum abundance applied to the unique ITS1 sequences "
+        "in each sample (i.e. each FASTQ pair), default %i. "
         "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
     )
     parser_prepare_reads.add_argument(
@@ -632,8 +631,7 @@ def main(args=None):
         type=str,
         default="",
         help="Which ITS1 database to use for species classification. "
-        "Default is the bundled read-only ITS1_DB.sqlite database "
-        "included with the tool.",
+        "Default is the bundled read-only database.",
     )
     parser_classify.add_argument(
         "-m",
@@ -769,7 +767,7 @@ def main(args=None):
         epilog="Assumes you've run prepare-reads and classify, and have "
         "folders with XXX.fasta and XXX.method.tsv files from your plate(s). "
         "The output is a table with one row per unique sequence (as trimmed "
-        "by the prepare-reads step, can be 1000s of rows) and one column "
+        "by the prepare-reads step, can be thousands of rows) and one column "
         "per sample (typically 96 samples).",
     )
     parser_plate_summary.add_argument(
@@ -786,7 +784,7 @@ def main(args=None):
         "--method",
         type=str,
         default=DEFAULT_METHOD,
-        help="Method(s) to report, comma separaed list (used to infer "
+        help="Classifier method(s) to report, comma separaed list (used to infer "
         "filenames), default is '%s' (only)." % DEFAULT_METHOD,
     )
     parser_plate_summary.add_argument(
@@ -840,7 +838,7 @@ def main(args=None):
         help="If using metadata, which column contains the sequenced sample "
         "names. Default is the first column requested as metadata output "
         "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated name catering to the fact that a field sample "
+        "semi-colon separated names catering to the fact that a field sample "
         "could be sequenced multiple times with technical replicates.",
     )
     parser_plate_summary.add_argument(
@@ -865,7 +863,7 @@ def main(args=None):
         description="Sample-level summary report on classifier output.",
         epilog="Assumes you've run prepare-reads and classify, and have "
         "folders with XXX.method.tsv files from your samples. The output "
-        "is a table with rows for each sample (XXX), describing the species"
+        "is a table with rows for each sample (XXX), describing the species "
         "predicted to be present, and the associated sequence count. "
         "Intended to be used for samples over multiple sequencing plates.",
     )
@@ -882,8 +880,8 @@ def main(args=None):
         "--method",
         type=str,
         default=DEFAULT_METHOD,
-        help="Method to assess (used to infer filenames), default is '%s'."
-        % DEFAULT_METHOD,
+        help="Classifier method to report (used to infer filenames), "
+        "default is '%s'." % DEFAULT_METHOD,
     )
     parser_sample_summary.add_argument(
         "-a",
@@ -945,7 +943,7 @@ def main(args=None):
         help="If using metadata, which column contains the sequenced sample "
         "names. Default is the first column requested as metadata output "
         "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated name catering to the fact that a field sample "
+        "semi-colon separated names catering to the fact that a field sample "
         "could be sequenced multiple times with technical replicates.",
     )
     parser_sample_summary.add_argument(
