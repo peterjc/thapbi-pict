@@ -1,0 +1,15 @@
+NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+
+DNAMIX_S95_L001
+
+ - Phytophthora agathidicida (uncertain/ambiguous)
+ - Phytophthora capsici (uncertain/ambiguous)
+ - Phytophthora castaneae (uncertain/ambiguous)
+ - Phytophthora crassamura (uncertain/ambiguous)
+ - Phytophthora cryptogea (uncertain/ambiguous)
+ - Phytophthora glovera (uncertain/ambiguous)
+ - Phytophthora megasperma (uncertain/ambiguous)
+ - Phytophthora plurivora
+ - Phytophthora pseudocryptogea
+ - Phytophthora rubi
+
