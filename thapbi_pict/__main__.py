@@ -143,6 +143,8 @@ def prepare_reads(args=None):
     from .prepare import main
 
     check_output_directory(args.output)
+    if args.temp:
+        check_output_directory(args.temp)
     return main(
         fastq=args.fastq,
         controls=args.controls,
