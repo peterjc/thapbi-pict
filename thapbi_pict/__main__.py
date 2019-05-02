@@ -13,8 +13,16 @@ from . import __version__
 from .classify import method_classifier
 
 
+# Common command line defaults
+# ============================
+
+
 DEFAULT_METHOD = "onebp"
 DEFAULT_MIN_ABUNDANCE = 100
+
+
+# Argument validation functions
+# =============================
 
 
 def check_input_file(filename):
@@ -53,6 +61,10 @@ def expand_database_argument(text, exist=False, blank_default=False):
     if exist and db != ":memory:" and not os.path.isfile(db):
         sys.exit("ERROR: The database %s was not found.\n" % db)
     return prefix + db
+
+
+# Subcommand dispatch
+# ===================
 
 
 def load_tax(args=None):
@@ -224,6 +236,104 @@ def sample_summary(args=None):
     )
 
 
+# Common arguments
+# ================
+
+# "-t", "--temp",
+ARG_TEMPDIR = dict(  # noqa: C408
+    type=str,
+    required=False,
+    metavar="DIRNAME",
+    help="Debug option. Specify an (ideally empty) directory to "
+    "use for temporary files, which will not be deleted.",
+)
+
+# "-v", "--verbose",
+ARG_VERBOSE = dict(action="store_true", help="Verbose logging.")  # noqa: C408
+
+# "--cpu",
+ARG_CPU = dict(  # noqa: C408
+    type=int, default=0, help="Number of parallel threads to use in called tools."
+)
+
+# Common import arguments
+# =======================
+
+# "-d", "--database",
+ARG_DB_WRITE = dict(  # noqa: C408
+    type=str, required=True, help="Which database to write to (or create)."
+)
+
+# "-n", "--name",
+ARG_NAME = dict(  # noqa: C408
+    type=str, default="", help="Name to record for this data source (string)."
+)
+
+# "-x", "--lax",
+ARG_LAX = dict(  # noqa: C408
+    default=False,
+    action="store_true",
+    help="Accept species names without pre-loaded taxonomy.",
+)
+
+# "-g", "--genus"
+ARG_GENUS_ONLY = dict(  # noqa: C408
+    default=False,
+    action="store_true",
+    help="Record at genus level only (and only validate at genus level, "
+    "unless using -x / --lax in which case anything is accepted as a genus).",
+)
+
+# Common metadata arguments
+# ========================
+
+# "-t", "--metadata",
+ARG_METADATA = dict(  # noqa: C408
+    type=str,
+    default="",
+    metavar="FILENAME",
+    help="Optional tab separated table containing metadata indexed by "
+    "sample name. Must also specify the columns with -c / --metacols. ",
+)
+
+# "-c", "--metacols",
+ARG_METACOLS = dict(  # noqa: C408
+    type=str,
+    default="",
+    metavar="COLUMNS",
+    help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
+    "table specified with the -m / --metadata argument to be included in the "
+    "report header, and use to sort the samples. Use in conjunction with "
+    "-m / --metadata argument.",
+)
+
+# "-x", "--metaindex",
+ARG_METAINDEX = dict(  # noqa: C408
+    type=int,
+    default="0",
+    metavar="COL",
+    help="If using metadata, which column contains the sequenced sample "
+    "names. Default is the first column requested as metadata output "
+    "with the -c / --metacols argument. This column can contain multiple "
+    "semi-colon separated names catering to the fact that a field sample "
+    "could be sequenced multiple times with technical replicates.",
+)
+
+# "-n", "--metaname",
+ARG_METANAME = dict(  # noqa: C408
+    type=int,
+    default="1",
+    metavar="ROW",
+    help="If using metadata, which row should be used as the field names? "
+    "Default 1, use 0 for no labels. "
+    "Use in conjunction with -m / --metadata argument.",
+)
+
+
+# Command line definition
+# =======================
+
+
 def main(args=None):
     """Execute the command line script thapbi_pict.
 
@@ -263,13 +373,7 @@ def main(args=None):
         metavar="DIRNAME",
         help="Folder containing NCBI taxonomy files 'names.dmp' etc.",
     )
-    parser_load_tax.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        required=True,
-        help="Which database to write to (or create).",
-    )
+    parser_load_tax.add_argument("-d", "--database", **ARG_DB_WRITE)
     parser_load_tax.add_argument(
         "-a",
         "--ancestors",
@@ -278,9 +382,7 @@ def main(args=None):
         help="Comma separated list of NCBI taxids at genus level or higher. "
         "Default is 4776 for Peronosporales, use 4783 for Phytophthora only.",
     ),
-    parser_load_tax.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_load_tax.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_load_tax.set_defaults(func=load_tax)
     del parser_load_tax  # To prevent acidentally adding more
 
@@ -292,38 +394,11 @@ def main(args=None):
         "non-matching entries are rejected.",
     )
     parser_ncbi_import.add_argument("fasta", type=str, help="One ITS1 fasta filename.")
-    parser_ncbi_import.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        required=True,
-        help="Which database to write to (or create).",
-    )
-    parser_ncbi_import.add_argument(
-        "-n",
-        "--name",
-        type=str,
-        default="",
-        help="Name to record for this data source (string).",
-    )
-    parser_ncbi_import.add_argument(
-        "-x",
-        "--lax",
-        default=False,
-        action="store_true",
-        help="Accept species names without pre-loaded taxonomy.",
-    )
-    parser_ncbi_import.add_argument(
-        "-g",
-        "--genus",
-        default=False,
-        action="store_true",
-        help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as a genus).",
-    )
-    parser_ncbi_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_ncbi_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_ncbi_import.add_argument("-n", "--name", **ARG_NAME)
+    parser_ncbi_import.add_argument("-x", "--lax", **ARG_LAX)
+    parser_ncbi_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    parser_ncbi_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_ncbi_import.set_defaults(func=ncbi_import)
     del parser_ncbi_import  # To prevent acidentally adding more
 
@@ -366,38 +441,11 @@ def main(args=None):
         "classification pipeline - be cautious what goes in your "
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
-    parser_seq_import.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        required=True,
-        help="Which database to write to (or create).",
-    )
-    parser_seq_import.add_argument(
-        "-n",
-        "--name",
-        type=str,
-        default="",
-        help="Name to record for this data source (string).",
-    )
-    parser_seq_import.add_argument(
-        "-x",
-        "--lax",
-        default=False,
-        action="store_true",
-        help="Accept species names without pre-loaded taxonomy.",
-    )
-    parser_seq_import.add_argument(
-        "-g",
-        "--genus",
-        default=False,
-        action="store_true",
-        help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as a genus).",
-    )
-    parser_seq_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_seq_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_seq_import.add_argument("-n", "--name", **ARG_NAME)
+    parser_seq_import.add_argument("-x", "--lax", **ARG_LAX)
+    parser_seq_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    parser_seq_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_seq_import.set_defaults(func=seq_import)
     del parser_seq_import  # To prevent acidentally adding more
 
@@ -411,38 +459,11 @@ def main(args=None):
     parser_legacy_import.add_argument(
         "fasta", type=str, help="One ITS1 fasta filename."
     )
-    parser_legacy_import.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        required=True,
-        help="Which database to write to (or create).",
-    )
-    parser_legacy_import.add_argument(
-        "-n",
-        "--name",
-        type=str,
-        default="",
-        help="Name to record for this data source (string).",
-    )
-    parser_legacy_import.add_argument(
-        "-x",
-        "--lax",
-        default=False,
-        action="store_true",
-        help="Accept species names without pre-loaded taxonomy.",
-    )
-    parser_legacy_import.add_argument(
-        "-g",
-        "--genus",
-        default=False,
-        action="store_true",
-        help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case anything is accepted as a genus).",
-    )
-    parser_legacy_import.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_legacy_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_legacy_import.add_argument("-n", "--name", **ARG_NAME)
+    parser_legacy_import.add_argument("-x", "--lax", **ARG_LAX)
+    parser_legacy_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    parser_legacy_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_legacy_import.set_defaults(func=legacy_import)
     del parser_legacy_import  # To prevent acidentally adding more
 
@@ -501,9 +522,7 @@ def main(args=None):
         "spaces after each comma). Requires a single genus argument be given. "
         "Default is not to filter by species.",
     )
-    parser_dump.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_dump.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_dump.set_defaults(func=dump)
     del parser_dump  # To prevent acidentally adding more
 
@@ -589,24 +608,9 @@ def main(args=None):
         "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
         "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
     )
-    parser_prepare_reads.add_argument(
-        "-t",
-        "--temp",
-        type=str,
-        required=False,
-        metavar="DIRNAME",
-        help="Debug option. Specify an (ideally empty) directory to "
-        "use for temporary files, which will not be deleted.",
-    )
-    parser_prepare_reads.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
-    parser_prepare_reads.add_argument(
-        "--cpu",
-        type=int,
-        default=0,
-        help="Number of parallel threads to use in called tools.",
-    )
+    parser_prepare_reads.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    parser_prepare_reads.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_prepare_reads.add_argument("--cpu", **ARG_CPU)
     parser_prepare_reads.set_defaults(func=prepare_reads)
     del parser_prepare_reads  # To prevent acidentally adding more
 
@@ -650,24 +654,9 @@ def main(args=None):
         help="Directory to write output reports to, default (empty "
         "string) is next to each input file. Use '-' for stdout.",
     )
-    parser_classify.add_argument(
-        "-t",
-        "--temp",
-        type=str,
-        required=False,
-        metavar="DIRNAME",
-        help="Debug option. Specify an (ideally empty) directory to "
-        "use for temporary files, which will not be deleted.",
-    )
-    parser_classify.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
-    parser_classify.add_argument(
-        "--cpu",
-        type=int,
-        default=0,
-        help="Max number of parallel threads to use in called tools.",
-    )
+    parser_classify.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    parser_classify.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_classify.add_argument("--cpu", **ARG_CPU)
     parser_classify.set_defaults(func=classify)
     del parser_classify  # To prevent acidentally adding more
 
@@ -754,9 +743,7 @@ def main(args=None):
         help="File to write species level confusion matrix to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
-    parser_assess.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_assess.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_assess.set_defaults(func=assess_classification)
     del parser_assess  # To prevent acidentally adding more
 
@@ -808,52 +795,11 @@ def main(args=None):
         help="File to write summary sequence vs samples table to. "
         "Default is '-' meaning to stdout.",
     )
-    parser_plate_summary.add_argument(
-        "-t",
-        "--metadata",
-        type=str,
-        default="",
-        metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by "
-        "sample name. Must also specify the columns with -c / --metacols, "
-        "and then this information will be included as extra header rows.",
-    )
-    parser_plate_summary.add_argument(
-        "-c",
-        "--metacols",
-        type=str,
-        default="",
-        metavar="COLUMNS",
-        help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
-        "table specified with the -m / --metadata argument to be included in the "
-        "human readable report, and use to sort the samples. Use in conjunction "
-        "with -m / --metadata argument.",
-    )
-    parser_plate_summary.add_argument(
-        "-x",
-        "--metaindex",
-        type=int,
-        default="0",
-        metavar="COL",
-        help="If using metadata, which column contains the sequenced sample "
-        "names. Default is the first column requested as metadata output "
-        "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated names catering to the fact that a field sample "
-        "could be sequenced multiple times with technical replicates.",
-    )
-    parser_plate_summary.add_argument(
-        "-n",
-        "--metaname",
-        type=int,
-        default="1",
-        metavar="ROW",
-        help="If using metadata, which row should be used as the field names? "
-        "Default 1, use 0 for no labels. "
-        "Use in conjunction with -m / --metadata argument.",
-    )
-    parser_plate_summary.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_plate_summary.add_argument("-t", "--metadata", **ARG_METADATA)
+    parser_plate_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
+    parser_plate_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    parser_plate_summary.add_argument("-n", "--metaname", **ARG_METANAME)
+    parser_plate_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_plate_summary.set_defaults(func=plate_summary)
     del parser_plate_summary  # To prevent acidentally adding more
 
@@ -912,17 +858,7 @@ def main(args=None):
         help="File to write human readable smaple level species predictions to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
-    parser_sample_summary.add_argument(
-        "-t",
-        "--metadata",
-        type=str,
-        default="",
-        metavar="FILENAME",
-        help="Optional tab separated table containing metadata indexed by "
-        "sample name. Must also specify the columns with -c / --metacols, "
-        "and then this information will be included in the human readable "
-        "report output.",
-    )
+    parser_sample_summary.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_sample_summary.add_argument(
         "-c",
         "--metacols",
@@ -946,19 +882,8 @@ def main(args=None):
         "semi-colon separated names catering to the fact that a field sample "
         "could be sequenced multiple times with technical replicates.",
     )
-    parser_sample_summary.add_argument(
-        "-n",
-        "--metaname",
-        type=int,
-        default="1",
-        metavar="ROW",
-        help="If using metadata, which row should be used as the field names? "
-        "Default 1, use 0 for no labels. "
-        "Use in conjunction with -m / --metadata argument.",
-    )
-    parser_sample_summary.add_argument(
-        "-v", "--verbose", action="store_true", help="Verbose logging."
-    )
+    parser_sample_summary.add_argument("-n", "--metaname", **ARG_METANAME)
+    parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more
 
