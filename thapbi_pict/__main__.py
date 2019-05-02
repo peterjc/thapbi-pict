@@ -239,6 +239,11 @@ def sample_summary(args=None):
 # Common arguments
 # ================
 
+# "-d", "--database",
+ARG_DB_INPUT = dict(  # noqa: C408
+    type=str, default="", help="ITS1 database to use, default is bundled database."
+)
+
 # "-t", "--temp",
 ARG_TEMPDIR = dict(  # noqa: C408
     type=str,
@@ -473,14 +478,7 @@ def main(args=None):
         description="Export an ITS1 database to a text file.",
         epilog="e.g. 'thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt'",
     )
-    parser_dump.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        default="",
-        help="Which database to export from. "
-        "Default is the bundled read-only database.",
-    )
+    parser_dump.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_dump.add_argument(
         "-o",
         "--output",
@@ -629,14 +627,7 @@ def main(args=None):
         help="One or more ITS1 FASTA filenames or folder names "
         "(containing files named *.fasta).",
     )
-    parser_classify.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        default="",
-        help="Which ITS1 database to use for species classification. "
-        "Default is the bundled read-only database.",
-    )
+    parser_classify.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_classify.add_argument(
         "-m",
         "--method",
