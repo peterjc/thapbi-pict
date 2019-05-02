@@ -147,7 +147,7 @@ def prepare_reads(args=None):
         check_output_directory(args.temp)
     return main(
         fastq=args.fastq,
-        controls=args.controls,
+        negative_controls=args.negctrls,
         out_dir=args.output,
         primer_dir=args.primers,
         left_primer=args.left,
@@ -210,7 +210,7 @@ def plate_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
-        metadata_name=args.metaname,
+        metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
     )
@@ -232,7 +232,7 @@ def sample_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
-        metadata_name=args.metaname,
+        metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
     )
@@ -326,8 +326,8 @@ ARG_METAINDEX = dict(  # noqa: C408
     "could be sequenced multiple times with technical replicates.",
 )
 
-# "-n", "--metaname",
-ARG_METANAME = dict(  # noqa: C408
+# "-f", "--metafields",
+ARG_METAFIELDS = dict(  # noqa: C408
     type=int,
     default="1",
     metavar="ROW",
@@ -548,8 +548,8 @@ def main(args=None):
         "(containing files named *.fastq or *.fastq.gz).",
     )
     parser_prepare_reads.add_argument(
-        "-c",
-        "--controls",
+        "-n",
+        "--negctrls",
         type=str,
         nargs="+",
         help="One or more negative control FASTQ filenames or folder "
@@ -791,7 +791,7 @@ def main(args=None):
     parser_plate_summary.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_plate_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
     parser_plate_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    parser_plate_summary.add_argument("-n", "--metaname", **ARG_METANAME)
+    parser_plate_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     parser_plate_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_plate_summary.set_defaults(func=plate_summary)
     del parser_plate_summary  # To prevent acidentally adding more
@@ -875,7 +875,7 @@ def main(args=None):
         "semi-colon separated names catering to the fact that a field sample "
         "could be sequenced multiple times with technical replicates.",
     )
-    parser_sample_summary.add_argument("-n", "--metaname", **ARG_METANAME)
+    parser_sample_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more
