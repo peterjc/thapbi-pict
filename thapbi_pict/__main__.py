@@ -296,6 +296,36 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
     "unless using -x / --lax in which case anything is accepted as a genus).",
 )
 
+# Common pipeline arguments
+# =========================
+
+# "fastq" (note - positional argument!)
+ARG_FASTQ = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    help="One or more ITS1 FASTQ filenames or folder names "
+    "(containing files named *.fastq or *.fastq.gz).",
+)
+
+# "-n", "--negctrls",
+ARG_CONTROLS = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    help="One or more negative control FASTQ filenames or folder "
+    "names (which can be duplicated in the FASTQ argument). "
+    "ITS1 levels in these paired reads are used to increase "
+    "the minimum abundance threshold automatically.",
+)
+
+# "-a", "--abundance",
+ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
+    type=int,
+    default=str(DEFAULT_MIN_ABUNDANCE),
+    help="Mininum abundance applied to the unique ITS1 sequences "
+    "in each sample (i.e. each FASTQ pair), default %i. "
+    "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
+)
+
 # Common metadata arguments
 # ========================
 
@@ -381,23 +411,8 @@ def main(args=None):
         "classify, sample-summary, plate-summary) with their defaults, with only a "
         "minority of settings available here.",
     )
-    parser_pipeline.add_argument(
-        "fastq",
-        type=str,
-        nargs="+",
-        help="One or more ITS1 FASTQ filenames or folder names "
-        "(containing files named *.fastq or *.fastq.gz).",
-    )
-    parser_pipeline.add_argument(
-        "-c",
-        "--controls",
-        type=str,
-        nargs="+",
-        help="One or more negative control FASTQ filenames or folder "
-        "names (which can be duplicated in the FASTQ argument). "
-        "ITS1 levels in these paired reads are used to increase "
-        "the minimum abundance threshold automatically.",
-    )
+    parser_pipeline.add_argument("fastq", **ARG_FASTQ)
+    parser_pipeline.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     parser_pipeline.add_argument(
         "-o",
         "--output",
@@ -415,15 +430,7 @@ def main(args=None):
         help="Directory to write intermediate files (FASTA and TSV) "
         "for each sample (FASTQ pair) to. Defaults to -o / --output.",
     )
-    parser_pipeline.add_argument(
-        "-a",
-        "--abundance",
-        type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum abundance applied to the unique ITS1 sequences "
-        "in each sample (i.e. each FASTQ pair), default %i. "
-        "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
-    )
+    parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_pipeline.add_argument(
         "-m",
@@ -616,23 +623,8 @@ def main(args=None):
         "checksum and their abundance, and sorted by decreasing "
         "abundance then alphabetically by sequence.",
     )
-    parser_prepare_reads.add_argument(
-        "fastq",
-        type=str,
-        nargs="+",
-        help="One or more ITS1 FASTQ filenames or folder names "
-        "(containing files named *.fastq or *.fastq.gz).",
-    )
-    parser_prepare_reads.add_argument(
-        "-n",
-        "--negctrls",
-        type=str,
-        nargs="+",
-        help="One or more negative control FASTQ filenames or folder "
-        "names (which can be duplicated in the FASTQ argument). "
-        "ITS1 levels in these paired reads are used to increase "
-        "the minimum abundance threshold automatically.",
-    )
+    parser_prepare_reads.add_argument("fastq", **ARG_FASTQ)
+    parser_prepare_reads.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     parser_prepare_reads.add_argument(
         "-o",
         "--output",
@@ -642,15 +634,7 @@ def main(args=None):
         help="Directory to write output FASTA files to, "
         "default is next to each input file.",
     )
-    parser_prepare_reads.add_argument(
-        "-a",
-        "--abundance",
-        type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum abundance applied to the unique ITS1 sequences "
-        "in each sample (i.e. each FASTQ pair), default %i. "
-        "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
-    )
+    parser_prepare_reads.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_prepare_reads.add_argument(
         "-p",
         "--primers",
