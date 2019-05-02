@@ -240,7 +240,88 @@ def sample_summary(args=None):
 
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
-    pass
+    from .prepare import main as prepare
+    from .classify import main as classify
+    from .sample_summary import main as sample_summary
+    from .summary import main as plate_summary
+
+    check_output_directory(args.output)
+    if args.sampleout:
+        check_output_directory(args.sampleout)
+        intermediate_dir = args.sampleout
+    else:
+        intermediate_dir = args.output
+    if args.temp:
+        check_output_directory(args.temp)
+    if args.metadata:
+        check_input_file(args.metadata)
+        if not args.metacols:
+            sys.exit("ERROR: Must also supply -c / --metacols argument.")
+
+    return_code = prepare(
+        fastq=args.fastq,
+        negative_controls=args.negctrls,
+        out_dir=intermediate_dir,
+        # primer_dir=args.primers,
+        primer_dir=None,
+        # left_primer=args.left,
+        left_primer="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
+        # right_primer=args.right,
+        right_primer="GCARRGACTTTCGTCCCYRC",
+        min_abundance=args.abundance,
+        tmp_dir=args.temp,
+        debug=args.verbose,
+        cpu=args.cpu,
+    )
+    if return_code:
+        sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
+        sys.exit(return_code)
+
+    return_code = classify(
+        # Should we check intermediate_dir was empty, or
+        # build an actual file list?
+        fasta=[intermediate_dir],
+        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
+        method=args.method,
+        out_dir=intermediate_dir,
+        tmp_dir=args.temp,
+        debug=args.verbose,
+        cpu=args.cpu,
+    )
+    if return_code:
+        sys.stderr.write("ERROR: Pipeline aborted during classify\n")
+        sys.exit(return_code)
+
+    return_code = sample_summary(
+        inputs=[intermediate_dir],
+        output=os.path.join(args.output, "sample-summary.tsv"),
+        human_output=os.path.join(args.output, "sample-summary.txt"),
+        method=args.method,
+        min_abundance=args.abundance,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
+        metadata_fieldnames=args.metafields,
+        metadata_index=args.metaindex,
+        debug=args.verbose,
+    )
+    if return_code:
+        sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
+        sys.exit(return_code)
+
+    return_code = plate_summary(
+        inputs=[intermediate_dir],
+        output=os.path.join(args.output, "plate-summary.tsv"),
+        method=args.method,
+        min_abundance=args.abundance,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
+        metadata_fieldnames=args.metafields,
+        metadata_index=args.metaindex,
+        debug=args.verbose,
+    )
+    if return_code:
+        sys.stderr.write("ERROR: Pipeline aborted during plate-summary\n")
+        sys.exit(return_code)
 
 
 # Common arguments
