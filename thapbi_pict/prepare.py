@@ -418,7 +418,7 @@ def prepare_sample(
 
 def main(
     fastq,
-    controls,
+    negative_controls,
     out_dir,
     primer_dir,
     left_primer,
@@ -444,10 +444,10 @@ def main(
     control_min_abundance = min_abundance
     sample_min_abundance = min_abundance
 
-    if not controls:
+    if not negative_controls:
         control_file_pairs = []
     else:
-        control_file_pairs = find_fastq_pairs(controls, debug=debug)
+        control_file_pairs = find_fastq_pairs(negative_controls, debug=debug)
 
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
     fastq_file_pairs = [_ for _ in fastq_file_pairs if _ not in control_file_pairs]

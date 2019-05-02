@@ -24,7 +24,7 @@ def main(
     min_abundance=1,
     metadata_file=None,
     metadata_cols=None,
-    metadata_name=None,
+    metadata_fieldnames=None,
     metadata_index=None,
     debug=False,
 ):
@@ -70,7 +70,7 @@ def main(
     ) = load_metadata(
         metadata_file,
         metadata_cols,
-        metadata_name,
+        metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
         debug=debug,
