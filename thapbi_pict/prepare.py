@@ -432,6 +432,9 @@ def main(
 
     If there are controls, they will be used to potentially increase
     the minimum abundance threshold used for the non-control files.
+
+    For use in the pipeline command, returns a filename listing of the
+    FASTA files created.
     """
     hmm_cropping_warning = 0
 
@@ -479,6 +482,8 @@ def main(
     if debug:
         sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
 
+    fasta_files_prepared = []  # return value
+
     for control, stem, raw_R1, raw_R2 in file_pairs:
         sys.stdout.flush()
         sys.stderr.flush()
@@ -487,6 +492,7 @@ def main(
         if out_dir and out_dir != "-":
             folder = out_dir
         fasta_name = os.path.join(folder, "%s.fasta" % stem)
+        fasta_files_prepared.append(fasta_name)
         if primer_dir:
             failed_primer_name = os.path.join(
                 primer_dir, "%s.failed-primers.fasta" % stem
@@ -581,4 +587,4 @@ def main(
 
     sys.stdout.flush()
     sys.stderr.flush()
-    return 0
+    return fasta_files_prepared

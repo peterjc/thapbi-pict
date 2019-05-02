@@ -618,7 +618,11 @@ method_setup = {
 
 
 def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
-    """Implement the thapbi_pict classify command."""
+    """Implement the thapbi_pict classify command.
+
+    For use in the pipeline command, returns a filename list of the TSV
+    classifier output.
+    """
     assert isinstance(fasta, list)
 
     if method not in method_classifier:
@@ -696,6 +700,8 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
     if setup_fn:
         setup_fn(session, shared_tmp, debug, cpu)
 
+    classifier_output = []  # return value
+
     seq_count = 0
     match_count = 0
     for filename in fasta_files:
@@ -712,6 +718,8 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
             output_name = None
         else:
             output_name = os.path.join(out_dir, "%s.%s.tsv" % (stem, method))
+
+        classifier_output.append(output_name)
 
         if output_name is not None and os.path.isfile(output_name):
             sys.stderr.write("WARNING: Skipping %s as already exists\n" % output_name)
@@ -779,4 +787,4 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
 
     sys.stdout.flush()
     sys.stderr.flush()
-    return 0
+    return classifier_output
