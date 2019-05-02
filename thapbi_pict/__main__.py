@@ -272,12 +272,9 @@ def pipeline(args=None):
         fastq=args.fastq,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
-        # primer_dir=args.primers,
         primer_dir=None,
-        # left_primer=args.left,
-        left_primer="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
-        # right_primer=args.right,
-        right_primer="GCARRGACTTTCGTCCCYRC",
+        left_primer=ARG_PRIMER_LEFT["default"],
+        right_primer=ARG_PRIMER_RIGHT["default"],
         min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -392,6 +389,34 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
     action="store_true",
     help="Record at genus level only (and only validate at genus level, "
     "unless using -x / --lax in which case anything is accepted as a genus).",
+)
+
+# Prepare reads arguments
+# =======================
+
+# "-l", "--left",
+ARG_PRIMER_LEFT = dict(  # noqa: C408
+    type=str,
+    default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
+    metavar="PRIMER",
+    help="Left primer sequence, finds and removes from start of "
+    "merged read pairs. Can use IUPAC ambiguity codes. "
+    "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
+    "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202 and "
+    "conserved 32bp 'TTTCCGTAGGTGAACCTGCGGAAGGATCATTA'.",
+)
+
+# "-r", "--right",
+ARG_PRIMER_RIGHT = dict(  # noqa: C408
+    type=str,
+    default="GCARRGACTTTCGTCCCYRC",
+    metavar="PRIMER",
+    help="Right primer sequence, finds and removes reverse "
+    "complement from end of merged read pairs. Can use "
+    "IUPAC ambiguity codes. Default 20bp 5.8S-1R primer "
+    "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
+    "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
+    "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
 )
 
 # Common pipeline arguments
@@ -741,31 +766,8 @@ def main(args=None):
         metavar="DIRNAME",
         help="Where to write optional failed primer FASTA files.",
     )
-    parser_prepare_reads.add_argument(
-        "-l",
-        "--left",
-        type=str,
-        default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
-        metavar="PRIMER",
-        help="Left primer sequence, finds and removes from start of "
-        "merged read pairs. Can use IUPAC ambiguity codes. "
-        "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
-        "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202 and "
-        "conserved 32bp 'TTTCCGTAGGTGAACCTGCGGAAGGATCATTA'.",
-    )
-    parser_prepare_reads.add_argument(
-        "-r",
-        "--right",
-        type=str,
-        default="GCARRGACTTTCGTCCCYRC",
-        metavar="PRIMER",
-        help="Right primer sequence, finds and removes reverse "
-        "complement from end of merged read pairs. Can use "
-        "IUPAC ambiguity codes. Default 20bp 5.8S-1R primer "
-        "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
-        "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
-        "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
-    )
+    parser_prepare_reads.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
+    parser_prepare_reads.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
     parser_prepare_reads.add_argument("-t", "--temp", **ARG_TEMPDIR)
     parser_prepare_reads.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_prepare_reads.add_argument("--cpu", **ARG_CPU)
