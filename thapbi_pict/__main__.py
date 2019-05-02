@@ -145,7 +145,7 @@ def prepare_reads(args=None):
     check_output_directory(args.output)
     if args.temp:
         check_output_directory(args.temp)
-    return main(
+    return_code = main(
         fastq=args.fastq,
         negative_controls=args.negctrls,
         out_dir=args.output,
@@ -157,6 +157,11 @@ def prepare_reads(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
+    if isinstance(return_code, list):
+        # Should be a list of FASTA filenames
+        return 0
+    else:
+        return return_code
 
 
 def classify(args=None):
@@ -167,7 +172,7 @@ def classify(args=None):
         check_output_directory(args.output)
     if args.temp:
         check_output_directory(args.temp)
-    return main(
+    return_code = main(
         fasta=args.fasta,
         db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         method=args.method,
@@ -176,6 +181,11 @@ def classify(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
+    if isinstance(return_code, list):
+        # Should be a list of *.method.tsv filenames.
+        return 0
+    else:
+        return return_code
 
 
 def assess_classification(args=None):
@@ -258,7 +268,7 @@ def pipeline(args=None):
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
 
-    return_code = prepare(
+    fasta_files = prepare(
         fastq=args.fastq,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
@@ -273,14 +283,14 @@ def pipeline(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
-    if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
-        sys.exit(return_code)
+    if isinstance(fasta_files, int):
+        return_code = fasta_files
+        if return_code:
+            sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
+            sys.exit(return_code)
 
-    return_code = classify(
-        # Should we check intermediate_dir was empty, or
-        # build an actual file list?
-        fasta=[intermediate_dir],
+    classified_files = classify(
+        fasta=fasta_files,
         db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         method=args.method,
         out_dir=intermediate_dir,
@@ -288,12 +298,19 @@ def pipeline(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
-    if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during classify\n")
-        sys.exit(return_code)
+    if isinstance(classified_files, int):
+        return_code = classified_files
+        if return_code:
+            sys.stderr.write("ERROR: Pipeline aborted during classify\n")
+            sys.exit(return_code)
+    if len(fasta_files) != len(classified_files):
+        sys.exit(
+            "ERROR: %i FASTA files but %i classified"
+            % (len(fasta_files), len(classified_files))
+        )
 
     return_code = sample_summary(
-        inputs=[intermediate_dir],
+        inputs=classified_files,
         output=os.path.join(args.output, "sample-summary.tsv"),
         human_output=os.path.join(args.output, "sample-summary.txt"),
         method=args.method,
@@ -309,7 +326,7 @@ def pipeline(args=None):
         sys.exit(return_code)
 
     return_code = plate_summary(
-        inputs=[intermediate_dir],
+        inputs=fasta_files + classified_files,
         output=os.path.join(args.output, "plate-summary.tsv"),
         method=args.method,
         min_abundance=args.abundance,
