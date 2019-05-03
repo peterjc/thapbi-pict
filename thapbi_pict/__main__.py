@@ -146,7 +146,7 @@ def prepare_reads(args=None):
     if args.temp:
         check_output_directory(args.temp)
     return_code = main(
-        fastq=args.fastq,
+        fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=args.output,
         primer_dir=args.primers,
@@ -269,7 +269,7 @@ def pipeline(args=None):
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
 
     fasta_files = prepare(
-        fastq=args.fastq,
+        fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
         primer_dir=None,
@@ -422,9 +422,10 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
 # Common pipeline arguments
 # =========================
 
-# "fastq" (note - positional argument!)
-ARG_FASTQ = dict(  # noqa: C408
+# "-i", "--input",
+ARG_INPUT_FASTQ = dict(  # noqa: C408
     type=str,
+    required=True,
     nargs="+",
     help="One or more ITS1 FASTQ filenames or folder names "
     "(containing files named *.fastq or *.fastq.gz).",
@@ -534,7 +535,7 @@ def main(args=None):
         "classify, sample-summary, plate-summary) with their defaults, with only a "
         "minority of settings available here.",
     )
-    parser_pipeline.add_argument("fastq", **ARG_FASTQ)
+    parser_pipeline.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     parser_pipeline.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     parser_pipeline.add_argument(
         "-o",
@@ -746,7 +747,7 @@ def main(args=None):
         "checksum and their abundance, and sorted by decreasing "
         "abundance then alphabetically by sequence.",
     )
-    parser_prepare_reads.add_argument("fastq", **ARG_FASTQ)
+    parser_prepare_reads.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     parser_prepare_reads.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     parser_prepare_reads.add_argument(
         "-o",
