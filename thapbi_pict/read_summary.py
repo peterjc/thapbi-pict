@@ -22,6 +22,7 @@ def main(
     output,
     method,
     min_abundance=1,
+    excel=None,
     metadata_file=None,
     metadata_cols=None,
     metadata_fieldnames=None,
@@ -128,12 +129,31 @@ def main(
     else:
         handle = open(output, "w")
 
+    if excel:
+        import xlsxwriter
+
+        workbook = xlsxwriter.Workbook(excel)
+        worksheet = workbook.add_worksheet("Sequence vs samples")
+        cell_rightalign_format = workbook.add_format({"align": "right"})
+    else:
+        workbook = None
+        worksheet = None
+
+    current_row = 0
     if metadata:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
         meta = [metadata.get(sample, meta_default) for sample in samples]
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
+        if worksheet:
+            for i, name in enumerate(meta_names):
+                worksheet.write_string(i, 4, name, cell_rightalign_format)
+                for s, sample in enumerate(samples):
+                    worksheet.write_string(
+                        i, 5 + s, metadata.get(sample, meta_default)[i]
+                    )
+            current_row += len(meta_names)
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
         % (",".join(methods), "\t".join(samples))
@@ -158,6 +178,36 @@ def main(
             ),
         )
     )
+    if worksheet:
+        worksheet.write_string(current_row, 0, "ITS1-MD5")
+        worksheet.write_string(current_row, 1, "%s-predictions" % ",".join(methods))
+        worksheet.write_string(current_row, 2, "Sequence")
+        worksheet.write_string(current_row, 3, "Sample-count")
+        worksheet.write_string(current_row, 4, "Total-abundance")
+        for s, sample in enumerate(samples):
+            worksheet.write_string(current_row, 5 + s, sample)
+        current_row += 1
+        worksheet.write_string(current_row, 0, "TOTAL")
+        worksheet.write_string(current_row, 1, "-")
+        worksheet.write_string(current_row, 2, "-")
+        worksheet.write_number(
+            current_row,
+            3,
+            sum(
+                1
+                for md5 in md5_to_seq
+                for sample in samples
+                if (md5, sample) in abundance_by_samples
+            ),
+        )
+        worksheet.write_number(current_row, 4, sum(md5_abundance.values()))
+        for s, sample in enumerate(samples):
+            worksheet.write_number(
+                current_row,
+                5 + s,
+                sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
+            )
+        current_row += 1
     for total_abundance, md5 in reversed(
         sorted((v, k) for (k, v) in md5_abundance.items())
     ):
@@ -173,9 +223,22 @@ def main(
                 "\t".join(str(abundance_by_samples.get((md5, _), 0)) for _ in samples),
             )
         )
+        if worksheet:
+            worksheet.write_string(current_row, 0, md5)
+            worksheet.write_string(current_row, 1, ";".join(sorted(md5_species[md5])))
+            worksheet.write_string(current_row, 2, md5_to_seq[md5])
+            worksheet.write_number(current_row, 3, md5_in_xxx_samples)
+            worksheet.write_number(current_row, 4, total_abundance)
+            for s, sample in enumerate(samples):
+                worksheet.write_number(
+                    current_row, 5 + s, abundance_by_samples.get((md5, sample), 0)
+                )
+            current_row += 1
 
     if output != "-":
         handle.close()
+    if workbook:
+        workbook.close()
 
     try:
         sys.stdout.flush()
