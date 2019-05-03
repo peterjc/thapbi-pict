@@ -25,4 +25,4 @@ tests/test_classify.sh
 tests/test_seq-import.sh
 tests/test_assess.sh
 tests/test_sample-summary.sh
-tests/test_plate-summary.sh
+tests/test_read-summary.sh

@@ -205,9 +205,9 @@ def assess_classification(args=None):
     )
 
 
-def plate_summary(args=None):
+def read_summary(args=None):
     """Subcommand to run per-output-folder summary at sequence level."""
-    from .summary import main
+    from .read_summary import main
 
     if args.metadata:
         check_input_file(args.metadata)
@@ -253,7 +253,7 @@ def pipeline(args=None):
     from .prepare import main as prepare
     from .classify import main as classify
     from .sample_summary import main as sample_summary
-    from .summary import main as plate_summary
+    from .read_summary import main as read_summary
 
     check_output_directory(args.output)
     if args.sampleout:
@@ -328,7 +328,7 @@ def pipeline(args=None):
         sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
         sys.exit(return_code)
 
-    return_code = plate_summary(
+    return_code = read_summary(
         inputs=fasta_files + classified_files,
         output=os.path.join(args.output, stem + ".reads.tsv"),
         method=args.method,
@@ -340,7 +340,7 @@ def pipeline(args=None):
         debug=args.verbose,
     )
     if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during plate-summary\n")
+        sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
         sys.exit(return_code)
 
 
@@ -538,7 +538,7 @@ def main(args=None):
         "pipeline",
         description="Run default classification pipeline on FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
-        "classify, sample-summary, plate-summary) with their defaults, with only a "
+        "classify, sample-summary, read-summary) with their defaults, with only a "
         "minority of settings available here.",
     )
     parser_pipeline.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
@@ -914,9 +914,9 @@ def main(args=None):
     parser_assess.set_defaults(func=assess_classification)
     del parser_assess  # To prevent acidentally adding more
 
-    # plate-summary
-    parser_plate_summary = subparsers.add_parser(
-        "plate-summary",
+    # read-summary
+    parser_read_summary = subparsers.add_parser(
+        "read-summary",
         description="Sequence-level summary report on classifier output.",
         epilog="Assumes you've run prepare-reads and classify, and have "
         "folders with XXX.fasta and XXX.method.tsv files from your plate(s). "
@@ -924,7 +924,7 @@ def main(args=None):
         "by the prepare-reads step, can be thousands of rows) and one column "
         "per sample (typically 96 samples).",
     )
-    parser_plate_summary.add_argument(
+    parser_read_summary.add_argument(
         "inputs",
         type=str,
         nargs="+",
@@ -933,7 +933,7 @@ def main(args=None):
         "it expects to find paired files using these extensions. "
         "The classifier method extension can be set via -m / --method.",
     )
-    parser_plate_summary.add_argument(
+    parser_read_summary.add_argument(
         "-m",
         "--method",
         type=str,
@@ -941,7 +941,7 @@ def main(args=None):
         help="Classifier method(s) to report, comma separaed list (used to infer "
         "filenames), default is '%s' (only)." % DEFAULT_METHOD,
     )
-    parser_plate_summary.add_argument(
+    parser_read_summary.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -953,7 +953,7 @@ def main(args=None):
         "that negative control samples will include low abundance entries)."
         % DEFAULT_MIN_ABUNDANCE,
     )
-    parser_plate_summary.add_argument(
+    parser_read_summary.add_argument(
         "-o",
         "--output",
         type=str,
@@ -962,13 +962,13 @@ def main(args=None):
         help="File to write summary sequence vs samples table to. "
         "Default is '-' meaning to stdout.",
     )
-    parser_plate_summary.add_argument("-t", "--metadata", **ARG_METADATA)
-    parser_plate_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
-    parser_plate_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    parser_plate_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    parser_plate_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_plate_summary.set_defaults(func=plate_summary)
-    del parser_plate_summary  # To prevent acidentally adding more
+    parser_read_summary.add_argument("-t", "--metadata", **ARG_METADATA)
+    parser_read_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
+    parser_read_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    parser_read_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    parser_read_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_read_summary.set_defaults(func=read_summary)
+    del parser_read_summary  # To prevent acidentally adding more
 
     # sample-summary
     parser_sample_summary = subparsers.add_parser(
