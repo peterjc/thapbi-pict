@@ -135,11 +135,15 @@ def main(
         workbook = xlsxwriter.Workbook(excel)
         worksheet = workbook.add_worksheet("Sequence vs samples")
         cell_rightalign_format = workbook.add_format({"align": "right"})
+        red_conditional_format = workbook.add_format(
+            {"bg_color": "#FFC7CE", "font_color": "#000000"}
+        )
     else:
         workbook = None
         worksheet = None
 
     current_row = 0
+    first_data_row = 0
     if metadata:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
@@ -187,6 +191,7 @@ def main(
         for s, sample in enumerate(samples):
             worksheet.write_string(current_row, 5 + s, sample)
         current_row += 1
+        first_data_row = current_row
         worksheet.write_string(current_row, 0, "TOTAL")
         worksheet.write_string(current_row, 1, "-")
         worksheet.write_string(current_row, 2, "-")
@@ -234,6 +239,18 @@ def main(
                     current_row, 5 + s, abundance_by_samples.get((md5, sample), 0)
                 )
             current_row += 1
+            worksheet.conditional_format(
+                first_data_row,
+                5,
+                current_row,
+                5 + len(samples),
+                {
+                    "type": "cell",
+                    "criteria": "greater than",
+                    "value": 0,
+                    "format": red_conditional_format,
+                },
+            )
 
     if output != "-":
         handle.close()
