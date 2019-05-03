@@ -9,3 +9,4 @@
 
 biopython
 sqlalchemy
+xlsxwriter
