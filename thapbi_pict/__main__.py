@@ -306,10 +306,16 @@ def pipeline(args=None):
             % (len(fasta_files), len(classified_files))
         )
 
+    if args.report:
+        stem = os.path.join(args.output, args.report)
+    else:
+        # Include version number here?
+        stem = os.path.join(args.output, "thapbi-pict")
+
     return_code = sample_summary(
         inputs=classified_files,
-        output=os.path.join(args.output, "sample-summary.tsv"),
-        human_output=os.path.join(args.output, "sample-summary.txt"),
+        output=os.path.join(args.output, stem + ".samples.tsv"),
+        human_output=os.path.join(args.output, stem + ".samples.txt"),
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -324,7 +330,7 @@ def pipeline(args=None):
 
     return_code = plate_summary(
         inputs=fasta_files + classified_files,
-        output=os.path.join(args.output, "plate-summary.tsv"),
+        output=os.path.join(args.output, stem + ".reads.tsv"),
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -544,6 +550,13 @@ def main(args=None):
         required=True,
         metavar="DIRNAME",
         help="Directory to output to. Required.",
+    )
+    parser_pipeline.add_argument(
+        "-r",
+        "--report",
+        type=str,
+        metavar="STEM",
+        help="Stem for generating report filenames.",
     )
     parser_pipeline.add_argument(
         "-s",
