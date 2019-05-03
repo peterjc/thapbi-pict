@@ -77,6 +77,7 @@ This should automatically find the installed copy of the Python code. Use
 
 | Version | Date       | Notes                                                                        |
 |---------|------------|------------------------------------------------------------------------------|
+| v0.1.10 | 2019-05-03 | Tweaking command line API, renamed ``plate-summary`` to ``read-summary``.    |
 | v0.1.9  | 2019-05-02 | Implemented pipeline subcommand (prepare reads, classify, and report).       |
 | v0.1.8  | 2019-05-01 | Standard errors for missing external tools; versions logged in verbose mode. |
 | v0.1.7  | 2019-05-01 | Changed default classifier method from 'identity' to more lienient 'onebp'.  |
