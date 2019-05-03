@@ -549,7 +549,7 @@ def main(args=None):
         type=str,
         required=True,
         metavar="DIRNAME",
-        help="Directory to output to. Required.",
+        help="Output directory. Required.",
     )
     parser_pipeline.add_argument(
         "-r",
@@ -564,8 +564,8 @@ def main(args=None):
         type=str,
         default="",
         metavar="DIRNAME",
-        help="Directory to write intermediate files (FASTA and TSV) "
-        "for each sample (FASTQ pair) to. Defaults to -o / --output.",
+        help="Output directory for intermediate files for each sample "
+        "(FASTQ pair). Defaults to -o / --output.",
     )
     parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
