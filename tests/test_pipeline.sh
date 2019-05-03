@@ -11,7 +11,7 @@ set -o pipefail
 
 rm -rf $TMP/intermediate $TMP/output
 mkdir $TMP/intermediate $TMP/output
-thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output tests/reads/
+thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output -i tests/reads/
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/sample-summary.txt tests/pipeline/sample-summary.onebp.txt
 diff $TMP/output/sample-summary.tsv tests/pipeline/sample-summary.onebp.tsv
@@ -25,7 +25,7 @@ touch $TMP/intermediate/distraction.fasta
 touch $TMP/intermediate/ignore-me.onebp.tsv
 # Run again with some explicit options set (shouldn't change output)
 rm -rf $TMP/output/*
-thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output tests/reads/ -m onebp -a 250
+thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output -m onebp -a 250
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/sample-summary.txt tests/pipeline/sample-summary.onebp.txt
 diff $TMP/output/sample-summary.tsv tests/pipeline/sample-summary.onebp.tsv
