@@ -216,6 +216,7 @@ def read_summary(args=None):
     return main(
         inputs=args.inputs,
         output=args.output,
+        excel=args.excel,
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -331,6 +332,7 @@ def pipeline(args=None):
     return_code = read_summary(
         inputs=fasta_files + classified_files,
         output=os.path.join(args.output, stem + ".reads.tsv"),
+        excel=os.path.join(args.output, stem + ".reads.xlsx"),
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -934,6 +936,24 @@ def main(args=None):
         "The classifier method extension can be set via -m / --method.",
     )
     parser_read_summary.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="File to write summary sequence vs samples TSV table to. "
+        "Default is '-' meaning to stdout.",
+    )
+    parser_read_summary.add_argument(
+        "-e",
+        "--excel",
+        type=str,
+        default="",
+        metavar="FILENAME",
+        help="File to write summary sequence vs samples Excel table to. "
+        "Default is '' meaning no output.",
+    )
+    parser_read_summary.add_argument(
         "-m",
         "--method",
         type=str,
@@ -952,15 +972,6 @@ def main(args=None):
         "can apply it here. Use zero or one to look at everything (but beware "
         "that negative control samples will include low abundance entries)."
         % DEFAULT_MIN_ABUNDANCE,
-    )
-    parser_read_summary.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        default="-",
-        metavar="FILENAME",
-        help="File to write summary sequence vs samples table to. "
-        "Default is '-' meaning to stdout.",
     )
     parser_read_summary.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_read_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
