@@ -220,6 +220,7 @@ def main(
                 sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
             )
         current_row += 1
+        worksheet.freeze_panes(current_row, 5)  # keep total line in view plus headers
     for total_abundance, md5 in reversed(
         sorted((v, k) for (k, v) in md5_abundance.items())
     ):
