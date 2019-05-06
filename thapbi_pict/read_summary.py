@@ -138,6 +138,13 @@ def main(
         red_conditional_format = workbook.add_format(
             {"bg_color": "#FFC7CE", "font_color": "#000000"}
         )
+        # If there are lots of samples, set narrow column widths
+        if len(samples) > 50:
+            # Set column width to 2
+            worksheet.set_column(5, 5 + len(samples), 2)
+        elif len(samples) > 20:
+            # Set column width to 4
+            worksheet.set_column(5, 5 + len(samples), 4)
     else:
         workbook = None
         worksheet = None
