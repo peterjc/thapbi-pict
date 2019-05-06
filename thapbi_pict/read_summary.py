@@ -17,6 +17,74 @@ from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
+def color_bands(meta, meta_names, sample_color_bands, debug=False):
+    """Return a list for formats, one for each sample."""
+    min_groups = 5
+    max_groups = 0.8 * len(meta)
+    if min_groups > max_groups:
+        if debug:
+            sys.stderr.write("DEBUG: Not enough colums to bother with coloring\n")
+    else:
+        for first_word in (False, True):
+            for i, name in enumerate(meta_names):
+                values = [_[i] for _ in meta]
+                # if debug:
+                #    sys.stderr.write("DEBUG: %s %r\n" % (name, values))
+                if len(set(values)) == 1:
+                    # All the same not helpful for banding
+                    continue
+                if first_word:
+                    # Try massaging the data, take first 'word' only
+                    values = [
+                        _.replace("_", " ").replace("-", " ").split(None, 1)[0]
+                        if _
+                        else ""
+                        for _ in values
+                    ]
+                if len(set(values)) < min_groups or max_groups < len(set(values)):
+                    # (Almost) all same or (almost) unique not helpful
+                    continue
+                bands = []
+                for s, value in enumerate(values):
+                    if s == 0:
+                        bands.append(0)
+                    elif value == values[s - 1]:
+                        # Same
+                        bands.append(bands[-1])
+                    else:
+                        # Different
+                        if value in values[:s]:
+                            # Metadata values are not grouped, can't use for banding
+                            # (might be able to use with a color key?)
+                            bands = None
+                            if debug:
+                                sys.stderr.write(
+                                    "DEBUG: Could not use %s for coloring, "
+                                    "not grouped nicely\n" % name
+                                )
+                            break
+                        bands.append(max(bands) + 1)
+                if bands:
+                    assert len(set(bands)) == max(bands) + 1
+                    if debug:
+                        sys.stderr.write(
+                            "DEBUG: Using %s%s for coloring columns (%i groups)\n"
+                            % (
+                                name,
+                                " (first word)" if first_word else "",
+                                len(set(bands)),
+                            )
+                        )
+                    return [
+                        sample_color_bands[_ % len(sample_color_bands)] for _ in bands
+                    ]
+    if debug:
+        sys.stderr.write(
+            "DEBUG: No metadata deemed suitable to use for coloring sample columns\n"
+        )
+    return [None] * len(meta)
+
+
 def main(
     inputs,
     output,
@@ -138,6 +206,18 @@ def main(
         red_conditional_format = workbook.add_format(
             {"bg_color": "#FFC7CE", "font_color": "#000000"}
         )
+        sample_color_bands = [
+            # Simple rolling rainbow pastel pallet
+            workbook.add_format({"bg_color": c.upper(), "font_color": "#000000"})
+            for c in [
+                "#ffb3ba",  # pink
+                "#ffdfba",  # orange
+                "#ffffba",  # yellow
+                "#baffc9",  # geen
+                "#bae1ff",  # blue
+            ]
+        ]
+
         # If there are lots of samples, set narrow column widths
         if len(samples) > 50:
             # Set column width to 2
@@ -151,6 +231,7 @@ def main(
 
     current_row = 0
     first_data_row = 0
+    sample_formats = [None] * len(samples)
     if metadata:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
@@ -158,11 +239,17 @@ def main(
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
         if worksheet:
+            sample_formats = color_bands(
+                meta, meta_names, sample_color_bands, debug=debug
+            )
             for i, name in enumerate(meta_names):
                 worksheet.write_string(i, 4, name, cell_rightalign_format)
                 for s, sample in enumerate(samples):
                     worksheet.write_string(
-                        i, 5 + s, metadata.get(sample, meta_default)[i]
+                        i,
+                        5 + s,
+                        metadata.get(sample, meta_default)[i],
+                        sample_formats[s],
                     )
             current_row += len(meta_names)
     handle.write(
@@ -196,7 +283,7 @@ def main(
         worksheet.write_string(current_row, 3, "Sample-count")
         worksheet.write_string(current_row, 4, "Total-abundance")
         for s, sample in enumerate(samples):
-            worksheet.write_string(current_row, 5 + s, sample)
+            worksheet.write_string(current_row, 5 + s, sample, sample_formats[s])
         current_row += 1
         first_data_row = current_row
         worksheet.write_string(current_row, 0, "TOTAL")
@@ -218,6 +305,7 @@ def main(
                 current_row,
                 5 + s,
                 sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
+                sample_formats[s],
             )
         current_row += 1
         worksheet.freeze_panes(current_row, 5)  # keep total line in view plus headers
@@ -244,7 +332,10 @@ def main(
             worksheet.write_number(current_row, 4, total_abundance)
             for s, sample in enumerate(samples):
                 worksheet.write_number(
-                    current_row, 5 + s, abundance_by_samples.get((md5, sample), 0)
+                    current_row,
+                    5 + s,
+                    abundance_by_samples.get((md5, sample), 0),
+                    sample_formats[s],
                 )
             current_row += 1
             worksheet.conditional_format(
