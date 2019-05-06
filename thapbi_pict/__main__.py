@@ -1026,29 +1026,8 @@ def main(args=None):
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     parser_sample_summary.add_argument("-t", "--metadata", **ARG_METADATA)
-    parser_sample_summary.add_argument(
-        "-c",
-        "--metacols",
-        type=str,
-        default="",
-        metavar="COLUMNS",
-        help="Comma separated list (e.g, '1,3,5') of columns from the metadata "
-        "table specified with the -m / --metadata argument to be included in the "
-        "report header, and use to sort the samples. Use in conjunction with "
-        "-m / --metadata argument.",
-    )
-    parser_sample_summary.add_argument(
-        "-x",
-        "--metaindex",
-        type=int,
-        default="0",
-        metavar="COL",
-        help="If using metadata, which column contains the sequenced sample "
-        "names. Default is the first column requested as metadata output "
-        "with the -c / --metacols argument. This column can contain multiple "
-        "semi-colon separated names catering to the fact that a field sample "
-        "could be sequenced multiple times with technical replicates.",
-    )
+    parser_sample_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
+    parser_sample_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     parser_sample_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
