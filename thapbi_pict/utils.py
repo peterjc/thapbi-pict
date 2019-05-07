@@ -457,6 +457,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
 def load_metadata(
     metadata_file,
     metadata_cols,
+    metadata_groups=0,
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
@@ -469,6 +470,10 @@ def load_metadata(
     The columns argument should be a string like "1,3,5" - a comma
     separated list of columns to output. The column numbers are assumed
     to be one-based as provided by the command line user.
+
+    The groups argument should be a column number used to break the
+    samples into groups for applying background colouring in Excel
+    reports. It must be one of the columns requested in the output.
 
     The name row indicates which row in the table contains the names
     or descriptions of the metadata columns (one-based).
@@ -484,6 +489,7 @@ def load_metadata(
 
     Returns:
      - list of field sample metadata values (each a list of N values)
+     - matching list of associated sample groups (all None if unspecified)
      - matching list of associated sequenced sample(s),
      - list of the N field names,
      - matching default value (list of N empty strings).
@@ -516,7 +522,7 @@ def load_metadata(
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], [], sequenced_samples
+        return [], [], [], [], [], sequenced_samples
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
@@ -540,6 +546,22 @@ def load_metadata(
         sys.stderr.write(
             "DEBUG: Matching sample names to metadata column %i\n" % (sample_col + 1)
         )
+    if metadata_groups:
+        try:
+            group_col = int(metadata_groups) - 1
+        except ValueError:
+            sys.exit(
+                "ERROR: Invalid metadata group column, should be positive, not %r."
+                % metadata_groups
+            )
+        if group_col not in value_cols:
+            # bad idea as it will likely make the colours impossible to interpret
+            sys.exit(
+                "ERROR: Metadata group column not included in reported metadata.\n"
+            )
+    else:
+        group_col = None
+
     names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)
@@ -587,6 +609,27 @@ def load_metadata(
     index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
     del meta_plus_idx
 
+    if group_col:
+        # Pull out the group column from the meta-columns
+        offset = value_cols.index(group_col)
+        groups = [_[offset] for _ in meta]
+        del offset
+
+        # Might need to post process group names
+        if len(set(groups)) == len(groups):
+            if debug:
+                sys.stderr.write("DEBUG: Trying first word only for group names\n")
+            # Taking the first word/field will work on schemes like
+            # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
+            groups = [
+                _.replace("-", " ").replace("_", " ").split(None, 1)[0] for _ in groups
+            ]
+        if len(set(groups)) == len(groups):
+            groups = [None] * len(meta)
+            sys.stderr.write("WARNING: All samples had different group values.\n")
+    else:
+        groups = [None] * len(meta)
+
     back = {}
     for i, samples in enumerate(index):
         for sample in samples:
@@ -624,4 +667,4 @@ def load_metadata(
         )
     del back
 
-    return meta, index, names, default, missing_meta
+    return meta, groups, index, names, default, missing_meta

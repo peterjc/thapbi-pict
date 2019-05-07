@@ -69,9 +69,11 @@ def main(
     if debug:
         sys.stderr.write("Loaded predictions for %i samples\n" % len(samples))
 
+    metadata_groups = None  # currently not requested at command line
     samples = sample_sort(samples)
     (
         metadata_rows,
+        meta_groups,
         metadata_samples,
         meta_names,
         meta_default,
@@ -79,12 +81,14 @@ def main(
     ) = load_metadata(
         metadata_file,
         metadata_cols,
+        metadata_groups,
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
         metadata_sort=True,
         debug=debug,
     )
+    del meta_groups, metadata_groups
 
     if output == "-":
         if debug:
