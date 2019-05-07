@@ -465,14 +465,18 @@ def load_metadata(
 ):
     """Load specified metadata as several lists.
 
-    The columns argument should be a string like "2:1,3,5" listing the
-    sample name index column, colon, comma separated list of columns to
-    output. The column numbers are assumed to be one based.
+    The columns argument should be a string like "1,3,5" - a comma
+    separated list of columns to output. The column numbers are assumed
+    to be one-based as provided by the command line user.
+
+    The name row indicates which row in the table contains the names
+    or descriptions of the metadata columns (one-based).
 
     The index column is assumed to contain one or more sequenced sample
-    names which are semi-colon separated (reflecting that a single field
-    sample could be sequenced more than once). These sample names are
-    matched against the file name stems, see function find_metadata.
+    names separated by the character specified (default is semi-colon).
+    This one-to-many mapping reflecting that a single field sample could
+    be sequenced more than once (e.g. technical replicates). These sample
+    names are matched against the file name stems, see function find_metadata.
 
     Returns:
      - list of field sample metadata values (each a list of N values)
