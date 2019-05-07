@@ -461,6 +461,7 @@ def load_metadata(
     metadata_index=0,
     metadata_index_sep=";",
     sequenced_samples=None,
+    metadata_sort=True,
     debug=False,
 ):
     """Load specified metadata as several lists.
@@ -477,6 +478,9 @@ def load_metadata(
     This one-to-many mapping reflecting that a single field sample could
     be sequenced more than once (e.g. technical replicates). These sample
     names are matched against the file name stems, see function find_metadata.
+
+    if metadata_sort=True, then the table rows are sorted based on the
+    requested metadata - otherwise the table row order is preserved.
 
     Returns:
      - list of field sample metadata values (each a list of N values)
@@ -573,6 +577,10 @@ def load_metadata(
     # Remove blanks
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
     del lines
+
+    # Sort on metadata if requested
+    if metadata_sort:
+        meta_plus_idx.sort()
 
     # Select desired columns,
     meta = [_[:-1] for _ in meta_plus_idx]

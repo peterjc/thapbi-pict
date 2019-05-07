@@ -142,14 +142,14 @@ def main(
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
+        metadata_sort=True,
         debug=debug,
     )
-    # Turn row-centric metadata into a dictionary keyed on sequenced sample name,
-    # and use for sorting order
+    # Turn row-centric metadata into a dictionary keyed on sequenced sample name
     metadata = {}
     new = []
-    # Note we sort rows on the metadata values, discarding the order in the table
-    for row, r_samples in sorted(zip(metadata_rows, metadata_samples)):
+    # Already sorted rows of the metadata values, discarded the order in the table
+    for row, r_samples in zip(metadata_rows, metadata_samples):
         for sample in r_samples:
             if sample in samples:
                 # print(sample, row)
