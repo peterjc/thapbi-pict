@@ -221,6 +221,7 @@ def read_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
@@ -243,6 +244,7 @@ def sample_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        # metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
@@ -321,6 +323,7 @@ def pipeline(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        # metadata_groups=args.metagroups
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
@@ -337,6 +340,7 @@ def pipeline(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
+        metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         debug=args.verbose,
@@ -493,6 +497,19 @@ ARG_METAINDEX = dict(  # noqa: C408
     "could be sequenced multiple times with technical replicates.",
 )
 
+# "-g", "--metagroups",
+ARG_METAGROUPS = dict(  # noqa: C408
+    type=int,
+    default="0",
+    metavar="COL",
+    help="If using metadata, which column values should be used for applying "
+    "background color bands.  All samples with the same metadata value must "
+    "be grouped together after sorting, as the colors are reused. "
+    "Default is the first column requested as metadata output (which would "
+    "also be the primary sorting key, and thus ensures all members of the "
+    "same group will be together).",
+)
+
 # "-f", "--metafields",
 ARG_METAFIELDS = dict(  # noqa: C408
     type=int,
@@ -582,6 +599,7 @@ def main(args=None):
     parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
     parser_pipeline.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    parser_pipeline.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     parser_pipeline.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     # Can't use -t for --temp as already using for --metadata:
     parser_pipeline.add_argument("--temp", **ARG_TEMPDIR)
@@ -976,6 +994,7 @@ def main(args=None):
     parser_read_summary.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_read_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
     parser_read_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    parser_read_summary.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     parser_read_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     parser_read_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_read_summary.set_defaults(func=read_summary)

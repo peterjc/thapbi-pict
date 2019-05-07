@@ -17,72 +17,54 @@ from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
-def color_bands(meta, meta_names, sample_color_bands, debug=False):
+def color_bands(meta_groups, sample_color_bands, debug=False):
     """Return a list for formats, one for each sample."""
+    default = [None] * len(meta_groups)
+
     min_groups = 5
-    max_groups = 0.8 * len(meta)
+    max_groups = 0.8 * len(meta_groups)
     if min_groups > max_groups:
         if debug:
-            sys.stderr.write("DEBUG: Not enough colums to bother with coloring\n")
-    else:
-        for first_word in (False, True):
-            for i, name in enumerate(meta_names):
-                values = [_[i] for _ in meta]
+            sys.stderr.write("DEBUG: Not enough columns to bother with coloring\n")
+        return default
+
+    if len(set(meta_groups)) == 1:
+        # All the same not helpful for banding
+        return default
+
+    if len(set(meta_groups)) < min_groups or max_groups < len(set(meta_groups)):
+        # (Almost) all same or (almost) unique not helpful
+        if debug:
+            sys.stderr.write(
+                "DEBUG: %i groups not suitable for coloring\n" % len(set(meta_groups))
+            )
+        return default
+
+    bands = []
+    debug_msg = []
+    for s, value in enumerate(meta_groups):
+        if s == 0:
+            bands.append(0)
+            debug_msg.append(value)
+        elif value == meta_groups[s - 1]:
+            # Same
+            bands.append(bands[-1])
+        else:
+            # Different
+            if value in meta_groups[:s]:
+                # Metadata values are not grouped, can't use for banding
+                # (might be able to use with a color key?)
+                sys.stderr.write(
+                    "WARNING: Metadata not grouped nicely for coloring: "
+                    "%s and then %s (again).\n" % (", ".join(debug_msg), value)
+                )
                 # if debug:
-                #    sys.stderr.write("DEBUG: %s %r\n" % (name, values))
-                if len(set(values)) == 1:
-                    # All the same not helpful for banding
-                    continue
-                if first_word:
-                    # Try massaging the data, take first 'word' only
-                    values = [
-                        _.replace("_", " ").replace("-", " ").split(None, 1)[0]
-                        if _
-                        else ""
-                        for _ in values
-                    ]
-                if len(set(values)) < min_groups or max_groups < len(set(values)):
-                    # (Almost) all same or (almost) unique not helpful
-                    continue
-                bands = []
-                for s, value in enumerate(values):
-                    if s == 0:
-                        bands.append(0)
-                    elif value == values[s - 1]:
-                        # Same
-                        bands.append(bands[-1])
-                    else:
-                        # Different
-                        if value in values[:s]:
-                            # Metadata values are not grouped, can't use for banding
-                            # (might be able to use with a color key?)
-                            bands = None
-                            if debug:
-                                sys.stderr.write(
-                                    "DEBUG: Could not use %s for coloring, "
-                                    "not grouped nicely\n" % name
-                                )
-                            break
-                        bands.append(max(bands) + 1)
-                if bands:
-                    assert len(set(bands)) == max(bands) + 1
-                    if debug:
-                        sys.stderr.write(
-                            "DEBUG: Using %s%s for coloring columns (%i groups)\n"
-                            % (
-                                name,
-                                " (first word)" if first_word else "",
-                                len(set(bands)),
-                            )
-                        )
-                    return [
-                        sample_color_bands[_ % len(sample_color_bands)] for _ in bands
-                    ]
-    if debug:
-        sys.stderr.write(
-            "DEBUG: No metadata deemed suitable to use for coloring sample columns\n"
-        )
-    return [None] * len(meta)
+                #     sys.stderr.write("DEBUG: %r\n" % meta_groups)
+                return default
+            bands.append(max(bands) + 1)
+            debug_msg.append(value)
+    assert len(set(bands)) == max(bands) + 1
+    return [sample_color_bands[_ % len(sample_color_bands)] for _ in bands]
 
 
 def main(
@@ -93,6 +75,7 @@ def main(
     excel=None,
     metadata_file=None,
     metadata_cols=None,
+    metadata_groups=None,
     metadata_fieldnames=None,
     metadata_index=None,
     debug=False,
@@ -132,6 +115,7 @@ def main(
     samples = sample_sort(samples)
     (
         metadata_rows,
+        meta_groups,
         metadata_samples,
         meta_names,
         meta_default,
@@ -139,6 +123,7 @@ def main(
     ) = load_metadata(
         metadata_file,
         metadata_cols,
+        metadata_groups,
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
@@ -148,22 +133,26 @@ def main(
     # Turn row-centric metadata into a dictionary keyed on sequenced sample name
     metadata = {}
     new = []
+    sample_groups = []
     # Already sorted rows of the metadata values, discarded the order in the table
-    for row, r_samples in zip(metadata_rows, metadata_samples):
+    for row, r_samples, g in zip(metadata_rows, metadata_samples, meta_groups):
         for sample in r_samples:
             if sample in samples:
                 # print(sample, row)
                 metadata[sample] = row
                 assert sample not in new, sample
                 new.append(sample)
+                sample_groups.append(g)
     for sample in missing_meta:
         # print("Missing metadata for %s" % sample)
         assert sample not in new, sample
         new.append(sample)
+        sample_groups.append(None)
     assert set(samples) == set(new)
     assert len(samples) == len(new)
+    assert len(samples) == len(sample_groups)
     samples = new
-    del metadata_rows, metadata_samples, new
+    del metadata_rows, metadata_samples, meta_groups, new
 
     methods = method.split(",")
     for method in methods:
@@ -239,9 +228,7 @@ def main(
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
         if worksheet:
-            sample_formats = color_bands(
-                meta, meta_names, sample_color_bands, debug=debug
-            )
+            sample_formats = color_bands(sample_groups, sample_color_bands, debug=debug)
             for i, name in enumerate(meta_names):
                 worksheet.write_string(i, 4, name, cell_rightalign_format)
                 for s, sample in enumerate(samples):
