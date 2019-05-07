@@ -82,6 +82,7 @@ def main(
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
+        metadata_sort=True,
         debug=debug,
     )
 
@@ -113,8 +114,8 @@ def main(
             "marker.\n\n"
         )
 
-    # Note we sort rows on the metadata values, discarding the order in the table
-    batches = sorted(zip(metadata_rows, metadata_samples))
+    # Note already sorted on metadata values, discarded the order in the table
+    batches = list(zip(metadata_rows, metadata_samples))
     if missing_meta:
         batches.append([meta_default, missing_meta])
     for metadata, sample_batch in batches:
