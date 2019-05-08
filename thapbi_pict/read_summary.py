@@ -325,18 +325,19 @@ def main(
                     sample_formats[s],
                 )
             current_row += 1
-            worksheet.conditional_format(
-                first_data_row,
-                5,
-                current_row,
-                5 + len(samples),
-                {
-                    "type": "cell",
-                    "criteria": "greater than",
-                    "value": 0,
-                    "format": red_conditional_format,
-                },
-            )
+    if worksheet:
+        worksheet.conditional_format(
+            first_data_row,
+            5,
+            current_row,
+            5 + len(samples),
+            {
+                "type": "cell",
+                "criteria": "greater than",
+                "value": 0,
+                "format": red_conditional_format,
+            },
+        )
 
     if output != "-":
         handle.close()
