@@ -296,35 +296,45 @@ def main(
             )
         current_row += 1
         worksheet.freeze_panes(current_row, 5)  # keep total line in view plus headers
-    for total_abundance, md5 in reversed(
-        sorted((v, k) for (k, v) in md5_abundance.items())
-    ):
-        md5_in_xxx_samples = sum(1 for _ in samples if (md5, _) in abundance_by_samples)
+
+    # Build the first few columns as a list of lists, which we can sort
+    data = [
+        [
+            md5,
+            ";".join(sorted(md5_species[md5])),
+            md5_to_seq[md5],
+            sum(1 for _ in samples if (md5, _) in abundance_by_samples),
+            total_abundance,
+        ]
+        for md5, total_abundance in md5_abundance.items()
+    ]
+    # Sort on species prediction (with blank last, sorting as tilde);
+    # number of samples (decreasing), total abundance (decreasing), md5
+    data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
+    for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
+        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in samples]
         handle.write(
             "%s\t%s\t%s\t%i\t%i\t%s\n"
             % (
                 md5,
-                ";".join(sorted(md5_species[md5])),
-                md5_to_seq[md5],
+                sp,
+                seq,
                 md5_in_xxx_samples,
                 total_abundance,
-                "\t".join(str(abundance_by_samples.get((md5, _), 0)) for _ in samples),
+                "\t".join(str(_) for _ in sample_counts),
             )
         )
         if worksheet:
             worksheet.write_string(current_row, 0, md5)
-            worksheet.write_string(current_row, 1, ";".join(sorted(md5_species[md5])))
-            worksheet.write_string(current_row, 2, md5_to_seq[md5])
+            worksheet.write_string(current_row, 1, sp)
+            worksheet.write_string(current_row, 2, seq)
             worksheet.write_number(current_row, 3, md5_in_xxx_samples)
             worksheet.write_number(current_row, 4, total_abundance)
-            for s, sample in enumerate(samples):
-                worksheet.write_number(
-                    current_row,
-                    5 + s,
-                    abundance_by_samples.get((md5, sample), 0),
-                    sample_formats[s],
-                )
+            for s, count in enumerate(sample_counts):
+                worksheet.write_number(current_row, 5 + s, count, sample_formats[s])
             current_row += 1
+    del data
+
     if worksheet:
         worksheet.conditional_format(
             first_data_row,
