@@ -197,13 +197,13 @@ def main(
         )
         sample_color_bands = [
             # Simple rolling rainbow pastel pallet
-            workbook.add_format({"bg_color": c.upper(), "font_color": "#000000"})
+            workbook.add_format({"bg_color": c, "font_color": "#000000"})
             for c in [
-                "#ffb3ba",  # pink
-                "#ffdfba",  # orange
-                "#ffffba",  # yellow
-                "#baffc9",  # geen
-                "#bae1ff",  # blue
+                "#FFC4CC",  # pink
+                "#FFF5CC",  # orange
+                "#FFFFCC",  # yellow
+                "#CCFFDD",  # green
+                "#CCF7FF",  # blue
             ]
         ]
 
