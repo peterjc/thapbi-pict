@@ -193,14 +193,15 @@ def main(
         worksheet = workbook.add_worksheet("Sequence vs samples")
         cell_rightalign_format = workbook.add_format({"align": "right"})
         red_conditional_format = workbook.add_format(
-            {"bg_color": "#FFC7CE", "font_color": "#000000"}
+            # Maraschino red
+            {"bg_color": "#FF2600", "font_color": "#000000"}
         )
         sample_color_bands = [
             # Simple rolling rainbow pastel pallet
             workbook.add_format({"bg_color": c, "font_color": "#000000"})
             for c in [
-                "#FFC4CC",  # pink
-                "#FFF5CC",  # orange
+                "#FFCCDA",  # pink
+                "#F7D6B7",  # orange
                 "#FFFFCC",  # yellow
                 "#CCFFDD",  # green
                 "#CCF7FF",  # blue
