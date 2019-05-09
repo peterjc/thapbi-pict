@@ -7,7 +7,7 @@ and [PEP257 docstring](https://www.python.org/dev/peps/pep-0257/) style,
 guided by the [Zen of Python](https://www.python.org/dev/peps/pep-0020/).
 
 Practically, coding style is enforced with the command line tools
-[black](https://github.com/ambv/black) (which can automatically edit
+[black](https://github.com/python/black) (which can automatically edit
 your code) via [flake8](http://flake8.pycqa.org/) (which in addition to
 its own style checking, has a range of plugins - including a plugin to
 call black from flake8).
