@@ -98,7 +98,9 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
     return new
 
 
-def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False):
+def filter_for_ITS1(
+    input_fasta, cache_dir, bitscore_threshold="6", min_length=100, debug=False
+):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
     The arbitrary low bitscore_threshold default is based on ensuring
@@ -114,7 +116,7 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False)
     ):
         title = record.description
         seq = str(record.seq).upper()
-        if not result:
+        if len(record) < min_length or not result:
             yield title, seq, None
             continue
 
@@ -123,10 +125,10 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False)
         assert hit.id == "phytophthora_its1"
 
         if len(hit) == 0:
-            yield title, seq, None
+            its1 = None
         elif len(hit) == 1:
             hsp = hit[0]
-            yield title, seq, seq[hsp.query_start : hsp.query_end]
+            its1 = seq[hsp.query_start : hsp.query_end]
         else:
             # Merge them - does not seem useful to insist non-overlapping
             start = min(_.query_start for _ in hit)
@@ -136,4 +138,7 @@ def filter_for_ITS1(input_fasta, cache_dir, bitscore_threshold="6", debug=False)
                     "WARNING: Taking span %i-%i from %i HMM hits for:\n"
                     ">%s\n%s\n" % (start, end, len(hit), title, seq)
                 )
-            yield title, seq, seq[start:end]
+            its1 = seq[start:end]
+        if its1 and len(its1) < min_length:
+            its1 = None
+        yield title, seq, its1
