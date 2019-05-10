@@ -21,7 +21,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
     """Return a list for formats, one for each sample."""
     default = [None] * len(meta_groups)
 
-    min_groups = 5
+    min_groups = 3
     max_groups = 0.8 * len(meta_groups)
     if min_groups > max_groups:
         if debug:
