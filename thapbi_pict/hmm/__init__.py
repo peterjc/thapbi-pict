@@ -129,29 +129,37 @@ def filter_for_ITS1(
         hit = result[0]
         assert hit.id == "phytophthora_its1"
 
+        # Apply length filter to all the matches
+        if min_length:
+            hit = [_ for _ in hit if min_length <= _.query_end - _.query_start]
+        if max_length:
+            hit = [_ for _ in hit if _.query_end - _.query_start <= max_length]
+
         if len(hit) == 0:
             its1 = None
         elif len(hit) == 1:
             hsp = hit[0]
             its1 = seq[hsp.query_start : hsp.query_end]
         else:
+            # Tandem entries in the genome? TODO: Return both...
             # Merge them - does not seem useful to insist non-overlapping
             start = min(_.query_start for _ in hit)
             end = max(_.query_end for _ in hit)
-            if len(hit) > 2:
-                if max_length and max_length < end - start:
-                    sys.stderr.write(
-                        "WARNING: Span %i-%i of %i HMM hits exceeds max length:\n"
-                        ">%s\n%s\n" % (start, end, len(hit), title, seq)
-                    )
-                else:
-                    sys.stderr.write(
-                        "DEBUG: Taking span %i-%i from %i HMM hits for:\n"
-                        ">%s\n%s\n" % (start, end, len(hit), title, seq)
-                    )
             its1 = seq[start:end]
-        if its1 and len(its1) < min_length:
-            its1 = None
-        if its1 and max_length and max_length < len(its1):
-            its1 = None
+            if max_length and max_length < len(its1):
+                sys.stderr.write(
+                    "ERROR: Span %i-%i of %i HMM hits exceeds max length:\n"
+                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
+                )
+                its1 = None
+            else:
+                sys.stderr.write(
+                    "WARNING: Taking span %i-%i from %i HMM hits for:\n"
+                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
+                )
+        # Sanity test
+        if its1:
+            assert min_length <= len(its1), title
+            if max_length:
+                assert len(its1) <= max_length, title
         yield title, seq, its1
