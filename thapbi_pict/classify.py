@@ -158,16 +158,19 @@ def method_identity(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
+    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        if len(seqs) > 1:
+            sys.exit("ERROR: %i HMM matches from %s\n" % title)
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
         taxid = 0
         genus_species = ""
         note = ""
-        if not seq:
+        if not seqs:
             note = "No ITS1 HMM match"
         else:
+            seq = seqs[0]
             assert seq == seq.upper(), seq
             # Now, does this match any of the ITS1 seq in our DB?
             its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
@@ -224,16 +227,19 @@ def method_onebp(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
+    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        if len(seqs) > 1:
+            sys.exit("ERROR: %i HMM matches from %s\n" % title)
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
         taxid = 0
         genus_species = ""
         note = ""
-        if not seq:
+        if not seqs:
             note = "No ITS1 HMM match"
         else:
+            seq = seqs[0]
             assert seq == seq.upper(), seq
             # Now, does this match any of the ITS1 seq in our DB?
             taxid, genus_species, note = perfect_match_in_db(session, seq)
@@ -473,7 +479,12 @@ def method_swarm_core(
     # used in the DB entries
     its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
     with open(its_fasta, "w") as handle:
-        for title, _, seq in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+            if len(seqs) > 1:
+                sys.exit("ERROR: %i HMM matches from %s\n" % title)
+            if not seqs:
+                continue
+            seq = seqs[0]
             # Note leaving the MD5 based name as is (MD5 of full seq)
             handle.write(">%s\n%s\n" % (title, seq))
 
