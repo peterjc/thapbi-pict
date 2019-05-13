@@ -272,25 +272,33 @@ def import_fasta_file(
     good_entries = 0
     idn_set = set()
 
-    for title, seq, its1_seq in filter_for_ITS1(fasta_file, cache_dir=None):
+    for title, seq, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
         seq_count += 1
         if title.startswith("Control_"):
             if debug:
                 sys.stderr.write("DEBUG: Ignoring control entry: %s\n" % title)
             continue
-        if not its1_seq:
+        if not its1_seqs:
             if debug:
                 sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n" % title)
             continue
-
-        its1_seq_count += 1
-        its1_md5 = md5seq(its1_seq)
 
         # One sequence can have multiple entries
         idn = title.split(None, 1)[0]
         if idn in idn_set:
             sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
+
+        if len(its1_seqs) > 1:
+            sys.stderr.write(
+                "WARNING: %i HMM matches in %s, using first only\n"
+                % (len(its1_seqs), idn)
+            )
+        its1_seq = its1_seqs[0]
+        del its1_seqs
+
+        its1_seq_count += 1
+        its1_md5 = md5seq(its1_seq)
 
         entries = fasta_entry_fn(title)
         accepted_entries = []  # Some or all may fail species validation

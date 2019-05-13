@@ -106,7 +106,9 @@ def filter_for_ITS1(
     max_length=250,
     debug=False,
 ):
-    """Search for the expected single ITS1 sequence within FASTA entries.
+    """Search for the ITS1 sequence(s) within FASTA entries.
+
+    Expect one ITS1 match in the vast majority of cases.
 
     The arbitrary low bitscore_threshold default is based on ensuring
     all the sequences in our legacy FASTA files pass without false
@@ -122,44 +124,19 @@ def filter_for_ITS1(
         title = record.description
         seq = str(record.seq).upper()
         if len(record) < min_length or not result:
-            yield title, seq, None
+            yield title, seq, []
             continue
 
         assert len(result) == 1
         hit = result[0]
         assert hit.id == "phytophthora_its1"
 
+        its1_seqs = [seq[hsp.query_start : hsp.query_end] for hsp in hit]
+
         # Apply length filter to all the matches
         if min_length:
-            hit = [_ for _ in hit if min_length <= _.query_end - _.query_start]
+            its1_seqs = [_ for _ in its1_seqs if min_length <= len(_)]
         if max_length:
-            hit = [_ for _ in hit if _.query_end - _.query_start <= max_length]
+            its1_seqs = [_ for _ in its1_seqs if len(_) <= max_length]
 
-        if len(hit) == 0:
-            its1 = None
-        elif len(hit) == 1:
-            hsp = hit[0]
-            its1 = seq[hsp.query_start : hsp.query_end]
-        else:
-            # Tandem entries in the genome? TODO: Return both...
-            # Merge them - does not seem useful to insist non-overlapping
-            start = min(_.query_start for _ in hit)
-            end = max(_.query_end for _ in hit)
-            its1 = seq[start:end]
-            if max_length and max_length < len(its1):
-                sys.stderr.write(
-                    "ERROR: Span %i-%i of %i HMM hits exceeds max length:\n"
-                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
-                )
-                its1 = None
-            else:
-                sys.stderr.write(
-                    "WARNING: Taking span %i-%i from %i HMM hits for:\n"
-                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
-                )
-        # Sanity test
-        if its1:
-            assert min_length <= len(its1), title
-            if max_length:
-                assert len(its1) <= max_length, title
-        yield title, seq, its1
+        yield title, seq, its1_seqs

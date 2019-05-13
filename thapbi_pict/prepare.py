@@ -242,11 +242,11 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_seq in filter_for_ITS1(
+        for title, full_seq, hmm_seqs in filter_for_ITS1(
             input_fasta, shared_tmp_dir, debug=debug
         ):
-            if not hmm_seq:
-                # Using HMM match as a presense/absense filter
+            if not hmm_seqs:
+                # Using HMM match(es) as a presense/absense filter
                 continue
             out_handle.write(">%s\n%s\n" % (title, full_seq))
             count += 1
@@ -254,23 +254,30 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
                 max_indiv_abundance, abundance_from_read_name(title.split(None, 1)[0])
             )
 
-            left = full_seq.index(hmm_seq)
-            right = len(full_seq) - left - len(hmm_seq)
-            if not (
-                exp_left - margin < left < exp_left + margin
-                and exp_right - margin < right < exp_right + margin
-            ):
-                cropping_warning += 1
-                sys.stderr.write(
-                    "WARNING: %r has HMM cropping %i left, %i right, "
-                    "giving %i, vs %i bp from fixed trimming\n"
-                    % (
-                        title.split(None, 1)[0],
-                        left,
-                        right,
-                        len(hmm_seq),
-                        len(full_seq) - exp_left - exp_right,
+            # Now some debugging...
+            if len(hmm_seqs) == 1:
+                hmm_seq = hmm_seqs[0]
+                left = full_seq.index(hmm_seq)
+                right = len(full_seq) - left - len(hmm_seq)
+                if not (
+                    exp_left - margin < left < exp_left + margin
+                    and exp_right - margin < right < exp_right + margin
+                ):
+                    cropping_warning += 1
+                    sys.stderr.write(
+                        "WARNING: %r has HMM cropping %i left, %i right, "
+                        "giving %i, vs %i bp from fixed trimming\n"
+                        % (
+                            title.split(None, 1)[0],
+                            left,
+                            right,
+                            len(hmm_seq),
+                            len(full_seq) - exp_left - exp_right,
+                        )
                     )
+            else:
+                sys.stderr.write(
+                    "WARNING: %i HMM matches from %s\n" % (len(hmm_seqs), title)
                 )
 
     if cropping_warning:
