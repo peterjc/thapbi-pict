@@ -99,7 +99,12 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
 
 
 def filter_for_ITS1(
-    input_fasta, cache_dir, bitscore_threshold="6", min_length=100, debug=False
+    input_fasta,
+    cache_dir,
+    bitscore_threshold="6",
+    min_length=100,
+    max_length=250,
+    debug=False,
 ):
     """Search for the expected single ITS1 sequence within FASTA entries.
 
@@ -134,11 +139,19 @@ def filter_for_ITS1(
             start = min(_.query_start for _ in hit)
             end = max(_.query_end for _ in hit)
             if len(hit) > 2:
-                sys.stderr.write(
-                    "WARNING: Taking span %i-%i from %i HMM hits for:\n"
-                    ">%s\n%s\n" % (start, end, len(hit), title, seq)
-                )
+                if max_length and max_length < end - start:
+                    sys.stderr.write(
+                        "WARNING: Span %i-%i of %i HMM hits exceeds max length:\n"
+                        ">%s\n%s\n" % (start, end, len(hit), title, seq)
+                    )
+                else:
+                    sys.stderr.write(
+                        "DEBUG: Taking span %i-%i from %i HMM hits for:\n"
+                        ">%s\n%s\n" % (start, end, len(hit), title, seq)
+                    )
             its1 = seq[start:end]
         if its1 and len(its1) < min_length:
+            its1 = None
+        if its1 and max_length and max_length < len(its1):
             its1 = None
         yield title, seq, its1
