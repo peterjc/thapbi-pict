@@ -17,19 +17,25 @@ rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01
 # NCBI import at genus level only, as used in bundled ITS1_DB.sqlite
 thapbi_pict ncbi-import -d $DB -g tests/ncbi-import/multiple_hmm.fasta -n "NCBI examples with multiple HMM matches"
-# File tests/seq-import/multiple_hmm.fasta had 5 sequences, 5 of which have ITS1, of which 4 accepted.
+# WARNING: 2 HMM matches in MF370571.1
+# WARNING: 2 HMM matches in MH169111.1
+# WARNING: Discarding exactly duplicated ITS1 matches in DQ641247.1
+# WARNING: 2 HMM matches in KP691407.1
+# File tests/seq-import/multiple_hmm.fasta had 5 sequences. Found 7 ITS1, of which 7 accepted.
 # Of 5 potential entries, 0 unparsable, 1 failed sp. validation, 4 OK.
-# (rejects the 'Uncultured Peronosporaceae' entry, not in this NCBI taxonomy)
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "4" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "4" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "7" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "7" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wrong taxonomy count"; false; fi
 # Debugging output,
-#sqlite3 $DB "SELECT md5, LENGTH(sequence) FROM its1_sequence;"
-#63fa728c0fe76536f13eb593df99bd46|179
-#4c9e98f437ca0f55d0d8ba3b2928239c|199
-#7f27d3a8f7150e0ee7ad64073e6da6b5|170
-#f8b93625eda4d39b5c76c03a3fc54732|137
+# $ sqlite3 $DB "SELECT md5, LENGTH(its1_sequence.sequence), source_accession FROM its1_sequence, its1_source WHERE its1_sequence.id=its1_source.its1_id;"
+# 63fa728c0fe76536f13eb593df99bd46|179|MF370571.1
+# a42d385f25a9f1b10d0642ad8a72a584|116|MF370571.1
+# 4c9e98f437ca0f55d0d8ba3b2928239c|199|MH169111.1
+# 158774f117b3e6058b22ba9ef877f346|199|MH169111.1
+# 7f27d3a8f7150e0ee7ad64073e6da6b5|170|DQ641247.1
+# f8b93625eda4d39b5c76c03a3fc54732|137|KP691407.1
+# eccb71a3c11dd82e71931e081dfc5bef|101|KP691407.1
 if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "199" ]; then echo "Wrong max ITS1 sequence length"; false; fi
 
 
