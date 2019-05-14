@@ -289,17 +289,6 @@ def import_fasta_file(
             sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
 
-        if len(its1_seqs) > 1:
-            sys.stderr.write(
-                "WARNING: %i HMM matches in %s, using first only\n"
-                % (len(its1_seqs), idn)
-            )
-        its1_seq = its1_seqs[0]
-        del its1_seqs
-
-        its1_seq_count += 1
-        its1_md5 = md5seq(its1_seq)
-
         entries = fasta_entry_fn(title)
         accepted_entries = []  # Some or all may fail species validation
         for entry in entries:
@@ -348,6 +337,21 @@ def import_fasta_file(
             else:
                 accepted_entries.append((entry, clade, genus, species, taxid, taxonomy))
 
+        if not accepted_entries:
+            continue
+
+        if len(its1_seqs) > 1:
+            sys.stderr.write(
+                "WARNING: %i HMM matches in %s, using first only\n"
+                % (len(its1_seqs), idn)
+            )
+        its1_seq = its1_seqs[0]
+        del its1_seqs
+
+        its1_seq_count += 1
+        its1_md5 = md5seq(its1_seq)
+
+        # TODO: Remove if statment here, will continue (above) if no accepted_entries
         if accepted_entries:
             # Is sequence already there? e.g. duplicate sequences in FASTA file
             its1 = (
