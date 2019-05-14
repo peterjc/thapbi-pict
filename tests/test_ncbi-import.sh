@@ -16,7 +16,7 @@ export DB=$TMP/multiple_hmm.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01
 # NCBI import at genus level only, as used in bundled ITS1_DB.sqlite
-thapbi_pict ncbi-import -d $DB -g tests/seq-import/multiple_hmm.fasta -n "NCBI examples with multiple HMM matches"
+thapbi_pict ncbi-import -d $DB -g tests/ncbi-import/multiple_hmm.fasta -n "NCBI examples with multiple HMM matches"
 # File tests/seq-import/multiple_hmm.fasta had 5 sequences, 5 of which have ITS1, of which 4 accepted.
 # Of 5 potential entries, 0 unparsable, 1 failed sp. validation, 4 OK.
 # (rejects the 'Uncultured Peronosporaceae' entry, not in this NCBI taxonomy)
