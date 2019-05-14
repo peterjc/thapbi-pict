@@ -20,12 +20,11 @@ thapbi_pict ncbi-import -d $DB -g tests/ncbi-import/multiple_hmm.fasta -n "NCBI 
 # WARNING: 2 HMM matches in MF370571.1
 # WARNING: 2 HMM matches in MH169111.1
 # WARNING: Discarding exactly duplicated ITS1 matches in DQ641247.1
-# WARNING: 2 HMM matches in KP691407.1
-# File tests/seq-import/multiple_hmm.fasta had 5 sequences. Found 7 ITS1, of which 7 accepted.
-# Of 5 potential entries, 0 unparsable, 1 failed sp. validation, 4 OK.
+# File tests/ncbi-import/multiple_hmm.fasta had 5 sequences. Found 5 ITS1, of which 5 accepted.
+# Of 5 potential entries, 0 unparsable, 2 failed sp. validation, 3 OK.
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "7" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "7" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "5" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "5" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wrong taxonomy count"; false; fi
 # Debugging output,
 # $ sqlite3 $DB "SELECT md5, LENGTH(its1_sequence.sequence), source_accession FROM its1_sequence, its1_source WHERE its1_sequence.id=its1_source.its1_id;"
@@ -34,8 +33,6 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wro
 # 4c9e98f437ca0f55d0d8ba3b2928239c|199|MH169111.1
 # 158774f117b3e6058b22ba9ef877f346|199|MH169111.1
 # 7f27d3a8f7150e0ee7ad64073e6da6b5|170|DQ641247.1
-# f8b93625eda4d39b5c76c03a3fc54732|137|KP691407.1
-# eccb71a3c11dd82e71931e081dfc5bef|101|KP691407.1
 if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "199" ]; then echo "Wrong max ITS1 sequence length"; false; fi
 
 
