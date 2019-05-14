@@ -117,13 +117,19 @@ This should automatically find the installed copy of the Python code. Use
 For a release, start from a clean git checkout (to reduce the chance of
 bundling any stray local files despite a cautious ``MANIFEST.in``).
 
+If the DB has changed,
+
 ```bash
 rm -rf thapbi_pict/ITS1_DB.sqlite
 sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
 chmod a-w thapbi_pict/ITS1_DB.sqlite
-python setup.py sdist --formats=gztar
-python setup.py bdist_wheel
-twine upload dist/thapbi_pict-X.Y.Z.tar.gz dist/thapbi_pict-X.Y.Z-py3-none-any.whl
+```
+
+If not, skip directly to:
+
+```
+python setup.py sdist --formats=gztar && python setup.py bdist_wheel
+twine upload dist/thapbi_pict-X.Y.Z*
 git tag vX.Y.Z
 git push origin master --tags
 ```
