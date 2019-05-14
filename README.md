@@ -80,6 +80,7 @@ This should automatically find the installed copy of the Python code. Use
 
 | Version | Date       | Notes                                                                        |
 |---------|------------|------------------------------------------------------------------------------|
+| v0.2.0  | 2019-05-14 | Limit ITS1 length, 100 to 250bp. Exclude uncultured NCBI entries from DB.    |
 | v0.1.12 | 2019-05-09 | Sort ``read-summary`` output by species. Set coloring group at command line. |
 | v0.1.11 | 2019-05-06 | Excel output from ``read-summary`` with formatting applied.                  |
 | v0.1.10 | 2019-05-03 | Tweaking command line API, renamed ``plate-summary`` to ``read-summary``.    |
