@@ -139,4 +139,15 @@ def filter_for_ITS1(
         if max_length:
             its1_seqs = [_ for _ in its1_seqs if len(_) <= max_length]
 
+        if len(set(its1_seqs)) < len(its1_seqs):
+            # e.g. DQ641247.1 Phytophthora ramorum isolate 2195
+            sys.stderr.write(
+                "WARNING: Discarding exactly duplicated ITS1 matches in %s\n"
+                % title.split(None, 1)[0]
+            )
+            new = []
+            for _ in its1_seqs:
+                if _ not in new:
+                    new.append(_)
+            its1_seqs = new
         yield title, seq, its1_seqs
