@@ -271,6 +271,7 @@ def import_fasta_file(
     bad_sp_entries = 0
     good_entries = 0
     idn_set = set()
+    multiple_its1 = False
 
     for title, seq, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
         seq_count += 1
@@ -341,18 +342,13 @@ def import_fasta_file(
             continue
 
         if len(its1_seqs) > 1:
-            sys.stderr.write(
-                "WARNING: %i HMM matches in %s, using first only\n"
-                % (len(its1_seqs), idn)
-            )
-        its1_seq = its1_seqs[0]
-        del its1_seqs
+            sys.stderr.write("WARNING: %i HMM matches in %s\n" % (len(its1_seqs), idn))
+            multiple_its1 = True
 
-        its1_seq_count += 1
-        its1_md5 = md5seq(its1_seq)
+        for its1_seq in its1_seqs:
+            its1_seq_count += 1
+            its1_md5 = md5seq(its1_seq)
 
-        # TODO: Remove if statment here, will continue (above) if no accepted_entries
-        if accepted_entries:
             # Is sequence already there? e.g. duplicate sequences in FASTA file
             its1 = (
                 session.query(ITS1)
@@ -364,55 +360,63 @@ def import_fasta_file(
                 session.add(its1)
             good_seq_count += 1
 
-        for entry, clade, genus, species, taxid, taxonomy in accepted_entries:
-            if taxonomy is None:
-                assert not validate_species
-                # A previous entry in this match could have had same sp,
-                assert not taxid
-                if genus_only:
-                    taxonomy = lookup_genus_taxonomy(session, genus)
-                    if taxonomy is None:
-                        clade = ""
-                        species = ""
-                        taxid = None
-                        taxonomy = Taxonomy(
-                            clade=clade, genus=genus, species=species, ncbi_taxid=taxid
+            for entry, clade, genus, species, taxid, taxonomy in accepted_entries:
+                if taxonomy is None:
+                    assert not validate_species
+                    # A previous entry in this match could have had same sp,
+                    assert not taxid
+                    if genus_only:
+                        taxonomy = lookup_genus_taxonomy(session, genus)
+                        if taxonomy is None:
+                            clade = ""
+                            species = ""
+                            taxid = None
+                            taxonomy = Taxonomy(
+                                clade=clade,
+                                genus=genus,
+                                species=species,
+                                ncbi_taxid=taxid,
+                            )
+                            session.add(taxonomy)
+                    else:
+                        taxonomy = lookup_species_taxonomy(
+                            session, clade, genus, species
                         )
-                        session.add(taxonomy)
-                else:
-                    taxonomy = lookup_species_taxonomy(session, clade, genus, species)
-                    if taxonomy is None:
-                        taxonomy = Taxonomy(
-                            clade=clade, genus=genus, species=species, ncbi_taxid=taxid
-                        )
-                        session.add(taxonomy)
+                        if taxonomy is None:
+                            taxonomy = Taxonomy(
+                                clade=clade,
+                                genus=genus,
+                                species=species,
+                                ncbi_taxid=taxid,
+                            )
+                            session.add(taxonomy)
 
-            assert taxonomy is not None
-            # Note we use the original FASTA identifier for traceablity
-            # but means the multi-entries get the same source accession
-            record_entry = SequenceSource(
-                source_accession=entry.split(None, 1)[0],
-                source=db_source,
-                its1=its1,
-                sequence=seq,
-                original_taxonomy=taxonomy,
-                current_taxonomy=taxonomy,
-                seq_strategy=0,
-                seq_platform=0,
-                curated_trust=0,
-            )
-            session.add(record_entry)
-            good_entries += 1
-            # print(clade, species, acc)
+                assert taxonomy is not None
+                # Note we use the original FASTA identifier for traceablity
+                # but means the multi-entries get the same source accession
+                record_entry = SequenceSource(
+                    source_accession=entry.split(None, 1)[0],
+                    source=db_source,
+                    its1=its1,
+                    sequence=seq,
+                    original_taxonomy=taxonomy,
+                    current_taxonomy=taxonomy,
+                    seq_strategy=0,
+                    seq_platform=0,
+                    curated_trust=0,
+                )
+                session.add(record_entry)
+                # print(clade, species, acc)
+        good_entries += len(accepted_entries)  # single counting, misleading?
 
     session.commit()
     sys.stderr.write(
-        "File %s had %i sequences, %i of which have ITS1, of which %i accepted.\n"
+        "File %s had %i sequences. Found %i ITS1, of which %i accepted.\n"
         % (fasta_file, seq_count, its1_seq_count, good_seq_count)
     )
-    assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
+    assert multiple_its1 or its1_seq_count <= seq_count, (its1_seq_count, seq_count)
     assert bad_entries <= entry_count, (bad_entries, entry_count)
-    assert good_entries <= entry_count, (good_entries, entry_count)
+    assert multiple_its1 or good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
             "Of %i potential entries, %i unparsable, %i failed sp. validation, %i OK.\n"
