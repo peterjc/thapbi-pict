@@ -30,7 +30,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wro
 # 78420c5d66defd9bbdb543af20cdd408|1090
 # 320e59185ea4262f436c9b9275c933be|1029
 # 443d181bf76e82d2fae66aa272b9b6a7|312
-if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -n 1090 ]; then echo "Wrong max ITS1 sequence length"; false; fi
+if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "1090" ]; then echo "Wrong max ITS1 sequence length"; false; fi
 
 
 export DB=$TMP/20th_Century_ITS1.sqlite
