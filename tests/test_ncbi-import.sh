@@ -25,12 +25,12 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "4" ]; then echo "Wr
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "4" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wrong taxonomy count"; false; fi
 # Debugging output,
-# sqlite3 /tmp/pc40583/multiple_hmm.sqlite "SELECT md5, LENGTH(sequence) FROM its1_sequence;"
-# db1ad9d874376ae71b01fae01f07bd2e|639
-# 78420c5d66defd9bbdb543af20cdd408|1090
-# 320e59185ea4262f436c9b9275c933be|1029
-# 443d181bf76e82d2fae66aa272b9b6a7|312
-if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "1090" ]; then echo "Wrong max ITS1 sequence length"; false; fi
+#sqlite3 $DB "SELECT md5, LENGTH(sequence) FROM its1_sequence;"
+#63fa728c0fe76536f13eb593df99bd46|179
+#4c9e98f437ca0f55d0d8ba3b2928239c|199
+#7f27d3a8f7150e0ee7ad64073e6da6b5|170
+#f8b93625eda4d39b5c76c03a3fc54732|137
+if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "199" ]; then echo "Wrong max ITS1 sequence length"; false; fi
 
 
 export DB=$TMP/20th_Century_ITS1.sqlite
