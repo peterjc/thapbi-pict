@@ -7,12 +7,31 @@ export TMP=${TMP:-/tmp}
 
 echo "Checking ncbi-import"
 thapbi_pict ncbi-import 2>&1 | grep "the following arguments are required"
-set -o pipefail
-
 # Cannot use validation without having some taxonomy entries
-set +o pipefail
 thapbi_pict ncbi-import -d sqlite:///:memory: tests/ncbi-import/20th_Century_ITS1.fasta 2>&1 | grep "Taxonomy table empty"
 set -o pipefail
+
+# examples with multiple HMM matches in the sequence (tandem repeats etc)
+export DB=$TMP/multiple_hmm.sqlite
+rm -rf $DB
+thapbi_pict load-tax -d $DB -t new_taxdump_2018-12-01
+# NCBI import at genus level only, as used in bundled ITS1_DB.sqlite
+thapbi_pict ncbi-import -d $DB -g tests/seq-import/multiple_hmm.fasta -n "NCBI examples with multiple HMM matches"
+# File tests/seq-import/multiple_hmm.fasta had 5 sequences, 5 of which have ITS1, of which 4 accepted.
+# Of 5 potential entries, 0 unparsable, 1 failed sp. validation, 4 OK.
+# (rejects the 'Uncultured Peronosporaceae' entry, not in this NCBI taxonomy)
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "4" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "4" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wrong taxonomy count"; false; fi
+# Debugging output,
+# sqlite3 /tmp/pc40583/multiple_hmm.sqlite "SELECT md5, LENGTH(sequence) FROM its1_sequence;"
+# db1ad9d874376ae71b01fae01f07bd2e|639
+# 78420c5d66defd9bbdb543af20cdd408|1090
+# 320e59185ea4262f436c9b9275c933be|1029
+# 443d181bf76e82d2fae66aa272b9b6a7|312
+if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -n 1090 ]; then echo "Wrong max ITS1 sequence length"; false; fi
+
 
 export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
