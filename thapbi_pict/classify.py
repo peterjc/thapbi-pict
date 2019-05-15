@@ -160,7 +160,7 @@ def method_identity(
 
     for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
         if len(seqs) > 1:
-            sys.exit("ERROR: %i HMM matches from %s\n" % title)
+            sys.exit("ERROR: %i HMM matches from %s\n" % (len(seqs), title))
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -229,7 +229,7 @@ def method_onebp(
 
     for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
         if len(seqs) > 1:
-            sys.exit("ERROR: %i HMM matches from %s\n" % title)
+            sys.exit("ERROR: %i HMM matches from %s\n" % (len(seqs), title))
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -481,7 +481,7 @@ def method_swarm_core(
     with open(its_fasta, "w") as handle:
         for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
             if len(seqs) > 1:
-                sys.exit("ERROR: %i HMM matches from %s\n" % title)
+                sys.exit("ERROR: %i HMM matches from %s\n" % (len(seqs), title))
             if not seqs:
                 continue
             seq = seqs[0]
