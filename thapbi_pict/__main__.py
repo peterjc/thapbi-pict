@@ -10,7 +10,7 @@ import os
 import sys
 
 from . import __version__
-from .classify import method_classifier
+from .classify import method_classify_file as method_classifier
 
 
 # Common command line defaults
