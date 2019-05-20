@@ -620,7 +620,7 @@ method_tool_check = {
     "swarmid": ["hmmscan", "swarm"],
 }
 
-method_classifier = {
+method_classify_file = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
@@ -645,12 +645,12 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
     """
     assert isinstance(fasta, list)
 
-    if method not in method_classifier:
+    if method not in method_classify_file:
         sys.exit(
             "ERROR: Invalid method name %r, should be one of: %s\n"
-            % (method, ", ".join(sorted(method_classifier)))
+            % (method, ", ".join(sorted(method_classify_file)))
         )
-    method_fn = method_classifier[method]
+    classify_file_fn = method_classify_file[method]
     try:
         setup_fn = method_setup[method]
     except KeyError:
@@ -771,7 +771,7 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
         )
         if os.path.getsize(filename):
             # There are sequences to classify
-            tax_counts = method_fn(
+            tax_counts = classify_file_fn(
                 filename, session, pred_handle, tmp, shared_tmp, debug, cpu
             )
         else:
