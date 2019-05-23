@@ -405,7 +405,7 @@ def prepare_sample(
     if debug:
         sys.stderr.write(
             "DEBUG: Filtered %s down to %i unique ITS1 sequences "
-            "above %s min abundance threshold %i, (max abundance %i)\n"
+            "above %s min abundance threshold %i (max abundance %i)\n"
             % (
                 stem,
                 uniq_count,
