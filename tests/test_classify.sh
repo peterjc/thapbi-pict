@@ -48,4 +48,12 @@ for M in identity onebp blast swarm swarmid; do
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
 done
 
+rm -rf $TMP/multiple_its1.*.tsv
+# Have not handled this in swarm classifier....
+for  M in identity onebp blast; do
+    echo "Checking multiple HMM containing sequences with $M"
+    thapbi_pict classify tests/classify/multiple_its1.fasta -o $TMP/ -m $M
+    diff $TMP/multiple_its1.$M.tsv tests/classify/multiple_its1.$M.tsv
+done
+
 echo "$0 - test_classify.sh passed"
