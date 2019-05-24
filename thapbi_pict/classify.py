@@ -109,7 +109,7 @@ def taxid_and_sp_lists(taxon_entries):
     )
 
 
-def perfect_match_in_db(session, seq):
+def perfect_match_in_db(session, seq, debug=False):
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the 100% matches in the DB give multiple species, then taxid and
@@ -135,6 +135,36 @@ def perfect_match_in_db(session, seq):
     return taxid_and_sp_lists(t)
 
 
+def apply_method_to_file(
+    method_fn, fasta_file, session, read_report, shared_tmp_dir, debug=False
+):
+    """Apply HMM filter to FASTA file, and call given method on each match."""
+    count = 0
+    tax_counts = Counter()
+
+    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        if len(seqs) > 1:
+            sys.exit(
+                "ERROR: %i HMM matches from %s in %s"
+                % (len(seqs), title.split(None, 1)[0], fasta_file)
+            )
+        idn = title.split(None, 1)[0]
+        abundance = abundance_from_read_name(idn)
+        count += abundance
+        if not seqs:
+            taxid = 0
+            genus_species = ""
+            note = "No ITS1 HMM match"
+        else:
+            seq = seqs[0]
+            assert seq == seq.upper(), seq
+            taxid, genus_species, note = method_fn(session, seq, debug=debug)
+        tax_counts[genus_species] += abundance
+        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+    assert count == sum(tax_counts.values())
+    return tax_counts
+
+
 def method_identity(
     fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
@@ -155,36 +185,27 @@ def method_identity(
     #
     # Plan B is brute force - we can run hmmscan to find any
     # ITS1 matchs, and then look for 100% equality in the DB.
-    count = 0
-    tax_counts = Counter()
+    return apply_method_to_file(
+        perfect_match_in_db,
+        fasta_file,
+        session,
+        read_report,
+        shared_tmp_dir,
+        debug=debug,
+    )
 
-    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
-        if len(seqs) > 1:
-            sys.exit(
-                "ERROR: %i HMM matches from %s in %s"
-                % (len(seqs), title.split(None, 1)[0], fasta_file)
-            )
-        idn = title.split(None, 1)[0]
-        abundance = abundance_from_read_name(idn)
-        count += abundance
-        taxid = 0
-        genus_species = ""
-        note = ""
-        if not seqs:
-            note = "No ITS1 HMM match"
-        else:
-            seq = seqs[0]
-            assert seq == seq.upper(), seq
-            # Now, does this match any of the ITS1 seq in our DB?
-            its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
-            if its1 is None:
-                note = "No DB match"
-            else:
-                taxid, genus_species, note = perfect_match_in_db(session, seq)
-        tax_counts[genus_species] += abundance
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
-    assert count == sum(tax_counts.values())
-    return tax_counts
+
+def seq_method_identity(seq, session, debug=False):
+    """Look for a perfect match in the database.
+
+    Returns taxid (integer or string), genus-species (string), note (string).
+    If there are multiple matches, semi-colon separated strings are returned.
+    """
+    its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+    if its1 is None:
+        return 0, "", "No DB match"
+    else:
+        return perfect_match_in_db(session, seq)
 
 
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
@@ -225,71 +246,50 @@ def method_onebp(
     database, and thus an exact match is resonable to expect
     (without having to worry about trimming for a partial match).
     """
+    return apply_method_to_file(
+        onebp_match_in_db, fasta_file, session, read_report, shared_tmp_dir, debug=debug
+    )
+
+
+def onebp_match_in_db(session, seq, debug=False):
+    """Look in database for a perfect match or with 1bp edit.
+
+    Returns taxid (integer or string), genus-species (string), note (string).
+    If there are multiple matches, semi-colon separated strings are returned.
+    """
     global fuzzy_matches
-
-    count = 0
-    tax_counts = Counter()
-
-    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
-        if len(seqs) > 1:
-            sys.exit(
-                "ERROR: %i HMM matches from %s in %s"
-                % (len(seqs), title.split(None, 1)[0], fasta_file)
+    taxid, genus_species, note = perfect_match_in_db(session, seq)
+    if any(species_level(_) for _ in genus_species.split(";")):
+        # Found 100% identical match(es) in DB at species level, done :)
+        pass
+    elif seq in fuzzy_matches:
+        # No species level exact matches, so do we have 1bp off match(es)?
+        t = []
+        # TODO - Refactor this 2-query-per-loop into one lookup?
+        # Including [seq] here in order to retain any perfect genus match.
+        # If there are any *different* genus matches 1bp away, they'll be
+        # reported too, but that would most likely be a DB problem...
+        for db_seq in [seq] + fuzzy_matches[seq]:
+            its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
+            assert db_seq, "Could not find %s (%s) in DB?" % (db_seq, md5seq(db_seq))
+            t.extend(
+                _.current_taxonomy
+                for _ in session.query(SequenceSource).filter_by(its1=its1)
             )
-        idn = title.split(None, 1)[0]
-        abundance = abundance_from_read_name(idn)
-        count += abundance
-        taxid = 0
-        genus_species = ""
-        note = ""
-        if not seqs:
-            note = "No ITS1 HMM match"
-        else:
-            seq = seqs[0]
-            assert seq == seq.upper(), seq
-            # Now, does this match any of the ITS1 seq in our DB?
-            taxid, genus_species, note = perfect_match_in_db(session, seq)
-            if any(species_level(_) for _ in genus_species.split(";")):
-                # Found 100% identical match(es) in DB at species level, done :)
-                pass
-            elif seq in fuzzy_matches:
-                # No species level exact matches, so do we have 1bp off match(es)?
-                t = []
-                # TODO - Refactor this 2-query-per-loop into one lookup?
-                # Including [seq] here in order to retain any perfect genus match.
-                # If there are any *different* genus matches 1bp away, they'll be
-                # reported too, but that would most likely be a DB problem...
-                for db_seq in [seq] + fuzzy_matches[seq]:
-                    its1 = (
-                        session.query(ITS1)
-                        .filter(ITS1.sequence == db_seq)
-                        .one_or_none()
-                    )
-                    assert db_seq, "Could not find %s (%s) in DB?" % (
-                        db_seq,
-                        md5seq(db_seq),
-                    )
-                    t.extend(
-                        _.current_taxonomy
-                        for _ in session.query(SequenceSource).filter_by(its1=its1)
-                    )
-                t = list(set(t))
-                note = "%i ITS1 matches with up to 1bp diff, %i taxonomy entries" % (
-                    len(fuzzy_matches[seq]),
-                    len(t),
-                )
-                if not t:
-                    sys.exit(
-                        "ERROR: onebp: %i matches but no taxonomy entries for %s\n"
-                        % (len(fuzzy_matches[seq]), seq)
-                    )
-                taxid, genus_species, _ = taxid_and_sp_lists(t)
-            else:
-                note = "No DB matches, even with 1bp diff"
-        tax_counts[genus_species] += abundance
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
-    assert count == sum(tax_counts.values())
-    return tax_counts
+        t = list(set(t))
+        note = "%i ITS1 matches with up to 1bp diff, %i taxonomy entries" % (
+            len(fuzzy_matches[seq]),
+            len(t),
+        )
+        if not t:
+            sys.exit(
+                "ERROR: onebp: %i matches but no taxonomy entries for %s\n"
+                % (len(fuzzy_matches[seq]), seq)
+            )
+        taxid, genus_species, _ = taxid_and_sp_lists(t)
+    else:
+        note = "No DB matches, even with 1bp diff"
+    return taxid, genus_species, note
 
 
 def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
