@@ -333,7 +333,7 @@ def onebp_match_in_db(session, seq, debug=False):
                 % (len(fuzzy_matches[seq]), seq)
             )
         taxid, genus_species, _ = taxid_and_sp_lists(t)
-    else:
+    elif not genus_species:
         note = "No DB matches, even with 1bp diff"
     return taxid, genus_species, note
 
