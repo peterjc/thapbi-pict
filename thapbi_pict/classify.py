@@ -142,12 +142,7 @@ def apply_method_to_file(
     count = 0
     tax_counts = Counter()
 
-    for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
-        if len(seqs) > 1:
-            sys.exit(
-                "ERROR: %i HMM matches from %s in %s"
-                % (len(seqs), title.split(None, 1)[0], fasta_file)
-            )
+    for title, full_seq, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -155,10 +150,61 @@ def apply_method_to_file(
             taxid = 0
             genus_species = ""
             note = "No ITS1 HMM match"
-        else:
+        elif len(seqs) == 1:
+            # Easy case
             seq = seqs[0]
             assert seq == seq.upper(), seq
             taxid, genus_species, note = method_fn(session, seq, debug=debug)
+        else:
+            calls = [method_fn(session, seq, debug=debug) for seq in seqs]
+            if debug:
+                for seq, (taxid, genus_species, note) in zip(seqs, calls):
+                    sys.stderr.write(
+                        "DEBUG: %s[%i:%i] %s %s %s\n"
+                        % (
+                            idn,
+                            full_seq.index(seq),
+                            full_seq.index(seq) + len(seq),
+                            str(taxid),
+                            genus_species,
+                            note,
+                        )
+                    )
+                del taxid, genus_species, note
+            non_blank = [
+                _[0:2] for _ in calls if _[1]
+            ]  # non-blank genus-species; discard notes
+            if len(set(calls)) == 1:
+                # All agreed 100%, even the note!
+                taxid = calls[0][0]
+                genus_species = calls[0][1]
+                note = "Consistent from %i ITS1 HMM matches; %s" % (
+                    len(seqs),
+                    calls[0][2],
+                )
+            elif len({_[0:2] for _ in calls}) == 1:
+                # All agreed, except the note
+                taxid = calls[0][0]
+                genus_species = calls[0][1]
+                note = "Consistent from %i ITS1 HMM matches" % len(seqs)
+            elif len(set(non_blank)):
+                # Non-blanks agree (ignored notes)
+                taxid = non_blank[0][0]
+                genus_species = non_blank[0][1]
+                note = (
+                    "Consistent non-blank predictions from %i ITS1 HMM matches"
+                    % len(seqs)
+                )
+            else:
+                sys.exit(
+                    "ERROR: Conflicting predictions "
+                    "returned from %i ITS1 HMM matches in %s\n%s"
+                    % (len(seqs), idn, "\n".join(repr(_) for _ in calls))
+                )
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: %s %s %s %s\n" % (idn, str(taxid), genus_species, note)
+                )
         tax_counts[genus_species] += abundance
         read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
     assert count == sum(tax_counts.values())
