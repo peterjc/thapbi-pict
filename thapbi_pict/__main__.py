@@ -358,6 +358,22 @@ ARG_DB_INPUT = dict(  # noqa: C408
     type=str, default="", help="ITS1 database to use, default is bundled database."
 )
 
+# "-m", "--method",
+ARG_METHOD_OUTPUT = dict(  # noqa: C408
+    type=str,
+    default=DEFAULT_METHOD,
+    choices=list(method_classifier),
+    help="Classify method to run, default is '%s'." % DEFAULT_METHOD,
+)
+
+# "-m", "--method",
+ARG_METHOD_INPUT = dict(  # noqa: C408
+    type=str,
+    default=DEFAULT_METHOD,
+    choices=list(method_classifier),
+    help="Classify method (to infer filenames), default '%s'." % DEFAULT_METHOD,
+)
+
 # "-t", "--temp",
 ARG_TEMPDIR = dict(  # noqa: C408
     type=str,
@@ -588,14 +604,7 @@ def main(args=None):
     )
     parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_pipeline.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default=DEFAULT_METHOD,
-        choices=list(method_classifier),
-        help="Method to use, default is '%s'." % DEFAULT_METHOD,
-    )
+    parser_pipeline.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
     parser_pipeline.add_argument("-x", "--metaindex", **ARG_METAINDEX)
@@ -824,14 +833,7 @@ def main(args=None):
         "(containing files named *.fasta).",
     )
     parser_classify.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_classify.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default=DEFAULT_METHOD,
-        choices=list(method_classifier),
-        help="Method to use, default is '%s'." % DEFAULT_METHOD,
-    )
+    parser_classify.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_classify.add_argument(
         "-o",
         "--output",
@@ -888,14 +890,7 @@ def main(args=None):
         "against which the method in -m / --method is assessed. "
         "This could be any defined method, default is 'known'.",
     )
-    parser_assess.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default=DEFAULT_METHOD,
-        help="Method to assess (used to infer filenames), default is '%s'."
-        % DEFAULT_METHOD,
-    )
+    parser_assess.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     parser_assess.add_argument(
         "-a",
         "--abundance",
@@ -1018,14 +1013,7 @@ def main(args=None):
         "The files should follow this naming convention, where the classifer "
         "method appearing in the extension can be set via -m / --method.",
     )
-    parser_sample_summary.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default=DEFAULT_METHOD,
-        help="Classifier method to report (used to infer filenames), "
-        "default is '%s'." % DEFAULT_METHOD,
-    )
+    parser_sample_summary.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     parser_sample_summary.add_argument(
         "-a",
         "--abundance",
