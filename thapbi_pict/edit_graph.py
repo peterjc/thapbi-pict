@@ -14,7 +14,7 @@ from sqlalchemy.orm import aliased, contains_eager
 
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
-from .utils import genus_species_name
+from .utils import genus_species_name, species_level
 
 
 def main(
@@ -73,13 +73,15 @@ def main(
     node_sizes = []
     for check1 in md5_to_seq:
         graph.add_node(check1)
-        if md5_species[check1]:
-            node_colors.append("#ff0000")
-            node_labels[check1] = "\n".join(sorted(md5_species[check1])).replace(
-                "Phytophthora", "P."
-            )
-        else:
+        sp = md5_species[check1]
+        if not sp:
             node_colors.append("#808080")
+        elif species_level(sp):
+            node_colors.append("#ff0000")
+            node_labels[check1] = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
+        else:
+            # Genus only, dark red
+            node_colors.append("#600000")
         # node_sizes.append(SIZE * (md5_abundance[check1] - total_min_abundance))
         node_sizes.append(1)
     if debug:
