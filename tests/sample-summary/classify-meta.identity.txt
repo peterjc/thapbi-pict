@@ -14,3 +14,11 @@ Sequencing sample: P-infestans-T30-4
  - Phytophthora infestans (uncertain/ambiguous)
  - Phytophthora ipomoeae (uncertain/ambiguous)
 
+------------------------------------------------------------
+
+
+Sequencing sample: multiple_its1
+
+ - Unknown
+ - Peronospora
+
