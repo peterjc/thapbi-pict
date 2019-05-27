@@ -131,8 +131,7 @@ def connect_to_db(*args, **kwargs):
     """
     engine = create_engine(*args, **kwargs)
     Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    return Session
+    return sessionmaker(bind=engine)
 
 
 if __name__ == "__main__":
