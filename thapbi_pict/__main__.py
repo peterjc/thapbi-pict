@@ -251,6 +251,23 @@ def sample_summary(args=None):
     )
 
 
+def edit_graph(args=None):
+    """Subcommand to create sequence-level edit-distance graph."""
+    from .edit_graph import main
+
+    return main(
+        graph_output=args.output,
+        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
+        # inputs=args.inputs,
+        # graph_output=args.output,
+        # method=args.method,
+        # min_abundance=args.abundance,
+        # total_min_abundance=args.total,
+        max_edit_dist=args.editdist,
+        debug=args.verbose,
+    )
+
+
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
@@ -1053,6 +1070,76 @@ def main(args=None):
     parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more
+
+    # edit-graph
+    parser_edit_graph = subparsers.add_parser(
+        "edit-graph",
+        description="Draw network graph of sequences using edit distance.",
+        epilog="Currently takes an ITS1 database as input. "
+        "The output is a network graph (in PDF format) with unique sequences "
+        "as nodes (labelled by the database taxonomy), and short edit "
+        "distances as edges between nodes.",
+    )
+    parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
+    # parser_edit_graph.add_argument(
+    #    "inputs",
+    #    type=str,
+    #    nargs="+",
+    #    help="One or more prepared read files (*.fasta), prediction "
+    #    "files (*.method.tsv) or folder names. If passing folder names, "
+    #    "it expects to find paired files using these extensions. "
+    #    "The classifier method extension can be set via -m / --method.",
+    # )
+    # parser_edit_graph.add_argument(
+    #    "-m",
+    #    "--method",
+    #    type=str,
+    #    default="identity",
+    #    help="Method(s) to report, comma separaed list (used to infer "
+    #    "filenames), default is identity (only).",
+    # )
+    # parser_edit_graph.add_argument(
+    #    "-a",
+    #    "--abundance",
+    #    type=int,
+    #    default="100",
+    #    help="Mininum sample level abundance to require for the report. "
+    #    "Default 100 reflects default in prepare-reads. Rather than re-running "
+    #    "the prepare or classifier steps with a stricter minimum abundance you "
+    #    "can apply it here. Use zero or one look at everything (but beware that "
+    #    "negative control samples will include low abundance entries).",
+    # )
+    # parser_edit_graph.add_argument(
+    #    "-t",
+    #    "--total",
+    #    type=int,
+    #    default="1000",
+    #    help="Mininum total abundance to require for the report. This is applied "
+    #    "after the per-sample level minimum (-a / --abundance), and is mainly "
+    #    "offered as a way to simplify the final graph.",
+    # )
+    parser_edit_graph.add_argument(
+        "-e",
+        "--editdist",
+        type=int,
+        default="3",
+        help="Maximum edit distance. Recommend at most 3 (default) for plate "
+        "level graphs, could try putting this higher for smaller datasets like "
+        "single samples, or if combined with hard minimum abundance settings.",
+    )
+    parser_edit_graph.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="Write PDF graph here. Default is '-' meaning stdout.",
+    )
+    parser_edit_graph.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_edit_graph.set_defaults(func=edit_graph)
+    del parser_edit_graph  # To prevent accidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
