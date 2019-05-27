@@ -6,3 +6,9 @@ P-infestans-T30-4
  - Phytophthora infestans (uncertain/ambiguous)
  - Phytophthora ipomoeae (uncertain/ambiguous)
 
+multiple_its1
+
+ - Nothophytophthora
+ - Peronospora
+ - Phytophthora
+
