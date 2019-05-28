@@ -7,17 +7,18 @@
 
 # THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 
+THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK
+[BBSRC](https://www.bbsrc.ac.uk) funded Tree Health and Plant Biosecurity
+Initiative (THAPBI) Phyto-Threats project, focused on identifying
+*Phytophthora* species present in Illumina sequenced environmental samples.
+
 *Phytophthora* (from Greek meaning plant-destroyer) species are economically
 important plant pathogens, important in both agriculture and forestry. ITS1 is
 short for Internal Transcribed Spacer one, which is a region of eukaryotes
 genomes between the 18S and 5.8S rRNA genes. This is commonly used for
 molecular barcoding, where sequencing this short region can identify species.
 
-This repository is for development of ITS1-based diagnostic/profiling tools
-for the Tree Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats
-project, funded by the UK's [BBSRC](https://www.bbsrc.ac.uk).
-
-This continues earlier work including:
+This software repository continues earlier work including:
 
 * https://github.com/widdowquinn/THAPBI
 * https://github.com/widdowquinn/THAPBI-pycits
