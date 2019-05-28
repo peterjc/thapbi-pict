@@ -62,16 +62,16 @@ which will handle *all* the dependencies:
 
 https://anaconda.org/bioconda/thapbi-pict
 
-For development (and this is reflected in the contuinuous integration setup),
+For development (and this is reflected in the TravisCI configuration),
 we recommend installing via pip, which uses [PyPI](https://pypi.python.org/)
 for the Python dependencies. These are declared in the ``setup.py`` script
-and so will automatically be installed via ``pip``, but see also the
-``requirements.txt`` file.
+and so will automatically be installed, but see also the ``requirements.txt``
+file.
 
 The two requirements files (``requirements.txt`` for Python dependencies -
 and ``requirements-ext.txt`` for external command line bioinformatics tools)
 can contain exact pinned dependency versions, allowing us to define a more
-reproducible environment for running this software as needed.
+reproducible environment for running this software if needed.
 
 
 ## Installing from source
