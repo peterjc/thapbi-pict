@@ -1,4 +1,4 @@
-# THAPBI *Phytophthora* ITS1 Classifier Tool (PICT) - Development Notes
+# THAPBI PICT - Development Notes
 
 ## Python style conventions
 
@@ -15,7 +15,8 @@ call black from flake8).
 You can install these tools using:
 
 ```console
-pip install black flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear flake8-pie flake8-comprehensions
+$ pip install black flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings \
+flake8-bugbear flake8-pie flake8-comprehensions restructuredtext-lint 
 ```
 
 You can run the checks using:
