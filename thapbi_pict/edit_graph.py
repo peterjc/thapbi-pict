@@ -5,6 +5,7 @@ This implementes the ``thapbi_pict edit-graph ...`` command.
 
 import sys
 
+import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -94,12 +95,45 @@ def main(
                 # If have species level, discard genus level only
                 md5_species[md5].remove(genus)
 
+    # For drawing performance reasons, calculate the distances, and then may
+    # drop nodes with no edges (unless for example DB entry at species level,
+    # or for environmental sequences at high abundance)
+    n = len(md5_to_seq)
+    distances = np.zeros((n, n), np.uint)
+    for i, check1 in enumerate(md5_to_seq):
+        seq1 = md5_to_seq[check1]
+        for j, check2 in enumerate(md5_to_seq):
+            if i < j:
+                seq2 = md5_to_seq[check2]
+                distances[i, j] = distances[j, i] = levenshtein(seq1, seq2)
+    sys.stderr.write(
+        "Computed %i Levenshtein edit distances between %i sequences.\n"
+        % (n * (n - 1), n)
+    )
+    dropped = set()
+    for i, check1 in enumerate(md5_to_seq):
+        # Ignore self-vs-self which will be zero distance
+        if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
+            # Good, will draw this
+            pass
+        elif i + 1 < n and min(distances[i, i + 1 :]) <= max_edit_dist:
+            # Good, will draw this
+            pass
+        else:
+            dropped.add(check1)
+    sys.stderr.write(
+        "Dropped %i sequences with no siblings within maximum edit distance %i.\n"
+        % (len(dropped), max_edit_dist)
+    )
+
     # SIZE = 100 / (total_max_abundance - total_min_abundance)  # scaling factor
     graph = nx.Graph()
     node_colors = []
     node_labels = {}
     node_sizes = []
     for check1 in md5_to_seq:
+        if check1 in dropped:
+            continue
         graph.add_node(check1)
         sp = md5_species[check1]
         genus = sorted({_.split(None, 1)[0] for _ in sp})
@@ -130,21 +164,19 @@ def main(
     #    else:
     #        node_labels[check1] = check1[:6]
 
-    if debug:
-        sys.stderr.write(
-            "DEBUG: About to compute edit distances between %i unique sequences\n"
-            % len(md5_to_seq)
-        )
     edge_count = 0
     edge_style = []
     edge_width = []
     edge_color = []
     for i, check1 in enumerate(md5_to_seq):
+        if check1 in dropped:
+            continue
         seq1 = md5_to_seq[check1]
         for j, check2 in enumerate(md5_to_seq):
-            if i < j:
+            if i < j and check2 not in dropped:
                 seq2 = md5_to_seq[check2]
-                dist = levenshtein(seq1, seq2)
+                # dist = levenshtein(seq1, seq2)
+                dist = distances[i, j]
                 if dist <= max_edit_dist:
                     # Some graph layout algorithms can use weight attr
                     graph.add_edge(check1, check2, weight=1.0 / dist)
