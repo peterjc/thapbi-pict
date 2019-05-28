@@ -178,8 +178,10 @@ def main(
                 # dist = levenshtein(seq1, seq2)
                 dist = distances[i, j]
                 if dist <= max_edit_dist:
-                    # Some graph layout algorithms can use weight attr
-                    graph.add_edge(check1, check2, weight=1.0 / dist)
+                    # Some graph layout algorithms can use weight attr; some want int
+                    # Larger weight makes it closer to the requested length.
+                    # fdp default length is 0.3, neato is 1.0
+                    graph.add_edge(check1, check2, len=0.3 * dist / max_edit_dist)
                     edge_count += 1
                     if dist <= 1:
                         edge_style.append("solid")
