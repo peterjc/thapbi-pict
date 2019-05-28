@@ -56,6 +56,8 @@ def main(
     # TODO - Copy genus/species filtering behvaiour from dump command?
 
     for seq_source in view:
+        # if debug and len(md5_to_seq) > 1000:
+        #    break
         md5 = seq_source.its1.md5
         md5_to_seq[md5] = seq_source.its1.sequence
         genus_species = genus_species_name(
@@ -65,6 +67,13 @@ def main(
             md5_species[md5].add(genus_species)
         except KeyError:
             md5_species[md5] = {genus_species}
+
+    for md5 in md5_species:
+        for genus_species in [_ for _ in md5_species[md5] if species_level(_)]:
+            genus = genus_species.split(None, 1)[0]
+            if genus in md5_species[md5]:
+                # If have species level, discard genus level only
+                md5_species[md5].remove(genus)
 
     # SIZE = 100 / (total_max_abundance - total_min_abundance)  # scaling factor
     graph = nx.Graph()
@@ -76,7 +85,7 @@ def main(
         sp = md5_species[check1]
         if not sp:
             node_colors.append("#808080")
-        elif species_level(sp):
+        elif any(species_level(_) for _ in sp):
             node_colors.append("#ff0000")
             node_labels[check1] = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
         else:
