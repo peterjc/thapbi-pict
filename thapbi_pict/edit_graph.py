@@ -17,6 +17,25 @@ from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 from .utils import genus_species_name, species_level
 
 
+genus_color = {
+    # From the VGA colors, in order of DB abundance,
+    "Phytophthora": "#FF0000",  # Red
+    "Peronospora": "#00FF00",  # Lime
+    "Hyaloperonospora": "#0000FF",  # Blue
+    "Bremia": "#FFFF00",  # Yellow
+    "Pseudoperonospora": "#00FFFF",  # Cyan
+    "Plasmopara": "#FF00FF",  # Magenta
+    "Nothophytophthora": "#800000",  # Maroon
+    "Peronosclerospora": "#808000",  # Olive
+    "Perofascia": "#008000",  # Green
+    "Paraperonospora": "#800080",  # Purple
+    "Protobremia": "#008080",  # Teal
+    # Basidiophora
+    # Calycofera
+    # Plasmoverna
+}
+
+
 def main(
     graph_output,
     db_url,
@@ -83,14 +102,20 @@ def main(
     for check1 in md5_to_seq:
         graph.add_node(check1)
         sp = md5_species[check1]
-        if not sp:
-            node_colors.append("#808080")
-        elif any(species_level(_) for _ in sp):
-            node_colors.append("#ff0000")
+        genus = sorted({_.split(None, 1)[0] for _ in sp})
+        if not genus:
+            node_colors.append("#808080")  # grey
+        elif len(genus) > 1:
+            node_colors.append("#FF8C00")  # dark orange
+        elif genus[0] in genus_color:
+            node_colors.append(genus_color[genus[0]])
+        else:
+            node_colors.append("#8B0000")  # dark red
+        if any(species_level(_) for _ in sp):
             node_labels[check1] = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
         else:
-            # Genus only, dark red
-            node_colors.append("#600000")
+            # Genus only
+            pass
         # node_sizes.append(SIZE * (md5_abundance[check1] - total_min_abundance))
         node_sizes.append(1)
     if debug:
