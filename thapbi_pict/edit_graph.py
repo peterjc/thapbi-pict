@@ -208,7 +208,7 @@ def main(
         % (len(dropped), max_edit_dist)
     )
 
-    # SIZE = 100 / (total_max_abundance - total_min_abundance)  # scaling factor
+    SIZE = 100 / (max(md5_abundance.values()) - total_min_abundance)  # scaling factor
     graph = nx.Graph()
     node_colors = []
     node_labels = {}
@@ -232,8 +232,10 @@ def main(
         else:
             # Genus only
             pass
-        # node_sizes.append(SIZE * (md5_abundance[check1] - total_min_abundance))
-        node_sizes.append(1)
+        # DB only entries get size one, FASTA entries can be up to 100.
+        node_sizes.append(
+            max(1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance))
+        )
     if debug:
         sys.stderr.write(
             "Node sizes %0.2f to %0.2f\n" % (min(node_sizes), max(node_sizes))
