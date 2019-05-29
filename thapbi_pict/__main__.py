@@ -259,8 +259,8 @@ def edit_graph(args=None):
         graph_output=args.output,
         db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         inputs=args.input,
-        # min_abundance=args.abundance,
-        # total_min_abundance=args.total,
+        min_abundance=args.abundance,
+        total_min_abundance=args.total,
         max_edit_dist=args.editdist,
         debug=args.verbose,
     )
@@ -1083,26 +1083,23 @@ def main(args=None):
     arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     arg.required = False
     del arg
-    # parser_edit_graph.add_argument(
-    #    "-a",
-    #    "--abundance",
-    #    type=int,
-    #    default="100",
-    #    help="Mininum sample level abundance to require for the report. "
-    #    "Default 100 reflects default in prepare-reads. Rather than re-running "
-    #    "the prepare or classifier steps with a stricter minimum abundance you "
-    #    "can apply it here. Use zero or one look at everything (but beware that "
-    #    "negative control samples will include low abundance entries).",
-    # )
-    # parser_edit_graph.add_argument(
-    #    "-t",
-    #    "--total",
-    #    type=int,
-    #    default="1000",
-    #    help="Mininum total abundance to require for the report. This is applied "
-    #    "after the per-sample level minimum (-a / --abundance), and is mainly "
-    #    "offered as a way to simplify the final graph.",
-    # )
+    parser_edit_graph.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="100",
+        help="Mininum sample level abundance for FASTA sequences. "
+        "Default 100 reflects default in prepare-reads.",
+    )
+    parser_edit_graph.add_argument(
+        "-t",
+        "--total",
+        type=int,
+        default="1000",
+        help="Mininum total abundance for FASTA sequences. "
+        "Applied after per-sample level minimum (-a / --abundance). "
+        "Offered as a way to simplify the final graph.",
+    )
     parser_edit_graph.add_argument(
         "-e",
         "--editdist",
