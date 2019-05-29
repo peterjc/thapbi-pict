@@ -3,7 +3,10 @@
 This implementes the ``thapbi_pict edit-graph ...`` command.
 """
 
+import os
 import sys
+
+from collections import Counter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,9 +16,14 @@ from Levenshtein import distance as levenshtein
 
 from sqlalchemy.orm import aliased, contains_eager
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
 from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
-from .utils import genus_species_name, species_level
+from .utils import find_requested_files
+from .utils import genus_species_name
+from .utils import species_level
+from .utils import split_read_name_abundance
 
 
 genus_color = {
@@ -40,11 +48,9 @@ genus_color = {
 def main(
     graph_output,
     db_url,
-    # inputs,
-    # graph_output,
-    # method="identity",
-    # min_abundance=100,
-    # total_min_abundance=1000,
+    inputs,
+    min_abundance=100,
+    total_min_abundance=1000,
     max_edit_dist=3,
     debug=False,
 ):
@@ -54,46 +60,109 @@ def main(
     limits) and/or selected FASTA files (possibly with predictions or other
     metadata, and minimum abundance limits).
     """
+    assert isinstance(inputs, list)
+
+    samples = set()
+    md5_abundance = Counter()
+    abundance_by_samples = {}
     md5_to_seq = {}
     md5_species = {}
+    md5_in_db = set()
+    md5_in_fasta = set()
 
-    # Connect to the DB,
-    Session = connect_to_db(db_url, echo=debug)
-    session = Session()
+    if not (inputs or db_url):
+        sys.exit("Require -d / --database and/or -i / --input argument.")
 
-    # Doing a join to pull in the ITS1 and Taxonomy tables too:
-    cur_tax = aliased(Taxonomy)
-    its1_seq = aliased(ITS1)
-    view = (
-        session.query(SequenceSource)
-        .join(its1_seq, SequenceSource.its1)
-        .join(cur_tax, SequenceSource.current_taxonomy)
-        .options(contains_eager(SequenceSource.its1, alias=its1_seq))
-        .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
-    )
-    # Sorting for reproducibility
-    view = view.order_by(SequenceSource.id)
-    # TODO - Copy genus/species filtering behvaiour from dump command?
+    if db_url:
+        if debug:
+            sys.stderr.write("DEBUG: Connecting to database %s\n" % db_url)
+        # Connect to the DB,
+        Session = connect_to_db(db_url, echo=False)  # echo=debug
+        session = Session()
 
-    for seq_source in view:
-        # if debug and len(md5_to_seq) > 1000:
-        #    break
-        md5 = seq_source.its1.md5
-        md5_to_seq[md5] = seq_source.its1.sequence
-        genus_species = genus_species_name(
-            seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
+        # Doing a join to pull in the ITS1 and Taxonomy tables too:
+        cur_tax = aliased(Taxonomy)
+        its1_seq = aliased(ITS1)
+        view = (
+            session.query(SequenceSource)
+            .join(its1_seq, SequenceSource.its1)
+            .join(cur_tax, SequenceSource.current_taxonomy)
+            .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
         )
-        try:
-            md5_species[md5].add(genus_species)
-        except KeyError:
-            md5_species[md5] = {genus_species}
+        # Sorting for reproducibility
+        view = view.order_by(SequenceSource.id)
+        # TODO - Copy genus/species filtering behvaiour from dump command?
 
-    for md5 in md5_species:
-        for genus_species in [_ for _ in md5_species[md5] if species_level(_)]:
-            genus = genus_species.split(None, 1)[0]
-            if genus in md5_species[md5]:
-                # If have species level, discard genus level only
-                md5_species[md5].remove(genus)
+        for seq_source in view:
+            # if debug and len(md5_to_seq) > 1000:
+            #    break
+            md5 = seq_source.its1.md5
+            md5_to_seq[md5] = seq_source.its1.sequence
+            genus_species = genus_species_name(
+                seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
+            )
+            try:
+                md5_species[md5].add(genus_species)
+            except KeyError:
+                md5_species[md5] = {genus_species}
+
+        for md5 in md5_species:
+            for genus_species in [_ for _ in md5_species[md5] if species_level(_)]:
+                genus = genus_species.split(None, 1)[0]
+                if genus in md5_species[md5]:
+                    # If have species level, discard genus level only
+                    md5_species[md5].remove(genus)
+        md5_in_db = set(md5_species)
+        sys.stderr.write("Loaded %i unique sequences from database\n" % len(md5_in_db))
+
+    if inputs:
+        if debug:
+            sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
+        for fasta_file in find_requested_files(inputs, ".fasta", debug):
+            # TODO: Refactor this shared code with sample-summary?
+            sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
+            if sample.startswith("Undetermined"):
+                sys.stderr.write("WARNING: Ignoring %s\n" % fasta_file)
+                continue
+            if sample in samples:
+                sys.exit("Duplicate sample name %s" % sample)
+            samples.add(sample)
+            with open(fasta_file) as handle:
+                for title, seq in SimpleFastaParser(handle):
+                    md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
+                    if min_abundance > 1 and abundance < min_abundance:
+                        continue
+                    md5_in_fasta.add(md5)
+                    abundance_by_samples[md5, sample] = abundance
+                    md5_abundance[md5] += abundance
+                    if md5 in md5_to_seq:
+                        assert md5_to_seq[md5] == seq
+                    else:
+                        md5_to_seq[md5] = seq
+        sys.stderr.write(
+            "Loaded %i unique sequences from %i FASTA files\n"
+            % (len(md5_in_fasta), len(samples))
+        )
+
+    if db_url and inputs:
+        sys.stderr.write(
+            "DB had %i sequences (%i not in FASTA), "
+            "FASTA had %i sequences (%i not in DB)\n"
+            % (
+                len(md5_in_db),
+                len(md5_in_db.difference(md5_in_fasta)),
+                len(md5_in_fasta),
+                len(md5_in_fasta.difference(md5_in_db)),
+            )
+        )
+        sys.stderr.write(
+            "DB and FASTA had %i sequences in common; %i combined\n"
+            % (
+                len(md5_in_db.intersection(md5_in_fasta)),
+                len(md5_in_db.union(md5_in_fasta)),
+            )
+        )
 
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
@@ -111,16 +180,18 @@ def main(
         % (n * (n - 1), n)
     )
     dropped = set()
-    for i, check1 in enumerate(md5_to_seq):
+    for i, md5 in enumerate(md5_to_seq):
+        if total_min_abundance <= md5_abundance.get(md5, 0):
+            continue
         # Ignore self-vs-self which will be zero distance
         if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
             # Good, will draw this
-            pass
+            continue
         elif i + 1 < n and min(distances[i, i + 1 :]) <= max_edit_dist:
             # Good, will draw this
-            pass
-        else:
-            dropped.add(check1)
+            continue
+        # No reason to draw this:
+        dropped.add(md5)
     sys.stderr.write(
         "Dropped %i sequences with no siblings within maximum edit distance %i.\n"
         % (len(dropped), max_edit_dist)
@@ -135,7 +206,7 @@ def main(
         if check1 in dropped:
             continue
         graph.add_node(check1)
-        sp = md5_species[check1]
+        sp = md5_species.get(check1, [])
         genus = sorted({_.split(None, 1)[0] for _ in sp})
         if not genus:
             node_colors.append("#808080")  # grey

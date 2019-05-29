@@ -258,9 +258,7 @@ def edit_graph(args=None):
     return main(
         graph_output=args.output,
         db_url=expand_database_argument(args.database, exist=True, blank_default=True),
-        # inputs=args.inputs,
-        # graph_output=args.output,
-        # method=args.method,
+        inputs=args.input,
         # min_abundance=args.abundance,
         # total_min_abundance=args.total,
         max_edit_dist=args.editdist,
@@ -1081,23 +1079,10 @@ def main(args=None):
         "distances as edges between nodes.",
     )
     parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
-    # parser_edit_graph.add_argument(
-    #    "inputs",
-    #    type=str,
-    #    nargs="+",
-    #    help="One or more prepared read files (*.fasta), prediction "
-    #    "files (*.method.tsv) or folder names. If passing folder names, "
-    #    "it expects to find paired files using these extensions. "
-    #    "The classifier method extension can be set via -m / --method.",
-    # )
-    # parser_edit_graph.add_argument(
-    #    "-m",
-    #    "--method",
-    #    type=str,
-    #    default="identity",
-    #    help="Method(s) to report, comma separaed list (used to infer "
-    #    "filenames), default is identity (only).",
-    # )
+    # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
+    arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    arg.required = False
+    del arg
     # parser_edit_graph.add_argument(
     #    "-a",
     #    "--abundance",
