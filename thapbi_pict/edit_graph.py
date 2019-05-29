@@ -141,14 +141,24 @@ def main(
                     else:
                         md5_to_seq[md5] = seq
         sys.stderr.write(
-            "Loaded %i unique sequences from %i FASTA files\n"
+            "Loaded %i unique sequences from %i FASTA files.\n"
             % (len(md5_in_fasta), len(samples))
+        )
+        # Drop low total abundance FASTA sequences now (before compute distances)
+        for md5, total in md5_abundance.items():
+            if total < total_min_abundance and md5 not in md5_in_db:
+                # Remove it!
+                md5_in_fasta.remove(md5)
+                del md5_to_seq[md5]
+        sys.stderr.write(
+            "Minimum total abundance threshold %i left %i sequences from FASTA files.\n"
+            % (total_min_abundance, len(md5_in_fasta))
         )
 
     if db_url and inputs:
         sys.stderr.write(
             "DB had %i sequences (%i not in FASTA), "
-            "FASTA had %i sequences (%i not in DB)\n"
+            "FASTA had %i sequences (%i not in DB).\n"
             % (
                 len(md5_in_db),
                 len(md5_in_db.difference(md5_in_fasta)),
@@ -157,7 +167,7 @@ def main(
             )
         )
         sys.stderr.write(
-            "DB and FASTA had %i sequences in common; %i combined\n"
+            "DB and FASTA had %i sequences in common; %i combined.\n"
             % (
                 len(md5_in_db.intersection(md5_in_fasta)),
                 len(md5_in_db.union(md5_in_fasta)),
@@ -182,6 +192,7 @@ def main(
     dropped = set()
     for i, md5 in enumerate(md5_to_seq):
         if total_min_abundance <= md5_abundance.get(md5, 0):
+            # High abundance, include it (not applied to DB sequences)
             continue
         # Ignore self-vs-self which will be zero distance
         if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
