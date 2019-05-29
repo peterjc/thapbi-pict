@@ -173,7 +173,7 @@ def classify(args=None):
     if args.temp:
         check_output_directory(args.temp)
     return_code = main(
-        fasta=args.fasta,
+        fasta=args.input,
         db_url=expand_database_argument(args.database, exist=True, blank_default=True),
         method=args.method,
         out_dir=args.output,
@@ -356,6 +356,15 @@ def pipeline(args=None):
 # "-d", "--database",
 ARG_DB_INPUT = dict(  # noqa: C408
     type=str, default="", help="ITS1 database to use, default is bundled database."
+)
+
+# "-i", "--input",
+ARG_INPUT_FASTA = dict(  # noqa: C408
+    type=str,
+    required=True,
+    nargs="+",
+    help="One or more ITS1 FASTA filenames or folder names "
+    "(containing files named *.fasta).",
 )
 
 # "-m", "--method",
@@ -825,13 +834,7 @@ def main(args=None):
         "named XXX.method.tsv in the specified output directory (default "
         "input dir).",
     )
-    parser_classify.add_argument(
-        "fasta",
-        type=str,
-        nargs="+",
-        help="One or more ITS1 FASTA filenames or folder names "
-        "(containing files named *.fasta).",
-    )
+    parser_classify.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     parser_classify.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_classify.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_classify.add_argument(
