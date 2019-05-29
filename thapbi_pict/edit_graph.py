@@ -263,7 +263,12 @@ def main(
                     # Some graph layout algorithms can use weight attr; some want int
                     # Larger weight makes it closer to the requested length.
                     # fdp default length is 0.3, neato is 1.0
-                    graph.add_edge(check1, check2, len=0.3 * dist / max_edit_dist)
+                    graph.add_edge(
+                        check1,
+                        check2,
+                        len=0.3 * dist / max_edit_dist,
+                        weight=max_edit_dist - dist + 1,
+                    )
                     edge_count += 1
                     if dist <= 1:
                         edge_style.append("solid")
