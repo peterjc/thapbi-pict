@@ -1105,9 +1105,8 @@ def main(args=None):
         "--editdist",
         type=int,
         default="3",
-        help="Maximum edit distance. Recommend at most 3 (default) for plate "
-        "level graphs, could try putting this higher for smaller datasets like "
-        "single samples, or if combined with hard minimum abundance settings.",
+        choices=[1, 2, 3],
+        help="Maximum edit distance to draw. Default and maximum 3.",
     )
     parser_edit_graph.add_argument(
         "-o",
