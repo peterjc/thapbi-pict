@@ -62,6 +62,9 @@ def main(
     """
     assert isinstance(inputs, list)
 
+    if 3 < max_edit_dist:
+        sys.exit("ERROR: Maximum supported edit distance is 3bp.")
+
     samples = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
@@ -189,6 +192,17 @@ def main(
         "Computed %i Levenshtein edit distances between %i sequences.\n"
         % (n * (n - 1), n)
     )
+
+    # Matrix computation of multi-step paths vs edit distances, e.g.
+    # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
+    one_bp = distances == 1  # boolean
+    two_step = np.dot(one_bp, one_bp)  # matrix multiply
+    two_bp = (distances == 2) | two_step
+    three_step = (
+        np.dot(one_bp, two_bp) | np.dot(two_bp, one_bp) | np.dot(one_bp, one_bp, one_bp)
+    )
+    del one_bp, two_bp
+
     dropped = set()
     for i, md5 in enumerate(md5_to_seq):
         if total_min_abundance <= md5_abundance.get(md5, 0):
@@ -252,6 +266,8 @@ def main(
     edge_style = []
     edge_width = []
     edge_color = []
+    redundant2 = 0
+    redundant3 = 0
     for i, check1 in enumerate(md5_to_seq):
         if check1 in dropped:
             continue
@@ -261,36 +277,49 @@ def main(
                 seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = distances[i, j]
-                if dist <= max_edit_dist:
-                    # Some graph layout algorithms can use weight attr; some want int
-                    # Larger weight makes it closer to the requested length.
-                    # fdp default length is 0.3, neato is 1.0
-                    graph.add_edge(
-                        check1,
-                        check2,
-                        len=0.3 * dist / max_edit_dist,
-                        weight=max_edit_dist - dist + 1,
-                    )
-                    edge_count += 1
-                    if dist <= 1:
-                        edge_style.append("solid")
-                        edge_width.append(1.0)
-                        edge_color.append("#404040")
-                    elif dist <= 2:
-                        edge_style.append("dashed")
-                        edge_width.append(0.33)
-                        edge_color.append("#707070")
-                    else:
-                        edge_style.append("dotted")
-                        edge_width.append(0.25)
-                        edge_color.append("#808080")
-                    # if debug:
-                    #    sys.stderr.write("%s\t%s\t%i\n" % (check1, check2, dist))
+                if dist > max_edit_dist:
+                    continue
+                if dist == 2 and two_step[i, j]:
+                    # Redundant edge, two 1bp edges exist
+                    redundant2 += 1
+                    continue
+                if dist == 3 and three_step[i, j]:
+                    # Redundant, three 1bp edges exist, or 1bp+2bp
+                    redundant3 += 1
+                    continue
+                # Some graph layout algorithms can use weight attr; some want int
+                # Larger weight makes it closer to the requested length.
+                # fdp default length is 0.3, neato is 1.0
+                graph.add_edge(
+                    check1,
+                    check2,
+                    len=0.3 * dist / max_edit_dist,
+                    weight=max_edit_dist - dist + 1,
+                )
+                edge_count += 1
+                if dist <= 1:
+                    edge_style.append("solid")
+                    edge_width.append(1.0)
+                    edge_color.append("#404040")
+                elif dist <= 2:
+                    edge_style.append("dashed")
+                    edge_width.append(0.33)
+                    edge_color.append("#707070")
+                else:
+                    edge_style.append("dotted")
+                    edge_width.append(0.25)
+                    edge_color.append("#808080")
+                # if debug:
+                #    sys.stderr.write("%s\t%s\t%i\n" % (check1, check2, dist))
 
     if debug:
         sys.stderr.write(
             "DEBUG: %i edges up to maximum edit distance %i\n"
             % (edge_count, max_edit_dist)
+        )
+        sys.stderr.write(
+            "DEBUG: Dropped %i redundant 2-bp edges, and %i redundant 3-bp edges\n"
+            % (redundant2, redundant3)
         )
 
     placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
