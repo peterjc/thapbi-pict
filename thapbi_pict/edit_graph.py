@@ -60,6 +60,8 @@ def main(
     limits) and/or selected FASTA files (possibly with predictions or other
     metadata, and minimum abundance limits).
     """
+    if inputs is None:
+        inputs = []
     assert isinstance(inputs, list)
 
     if 3 < max_edit_dist:
