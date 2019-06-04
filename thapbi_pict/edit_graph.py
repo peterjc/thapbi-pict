@@ -341,6 +341,7 @@ def main(
             % (redundant2, redundant3)
         )
 
+    # TODO: Try "sfdp" but need GraphViz built with triangulation library
     placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
     nx.draw_networkx_nodes(
         graph,
