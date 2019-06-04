@@ -271,6 +271,7 @@ def main(
     #        node_labels[check1] = check1[:6]
 
     edge_count = 0
+    edge_count1 = edge_count2 = edge_count3 = 0
     edge_style = []
     edge_width = []
     edge_color = []
@@ -301,19 +302,24 @@ def main(
                 graph.add_edge(
                     check1,
                     check2,
+                    # i.e. edit distance 1, 2, 3 becomes distance 0.1, 0.2 and 0.3
                     len=0.3 * dist / max_edit_dist,
+                    # i.e. edit distance 1, 2, 3 get weights 3, 2, 1
                     weight=max_edit_dist - dist + 1,
                 )
                 edge_count += 1
                 if dist <= 1:
+                    edge_count1 += 1
                     edge_style.append("solid")
                     edge_width.append(1.0)
                     edge_color.append("#404040")
                 elif dist <= 2:
+                    edge_count2 += 1
                     edge_style.append("dashed")
                     edge_width.append(0.33)
                     edge_color.append("#707070")
                 else:
+                    edge_count3 += 1
                     edge_style.append("dotted")
                     edge_width.append(0.25)
                     edge_color.append("#808080")
@@ -325,6 +331,11 @@ def main(
             "DEBUG: %i edges up to maximum edit distance %i\n"
             % (edge_count, max_edit_dist)
         )
+        sys.stderr.write(
+            "DEBUG: %i one-bp edges; %i two-bp edges; %i three-bp edges.\n"
+            % (edge_count1, edge_count2, edge_count3)
+        )
+        assert edge_count == edge_count1 + edge_count2 + edge_count3
         sys.stderr.write(
             "DEBUG: Dropped %i redundant 2-bp edges, and %i redundant 3-bp edges\n"
             % (redundant2, redundant3)
