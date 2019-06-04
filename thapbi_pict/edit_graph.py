@@ -45,6 +45,65 @@ genus_color = {
 }
 
 
+def connected_components(boolean_edge_matrix):
+    """Given an N x N boolean symetric edge matrix, return a partition of the N nodes.
+
+    For example, this 3 x 3 matrix breaks down into two connected components,
+    node 0 and 2, and node 1 on its own:
+
+    >>> import numpy as np
+    >>> connected_components(np.array([[0, 0, 1], [0, 0, 0], [1, 0, 0]], np.bool))
+    [(0, 2), (1, )]
+
+    The partition is sorted by size (largest component first)
+    """
+    # Could have built a NetworkX object, and used their code...
+    n = boolean_edge_matrix.shape[0]
+    if boolean_edge_matrix.shape != (n, n):
+        raise ValueError("Expected a square adjacency matrix")
+    partition = [{_} for _ in range(n)]
+    for i in range(n):
+        # So, what is node i connected to?
+        for j in range(n):
+            if boolean_edge_matrix[i, j] != boolean_edge_matrix[j, i]:
+                raise ValueError("Expected a symmetric adjacency matrix")
+            if i < j:
+                continue
+            if boolean_edge_matrix[i, j]:
+                # Need to merge the partitions containing i and j
+                i_old = [_ for _ in partition if i in _]
+                assert len(i_old) == 1
+                i_old = i_old[0]
+                j_old = [_ for _ in partition if j in _]
+                assert len(j_old) == 1, (
+                    "%i found in %i members of the partitioning %r"
+                    % (j, len(j_old), partition)
+                )
+                j_old = j_old[0]
+                if i_old == j_old:
+                    # Already in same partition
+                    continue
+                # Need to merge the partitions containing i and j
+                partition = [_ for _ in partition if i not in _ and j not in _]
+                partition.append(i_old.union(j_old))
+    return [tuple(sorted(_)) for _ in sorted(partition, key=len, reverse=True)]
+
+
+assert connected_components(np.array([[0, 0, 1], [0, 0, 0], [1, 0, 0]], np.bool)) == [
+    (0, 2),
+    (1,),
+]
+assert connected_components(
+    np.array([[0, 0, 1, 1], [0, 0, 0, 1], [1, 0, 0, 1], [1, 1, 1, 0]], np.bool)
+) == [(0, 1, 2, 3)]
+assert connected_components(
+    np.array([[0, 0, 1, 0], [0, 0, 0, 1], [1, 0, 0, 1], [0, 1, 1, 0]], np.bool)
+) == [(0, 1, 2, 3)]
+assert connected_components(
+    np.array([[0, 0, 1, 0], [0, 0, 0, 1], [1, 0, 0, 0], [0, 1, 0, 0]], np.bool)
+) == [(0, 2), (1, 3)]
+
+
 def main(
     graph_output,
     db_url,
@@ -63,6 +122,8 @@ def main(
     if inputs is None:
         inputs = []
     assert isinstance(inputs, list)
+
+    MIN_CLUMP = 3  # command line option?
 
     if 3 < max_edit_dist:
         sys.exit("ERROR: Maximum supported edit distance is 3bp.")
@@ -195,6 +256,12 @@ def main(
         % (n * (n - 1), n)
     )
 
+    clumps = connected_components(distances <= max_edit_dist)
+    sys.stderr.write(
+        "Max edit distance %i gave %i connected components (size %i to %i).\n"
+        % (max_edit_dist, len(clumps), len(clumps[0]), len(clumps[-1]))
+    )
+
     # Matrix computation of multi-step paths vs edit distances, e.g.
     # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
     one_bp = distances == 1  # boolean
@@ -205,20 +272,26 @@ def main(
     )
     del one_bp, two_bp
 
+    md5_list = list(md5_to_seq)
     dropped = set()
-    for i, md5 in enumerate(md5_to_seq):
-        if total_min_abundance <= md5_abundance.get(md5, 0):
-            # High abundance, include it (not applied to DB sequences)
+    for clump in clumps:
+        if MIN_CLUMP <= len(clump):
+            # Keep them all
             continue
-        # Ignore self-vs-self which will be zero distance
-        if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
-            # Good, will draw this
-            continue
-        elif i + 1 < n and min(distances[i, i + 1 :]) <= max_edit_dist:
-            # Good, will draw this
-            continue
-        # No reason to draw this:
-        dropped.add(md5)
+        for index in clump:
+            md5 = md5_list[index]
+            if total_min_abundance <= md5_abundance.get(md5, 0):
+                # High abundance, include it (not applied to DB sequences)
+                continue
+            # # Ignore self-vs-self which will be zero distance
+            # if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
+            #    # Good, will draw this
+            #    continue
+            # elif i + 1 < n and min(distances[i, i + 1 :]) <= max_edit_dist:
+            #    # Good, will draw this
+            #    continue
+            # No reason to draw this:
+            dropped.add(md5)
     sys.stderr.write(
         "Dropped %i sequences with no siblings within maximum edit distance %i.\n"
         % (len(dropped), max_edit_dist)
@@ -235,29 +308,35 @@ def main(
     node_colors = []
     node_labels = {}
     node_sizes = []
-    for check1 in md5_to_seq:
-        if check1 in dropped:
+    for clump in clumps:
+        if len(clump) < MIN_CLUMP:
             continue
-        graph.add_node(check1)
-        sp = md5_species.get(check1, [])
-        genus = sorted({_.split(None, 1)[0] for _ in sp})
-        if not genus:
-            node_colors.append("#808080")  # grey
-        elif len(genus) > 1:
-            node_colors.append("#FF8C00")  # dark orange
-        elif genus[0] in genus_color:
-            node_colors.append(genus_color[genus[0]])
-        else:
-            node_colors.append("#8B0000")  # dark red
-        if any(species_level(_) for _ in sp):
-            node_labels[check1] = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
-        else:
-            # Genus only
-            pass
-        # DB only entries get size one, FASTA entries can be up to 100.
-        node_sizes.append(
-            max(1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance))
-        )
+        for index in clump:
+            check1 = md5_list[index]
+            if check1 in dropped:
+                continue
+            graph.add_node(check1)
+            sp = md5_species.get(check1, [])
+            genus = sorted({_.split(None, 1)[0] for _ in sp})
+            if not genus:
+                node_colors.append("#808080")  # grey
+            elif len(genus) > 1:
+                node_colors.append("#FF8C00")  # dark orange
+            elif genus[0] in genus_color:
+                node_colors.append(genus_color[genus[0]])
+            else:
+                node_colors.append("#8B0000")  # dark red
+            if any(species_level(_) for _ in sp):
+                node_labels[check1] = "\n".join(sorted(sp)).replace(
+                    "Phytophthora", "P."
+                )
+            else:
+                # Genus only
+                pass
+            # DB only entries get size one, FASTA entries can be up to 100.
+            node_sizes.append(
+                max(1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance))
+            )
     if debug:
         sys.stderr.write(
             "Node sizes %0.2f to %0.2f\n" % (min(node_sizes), max(node_sizes))
