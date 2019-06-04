@@ -224,7 +224,13 @@ def main(
         % (len(dropped), max_edit_dist)
     )
 
-    SIZE = 100 / (max(md5_abundance.values()) - total_min_abundance)  # scaling factor
+    if md5_abundance:
+        SIZE = 100 / (
+            max(md5_abundance.values()) - total_min_abundance
+        )  # scaling factor
+    else:
+        # Happens with DB only graph,
+        SIZE = 100
     graph = nx.Graph()
     node_colors = []
     node_labels = {}
