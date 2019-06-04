@@ -16,7 +16,7 @@ You can install these tools using:
 
 ```console
 $ pip install black flake8 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings \
-flake8-bugbear flake8-pie flake8-comprehensions restructuredtext-lint 
+flake8-bugbear flake8-pie flake8-comprehensions restructuredtext-lint
 ```
 
 You can run the checks using:
