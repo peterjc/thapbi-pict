@@ -470,12 +470,18 @@ def main(
         )
         nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
         plt.axis("off")
+        # PDF to stdout?
         plt.savefig(graph_output)
     elif graph_format == "graphml":
-        with open(graph_output, "w") as handle:
+        if graph_output == "-":
             for line in nx.generate_graphml(graph):
                 # Seems not to bother including the new line...
-                handle.write(line.rstrip() + "\n")
+                sys.stdout.write(line.rstrip() + "\n")
+        else:
+            with open(graph_output, "w") as handle:
+                for line in nx.generate_graphml(graph):
+                    # Seems not to bother including the new line...
+                    handle.write(line.rstrip() + "\n")
     else:
         # Typically this would be caught in __main__.py
         sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
