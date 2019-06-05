@@ -22,6 +22,7 @@ from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
 
 from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import md5seq
 from .utils import species_level
 from .utils import split_read_name_abundance
 
@@ -195,8 +196,12 @@ def main(
                 sys.exit("Duplicate sample name %s" % sample)
             samples.add(sample)
             with open(fasta_file) as handle:
+                md5_warn = False
                 for title, seq in SimpleFastaParser(handle):
-                    md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
+                    idn, abundance = split_read_name_abundance(title.split(None, 1)[0])
+                    md5 = md5seq(seq)
+                    if idn != md5:
+                        md5_warn = True
                     if min_abundance > 1 and abundance < min_abundance:
                         continue
                     md5_in_fasta.add(md5)
@@ -206,6 +211,11 @@ def main(
                         assert md5_to_seq[md5] == seq
                     else:
                         md5_to_seq[md5] = seq
+                if md5_warn:
+                    sys.stderr.write(
+                        "WARNING: Sequence(s) in %s not using MD5_abundance naming\n"
+                        % fasta_file
+                    )
         sys.stderr.write(
             "Loaded %i unique sequences from %i FASTA files.\n"
             % (len(md5_in_fasta), len(samples))
@@ -239,6 +249,9 @@ def main(
                 len(md5_in_db.union(md5_in_fasta)),
             )
         )
+
+    if not md5_to_seq:
+        sys.exit("ERROR: No sequences to plot.")
 
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
