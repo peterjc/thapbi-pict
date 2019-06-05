@@ -97,6 +97,12 @@ setup(
     entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["biopython", "networkx", "sqlalchemy", "xlsxwriter"],
+    install_requires=[
+        "biopython",
+        "networkx",
+        "python-levenshtein",
+        "sqlalchemy",
+        "xlsxwriter",
+    ],
     python_requires=">=3.5",
 )

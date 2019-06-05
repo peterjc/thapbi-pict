@@ -9,5 +9,6 @@
 
 biopython
 networkx
+python-levenshtein
 sqlalchemy
 xlsxwriter
