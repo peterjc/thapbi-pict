@@ -123,7 +123,7 @@ def main(
         inputs = []
     assert isinstance(inputs, list)
 
-    MIN_CLUMP = 3  # command line option?
+    MIN_CLUMP = 150  # command line option?
 
     if 3 < max_edit_dist:
         sys.exit("ERROR: Maximum supported edit distance is 3bp.")
@@ -354,8 +354,7 @@ def main(
     edge_style = []
     edge_width = []
     edge_color = []
-    redundant2 = 0
-    redundant3 = 0
+    redundant = 0
     for i, check1 in enumerate(md5_to_seq):
         if check1 in dropped:
             continue
@@ -365,45 +364,63 @@ def main(
                 seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = distances[i, j]
-                if dist > max_edit_dist:
-                    continue
-                if dist == 2 and two_step[i, j]:
-                    # Redundant edge, two 1bp edges exist
-                    redundant2 += 1
-                    continue
-                if dist == 3 and three_step[i, j]:
-                    # Redundant, three 1bp edges exist, or 1bp+2bp
-                    redundant3 += 1
-                    continue
                 # Some graph layout algorithms can use weight attr; some want int
                 # Larger weight makes it closer to the requested length.
                 # fdp default length is 0.3, neato is 1.0
-                graph.add_edge(
-                    check1,
-                    check2,
-                    # i.e. edit distance 1, 2, 3 becomes distance 0.1, 0.2 and 0.3
-                    len=0.3 * dist / max_edit_dist,
-                    # i.e. edit distance 1, 2, 3 get weights 3, 2, 1
-                    weight=max_edit_dist - dist + 1,
-                )
-                edge_count += 1
-                if dist <= 1:
-                    edge_count1 += 1
-                    edge_style.append("solid")
-                    edge_width.append(1.0)
-                    edge_color.append("#404040")
-                elif dist <= 2:
-                    edge_count2 += 1
-                    edge_style.append("dashed")
-                    edge_width.append(0.33)
-                    edge_color.append("#707070")
-                else:
-                    edge_count3 += 1
+
+                # i.e. edit distance 1, 2, 3 becomes distance 0.1, 0.2 and 0.3
+                edge_length = 0.3 * dist / max_edit_dist
+                # i.e. edit distance 1, 2, 3 get weights 3, 2, 1
+                edge_weight = max_edit_dist - dist + 1
+
+                if dist > max_edit_dist:
+                    continue
+                if (dist == 2 and two_step[i, j]) or (dist == 3 and three_step[i, j]):
+                    # Redundant edge, if dist=2, two 1bp edges exist
+                    # Or, if dist=3, three 1bp edges exist, or 1bp+2bp
+                    redundant += 1
+                    graph.add_edge(
+                        check1,
+                        check2,
+                        len=edge_length,
+                        K=edge_length,
+                        weight=edge_weight,
+                    )
+                    # edge_style.append("invis")
+                    # ValueError: Unrecognized linestyle: invis
                     edge_style.append("dotted")
-                    edge_width.append(0.25)
-                    edge_color.append("#808080")
-                # if debug:
-                #    sys.stderr.write("%s\t%s\t%i\n" % (check1, check2, dist))
+                    edge_width.append(0.1)
+                    edge_color.append("#0000FF9F")  # blue for debug
+                    # edge_color.append("#000000FF")  # fully transparent
+                else:
+                    # Some graph layout algorithms can use weight attr; some want int
+                    # Larger weight makes it closer to the requested length.
+                    # fdp default length is 0.3, neato is 1.0
+                    graph.add_edge(
+                        check1,
+                        check2,
+                        len=edge_length,
+                        K=edge_length,
+                        weight=edge_weight,
+                    )
+                    edge_count += 1
+                    if dist <= 1:
+                        edge_count1 += 1
+                        edge_style.append("solid")
+                        edge_width.append(1.0)
+                        edge_color.append("#404040")
+                    elif dist <= 2:
+                        edge_count2 += 1
+                        edge_style.append("dashed")
+                        edge_width.append(0.33)
+                        edge_color.append("#707070")
+                    else:
+                        edge_count3 += 1
+                        edge_style.append("dotted")
+                        edge_width.append(0.25)
+                        edge_color.append("#808080")
+                    # if debug:
+                    #    sys.stderr.write("%s\t%s\t%i\n" % (check1, check2, dist))
 
     if debug:
         sys.stderr.write(
@@ -416,8 +433,7 @@ def main(
         )
         assert edge_count == edge_count1 + edge_count2 + edge_count3
         sys.stderr.write(
-            "DEBUG: Dropped %i redundant 2-bp edges, and %i redundant 3-bp edges\n"
-            % (redundant2, redundant3)
+            "DEBUG: Dropped %i redundant 2-bp or 3-bp edges.\n" % redundant
         )
 
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
