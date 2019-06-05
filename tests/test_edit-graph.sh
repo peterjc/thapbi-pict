@@ -3,7 +3,8 @@ IFS=$'\n\t'
 set -eux
 # Note not using "set -o pipefail" until after check error message with grep
 
-# Note all tests here (initially) using default database:
+# Debug:
+thapbi_pict edit-graph -h
 
 echo "Checking edit-graph"
 thapbi_pict edit-graph -d - 2>&1 | grep "Require -d / --database and/or -i / --input argument"
