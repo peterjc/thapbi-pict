@@ -99,6 +99,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "biopython",
+        "matplotlib",
         "networkx",
         "python-levenshtein",
         "sqlalchemy",

@@ -8,6 +8,7 @@
 #
 
 biopython
+matplotlib
 networkx
 python-levenshtein
 sqlalchemy
