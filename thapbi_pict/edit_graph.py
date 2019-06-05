@@ -107,6 +107,7 @@ assert connected_components(
 
 def main(
     graph_output,
+    graph_format,
     db_url,
     inputs,
     min_abundance=100,
@@ -449,25 +450,34 @@ def main(
             "DEBUG: Dropped %i redundant 2-bp or 3-bp edges.\n" % redundant
         )
 
-    # TODO: Try "sfdp" but need GraphViz built with triangulation library
-    placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
-    nx.draw_networkx_nodes(
-        graph,
-        placement,
-        node_color=node_colors,
-        # node_labels=node_labels,
-        node_size=node_sizes,
-    )
-    nx.draw_networkx_edges(
-        graph,
-        placement,
-        style=edge_style,
-        width=edge_width,
-        edge_color=edge_color,
-        alpha=0.5,
-    )
-    nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
-    plt.axis("off")
-    plt.savefig(graph_output)
+    if graph_format == "pdf":
+        # TODO: Try "sfdp" but need GraphViz built with triangulation library
+        placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
+        nx.draw_networkx_nodes(
+            graph,
+            placement,
+            node_color=node_colors,
+            # node_labels=node_labels,
+            node_size=node_sizes,
+        )
+        nx.draw_networkx_edges(
+            graph,
+            placement,
+            style=edge_style,
+            width=edge_width,
+            edge_color=edge_color,
+            alpha=0.5,
+        )
+        nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
+        plt.axis("off")
+        plt.savefig(graph_output)
+    elif graph_format == "graphml":
+        with open(graph_output, "w") as handle:
+            for line in nx.generate_graphml(graph):
+                # Seems not to bother including the new line...
+                handle.write(line.rstrip() + "\n")
+    else:
+        # Typically this would be caught in __main__.py
+        sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
 
     return 0

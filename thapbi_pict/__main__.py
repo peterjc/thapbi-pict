@@ -263,6 +263,7 @@ def edit_graph(args=None):
 
     return main(
         graph_output=args.output,
+        graph_format=args.format,
         db_url=db,
         inputs=args.input,
         min_abundance=args.abundance,
@@ -1080,10 +1081,10 @@ def main(args=None):
         "edit-graph",
         description="Draw network graph of sequences using edit distance.",
         epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
-        "The output is a network graph (in PDF format) with unique sequences "
-        "as nodes (labelled by the database taxonomy, colored by genus, size "
-        "set by total abundance in the FASTA files), and short edit "
-        "distances as edges between nodes.",
+        "The output is a network graph (in GraphML or PDF format) with unique "
+        "sequences as nodes (in the PDF labelled by the database taxonomy, "
+        "colored by genus, size set by total abundance in the FASTA files), "
+        "and short edit distances as edges between nodes.",
     )
     arg = parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Use '-' to mean no database."
@@ -1123,7 +1124,15 @@ def main(args=None):
         type=str,
         default="-",
         metavar="FILENAME",
-        help="Write PDF graph here. Default is '-' meaning stdout.",
+        help="Write graph here. Default is '-' meaning stdout.",
+    )
+    parser_edit_graph.add_argument(
+        "-f",
+        "--format",
+        type=str,
+        default="graphml",
+        choices=["graphml", "pdf"],
+        help="Format to write out (default 'graphml').",
     )
     parser_edit_graph.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
