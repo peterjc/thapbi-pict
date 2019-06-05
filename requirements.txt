@@ -8,5 +8,6 @@
 #
 
 biopython
+networkx
 sqlalchemy
 xlsxwriter
