@@ -351,9 +351,9 @@ def main(
     else:
         # Happens with DB only graph,
         SIZE = 100
-    graph = nx.Graph()
-    graph.graph["node_default"] = {"color": "#8B0000", "size": 1.0}
-    graph.graph["edge_default"] = {"color": "#808080", "weight": 1.0}
+    G = nx.Graph()
+    G.graph["node_default"] = {"color": "#8B0000", "size": 1.0}
+    G.graph["edge_default"] = {"color": "#808080", "weight": 1.0}
     for clump in clumps:
         if len(clump) < MIN_CLUMP:
             continue
@@ -380,7 +380,7 @@ def main(
             node_size = max(
                 1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance)
             )
-            graph.add_node(check1, color=node_color, size=node_size, label=node_label)
+            G.add_node(check1, color=node_color, size=node_size, label=node_label)
 
     edge_count = 0
     edge_count1 = edge_count2 = edge_count3 = 0
@@ -412,7 +412,7 @@ def main(
                     # Redundant edge, if dist=2, two 1bp edges exist
                     # Or, if dist=3, three 1bp edges exist, or 1bp+2bp
                     redundant += 1
-                    graph.add_edge(
+                    G.add_edge(
                         check1,
                         check2,
                         len=edge_length,
@@ -429,7 +429,7 @@ def main(
                     # Some graph layout algorithms can use weight attr; some want int
                     # Larger weight makes it closer to the requested length.
                     # fdp default length is 0.3, neato is 1.0
-                    graph.add_edge(
+                    G.add_edge(
                         check1,
                         check2,
                         len=edge_length,
@@ -481,6 +481,6 @@ def main(
         # Typically this would be caught in __main__.py
         sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
 
-    write_fn(graph, "/dev/stdout" if graph_output == "-" else graph_output)
+    write_fn(G, "/dev/stdout" if graph_output == "-" else graph_output)
 
     return 0
