@@ -358,10 +358,10 @@ def main(
         if len(clump) < MIN_CLUMP:
             continue
         for index in clump:
-            check1 = md5_list[index]
-            if check1 in dropped:
+            md5 = md5_list[index]
+            if md5 in dropped:
                 continue
-            sp = md5_species.get(check1, [])
+            sp = md5_species.get(md5, [])
             genus = sorted({_.split(None, 1)[0] for _ in sp})
             if not genus:
                 node_color = "#808080"  # grey
@@ -377,10 +377,8 @@ def main(
                 # Genus only
                 node_label = ""
             # DB only entries get size one, FASTA entries can be up to 100.
-            node_size = max(
-                1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance)
-            )
-            G.add_node(check1, color=node_color, size=node_size, label=node_label)
+            node_size = max(1, SIZE * (md5_abundance.get(md5, 0) - total_min_abundance))
+            G.add_node(md5, color=node_color, size=node_size, label=node_label)
 
     edge_count = 0
     edge_count1 = edge_count2 = edge_count3 = 0
@@ -388,13 +386,13 @@ def main(
     edge_width = []
     edge_color = []
     redundant = 0
-    for i, check1 in enumerate(md5_to_seq):
+    for i, check1 in enumerate(md5_list):
         if check1 in dropped:
             continue
-        seq1 = md5_to_seq[check1]
-        for j, check2 in enumerate(md5_to_seq):
+        # seq1 = md5_to_seq[check1]
+        for j, check2 in enumerate(md5_list):
             if i < j and check2 not in dropped:
-                seq2 = md5_to_seq[check2]
+                # seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = distances[i, j]
                 # Some graph layout algorithms can use weight attr; some want int
