@@ -105,6 +105,38 @@ assert connected_components(
 ) == [(0, 2), (1, 3)]
 
 
+def write_pdf(graph, filename):
+    """Render NetworkX graph to PDF using GraphViz fdp."""
+    # TODO: Try "sfdp" but need GraphViz built with triangulation library
+    default = graph["node_default"]["color"]
+    node_colors = [graph.node[_].get("color", default) for _ in graph]
+
+    default = 1.0
+    node_sizes = [graph.node[_].get("size", default) for _ in graph]
+
+    default = ""
+    node_labels = [graph.node[_].get("label", default) for _ in graph]
+
+    default = graph["edge_default"]["color"]
+    edge_colors = [graph.edge[_].get("color", default) for _ in graph.edges]
+
+    placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
+    nx.draw_networkx_nodes(
+        graph, placement, node_color=node_colors, node_size=node_sizes
+    )
+    nx.draw_networkx_edges(
+        graph,
+        placement,
+        # style=edge_styles,
+        # width=edge_widths,
+        edge_color=edge_colors,
+        alpha=0.5,
+    )
+    nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
+    plt.axis("off")
+    plt.savefig(filename)
+
+
 def main(
     graph_output,
     graph_format,
@@ -319,9 +351,8 @@ def main(
         # Happens with DB only graph,
         SIZE = 100
     graph = nx.Graph()
-    node_colors = []
-    node_labels = {}
-    node_sizes = []
+    graph.graph["node_default"] = {"color": "#8B0000", "size": 1.0}
+    graph.graph["edge_default"] = {"color": "#808080", "weight": 1.0}
     for clump in clumps:
         if len(clump) < MIN_CLUMP:
             continue
@@ -332,39 +363,23 @@ def main(
             sp = md5_species.get(check1, [])
             genus = sorted({_.split(None, 1)[0] for _ in sp})
             if not genus:
-                c = "#808080"  # grey
+                node_color = "#808080"  # grey
             elif len(genus) > 1:
-                c = "#FF8C00"  # dark orange
+                node_color = "#FF8C00"  # dark orange
             elif genus[0] in genus_color:
-                c = genus_color[genus[0]]
+                node_color = genus_color[genus[0]]
             else:
-                c = "#8B0000"  # dark red
-            node_colors.append(c)
+                node_color = "#8B0000"  # dark red
             if any(species_level(_) for _ in sp):
-                node_labels[check1] = "\n".join(sorted(sp)).replace(
-                    "Phytophthora", "P."
-                )
+                node_label = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
             else:
                 # Genus only
-                pass
+                node_label = ""
             # DB only entries get size one, FASTA entries can be up to 100.
-            node_sizes.append(
-                max(1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance))
+            node_size = max(
+                1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance)
             )
-            # TODO - record color, label, size, etc on the node itself
-            graph.add_node(check1)
-    assert len(node_colors) == len(node_labels) == len(node_sizes)
-    if debug and node_sizes:
-        sys.stderr.write(
-            "Node sizes %0.2f to %0.2f\n" % (min(node_sizes), max(node_sizes))
-        )
-
-    # for check1 in md5_abundance:
-    #    if check1 in node_labels:
-    #        if debug:
-    #            node_labels[check1] += "\n" + check1[:6]
-    #    else:
-    #        node_labels[check1] = check1[:6]
+            graph.add_node(check1, color=node_color, size=node_size, label=node_label)
 
     edge_count = 0
     edge_count1 = edge_count2 = edge_count3 = 0
@@ -453,36 +468,18 @@ def main(
             "DEBUG: Dropped %i redundant 2-bp or 3-bp edges.\n" % redundant
         )
 
-    if graph_format == "pdf":
-        # TODO: Try "sfdp" but need GraphViz built with triangulation library
-        placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
-        nx.draw_networkx_nodes(
-            graph,
-            placement,
-            node_color=node_colors,
-            # node_labels=node_labels,
-            node_size=node_sizes,
-        )
-        nx.draw_networkx_edges(
-            graph,
-            placement,
-            style=edge_style,
-            width=edge_width,
-            edge_color=edge_color,
-            alpha=0.5,
-        )
-        nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
-        plt.axis("off")
-        # PDF to stdout?
-        plt.savefig(graph_output)
-    elif graph_format == "graphml":
-        nx.write_graphml(graph, "/dev/stdout" if graph_output == "-" else graph_output)
-    elif graph_format == "gexf":
-        nx.write_gexf(graph, "/dev/stdout" if graph_output == "-" else graph_output)
-    elif graph_format == "gml":
-        nx.write_gml(graph, "/dev/stdout" if graph_output == "-" else graph_output)
-    else:
+    render = {
+        "gexf": nx.write_gexf,
+        "gml": nx.write_gml,
+        "graphml": nx.write_graphml,
+        "pdf": write_pdf,
+    }
+    try:
+        write_fn = render[graph_format]
+    except KeyError:
         # Typically this would be caught in __main__.py
         sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
+
+    write_fn(graph, "/dev/stdout" if graph_output == "-" else graph_output)
 
     return 0
