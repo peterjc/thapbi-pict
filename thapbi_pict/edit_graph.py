@@ -58,17 +58,23 @@ def write_pdf(G, filename):
     default = ""
     node_labels = {_: G.node[_].get("label", default) for _ in G}
 
+    default = G.graph["edge_default"]["style"]
+    edge_styles = [G.edges[_].get("style", default) for _ in G.edges()]
+
     default = G.graph["edge_default"]["color"]
-    # edge_colors = [G.edges[_].get("color", default) for _ in G.edges]
+    edge_colors = [G.edges[_].get("color", default) for _ in G.edges()]
+
+    default = G.graph["edge_default"]["width"]
+    edge_widths = [G.edges[_].get("width", default) for _ in G.edges()]
 
     placement = nx.drawing.nx_pydot.graphviz_layout(G, "fdp")
     nx.draw_networkx_nodes(G, placement, node_color=node_colors, node_size=node_sizes)
     nx.draw_networkx_edges(
         G,
         placement,
-        # style=edge_styles,
-        # width=edge_widths,
-        # edge_color=edge_colors,
+        style=edge_styles,
+        width=edge_widths,
+        edge_color=edge_colors,
         alpha=0.5,
     )
     nx.draw_networkx_labels(G, placement, node_labels, font_size=4)
@@ -281,7 +287,12 @@ def main(
         SIZE = 100
     G = nx.Graph()
     G.graph["node_default"] = {"color": "#8B0000", "size": 1.0}
-    G.graph["edge_default"] = {"color": "#808080", "weight": 1.0}
+    G.graph["edge_default"] = {
+        "color": "#FF0000",
+        "weight": 1.0,
+        "width": 1.0,
+        "style": "solid",
+    }
     for md5 in md5_list:
         if md5 in dropped:
             continue
@@ -334,48 +345,42 @@ def main(
                     # Redundant edge, if dist=2, two 1bp edges exist
                     # Or, if dist=3, three 1bp edges exist, or 1bp+2bp
                     redundant += 1
-                    G.add_edge(
-                        check1,
-                        check2,
-                        len=edge_length,
-                        K=edge_length,
-                        weight=edge_weight,
-                    )
-                    # edge_style.append("invis")
+                    # edge_style = "invis"
                     # ValueError: Unrecognized linestyle: invis
-                    edge_style.append("dotted")
-                    edge_width.append(0.1)
-                    edge_color.append("#0000FF9F")  # blue for debug
-                    # edge_color.append("#000000FF")  # fully transparent
+                    edge_style = "dotted"
+                    edge_width = 0.1
+                    edge_color = "#0000FF9F"  # blue for debug
+                    # edge_color = "#000000FF"  # fully transparent
                 else:
                     # Some graph layout algorithms can use weight attr; some want int
                     # Larger weight makes it closer to the requested length.
                     # fdp default length is 0.3, neato is 1.0
-                    G.add_edge(
-                        check1,
-                        check2,
-                        len=edge_length,
-                        K=edge_length,
-                        weight=edge_weight,
-                    )
                     edge_count += 1
                     if dist <= 1:
                         edge_count1 += 1
-                        edge_style.append("solid")
-                        edge_width.append(1.0)
-                        edge_color.append("#404040")
+                        edge_style = "solid"
+                        edge_width = 1.0
+                        edge_color = "#404040"
                     elif dist <= 2:
                         edge_count2 += 1
-                        edge_style.append("dashed")
-                        edge_width.append(0.33)
-                        edge_color.append("#707070")
+                        edge_style = "dashed"
+                        edge_width = 0.33
+                        edge_color = "#707070"
                     else:
                         edge_count3 += 1
-                        edge_style.append("dotted")
-                        edge_width.append(0.25)
-                        edge_color.append("#808080")
-                    # if debug:
-                    #    sys.stderr.write("%s\t%s\t%i\n" % (check1, check2, dist))
+                        edge_style = "dotted"
+                        edge_width = 0.25
+                        edge_color = "#808080"
+                G.add_edge(
+                    check1,
+                    check2,
+                    len=edge_length,
+                    K=edge_length,
+                    weight=edge_weight,
+                    style=edge_style,
+                    width=edge_width,
+                    color=edge_color,
+                )
 
     if debug:
         sys.stderr.write(
