@@ -476,23 +476,11 @@ def main(
         # PDF to stdout?
         plt.savefig(graph_output)
     elif graph_format == "graphml":
-        if graph_output == "-":
-            for line in nx.generate_graphml(graph):
-                # Seems not to bother including the new line...
-                sys.stdout.write(line.rstrip() + "\n")
-        else:
-            with open(graph_output, "w") as handle:
-                for line in nx.generate_graphml(graph):
-                    # Seems not to bother including the new line...
-                    handle.write(line.rstrip() + "\n")
+        nx.write_graphml(graph, "/dev/stdout" if graph_output == "-" else graph_output)
     elif graph_format == "gexf":
-        nx.readwrite.gexf.write_gexf(
-            graph, "/dev/stdout" if graph_output == "-" else graph_output
-        )
+        nx.write_gexf(graph, "/dev/stdout" if graph_output == "-" else graph_output)
     elif graph_format == "gml":
-        nx.readwrite.gml.write_gml(
-            graph, "/dev/stdout" if graph_output == "-" else graph_output
-        )
+        nx.write_gml(graph, "/dev/stdout" if graph_output == "-" else graph_output)
     else:
         # Typically this would be caught in __main__.py
         sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
