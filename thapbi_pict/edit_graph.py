@@ -105,36 +105,37 @@ assert connected_components(
 ) == [(0, 2), (1, 3)]
 
 
-def write_pdf(graph, filename):
+def write_pdf(G, filename):
     """Render NetworkX graph to PDF using GraphViz fdp."""
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
-    default = graph["node_default"]["color"]
-    node_colors = [graph.node[_].get("color", default) for _ in graph]
+    default = G.graph["node_default"]["color"]
+    node_colors = [G.node[_].get("color", default) for _ in G]
 
     default = 1.0
-    node_sizes = [graph.node[_].get("size", default) for _ in graph]
+    node_sizes = [G.node[_].get("size", default) for _ in G]
 
     default = ""
-    node_labels = [graph.node[_].get("label", default) for _ in graph]
+    node_labels = {_: G.node[_].get("label", default) for _ in G}
 
-    default = graph["edge_default"]["color"]
-    edge_colors = [graph.edge[_].get("color", default) for _ in graph.edges]
+    default = G.graph["edge_default"]["color"]
+    # edge_colors = [G.edges[_].get("color", default) for _ in G.edges]
 
-    placement = nx.drawing.nx_pydot.graphviz_layout(graph, "fdp")
-    nx.draw_networkx_nodes(
-        graph, placement, node_color=node_colors, node_size=node_sizes
-    )
+    placement = nx.drawing.nx_pydot.graphviz_layout(G, "fdp")
+    nx.draw_networkx_nodes(G, placement, node_color=node_colors, node_size=node_sizes)
     nx.draw_networkx_edges(
-        graph,
+        G,
         placement,
         # style=edge_styles,
         # width=edge_widths,
-        edge_color=edge_colors,
+        # edge_color=edge_colors,
         alpha=0.5,
     )
-    nx.draw_networkx_labels(graph, placement, node_labels, font_size=4)
+    nx.draw_networkx_labels(G, placement, node_labels, font_size=4)
     plt.axis("off")
-    plt.savefig(filename)
+    if filename in ["-", "/dev/stdout"]:
+        plt.savefig(sys.stdout.buffer, format="pdf")
+    else:
+        plt.savefig(filename, format="pdf")
 
 
 def main(
