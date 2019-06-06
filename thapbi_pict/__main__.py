@@ -1081,7 +1081,7 @@ def main(args=None):
         "edit-graph",
         description="Draw network graph of sequences using edit distance.",
         epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
-        "The output is a network graph (in GraphML or PDF format) with unique "
+        "The output is a network graph (in a choice of format) with unique "
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
         "colored by genus, size set by total abundance in the FASTA files), "
         "and short edit distances as edges between nodes.",
@@ -1131,7 +1131,7 @@ def main(args=None):
         "--format",
         type=str,
         default="graphml",
-        choices=["graphml", "pdf"],
+        choices=["graphml", "gexf", "gml", "pdf"],
         help="Format to write out (default 'graphml').",
     )
     parser_edit_graph.add_argument(

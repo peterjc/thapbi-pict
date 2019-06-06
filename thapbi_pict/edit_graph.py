@@ -329,17 +329,17 @@ def main(
             check1 = md5_list[index]
             if check1 in dropped:
                 continue
-            graph.add_node(check1)
             sp = md5_species.get(check1, [])
             genus = sorted({_.split(None, 1)[0] for _ in sp})
             if not genus:
-                node_colors.append("#808080")  # grey
+                c = "#808080"  # grey
             elif len(genus) > 1:
-                node_colors.append("#FF8C00")  # dark orange
+                c = "#FF8C00"  # dark orange
             elif genus[0] in genus_color:
-                node_colors.append(genus_color[genus[0]])
+                c = genus_color[genus[0]]
             else:
-                node_colors.append("#8B0000")  # dark red
+                c = "#8B0000"  # dark red
+            node_colors.append(c)
             if any(species_level(_) for _ in sp):
                 node_labels[check1] = "\n".join(sorted(sp)).replace(
                     "Phytophthora", "P."
@@ -351,7 +351,10 @@ def main(
             node_sizes.append(
                 max(1, SIZE * (md5_abundance.get(check1, 0) - total_min_abundance))
             )
-    if debug:
+            # TODO - record color, label, size, etc on the node itself
+            graph.add_node(check1)
+    assert len(node_colors) == len(node_labels) == len(node_sizes)
+    if debug and node_sizes:
         sys.stderr.write(
             "Node sizes %0.2f to %0.2f\n" % (min(node_sizes), max(node_sizes))
         )
@@ -482,6 +485,14 @@ def main(
                 for line in nx.generate_graphml(graph):
                     # Seems not to bother including the new line...
                     handle.write(line.rstrip() + "\n")
+    elif graph_format == "gexf":
+        nx.readwrite.gexf.write_gexf(
+            graph, "/dev/stdout" if graph_output == "-" else graph_output
+        )
+    elif graph_format == "gml":
+        nx.readwrite.gml.write_gml(
+            graph, "/dev/stdout" if graph_output == "-" else graph_output
+        )
     else:
         # Typically this would be caught in __main__.py
         sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
