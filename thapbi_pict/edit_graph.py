@@ -235,17 +235,26 @@ def main(
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
     # or for environmental sequences at high abundance)
-    n = len(md5_to_seq)
+    md5_list = list(md5_to_seq)
+    wanted = set()
+    n = len(md5_list)
     distances = np.zeros((n, n), np.uint)
-    for i, check1 in enumerate(md5_to_seq):
+    for i, check1 in enumerate(md5_list):
         seq1 = md5_to_seq[check1]
-        for j, check2 in enumerate(md5_to_seq):
+        for j, check2 in enumerate(md5_list):
             if i < j:
                 seq2 = md5_to_seq[check2]
-                distances[i, j] = distances[j, i] = levenshtein(seq1, seq2)
+                distances[i, j] = distances[j, i] = d = levenshtein(seq1, seq2)
+                if d and d <= max_edit_dist:
+                    wanted.add(check1)
+                    wanted.add(check2)
     sys.stderr.write(
         "Computed %i Levenshtein edit distances between %i sequences.\n"
         % (n * (n - 1), n)
+    )
+    sys.stderr.write(
+        "Will draw %i nodes with at least one edge (%i are isolated sequences).\n"
+        % (len(wanted), n - len(wanted))
     )
 
     # Matrix computation of multi-step paths vs edit distances, e.g.
@@ -258,25 +267,16 @@ def main(
     )
     del one_bp, two_bp
 
-    md5_list = list(md5_to_seq)
-    dropped = set()
     for md5 in md5_list:
-        if total_min_abundance <= md5_abundance.get(md5, 0):
-            # High abundance, include it (not applied to DB sequences)
-            continue
-        # Ignore self-vs-self which will be zero distance
-        if i > 1 and min(distances[i, 0 : i - 1]) <= max_edit_dist:
-            # Good, will draw this
-            continue
-        elif i + 1 < n and min(distances[i, i + 1 :]) <= max_edit_dist:
-            # Good, will draw this
-            continue
-        # No reason to draw this:
-        dropped.add(md5)
-    sys.stderr.write(
-        "Dropped %i sequences with no siblings within maximum edit distance %i.\n"
-        % (len(dropped), max_edit_dist)
-    )
+        if md5 not in wanted:
+            # Will include high abundance singletons too
+            if total_min_abundance <= md5_abundance.get(md5, 0):
+                wanted.add(md5)
+    if inputs:
+        sys.stderr.write(
+            "Including high abundance isolated sequences, will draw %i nodes.\n"
+            % len(wanted)
+        )
 
     if md5_abundance:
         SIZE = 100 / (
@@ -294,7 +294,7 @@ def main(
         "style": "solid",
     }
     for md5 in md5_list:
-        if md5 in dropped:
+        if md5 not in wanted:
             continue
         sp = md5_species.get(md5, [])
         genus = sorted({_.split(None, 1)[0] for _ in sp})
@@ -322,11 +322,11 @@ def main(
     edge_color = []
     redundant = 0
     for i, check1 in enumerate(md5_list):
-        if check1 in dropped:
+        if check1 not in wanted:
             continue
         # seq1 = md5_to_seq[check1]
         for j, check2 in enumerate(md5_list):
-            if i < j and check2 not in dropped:
+            if i < j and check2 in wanted:
                 # seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = distances[i, j]
