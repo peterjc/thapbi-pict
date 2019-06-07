@@ -1130,9 +1130,9 @@ def main(args=None):
         "-f",
         "--format",
         type=str,
-        default="graphml",
+        default="xgmml",
         choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
-        help="Format to write out (default 'graphml').",
+        help="Format to write out (default 'xgmml' for use with Cytoscape).",
     )
     parser_edit_graph.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
