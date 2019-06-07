@@ -86,22 +86,44 @@ def write_pdf(G, filename):
 
 
 def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
-    """Call networkxgmml to save graph in XGML format."""
-    from networkxgmml import XGMMLWriter
-
-    for n in G:
-        if "label" in G.nodes[n] and not G.nodes[n]["label"]:
-            # Cytoscape does not like blank labels:
-            G.nodes[n]["label"] = n
-
-    # Hack for bug in networkxgmml
-    # https://github.com/informationsea/networkxxgmml/issues/14
-    for e in G.edges():
-        del G.edges[e]["style"]
-        del G.edges[e]["color"]
-
+    """Save graph in XGMML format suitable for Cytoscape import."""
+    # Not currently supported in NetworkX, and third party
+    # package networkxgmml is not up to date (Python 3,
+    # setting graphical properties on edges). So, DIY time!
     with open(filename, "w") as handle:
-        XGMMLWriter(handle, G, name, directed=False)
+        handle.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
+        handle.write(
+            '<graph directed="0"  xmlns:dc="http://purl.org/dc/elements/1.1/" '
+            'xmlns:xlink="http://www.w3.org/1999/xlink" '
+            'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
+            'xmlns="http://www.cs.rpi.edu/XGMML">\n'
+        )
+        for n in G:
+            node = G.nodes[n]
+            try:
+                label = node["label"]
+            except KeyError:
+                label = None
+            if not label:
+                # Cytoscape does not like blank labels:
+                label = n
+            handle.write('  <node label="%s" id="%s">\n' % (label, n))
+            color = node["color"]
+            size = node["size"]
+            handle.write(
+                '    <graphics type="CIRCLE" fill="%s" width="0" outline="#000000" '
+                'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
+            )
+            handle.write("  </node>\n")
+        for n1, n2 in G.edges():
+            edge = G.edges[n1, n2]
+            handle.write('  <edge source="%s" target="%s">\n' % (n1, n2))
+            # style = edge["style"]  # Not in XGMML?
+            color = edge["color"]
+            width = edge["width"]
+            handle.write('    <graphics fill="%s" width="%0.1f"/>\n' % (color, width))
+            handle.write("  </edge>\n")
+        handle.write("</graph>\n")
 
 
 def main(
