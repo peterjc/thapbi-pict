@@ -106,25 +106,37 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                 label = None
             if not label:
                 label = n[:6]  # start of MD5
+            # weight = node["weight"]
             handle.write('  <node id="%s" label="%s">\n' % (n, label))
             color = node["color"]
-            # Size 1 to 100 works find in PDF output, not in Cytoscape!
+            # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
+            # Rescale to use a minimum of 5.
             size = (node["size"] * 0.95) + 5.0
             handle.write(
                 '    <graphics type="CIRCLE" fill="%s" outline="#000000" '
                 'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
             )
+            handle.write(
+                '    <att type="integer" name="Abundance" value="%i"/>\n'
+                % node.get("abundance", 0)
+            )
             handle.write("  </node>\n")
         for n1, n2 in G.edges():
             edge = G.edges[n1, n2]
-            weight = edge["weight"]
             handle.write(
-                '  <edge source="%s" target="%s" weight="%0.2f">\n' % (n1, n2, weight)
+                '  <edge source="%s" target="%s" weight="%0.2f">\n'
+                % (n1, n2, edge["weight"])
             )
-            # style = edge["style"]  # Not in XGMML?
-            color = edge["color"]
-            width = edge["width"]
-            handle.write('    <graphics fill="%s" width="%0.1f"/>\n' % (color, width))
+            # edge["style"]  # Not in XGMML?
+            handle.write(
+                '    <graphics fill="%s" width="%0.1f"/>\n'
+                % (edge["color"], edge["width"])
+            )
+            if "edit_dist" in edge:
+                handle.write(
+                    '    <att type="integer" name="Edit-distance" value="%i"/>\n'
+                    % edge["edit_dist"]
+                )
             handle.write("  </edge>\n")
         handle.write("</graph>\n")
 
@@ -356,8 +368,11 @@ def main(
             # Genus only
             node_label = ""
         # DB only entries get size one, FASTA entries can be up to 100.
-        node_size = max(1, SIZE * (md5_abundance.get(md5, 0) - total_min_abundance))
-        G.add_node(md5, color=node_color, size=node_size, label=node_label)
+        abundance = md5_abundance.get(md5, 0)
+        node_size = max(1, SIZE * (abundance - total_min_abundance))
+        G.add_node(
+            md5, color=node_color, size=node_size, label=node_label, abundance=abundance
+        )
 
     edge_count = 0
     edge_count1 = edge_count2 = edge_count3 = 0
@@ -420,6 +435,7 @@ def main(
                     check1,
                     check2,
                     len=edge_length,
+                    edit_dist=dist,
                     K=edge_length,
                     weight=edge_weight,
                     style=edge_style,
