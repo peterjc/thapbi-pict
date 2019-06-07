@@ -349,8 +349,9 @@ def main(
                     # ValueError: Unrecognized linestyle: invis
                     edge_style = "dotted"
                     edge_width = 0.1
-                    edge_color = "#0000FF9F"  # blue for debug
+                    edge_color = "#0000FF9F"  # transparent blue for debug
                     # edge_color = "#000000FF"  # fully transparent
+                    continue
                 else:
                     # Some graph layout algorithms can use weight attr; some want int
                     # Larger weight makes it closer to the requested length.
