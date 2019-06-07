@@ -1131,7 +1131,7 @@ def main(args=None):
         "--format",
         type=str,
         default="graphml",
-        choices=["graphml", "gexf", "gml", "pdf"],
+        choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
         help="Format to write out (default 'graphml').",
     )
     parser_edit_graph.add_argument(

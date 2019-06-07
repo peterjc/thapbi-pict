@@ -85,6 +85,14 @@ def write_pdf(G, filename):
         plt.savefig(filename, format="pdf")
 
 
+def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
+    """Call networkxxgmml to save graph in XGML format."""
+    from networkxgmml import XGMMLWriter
+
+    with open(filename, "w") as handle:
+        XGMMLWriter(handle, G, name, directed=False)
+
+
 def main(
     graph_output,
     graph_format,
@@ -401,6 +409,7 @@ def main(
         "gexf": nx.write_gexf,
         "gml": nx.write_gml,
         "graphml": nx.write_graphml,
+        "xgmml": write_xgmml,
         "pdf": write_pdf,
     }
     try:
