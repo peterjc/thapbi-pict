@@ -6,6 +6,7 @@
 blast
 cutadapt
 flash
+graphviz
 hmmer
 swarm
 trimmomatic
