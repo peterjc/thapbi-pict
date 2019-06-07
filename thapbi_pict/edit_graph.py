@@ -105,13 +105,13 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             except KeyError:
                 label = None
             if not label:
-                # Cytoscape does not like blank labels:
-                label = n
-            handle.write('  <node label="%s" id="%s">\n' % (label, n))
+                label = n[:6]  # start of MD5
+            handle.write('  <node id="%s" label="%s">\n' % (n, label))
             color = node["color"]
-            size = node["size"]
+            # Size 1 to 100 works find in PDF output, not in Cytoscape!
+            size = (node["size"] * 0.95) + 5.0
             handle.write(
-                '    <graphics type="CIRCLE" fill="%s" width="0" outline="#000000" '
+                '    <graphics type="CIRCLE" fill="%s" outline="#000000" '
                 'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
             )
             handle.write("  </node>\n")
