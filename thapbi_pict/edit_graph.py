@@ -117,7 +117,10 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             handle.write("  </node>\n")
         for n1, n2 in G.edges():
             edge = G.edges[n1, n2]
-            handle.write('  <edge source="%s" target="%s">\n' % (n1, n2))
+            weight = edge["weight"]
+            handle.write(
+                '  <edge source="%s" target="%s" weight="%0.2f">\n' % (n1, n2, weight)
+            )
             # style = edge["style"]  # Not in XGMML?
             color = edge["color"]
             width = edge["width"]
