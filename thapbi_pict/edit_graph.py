@@ -89,6 +89,11 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
     """Call networkxgmml to save graph in XGML format."""
     from networkxgmml import XGMMLWriter
 
+    for n in G:
+        if "label" in G.nodes[n] and not G.nodes[n]["label"]:
+            # Cytoscape does not like blank labels:
+            G.nodes[n]["label"] = n
+
     # Hack for bug in networkxgmml
     # https://github.com/informationsea/networkxxgmml/issues/14
     for e in G.edges():
