@@ -86,8 +86,14 @@ def write_pdf(G, filename):
 
 
 def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
-    """Call networkxxgmml to save graph in XGML format."""
+    """Call networkxgmml to save graph in XGML format."""
     from networkxgmml import XGMMLWriter
+
+    # Hack for bug in networkxgmml
+    # https://github.com/informationsea/networkxxgmml/issues/14
+    for e in G.edges():
+        del G.edges[e]["style"]
+        del G.edges[e]["color"]
 
     with open(filename, "w") as handle:
         XGMMLWriter(handle, G, name, directed=False)
