@@ -116,6 +116,8 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                 '    <graphics type="CIRCLE" fill="%s" outline="#000000" '
                 'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
             )
+            # Cytoscape hides the node ID (presumably assumes not usually user facing):
+            handle.write('    <att type="string" name="MD5" value="%s"/>\n' % n)
             handle.write(
                 '    <att type="integer" name="Abundance" value="%i"/>\n'
                 % node.get("abundance", 0)
@@ -284,7 +286,14 @@ def main(
                     # If have species level, discard genus level only
                     md5_species[md5].remove(genus)
         md5_in_db = set(md5_species)
-        sys.stderr.write("Loaded %i unique sequences from database\n" % len(md5_in_db))
+        if always_show_db:
+            sys.stderr.write(
+                "Loaded %i unique sequences from database\n" % len(md5_in_db)
+            )
+        else:
+            sys.stderr.write(
+                "Matched %i unique sequences in database\n" % len(md5_in_db)
+            )
 
     if db_url and inputs and always_show_db:
         sys.stderr.write(
