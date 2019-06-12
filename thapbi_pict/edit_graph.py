@@ -271,7 +271,7 @@ def main(
         md5_in_db = set(md5_species)
         sys.stderr.write("Loaded %i unique sequences from database\n" % len(md5_in_db))
 
-    if db_url and inputs:
+    if db_url and inputs and always_show_db:
         sys.stderr.write(
             "DB had %i sequences (%i not in FASTA), "
             "FASTA had %i sequences (%i not in DB).\n"
