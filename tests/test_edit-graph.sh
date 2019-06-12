@@ -6,10 +6,11 @@ set -eux
 export TMP=${TMP:-/tmp}
 
 echo "Checking edit-graph"
+thapbi_pict edit-graph 2>&1 | grep "If not using -i / --input argument, require -s / --showdb"
 thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --input argument"
 set -o pipefail
 
-# No database, small FASTA file, have to use explciit total abundance threshold
+# No database, small FASTA file, have to use explicit total abundance threshold
 if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 # Loaded 7 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 200 left 7 sequences from FASTA files.
