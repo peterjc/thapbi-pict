@@ -46,10 +46,15 @@ def expand_database_argument(text, exist=False, hyphen_default=False):
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
     # as we might be about to create it.
-    if text == "-" and hyphen_default:
-        # Expand to the default bundled DB
-        text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
-    elif text == "-" or not text:
+    if text == "-":
+        if hyphen_default:
+            # Expand to the default bundled DB
+            text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
+        else:
+            sys.exit(
+                "ERROR: Using hyphen as a database default is not supported here.\n"
+            )
+    if not text:
         sys.exit("ERROR: The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
@@ -256,7 +261,7 @@ def edit_graph(args=None):
 
     db = (
         None
-        if args.database == "-"
+        if not args.database
         else expand_database_argument(args.database, exist=True, hyphen_default=True)
     )
 
