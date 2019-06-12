@@ -1114,7 +1114,7 @@ def main(args=None):
         "-t",
         "--total",
         type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE * 100),
+        default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
