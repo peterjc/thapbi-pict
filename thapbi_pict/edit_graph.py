@@ -120,6 +120,15 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                 '    <att type="integer" name="Abundance" value="%i"/>\n'
                 % node.get("abundance", 0)
             )
+            if node["genus"]:
+                handle.write(
+                    '    <att type="string" name="Genus" value="%s"/>\n' % node["genus"]
+                )
+            if node["taxonomy"]:
+                handle.write(
+                    '    <att type="string" name="Taxonomy" value="%s"/>\n'
+                    % node["taxonomy"]
+                )
             handle.write("  </node>\n")
         for n1, n2 in G.edges():
             edge = G.edges[n1, n2]
@@ -378,11 +387,18 @@ def main(
         else:
             # Genus only
             node_label = ""
+        genus = ";".join(sorted({_.split(None, 1)[0] for _ in sp}))
         # DB only entries get size one, FASTA entries can be up to 100.
         abundance = md5_abundance.get(md5, 0)
         node_size = max(1, SIZE * (abundance - total_min_abundance))
         G.add_node(
-            md5, color=node_color, size=node_size, label=node_label, abundance=abundance
+            md5,
+            color=node_color,
+            size=node_size,
+            label=node_label,
+            abundance=abundance,
+            genus=genus,
+            taxonomy=";".join(sp),
         )
 
     edge_count = 0
