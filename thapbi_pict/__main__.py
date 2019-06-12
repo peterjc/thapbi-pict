@@ -251,6 +251,28 @@ def sample_summary(args=None):
     )
 
 
+def edit_graph(args=None):
+    """Subcommand to create sequence-level edit-distance graph."""
+    from .edit_graph import main
+
+    db = (
+        None
+        if args.database == "-"
+        else expand_database_argument(args.database, exist=True, blank_default=True)
+    )
+
+    return main(
+        graph_output=args.output,
+        graph_format=args.format,
+        db_url=db,
+        inputs=args.input,
+        min_abundance=args.abundance,
+        total_min_abundance=args.total,
+        max_edit_dist=args.editdist,
+        debug=args.verbose,
+    )
+
+
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
@@ -355,7 +377,7 @@ def pipeline(args=None):
 
 # "-d", "--database",
 ARG_DB_INPUT = dict(  # noqa: C408
-    type=str, default="", help="ITS1 database to use, default is bundled database."
+    type=str, default="", help="ITS1 database to use, default '' is bundled database."
 )
 
 # "-i", "--input",
@@ -1053,6 +1075,74 @@ def main(args=None):
     parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more
+
+    # edit-graph
+    parser_edit_graph = subparsers.add_parser(
+        "edit-graph",
+        description="Draw network graph of sequences using edit distance.",
+        epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
+        "The output is a network graph (in a choice of format) with unique "
+        "sequences as nodes (in the PDF labelled by the database taxonomy, "
+        "colored by genus, size set by total abundance in the FASTA files), "
+        "and short edit distances as edges between nodes. For Cytoscape "
+        "we recommend generating XGMML output here, the start Cytoscape, "
+        "menu 'File', 'Import', 'Import from file', and then run a layout. "
+        "Both 'Perfuse Force Directed' and 'Edge-weighted Spring Embedded' "
+        "work well.",
+    )
+    arg = parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
+    arg.help += " Use '-' to mean no database."
+    del arg
+    # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
+    arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    arg.required = False
+    del arg
+    parser_edit_graph.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="100",
+        help="Mininum sample level abundance for FASTA sequences. "
+        "Default 100 reflects default in prepare-reads.",
+    )
+    parser_edit_graph.add_argument(
+        "-t",
+        "--total",
+        type=int,
+        default="1000",
+        help="Mininum total abundance for FASTA sequences. "
+        "Applied after per-sample level minimum (-a / --abundance). "
+        "Offered as a way to simplify the final graph.",
+    )
+    parser_edit_graph.add_argument(
+        "-e",
+        "--editdist",
+        type=int,
+        default="3",
+        choices=[1, 2, 3],
+        help="Maximum edit distance to draw. Default and maximum 3.",
+    )
+    parser_edit_graph.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="Write graph here. Default is '-' meaning stdout.",
+    )
+    parser_edit_graph.add_argument(
+        "-f",
+        "--format",
+        type=str,
+        default="xgmml",
+        choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
+        help="Format to write out (default 'xgmml' for use with Cytoscape).",
+    )
+    parser_edit_graph.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose logging"
+    )
+    parser_edit_graph.set_defaults(func=edit_graph)
+    del parser_edit_graph  # To prevent accidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
