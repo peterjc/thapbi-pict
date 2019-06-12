@@ -6,7 +6,7 @@ set -eux
 export TMP=${TMP:-/tmp}
 
 echo "Checking edit-graph"
-thapbi_pict edit-graph -d '-' 2>&1 | grep "Require -d / --database and/or -i / --input argument"
+thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --input argument"
 set -o pipefail
 
 # No database, small FASTA file, have to use explciit total abundance threshold
