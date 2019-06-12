@@ -41,17 +41,16 @@ def check_output_directory(out_dir):
         sys.exit("ERROR: Output directory does not exist")
 
 
-def expand_database_argument(text, exist=False, blank_default=False):
+def expand_database_argument(text, exist=False, hyphen_default=False):
     """Expand an SQLite3 filename to an SQLalchemy URL."""
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
     # as we might be about to create it.
-    if not text:
-        if blank_default:
-            # Expand to the default bundled DB
-            text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
-        else:
-            sys.exit("ERROR: The database argument is required.\n")
+    if text == "-" and hyphen_default:
+        # Expand to the default bundled DB
+        text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
+    elif text == "-" or not text:
+        sys.exit("ERROR: The database argument is required.\n")
     prefix = "sqlite:///"
     if text.startswith(prefix):
         db = text[len(prefix) :]
@@ -128,7 +127,7 @@ def dump(args=None):
     from .dump import main
 
     return main(
-        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         output_filename=args.output,
         output_format=args.format,
         clade=args.clade,
@@ -174,7 +173,7 @@ def classify(args=None):
         check_output_directory(args.temp)
     return_code = main(
         fasta=args.input,
-        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         method=args.method,
         out_dir=args.output,
         tmp_dir=args.temp,
@@ -258,7 +257,7 @@ def edit_graph(args=None):
     db = (
         None
         if args.database == "-"
-        else expand_database_argument(args.database, exist=True, blank_default=True)
+        else expand_database_argument(args.database, exist=True, hyphen_default=True)
     )
 
     return main(
@@ -313,7 +312,7 @@ def pipeline(args=None):
 
     classified_files = classify(
         fasta=fasta_files,
-        db_url=expand_database_argument(args.database, exist=True, blank_default=True),
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         method=args.method,
         out_dir=intermediate_dir,
         tmp_dir=args.temp,
@@ -377,7 +376,7 @@ def pipeline(args=None):
 
 # "-d", "--database",
 ARG_DB_INPUT = dict(  # noqa: C408
-    type=str, default="", help="ITS1 database to use, default '' is bundled database."
+    type=str, default="-", help="ITS1 database to use, default '-' is bundled database."
 )
 
 # "-i", "--input",
@@ -1091,7 +1090,7 @@ def main(args=None):
         "work well.",
     )
     arg = parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
-    arg.help += " Use '-' to mean no database."
+    arg.help += " Use '' to mean no database."
     del arg
     # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
     arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
