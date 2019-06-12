@@ -1108,7 +1108,7 @@ def main(args=None):
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance for FASTA sequences. "
-        "Default 100 reflects default in prepare-reads.",
+        "Default %i reflects default in prepare-reads." % DEFAULT_MIN_ABUNDANCE,
     )
     parser_edit_graph.add_argument(
         "-t",
