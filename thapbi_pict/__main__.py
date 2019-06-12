@@ -1101,7 +1101,7 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default="100",
+        default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance for FASTA sequences. "
         "Default 100 reflects default in prepare-reads.",
     )
@@ -1109,7 +1109,7 @@ def main(args=None):
         "-t",
         "--total",
         type=int,
-        default="1000",
+        default=str(DEFAULT_MIN_ABUNDANCE * 100),
         help="Mininum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
