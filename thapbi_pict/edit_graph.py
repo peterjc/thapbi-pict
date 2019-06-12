@@ -147,6 +147,7 @@ def main(
     db_url,
     inputs,
     min_abundance=100,
+    always_show_db=False,
     total_min_abundance=1000,
     max_edit_dist=3,
     debug=False,
@@ -175,48 +176,8 @@ def main(
     if not (inputs or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")
 
-    if db_url:
-        if debug:
-            sys.stderr.write("DEBUG: Connecting to database %s\n" % db_url)
-        # Connect to the DB,
-        Session = connect_to_db(db_url, echo=False)  # echo=debug
-        session = Session()
-
-        # Doing a join to pull in the ITS1 and Taxonomy tables too:
-        cur_tax = aliased(Taxonomy)
-        its1_seq = aliased(ITS1)
-        view = (
-            session.query(SequenceSource)
-            .join(its1_seq, SequenceSource.its1)
-            .join(cur_tax, SequenceSource.current_taxonomy)
-            .options(contains_eager(SequenceSource.its1, alias=its1_seq))
-            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
-        )
-        # Sorting for reproducibility
-        view = view.order_by(SequenceSource.id)
-        # TODO - Copy genus/species filtering behvaiour from dump command?
-
-        for seq_source in view:
-            # if debug and len(md5_to_seq) > 1000:
-            #    break
-            md5 = seq_source.its1.md5
-            md5_to_seq[md5] = seq_source.its1.sequence
-            genus_species = genus_species_name(
-                seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
-            )
-            try:
-                md5_species[md5].add(genus_species)
-            except KeyError:
-                md5_species[md5] = {genus_species}
-
-        for md5 in md5_species:
-            for genus_species in [_ for _ in md5_species[md5] if species_level(_)]:
-                genus = genus_species.split(None, 1)[0]
-                if genus in md5_species[md5]:
-                    # If have species level, discard genus level only
-                    md5_species[md5].remove(genus)
-        md5_in_db = set(md5_species)
-        sys.stderr.write("Loaded %i unique sequences from database\n" % len(md5_in_db))
+    if not inputs and not always_show_db:
+        sys.exit("If not using -i / --input argument, require -s / --showdb.")
 
     if inputs:
         if debug:
@@ -257,7 +218,7 @@ def main(
         )
         # Drop low total abundance FASTA sequences now (before compute distances)
         for md5, total in md5_abundance.items():
-            if total < total_min_abundance and md5 not in md5_in_db:
+            if total < total_min_abundance:
                 # Remove it!
                 md5_in_fasta.remove(md5)
                 del md5_to_seq[md5]
@@ -265,6 +226,50 @@ def main(
             "Minimum total abundance threshold %i left %i sequences from FASTA files.\n"
             % (total_min_abundance, len(md5_in_fasta))
         )
+
+    if db_url:
+        if debug:
+            sys.stderr.write("DEBUG: Connecting to database %s\n" % db_url)
+        # Connect to the DB,
+        Session = connect_to_db(db_url, echo=False)  # echo=debug
+        session = Session()
+
+        # Doing a join to pull in the ITS1 and Taxonomy tables too:
+        cur_tax = aliased(Taxonomy)
+        its1_seq = aliased(ITS1)
+        view = (
+            session.query(SequenceSource)
+            .join(its1_seq, SequenceSource.its1)
+            .join(cur_tax, SequenceSource.current_taxonomy)
+            .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+        )
+        # Sorting for reproducibility
+        view = view.order_by(SequenceSource.id)
+        # TODO - Copy genus/species filtering behvaiour from dump command?
+
+        for seq_source in view:
+            md5 = seq_source.its1.md5
+            if not always_show_db and md5 not in md5_in_fasta:
+                # Low abundance or absenst from FASTA files, ignore it
+                continue
+            md5_to_seq[md5] = seq_source.its1.sequence
+            genus_species = genus_species_name(
+                seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
+            )
+            try:
+                md5_species[md5].add(genus_species)
+            except KeyError:
+                md5_species[md5] = {genus_species}
+
+        for md5 in md5_species:
+            for genus_species in [_ for _ in md5_species[md5] if species_level(_)]:
+                genus = genus_species.split(None, 1)[0]
+                if genus in md5_species[md5]:
+                    # If have species level, discard genus level only
+                    md5_species[md5].remove(genus)
+        md5_in_db = set(md5_species)
+        sys.stderr.write("Loaded %i unique sequences from database\n" % len(md5_in_db))
 
     if db_url and inputs:
         sys.stderr.write(

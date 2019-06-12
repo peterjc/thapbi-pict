@@ -272,6 +272,7 @@ def edit_graph(args=None):
         inputs=args.input,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
+        always_show_db=args.showdb,
         max_edit_dist=args.editdist,
         debug=args.verbose,
     )
@@ -1117,6 +1118,13 @@ def main(args=None):
         help="Mininum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
+    )
+    parser_edit_graph.add_argument(
+        "-s",
+        "--showdb",
+        action="store_true",
+        help="Show DB entries, regardless of their abundance in the "
+        "FASTA inputs. Required if only drawing DB entries.",
     )
     parser_edit_graph.add_argument(
         "-e",
