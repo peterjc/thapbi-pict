@@ -101,6 +101,7 @@ setup(
         "biopython",
         "matplotlib",
         "networkx",
+        "pydot",
         "python-levenshtein",
         "sqlalchemy",
         "xlsxwriter",
