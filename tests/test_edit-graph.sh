@@ -16,6 +16,15 @@ if [ `thapbi_pict edit-graph -d - -i tests/prepare-reads/DNAMIX_S95_L001.fasta -
 # Including high abundance isolated sequences, will draw 7 nodes.
 # 1
 
+# Same example as above with default xgmml output, but here different output formats:
+if [ `thapbi_pict edit-graph -d - -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f graphml | grep -c "<edge"` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d - -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f gexf | grep -c "<edge"` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+# gml fails, https://github.com/networkx/networkx/issues/3471
+
+# Same example, but PDF output (more dependencies):
+rm -rf $TMP/edit-graph.pdf
+thapbi_pict edit-graph -d - -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f pdf -o $TMP/edit-graph.pdf
+hexdump -C $TMP/edit-graph.pdf | head -1 | grep "%PDF-1.4.%"
 
 # No database, generic FASTA file, have to use explicit abundance thresholds of 1:
 if [ `thapbi_pict edit-graph -d - -i database/legacy/Phytophthora_ITS_database_v0.005.fasta -a 1 -t 1 | grep -c "<node"` -ne 176 ]; then echo "Wrong node count"; false; fi
