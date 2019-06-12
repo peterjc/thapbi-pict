@@ -137,6 +137,12 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                     '    <att type="integer" name="Edit-distance" value="%i"/>\n'
                     % edge["edit_dist"]
                 )
+            # Seems Cytoscape does not expose the weight attribute above
+            # in the user-facing edge table, so doing it again here:
+            handle.write(
+                '    <att type="integer" name="Edit-distance-weight" value="%i"/>\n'
+                % edge["weight"]
+            )
             handle.write("  </edge>\n")
         handle.write("</graph>\n")
 
