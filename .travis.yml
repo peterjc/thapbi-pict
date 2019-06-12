@@ -13,6 +13,7 @@ addons:
      - ncbi-blast+
      # cutadapt
      # flash
+     - graphviz
      - hmmer
      - swarm
      - trimmomatic
