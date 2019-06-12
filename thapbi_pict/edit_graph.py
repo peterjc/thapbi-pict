@@ -101,11 +101,11 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
         for n in G:
             node = G.nodes[n]
             try:
-                label = node["label"]
+                label = node["label"].replace("\n", ";")  # Undo newline for Graphviz
             except KeyError:
                 label = None
             if not label:
-                label = n[:6]  # start of MD5
+                label = "{%s}" % n[:6]  # start of MD5, prefixed for sorting
             # weight = node["weight"]
             handle.write('  <node id="%s" label="%s">\n' % (n, label))
             color = node["color"]
