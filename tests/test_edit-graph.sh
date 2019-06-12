@@ -3,6 +3,8 @@ IFS=$'\n\t'
 set -eux
 # Note not using "set -o pipefail" until after check error message with grep
 
+export TMP=${TMP:-/tmp}
+
 echo "Checking edit-graph"
 thapbi_pict edit-graph -d - 2>&1 | grep "Require -d / --database and/or -i / --input argument"
 set -o pipefail
