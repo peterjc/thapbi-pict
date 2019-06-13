@@ -119,8 +119,12 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             # Cytoscape hides the node ID (presumably assumes not usually user facing):
             handle.write('    <att type="string" name="MD5" value="%s"/>\n' % n)
             handle.write(
-                '    <att type="integer" name="Abundance" value="%i"/>\n'
+                '    <att type="integer" name="Total-abundance" value="%i"/>\n'
                 % node.get("abundance", 0)
+            )
+            handle.write(
+                '    <att type="integer" name="Sample-count" value="%i"/>\n'
+                % node.get("sample_count", 0)
             )
             if node["genus"]:
                 handle.write(
@@ -184,6 +188,7 @@ def main(
 
     samples = set()
     md5_abundance = Counter()
+    md5_sample_count = Counter()
     abundance_by_samples = {}
     md5_to_seq = {}
     md5_species = {}
@@ -220,6 +225,7 @@ def main(
                     md5_in_fasta.add(md5)
                     abundance_by_samples[md5, sample] = abundance
                     md5_abundance[md5] += abundance
+                    md5_sample_count[md5] += 1
                     if md5 in md5_to_seq:
                         assert md5_to_seq[md5] == seq
                     else:
@@ -406,6 +412,7 @@ def main(
             size=node_size,
             label=node_label,
             abundance=abundance,
+            sample_count=md5_sample_count.get(md5, 0),
             genus=genus,
             taxonomy=";".join(sp),
         )
