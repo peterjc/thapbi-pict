@@ -144,7 +144,8 @@ def main(
                 human = None
         # Now do the samples in this batch
         for sample in sample_batch:
-            assert sample in samples, sample
+            if sample not in samples:
+                sys.stderr.write("WARNING: Missing %s\n" % sample)
             all_sp = set()
             unambig_sp = set()
             for sp in sp_to_taxid:
