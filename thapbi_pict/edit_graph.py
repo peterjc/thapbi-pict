@@ -414,7 +414,7 @@ def main(
             abundance=abundance,
             sample_count=md5_sample_count.get(md5, 0),
             genus=genus,
-            taxonomy=";".join(sp),
+            taxonomy=";".join(sorted(sp)),
         )
 
     edge_count = 0
