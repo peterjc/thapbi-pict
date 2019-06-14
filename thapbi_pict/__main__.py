@@ -275,6 +275,7 @@ def edit_graph(args=None):
         always_show_db=args.showdb,
         max_edit_dist=args.editdist,
         debug=args.verbose,
+        cpu=args.cpu,
     )
 
 
@@ -1150,6 +1151,9 @@ def main(args=None):
         choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
         help="Format to write out (default 'xgmml' for use with Cytoscape).",
     )
+    arg = parser_edit_graph.add_argument("--cpu", **ARG_CPU)
+    arg.help = "Number of CPU cores to use, default is all."
+    del arg
     parser_edit_graph.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose logging"
     )

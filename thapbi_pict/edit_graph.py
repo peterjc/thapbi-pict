@@ -8,6 +8,7 @@ import sys
 
 from collections import Counter
 
+import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -172,12 +173,16 @@ def main(
     total_min_abundance=1000,
     max_edit_dist=3,
     debug=False,
+    cpu=0,
 ):
     """Run the edit-graph command with arguments from the command line.
 
     Plan is to show sequences from a database (possibly with species/genus
     limits) and/or selected FASTA files (possibly with predictions or other
     metadata, and minimum abundance limits).
+
+    If cpu is false (0 or None), will use the number of cores. Otherwise
+    should be a positive integer - use one for no threading.
     """
     if inputs is None:
         inputs = []
@@ -194,6 +199,11 @@ def main(
     md5_species = {}
     md5_in_db = set()
     md5_in_fasta = set()
+
+    if cpu and cpu < 0:
+        sys.exit(
+            "Require positive value for --cpu (or zero for actual number of CPUs)."
+        )
 
     if not (inputs or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")
@@ -327,18 +337,39 @@ def main(
     # drop nodes with no edges (unless for example DB entry at species level,
     # or for environmental sequences at high abundance)
     md5_list = list(md5_to_seq)
+
     wanted = set()
     n = len(md5_list)
     distances = np.zeros((n, n), np.uint)
-    for i, check1 in enumerate(md5_list):
-        seq1 = md5_to_seq[check1]
-        for j, check2 in enumerate(md5_list):
-            if i < j:
-                seq2 = md5_to_seq[check2]
-                distances[i, j] = distances[j, i] = d = levenshtein(seq1, seq2)
-                if d and d <= max_edit_dist:
-                    wanted.add(check1)
-                    wanted.add(check2)
+    if cpu == 1:
+        # Single threaded without using joblib
+        for i, check1 in enumerate(md5_list):
+            seq1 = md5_to_seq[check1]
+            for j, check2 in enumerate(md5_list):
+                if i < j:
+                    seq2 = md5_to_seq[check2]
+                    distances[i, j] = distances[j, i] = d = levenshtein(seq1, seq2)
+                    if d and d <= max_edit_dist:
+                        wanted.add(check1)
+                        wanted.add(check2)
+    else:
+        # Multi-threaded using joblib
+        if not cpu:
+            cpu = -1  # tells joblib to use all CPUs
+        # Note if 1 is given, no parallel computing code is used at all
+        dist_list = joblib.Parallel(n_jobs=cpu)(
+            joblib.delayed(levenshtein)(
+                md5_to_seq[md5_list[i]], md5_to_seq[md5_list[j]]
+            )
+            for i in range(n)
+            for j in range(i)
+        )
+        for k, (i, j) in enumerate((i, j) for i in range(n) for j in range(i)):
+            distances[i, j] = distances[j, i] = d = dist_list[k]
+            if d and d <= max_edit_dist:
+                wanted.add(md5_list[i])
+                wanted.add(md5_list[j])
+        del dist_list
     sys.stderr.write(
         "Computed %i Levenshtein edit distances between %i sequences.\n"
         % (n * (n - 1), n)
