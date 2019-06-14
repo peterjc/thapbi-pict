@@ -110,8 +110,8 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             handle.write('  <node id="%s" label="%s">\n' % (n, label))
             color = node["color"]
             # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
-            # Rescale to use a minimum of 5.
-            size = (node["size"] * 0.95) + 5.0
+            # Rescale to use range 5 to 50.
+            size = (node["size"] * 0.45) + 5.0
             handle.write(
                 '    <graphics type="CIRCLE" fill="%s" outline="#000000" '
                 'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
@@ -369,13 +369,12 @@ def main(
             % len(wanted)
         )
 
-    if md5_abundance:
-        SIZE = 100 / (
-            max(md5_abundance.values()) - total_min_abundance
-        )  # scaling factor
+    if md5_sample_count:
+        # scaling factor
+        SIZE = 100.0 / max(md5_sample_count.values())
     else:
         # Happens with DB only graph,
-        SIZE = 100
+        SIZE = 1.0
     G = nx.Graph()
     G.graph["node_default"] = {"color": "#8B0000", "size": 1.0}
     G.graph["edge_default"] = {
@@ -405,7 +404,7 @@ def main(
         genus = ";".join(sorted({_.split(None, 1)[0] for _ in sp}))
         # DB only entries get size one, FASTA entries can be up to 100.
         abundance = md5_abundance.get(md5, 0)
-        node_size = max(1, SIZE * (abundance - total_min_abundance))
+        node_size = max(1, SIZE * md5_sample_count.get(md5, 0))
         G.add_node(
             md5,
             color=node_color,
