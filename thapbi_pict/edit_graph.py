@@ -5,6 +5,7 @@ This implementes the ``thapbi_pict edit-graph ...`` command.
 
 import os
 import sys
+import time
 
 from collections import Counter
 
@@ -341,6 +342,7 @@ def main(
     wanted = set()
     n = len(md5_list)
     distances = np.zeros((n, n), np.uint)
+    start = time.time()
     if cpu == 1:
         # Single threaded without using joblib
         for i, check1 in enumerate(md5_list):
@@ -374,6 +376,11 @@ def main(
         "Computed %i Levenshtein edit distances between %i sequences.\n"
         % (n * (n - 1), n)
     )
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Computing distances with cpu=%r took %0.1fmins\n"
+            % (cpu, (time.time() - start) / 60.0)
+        )
     sys.stderr.write(
         "Will draw %i nodes with at least one edge (%i are isolated sequences).\n"
         % (len(wanted), n - len(wanted))
