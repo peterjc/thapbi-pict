@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<graph directed="0"  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.cs.rpi.edu/XGMML">
+  <node id="9e8f051c64c2b9cc3b6fcb27559418ca" label="P. plurivora">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="9e8f051c64c2b9cc3b6fcb27559418ca"/>
+    <att type="integer" name="Total-abundance" value="985"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora plurivora"/>
+  </node>
+  <node id="2ba87367bdbb87cc37521bed773ffa37" label="P. rubi">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="2ba87367bdbb87cc37521bed773ffa37"/>
+    <att type="integer" name="Total-abundance" value="829"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora rubi"/>
+  </node>
+  <node id="0368431c779b6d3b2555f68f90d047c5" label="{036843}">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="0368431c779b6d3b2555f68f90d047c5"/>
+    <att type="integer" name="Total-abundance" value="395"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora"/>
+  </node>
+  <node id="5122dde24762f8e3d6a54e3f79077254" label="P. agathidicida;P. castaneae">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="5122dde24762f8e3d6a54e3f79077254"/>
+    <att type="integer" name="Total-abundance" value="304"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora agathidicida;Phytophthora castaneae"/>
+  </node>
+  <node id="2b8e7a64e493e5c191e92f21596b4256" label="P. pseudocryptogea">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="2b8e7a64e493e5c191e92f21596b4256"/>
+    <att type="integer" name="Total-abundance" value="301"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora pseudocryptogea"/>
+  </node>
+  <node id="6803c088eb1e53bb2e44bffecbaa0fdd" label="P. capsici;P. glovera">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="6803c088eb1e53bb2e44bffecbaa0fdd"/>
+    <att type="integer" name="Total-abundance" value="297"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora capsici;Phytophthora glovera"/>
+  </node>
+  <node id="9577aa1a6c2da294ebbfa5c84cff65aa" label="P. crassamura;P. megasperma">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="9577aa1a6c2da294ebbfa5c84cff65aa"/>
+    <att type="integer" name="Total-abundance" value="267"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora crassamura;Phytophthora megasperma"/>
+  </node>
+  <edge source="0368431c779b6d3b2555f68f90d047c5" target="2b8e7a64e493e5c191e92f21596b4256" weight="3.00">
+    <graphics fill="#404040" width="1.0"/>
+    <att type="integer" name="Edit-distance" value="1"/>
+    <att type="integer" name="Edit-distance-weight" value="3"/>
+  </edge>
+</graph>
