@@ -284,6 +284,7 @@ def pipeline(args=None):
     from .classify import main as classify
     from .sample_summary import main as sample_summary
     from .read_summary import main as read_summary
+    from .edit_graph import main as edit_graph
 
     check_output_directory(args.output)
     if args.sampleout:
@@ -297,6 +298,7 @@ def pipeline(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
 
     fasta_files = prepare(
         fastq=args.input,
@@ -318,7 +320,7 @@ def pipeline(args=None):
 
     classified_files = classify(
         fasta=fasta_files,
-        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        db_url=db,
         method=args.method,
         out_dir=intermediate_dir,
         tmp_dir=args.temp,
@@ -374,6 +376,22 @@ def pipeline(args=None):
     )
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
+        sys.exit(return_code)
+
+    # The XGMML output has minimal dependencies compared to PDF output
+    return_code = edit_graph(
+        graph_output=os.path.join(args.output, stem + ".edit-graph.xgmml"),
+        graph_format="xgmml",
+        db_url=db,
+        inputs=fasta_files,
+        min_abundance=args.abundance,
+        # total_min_abundance=args.total,
+        # always_show_db=args.showdb,
+        # max_edit_dist=args.editdist,
+        debug=args.verbose,
+    )
+    if return_code:
+        sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
         sys.exit(return_code)
 
 
@@ -1114,7 +1132,7 @@ def main(args=None):
         "-t",
         "--total",
         type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE),
+        default="0",
         help="Mininum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",

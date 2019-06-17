@@ -16,6 +16,7 @@ diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001
 diff $TMP/output/thapbi-pict.samples.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
+diff $TMP/output/thapbi-pict.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
 
 # Leaving the intermediate files in place... plus some stray files:
 touch $TMP/intermediate/unwanted.fasta
@@ -30,5 +31,6 @@ diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001
 diff $TMP/output/thapbi-pict.samples.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
+diff $TMP/output/thapbi-pict.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
 
 echo "$0 - test_pipeline.sh passed"

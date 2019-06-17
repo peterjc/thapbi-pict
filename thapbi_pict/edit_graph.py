@@ -169,7 +169,7 @@ def main(
     inputs,
     min_abundance=100,
     always_show_db=False,
-    total_min_abundance=1000,
+    total_min_abundance=0,
     max_edit_dist=3,
     debug=False,
 ):
@@ -240,15 +240,17 @@ def main(
             % (len(md5_in_fasta), len(samples))
         )
         # Drop low total abundance FASTA sequences now (before compute distances)
-        for md5, total in md5_abundance.items():
-            if total < total_min_abundance:
-                # Remove it!
-                md5_in_fasta.remove(md5)
-                del md5_to_seq[md5]
-        sys.stderr.write(
-            "Minimum total abundance threshold %i left %i sequences from FASTA files.\n"
-            % (total_min_abundance, len(md5_in_fasta))
-        )
+        if total_min_abundance:
+            for md5, total in md5_abundance.items():
+                if total < total_min_abundance:
+                    # Remove it!
+                    md5_in_fasta.remove(md5)
+                    del md5_to_seq[md5]
+            sys.stderr.write(
+                "Minimum total abundance threshold %i "
+                "left %i sequences from FASTA files.\n"
+                % (total_min_abundance, len(md5_in_fasta))
+            )
 
     if db_url:
         if debug:
