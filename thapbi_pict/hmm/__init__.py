@@ -101,7 +101,7 @@ def filter_for_ITS1(
 
     Expect one ITS1 match in the vast majority of cases.
     """
-    hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
+    hmm = os.path.join(os.path.split(__file__)[0], "combined.hmm")
     if cache_dir:
         hmm = hmm_cache(hmm, cache_dir, debug=debug)
 
@@ -112,17 +112,40 @@ def filter_for_ITS1(
             yield title, seq, []
             continue
 
-        assert len(result) == 1
-        hit = result[0]
-        assert hit.id == "phytophthora_its1"
+        # Not interested in cases like this with no actual hits:
+        # [No individual domains that satisfy reporting thresholds
+        # (although complete target did)]
+        if debug and len([_ for _ in result if _]) > 1:
+            sys.stderr.write(
+                "DEBUG: %s matched HMM for %s\n"
+                % (record.id, ";".join(hit.id for hit in result))
+            )
 
-        its1_seqs = [seq[hsp.query_start : hsp.query_end] for hsp in hit]
+        its1_seqs = [
+            (hit.id, seq[hsp.query_start : hsp.query_end])
+            for hit in result
+            for hsp in hit
+        ]
 
         # Apply length filter to all the matches
         if min_length:
-            its1_seqs = [_ for _ in its1_seqs if min_length <= len(_)]
+            its1_seqs = [_ for _ in its1_seqs if min_length <= len(_[1])]
         if max_length:
-            its1_seqs = [_ for _ in its1_seqs if len(_) <= max_length]
+            its1_seqs = [_ for _ in its1_seqs if len(_[1]) <= max_length]
+
+        if len({_[0] for _ in its1_seqs}) > 1:
+            # Depending on the orthogonality of the HMM set, this could be fine
+            # (e.g. HMM for close sister genera), or a potential problen
+            # (e.g. two synthetic controls)
+            sys.stderr.write(
+                "ERROR: Conflicting HMM matches for %s: %s\n"
+                % (record.id, ";".join(sorted({_[0] for _ in its1_seqs})))
+            )
+            sys.stderr.write("%s length %s:\n" % (_[0], len(_[1])) for _ in its1_seqs)
+            sys.exit(1)
+
+        # Discard HMM names, keep just acceptable length sub-sequences
+        its1_seqs = [_[1] for _ in its1_seqs]
 
         if len(set(its1_seqs)) < len(its1_seqs):
             # e.g. DQ641247.1 Phytophthora ramorum isolate 2195
