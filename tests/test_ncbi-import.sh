@@ -97,7 +97,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "95" ]; then echo 
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "604" ]; then echo "Wrong taxonomy count"; false; fi
 # 104 + 106 + 29 = 239
 if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c "species=Phytophthora "` -ne 104 ]; then echo "Wrong Phytophthora species count";	false; fi
-if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c "species=Phytophthora\]"` -n 106 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
+if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c "species=Phytophthora\]"` -ne 106 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
 if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c -v "Phytophthora"` -ne 29 ]; then echo "Wrong sister genus count"; false; fi
 
 echo "$0 - test_ncbi-import.sh passed"
