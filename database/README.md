@@ -16,7 +16,8 @@ sequences:
 
  - Curated Phytophthora ITS1 sequences (at species level) from
    file ``legacy/Phytophthora_ITS_database_v0.005.fasta`` (in
-   a subdirectory within the source code repository).
+   a subdirectory within the source code repository), including
+   four G-BLOCKS synthetic controls.
 
  - NCBI Peronosporales (including Phytophthora) at genus level,
    file ``2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394

@@ -71,6 +71,9 @@ def split_composite_entry(text):
     ['4_P._alticola_HQ013214', '4_P._arenaria_HQ013219']
 
     """
+    if text.startswith("Control_"):
+        # Single entry, want the text after the space preserved.
+        return [text]
     rest = text.split(None, 1)[0]  # Only look at the first word
     answer = []
     while True:
@@ -128,6 +131,11 @@ def parse_fasta_entry(text):
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
+
+    Handles the special case of the synthetic controls as follows:
+
+    >>> parse_fasta_entry("Control_05 C1")
+    (0, '', 'synthetic construct C1', '')
     """
     taxid = 0
 
@@ -135,6 +143,23 @@ def parse_fasta_entry(text):
     # >PPhytophthora_fluvialis_CBS129424_JF701436_ P. fluvialis
     # See also fixing PPhytophthora later on...
     parts = text.rstrip("_").split("_")
+
+    if parts[0] == "Control":
+        # txid32630 is "synthetic construct", seems best taxonomy match
+        if " " in text:
+            return (
+                0,
+                "",
+                ("synthetic construct %s" % text.split(" ", 1)[1]).rstrip(),
+                "",
+            )
+        else:
+            return (
+                0,
+                "",
+                ("synthetic construct %s" % " ".join(parts[1:])).rstrip(),
+                "",
+            )
 
     if len(parts) == 1:
         # Legacy variant with just an accession
@@ -188,6 +213,7 @@ def parse_fasta_entry(text):
     return (taxid, clade, " ".join(name), "")
 
 
+assert parse_fasta_entry("Control_05 C1") == (0, "", "synthetic construct C1", "")
 assert parse_fasta_entry("7a_Phytophthora_alni_subsp._uniformis_AF139367") == (
     0,
     "7a",
