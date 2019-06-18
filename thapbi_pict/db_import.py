@@ -275,13 +275,11 @@ def import_fasta_file(
 
     for title, seq, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
         seq_count += 1
-        if title.startswith("Control_"):
-            if debug:
-                sys.stderr.write("DEBUG: Ignoring control entry: %s\n" % title)
-            continue
         if not its1_seqs:
             if debug:
-                sys.stderr.write("DEBUG: Ignoring non-ITS entry: %s\n" % title)
+                sys.stderr.write(
+                    "DEBUG: Ignoring entry with no HMM matches: %s\n" % title
+                )
             continue
 
         # One sequence can have multiple entries

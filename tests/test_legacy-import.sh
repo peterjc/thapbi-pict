@@ -32,10 +32,12 @@ rm -rf $DB
 thapbi_pict legacy-import -x -d $DB database/legacy/Phytophthora_ITS_database_v0.004.fasta -n "Legacy DB v0.004"
 thapbi_pict legacy-import -x -d $DB database/legacy/Phytophthora_ITS_database_v0.005.fasta -n "Legacy DB v0.005"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "378" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "172" ]; then echo "Wrong its1_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "161" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "378" ]; then echo "Wrong FASTA record count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "382" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "176" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "165" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "382" ]; then echo "Wrong FASTA record count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep "synthetic" -c` -ne 4 ]; then echo "Missing four synthetic controls"; false; fi
+
 
 if [ ! -f "new_taxdump_2018-12-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2018-12-01.zip"; fi
 if [ ! -d "new_taxdump_2018-12-01" ]; then unzip new_taxdump_2018-12-01.zip -d new_taxdump_2018-12-01; fi
