@@ -33,9 +33,7 @@ with warnings.catch_warnings():
     from Bio import SearchIO
 
 
-def run_and_parse_hmmscan(
-    hmm_file, fasta_input_file, hmmscan="hmmscan", bitscore_threshold=None, debug=False
-):
+def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan="hmmscan", debug=False):
     """Run hmmscan and parse the output with Bio.SearchIO.
 
     This will run the command line tool ``hmmscan`` (assumed to be on the
@@ -53,9 +51,7 @@ def run_and_parse_hmmscan(
     # TODO - Once this is working, refactor to parse stdout
     tmp_dir = tempfile.mkdtemp()
     hmm_out = os.path.join(tmp_dir, "hmmscan.txt")
-    cmd = [hmmscan, "--noali"]
-    if bitscore_threshold is not None:
-        cmd += ["-T", bitscore_threshold, "--domT", bitscore_threshold]
+    cmd = [hmmscan, "--noali", "--cut_ga"]
     cmd += ["-o", hmm_out, hmm_file, fasta_input_file]
     # cmd = "'%s' --noali -o '%s' '%s' '%s'" % (hmmscan, hmm_out, hmm_file,
     #                                           fasta_input_file)
@@ -99,28 +95,17 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
 
 
 def filter_for_ITS1(
-    input_fasta,
-    cache_dir,
-    bitscore_threshold="6",
-    min_length=100,
-    max_length=250,
-    debug=False,
+    input_fasta, cache_dir, min_length=100, max_length=250, debug=False
 ):
     """Search for the ITS1 sequence(s) within FASTA entries.
 
     Expect one ITS1 match in the vast majority of cases.
-
-    The arbitrary low bitscore_threshold default is based on ensuring
-    all the sequences in our legacy FASTA files pass without false
-    positive additional weak hits complicating things.
     """
     hmm = os.path.join(os.path.split(__file__)[0], "phytophthora_its1.hmm")
     if cache_dir:
         hmm = hmm_cache(hmm, cache_dir, debug=debug)
 
-    for record, result in run_and_parse_hmmscan(
-        hmm, input_fasta, bitscore_threshold=bitscore_threshold, debug=debug
-    ):
+    for record, result in run_and_parse_hmmscan(hmm, input_fasta, debug=debug):
         title = record.description
         seq = str(record.seq).upper()
         if len(record) < min_length or not result:
