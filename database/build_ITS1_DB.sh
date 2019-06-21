@@ -11,6 +11,10 @@ thapbi_pict legacy-import -d "$DB.sqlite" legacy/Phytophthora_ITS_database_v0.00
 thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporales_16394.fasta -g
 thapbi_pict seq-import -d "$DB.sqlite" thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
 
+# Add the G-BLOCK synthetic controls (in lax mode as not in the taxonomy)
+grep -A 1 ">Control_" legacy/Phytophthora_ITS_database_v0.005.fasta > controls.fasta
+thapbi_pict legacy-import -x -d "$DB.sqlite" controls.fasta
+
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations
 # Working Party (IUFRO) 7.02.09, Phytophthoras in forests and natural ecosystems,
