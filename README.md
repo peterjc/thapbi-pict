@@ -82,6 +82,7 @@ This should automatically find the installed copy of the Python code. Use
 
 | Version | Date       | Notes                                                                        |
 |---------|------------|------------------------------------------------------------------------------|
+| v0.2.5  | 2019-06-21 | Include XGMML edit-graph (for Cytoscape use) in ``pipeline`` output.         |
 | v0.2.4  | 2019-06-21 | Synthetic controls in DB, fixed 3 *Hyaloperonospora* also in *Peronospora*.  |
 | v0.2.3  | 2019-06-18 | Sample count rather than total read abundance for node size in edit-graph.   |
 | v0.2.2  | 2019-06-12 | New ``edit-graph`` command for use with Cytoscape etc, or PDF via GraphViz.  |
