@@ -22,4 +22,4 @@ include database/legacy/Phytophthora_ITS_database_v0.005.fasta
 
 # The following is better than a blanket include wildcard * but
 # this still risks unwanted includes of any working files:
-recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz
+recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
