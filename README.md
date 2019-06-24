@@ -52,10 +52,10 @@ line tools like ``hmmer``, and others which are only used for some classifiers
 (like ``blast`` and ``swarm``). If you have BioConda setup, use the following:
 
 ```bash
-$ conda install blast cutadapt flash hmmer swarm trimmomatic
+$ conda install --file requirements-ext.txt
 ```
 
-On a typical Linux system most of the tools listed will be available via the
+On a typical Linux system most of the tools required will be available via the
 default distribution packages, although not always under the same package name.
 
 On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
