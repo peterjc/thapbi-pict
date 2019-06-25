@@ -142,7 +142,7 @@ def apply_method_to_file(
     count = 0
     tax_counts = Counter()
 
-    for title, full_seq, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+    for title, full_seq, hmm_name, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -160,11 +160,12 @@ def apply_method_to_file(
             if debug:
                 for seq, (taxid, genus_species, note) in zip(seqs, calls):
                     sys.stderr.write(
-                        "DEBUG: %s[%i:%i] %s %s %s\n"
+                        "DEBUG: %s[%i:%i] %s %s %s %s\n"
                         % (
                             idn,
                             full_seq.index(seq),
                             full_seq.index(seq) + len(seq),
+                            hmm_name,
                             str(taxid),
                             genus_species,
                             note,
@@ -531,11 +532,11 @@ def method_swarm_core(
     # used in the DB entries
     its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
     with open(its_fasta, "w") as handle:
-        for title, _, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        for title, _, hmm_name, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
             if len(seqs) > 1:
                 sys.exit(
-                    "ERROR: %i HMM matches from %s in %s"
-                    % (len(seqs), title.split(None, 1)[0], fasta_file)
+                    "ERROR: %i %s HMM matches from %s in %s"
+                    % (len(seqs), hmm_name, title.split(None, 1)[0], fasta_file)
                 )
             if not seqs:
                 continue

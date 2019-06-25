@@ -273,9 +273,10 @@ def import_fasta_file(
     idn_set = set()
     multiple_its1 = False
 
-    for title, seq, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
+    for title, seq, hmm_name, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
         seq_count += 1
         if not its1_seqs:
+            assert not hmm_name, hmm_name
             if debug:
                 sys.stderr.write(
                     "DEBUG: Ignoring entry with no HMM matches: %s\n" % title
