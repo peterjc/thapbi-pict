@@ -82,6 +82,7 @@ This should automatically find the installed copy of the Python code. Use
 
 | Version | Date       | Notes                                                                        |
 |---------|------------|------------------------------------------------------------------------------|
+| v0.3.0  | *pending*  | Include four gBlocks synthetic negative controls in DB and pipeline.         |
 | v0.2.6  | 2019-06-25 | *Phytophthora* ITS1 HMM threshold now set within model file, not the code.   |
 | v0.2.5  | 2019-06-21 | Include XGMML edit-graph (for Cytoscape use) in ``pipeline`` output.         |
 | v0.2.4  | 2019-06-21 | Fixed 3 *Hyaloperonospora* also in *Peronospora* in default DB.              |
