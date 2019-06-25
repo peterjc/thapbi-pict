@@ -242,13 +242,14 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_seqs in filter_for_ITS1(
+        for title, full_seq, hmm_name, hmm_seqs in filter_for_ITS1(
             input_fasta, shared_tmp_dir, debug=debug
         ):
             if not hmm_seqs:
                 # Using HMM match(es) as a presense/absense filter
                 continue
-            out_handle.write(">%s\n%s\n" % (title, full_seq))
+            assert hmm_name, hmm_name
+            out_handle.write(">%s %s\n%s\n" % (title, hmm_name, full_seq))
             count += 1
             max_indiv_abundance = max(
                 max_indiv_abundance, abundance_from_read_name(title.split(None, 1)[0])

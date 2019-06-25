@@ -109,7 +109,7 @@ def filter_for_ITS1(
         title = record.description
         seq = str(record.seq).upper()
         if len(record) < min_length or not result:
-            yield title, seq, []
+            yield title, seq, None, []
             continue
 
         # Not interested in cases like this with no actual hits:
@@ -133,6 +133,10 @@ def filter_for_ITS1(
         if max_length:
             its1_seqs = [_ for _ in its1_seqs if len(_[1]) <= max_length]
 
+        if not its1_seqs:
+            yield title, seq, None, []
+            continue
+
         if len({_[0] for _ in its1_seqs}) > 1:
             # Depending on the orthogonality of the HMM set, this could be fine
             # (e.g. HMM for close sister genera), or a potential problen
@@ -143,6 +147,7 @@ def filter_for_ITS1(
             )
             sys.stderr.write("%s length %s:\n" % (_[0], len(_[1])) for _ in its1_seqs)
             sys.exit(1)
+        name = its1_seqs[0][0]  # Just checked all the same name
 
         # Discard HMM names, keep just acceptable length sub-sequences
         its1_seqs = [_[1] for _ in its1_seqs]
@@ -158,4 +163,4 @@ def filter_for_ITS1(
                 if _ not in new:
                     new.append(_)
             its1_seqs = new
-        yield title, seq, its1_seqs
+        yield title, seq, name, its1_seqs
