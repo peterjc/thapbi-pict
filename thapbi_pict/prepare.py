@@ -230,14 +230,15 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
 
     Assumes the SWARM naming convention.
 
-    Returns the number of unique ITS1 sequences (integer),
-    maximum abundance, and number of cropping warnings.
+    Returns the number of unique sequences (integer),
+    maximum abundance (dict keyed by HMM name), and number
+    of cropping warnings.
     """
     exp_left = 0
     exp_right = 0
     margin = 10
     cropping_warning = 0
-    max_indiv_abundance = 0
+    max_hmm_abundance = Counter()
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     count = 0
@@ -251,8 +252,9 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
             assert hmm_name, hmm_name
             out_handle.write(">%s %s\n%s\n" % (title, hmm_name, full_seq))
             count += 1
-            max_indiv_abundance = max(
-                max_indiv_abundance, abundance_from_read_name(title.split(None, 1)[0])
+            max_hmm_abundance[hmm_name] = max(
+                max_hmm_abundance[hmm_name],
+                abundance_from_read_name(title.split(None, 1)[0]),
             )
 
             # Now some debugging...
@@ -278,7 +280,8 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
                     )
             else:
                 sys.stderr.write(
-                    "WARNING: %i HMM matches from %s\n" % (len(hmm_seqs), title)
+                    "WARNING: %i %s HMM matches from %s\n"
+                    % (len(hmm_seqs), hmm_name, title)
                 )
 
     if cropping_warning:
@@ -287,7 +290,7 @@ def filter_fasta_for_its1(input_fasta, output_fasta, stem, shared_tmp_dir, debug
             "in %i sequences in %s\n" % (cropping_warning, stem)
         )
 
-    return count, max_indiv_abundance, cropping_warning
+    return count, max_hmm_abundance, cropping_warning
 
 
 def prepare_sample(
@@ -308,7 +311,8 @@ def prepare_sample(
 
     Runs trimmomatic, pear, does primer filtering, does HMM filtering.
 
-    Return max abundance, hmm_cropping_warning count.
+    Return unique sequence count, max abundance (dict keyed by
+    HMM name), and hmm_cropping_warning count.
     """
     sys.stderr.write(
         "Starting to prepare %s %s (min abundance set to %i)\n"
@@ -360,14 +364,14 @@ def prepare_sample(
 
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-    (count, uniq_count, acc_uniq_count, max_indiv_abundance) = make_nr_fasta(
+    (count, uniq_count, acc_uniq_count, max_hmm_abundance) = make_nr_fasta(
         trimmed_fasta, merged_fasta, min_abundance=min_abundance, debug=debug
     )
     if debug:
         sys.stderr.write(
             "Merged %i paired FASTQ reads into %i unique sequences, "
             "%i above min abundance %i (max abundance %i)\n"
-            % (count, uniq_count, acc_uniq_count, min_abundance, max_indiv_abundance)
+            % (count, uniq_count, acc_uniq_count, min_abundance, max_hmm_abundance)
         )
 
     if not acc_uniq_count:
@@ -394,25 +398,25 @@ def prepare_sample(
                 acc_uniq_count,
                 "control" if control else "sample",
                 min_abundance,
-                max_indiv_abundance,
+                max_hmm_abundance,
             )
         )
 
     # Determine if ITS1 region is present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
-    uniq_count, max_indiv_abundance, cropping = filter_fasta_for_its1(
+    uniq_count, max_hmm_abundance, cropping = filter_fasta_for_its1(
         merged_fasta, dedup, stem, shared_tmp, debug=debug
     )
     if debug:
         sys.stderr.write(
-            "DEBUG: Filtered %s down to %i unique ITS1 sequences "
+            "DEBUG: Filtered %s down to %i unique sequences "
             "above %s min abundance threshold %i (max abundance %i)\n"
             % (
                 stem,
                 uniq_count,
                 "control" if control else "sample",
                 min_abundance,
-                max_indiv_abundance,
+                max(max_hmm_abundance.values(), default=0),
             )
         )
 
@@ -421,7 +425,7 @@ def prepare_sample(
     if failed_primer_name:
         shutil.move(bad_primer_fasta, failed_primer_name)
 
-    return uniq_count, max_indiv_abundance, cropping
+    return uniq_count, max_hmm_abundance, cropping
 
 
 def main(
@@ -512,16 +516,24 @@ def main(
             failed_primer_name is None or os.path.isfile(failed_primer_name)
         ):
             if control:
-                (uniq_count, max_indiv_abundance) = abundance_values_in_fasta(
+                (uniq_count, max_abundance_by_hmm) = abundance_values_in_fasta(
                     fasta_name
                 )
                 # TODO - Refactor this duplicated logging?
-                sys.stderr.write(
-                    "Control %s had %i unique ITS1 sequences "
-                    "over control abundance threshold %i (max abundance %i), "
-                    % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
+                max_its1_abundance = max(
+                    (
+                        max_abundance_by_hmm[_]
+                        for _ in max_abundance_by_hmm
+                        if not _.startswith("SynCtrl")
+                    ),
+                    default=0,
                 )
-                if sample_min_abundance < max_indiv_abundance:
+                sys.stderr.write(
+                    "Control %s had %i unique sequences "
+                    "over control abundance threshold %i (max ITS abundance %i), "
+                    % (stem, uniq_count, control_min_abundance, max_its1_abundance)
+                )
+                if sample_min_abundance < max_its1_abundance:
                     sys.stderr.write(
                         "increasing sample abundance threshold from %i\n"
                         % sample_min_abundance
@@ -531,7 +543,7 @@ def main(
                         "keeping sample abundance threshold at %i\n"
                         % sample_min_abundance
                     )
-                sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
+                sample_min_abundance = max(sample_min_abundance, max_its1_abundance)
                 continue
             else:
                 sys.stderr.write(
@@ -539,7 +551,7 @@ def main(
                 )
                 continue
 
-        uniq_count, max_indiv_abundance, hmm_cropping = prepare_sample(
+        uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
@@ -554,29 +566,51 @@ def main(
             cpu=cpu,
         )
         hmm_cropping_warning += hmm_cropping
+        max_its1_abundance = max(
+            (
+                max_abundance_by_hmm[_]
+                for _ in max_abundance_by_hmm
+                if not _.startswith("SynCtrl")
+            ),
+            default=0,
+        )
 
         # Update threshold and logging
         if control:
-            sys.stderr.write(
-                "Control %s has %i unique ITS1 sequences "
-                "over control abundance threshold %i (max abundance %i), "
-                % (stem, uniq_count, control_min_abundance, max_indiv_abundance)
-            )
-            if sample_min_abundance < max_indiv_abundance:
+            if debug:
                 sys.stderr.write(
+                    "Control %s has %i unique sequences "
+                    "over control abundance threshold %i\n"
+                    % (stem, uniq_count, control_min_abundance)
+                )
+                sys.stderr.write(
+                    "Control %s max abundance breakdown %s\n"
+                    % (
+                        stem,
+                        ", ".join(
+                            "%s: %i" % (k, v)
+                            for k, v in sorted(max_abundance_by_hmm.items())
+                        ),
+                    )
+                )
+            if sample_min_abundance < max_its1_abundance:
+                sys.stderr.write(
+                    "Control %s max ITS1 abundance %i, "
                     "increasing sample abundance threshold from %i\n"
-                    % sample_min_abundance
+                    % (stem, max_its1_abundance, sample_min_abundance)
                 )
             else:
                 sys.stderr.write(
-                    "keeping sample abundance threshold at %i\n" % sample_min_abundance
+                    "Control %s max ITS1 abundance %i, "
+                    "keeping sample abundance threshold at %i\n"
+                    % (stem, max_its1_abundance, sample_min_abundance)
                 )
-            sample_min_abundance = max(sample_min_abundance, max_indiv_abundance)
+            sample_min_abundance = max(sample_min_abundance, max_its1_abundance)
         else:
             sys.stderr.write(
                 "Wrote %s with %i unique sequences "
-                "over sample abundance theshold %i (max abundance %i)\n"
-                % (stem, uniq_count, sample_min_abundance, max_indiv_abundance)
+                "over sample abundance theshold %i (max ITS abundance %i)\n"
+                % (stem, uniq_count, sample_min_abundance, max_its1_abundance)
             )
 
     if tmp_dir:

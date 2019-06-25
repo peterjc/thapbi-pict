@@ -6,6 +6,8 @@ import subprocess
 import sys
 import time
 
+from collections import Counter
+
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -312,11 +314,13 @@ def split_read_name_abundance(text, debug=False):
 
 def abundance_values_in_fasta(fasta_file):
     """Return total and maximum abundance encoded in read names."""
-    total_a = max_a = 0
+    total_a = 0
+    max_a = Counter()
     with open(fasta_file) as handle:
         for title, _ in SimpleFastaParser(handle):
             a = abundance_from_read_name(title.split(None, 1)[0])
-            max_a = max(a, max_a)
+            hmm = title.split(None, 1)[1].strip()
+            max_a[hmm] = max(a, max_a[hmm])
             total_a += a
     return total_a, max_a
 
