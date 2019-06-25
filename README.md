@@ -94,7 +94,7 @@ This should automatically find the installed copy of the Python code. Use
 | v0.1.10 | 2019-05-03 | Tweaking command line API, renamed ``plate-summary`` to ``read-summary``.    |
 | v0.1.9  | 2019-05-02 | Implemented pipeline subcommand (prepare reads, classify, and report).       |
 | v0.1.8  | 2019-05-01 | Standard errors for missing external tools; versions logged in verbose mode. |
-| v0.1.7  | 2019-05-01 | Changed default classifier method from 'identity' to more lienient 'onebp'.  |
+| v0.1.7  | 2019-05-01 | Changed default classifier method from ``identity`` to more fuzzy ``onebp``. |
 | v0.1.6  | 2019-04-30 | Include ready to use binary ITS1 database in source tar-ball & wheel files.  |
 | v0.1.5  | 2019-04-29 | Reworked optional metadata integration and its display in summary reports.   |
 | v0.1.4  | 2019-04-25 | Sort samples using the optional metadata fields requested in reports.        |
