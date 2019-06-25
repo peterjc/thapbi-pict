@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Setup Conda
           command: |
-            conda config --set always_yes yes --set changeps1 no
+            conda config --set always_yes yes --set changeps1 no --set channel_priority strict
             conda update -q conda
             # In future point at project-env.yml file here:
             conda create -q -n myenv python=3.7
