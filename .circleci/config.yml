@@ -38,7 +38,7 @@ jobs:
             pip install --upgrade pip setuptools
             pip install black
             black --check .
-            pip install flake8==3.6 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear
+            pip install flake8==3.6 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
             flake8 .
             restructuredtext-lint *.rst
       - run:
