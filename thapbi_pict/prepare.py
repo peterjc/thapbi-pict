@@ -385,7 +385,7 @@ def prepare_sample(
             pass
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
-        return 0, 0, 0
+        return 0, {}, 0
 
     if debug:
         sys.stderr.write(
