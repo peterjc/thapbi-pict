@@ -33,13 +33,14 @@ jobs:
             if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi
             if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi
       - run:
-          name: Python checks
+          name: Python and RST checks
           command: |
             pip install --upgrade pip setuptools
             pip install black
             black --check .
             pip install flake8==3.6 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear
             flake8 .
+            restructuredtext-lint *.rst
       - run:
           name: Installation
           command: |

@@ -33,6 +33,8 @@ before_install:
  - pip install flake8==3.6 flake8-black flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear flake8-pie flake8-comprehensions
  - echo "Using flake8 (including black) to check Python code"
  - flake8 .
+ - echo "Using restructuredtext-lint to check documentation"
+ - restructuredtext-lint *.rst
 
 install:
  # Already installed external dependencies with apt packages (above)
