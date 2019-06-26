@@ -1,3 +1,9 @@
+# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 """Shared code for THAPBI PICT to import FASTA into our database.
 
 This code is used both for importing NCBI formatted FASTA files, and also

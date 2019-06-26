@@ -1,3 +1,9 @@
+# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 """Helper code to get command line tool versions.
 
 Defines various functions to check a tool is on the $PATH and if so,
