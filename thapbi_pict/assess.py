@@ -524,7 +524,10 @@ def main(
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
         # Hamming Loss = (total number of mis-predicted class entries
         #                 / number of class-level predictions)
-        hamming_loss = float(fp + fn) / (tp + fp + fn + tn)
+        try:
+            hamming_loss = float(fp + fn) / (tp + fp + fn + tn)
+        except ZeroDivisionError:
+            hamming_loss = 0.0
         # Ad-hoc Loss = (total number of mis-predicted class entries
         #                 / number of class-level predictions ignoring TN
         try:
