@@ -1,9 +1,24 @@
-|THAPBI PICT on the Python Package Index (PyPI)| |THAPBI PICT on
-BioConda| |THAPBI PICT TravisCI build status| |THAPBI PICT CircleCI
-build status| |Documentation Status| |Code style: black|
-
 THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 =================================================
+
+.. image:: https://img.shields.io/pypi/v/thapbi_pict.svg
+   :alt: THAPBI PICT on the Python Package Index (PyPI)
+   :target: https://pypi.org/project/thapbi-pict/
+.. image:: https://img.shields.io/conda/vn/bioconda/thapbi-pict.svg
+   :alt: THAPBI PICT on BioConda
+   :target: https://anaconda.org/bioconda/thapbi-pict
+.. image:: https://img.shields.io/travis/peterjc/thapbi-pict/master.svg?label=master&logo=travis
+   :alt: THAPBI PICT TravisCI build status
+   :target: https://travis-ci.org/peterjc/thapbi-pict/branches
+.. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=master&logo=CircleCI
+   :alt: THAPBI PICT CircleCI build status
+   :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
+.. image:: https://readthedocs.org/projects/thapbi-pict/badge/?version=latest
+   :alt: Documentation Status
+   :target: https://thapbi-pict.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :alt: Code style: black
+   :target: https://github.com/python/black
 
 THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK
 `BBSRC <https://www.bbsrc.ac.uk>`__ funded Tree Health and Plant
@@ -20,11 +35,12 @@ short region can identify species.
 
 This software repository continues earlier work including:
 
--  `https://github.com/widdowquinn/THAPBI <https://github.com/widdowquinn/THAPBI>`__
--  `https://github.com/widdowquinn/THAPBI-pycits <https://github.com/widdowquinn/THAPBI-pycits>`__
--  `https://github.com/peterthorpe5/THAPBI-pycits <https://github.com/peterthorpe5/THAPBI-pycits>`__
--  `https://github.com/peterthorpe5/public_scripts/tree/master/metapy <https://github.com/peterthorpe5/public_scripts/tree/master/metapy>`__
--  `https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools <https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools>`__
+- https://github.com/widdowquinn/THAPBI
+- https://github.com/widdowquinn/THAPBI-pycits
+- https://github.com/peterthorpe5/THAPBI-pycits
+- https://github.com/peterthorpe5/public_scripts/tree/master/metapy
+- https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools
+
 
 Installation
 ============
@@ -82,27 +98,16 @@ This should automatically find the installed copy of the Python code.
 Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for
 help.
 
+
 Release History
 ===============
 
-See the ``CHANGELOG.md`` file (it was getting too long to include here).
+See the ``CHANGELOG.rst`` file (it was getting too long to include here).
+
 
 Development Notes
 =================
 
-Please see the ``CONTRIBUTING.md`` file for details of the development
+Please see the ``CONTRIBUTING.rst`` file for details of the development
 setup including Python style conventions, git pre-commit hook,
 continuous integration and test coverage, and release process.
-
-.. |THAPBI PICT on the Python Package Index (PyPI)| image:: https://img.shields.io/pypi/v/thapbi_pict.svg
-   :target: https://pypi.org/project/thapbi-pict/
-.. |THAPBI PICT on BioConda| image:: https://img.shields.io/conda/vn/bioconda/thapbi-pict.svg
-   :target: https://anaconda.org/bioconda/thapbi-pict
-.. |THAPBI PICT TravisCI build status| image:: https://img.shields.io/travis/peterjc/thapbi-pict/master.svg?label=master&logo=travis
-   :target: https://travis-ci.org/peterjc/thapbi-pict/branches
-.. |THAPBI PICT CircleCI build status| image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=master&logo=CircleCI
-   :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
-.. |Documentation Status| image:: https://readthedocs.org/projects/thapbi-pict/badge/?version=latest
-   :target: https://thapbi-pict.readthedocs.io/en/latest/?badge=latest
-.. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/python/black
