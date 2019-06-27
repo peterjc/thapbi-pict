@@ -1,6 +1,3 @@
-THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
-=================================================
-
 .. image:: https://img.shields.io/pypi/v/thapbi_pict.svg
    :alt: THAPBI PICT on the Python Package Index (PyPI)
    :target: https://pypi.org/project/thapbi-pict/
@@ -19,6 +16,9 @@ THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :alt: Code style: black
    :target: https://github.com/python/black
+
+THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
+=================================================
 
 THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK
 `BBSRC <https://www.bbsrc.ac.uk>`__ funded Tree Health and Plant
