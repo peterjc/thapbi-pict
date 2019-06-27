@@ -3,12 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to THAPBI PICT's documentation!
-=======================================
+THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
+=================================================
+
+THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK
+`BBSRC <https://www.bbsrc.ac.uk>`__ funded Tree Health and Plant
+Biosecurity Initiative (THAPBI) Phyto-Threats project, focused on
+identifying *Phytophthora* species present in Illumina sequenced
+environmental samples.
+
+*Phytophthora* (from Greek meaning plant-destroyer) species are
+economically important plant pathogens, important in both agriculture
+and forestry. ITS1 is short for Internal Transcribed Spacer one, which
+is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
+This is commonly used for molecular barcoding, where sequencing this
+short region can identify species.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation contents:
 
    release_history
    development_notes
