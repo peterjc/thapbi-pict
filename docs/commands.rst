@@ -3,7 +3,7 @@ Command Line
 
 THAPBI PICT is a command line tool, meaning you must open your command line
 terminal window and key in instructions to use the tool. The documentation
-example use the ``$`` (dollar sign) to indicate the prompt, followed by text
+examples use the ``$`` (dollar sign) to indicate the prompt, followed by text
 to be entered. For example, this should run the tool with no instructions:
 
 .. code:: bash
@@ -27,13 +27,7 @@ installed:
 THAPBI PICT follows the sub-command style popularised in bioinformatics by
 ``samtools`` (also used in the version control tool ``git``). This means most
 of the instructions take the form ``thapbi_pict sub-command ...``, where the
-dots indicate some additional options. Start with reading the help for any
-command using ``-h`` or ``--help`` as follows:
-
-.. code:: bash
-
-    $ thapbi_pict pipeline -h
-    ...
+dots indicate some additional options.
 
 The main sub-commands are to do with classifying sequence files and reporting
 the results:
@@ -53,3 +47,19 @@ format ITS1 database:
 * ``ncbi-import`` - import a FASTA file using the NCBI style naming
 * ``import-seq`` - import prepared reads with known species assignment (single isolate positive controls)
 * ``legacy-import`` - import a FASTA file using the style of our legacy curated ITS1 dataset
+
+Start with reading the help for any command using ``-h`` or ``--help`` as follows:
+
+.. code:: bash
+
+    $ thapbi_pict pipeline -h
+    ...
+
+Most of the commands have required arguments, and if you omit a required
+argument it will stop with an error:
+
+.. code:: bash
+
+    $ thapbi_pict pipeline
+    ...
+    thapbi_pict pipeline: error: the following arguments are required: -i/--input, -o/--output
