@@ -33,13 +33,18 @@ is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
 This is commonly used for molecular barcoding, where sequencing this
 short region can identify species.
 
-This software repository continues earlier work including:
+This `software repository <https://github.com/peterjc/thapbi-pict/>`_
+continues earlier work including:
 
 - https://github.com/widdowquinn/THAPBI
 - https://github.com/widdowquinn/THAPBI-pycits
 - https://github.com/peterthorpe5/THAPBI-pycits
 - https://github.com/peterthorpe5/public_scripts/tree/master/metapy
 - https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools
+
+The `tool documentation <https://thapbi-pict.readthedocs.io/e>`_ is
+hosted by `Read The Docs <https://readthedocs.org/>`_, generated
+automatically from the ``docs/`` folder of this repository.
 
 
 Installation
