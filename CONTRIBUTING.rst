@@ -106,13 +106,13 @@ tool and automatically get our Python dependencies:
 
 .. code:: bash
 
-   pip install .
+   $ pip install .
 
 If your system defaults to Python 2, try ``pip3 install .`` instead.
 
 Once installed, you should be able to run the tool using:
 
-::
+.. code:: console
 
    $ thapbi_pict
 
