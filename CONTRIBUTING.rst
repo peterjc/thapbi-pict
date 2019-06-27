@@ -91,7 +91,7 @@ the command line with ``git``.
    $ cd thapbi-pict
 
 Then load the plain text SQL dump of the default database into SQLite3,
-see ``database/README.md`` for more information on this. Make it read
+see ``database/README.rst`` for more information on this. Make it read
 only to prevent accidental edits:
 
 .. code:: bash

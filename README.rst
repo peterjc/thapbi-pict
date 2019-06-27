@@ -85,7 +85,7 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
 
 If you want to install the very latest unreleased code, you must
-download the source code from GitHub - see the ``CONTRIBUTING.md`` file
+download the source code from GitHub - see the ``CONTRIBUTING.rst`` file
 for more details.
 
 Once installed, you should be able to run the tool using:
