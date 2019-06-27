@@ -8,6 +8,11 @@ thapbi_pict.egg-info
 #Ignore the distribution directory
 dist
 
+#Sphinx output
+docs/_build
+docs/_static
+docs/_templates
+
 # Python compiled files
 *.pyc
 *.pyo
