@@ -31,6 +31,7 @@ Key links:
 
    installation
    release_history
+   commands
    development_notes
 
 Indices and tables
