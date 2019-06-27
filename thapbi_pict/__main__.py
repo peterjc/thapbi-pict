@@ -634,8 +634,8 @@ def main(args=None):
         "pipeline",
         description="Run default classification pipeline on FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
-        "classify, sample-summary, read-summary) with their defaults, with only a "
-        "minority of settings available here.",
+        "classify, sample-summary, read-summary, edit-graph) with their defaults, "
+        "with only a minority of settings available here.",
     )
     parser_pipeline.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     parser_pipeline.add_argument("-n", "--negctrls", **ARG_CONTROLS)
