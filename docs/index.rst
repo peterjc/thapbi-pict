@@ -10,7 +10,8 @@ Welcome to THAPBI PICT's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   release_history
+   development_notes
 
 Indices and tables
 ==================
