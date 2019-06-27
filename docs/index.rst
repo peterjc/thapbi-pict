@@ -19,6 +19,12 @@ is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
 This is commonly used for molecular barcoding, where sequencing this
 short region can identify species.
 
+Key links:
+
+* Documentation on Read The Docs: https://github.com/peterjc/thapbi-pict/
+* Source code repository on GitHub: https://github.com/peterjc/thapbi-pict/
+* Software released on PyPI: https://pypi.org/project/thapbi-pict/
+
 .. toctree::
    :maxdepth: 2
    :caption: Documentation contents:
@@ -27,7 +33,7 @@ short region can identify species.
    development_notes
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
