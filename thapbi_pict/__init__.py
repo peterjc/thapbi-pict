@@ -23,4 +23,4 @@ You would typically use THAPBI PICT via the command line tool it defines::
 
 """
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
