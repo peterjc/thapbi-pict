@@ -619,7 +619,8 @@ def main(args=None):
         description=(
             "THAPBI Phytophthora ITS1 Classifier Tool (PICT), v%s." % __version__
         ),
-        epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help.",
+        epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help. "
+        "Please see https://thapbi-pict.readthedocs.io/ for documentation.",
     )
     parser.add_argument(
         "-v", "--version", action="version", version="THAPBI PICT v%s" % __version__
