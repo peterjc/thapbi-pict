@@ -24,6 +24,8 @@ author = "Peter Cock"
 # The full version, including alpha/beta/rc tags
 release = "0.3.1"
 
+# Sphinx vs ReadTheDocs conflict on default contents.rst vs index.rst
+master_doc = "index"
 
 # -- General configuration ---------------------------------------------------
 
