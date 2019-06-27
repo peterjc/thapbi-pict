@@ -11,9 +11,9 @@ by the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
 
 Practically, coding style is enforced with the command line tools
 `black <https://github.com/python/black>`__ (which can automatically
-edit your code) via `flake8 <http://flake8.pycqa.org/>`__ (which in
+edit your code) and `flake8 <http://flake8.pycqa.org/>`__ (which in
 addition to its own style checking, has a range of plugins - including a
-plugin to call black from flake8).
+plugin to call ``black`` from ``flake8``).
 
 You can install these tools using:
 
@@ -45,6 +45,7 @@ If your editor can be configured to run flake8 and/or black
 automatically, even better. These checks are done as part of the
 continuous integration when changes are made on GitHub.
 
+
 Continuous Integration
 ----------------------
 
@@ -52,9 +53,10 @@ Currently setup to do automated testing under Linux on two free
 continuous integration services, CircleCI (using Conda for dependencies)
 and TravisCI (using apt-packages and PyPI).
 
-`https://circleci.com/gh/peterjc/thapbi-pict/tree/master <https://circleci.com/gh/peterjc/thapbi-pict/tree/master>`__
+* CircleCI: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
 
-`https://travis-ci.org/peterjc/thapbi-pict/branches <https://travis-ci.org/peterjc/thapbi-pict/branches>`__
+* TravisCI: https://travis-ci.org/peterjc/thapbi-pict/branches
+
 
 Dependencies
 ------------
@@ -64,7 +66,7 @@ For end users, we recommend installing using the
 `BioConda <https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
 
-`https://anaconda.org/bioconda/thapbi-pict <https://anaconda.org/bioconda/thapbi-pict>`__
+https://anaconda.org/bioconda/thapbi-pict
 
 For development (and this is reflected in the TravisCI configuration),
 we recommend installing via pip, which uses
@@ -134,7 +136,7 @@ If the DB has changed,
 
 If not, skip directly to:
 
-::
+.. code:: bash
 
    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
    twine upload dist/thapbi_pict-X.Y.Z*
