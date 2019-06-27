@@ -29,6 +29,7 @@ Key links:
    :maxdepth: 2
    :caption: Documentation contents:
 
+   installation
    release_history
    development_notes
 
