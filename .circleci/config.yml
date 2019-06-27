@@ -40,7 +40,7 @@ jobs:
             black --check .
             pip install flake8==3.6 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
             flake8 .
-            restructuredtext-lint *.rst */*.rst
+            restructuredtext-lint *.rst database/*.rst
       - run:
           name: Installation
           command: |
