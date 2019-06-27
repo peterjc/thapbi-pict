@@ -63,15 +63,14 @@ with open("thapbi_pict/__init__.py") as handle:
             exec(line.strip())
             break
 
-# Load our markdown file README.md as the long description.
-# Must tell PyPI this is not using reStructuredText
+# Load our markdown file README.rst as the long description.
 #
 # Without declaring an encoding, any problematic character in the file, it may
 # fail on Python 3 depending on the user's locale. By explicitly checking it
 # it is ASCII (could use latin1 or UTF8 if needed later), if any invalid
 # character does appear in our README, this will fail for everyone.
-with open("README.md", "rb") as handle:
-    readme_md = handle.read().decode("ascii")
+with open("README.rst", "rb") as handle:
+    readme_rst = handle.read().decode("ascii")
 
 setup(
     name="thapbi_pict",
@@ -81,8 +80,8 @@ setup(
     url="https://github.com/peterjc/thapbi-pict",  # For now at least
     download_url="https://github.com/peterjc/thapbi-pict",
     description="THAPBI Phytophthora ITS1 Classifier Tool (PICT).",
-    long_description=readme_md,
-    long_description_content_type="text/markdown",
+    long_description=readme_rst,
+    long_description_content_type="text/x-rst",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
