@@ -69,7 +69,7 @@ For end users, we recommend installing using the
 https://anaconda.org/bioconda/thapbi-pict
 
 For development (and this is reflected in the TravisCI configuration),
-we recommend installing via pip, which uses
+we recommend installing via ``pip``, which uses
 `PyPI <https://pypi.python.org/>`__ for the Python dependencies. These
 are declared in the ``setup.py`` script and so will automatically be
 installed, but see also the ``requirements.txt`` file.
