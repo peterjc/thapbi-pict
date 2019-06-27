@@ -1,5 +1,5 @@
-THAPBI PICT - Development Notes
-===============================
+Development Notes
+=================
 
 Python style conventions
 ------------------------
