@@ -42,6 +42,12 @@ jobs:
             flake8 .
             restructuredtext-lint *.rst database/*.rst
       - run:
+          name: Documentation
+          command: |
+            conda install --file requirements-docs.txt
+            cd $HOME/docs
+            make html
+      - run:
           name: Installation
           command: |
             conda install --file requirements-ext.txt

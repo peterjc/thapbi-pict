@@ -35,6 +35,11 @@ before_install:
  - flake8 .
  - echo "Using restructuredtext-lint to check non-Sphinx documentation"
  - restructuredtext-lint *.rst database/*.rst
+ # Build the docs (do as a TravisCI stage/matrix entry?)
+ - cd $HOME/docs
+ - pip install -r requirements-docs.txt
+ - make html
+ - cd $HOME
 
 install:
  # Already installed external dependencies with apt packages (above)
