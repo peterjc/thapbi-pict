@@ -71,29 +71,14 @@ it along with its Python dependencies:
    $ pip install thapbi_pict
 
 However, in this case you will still need to install various external
-command line tools like ``hmmer``, and others which are only used for
-some classifiers (like ``blast`` and ``swarm``). If you have BioConda
-setup, use the following:
+command line tools. See ``INSTALL.rst`` for more details, and if you
+want to modify the software read ``CONTRIBUTING.rst`` as well.
 
-.. code:: bash
+Quick Start
+===========
 
-   $ conda install --file requirements-ext.txt
-
-On a typical Linux system most of the tools required will be available
-via the default distribution packages, although not always under the
-same package name.
-
-On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
-
-.. code:: bash
-
-   $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
-
-If you want to install the very latest unreleased code, you must
-download the source code from GitHub - see the ``CONTRIBUTING.rst`` file
-for more details.
-
-Once installed, you should be able to run the tool using:
+Once installed, you should be able to run the tool at the command line
+using:
 
 .. code:: bash
 
