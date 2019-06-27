@@ -3,7 +3,7 @@
 # This tells setuptools what files to distribute.
 
 include MANIFEST.in
-include *.md
+include *.rst
 
 recursive-include thapbi_pict *.py
 
@@ -14,7 +14,7 @@ include thapbi_pict/ITS1_DB.sqlite
 
 # Deliberately not bothering to anything in database via wildcards.
 # e.g. NCBI taxonomy or symlinks to control plate positive controls.
-include database/README.md
+include database/README.rst
 include database/ITS1_DB.sql
 include database/legacy/database.fasta
 include database/legacy/Phytophthora_ITS_database_v0.004.fasta
