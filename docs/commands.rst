@@ -22,7 +22,7 @@ installed:
 .. code:: bash
 
     $ thapbi_pict -v
-    THAPBI PICT v0.3.1   
+    THAPBI PICT v0.3.2
 
 THAPBI PICT follows the sub-command style popularised in bioinformatics by
 ``samtools`` (also used in the version control tool ``git``). This means most
