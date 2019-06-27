@@ -33,7 +33,7 @@ is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
 This is commonly used for molecular barcoding, where sequencing this
 short region can identify species.
 
-The `tool documentation <https://thapbi-pict.readthedocs.io/e>`_ is
+The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is
 hosted by `Read The Docs <https://readthedocs.org/>`_, generated
 automatically from the ``docs/`` folder of the `software repository
 <https://github.com/peterjc/thapbi-pict/>`_.
