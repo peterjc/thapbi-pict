@@ -12,7 +12,7 @@
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
 .. image:: https://readthedocs.org/projects/thapbi-pict/badge/?version=latest
    :alt: Documentation Status
-   :target: https://thapbi-pict.readthedocs.io/en/latest/?badge=latest
+   :target: https://readthedocs.org/projects/thapbi-pict/builds/
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :alt: Code style: black
    :target: https://github.com/python/black
