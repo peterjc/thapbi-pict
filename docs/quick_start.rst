@@ -59,6 +59,11 @@ read abundance.
     Expanded 3645 ITS1 sequences from DB into cloud of 4144465 1bp different variants
     Running onebp classifer on intermediate/<sample_name).fasta
     ...
+    Wrote summary/thapbi-pict.samples.*
+    Wrote summary/thapbi-pict.reads.*
+    ...
+    Wrote summary/thapbi-pict.edit-graph.xgmml
+    All done!
 
 This is robust to being interupted and restarted (as long as you are not
 changing settings), and will reuse intermediate files:
@@ -71,6 +76,11 @@ changing settings), and will reuse intermediate files:
     Running onebp classifer on intermediate/<sample_name>.fasta
     WARNING: Skipping intermediate/<sample_name>.onebp.tsv as already exists
     ...
+    Wrote summary/thapbi-pict.samples.*
+    Wrote summary/thapbi-pict.reads.*
+    ...
+    Wrote summary/thapbi-pict.edit-graph.xgmml
+    All	done!
 
 All being well, this will produce a set of report files, with names matching
 ``thapbi-pict.*`` as follows:

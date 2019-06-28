@@ -366,6 +366,7 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
         sys.exit(return_code)
+    sys.stderr.write("Wrote %s.samples.*\n" % stem)
 
     return_code = read_summary(
         inputs=fasta_files + classified_files,
@@ -383,6 +384,7 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
         sys.exit(return_code)
+    sys.stderr.write("Wrote %s.reads.*\n" % stem)
 
     # The XGMML output has minimal dependencies compared to PDF output
     return_code = edit_graph(
@@ -399,6 +401,9 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
         sys.exit(return_code)
+    sys.stderr.write("Wrote %s.edit-graph.xgmml\n" % stem)
+
+    sys.stderr.write("All done!")
 
 
 # Common arguments
