@@ -352,8 +352,8 @@ def pipeline(args=None):
 
     return_code = sample_summary(
         inputs=classified_files,
-        output=os.path.join(args.output, stem + ".samples.tsv"),
-        human_output=os.path.join(args.output, stem + ".samples.txt"),
+        output=stem + ".samples.tsv",
+        human_output=stem + ".samples.txt",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -369,8 +369,8 @@ def pipeline(args=None):
 
     return_code = read_summary(
         inputs=fasta_files + classified_files,
-        output=os.path.join(args.output, stem + ".reads.tsv"),
-        excel=os.path.join(args.output, stem + ".reads.xlsx"),
+        output=stem + ".reads.tsv",
+        excel=stem + ".reads.xlsx",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -386,7 +386,7 @@ def pipeline(args=None):
 
     # The XGMML output has minimal dependencies compared to PDF output
     return_code = edit_graph(
-        graph_output=os.path.join(args.output, stem + ".edit-graph.xgmml"),
+        graph_output=stem + ".edit-graph.xgmml",
         graph_format="xgmml",
         db_url=db,
         inputs=fasta_files,
