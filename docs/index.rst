@@ -26,7 +26,7 @@ Key links:
 * Software released on PyPI: https://pypi.org/project/thapbi-pict/
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Documentation contents:
 
    installation
