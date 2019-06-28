@@ -66,7 +66,8 @@ read abundance.
     All done!
 
 This is robust to being interupted and restarted (as long as you are not
-changing settings), and will reuse intermediate files:
+changing settings), and will reuse intermediate files, and not recompute
+the edit-graph (which can be bery slow):
 
 .. code:: bash
 
@@ -78,8 +79,7 @@ changing settings), and will reuse intermediate files:
     ...
     Wrote summary/thapbi-pict.samples.*
     Wrote summary/thapbi-pict.reads.*
-    ...
-    Wrote summary/thapbi-pict.edit-graph.xgmml
+    WARNING: Skipping summary/thapbi-pict.edit-graph.xgmml as already exists
     All	done!
 
 All being well, this will produce a set of report files, with names matching

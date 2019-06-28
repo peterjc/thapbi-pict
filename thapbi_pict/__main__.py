@@ -386,22 +386,29 @@ def pipeline(args=None):
         sys.exit(return_code)
     sys.stderr.write("Wrote %s.reads.*\n" % stem)
 
-    # The XGMML output has minimal dependencies compared to PDF output
-    return_code = edit_graph(
-        graph_output=stem + ".edit-graph.xgmml",
-        graph_format="xgmml",
-        db_url=db,
-        inputs=fasta_files,
-        min_abundance=args.abundance,
-        # total_min_abundance=args.total,
-        # always_show_db=args.showdb,
-        # max_edit_dist=args.editdist,
-        debug=args.verbose,
-    )
-    if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
-        sys.exit(return_code)
-    sys.stderr.write("Wrote %s.edit-graph.xgmml\n" % stem)
+    edit_graph_filename = stem + ".edit-graph.xgmml"
+    if os.path.isfile(edit_graph_filename):
+        # This is slow to compute on complex sample sets
+        sys.stderr.write(
+            "WARNING: Skipping %s as already exists\n" % edit_graph_filename
+        )
+    else:
+        # The XGMML output has minimal dependencies compared to PDF output
+        return_code = edit_graph(
+            graph_output=edit_graph_filename,
+            graph_format="xgmml",
+            db_url=db,
+            inputs=fasta_files,
+            min_abundance=args.abundance,
+            # total_min_abundance=args.total,
+            # always_show_db=args.showdb,
+            # max_edit_dist=args.editdist,
+            debug=args.verbose,
+        )
+        if return_code:
+            sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
+            sys.exit(return_code)
+        sys.stderr.write("Wrote %s\n" % edit_graph_filename)
 
     sys.stderr.write("All done!")
 
