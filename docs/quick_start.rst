@@ -14,7 +14,7 @@ samples, make classifications, and summary reports.
     ...
 
 Setup
-=====
+-----
 
 We assume you have a new folder dedicated to this analysis, with a sub folder
 ``raw_data/`` which contains the demultiplexed paired FASTQ files which are
