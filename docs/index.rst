@@ -30,6 +30,7 @@ Key links:
    :caption: Documentation contents:
 
    installation
+   quick_start
    release_history
    commands
    development_notes
