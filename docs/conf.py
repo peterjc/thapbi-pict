@@ -32,7 +32,10 @@ master_doc = "index"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+#
+# We are using SVG images which work fine in the HTML output, but need
+# 'sphinx.ext.imgconverter' for it to work in the PDF output on RTD.
+extensions = ["sphinx.ext.imgconverter"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
