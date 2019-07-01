@@ -5,7 +5,7 @@ Here we describe a simplified use of the THAPBI PICT tool to assess a single
 Illumina MiSeq sequencing run. The input data is a set of paired FASTQ files
 (one for each sample), perhaps barcoded samples from a 96-well plate.
 
-.. image:: pipeline.svg
+.. image:: images/pipeline.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
 
 In this illustrative flow chart of the default pipeline, the input paired
