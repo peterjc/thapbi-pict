@@ -108,7 +108,8 @@ tool and automatically get our Python dependencies:
 
    $ pip install .
 
-If your system defaults to Python 2, try ``pip3 install .`` instead.
+If your system defaults to Python 2, try ``pip3 install .`` or
+``python3 -m pip install .`` instead.
 
 Once installed, you should be able to run the tool using:
 
@@ -126,9 +127,10 @@ Release process
 For a release, start from a clean git checkout (to reduce the chance of
 bundling any stray local files despite a cautious ``MANIFEST.in``).
 
-If the DB has changed,
+If the DB has changed, and this was not done locally, we must update it
+using the plain text dump which is under version control:
 
-.. code:: console
+.. code:: bash
 
    rm -rf thapbi_pict/ITS1_DB.sqlite
    sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
@@ -136,7 +138,7 @@ If the DB has changed,
 
 If not, skip directly to:
 
-.. code:: console
+.. code:: bash
 
    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
    twine upload dist/thapbi_pict-X.Y.Z*
