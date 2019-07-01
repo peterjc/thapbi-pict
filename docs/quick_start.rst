@@ -46,10 +46,11 @@ With that done, we run the ``thapbi_pict pipeline`` command, which for a
 single 96 sample Illumina MiSeq run should take perhaps up to 20 minutes (the
 edit-graph can be most of this).
 
-*WARNING:*
-This minimal example omits a key consideration which is telling the tool which
-of the samples are your negative controls and/or manually setting the minimum
-read abundance.
+.. WARNING::
+
+    This minimal example omits a key consideration which is telling the tool
+    which of the samples are your negative controls and/or manually setting
+    the minimum read abundance.
 
 .. code:: bash
 
