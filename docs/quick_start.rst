@@ -10,7 +10,8 @@ Illumina MiSeq sequencing run. The input data is a set of paired FASTQ files
 
 In this illustrative flow chart of the default pipeline, the input paired
 FASTQ files are green, the intermediate per-sample FASTA and TSV files are
-yellow, and the output reports are in orange.
+yellow, and the output reports are in orange. The individual steps of the
+pipeline are dark blue boxes, and the ITS1 database is a pale blue cylinder.
 
 We will now describe how to run the ``thapbi_pict pipeline`` command, which
 will process the samples, make classifications, and summary reports.
