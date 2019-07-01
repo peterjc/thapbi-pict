@@ -5,16 +5,20 @@ Here we describe a simplified use of the THAPBI PICT tool to assess a single
 Illumina MiSeq sequencing run. The input data is a set of paired FASTQ files
 (one for each sample), perhaps barcoded samples from a 96-well plate.
 
-Here we will run the ``thapbi_pict pipeline`` command, which process the
-samples, make classifications, and summary reports.
+.. image:: pipeline.svg
+   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
+
+In this illustrative flow chart of the default pipeline, the input paired
+FASTQ files are green, the intermediate per-sample FASTA and TSV files are
+yellow, and the output reports are in orange.
+
+We will now describe how to run the ``thapbi_pict pipeline`` command, which
+will process the samples, make classifications, and summary reports.
 
 .. code:: bash
 
     $ thapbi_pict pipeline -h
     ...
-
-.. image:: pipeline.svg
-   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
 
 Setup
 -----
