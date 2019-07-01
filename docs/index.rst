@@ -21,7 +21,7 @@ short region can identify species.
 
 Key links:
 
-* Documentation on Read The Docs: https://github.com/peterjc/thapbi-pict/
+* Documentation on Read The Docs: https://thapbi-pict.readthedocs.io/
 * Source code repository on GitHub: https://github.com/peterjc/thapbi-pict/
 * Software released on PyPI: https://pypi.org/project/thapbi-pict/
 
