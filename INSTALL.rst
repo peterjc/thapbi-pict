@@ -1,38 +1,37 @@
 Installation
 ============
 
-We recommend installing this tool on Linux using the
-`Conda <https://conda.io/>`__ packaging system, via the
-`BioConda <https://bioconda.github.io/>`__ channel, which will handle
+We recommend installing this tool on Linux or macOS using the `Conda
+<https://conda.io/>`__ packaging system, via the `BioConda
+<https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
 
 .. code:: bash
 
    $ conda install thapbi_pict
 
-The same should work on macOS, but the command line dependencies likely
-rule out using Windows directly.
+The availability of all the command line dependencies likely rules out
+using Windows.
 
-Alternatively, since the software is on the `Python Package Index
-(PyPI) <https://pypi.python.org/>`__, the following command will install
-it along with its Python dependencies:
+Alternatively, since the software is on the `Python Package Index (PyPI)
+<https://pypi.python.org/>`__, the following command will install it along
+with its Python dependencies:
 
 .. code:: bash
 
    $ pip install thapbi_pict
 
-However, in this case you will still need to install various external
-command line tools like ``hmmer``, and others which are only used for
-some classifiers (like ``blast`` and ``swarm``). If you have BioConda
-setup, use the following:
+However, in this case you will still need to install various external command
+line tools like ``hmmer``, and others which are only used for some classifiers
+(like ``blast`` and ``swarm``). If you have BioConda setup, use the following:
 
 .. code:: bash
 
    $ conda install --file requirements-ext.txt
 
-On a typical Linux system most of the tools required will be available
-via the default distribution packages, although not always under the
-same package name.
+If you are not using Conda,  then on a typical Linux system most of the tools
+required will be available via the default distribution packages, although not
+always under the same package name.
 
 On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
@@ -40,10 +39,10 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
 
-If you want to install the very latest unreleased code, you must
-download the source code from the `repository on GitHub
-<https://github.com/peterjc/thapbi-pict>`_ - see the
-``CONTRIBUTING.rst`` file for more details.
+If you want to install the very latest unreleased code, you must download the
+source code from the `repository on GitHub
+<https://github.com/peterjc/thapbi-pict>`_ - see the ``CONTRIBUTING.rst`` file
+for more details.
 
 Once installed, you should be able to run the tool using:
 
@@ -51,6 +50,5 @@ Once installed, you should be able to run the tool using:
 
    $ thapbi_pict
 
-This should automatically find the installed copy of the Python code.
-Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for
-help.
+This should automatically find the installed copy of the Python code. Use
+``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
