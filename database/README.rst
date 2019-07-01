@@ -6,7 +6,7 @@ stored under version control as ``ITS1_DB.sql`` (plain text SQL
 dump from sqlite3), from which we generate the binary DB using
 the following commands as part of the release process:
 
-.. code:: bash
+.. code:: console
 
    $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
    $ chmod a-w thapbi_pict/ITS1_DB.sqlite
