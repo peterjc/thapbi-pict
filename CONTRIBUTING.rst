@@ -87,7 +87,7 @@ First, download the code from GitHub and decompress it if required. The
 best way to do this if you are likely to contribute any changes is at
 the command line with ``git``.
 
-.. code:: bash
+.. code:: console
 
    $ git clone https://github.com/peterjc/thapbi-pict.git
    $ cd thapbi-pict
@@ -96,7 +96,7 @@ Then load the plain text SQL dump of the default database into SQLite3,
 see ``database/README.rst`` for more information on this. Make it read
 only to prevent accidental edits:
 
-.. code:: bash
+.. code:: console
 
    $ sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
    $ chmod a-w thapbi_pict/ITS1_DB.sqlite
@@ -104,7 +104,7 @@ only to prevent accidental edits:
 Assuming your default Python is at least version 3.5, to install the
 tool and automatically get our Python dependencies:
 
-.. code:: bash
+.. code:: console
 
    $ pip install .
 
@@ -128,7 +128,7 @@ bundling any stray local files despite a cautious ``MANIFEST.in``).
 
 If the DB has changed,
 
-.. code:: bash
+.. code:: console
 
    rm -rf thapbi_pict/ITS1_DB.sqlite
    sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
@@ -136,7 +136,7 @@ If the DB has changed,
 
 If not, skip directly to:
 
-.. code:: bash
+.. code:: console
 
    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
    twine upload dist/thapbi_pict-X.Y.Z*

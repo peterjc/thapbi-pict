@@ -6,7 +6,7 @@ terminal window and key in instructions to use the tool. The documentation
 examples use the ``$`` (dollar sign) to indicate the prompt, followed by text
 to be entered. For example, this should run the tool with no instructions:
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict
     ...
@@ -19,7 +19,7 @@ For example, ``-v`` (minus sign, lower case letter v) or ``--version`` (minus,
 minus, version in lower case) can be added to find out the version of the tool
 installed:
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict -v
     THAPBI PICT v0.3.2
@@ -50,7 +50,7 @@ format ITS1 database:
 
 Start with reading the help for any command using ``-h`` or ``--help`` as follows:
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict pipeline -h
     ...
@@ -58,7 +58,7 @@ Start with reading the help for any command using ``-h`` or ``--help`` as follow
 Most of the commands have required arguments, and if you omit a required
 argument it will stop with an error:
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict pipeline
     ...

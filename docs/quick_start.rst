@@ -16,7 +16,7 @@ pipeline are dark blue boxes, and the ITS1 database is a pale blue cylinder.
 We will now describe how to run the ``thapbi_pict pipeline`` command, which
 will process the samples, make classifications, and summary reports.
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict pipeline -h
     ...
@@ -32,7 +32,7 @@ naming patterns. We recommend that you *do* *not* decompress the FASTQ files
 (as ``sample_name_R1.fastq`` and ``sample_name_R2.fastq``, leaving them gzip
 compressed is preferable for disk space.
 
-.. code:: bash
+.. code:: console
 
     $ cd /path/to/my/project/
     $ ls raw_data/*.fastq.gz
@@ -42,7 +42,7 @@ We will make two additional sub-folders, ``intermediate/`` (for the per-sample
 prepared FASTA files and classifier prediction TSV files), and ``summary/``
 for the folder level reports.
 
-.. code:: bash
+.. code:: console
 
     $ mkdir intermediate/
     $ mkdir summary/
@@ -54,7 +54,7 @@ With that done, we run the ``thapbi_pict pipeline`` command, which for a
 single 96 sample Illumina MiSeq run should take perhaps up to 20 minutes (the
 edit-graph can be most of this).
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/
     Starting to prepare sample intermediate/<sample_name).fasta ...
@@ -72,7 +72,7 @@ This is robust to being interupted and restarted (as long as you are not
 changing settings), and will reuse intermediate files, and not recompute
 the edit-graph (which can be very slow):
 
-.. code:: bash
+.. code:: console
 
     $ thapbi_pict pipeline  -i raw_data/ -s intermediate/ -o summary
     WARNING: Skipping intermediate/<sample_name>.fasta as already exists
@@ -88,7 +88,7 @@ the edit-graph (which can be very slow):
 All being well, this will produce a set of report files, with names matching
 ``thapbi-pict.*`` as follows:
 
-.. code:: bash
+.. code:: console
 
     $ ls -1 thapbi-pict.*
     thapbi-pict.reads.tsv

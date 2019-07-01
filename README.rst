@@ -55,7 +55,7 @@ We recommend installing this tool on Linux using the
 `BioConda <https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
 
-.. code:: bash
+.. code:: console
 
    $ conda install thapbi_pict
 
@@ -66,7 +66,7 @@ Alternatively, since the software is on the `Python Package Index
 (PyPI) <https://pypi.python.org/>`__, the following command will install
 it along with its Python dependencies:
 
-.. code:: bash
+.. code:: console
 
    $ pip install thapbi_pict
 
@@ -80,7 +80,7 @@ Quick Start
 Once installed, you should be able to run the tool at the command line
 using:
 
-.. code:: bash
+.. code:: console
 
    $ thapbi_pict
 

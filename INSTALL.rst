@@ -6,7 +6,7 @@ We recommend installing this tool on Linux or macOS using the `Conda
 <https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
 
-.. code:: bash
+.. code:: console
 
    $ conda install thapbi_pict
 
@@ -17,7 +17,7 @@ Alternatively, since the software is on the `Python Package Index (PyPI)
 <https://pypi.python.org/>`__, the following command will install it along
 with its Python dependencies:
 
-.. code:: bash
+.. code:: console
 
    $ pip install thapbi_pict
 
@@ -25,7 +25,7 @@ However, in this case you will still need to install various external command
 line tools like ``hmmer``, and others which are only used for some classifiers
 (like ``blast`` and ``swarm``). If you have BioConda setup, use the following:
 
-.. code:: bash
+.. code:: console
 
    $ conda install --file requirements-ext.txt
 
@@ -35,7 +35,7 @@ always under the same package name.
 
 On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
-.. code:: bash
+.. code:: console
 
    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
 
@@ -46,7 +46,7 @@ for more details.
 
 Once installed, you should be able to run the tool using:
 
-.. code:: bash
+.. code:: console
 
    $ thapbi_pict
 
