@@ -67,7 +67,7 @@ read abundance.
 
 This is robust to being interupted and restarted (as long as you are not
 changing settings), and will reuse intermediate files, and not recompute
-the edit-graph (which can be bery slow):
+the edit-graph (which can be very slow):
 
 .. code:: bash
 
