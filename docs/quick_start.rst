@@ -13,6 +13,9 @@ samples, make classifications, and summary reports.
     $ thapbi_pict pipeline -h
     ...
 
+.. image:: pipeline.pdf
+   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
+
 Setup
 -----
 
