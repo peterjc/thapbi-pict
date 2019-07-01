@@ -99,9 +99,9 @@ All being well, this will produce a set of report files, with names matching
 
 .. WARNING::
 
-    This minimal example omits a key consideration which is telling the tool
-    which of the samples are your negative controls and/or manually setting
-    the minimum read abundance.
+    This minimal example omits a key consideration - telling the tool which
+    samples are negative controls, and/or manually setting the minimum read
+    abundance.
 
 Sample Reports
 --------------
