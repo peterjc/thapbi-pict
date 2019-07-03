@@ -481,9 +481,10 @@ def load_metadata(
     separated list of columns to output. The column numbers are assumed
     to be one-based as provided by the command line user.
 
-    The groups argument should be a column number used to break the
-    samples into groups for applying background colouring in Excel
-    reports. It must be one of the columns requested in the output.
+    The groups argument should be a column number (one based counting)
+    used to break the samples into groups for applying background
+    colouring in Excel reports. It must be one of the columns requested
+    in the output, or zero for the first column requested in the output.
 
     The name row indicates which row in the table contains the names
     or descriptions of the metadata columns (one-based).
@@ -561,16 +562,23 @@ def load_metadata(
             group_col = int(metadata_groups) - 1
         except ValueError:
             sys.exit(
-                "ERROR: Invalid metadata group column, should be positive, not %r."
+                "ERROR: Invalid metadata group column, should be positive or 0, not %r."
                 % metadata_groups
             )
         if group_col not in value_cols:
             # bad idea as it will likely make the colours impossible to interpret
             sys.exit(
-                "ERROR: Metadata group column not included in reported metadata.\n"
+                "ERROR: Metadata group column %i not included in reported metadata.\n"
+                % (group_col + 1)
             )
     else:
-        group_col = None
+        # Default is the first requested column
+        group_col = value_cols[0]
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Using first requested column %i to try to do group coloring\n"
+                % (group_col + 1)
+            )
 
     names = [""] * len(value_cols)  # default
     meta = {}
@@ -619,26 +627,27 @@ def load_metadata(
     index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
     del meta_plus_idx
 
-    if group_col:
-        # Pull out the group column from the meta-columns
-        offset = value_cols.index(group_col)
-        groups = [_[offset] for _ in meta]
-        del offset
+    # Pull out the group column from the meta-columns
+    offset = value_cols.index(group_col)
+    groups = [_[offset] for _ in meta]
+    del offset
 
-        # Might need to post process group names
-        if len(set(groups)) == len(groups):
-            if debug:
-                sys.stderr.write("DEBUG: Trying first word only for group names\n")
-            # Taking the first word/field will work on schemes like
-            # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
-            groups = [
-                _.replace("-", " ").replace("_", " ").split(None, 1)[0] for _ in groups
-            ]
-        if len(set(groups)) == len(groups):
-            groups = [None] * len(meta)
-            sys.stderr.write("WARNING: All samples had different group values.\n")
-    else:
-        groups = [None] * len(meta)
+    # Might need to post process group names - if all the values are different,
+    # and each metadata row has a single sequenced sample, that's not ideal.
+    if len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
+        if debug:
+            sys.stderr.write("DEBUG: Trying first word only for group names\n")
+        # Taking the first word/field will work on schemes like
+        # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
+        groups = [
+            _.replace("-", " ").replace("_", " ").split(None, 1)[0] for _ in groups
+        ]
+    if len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
+        sys.stderr.write("WARNING: All metadata rows had different group values.\n")
+    elif len(set(groups)) == 1:
+        sys.stderr.write(
+            "WARNING: All metadata rows had same group value: %s\n" % groups[0]
+        )
 
     back = {}
     for i, samples in enumerate(index):

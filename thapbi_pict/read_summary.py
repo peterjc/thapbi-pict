@@ -36,6 +36,11 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
 
     if len(set(meta_groups)) == 1:
         # All the same not helpful for banding
+        if debug:
+            sys.stderr.write(
+                "DEBUG: All samples had same metadata in grouping field: %r\n"
+                % meta_groups[0]
+            )
         return default
 
     if len(set(meta_groups)) < min_groups or max_groups < len(set(meta_groups)):
@@ -69,7 +74,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
                 return default
             bands.append(max(bands) + 1)
             debug_msg.append(value)
-    assert len(set(bands)) == max(bands) + 1
+    assert len(set(bands)) == max(bands) + 1, bands
     return [sample_color_bands[_ % len(sample_color_bands)] for _ in bands]
 
 

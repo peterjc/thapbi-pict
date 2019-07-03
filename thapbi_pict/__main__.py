@@ -593,9 +593,9 @@ ARG_METAGROUPS = dict(  # noqa: C408
     help="If using metadata, which column values should be used for applying "
     "background color bands.  All samples with the same metadata value must "
     "be grouped together after sorting, as the colors are reused. "
-    "Default is the first column requested as metadata output (which would "
-    "also be the primary sorting key, and thus ensures all members of the "
-    "same group will be together).",
+    "Zero (default) is interpretted as the first column requested as metadata "
+    "output (which would also be the primary sorting key, and thus ensures all "
+    "members of the same group will be together).",
 )
 
 # "-f", "--metafields",
