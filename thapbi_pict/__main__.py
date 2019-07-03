@@ -108,7 +108,7 @@ def seq_import(args=None):
     from .seq_import import main
 
     return main(
-        inputs=args.inputs,
+        inputs=args.input,
         method=args.method,
         db_url=expand_database_argument(args.database),
         min_abundance=args.abundance,
@@ -203,7 +203,7 @@ def assess_classification(args=None):
     from .assess import main
 
     return main(
-        inputs=args.inputs,
+        inputs=args.input,
         level=args.level,
         known=args.known,
         method=args.method,
@@ -224,7 +224,7 @@ def read_summary(args=None):
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
-        inputs=args.inputs,
+        inputs=args.input,
         output=args.output,
         excel=args.excel,
         method=args.method,
@@ -247,7 +247,7 @@ def sample_summary(args=None):
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
-        inputs=args.inputs,
+        inputs=args.input,
         output=args.output,
         human_output=args.human,
         method=args.method,
@@ -742,8 +742,10 @@ def main(args=None):
         "non-matching entries are rejected.",
     )
     parser_seq_import.add_argument(
-        "inputs",
+        "-i",
+        "--input",
         type=str,
+        required=True,
         nargs="+",
         help="One or more ITS1 FASTA and classifier filenames or folders "
         "(names containing files named *.fasta and *.method.tsv, where "
@@ -930,8 +932,10 @@ def main(args=None):
         "is the expected benchmark.",
     )
     parser_assess.add_argument(
-        "inputs",
+        "-i",
+        "--input",
         type=str,
+        required=True,
         nargs="+",
         help="One or more prediction file or folder names. Expects to "
         "find matching files *.method.tsv to be assessed against "
@@ -1007,8 +1011,10 @@ def main(args=None):
         "per sample (typically 96 samples).",
     )
     parser_read_summary.add_argument(
-        "inputs",
+        "-i",
+        "--input",
         type=str,
+        required=True,
         nargs="+",
         help="One or more prepared read files (*.fasta), prediction "
         "files (*.method.tsv) or folder names. If passing folder names, "
@@ -1073,8 +1079,10 @@ def main(args=None):
         "Intended to be used for samples over multiple sequencing plates.",
     )
     parser_sample_summary.add_argument(
-        "inputs",
+        "-i",
+        "--input",
         type=str,
+        required=True,
         nargs="+",
         help="One or more prediction files (*.method.tsv) or folder names. "
         "The files should follow this naming convention, where the classifer "

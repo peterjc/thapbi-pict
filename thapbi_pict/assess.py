@@ -334,7 +334,7 @@ def main(
     debug=False,
 ):
     """Implement the (species level) thapbi_pict assess command."""
-    assert isinstance(inputs, list)
+    assert isinstance(inputs, list), inputs
     assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
