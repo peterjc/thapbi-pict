@@ -94,7 +94,7 @@ def ncbi_import(args=None):
     from .ncbi import main
 
     return main(
-        fasta_file=args.fasta,
+        fasta_file=args.input,
         db_url=expand_database_argument(args.database),
         name=args.name,
         validate_species=not args.lax,
@@ -124,7 +124,7 @@ def legacy_import(args=None):
     from .legacy import main
 
     return main(
-        fasta_file=args.fasta,
+        fasta_file=args.input,
         db_url=expand_database_argument(args.database),
         name=args.name,
         validate_species=not args.lax,
@@ -722,7 +722,9 @@ def main(args=None):
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    parser_ncbi_import.add_argument("fasta", type=str, help="One ITS1 fasta filename.")
+    parser_ncbi_import.add_argument(
+        "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
+    )
     parser_ncbi_import.add_argument("-d", "--database", **ARG_DB_WRITE)
     parser_ncbi_import.add_argument("-n", "--name", **ARG_NAME)
     parser_ncbi_import.add_argument("-x", "--lax", **ARG_LAX)
@@ -788,7 +790,7 @@ def main(args=None):
         "non-matching entries are rejected.",
     )
     parser_legacy_import.add_argument(
-        "fasta", type=str, help="One ITS1 fasta filename."
+        "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
     parser_legacy_import.add_argument("-d", "--database", **ARG_DB_WRITE)
     parser_legacy_import.add_argument("-n", "--name", **ARG_NAME)
