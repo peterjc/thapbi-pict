@@ -10,7 +10,7 @@
 .. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=master&logo=CircleCI
    :alt: THAPBI PICT CircleCI build status
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
-.. image:: https://readthedocs.org/projects/thapbi-pict/badge/?version=latest
+.. image:: https://img.shields.io/readthedocs/thapbi-pict.svg?logo=read-the-docs
    :alt: Documentation Status
    :target: https://readthedocs.org/projects/thapbi-pict/builds/
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
