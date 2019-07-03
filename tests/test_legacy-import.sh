@@ -31,7 +31,7 @@ thapbi_pict legacy-import -x -d $DB -i database/legacy/database.fasta
 thapbi_pict legacy-import -x -d "sqlite:///:memory:" -i database/legacy/Phytophthora_ITS_database_v0.004.fasta
 
 rm -rf database/legacy/Phytophthora_ITS_database_v0.005.sqlite
-thapbi_pict legacy-import -x -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" database/legacy/Phytophthora_ITS_database_v0.005.fasta
+thapbi_pict legacy-import -x -d "database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -i database/legacy/Phytophthora_ITS_database_v0.005.fasta
 # We use this DB later...
 
 export DB=$TMP/legacy_004_and_005_lax.sqlite
