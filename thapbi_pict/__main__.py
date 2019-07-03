@@ -557,7 +557,7 @@ ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
 ARG_METADATA = dict(  # noqa: C408
     type=str,
     default="",
-    metavar="FILENAME",
+    metavar="METADATAFILE",
     help="Optional tab separated table containing metadata indexed by "
     "sample name. Must also specify the columns with -c / --metacols. ",
 )
