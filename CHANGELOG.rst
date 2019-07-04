@@ -4,8 +4,8 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.3.2  *pending*  Read The Docs; using ``-i`` / ``--input`` consitently.
-v0.3.1  2019-06-27 Reformated documentation to use reStructuredText rather than Markdown.
+v0.3.2  2019-07-04 Read The Docs; using ``-i`` / ``--input`` consistently.
+v0.3.1  2019-06-27 Reformatted documentation to use reStructuredText rather than Markdown.
 v0.3.0  2019-06-26 Include four gBlocks synthetic negative controls in DB and pipeline.
 v0.2.6  2019-06-25 *Phytophthora* ITS1 HMM threshold now set within model file, not the code.
 v0.2.5  2019-06-21 Include XGMML edit-graph (for Cytoscape use) in ``pipeline`` output.
@@ -37,7 +37,7 @@ v0.0.9  2019-03-05 Looks for expected primers, discards mismatches. Caches HMM f
 v0.0.8  2019-02-21 Fix multi-class TN under-counting. New loss metric, ``swarmid`` classifier.
 v0.0.7  2019-02-12 Added ``plate-summary`` command, ``onebp`` classifier.
 v0.0.6  2019-02-07 Misc. cleanup and import fixes.
-v0.0.5  2019-02-06 Hamming Loss in assessement output.
+v0.0.5  2019-02-06 Hamming Loss in assessment output.
 v0.0.4  2019-01-24 Added ``seq-import`` command, ``blast`` classifier, multi-taxon predictions.
 v0.0.3  2019-01-22 Simplified generated filenames.
 v0.0.2  2019-01-21 Added ``assess`` command.
