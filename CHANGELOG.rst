@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.3.4  *pending*  Worked example using woody hosts dataset from Riddell et al. (2019).
 v0.3.3  2019-07-04 Fixed regression in group coloring for ``read-summary`` Excel output.
 v0.3.2  2019-07-04 Read The Docs; use ``-i`` / ``--input`` consistently - no positional args.
 v0.3.1  2019-06-27 Reformatted documentation to use reStructuredText rather than Markdown.
