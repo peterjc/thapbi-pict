@@ -4,7 +4,8 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.3.2  2019-07-04 Read The Docs; using ``-i`` / ``--input`` consistently.
+v0.3.3  2019-07-04 Fixed regression in group coloring for ``read-summary`` Excel output.
+v0.3.2  2019-07-04 Read The Docs; use ``-i`` / ``--input`` consistently - no positional args.
 v0.3.1  2019-06-27 Reformatted documentation to use reStructuredText rather than Markdown.
 v0.3.0  2019-06-26 Include four gBlocks synthetic negative controls in DB and pipeline.
 v0.2.6  2019-06-25 *Phytophthora* ITS1 HMM threshold now set within model file, not the code.
