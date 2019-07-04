@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
+IFS=$'\n\t'
+set -euo pipefail
+
+export TMP=${TMP:-/tmp}
+
+echo "Preparing sample data for woody hosts example"
+
+rm -rf $TMP/woody_hosts
+mkdir $TMP/woody_hosts
+mkdir $TMP/woody_hosts/intermediate
+mkdir $TMP/woody_hosts/summary
+
+# Idea here is to mimic what "thapbi_pict pipeline" would do if we had
+# the FASTQ files here:
+# thapbi_pict pipeline -i sample_data/raw_data/ \
+#	    -s $TMP/woody_hosts/intermediate \
+#	    -o $TMP/woody_hosts/summary -r woody-hosts \
+#	    -t tests/woody_hosts/site_metadata.tsv \
+#            -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+
+
+echo "=================================="
+echo "Decompressing prepare-reads output"
+echo "=================================="
+time tar -jxvf tests/woody_hosts/woody_hosts_fasta.tar.bz2 -C $TMP/woody_hosts/intermediate/ | wc -l
+
+echo "============================"
+echo "Running woody hosts classify"
+echo "============================"
+# Default for -o should be the same next to the inputs, which is fine
+time thapbi_pict classify -i $TMP/woody_hosts/intermediate/
+
+echo "=================================="
+echo "Running woody hosts sample-summary"
+echo "=================================="
+time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
+            -o $TMP/woody_hosts/summary/woody-hosts.samples.tsv \
+            -r $TMP/woody_hosts/summary/woody-hosts.samples.txt \
+            -t tests/woody_hosts/site_metadata.tsv \
+	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+ls $TMP/woody_hosts/summary/woody-hosts.samples.*
+
+echo "================================"
+echo "Running woody hosts read-summary"
+echo "================================"
+time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
+	    -o $TMP/woody_hosts/summary/woody-hosts.reads.tsv \
+	    -e $TMP/woody_hosts/summary/woody-hosts.reads.xlxs \
+	    -t tests/woody_hosts/site_metadata.tsv \
+	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+ls $TMP/woody_hosts/summary/woody-hosts.reads.*
+
+echo "=============================="
+echo "Running woody hosts edit-graph"
+echo "=============================="
+time thapbi_pict edit-graph -i $TMP/woody_hosts/intermediate/ -o $TMP/woody_hosts/summary/woody-hosts.edit-graph.xgmml
+
+echo "$0 - test_woody_hosts.sh passed"

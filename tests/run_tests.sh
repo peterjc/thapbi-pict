@@ -13,6 +13,8 @@ python -c "import thapbi_pict; print('Direct import says version ' + thapbi_pict
 thapbi_pict -v
 python -m thapbi_pict -v
 
+tests/test_woody_hosts.sh
+
 tests/test_dump.sh
 tests/test_load-tax.sh
 tests/test_legacy-import.sh
