@@ -145,8 +145,7 @@ If not, skip directly to:
    git tag vX.Y.Z
    git push origin master --tags
 
-Once that is done, you can update the `THAPBI PICT BioConda
-recipe <https://github.com/bioconda/bioconda-recipes/blob/master/recipes/thapbi-pict/meta.yaml>`__
-with a pull request. Typically all that needs changing is the version
-number and the SHA256 checksum (which you can simply copy from the `PyPI
-download files page <https://pypi.org/project/thapbi-pict/#files>`__).
+The PyPI upload should trigger an automated pull request updating the 
+`THAPBI PICT BioConda recipe
+<https://github.com/bioconda/bioconda-recipes/blob/master/recipes/thapbi-pict/meta.yaml>`__
+which will need reviewing (e.g. new dependencies) before it is merged.
