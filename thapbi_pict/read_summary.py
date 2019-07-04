@@ -120,6 +120,36 @@ def main(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
+    # Which column are we using for group coloring?
+    if metadata_groups and not metadata_cols:
+        sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
+    if metadata_cols:
+        # Tiny code duplication from load_metadata:
+        try:
+            value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
+        except ValueError:
+            sys.exit(
+                "ERROR: Output metadata columns should be a comma separated list "
+                "of positive integers, not %r." % metadata_cols
+            )
+    if metadata_groups:
+        try:
+            group_col = int(metadata_groups) - 1
+        except ValueError:
+            sys.exit(
+                "ERROR: Invalid metadata group column, should be positive or 0, not %r."
+                % metadata_groups
+            )
+        if group_col not in value_cols:
+            sys.exit(
+                "ERROR: Metadata group column %i not included in reported metadata.\n"
+                % metadata_groups
+            )
+        group_col = value_cols.index(group_col)  # i.e. which of requested columns
+        del value_cols
+    else:
+        group_col = 0  # Default is the first requested column
+
     samples = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
@@ -143,9 +173,9 @@ def main(
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
     samples = sample_sort(samples)
+
     (
         metadata_rows,
-        meta_groups,
         metadata_samples,
         meta_names,
         meta_default,
@@ -153,7 +183,6 @@ def main(
     ) = load_metadata(
         metadata_file,
         metadata_cols,
-        metadata_groups,
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
@@ -163,26 +192,22 @@ def main(
     # Turn row-centric metadata into a dictionary keyed on sequenced sample name
     metadata = {}
     new = []
-    sample_groups = []
     # Already sorted rows of the metadata values, discarded the order in the table
-    for row, r_samples, g in zip(metadata_rows, metadata_samples, meta_groups):
+    for row, r_samples in zip(metadata_rows, metadata_samples):
         for sample in r_samples:
             if sample in samples:
                 # print(sample, row)
                 metadata[sample] = row
                 assert sample not in new, sample
                 new.append(sample)
-                sample_groups.append(g)
     for sample in missing_meta:
         # print("Missing metadata for %s" % sample)
         assert sample not in new, sample
         new.append(sample)
-        sample_groups.append(None)
     assert set(samples) == set(new)
     assert len(samples) == len(new)
-    assert len(samples) == len(sample_groups)
     samples = new
-    del metadata_rows, metadata_samples, meta_groups, new
+    del metadata_rows, metadata_samples, new
 
     methods = method.split(",")
     for method in methods:
@@ -259,7 +284,9 @@ def main(
         for i, name in enumerate(meta_names):
             handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
         if worksheet:
-            sample_formats = color_bands(sample_groups, sample_color_bands, debug=debug)
+            sample_formats = color_bands(
+                [_[group_col] for _ in meta], sample_color_bands, debug=debug
+            )
             for i, name in enumerate(meta_names):
                 worksheet.write_string(i, 4, name, cell_rightalign_format)
                 for s, sample in enumerate(samples):

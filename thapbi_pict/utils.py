@@ -467,7 +467,6 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
 def load_metadata(
     metadata_file,
     metadata_cols,
-    metadata_groups=0,
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
@@ -480,11 +479,6 @@ def load_metadata(
     The columns argument should be a string like "1,3,5" - a comma
     separated list of columns to output. The column numbers are assumed
     to be one-based as provided by the command line user.
-
-    The groups argument should be a column number (one based counting)
-    used to break the samples into groups for applying background
-    colouring in Excel reports. It must be one of the columns requested
-    in the output, or zero for the first column requested in the output.
 
     The name row indicates which row in the table contains the names
     or descriptions of the metadata columns (one-based).
@@ -500,7 +494,6 @@ def load_metadata(
 
     Returns:
      - list of field sample metadata values (each a list of N values)
-     - matching list of associated sample groups (all None if unspecified)
      - matching list of associated sequenced sample(s),
      - list of the N field names,
      - matching default value (list of N empty strings).
@@ -533,7 +526,7 @@ def load_metadata(
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], [], [], sequenced_samples
+        return [], [], [], [], sequenced_samples
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
@@ -557,28 +550,6 @@ def load_metadata(
         sys.stderr.write(
             "DEBUG: Matching sample names to metadata column %i\n" % (sample_col + 1)
         )
-    if metadata_groups:
-        try:
-            group_col = int(metadata_groups) - 1
-        except ValueError:
-            sys.exit(
-                "ERROR: Invalid metadata group column, should be positive or 0, not %r."
-                % metadata_groups
-            )
-        if group_col not in value_cols:
-            # bad idea as it will likely make the colours impossible to interpret
-            sys.exit(
-                "ERROR: Metadata group column %i not included in reported metadata.\n"
-                % (group_col + 1)
-            )
-    else:
-        # Default is the first requested column
-        group_col = value_cols[0]
-        if debug:
-            sys.stderr.write(
-                "DEBUG: Using first requested column %i to try to do group coloring\n"
-                % (group_col + 1)
-            )
 
     names = [""] * len(value_cols)  # default
     meta = {}
@@ -627,20 +598,6 @@ def load_metadata(
     index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
     del meta_plus_idx
 
-    # Pull out the group column from the meta-columns
-    offset = value_cols.index(group_col)
-    groups = [_[offset] for _ in meta]
-    del offset
-
-    if len(set(groups)) == 1:
-        sys.stderr.write(
-            "WARNING: All metadata rows had same group value: %s\n" % groups[0]
-        )
-    elif len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
-        # If all the values are different, and each has a single sample,
-        # not ideal for coloring - each column would be different
-        sys.stderr.write("WARNING: All metadata rows had different group values.\n")
-
     back = {}
     for i, samples in enumerate(index):
         for sample in samples:
@@ -678,4 +635,4 @@ def load_metadata(
         )
     del back
 
-    return meta, groups, index, names, default, missing_meta
+    return meta, index, names, default, missing_meta
