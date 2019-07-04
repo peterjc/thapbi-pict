@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.3.2  *pending*  High level documentation hosted at https://thapbi-pict.readthedocs.io/
+v0.3.2  *pending*  Read The Docs; using ``-i`` / ``--input`` consitently.
 v0.3.1  2019-06-27 Reformated documentation to use reStructuredText rather than Markdown.
 v0.3.0  2019-06-26 Include four gBlocks synthetic negative controls in DB and pipeline.
 v0.2.6  2019-06-25 *Phytophthora* ITS1 HMM threshold now set within model file, not the code.
