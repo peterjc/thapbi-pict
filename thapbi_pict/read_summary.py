@@ -38,10 +38,29 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
         # All the same not helpful for banding
         if debug:
             sys.stderr.write(
-                "DEBUG: All samples had same metadata in grouping field: %r\n"
+                "DEBUG: All samples had same metadata in color grouping field: %r\n"
                 % meta_groups[0]
             )
         return default
+
+    if max_groups < len(set(meta_groups)):
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Too many coloring groups, trying first word only\n"
+            )
+        # Attempting heuristic, taking the first word/field will work on schemes like
+        # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
+        meta_groups = [
+            _.replace("-", " ").replace("_", " ").split(None, 1)[0] if _ else ""
+            for _ in meta_groups
+        ]
+        if len(set(meta_groups)) == 1:
+            # That didn't work.
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: Too many coloring groups, but first word only was unique\n"
+                )
+            return default
 
     if len(set(meta_groups)) < min_groups or max_groups < len(set(meta_groups)):
         # (Almost) all same or (almost) unique not helpful

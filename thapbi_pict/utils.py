@@ -632,22 +632,14 @@ def load_metadata(
     groups = [_[offset] for _ in meta]
     del offset
 
-    # Might need to post process group names - if all the values are different,
-    # and each metadata row has a single sequenced sample, that's not ideal.
-    if len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
-        if debug:
-            sys.stderr.write("DEBUG: Trying first word only for group names\n")
-        # Taking the first word/field will work on schemes like
-        # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
-        groups = [
-            _.replace("-", " ").replace("_", " ").split(None, 1)[0] for _ in groups
-        ]
-    if len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
-        sys.stderr.write("WARNING: All metadata rows had different group values.\n")
-    elif len(set(groups)) == 1:
+    if len(set(groups)) == 1:
         sys.stderr.write(
             "WARNING: All metadata rows had same group value: %s\n" % groups[0]
         )
+    elif len(set(groups)) == len(groups) and max(len(_) for _ in index) == 1:
+        # If all the values are different, and each has a single sample,
+        # not ideal for coloring - each column would be different
+        sys.stderr.write("WARNING: All metadata rows had different group values.\n")
 
     back = {}
     for i, samples in enumerate(index):
