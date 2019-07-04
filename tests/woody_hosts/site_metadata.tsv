@@ -1,0 +1,37 @@
+# This table is provided as plain text using tab separated variables (TSC), suitable to load into Excel etc.
+# It is based on Supplementary table 1 from https://doi.org/10.7717/peerj.6931/supp-1
+# Additional column added for Illumina MiSeq sample cross reference.
+# Additional rows added for the controls.
+#
+# Original caption: Approximate altitude at centre and underlying soil type for the fourteen sites sampled in this study,
+# and the number of soil samples collected at each site (n=10) from around trees/shrubs in each of six broad taxonomic
+# groupings and two health status categories.
+#
+# Column 1 (A), Anonymised site number with leading zero added (01 to 14), or control name
+# Column 2 (B), Approximate altitude at centre
+# Column 3 (C), underlying soil type
+# Columns 4 to 15 (D to O): Tree/shrub broad taxonomic grouping and health status (H, healthy; D, symptoms/stump/dead)
+# Column 16 (P): Semi-colon separated list of Illumina MiSeq sample names
+#
+# Rows 1-19, human readable header text
+# Row 20, colum headers
+# Rows 19-17 onwards, data for 14 field sites and 3 controls
+#
+#Site	Altitude (m)	Underlying soil type	H/Cupressaceae	D/Cupressaceae	H/Other conifers	D/Other conifers	H/Ericaceae	D/Ericaceae	H/Fagaceae or Nothofagaceae	D/Fagaceae or Nothofagaceae	H/Other angiosperms	D/Other angiosperms	H/Other	D/Other	MiSeq Sample(s)
+01	30	Brown earth, moderately well drained	0	1	0	1	0	4	2	1	0	1	0	0	Site_1_sample_1;Site_1_sample_2;Site_1_sample_3;Site_1_sample_4;Site_1_sample_5;Site_1_sample_6;Site_1_sample_7;Site_1_sample_8;Site_1_sample_9-2;Site_1_sample_10
+02	55	Urban 	1	7	0	2	0	0	0	0	0	0	0	0	Site_2_sample_1;Site_2_sample_2;Site_2_sample_3;Site_2_sample_4;Site_2_sample_5;Site_2_sample_6;Site_2_sample_7;Site_2_sample_8;Site_2_sample_9;Site_2_sample_10
+03	45	Brown earth, well drained	1	0	0	0	2	4	1	0	0	2	0	0	Site_3_sample_1;Site_3_sample_2;Site_3_sample_4;Site_3_sample_7;Site_3_sample_8;Site_3_sample_9
+04	20	Urban	0	10	0	0	0	0	0	0	0	0	0	0	Site_4_sample_1;Site_4_sample_2;Site_4_sample_3;Site_4_sample_3-2;Site_4_sample_4;Site_4_sample_5;Site_4_sample_6;Site_4_sample_8;Site_4_sample_9;Site_4_sample_10
+05	100	Urban	2	6	0	2	0	0	0	0	0	0	0	0	Site_5_sample_1;Site_5_sample_2;Site_5_sample_4;Site_5_sample_5;Site_5_sample_6;Site_5_sample_8;Site_5_sample_9
+06	5	Poorly drained peat	1	1	0	1	2	2	0	0	0	1	2	0	Site_6_sample_1;Site_6_sample_2-2;Site_6_sample_3-1;Site_6_sample_4;Site_6_sample_5-3;Site_6_sample_6;Site_6_sample_7-1;Site_6_sample_8-2;Site_6_sample_9;Site_6_sample_10
+07	105	Brown earth, humus iron podzols, well drained	0	1	0	0	0	0	0	7	0	2	0	0	Site_7_sample_1;Site_7_sample_2;Site_7_sample_3;Site_7_sample_5;Site_7_sample_6;Site_7_sample_7;Site_7_sample_8;Site_7_sample_9;Site_7_sample_10
+08	45	Brown earth, moderately well drained	2	4	0	4	0	0	0	0	0	0	0	0	Site_8_sample_1;Site_8_sample_2;Site_8_sample_3;Site_8_sample_4;Site_8_sample_5-2;Site_8_sample_6;Site_8_sample_7;Site_8_sample_7-2;Site_8_sample_8;Site_8_sample_9
+09	15	Humus iron podzols, well drained	1	1	2	0	1	4	1	0	0	0	0	0	Site_9_sample_1;Site_9_sample_4-3;Site_9_sample_6;Site_9_sample_7;Site_9_sample_8;Site_9_sample_9;Site_9_sample_10
+10	30	Humic gleys, poorly drained	0	2	2	2	1	1	0	1	0	1	0	0	Site_10_sample_7;Site_10_sample_8
+11	80	Brown earth, well drained	0	1	1	0	1	4	0	0	0	3	0	0	Site_11_sample_1;Site_11_sample_2;Site_11_sample_3;Site_11_sample_4;Site_11_sample_5;Site_11_sample_6;Site_11_sample_7;Site_11_sample_8;Site_11_sample_9;Site_11_sample_10
+12	30	Brown earth, moderately well drained	0	2	0	1	0	2	0	0	3	1	1	0	Site_12_sample_1;Site_12_sample_2;Site_12_sample_3-3;Site_12_sample_4;Site_12_sample_5-3;Site_12_sample_6;Site_12_sample_8;Site_12_sample_9;Site_12_sample_10
+13	300	Peaty gleys, poorly drained	2	8	0	0	0	0	0	0	0	0	0	0	Site_13_sample_1;Site_13_sample_2;Site_13_sample_4;Site_13_sample_5;Site_13_sample_6;Site_13_sample_7;Site_13_sample_8;Site_13_sample_9;Site_13_sample_10
+14	30	Urban	1	1	1	0	0	2	1	1	0	3	0	0	Site_14_sample_1-2;Site_14_sample_2;Site_14_sample_3;Site_14_sample_4;Site_14_sample_5;Site_14_sample_6;Site_14_sample_10
+DNA10MIX															DNA10MIX_diluted25x;DNA10MIX_undiluted;DNA10MIX_bycopynumber
+DNA16MIX															DNA16MIX
+NEGATIVE															NEGATIVE_firstplate;NEGATIVE_secondplate
