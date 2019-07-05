@@ -5,8 +5,20 @@ The *Quick Start* described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
 pipeline`` command. Here we will run over the same process using real data,
 the individual commands within the default pipeline - and include metadata
-for the reporting. We will close with the equivalent all in one pipeline
+for the reporting. We will close with the equivalent all-in-one pipeline
 command.
+
+.. image:: images/pipeline.svg
+   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
+
+.. image:: images/pipeline-meta.svg
+   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
+
+In these illustrative flow charts of the default pipeline, the input paired
+FASTQ files (and metadata) are green, the intermediate per-sample FASTA and
+TSV files are yellow, and the output reports are in orange. The individual
+steps of the pipeline are dark blue boxes, and the ITS1 database is a pale
+blue cylinder.
 
 Sample Data
 -----------
@@ -47,7 +59,7 @@ dedicated to this analysis. Start by making three sub-folders as follows:
    $ mkdir raw_data/ intermediate/ summary/
 
 We will need the ``site_metadata.tsv`` (included with the THAPBI PICT source
-code under ``tests/woody_hosts/``, or easily download). This is a table of
+code under ``tests/woody_hosts/``, or easily downloaded). This is a table of
 metadata (based on table S1 in the paper), with one row for each of the 14
 samples plus controls, with a cross reference to the 122 sequenced FASTQ
 filename stems. Download or copy this to your project folder:
@@ -77,15 +89,7 @@ thapbi-pict prepare-reads
 =========================
 
 Calling ``thapbi-pict prepare-reads`` is the first action done by the top
-level ``thapbi_pict pipeline`` command, as illustrated here:
-
-.. image:: images/pipeline.svg
-   :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
-
-In this illustrative flow chart of the default pipeline, the input paired
-FASTQ files are green, the intermediate per-sample FASTA and TSV files are
-yellow, and the output reports are in orange. The individual steps of the
-pipeline are dark blue boxes, and the ITS1 database is a pale blue cylinder.
+level ``thapbi_pict pipeline`` command.
 
 .. code:: console
 
@@ -105,7 +109,7 @@ this is robust to being interupted and restarted (e.g. a job might time
 out on the cluster).
 
 .. WARNING::
- 
+
     So far this example omits a key consideration - telling the tool which
     samples are negative controls, and/or manually setting the minimum read
     abundance. See below.
@@ -118,17 +122,16 @@ What the prepare command does can be briefly summarised as follows:
 * Quality trim the FASTQ reads (pairs where either read becomes too short are
   discarded).
 * Merge the overlapping paired FASTQ reads into single sequences (pairs which
-  do not overlap discarded, for example from unexpectedly long fragements, or
-  not enough left after quality trimming).
+  do not overlap are discarded, for example from unexpectedly long fragements,
+  or not enough left after quality trimming).
 * Primer trim (reads without both primers are discarded).
 * Convert into a non-redundant FASTA file, with the sequence name recording
-  the abundance, discarding sequences of low abundance.
+  the abundance (discarding sequences of low abundance).
 * Filter with Hidden Markov Models (HMMs) of ITS1 and our four synthetic
   controls (non-matching sequences are discarded).
 
 For each input ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz``
-FASTQ pair we get a single much smaller FASTA file ``<sample_name>.fasta``,
-the contents of which reflects those last two stages.
+FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
 
 .. WARNING::
 
@@ -151,8 +154,8 @@ controls.
 Finally, the sequence in the FASTA file is written as a single line in upper
 case. With standard line wrapping at 60 or 80 characters, the ITS1 sequences
 would need a few lines each. However, they are still short enough that having
-them on line line without line breaks is no hardship - and it is extremely
-helpful for simple tasks like using ``grep`` to look for a particualr sequence
+them one one line without line breaks is no hardship - and it is *extremely*
+helpful for simple tasks like using ``grep`` to look for a particular sequence
 at the command line.
 
 Abundance thresholds
@@ -160,21 +163,31 @@ Abundance thresholds
 
 As you might gather from reading the command line help, there are two settings
 to do with the minimum read abundance threshold, ``-a`` or ``--abundance``
-(default 100), and ``-n`` or ``--negctrls`` for specifying negative controls.
+(default 100), and ``-n`` or ``--negctrls`` for specifying negative controls
+(default none).
 
-.. WARNING::
+If any negative controls are specified, those paired FASTQ files are processed
+*first*, using the specified minimum abundance (default 100). If any of these
+contained ITS1 sequences above the threshold, that higher number is used as
+the minimum abundance threshold for the non-control samples. For example, say
+one control had several ITS1 sequences with a maximum abundance of 124, and
+another control had a maximum ITS1 abundance of 217, while the remaining
+controls had no ITS1 sequence above the default level. In that case, the tool
+would take maximum 217 as the abundance threshold for the non-control samples.
 
-   By default ``thapbi_pict prepare-reads`` and	``thapbi_pict pipeline`` will
-   reuse existing intermediate FASTA files, so you must	explicitly delete any
-   old FASTA files before the new abundance threshold will have any effect.
-
-For example, to	lower the threshold from the default to	50, you	could use:
+For example, to lower the threshold from the default to 50, you could use:
 
 .. code:: console
 
     $ rm -rf intermediate/*.fasta
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -a 50
     ...
+
+.. WARNING::
+
+   By default ``thapbi_pict prepare-reads`` and ``thapbi_pict pipeline`` will
+   reuse existing intermediate FASTA files, so you must explicitly delete any
+   old FASTA files before the new abundance threshold will have any effect.
 
 .. WARNING::
 
@@ -185,33 +198,34 @@ For example, to	lower the threshold from the default to	50, you	could use:
 
 .. WARNING::
 
-    Setting the abundance threshold very low (under 10) has the additional
+    Setting the abundance threshold *very* low (under 10) has the additional
     problem that the number of unique sequences accepted will increase many
     times over. This will *dramatically* slow down the rest of the analysis.
     This is only advised for investigating single samples.
 
 For the woody host data, each plate had a negative control sample which should
-contain no ITS1 sequences (and at the default threshold happily none are
-found). We can specify the negative controls with ``-n`` or ``--negctrls`` by
-entering their filenames in full, or with an appropriate wild card:
+contain no ITS1 sequences. We can specify the negative controls with ``-n`` or
+``--negctrls`` by entering the four FASTQ filenames in full, but since they
+have a common prefix we can use a simple wild card:
 
 .. code:: console
 
-    $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -n raw_data/NEGATIVE*
+    $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -n raw_data/NEGATIVE*.fastq.gz
     ...
 
-In this case happily neither of the negative controls have any ITS1 present
-above the default threshold, so this would have no effect.
+For this sample data, happily neither of the negative controls have any ITS1
+present above the default threshold, so this would have no effect.
 
 For the THAPBI project we now run each 96-well PCR plate with multiple
 negative controls. Rather than a simple blank, these include a known mixture
-of synthetic sequences of the same length, nucelotide composition, and also
-di-nucleotide composition as real *Phytophthora* ITS1. This means we might
-have say 90 biological samples which should contain ITS1 but not the
-synthetics controls, and 9 negative controls which should contain synthetic
+of synthetic sequences of the same length, same nucelotide composition, and
+also same di-nucleotide composition as real *Phytophthora* ITS1. This means we
+might have say 90 biological samples which should contain ITS1 but not the
+synthetics controls, and 6 negative controls which should contain synthetic
 controls but not ITS1. We then run ``thapbi_pict prepare-reads`` for each
 plate, where any ITS1 contamination in the synthetic controls is used to set
-a plate specific minimum abundance.
+a plate specific minimum abundance. This means we cannot run ``thapbi_pict
+pipeline`` on multiple plates at once.
 
 thapbi-pict classify
 --------------------
@@ -220,8 +234,26 @@ thapbi-pict classify
 
    If you don't have the FASTQ files, just the FASTA files, start from here.
 
-The second stage of the pipeline can be run separately as the
-``thapbi_pict classify`` command.
+The second stage of the pipeline can be run separately as the ``thapbi_pict
+classify`` command:
+
+.. code:: console
+
+    $ thapbi_pict classify -h
+    ...
+
+There are a number of options here, but for the purpose of this worked example
+we will stick with the defaults and tell it to look for FASTA files in the
+``intermediate/`` directory.
+
+.. code:: console
+
+    $ thapbi_pict classify -i intermediate/
+    ...
+
+Here we have not set the output folder with ``-o`` or ``--output``, which
+means the tool will default to writing the TSV output files next to each
+input FASTA file.
 
 Intermediate TSV files
 ----------------------
