@@ -32,6 +32,6 @@
 12	30	Brown earth, moderately well drained	0	2	0	1	0	2	0	0	3	1	1	0	Site_12_sample_1;Site_12_sample_2;Site_12_sample_3-3;Site_12_sample_4;Site_12_sample_5-3;Site_12_sample_6;Site_12_sample_8;Site_12_sample_9;Site_12_sample_10
 13	300	Peaty gleys, poorly drained	2	8	0	0	0	0	0	0	0	0	0	0	Site_13_sample_1;Site_13_sample_2;Site_13_sample_4;Site_13_sample_5;Site_13_sample_6;Site_13_sample_7;Site_13_sample_8;Site_13_sample_9;Site_13_sample_10
 14	30	Urban	1	1	1	0	0	2	1	1	0	3	0	0	Site_14_sample_1-2;Site_14_sample_2;Site_14_sample_3;Site_14_sample_4;Site_14_sample_5;Site_14_sample_6;Site_14_sample_10
-DNA10MIX															DNA10MIX_diluted25x;DNA10MIX_undiluted;DNA10MIX_bycopynumber
+DNA10MIX															DNA10MIX_undiluted;DNA10MIX_diluted25x;DNA10MIX_bycopynumber
 DNA16MIX															DNA16MIX
 NEGATIVE															NEGATIVE_firstplate;NEGATIVE_secondplate
