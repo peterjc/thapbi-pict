@@ -157,6 +157,42 @@ them one one line without line breaks is no hardship - and it is *extremely*
 helpful for simple tasks like using ``grep`` to look for a particular sequence
 at the command line.
 
+For example,
+
+.. code: console
+
+    $ cat intermediate/Site_1_sample_1.fasta
+    >a559aa4d00a28f11b83012e762391259_2303 phytophthora_its1
+    CCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGGGGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTGAGCTAGTAGCTATTTTTTAAACCCATTCTTTAATACTGATTATACT
+    >140ccd03a87b423a1f06521f08131464_724 phytophthora_its1
+    CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATTTGGGGGCTTGCTCGGCGGCGTGTGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
+    >868e1ad838c7ec587dfd05b9dd4556ec_339 phytophthora_its1
+    CCACACCTAAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
+    >742f1f7a934f2df075be6f2eea756fc9_210 phytophthora_its1
+    CCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCGTTAGTTGGGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTAGTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
+    >7f27d3a8f7150e0ee7ad64073e6da6b5_193 phytophthora_its1
+    CCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTAGTTGGGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTAGTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
+    >eaf42569c8b95c8bf4f9bf1b65a96ce4_183 phytophthora_its1
+    CCACACCTAAAAAACTTTCCACGTGAACCGTATCAACCCACTTAGTTGGGGGCTAGTCCCGGCGGCTGGCTGTCGATGTCAAAGTTGACGGCTGCTGCTGTGTGTCGGGCCCTATCATGGCGAGCGTTTGGGTCCCTCTCGGGGGAACTGAGCCAGTAGCCCTTATTTTTTAAACCCATTCTTGAATACTGAATATACT
+    >ffb8fbb83fa26a101c2fddf2af13cf95_167 phytophthora_its1
+    CCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAATCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGTCTGGGTGGCGGCTCTATCATGGTGACCGCTCTGGGCTTCGGCTTGGAGTTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACATACT
+    >af3654932ad7a06c5f4af3c738706c76_114 phytophthora_its1
+    CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
+
+We see this sample had eight unique sequences accepted, the most common had
+MD5 checksum ``a559aa4d00a28f11b83012e762391259`` and was seen in 2303 reads,
+and matched the ITS1 HMM.
+
+You could easily find out which other samples had this unique sequence using
+the command line searching tool ``grep`` as follows:
+
+.. code: console
+
+    $ grep a559aa4d00a28f11b83012e762391259 intermediate/*.fasta
+    ...
+
+You can also answer this example question from the read report produced later.
+
 Abundance thresholds
 --------------------
 
@@ -258,8 +294,44 @@ input FASTA file.
 Intermediate TSV files
 ----------------------
 
-For each FASTA file a tab separated variable (TSV) file is generated where
-the first column is the sequence name in ``<checksum>_<abundance>`` format.
+For each FASTA file a tab separated variable (TSV) file is generated named
+``<sample_name>.<method>.tsv`` where the default method is ``onebp`` (looks
+for perfect matches or up to one base pair different). The columns are:
+
+* Unique sequence name in ``<checksum>_<abundance>`` format.
+* NCBI taxid of any predictions (semi-colon separated, as order as species)
+* Genus-species of any predictions (semi-colon separated, alphabetical)
+* Text note field (arbitrary debug text from the tool)
+
+These files are not intended for human use, but are readable. For example,
+
+.. code:: console
+
+    $ cat intermediate/Site_1_sample_1.onebp.tsv
+    ...
+
+Viewing it like this is not ideal, although there are command line tools
+which help. You could open the file in R, Excel, etc. Slightly abridged:
+
+========================================= ============= ================================================= ====
+#sequence-name                            taxid         genus-species:...                                 note
+========================================= ============= ================================================= ====
+``a559aa4d00a28f11b83012e762391259_2303`` 221518        *Phytophthora pseudosyringae*                     ...
+``140ccd03a87b423a1f06521f08131464_724``  78237         *Phytophthora gonapodyides*                       ...
+``868e1ad838c7ec587dfd05b9dd4556ec_339``  78237         *Phytophthora gonapodyides*                       ...
+``742f1f7a934f2df075be6f2eea756fc9_210``  164328        *Phytophthora ramorum*                            ...
+``7f27d3a8f7150e0ee7ad64073e6da6b5_193``  164328        *Phytophthora ramorum*                            ...
+``eaf42569c8b95c8bf4f9bf1b65a96ce4_183``  53983;2056922 *Phytophthora cambivora;Phytophthora x cambivora* ...
+``ffb8fbb83fa26a101c2fddf2af13cf95_167``  631361        *Phytophthora austrocedri*                        ...
+``af3654932ad7a06c5f4af3c738706c76_114``  78237         *Phytophthora gonapodyides*                       ...
+========================================= ============= ================================================= ====
+
+Most of the unique sequences here have been assigned a single unique
+*Phytophthora* species, except for ``eaf42569c8b95c8bf4f9bf1b65a96ce4`` (found
+in 183 reads for this sample) which has matched *Phytophthora cambivora* (NCBI
+taxid 53983) and close relative *Phytophthora x cambivora* (NCBI taxid
+2056922).
+
 
 Metadata
 --------
