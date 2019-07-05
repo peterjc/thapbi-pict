@@ -408,7 +408,7 @@ meaning show columns 1 to 15 inclusive in the reports (in that order).
 
 Finally, we will use ``-x 16`` or ``--metaindex 16`` to indicate column 16
 contains cross references to the sequenced sample filename stems (semi-colon
-separated).
+separated). They will be shown in this order.
 
 This cross referencing idea is key to getting the best results from attaching
 metadata to your sequenced samples. Here is an abridged representation of the
@@ -433,7 +433,7 @@ to this row of the table (semi-colon separated list).
 12             30 ... Site_12_sample_1;Site_12_sample_2;Site_12_sample_3-3;Site_12_sample_4;Site_12_sample_5-3;Site_12_sample_6;Site_12_sample_8;Site_12_sample_9;Site_12_sample_10
 13            300 ... Site_13_sample_1;Site_13_sample_2;Site_13_sample_4;Site_13_sample_5;Site_13_sample_6;Site_13_sample_7;Site_13_sample_8;Site_13_sample_9;Site_13_sample_10
 14             30 ... Site_14_sample_1-2;Site_14_sample_2;Site_14_sample_3;Site_14_sample_4;Site_14_sample_5;Site_14_sample_6;Site_14_sample_10
-DNA10MIX          ... DNA10MIX_diluted25x;DNA10MIX_undiluted;DNA10MIX_bycopynumber
+DNA10MIX          ... DNA10MIX_undiluted;DNA10MIX_diluted25x;DNA10MIX_bycopynumber
 DNA16MIX          ... DNA16MIX
 NEGATIVE          ... NEGATIVE_firstplate;NEGATIVE_secondplate
 ======== ======== === ========================================================
@@ -500,10 +500,10 @@ Here we will discuss the high level human readable summary report from
 
 Without metadata, the samples are sorted by filename alphabetically. In this
 example that means we get DNA controls, Negative controls, Site 1, 10, 11, 12,
-13, 14, 2, ..., 9. This is unfortunate, can can be resolved by providing some
+13, 14, 2, ..., 9. This is unfortunate, but can be resolved by providing some
 minimal metadata - or better yet, using leading zeros in all sample names.
 
-Pulling out the ``Site_1_sample_1`` example, we see:
+Pulling out the ``Site_1_sample_1`` example, we see::
 
     Site_1_sample_1
 
@@ -522,7 +522,7 @@ Note we get ``Site_1_sample_1`` then ``Site_1_sample_10`` and then
 ``Site_1_sample_2`` etc. The sort order problem strikes again!
 
 As to the meaning of this list, those are the species identified - in some
-cases with a cavaet. The file starts with a tiny explanation:
+cases with a cavaet. The file starts with a tiny explanation::
 
     NOTE: Species listed with (uncertain/ambiguous) in brackets are where
     sequences matched multiple species equally well. For example,
@@ -572,12 +572,12 @@ grouped with a shared metadata header::
 
     ...
 
-If any of the requested metadata is missing, then it does not get shown. For
-example, this applies to the DNA mixes and the negative controls.
-
 Note that for ``Site_1_sample_2``, at least one unique sequence was not given
 a species or even genus level classification. This likely reflects a gap in
 the default database, and/or the default method being too strict.
+
+If any of the requested metadata is missing, then it does not get shown. For
+example, this applies to the DNA mixes and the negative controls.
 
 Read Reports
 ------------
