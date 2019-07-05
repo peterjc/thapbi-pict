@@ -23,9 +23,9 @@ python: "3.6"
 cache: pip
 
 before_install:
- - "if grep -P '\t' *.rst */*.rst */*/*.rst; then echo 'Tabs are bad, please use four spaces in RST files.'; false; fi"
- - "if grep -P '\t' *.yml .circleci/*.yml ; then echo 'Tabs are bad, please use four spaces in Yaml files.'; false; fi"
- - "if grep -P '\t' */*.py ; then echo 'Tabs are bad, please use four spaces in Python files.'; false; fi"
+ - "if grep -n -P '\t' *.rst */*.rst */*/*.rst; then echo 'Tabs are bad, please use four spaces in RST files.'; false; fi"
+ - "if grep -n -P '\t' *.yml .circleci/*.yml ; then echo 'Tabs are bad, please use four spaces in Yaml files.'; false; fi"
+ - "if grep -n -P '\t' */*.py ; then echo 'Tabs are bad, please use four spaces in Python files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' *.rst */*.rst */*/*.rst; then echo 'Please remove trailing whitespace in RST files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi"
