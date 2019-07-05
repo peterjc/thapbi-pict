@@ -3,13 +3,14 @@ Worked Example
 
 The *Quick Start* described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
-pipeline`` command. Here we will run over the same process using real data,
-the individual commands within the default pipeline - and include metadata
-for the reporting. We will close with the equivalent all-in-one pipeline
-command.
+pipeline`` command, as a flowchart:
 
 .. image:: images/pipeline.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
+
+Here we will run over the same process using real data, calling the individual
+commands within the default pipeline - and include metadata for the reporting.
+We will close with the equivalent all-in-one pipeline command.
 
 .. image:: images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
@@ -24,29 +25,27 @@ Sample Data
 -----------
 
 This example is based on the following paper from earlier in the THAPBI
-project, where the original analysis used the precursor pipeline ``metapy``:
+Phyto-Threats project, where the original analysis used the precursor pipeline
+``metapy``:
 
 * Riddell et al (2019) Metabarcoding reveals a high diversity of woody
   host-associated Phytophthora spp. in soils at public gardens and amenity
   woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
-The raw data is from two Illumina MiSeq runs (a whole 96-well plate from 2016,
-and about half the samples a second 96-well plate sequenced in 2017, the rest
-of the plate being samples from a separate ITS1 study).
+The raw data is from two Illumina MiSeq runs, a whole 96-well plate from 2016,
+and about half the samples from a second 96-well plate sequenced in 2017
+(where the rest of the plate was samples from a separate ITS1 study). There
+are multiple replicates from each of 14 sample sites, plus controls.
 
 The raw FASTQ files are too large to include with the THAPBI PICT source code,
 so to follow the complete example you must download 244 ``*.fastq.gz`` files
 separately (122 pairs, a little over 200MB in total).
 
-There are multiple replicates from each of 14 sample sites, with FASTQ files
-``Site_<N>_sample_<X>_R1.fastq.gz`` and ``Site_<N>_sample_<X>_R2.fastq.gz``
-(plus controls with a different naming pattern), which as the first step of
-the typical THAPBI PICT workflow (``thapbi_pict prepare-reads``) are
-transformed into FASTA files named ``Site_<N>_sample_<X>.fasta`` (etc).
-
-We provide these FASTA files as a compressed file with the THAPBI PICT source
-code, so after decompression they can be used to follow the rest of a typical
-analysis. We also provide metadata for the samples for use in the reports.
+The first step of a typical THAPBI PICT workflow is to transform the paired
+FASTQ files into much smaller FASTA files. We provide those FASTA files as a
+compressed file with the THAPBI PICT source code, so they can be used to
+follow the rest of a typical analysis. We also provide metadata for the
+samples for use in the reports.
 
 Setup
 -----
@@ -102,10 +101,21 @@ Assuming you have the FASTQ files in ``raw_data/`` as described above:
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/
     ...
 
-You should then find 122 small FASTQ files in the ``intermediate/`` folder
-(or you can get these from the compressed file as described above). Note
-this is robust to being interupted and restarted (e.g. a job might time
-out on the cluster).
+For each input FASTQ file pair ``raw_data/<sample_name>_R1.fastq.gz`` and
+``raw_data/<sample_name>_R2.fastq.gz`` you should get a small FASTA file
+``intermediate/<sample_name>.fasta``. In this cases there are multiple
+replicates from each of 14 sample sites where the file name stem is
+``Site_<N>_sample_<X>``, plus the controls.
+
+.. code:: console
+
+    $ ls -1 intermediate/*.fasta | wc -l
+    122
+
+You should find 122 small FASTQ files in the ``intermediate/`` folder (or you
+can get these from the compressed file as described above). Note this is
+robust to being interupted and restarted (e.g. a job might time out on the
+cluster).
 
 .. WARNING::
 
@@ -142,20 +152,21 @@ The sequence entries in the FASTA file are named ``<checksum>_<abundance>``.
 Here ``<checksum>`` is the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_
 of the sequence, and this is used as a unique shorthand. It is a 32 character
 string of the digits ``0`` to ``9`` and lower cases letters ``a`` to ``f``
-inclusive. These MD5 checksums are used later in the pipeline, including in
-reports. The ``<abundance>`` is just an integer, the number of paired reads
-which after processing had this unique sequence.
+inclusive, like ``a559aa4d00a28f11b83012e762391259``. These MD5 checksums are
+used later in the pipeline, including in reports. The ``<abundance>`` is just
+an integer, the number of paired reads which after processing had this unique
+sequence.
 
-The description entry in the FASTA file is the name of the HMM it matched,
-allowing us to distinguish the biological ITS1 sequences from the synthetic
-controls.
+The description entry in the FASTA file is currently just the name of the HMM
+it matched, allowing us to distinguish the biological ITS1 sequences from the
+synthetic controls.
 
 Finally, the sequence in the FASTA file is written as a single line in upper
-case. With standard line wrapping at 60 or 80 characters, the ITS1 sequences
-would need a few lines each. However, they are still short enough that having
-them one one line without line breaks is no hardship - and it is *extremely*
-helpful for simple tasks like using ``grep`` to look for a particular sequence
-at the command line.
+case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
+sequences would need a few lines each. However, they are still short enough
+that having them one one line without line breaks is no hardship - and it is
+*extremely* helpful for simple tasks like using ``grep`` to look for a
+particular sequence fragment at the command line.
 
 For example,
 
@@ -179,12 +190,12 @@ For example,
     >af3654932ad7a06c5f4af3c738706c76_114 phytophthora_its1
     CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
 
-We see this sample had eight unique sequences accepted, the most common had
-MD5 checksum ``a559aa4d00a28f11b83012e762391259`` and was seen in 2303 reads,
-and matched the ITS1 HMM.
+We see this sample had eight unique sequences accepted, all matching the ITS1
+HMM (happily none matching the synthetic controls). The most common had MD5
+checksum ``a559aa4d00a28f11b83012e762391259`` and was seen in 2303 reads.
 
 You could easily find out which other samples had this unique sequence using
-the command line searching tool ``grep`` as follows:
+the command line search tool ``grep`` as follows:
 
 .. code: console
 
@@ -296,14 +307,15 @@ Intermediate TSV files
 
 For each FASTA file a tab separated variable (TSV) file is generated named
 ``<sample_name>.<method>.tsv`` where the default method is ``onebp`` (looks
-for perfect matches or up to one base pair different). The columns are:
+for perfect matches or up to one base pair different). It starts with a
+header comment line (starting with ``#``) labelling the columns which are:
 
 * Unique sequence name in ``<checksum>_<abundance>`` format.
 * NCBI taxid of any predictions (semi-colon separated, as order as species)
 * Genus-species of any predictions (semi-colon separated, alphabetical)
 * Text note field (arbitrary debug text from the tool)
 
-These files are not intended for human use, but are readable. For example,
+These files are not really intended for human use, but are readable:
 
 .. code:: console
 
@@ -332,6 +344,21 @@ in 183 reads for this sample) which has matched *Phytophthora cambivora* (NCBI
 taxid 53983) and close relative *Phytophthora x cambivora* (NCBI taxid
 2056922).
 
+If you are familiar with the command line search tool ``grep`` and the regular
+expression syntax, you should find the format of these intermediate TSV files
+lends itself to some simple searches. For example, you could see which samples
+had matches to *Phytophthora rubi* using ``grep`` twice as follows (exclude
+header lines, find species):
+
+.. code:: console
+
+    $ grep -v "^#" intermediate/*.tsv | grep "Phytophthora rubi"
+    intermediate/DNA10MIX_bycopynumber.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_285	129364	Phytophthora rubi	Unique taxonomy match
+    intermediate/DNA10MIX_diluted25x.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_363	129364	Phytophthora rubi	Unique taxonomy match
+    intermediate/DNA10MIX_undiluted.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_274	129364	Phytophthora rubi	Unique taxonomy match
+
+The summary reports would also answer this paricular question, but this kind
+of search can be useful for exploring specific questions.
 
 Metadata
 --------
