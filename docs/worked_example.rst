@@ -644,7 +644,10 @@ in that sample (if above the threshold).
 
 In the Excel version, conditional formatting is used to highlight the non-zero
 counts with a red background. Furthermore, with metadata it will attempt to
-assign repeated bands of background color to groups (e.g. sample sites).
+assign repeated bands of background color to groups (here the sample sites).
+
+.. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
+   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.xlsx`` file.
 
 Running thapbi_pict edit-graph
 ------------------------------
