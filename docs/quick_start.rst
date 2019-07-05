@@ -193,3 +193,5 @@ re-use any already generated intermediate files.
 
 .. image:: images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
+
+The *Worked Example* covers these issues, with excerpts of the expected output.
