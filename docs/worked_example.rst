@@ -42,10 +42,10 @@ so to follow the complete example you must download 244 ``*.fastq.gz`` files
 separately (122 pairs, a little over 200MB in total).
 
 The first step of a typical THAPBI PICT workflow is to transform the paired
-FASTQ files into much smaller FASTA files. We provide those FASTA files as a
-compressed file with the THAPBI PICT source code, so they can be used to
-follow the rest of a typical analysis. We also provide metadata for the
-samples for use in the reports.
+FASTQ files into much smaller FASTA files. We provide those FASTA files
+compressed with the THAPBI PICT source code, so they can be used to follow the
+rest of a typical analysis. We also provide metadata for the samples for use
+in the reports.
 
 Setup
 -----
@@ -170,7 +170,7 @@ particular sequence fragment at the command line.
 
 For example,
 
-.. code: console
+.. code:: console
 
     $ cat intermediate/Site_1_sample_1.fasta
     >a559aa4d00a28f11b83012e762391259_2303 phytophthora_its1
