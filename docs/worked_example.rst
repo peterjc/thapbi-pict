@@ -477,9 +477,9 @@ generated with metadata (see discussion above about column and row numbers):
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
 
-Without metadata the results are sorted by sample name (and thus the first entry
-here should be ``DNA10MIX_bycopynumber``) but with a metadata table given, that
-order is used (with any metadata-less entries at the end).
+Without metadata the results are sorted by sample name (and thus the first
+entry here should be ``DNA10MIX_bycopynumber``). Any metadata is used for
+sorting, and here the first entry becomes ``Site_1_sample_1`` (see below).
 
 Because the computer readable TSV file does not include the metadata directly,
 the two versions differ only in the line order:
@@ -499,9 +499,17 @@ Here we will discuss the high level human readable summary report from
 ``thapbi_pict sample-report``, produced as plain text.
 
 Without metadata, the samples are sorted by filename alphabetically. In this
-example that means we get DNA controls, Negative controls, Site 1, 10, 11, 12,
-13, 14, 2, ..., 9. This is unfortunate, but can be resolved by providing some
-minimal metadata - or better yet, using leading zeros in all sample names.
+example that means we get DNA controls, negative controls, Site 1, 10, 11, 12,
+13, 14, 2, ..., 9. This is unfortunate, so if it is too late to change your
+sequence sample naming scheme (e.g. leading zeros), you can at least use
+nicely sorting names in your metadata.
+
+When a metadata table is given, the rows are sorted by the displayed columns
+(in the order requested), with any sequenced files without metadata entries
+shown at the very end. Thus we get site ``01`` to ``15``, ``DNA10MIX``,
+``DNA16MIX`` and ``NEGATIVE`` last. Within site ``01``, we get the sequenced
+samples in the order given in column 16, i.e. ``Site_1_sample_1``,
+``Site_1_sample_2``, ..., ``Site_1_sample_10`` as desired.
 
 Pulling out the ``Site_1_sample_1`` example, we see::
 
@@ -519,7 +527,7 @@ Pulling out the ``Site_1_sample_1`` example, we see::
     ...
 
 Note we get ``Site_1_sample_1`` then ``Site_1_sample_10`` and then
-``Site_1_sample_2`` etc. The sort order problem strikes again!
+``Site_1_sample_2`` etc. The alphabetic sort order problem again.
 
 As to the meaning of this list, those are the species identified - in some
 cases with a cavaet. The file starts with a tiny explanation::
@@ -573,8 +581,9 @@ grouped with a shared metadata header::
     ...
 
 Note that for ``Site_1_sample_2``, at least one unique sequence was not given
-a species or even genus level classification. This likely reflects a gap in
-the default database, and/or the default method being too strict.
+a species or even genus level classification, thus the ``Unknown`` entry. This
+likely reflects a gap in the default database, and/or the default method being
+too strict.
 
 If any of the requested metadata is missing, then it does not get shown. For
 example, this applies to the DNA mixes and the negative controls.
