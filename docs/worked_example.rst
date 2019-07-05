@@ -164,7 +164,7 @@ synthetic controls.
 Finally, the sequence in the FASTA file is written as a single line in upper
 case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
 sequences would need a few lines each. However, they are still short enough
-that having them one one line without line breaks is no hardship - and it is
+that having them on one line without line breaks is no hardship - and it is
 *extremely* helpful for simple tasks like using ``grep`` to look for a
 particular sequence fragment at the command line.
 
@@ -190,14 +190,14 @@ For example,
     >af3654932ad7a06c5f4af3c738706c76_114 phytophthora_its1
     CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
 
-We see this sample had eight unique sequences accepted, all matching the ITS1
-HMM (happily none matching the synthetic controls). The most common had MD5
+We see this sample had eight unique sequences accepted, all matched the ITS1
+HMM (happily none match the synthetic controls). The most common had MD5
 checksum ``a559aa4d00a28f11b83012e762391259`` and was seen in 2303 reads.
 
 You could easily find out which other samples had this unique sequence using
 the command line search tool ``grep`` as follows:
 
-.. code: console
+.. code:: console
 
     $ grep a559aa4d00a28f11b83012e762391259 intermediate/*.fasta
     ...
@@ -300,15 +300,22 @@ we will stick with the defaults and tell it to look for FASTA files in the
 
 Here we have not set the output folder with ``-o`` or ``--output``, which
 means the tool will default to writing the TSV output files next to each
-input FASTA file.
+input FASTA file. There should now be 122 TSV files, one for each FASTA:
+
+.. code:: console
+
+    $ ls -1 intermediate/*.tsv | wc -l
+    122
 
 Intermediate TSV files
 ----------------------
 
-For each FASTA file a tab separated variable (TSV) file is generated named
-``<sample_name>.<method>.tsv`` where the default method is ``onebp`` (looks
-for perfect matches or up to one base pair different). It starts with a
-header comment line (starting with ``#``) labelling the columns which are:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+For each FASTA file named ``<sample_name>.fasta`` a plain text tab separated
+variable (TSV) file is generated named ``<sample_name>.<method>.tsv`` where
+the default method is ``onebp`` (this looks for perfect matches or up to one
+base pair different). The first line is a header comment line (starting with
+``#``) labelling the columns, which are:
 
 * Unique sequence name in ``<checksum>_<abundance>`` format.
 * NCBI taxid of any predictions (semi-colon separated, as order as species)
@@ -322,8 +329,8 @@ These files are not really intended for human use, but are readable:
     $ cat intermediate/Site_1_sample_1.onebp.tsv
     ...
 
-Viewing it like this is not ideal, although there are command line tools
-which help. You could open the file in R, Excel, etc. Slightly abridged:
+Viewing it like this is not ideal, although there are command line tools which
+help. You could open the file in R, Excel, etc. Slightly abridged, we have:
 
 ========================================= ============= ================================================= ====
 #sequence-name                            taxid         genus-species:...                                 note
@@ -338,7 +345,7 @@ which help. You could open the file in R, Excel, etc. Slightly abridged:
 ``af3654932ad7a06c5f4af3c738706c76_114``  78237         *Phytophthora gonapodyides*                       ...
 ========================================= ============= ================================================= ====
 
-Most of the unique sequences here have been assigned a single unique
+This says most of the unique sequences here have been assigned a single unique
 *Phytophthora* species, except for ``eaf42569c8b95c8bf4f9bf1b65a96ce4`` (found
 in 183 reads for this sample) which has matched *Phytophthora cambivora* (NCBI
 taxid 53983) and close relative *Phytophthora x cambivora* (NCBI taxid
@@ -348,7 +355,7 @@ If you are familiar with the command line search tool ``grep`` and the regular
 expression syntax, you should find the format of these intermediate TSV files
 lends itself to some simple searches. For example, you could see which samples
 had matches to *Phytophthora rubi* using ``grep`` twice as follows (exclude
-header lines, find species):
+header lines, then find species):
 
 .. code:: console
 
@@ -375,6 +382,37 @@ File ``site_metadata.tsv`` is a table of metadata (based on table S1 in the
 paper), in plain text tab separated variable format (TSV). It has one row for
 each of the 14 samples plus controls, with a column cross referencing the 122
 sequenced FASTQ filename stems.
+
+This cross referencing idea is key to getting the best results from attaching
+metadata to your sequenced samples. Here is an abridged representation of the
+table, showing column one (site or control name), column two (altitute), and
+finally column 16 which has the filename stems of the sequence data belonging
+to this row of the table (semi-colon separated list).
+
+======== ======== === ========================================================
+#Site    Altitude ... MiSeq Sample(s)
+======== ======== === ========================================================
+01             30 ... Site_1_sample_1;Site_1_sample_2;Site_1_sample_3;Site_1_sample_4;Site_1_sample_5;Site_1_sample_6;Site_1_sample_7;Site_1_sample_8;Site_1_sample_9-2;Site_1_sample_10
+02             55 ... Site_2_sample_1;Site_2_sample_2;Site_2_sample_3;Site_2_sample_4;Site_2_sample_5;Site_2_sample_6;Site_2_sample_7;Site_2_sample_8;Site_2_sample_9;Site_2_sample_10
+03             45 ... Site_3_sample_1;Site_3_sample_2;Site_3_sample_4;Site_3_sample_7;Site_3_sample_8;Site_3_sample_9
+04             20 ... Site_4_sample_1;Site_4_sample_2;Site_4_sample_3;Site_4_sample_3-2;Site_4_sample_4;Site_4_sample_5;Site_4_sample_6;Site_4_sample_8;Site_4_sample_9;Site_4_sample_10
+05            100 ... Site_5_sample_1;Site_5_sample_2;Site_5_sample_4;Site_5_sample_5;Site_5_sample_6;Site_5_sample_8;Site_5_sample_9
+06              5 ... Site_6_sample_1;Site_6_sample_2-2;Site_6_sample_3-1;Site_6_sample_4;Site_6_sample_5-3;Site_6_sample_6;Site_6_sample_7-1;Site_6_sample_8-2;Site_6_sample_9;Site_6_sample_10
+07            105 ... Site_7_sample_1;Site_7_sample_2;Site_7_sample_3;Site_7_sample_5;Site_7_sample_6;Site_7_sample_7;Site_7_sample_8;Site_7_sample_9;Site_7_sample_10
+08             45 ... Site_8_sample_1;Site_8_sample_2;Site_8_sample_3;Site_8_sample_4;Site_8_sample_5-2;Site_8_sample_6;Site_8_sample_7;Site_8_sample_7-2;Site_8_sample_8;Site_8_sample_9
+09             15 ... Site_9_sample_1;Site_9_sample_4-3;Site_9_sample_6;Site_9_sample_7;Site_9_sample_8;Site_9_sample_9;Site_9_sample_10
+10             30 ... Site_10_sample_7;Site_10_sample_8
+11             80 ... Site_11_sample_1;Site_11_sample_2;Site_11_sample_3;Site_11_sample_4;Site_11_sample_5;Site_11_sample_6;Site_11_sample_7;Site_11_sample_8;Site_11_sample_9;Site_11_sample_10
+12             30 ... Site_12_sample_1;Site_12_sample_2;Site_12_sample_3-3;Site_12_sample_4;Site_12_sample_5-3;Site_12_sample_6;Site_12_sample_8;Site_12_sample_9;Site_12_sample_10
+13            300 ... Site_13_sample_1;Site_13_sample_2;Site_13_sample_4;Site_13_sample_5;Site_13_sample_6;Site_13_sample_7;Site_13_sample_8;Site_13_sample_9;Site_13_sample_10
+14             30 ... Site_14_sample_1-2;Site_14_sample_2;Site_14_sample_3;Site_14_sample_4;Site_14_sample_5;Site_14_sample_6;Site_14_sample_10
+DNA10MIX          ... DNA10MIX_diluted25x;DNA10MIX_undiluted;DNA10MIX_bycopynumber
+DNA16MIX          ... DNA16MIX
+NEGATIVE          ... NEGATIVE_firstplate;NEGATIVE_secondplate
+======== ======== === ========================================================
+
+Also note that in column one we have listed the numerical site names with
+leading zeros giving ``01`` to ``14`` to ensure they sort as expected.
 
 Sample Reports
 --------------
