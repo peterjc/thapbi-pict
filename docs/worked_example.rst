@@ -40,13 +40,13 @@ separately (122 pairs, a little over 200MB in total).
 
 There are multiple replicates from each of 14 sample sites, with FASTQ files
 ``Site_<N>_sample_<X>_R1.fastq.gz`` and ``Site_<N>_sample_<X>_R2.fastq.gz``
-(plus controls with a different pattern), which as the first step of the
-typical THAPBO PICT workflow (``thapbi_pict prepare-reads``) are transformed
-in FASTA files named ``Site_<N>_sample_<X>.fasta`` (etc). We provide these
-FASTA files as a compressed file with the THAPBI PICT source code, so after
-decompression they can be used to follow the rest of a typical analysis.
+(plus controls with a different naming pattern), which as the first step of
+the typical THAPBI PICT workflow (``thapbi_pict prepare-reads``) are
+transformed into FASTA files named ``Site_<N>_sample_<X>.fasta`` (etc).
 
-We also provide metadata for the samples for use in the reports.
+We provide these FASTA files as a compressed file with the THAPBI PICT source
+code, so after decompression they can be used to follow the rest of a typical
+analysis. We also provide metadata for the samples for use in the reports.
 
 Setup
 -----
@@ -58,28 +58,27 @@ dedicated to this analysis. Start by making three sub-folders as follows:
 
    $ mkdir raw_data/ intermediate/ summary/
 
-We will need the ``site_metadata.tsv`` (included with the THAPBI PICT source
-code under ``tests/woody_hosts/``, or easily downloaded). This is a table of
-metadata (based on table S1 in the paper), with one row for each of the 14
-samples plus controls, with a cross reference to the 122 sequenced FASTQ
-filename stems. Download or copy this to your project folder:
+We will need file ``site_metadata.tsv`` (included with the THAPBI PICT source
+code as ``tests/woody_hosts/site_metadata.tsv``) which can be downloaded:
 
 .. code:: console
 
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/site_metadata.tsv
 
+The FASTQ files are only needed for the very first step of the worked example.
 If you have downloaded the 244 paired FASTQ files, put them in the raw data
-sub-folder as ``raw_data/*.fastq.gz``, but this is only needed for the very
-first step which can be skipped if you instead decompress the provided 122
-FASTA file (included in the THAPBI PICT source code, but can easily be
-re-downloaded):
+sub-folder as ``raw_data/*.fastq.gz``.
+
+If you don't have the FASTQ files, you need get the pre-prepared 122 FASTA
+files into your intermediate data sub-folder as ``intermediate/*.fasta``.
+These are provided as a small compressed file included in the THAPBI PICT
+source code ``tests/woody_hosts/woody_hosts_fasta.tar.bz2``, or can easily be
+downloaded:
 
 .. code:: console
 
-   $ cd intermediate/
    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/woody_hosts_fasta.tar.bz2
-   $ tar -jxvf /path/to/downloads/woody_hosts_fasta.tar.bz2
-   $ cd ..
+   $ tar -jxvf woody_hosts_fasta.tar.bz2 -C intermediate/
 
 Note that four of the FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
@@ -222,10 +221,11 @@ of synthetic sequences of the same length, same nucelotide composition, and
 also same di-nucleotide composition as real *Phytophthora* ITS1. This means we
 might have say 90 biological samples which should contain ITS1 but not the
 synthetics controls, and 6 negative controls which should contain synthetic
-controls but not ITS1. We then run ``thapbi_pict prepare-reads`` for each
-plate, where any ITS1 contamination in the synthetic controls is used to set
-a plate specific minimum abundance. This means we cannot run ``thapbi_pict
-pipeline`` on multiple plates at once.
+controls but not ITS1. We then run ``thapbi_pict prepare-reads`` separately
+for each plate, where any ITS1 contamination in the synthetic controls is
+used to set a plate specific minimum abundance. This means we cannot run
+``thapbi_pict pipeline`` on multiple plates at once (although we could run it
+on each plate, we generally want to produce reports over multiple plates).
 
 thapbi-pict classify
 --------------------
@@ -272,6 +272,10 @@ sample metadata.
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
 
 In the following we will show the reports with and without metadata.
+File ``site_metadata.tsv`` is a table of metadata (based on table S1 in the
+paper), in plain text tab separated variable format (TSV). It has one row for
+each of the 14 samples plus controls, with a column cross referencing the 122
+sequenced FASTQ filename stems.
 
 Sample Reports
 --------------
