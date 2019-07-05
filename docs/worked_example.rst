@@ -84,7 +84,7 @@ Note that four of the FASTA files are empty, ``Site_13_sample_7.fasta`` and
 negative controls (good).
 
 thapbi-pict prepare-reads
-=========================
+-------------------------
 
 Calling ``thapbi-pict prepare-reads`` is the first action done by the top
 level ``thapbi_pict pipeline`` command.
