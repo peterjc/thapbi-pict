@@ -145,7 +145,7 @@ If not, skip directly to:
    git tag vX.Y.Z
    git push origin master --tags
 
-The PyPI upload should trigger an automated pull request updating the 
+The PyPI upload should trigger an automated pull request updating the
 `THAPBI PICT BioConda recipe
 <https://github.com/bioconda/bioconda-recipes/blob/master/recipes/thapbi-pict/meta.yaml>`__
 which will need reviewing (e.g. new dependencies) before it is merged.
