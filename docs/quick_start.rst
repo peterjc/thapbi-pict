@@ -83,7 +83,7 @@ the edit-graph (which can be very slow):
     Wrote summary/thapbi-pict.samples.*
     Wrote summary/thapbi-pict.reads.*
     WARNING: Skipping summary/thapbi-pict.edit-graph.xgmml as already exists
-    All	done!
+    All done!
 
 All being well, this will produce a set of report files, with names matching
 ``thapbi-pict.*`` as follows:
