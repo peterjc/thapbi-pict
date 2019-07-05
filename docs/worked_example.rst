@@ -477,11 +477,9 @@ generated with metadata (see discussion above about column and row numbers):
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
 
-Without metadata the results are sorted by sample name (and thus the first
-entry here should be ``DNA10MIX_bycopynumber``). Any metadata is used for
-sorting, and here the first entry becomes ``Site_1_sample_1`` (see below).
+This time the even longer command has been shown split over three lines.
 
-Because the computer readable TSV file does not include the metadata directly,
+The computer readable TSV file does not include the metadata directly, so the
 the two versions differ only in the line order:
 
 .. code:: console
@@ -490,7 +488,8 @@ the two versions differ only in the line order:
     $ diff summary/thapbi-pict.samples.tsv summary/with-metadata.samples.tsv
     ...
 
-The human readable text file is more interesting, and is discussed next.
+The changes in the human readable text file are more interesting, and that is
+discussed next.
 
 Sample Report
 -------------
@@ -501,8 +500,9 @@ Here we will discuss the high level human readable summary report from
 Without metadata, the samples are sorted by filename alphabetically. In this
 example that means we get DNA controls, negative controls, Site 1, 10, 11, 12,
 13, 14, 2, ..., 9. This is unfortunate, so if it is too late to change your
-sequence sample naming scheme (e.g. leading zeros), you can at least use
-nicely sorting names in your metadata.
+sequence sample naming scheme (e.g. use leading zeros, and ``YYYY-MM-DD``
+style for any dates), you can at least use nicely sorting names in your
+metadata.
 
 When a metadata table is given, the rows are sorted by the displayed columns
 (in the order requested), with any sequenced files without metadata entries
@@ -511,7 +511,8 @@ shown at the very end. Thus we get site ``01`` to ``15``, ``DNA10MIX``,
 samples in the order given in column 16, i.e. ``Site_1_sample_1``,
 ``Site_1_sample_2``, ..., ``Site_1_sample_10`` as desired.
 
-Pulling out the ``Site_1_sample_1`` example, we see::
+Pulling out the ``Site_1_sample_1`` example, without metadata in file
+``summary/thapbi-pict.samples.txt`` we see::
 
     Site_1_sample_1
 
@@ -541,8 +542,9 @@ In this case, as you may recall from when we looked at the classifier output
 file ``intermediate/Site_1_sample_1.onebp.tsv``, one of the sequences matched
 both *Phytophthora cambivora* and *Phytophthora x cambivora*.
 
-In comparison, with metadata, all the samples matched to a metadata row get
-grouped with a shared metadata header::
+In comparison, with metadata in file ``summary/with-metadata.samples.txt``,
+all the samples matched to a metadata row get grouped with a shared metadata
+header::
 
     Site: 01
     Altitude (m): 30
