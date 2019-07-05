@@ -384,7 +384,7 @@ each of the 14 samples plus controls, with a new column cross referencing the
 
 This metadata file is perhaps unusual in that it has a header of comment lines
 (starting ``#``) which some tools like R and THAPBI PICT need to be told to
-ignore explicitly. Quoting from	that header::
+ignore explicitly. Quoting from that header::
 
     # Lines 1-19, human readable header text
     # Lines 20, colum headers
@@ -392,7 +392,7 @@ ignore explicitly. Quoting from	that header::
 
 When calling THAPBI PICT we need to include ``-f 20`` or ``--metafields 20``
 indicating the column headers are on line 20 (and lines 1 to 19 should be
-ignored). Typically the	column header will be on line one, so this is not
+ignored). Typically the column header will be on line one, so this is not
 needed.
 
 As to the columns, again quoting from that header::
@@ -491,7 +491,7 @@ the two versions differ only in the line order:
     ...
 
 The human readable text file is more interesting, and is discussed next.
-    
+
 Sample Report
 -------------
 
