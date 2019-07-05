@@ -353,9 +353,9 @@ header lines, find species):
 .. code:: console
 
     $ grep -v "^#" intermediate/*.tsv | grep "Phytophthora rubi"
-    intermediate/DNA10MIX_bycopynumber.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_285	129364	Phytophthora rubi	Unique taxonomy match
-    intermediate/DNA10MIX_diluted25x.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_363	129364	Phytophthora rubi	Unique taxonomy match
-    intermediate/DNA10MIX_undiluted.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_274	129364	Phytophthora rubi	Unique taxonomy match
+    intermediate/DNA10MIX_bycopynumber.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_285  129364  Phytophthora rubi  Unique taxonomy match
+    intermediate/DNA10MIX_diluted25x.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_363    129364  Phytophthora rubi  Unique taxonomy match
+    intermediate/DNA10MIX_undiluted.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_274     129364  Phytophthora rubi  Unique taxonomy match
 
 The summary reports would also answer this paricular question, but this kind
 of search can be useful for exploring specific questions.
