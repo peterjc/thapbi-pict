@@ -31,8 +31,9 @@ Key links:
 
    installation
    quick_start
-   release_history
+   worked_example
    commands
+   release_history
    development_notes
 
 Indices and tables
