@@ -68,7 +68,7 @@ The FASTQ files are only needed for the very first step of the worked example.
 If you have downloaded the 244 paired FASTQ files, put them in the raw data
 sub-folder as ``raw_data/*.fastq.gz``.
 
-If you don't have the FASTQ files, you need get the pre-prepared 122 FASTA
+If you don't have the FASTQ files, you need to get the pre-prepared 122 FASTA
 files into your intermediate data sub-folder as ``intermediate/*.fasta``.
 These are provided as a small compressed file included in the THAPBI PICT
 source code ``tests/woody_hosts/woody_hosts_fasta.tar.bz2``, or can easily be
@@ -103,7 +103,7 @@ Assuming you have the FASTQ files in ``raw_data/`` as described above:
 
 For each input FASTQ file pair ``raw_data/<sample_name>_R1.fastq.gz`` and
 ``raw_data/<sample_name>_R2.fastq.gz`` you should get a small FASTA file
-``intermediate/<sample_name>.fasta``. In this cases there are multiple
+``intermediate/<sample_name>.fasta``. In this case, there are multiple
 replicates from each of 14 sample sites where the file name stem is
 ``Site_<N>_sample_<X>``, plus the controls.
 
@@ -637,14 +637,15 @@ extra rows at the start with sample information.
 
 This read report has a row for each unique sequence. The first columns are
 the unique sequence MD5 checksum, any species prediction, the sequence itself,
-the number of samples it detected in above the threshold, and the total number
-of times this was seen (in samples where it was above the threshold). Then
-the main columns (one per sample) list the abundance of each unique sequence
-in that sample (if above the threshold).
+the number of samples it was detected in above the threshold, and the total
+number of reads (from samples where it was above the threshold). Then the
+main columns (one per sample) list the abundance of each unique sequence in
+that sample (if above the threshold).
 
 In the Excel version, conditional formatting is used to highlight the non-zero
 counts with a red background. Furthermore, with metadata it will attempt to
-assign repeated bands of background color to groups (here the sample sites).
+assign repeated bands of background color to groups (pink, orange, yellow,
+green, blue). In this example, each sample site gets a new color:
 
 .. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
    :alt: Screenshot of Excel showing ``summary/with-metadata.samples.xlsx`` file.
