@@ -20,10 +20,9 @@
 THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 =================================================
 
-THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK
-`BBSRC <https://www.bbsrc.ac.uk>`__ funded Tree Health and Plant
-Biosecurity Initiative (THAPBI) Phyto-Threats project, focused on
-identifying *Phytophthora* species present in Illumina sequenced
+THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK funded Tree
+Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats project,
+focused on identifying *Phytophthora* species present in Illumina sequenced
 environmental samples.
 
 *Phytophthora* (from Greek meaning plant-destroyer) species are
@@ -32,6 +31,16 @@ and forestry. ITS1 is short for Internal Transcribed Spacer one, which
 is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
 This is commonly used for molecular barcoding, where sequencing this
 short region can identify species.
+
+The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
+Biotechnology and Biological Sciences Research Council (`BBSRC
+<https://bbsrc.ukri.org/>`_), the Department for Environment, Food and Rural
+affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
+the Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
+the `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
+the Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
+and the `Scottish Government <https://www.gov.scot/>`_, under the Tree
+Health and Plant Biosecurity Initiative (THAPBI).
 
 The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is
 hosted by `Read The Docs <https://readthedocs.org/>`_, generated
