@@ -18,6 +18,7 @@ close with the equivalent all-in-one pipeline command.
    sample_data
    prepare
    classify
+   metadata
    sample_summary
    read_summary
    edit_graph
