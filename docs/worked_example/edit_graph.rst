@@ -39,8 +39,8 @@ file by default, but you can also request other formats including PDF
     With larger datasets, the edit graph is easily the slowest of the report
     commands, and the PDF output even more so.
 
-Node and edges
---------------
+Nodes and edges
+---------------
 
 In this context, we are talking about a graph in the mathematical sense of
 nodes connected by edges. Our nodes are unique sequences (which we can again
@@ -51,8 +51,11 @@ distance of one could be a single base substitution, insertion or deletion.
 The tool starts by compiling a list of all the unique sequences in your
 samples (i.e. all the rows in the ``thapbi_pict read-summary`` report), and
 optionally all the unique sequences in the database. It then computes the
-edit distance between them all (this can get slow). We build the network
-graph by adding edges for edits of up to three base pairs.
+edit distance between them all (this can get slow).
+
+We build the network graph by adding edges for edits of up to three base pairs
+(by default). This gives small connected compoenents or sub-graphs which are
+roughly at the species level.
 
 Redundant edges are dropped, for example if *A* is one edit away from *B*,
 and *B* is one edit away from *C*, there is need to draw the two edit line
@@ -62,25 +65,25 @@ We draw the nodes as circles, scaled by the number of samples that unique
 sequence appeared in. If that exact sequence is in the database, is it colored
 according to genus, defaulting to grey.
 
-=========== ========= ===================
-Color       RGB value Meaning
-=========== ========= ===================
-Red         `FF0000`  *Phytophthora*
-Lime        `00FF00`  *Peronospora*
-Blue        `0000FF`  *Hyaloperonospora*
-Yellow      `FFFF00`  *Bremia*
-Cyan        `00FFFF`  *Pseudoperonospora*
-Magenta     `FF00FF`  *Plasmopara*
-Maroon      `800000`  *Nothophytophthora*
-Olive       `808000`  *Peronosclerospora*
-Green       `008000`  *Perofascia*
-Purple      `800080`  *Paraperonospora*
-Teal        `008080`  *Protobremia*
-Dark red    `8B0000`  Other known genus
-Dark orange `FF8C00`  Conflicting genus
-Orange      `FFA500`  Synthetic sequence
-Grey        `808080`  Not in the database
-=========== ========= ===================
+=========== ========== ===================
+Color       RGB value  Meaning
+=========== ========== ===================
+Red         ``FF0000``  *Phytophthora*
+Lime        ``00FF00``  *Peronospora*
+Blue        ``0000FF``  *Hyaloperonospora*
+Yellow      ``FFFF00``  *Bremia*
+Cyan        ``00FFFF``  *Pseudoperonospora*
+Magenta     ``FF00FF``  *Plasmopara*
+Maroon      ``800000``  *Nothophytophthora*
+Olive       ``808000``  *Peronosclerospora*
+Green       ``008000``  *Perofascia*
+Purple      ``800080``  *Paraperonospora*
+Teal        ``008080``  *Protobremia*
+Dark red    ``8B0000``  Other known genus
+Dark orange ``FF8C00``  Conflicting genus
+Orange      ``FFA500``  Synthetic sequence
+Grey        ``808080``  Not in the database
+=========== ========== ===================
 
 The edges are all grey, solid for a one base pair edit distance, dashed for a
 two base pair edit distance, and dotted for a three base pair edit distance.
@@ -88,15 +91,14 @@ two base pair edit distance, and dotted for a three base pair edit distance.
 Viewing the PDF
 ---------------
 
-You should be able to open the PDF file easily, and get something like this:
+You should be able to open the PDF file easily, and get something like this -
+lots of red circles for *Phytophthora*, some grey circles for sequences not
+in the database, and plenty of grey straight line edges between them.
 
 .. image:: https://user-images.githubusercontent.com/63959/60818082-d7d80100-a194-11e9-8002-7d855c0c0bd1.png
 
-In this representation, graph nodes (circles) represent unique sequences, and
-graph edges (straight lines) represent the edit distances between them.
-
-In the PDF output, nodes are coloured by genus (red for *Phytophthora*), and
-labelled if in the database at pecies level. Otherwise they are grey.
+In the PDF output, nodes are coloured by genus (red for *Phytophthora*), but
+only labelled if in the database at species level.
 
 The edges are solid for a one base pair edit distance, dashed for a two base
 pair edit distance, and dotted for a three base pair edit distance. All grey.
@@ -130,7 +132,7 @@ try different layouts, view and search the attributes of the nodes and edges.
 Here the nodes are labelled with the species if they were in the database
 at species level, or otherwise as the start of the MD5 checkum in curly
 brackets (so that they sort nicely). The default node colors are as in the
-PDF output, likewise the edge styles.
+PDF output, likewise the grey edge styles.
 
 The node attributes include the full MD5 (so you can lookup the full sequence
 or classification results for any node of interest), sample count, total read
