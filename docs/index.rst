@@ -40,7 +40,7 @@ Key links:
 
    installation
    quick_start
-   worked_example
+   worked_example/index
    commands
    release_history
    development_notes
