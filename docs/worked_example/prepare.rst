@@ -182,14 +182,16 @@ have a common prefix we can use a simple wild card:
 For this sample data, happily neither of the negative controls have any ITS1
 present above the default threshold, so this would have no effect.
 
-For the THAPBI project we now run each 96-well PCR plate with multiple
-negative controls. Rather than a simple blank, these include a known mixture
-of synthetic sequences of the same length, same nucelotide composition, and
-also same di-nucleotide composition as real *Phytophthora* ITS1. This means we
-might have say 90 biological samples which should contain ITS1 but not the
-synthetics controls, and 6 negative controls which should contain synthetic
-controls but not ITS1. We then run ``thapbi_pict prepare-reads`` separately
-for each plate, where any ITS1 contamination in the synthetic controls is
-used to set a plate specific minimum abundance. This means we cannot run
-``thapbi_pict pipeline`` on multiple plates at once (although we could run it
-on each plate, we generally want to produce reports over multiple plates).
+For the THAPBI Phyto-Threats project we now run each 96-well PCR plate with
+multiple negative controls. Rather than a simple blank, these include a known
+mixture of synthetic sequences of the same length, same nucelotide
+composition, and also same di-nucleotide composition as real *Phytophthora*
+ITS1. This means we might have say 90 biological samples which should contain
+ITS1 but not the synthetics controls, and 6 negative controls which should
+contain synthetic controls but not ITS1.
+
+We therefore run ``thapbi_pict prepare-reads`` separately for each plate,
+where any ITS1 contamination in the synthetic controls is used to set a plate
+specific minimum abundance. This means we cannot run ``thapbi_pict pipeline``
+on multiple plates at once (although we could run it on each plate, we
+generally want to produce reports over multiple plates).

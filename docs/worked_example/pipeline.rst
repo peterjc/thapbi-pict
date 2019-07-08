@@ -55,4 +55,11 @@ And, as described for the :ref:`sample-summary <sample_summary>` and
 Here we also used ``-r`` (or ``--report``) to specify a different stem
 for the report filenames.
 
+Conclusions
+-----------
 
+For the THAPBI Phyto-Threats project our datasets span multiple plates, but
+we want to set plate-specific minimum abundance threholds. With the current
+tool design, we must therefore run the ``prepare-reads`` stage at plate level,
+while running the reports at experiment level over multiple plates at once.
+This tension means we do not actually use the ``pipeline`` command as is.
