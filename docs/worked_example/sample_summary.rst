@@ -1,3 +1,5 @@
+.. _sample_summary:
+
 Sample level report
 ===================
 

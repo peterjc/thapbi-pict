@@ -1,3 +1,5 @@
+.. _read_summary:
+
 Read level report
 =================
 

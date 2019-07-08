@@ -1,3 +1,5 @@
+.. _prepare_reads:
+
 Preparing the sequence data
 ===========================
 
