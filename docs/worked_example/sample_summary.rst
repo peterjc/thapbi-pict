@@ -28,7 +28,8 @@ Linux command prompt (or include it in a copy and paste), or just enter this
 as one very long command.
 
 We will look at the output in a moment, along side the equivalent reports
-generated with metadata (see discussion above about column and row numbers):
+generated with :ref:`metadata <metadata>` (see linked discussion about column
+and row numbers):
 
 .. code:: console
 
@@ -57,12 +58,12 @@ Sample Report
 Here we will discuss the high level human readable summary report from
 ``thapbi_pict sample-summary``, produced as plain text.
 
-Without metadata, the samples are sorted by filename alphabetically. In this
-example that means we get DNA controls, negative controls, Site 1, 10, 11, 12,
-13, 14, 2, ..., 9. This is unfortunate, so if it is too late to change your
-sequence sample naming scheme (e.g. use leading zeros, and ``YYYY-MM-DD``
-style for any dates), you can at least use nicely sorting names in your
-metadata.
+Without :ref:`metadata <metadata>`, the samples are sorted by filename
+alphabetically. In this example that means we get DNA controls, negative
+controls, Site 1, 10, 11, 12, 13, 14, 2, ..., 9. This is unfortunate, so if it
+is too late to change your sequence sample naming scheme (e.g. use leading
+zeros, and ``YYYY-MM-DD`` style for any dates), you can at least use nicely
+sorting names in your metadata.
 
 When a metadata table is given, the rows are sorted by the displayed columns
 (in the order requested), with any sequenced files without metadata entries

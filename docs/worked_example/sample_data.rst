@@ -24,8 +24,8 @@ separately (122 pairs, a little over 200MB in total).
 The first step of a typical THAPBI PICT workflow is to transform the paired
 FASTQ files into much smaller FASTA files. We provide those FASTA files
 compressed with the THAPBI PICT source code, so they can be used to follow the
-rest of a typical analysis. We also provide metadata for the samples for use
-in the reports.
+rest of a typical analysis. We also provide :ref:`metadata for the samples
+<metadata>` for use in the reports.
 
 Setup
 -----
@@ -38,7 +38,8 @@ dedicated to this analysis. Start by making three sub-folders as follows:
    $ mkdir raw_data/ intermediate/ summary/
 
 We will need file ``site_metadata.tsv`` (included with the THAPBI PICT source
-code as ``tests/woody_hosts/site_metadata.tsv``) which can be downloaded:
+code as ``tests/woody_hosts/site_metadata.tsv``), containing :ref:`metadata
+about the sites <metadata>`. This file can be downloaded:
 
 .. code:: console
 

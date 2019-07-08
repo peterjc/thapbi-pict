@@ -25,7 +25,8 @@ format table and ``-e`` or ``--excel`` for the Excel format table:
 The contents of the two files are the same - here we will focus on the Excel
 version which adds some visual formatting to improve usability.
 
-This also command will accept the same metadata arguments as used earlier:
+This also command will accept the same :ref:`metadata <metadata>` arguments as
+used earlier:
 
 .. code::
 
@@ -42,8 +43,8 @@ Read Report
 
 The heart of the read report is a large table, of unique sequences (rows)
 versus sequenced samples (columns), with read abundance counts. There are
-additional columns with sequence information, and when metadata is present,
-extra rows at the start with sample information.
+additional columns with sequence information, and when :ref:`metadata` is
+present, extra rows at the start with sample information.
 
 This read report has a row for each unique sequence. The first columns are
 the unique sequence MD5 checksum, any species prediction, the sequence itself,
