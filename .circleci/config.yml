@@ -38,7 +38,8 @@ jobs:
             pip install --upgrade pip setuptools
             pip install black
             black --check .
-            pip install flake8==3.6 flake8-blind-except flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
+	    # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
+            pip install flake8==3.6 flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
             flake8 .
             restructuredtext-lint *.rst database/*.rst tests/*/*.rst
       - run:
