@@ -189,9 +189,9 @@ This minimal example omits a key consideration which is telling the tool which
 of the samples are your negative controls and/or manually setting the minimum
 read abundance.
 
-Also, interpretting the main reports is much easier if you can provide
-suitably formatted metadata. Happily, you can re-run the pipeline and it will
-re-use any already generated intermediate files.
+Also, interpreting the main reports is much easier if you can provide suitably
+formatted :ref:`metadata <metadata>`. Happily, you can re-run the pipeline and
+it will re-use any already generated intermediate files.
 
 .. image:: images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
