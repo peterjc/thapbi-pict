@@ -1,3 +1,5 @@
+.. _worked_example:
+
 Worked Example
 ==============
 
