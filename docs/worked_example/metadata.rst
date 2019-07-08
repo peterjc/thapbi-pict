@@ -3,8 +3,8 @@
 Metadata
 ========
 
-The *Quick Start* introduced the typical pipeline taking paired FASTQ files
-though to reports, and mentioned the idea of enhancing the reports with
+The :ref:`quick_start` introduced the typical pipeline taking paired FASTQ
+files though to reports, and mentioned the idea of enhancing the reports with
 sample metadata.
 
 .. image:: ../images/pipeline-meta.svg

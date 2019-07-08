@@ -1,7 +1,7 @@
 Worked Example
 ==============
 
-The *Quick Start* described a simplified use of the THAPBI PICT tool to
+The :ref:`quick_start` described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
 pipeline`` command, as a flowchart:
 
