@@ -36,8 +36,54 @@ file by default, but you can also request other formats including PDF
 
 .. WARNING:
 
-    With larger datasets, the edit graph easily the slowest of the report
+    With larger datasets, the edit graph is easily the slowest of the report
     commands, and the PDF output even more so.
+
+Node and edges
+--------------
+
+In this context, we are talking about a graph in the mathematical sense of
+nodes connected by edges. Our nodes are unique sequences (which we can again
+label by the MD5 checksum), and the edges are how similar two sequences are.
+Specially, we are using the Levenshtein edit distance. This means an edit
+distance of one could be a single base substitution, insertion or deletion.
+
+The tool starts by compiling a list of all the unique sequences in your
+samples (i.e. all the rows in the ``thapbi_pict read-summary`` report), and
+optionally all the unique sequences in the database. It then computes the
+edit distance between them all (this can get slow). We build the network
+graph by adding edges for edits of up to three base pairs.
+
+Redundant edges are dropped, for example if *A* is one edit away from *B*,
+and *B* is one edit away from *C*, there is need to draw the two edit line
+from *A* to *C*.
+
+We draw the nodes as circles, scaled by the number of samples that unique
+sequence appeared in. If that exact sequence is in the database, is it colored
+according to genus, defaulting to grey.
+
+=========== ========= ===================
+Color       RGB value Meaning
+=========== ========= ===================
+Red         `FF0000`  *Phytophthora*
+Lime        `00FF00`  *Peronospora*
+Blue        `0000FF`  *Hyaloperonospora*
+Yellow      `FFFF00`  *Bremia*
+Cyan        `00FFFF`  *Pseudoperonospora*
+Magenta     `FF00FF`  *Plasmopara*
+Maroon      `800000`  *Nothophytophthora*
+Olive       `808000`  *Peronosclerospora*
+Green       `008000`  *Perofascia*
+Purple      `800080`  *Paraperonospora*
+Teal        `008080`  *Protobremia*
+Dark red    `8B0000`  Other known genus
+Dark orange `FF8C00`  Conflicting genus
+Orange      `FFA500`  Synthetic sequence
+Grey        `808080`  Not in the database
+=========== ========= ===================
+
+The edges are all grey, solid for a one base pair edit distance, dashed for a
+two base pair edit distance, and dotted for a three base pair edit distance.
 
 Viewing the PDF
 ---------------
@@ -67,7 +113,7 @@ Open Cytoscape, and from the top level menu select ``File``, ``Import``,
 ``Network from file...``, then select ``summary/thapbi-pict.edit-graph.xgmml``
 (the XGMML file created above).
 
-You should get something like this, were initially all the nodes are drawn
+You should get something like this, where initially all the nodes are drawn
 on top of each other:
 
 .. image:: https://user-images.githubusercontent.com/63959/60818958-8af52a00-a196-11e9-9d89-27f5d027f1e7.png
@@ -83,7 +129,7 @@ try different layouts, view and search the attributes of the nodes and edges.
 
 Here the nodes are labelled with the species if they were in the database
 at species level, or otherwise as the start of the MD5 checkum in curly
-brackets (so that they sort nicely). The default node colors as as in the
+brackets (so that they sort nicely). The default node colors are as in the
 PDF output, likewise the edge styles.
 
 The node attributes include the full MD5 (so you can lookup the full sequence
