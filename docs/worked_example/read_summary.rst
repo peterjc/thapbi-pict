@@ -60,3 +60,14 @@ green, blue). In this example, each sample site gets a new color:
 
 .. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
    :alt: Screenshot of Excel showing ``summary/with-metadata.samples.xlsx`` file.
+
+Typical sample naming schemes will result in replicates as neighbouring
+columns - meaning you should see very similar patterns of red (non-zero).
+Certainly in this dataset scanning horizontally we do see some sequences
+clearly show presence/absence patterns consistent with the samples.
+
+The default row sorting will result in a dominant sequence being followed by
+any close variants assigned to the same species. Many of these rows will
+represent PCR artefacts found in just one or two samples. This contributes
+to the "halo" effect seen in the :ref:`edit_graph` representation, discusssed
+next.
