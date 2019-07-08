@@ -1,3 +1,6 @@
+Sample level report
+===================
+
 Running thapbi_pict sample-summary
 ----------------------------------
 

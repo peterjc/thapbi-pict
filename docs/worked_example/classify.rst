@@ -1,3 +1,6 @@
+Classifying sequences
+=====================
+
 Running thapbi-pict-classify
 ----------------------------
 

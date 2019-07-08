@@ -1,3 +1,6 @@
+Read level report
+=================
+
 Running thapbi_pict read-summary
 --------------------------------
 
@@ -34,8 +37,8 @@ This also command will accept the same metadata arguments as used earlier:
 This will again affect the sort order of the sequences samples (here as
 columns), and includes extra header rows containing the requested metadata.
 
-Read Reports
-------------
+Read Report
+-----------
 
 The heart of the read report is a large table, of unique sequences (rows)
 versus sequenced samples (columns), with read abundance counts. There are

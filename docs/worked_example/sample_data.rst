@@ -1,4 +1,7 @@
-Sample Data
+Introduction
+============
+
+Sample data
 -----------
 
 This example is based on the following paper from earlier in the THAPBI

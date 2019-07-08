@@ -1,3 +1,6 @@
+Preparing the sequence data
+===========================
+
 Running thapbi-pict prepare-reads
 ---------------------------------
 

@@ -1,3 +1,6 @@
+Edit Graph
+==========
+
 Running thapbi_pict edit-graph
 ------------------------------
 
@@ -34,8 +37,8 @@ file by default, but you can also request other formats including PDF
     With larger datasets, the edit graph easily the slowest of the report
     commands, and the PDF output even more so.
 
-Edit Graph
-----------
+Viewing the edit graph
+----------------------
 
 You should be able to open the PDF file easily, and while it is interesting
 it is read only and non-interactive. This is where the XGMML output shines.
