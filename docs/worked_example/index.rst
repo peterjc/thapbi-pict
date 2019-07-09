@@ -12,7 +12,10 @@ pipeline`` command, as a flowchart:
 
 Here we will run over the same process using real data, calling the individual
 commands within the default pipeline - and include metadata for reporting. We
-close with the equivalent all-in-one pipeline command.
+finish with the equivalent all-in-one pipeline command.
+
+Additionally, the sample data includes some positive controls, so we can look
+at assessing the classifier performance.
 
 .. toctree::
    :maxdepth: 1
@@ -25,3 +28,4 @@ close with the equivalent all-in-one pipeline command.
    read_summary
    edit_graph
    pipeline
+   assess
