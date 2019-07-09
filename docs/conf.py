@@ -22,7 +22,7 @@ copyright = "2019, Peter Cock"
 author = "Peter Cock"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.1"
+release = "0.3.4"
 
 # Sphinx vs ReadTheDocs conflict on default contents.rst vs index.rst
 master_doc = "index"
