@@ -341,6 +341,9 @@ def main(
         inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
     )
 
+    if not input_list:
+        sys.exit("ERROR: Found no pairs *.%s.tsv with *.%s.tsv" % (method, known))
+
     db_sp_list = None
     file_count = 0
     global_tally = {}
