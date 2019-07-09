@@ -373,6 +373,8 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
 
     The arguments ext1 and ext2 should include the leading dot.
     """
+    assert ext1.startswith("."), ext1
+    assert ext2.startswith("."), ext2
     file_list = find_requested_files(
         filenames_or_folders, ext=(ext1, ext2), debug=debug
     )
@@ -386,9 +388,9 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
 
     # This could happen if have same filename used in different folders:
     if len(ext1_dict) < len(ext1_list):
-        sys.exit("ERROR: Duplicate *.%s file names" % ext1)
+        sys.exit("ERROR: Duplicate *%s file names" % ext1)
     if len(ext2_dict) < len(ext2_list):
-        sys.exit("ERROR: Duplicate *.%s file names" % ext2)
+        sys.exit("ERROR: Duplicate *%s file names" % ext2)
     del ext1_list, ext2_list
 
     input_list = []
