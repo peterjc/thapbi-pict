@@ -14,7 +14,17 @@ molecular barcoding, where sequencing this short region can identify species.
 
 This Python package provides ITS1-based diagnostic/profiling tools for the
 Tree Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats project,
-funded by the UK's [BBSRC](https://www.bbsrc.ac.uk).
+which is supported by a grant funded jointly by the Biotechnology and
+Biological Sciences Research Council (BBSRC), the Department for Environment,
+Food and Rural affairs (DEFRA), the Economic and Social Research Council
+(ESRC), the Forestry Commission, and the Natural Environment Research Council
+(NERC) and the Scottish Government, under the Tree Health and Plant
+Biosecurity Initiative (THAPBI).
+
+The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is
+hosted by `Read The Docs <https://readthedocs.org/>`_, generated
+automatically from the ``docs/`` folder of the `software repository
+<https://github.com/peterjc/thapbi-pict/>`_.
 
 You would typically use THAPBI PICT via the command line tool it defines::
 
