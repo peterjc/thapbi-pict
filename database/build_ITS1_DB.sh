@@ -7,8 +7,9 @@ DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict legacy-import -d "$DB.sqlite" legacy/Phytophthora_ITS_database_v0.005.fasta
-thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporales_16394.fasta -g
+# In strict mode this will ignore the synthetic controls, we add them later:
+thapbi_pict legacy-import -d "$DB.sqlite" -i legacy/Phytophthora_ITS_database_v0.005.fasta
+thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.fasta -g
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations
@@ -18,11 +19,11 @@ thapbi_pict ncbi-import -d "$DB.sqlite" 2019-04-03-ITS_Peronosporales_16394.fast
 sqlite3 ITS1_DB.sqlite "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phytophthora' AND species='austrocedrae'"
 
 # The known value files are now using Phytophthora austrocedri, not P. austrocedrae
-thapbi_pict seq-import -d "$DB.sqlite" thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
+thapbi_pict seq-import -d "$DB.sqlite" -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
 
 # Add the G-BLOCK synthetic controls (in lax mode as not in the taxonomy)
 grep -A 1 ">Control_" legacy/Phytophthora_ITS_database_v0.005.fasta > controls.fasta
-thapbi_pict legacy-import -x -d "$DB.sqlite" controls.fasta
+thapbi_pict legacy-import -x -d "$DB.sqlite" -i controls.fasta
 
 # Ad-hoc fix for three unique sequences getting more than one genus in the NCBI,
 # should be Hyaloperonospora not Peronospora. Drop the entries saying Peronospora:
