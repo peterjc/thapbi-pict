@@ -8,7 +8,7 @@ rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
 # In strict mode this will ignore the synthetic controls, we add them later:
-thapbi_pict legacy-import -d "$DB.sqlite" -i legacy/Phytophthora_ITS_database_v0.005.fasta
+thapbi_pict legacy-import -d "$DB.sqlite" -i legacy/Phytophthora_ITS_database_v0.006.fasta
 thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.fasta -g
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
