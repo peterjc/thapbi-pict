@@ -54,6 +54,8 @@ We will also need four files ``positive_controls/*.known.tsv`` which describe
 the species expected in the positive control sequences. These are included
 with the source under ``tests/woody_hosts/``, or can be downloaded:
 
+.. code:: console
+
     $ cd positive_controls/
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA15MIX.known.tsv
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA10MIX_bycopynumber.known.tsv
