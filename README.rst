@@ -96,7 +96,7 @@ and the `Scottish Government <https://www.gov.scot/>`_, under the Tree
 Health and Plant Biosecurity Initiative (THAPBI).
 
 Background
-==========
+----------
 
 This continues earlier work including:
 
