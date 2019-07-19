@@ -40,7 +40,7 @@ dedicated to this analysis. Start by making three sub-folders as follows:
 
 .. code:: console
 
-   $ mkdir raw_data/ intermediate/ summary/
+   $ mkdir raw_data/ intermediate/ summary/ positive_controls/
 
 We will need file ``site_metadata.tsv`` (included with the THAPBI PICT source
 code as ``tests/woody_hosts/site_metadata.tsv``), containing :ref:`metadata
@@ -49,6 +49,17 @@ about the sites <metadata>`. This file can be downloaded:
 .. code:: console
 
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/site_metadata.tsv
+
+We will also need four files ``positive_controls/*.known.tsv`` which describe
+the species expected in the positive control sequences. These are included
+with the source under ``tests/woody_hosts/``, or can be downloaded:
+
+    $ cd positive_controls/
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA15MIX.known.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA10MIX_bycopynumber.known.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA10MIX_diluted25x.known.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/DNA10MIX_undiluted.known.tsv
+    $ cd ..
 
 The FASTQ files are only needed for the very first step of the worked example,
 or for running the combined pipeline command. The download is about 215MB:
