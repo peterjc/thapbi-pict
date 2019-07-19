@@ -20,44 +20,22 @@
 THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 =================================================
 
+About
+-----
+
 THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK funded Tree
 Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats project,
 focused on identifying *Phytophthora* species present in Illumina sequenced
 environmental samples.
 
-*Phytophthora* (from Greek meaning plant-destroyer) species are
-economically important plant pathogens, important in both agriculture
-and forestry. ITS1 is short for Internal Transcribed Spacer one, which
-is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
-This is commonly used for molecular barcoding, where sequencing this
-short region can identify species.
-
-The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
-Biotechnology and Biological Sciences Research Council (`BBSRC
-<https://bbsrc.ukri.org/>`_), the Department for Environment, Food and Rural
-affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
-the Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
-the `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
-the Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
-and the `Scottish Government <https://www.gov.scot/>`_, under the Tree
-Health and Plant Biosecurity Initiative (THAPBI).
-
-The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is
-hosted by `Read The Docs <https://readthedocs.org/>`_, generated
-automatically from the ``docs/`` folder of the `software repository
-<https://github.com/peterjc/thapbi-pict/>`_.
-
-This continues earlier work including:
-
-- https://github.com/widdowquinn/THAPBI
-- https://github.com/widdowquinn/THAPBI-pycits
-- https://github.com/peterthorpe5/THAPBI-pycits
-- https://github.com/peterthorpe5/public_scripts/tree/master/metapy
-- https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools
-
+*Phytophthora* (from Greek meaning plant-destroyer) species are economically
+important plant pathogens, important in both agriculture and forestry. ITS1 is
+short for Internal Transcribed Spacer one, which is a region of eukaryotes
+genomes between the 18S and 5.8S rRNA genes. This is commonly used for
+molecular barcoding, where sequencing this short region can identify species.
 
 Installation
-============
+------------
 
 We recommend installing this tool on Linux using the
 `Conda <https://conda.io/>`__ packaging system, via the
@@ -84,7 +62,7 @@ command line tools. See ``INSTALL.rst`` for more details, and if you
 want to modify the software read ``CONTRIBUTING.rst`` as well.
 
 Quick Start
-===========
+-----------
 
 Once installed, you should be able to run the tool at the command line
 using:
@@ -97,15 +75,44 @@ This should automatically find the installed copy of the Python code.
 Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for
 help.
 
+Documentation
+-------------
+
+The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is hosted by
+`Read The Docs <https://readthedocs.org/>`_, generated automatically from the
+``docs/`` folder.
+
+Funding
+-------
+
+The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
+Biotechnology and Biological Sciences Research Council (`BBSRC
+<https://bbsrc.ukri.org/>`_), the Department for Environment, Food and Rural
+affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
+the Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
+the `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
+the Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
+and the `Scottish Government <https://www.gov.scot/>`_, under the Tree
+Health and Plant Biosecurity Initiative (THAPBI).
+
+Background
+==========
+
+This continues earlier work including:
+
+- https://github.com/widdowquinn/THAPBI
+- https://github.com/widdowquinn/THAPBI-pycits
+- https://github.com/peterthorpe5/THAPBI-pycits
+- https://github.com/peterthorpe5/public_scripts/tree/master/metapy
+- https://github.com/peterthorpe5/public_scripts/tree/master/metapy_tools
 
 Release History
-===============
+---------------
 
 See the ``CHANGELOG.rst`` file (it was getting too long to include here).
 
-
 Development Notes
-=================
+-----------------
 
 Please see the ``CONTRIBUTING.rst`` file for details of the development
 setup including Python style conventions, git pre-commit hook,
