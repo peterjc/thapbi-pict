@@ -1,5 +1,7 @@
 """Configuration file for the Sphinx documentation builder."""
-#
+
+import thapbi_pict
+
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
@@ -13,6 +15,8 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+#
+# Rather than messing with the path, just requiring thapbi_pict be installed.
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +26,7 @@ copyright = "2019, Peter Cock"
 author = "Peter Cock"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.4"
+release = thapbi_pict.__version__
 
 # Sphinx vs ReadTheDocs conflict on default contents.rst vs index.rst
 master_doc = "index"
