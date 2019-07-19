@@ -62,7 +62,7 @@ Ideally confirm the MD5 checksum is ``4492fc78b6423d1761592e20f7ad97f3`` by
 running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` on
 macOS). This is just to double check there were no problems with the download.
 
-If you skip the raw data, instead you musy download the pre-prepared 122 FASTA
+If you skip the raw data, instead you must download the pre-prepared 122 FASTA
 files into your intermediate data sub-folder as ``intermediate/*.fasta``.
 These are provided as a small compressed file included in the THAPBI PICT
 source code ``tests/woody_hosts/woody_hosts_fasta.tar.bz2``, or can easily be
@@ -70,8 +70,8 @@ downloaded:
 
 .. code:: console
 
-   $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/woody_hosts_fasta.tar.bz2
-   $ tar -jxvf woody_hosts_fasta.tar.bz2 -C intermediate/
+   $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/intermediate.tar.bz2
+   $ tar -jxvf intermediate.tar.bz2
    $ ls -1 intermediate/*.fasta | wc -l
    122
 
