@@ -55,6 +55,8 @@ or for running the combined pipeline command. The download is about 215MB:
 
     $ wget https://zenodo.org/record/3332678/files/raw_data.tar.gz
     $ tar -zxvf raw_data.tar.gz
+    $ ls -1 raw_data/*.fastq.gz | wc -l
+    244
 
 Ideally confirm the MD5 checksum is ``4492fc78b6423d1761592e20f7ad97f3`` by
 running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` on
@@ -70,6 +72,8 @@ downloaded:
 
    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/woody_hosts_fasta.tar.bz2
    $ tar -jxvf woody_hosts_fasta.tar.bz2 -C intermediate/
+   $ ls -1 intermediate/*.fasta | wc -l
+   122
 
 Note that four of the FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
