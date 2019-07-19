@@ -30,7 +30,7 @@ mkdir $TMP/woody_hosts/summary
 echo "=================================="
 echo "Decompressing prepare-reads output"
 echo "=================================="
-time tar -jxvf tests/woody_hosts/woody_hosts_fasta.tar.bz2 -C $TMP/woody_hosts/intermediate/ | wc -l
+time tar -jxvf tests/woody_hosts/intermediate.tar.bz2 -C $TMP/woody_hosts/ | wc -l
 
 echo "============================"
 echo "Running woody hosts classify"
