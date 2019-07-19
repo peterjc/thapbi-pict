@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.3.6  2019-07-19 Added Zenodo FASTQ link to worked example, now includes ``assess`` command.
 v0.3.5  2019-07-12 Added missing ``T`` or ``CT`` to 11 of the legacy ITS1 sequences in the DB.
 v0.3.4  2019-07-08 Worked example using woody hosts dataset from Riddell et al. (2019).
 v0.3.3  2019-07-04 Fixed regression in group coloring for ``read-summary`` Excel output.
