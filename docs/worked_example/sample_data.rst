@@ -19,13 +19,16 @@ are multiple replicates from each of 14 sample sites, plus controls.
 
 The raw FASTQ files are too large to include with the THAPBI PICT source code,
 so to follow the complete example you must download 244 ``*.fastq.gz`` files
-separately (122 pairs, a little over 200MB in total).
+separately (122 pairs, 215MB compressed) from `DOI 10.5281/zenodo.3332678
+<https://doi.org/10.5281/zenodo.3332678>`_.
 
 The first step of a typical THAPBI PICT workflow is to transform the paired
 FASTQ files into much smaller FASTA files. We provide those FASTA files
-compressed with the THAPBI PICT source code, so they can be used to follow the
-rest of a typical analysis. We also provide :ref:`metadata for the samples
-<metadata>` for use in the reports.
+compressed with the THAPBI PICT source code, so if you skip the FASTQ files,
+you can still follow the rest of a typical analysis.
+
+We also provide :ref:`metadata for the samples <metadata>` for use in the
+reports.
 
 Setup
 -----
@@ -45,11 +48,19 @@ about the sites <metadata>`. This file can be downloaded:
 
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/site_metadata.tsv
 
-The FASTQ files are only needed for the very first step of the worked example.
-If you have downloaded the 244 paired FASTQ files, put them in the raw data
-sub-folder as ``raw_data/*.fastq.gz``.
+The FASTQ files are only needed for the very first step of the worked example,
+or for running the combined pipeline command. The download is about 215MB:
 
-If you don't have the FASTQ files, you need to get the pre-prepared 122 FASTA
+.. code:: console
+
+    $ wget https://zenodo.org/record/3332678/files/raw_data.tar.gz
+    $ tar -zxvf raw_data.tar.gz
+
+Ideally confirm the MD5 checksum is ``4492fc78b6423d1761592e20f7ad97f3`` by
+running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` on
+macOS). This is just to double check there were no problems with the download.
+
+If you skip the raw data, instead you musy download the pre-prepared 122 FASTA
 files into your intermediate data sub-folder as ``intermediate/*.fasta``.
 These are provided as a small compressed file included in the THAPBI PICT
 source code ``tests/woody_hosts/woody_hosts_fasta.tar.bz2``, or can easily be
