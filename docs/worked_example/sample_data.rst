@@ -21,8 +21,8 @@ are multiple replicates from each of 14 sample sites, plus controls.
 
 The raw FASTQ files are too large to include with the THAPBI PICT source code,
 so to follow the complete example you must download 244 ``*.fastq.gz`` files
-separately (122 pairs, 215MB compressed) from `DOI 10.5281/zenodo.3332678
-<https://doi.org/10.5281/zenodo.3332678>`_.
+separately (122 pairs, 215MB compressed) from `DOI 10.5281/zenodo.3342957
+<https://doi.org/10.5281/zenodo.3342957>`_.
 
 The first step of a typical THAPBI PICT workflow is to transform the paired
 FASTQ files into much smaller FASTA files. We provide those FASTA files
@@ -68,12 +68,12 @@ or for running the combined pipeline command. The download is about 215MB:
 
 .. code:: console
 
-    $ wget https://zenodo.org/record/3332678/files/raw_data.tar.gz
+    $ wget https://zenodo.org/record/3342957/files/raw_data.tar.gz
     $ tar -zxvf raw_data.tar.gz
     $ ls -1 raw_data/*.fastq.gz | wc -l
     244
 
-Ideally confirm the MD5 checksum is ``4492fc78b6423d1761592e20f7ad97f3`` by
+Ideally confirm the MD5 checksum is ``3435aa5b567897ab23e6aac46fb822a9`` by
 running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` on
 macOS). This is just to double check there were no problems with the download.
 
