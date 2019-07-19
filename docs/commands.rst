@@ -39,6 +39,7 @@ the results, and these are described in the :ref:`worked example
 * ``read-summary`` - summarise a set of predictions by unique sequence and sample (with Excel report)
 * ``edit-graph`` - draw the unique sequences as nodes on a graph, connected by edit-distance
 * ``pipeline`` - run all of the above in sequence
+* ``assess`` - compare claffifier output to known positive controls
 
 There are further sub-commands to do with making or inspecting an SQLite3
 format ITS1 database:
