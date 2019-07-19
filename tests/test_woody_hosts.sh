@@ -17,6 +17,8 @@ rm -rf $TMP/woody_hosts
 mkdir $TMP/woody_hosts
 mkdir $TMP/woody_hosts/intermediate
 mkdir $TMP/woody_hosts/summary
+mkdir $TMP/woody_hosts/positive_controls/
+for f in tests/woody_hosts/*.known.tsv; do ln -s $PWD/$f $TMP/woody_hosts/positive_controls/ ; done
 
 # Idea here is to mimic what "thapbi_pict pipeline" would do if we had
 # the FASTQ files here:
@@ -83,5 +85,11 @@ echo "=============================="
 time thapbi_pict edit-graph -i $TMP/woody_hosts/intermediate/ -o $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml
 if [ `grep -c "<node " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 94 ]; then echo "Wrong node count"; false; fi
 if [ `grep -c "<edge " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 65 ]; then echo "Wrong edge count"; false; fi
+
+echo "=========================="
+echo "Running woody hosts assess"
+echo "=========================="
+time thapbi_pict assess -i $TMP/woody_hosts/positive_controls/ $TMP/woody_hosts/intermediate/ -o $TMP/woody_hosts/DNA_MIXES.assess.tsv
+diff $TMP/woody_hosts/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 
 echo "$0 - test_woody_hosts.sh passed"
