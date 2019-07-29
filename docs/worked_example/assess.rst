@@ -65,14 +65,15 @@ primer annealing and thus limited amplification in a species mix.
 
 That still leaves six unexplained false negatives, meaning with the default
 settings THAPBI PICT has given a more cautious set of predictions than the
-metapy tool used in the original data analysis (see `Riddel et al. (2019)
+``metapy`` tool used in the original data analysis (see `Riddel et al. (2019)
 Table 1 <https://doi.org/10.7717/peerj.6931/table-1>`_).
 
 Dropping the minimum read abundance threshold from the default of 100 to 50
 (which requires deleting the intermediate FASTA files, and re-running with
 ``-a 50``), adds three more true positives (*Phytophthora chlamydospora*,
 *P. cinnamomi*, and *P. lateralis*) without any false negatives. That gives us
-11 TP, 0 FP, 4 FN, and compares favourably with the original metapy analysis.
+11 TP, 0 FP, 4 FN, and compares favourably with the original ``metapy``
+analysis.
 
 Dropping the minimum abundance further, we also get *P. cambivora* (plus a
 false positive sharing the same ITS1 sequence as *Phytophthora x cambivora*,
