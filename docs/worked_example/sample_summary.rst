@@ -75,7 +75,9 @@ samples in the order given in column 16, i.e. ``Site_1_sample_1``,
 ``Site_1_sample_2``, ..., ``Site_1_sample_10`` as desired.
 
 Pulling out the ``Site_1_sample_1`` example, without metadata in file
-``summary/thapbi-pict.samples.txt`` we see::
+``summary/thapbi-pict.samples.txt`` we see:
+
+.. code:: text
 
     Site_1_sample_1
 
@@ -94,7 +96,9 @@ Note we get ``Site_1_sample_1`` then ``Site_1_sample_10`` and then
 ``Site_1_sample_2`` etc. The alphabetic sort order problem again.
 
 As to the meaning of this list, those are the species identified - in some
-cases with a cavaet. The file starts with a tiny explanation::
+cases with a cavaet. The file starts with a tiny explanation:
+
+.. code:: text
 
     NOTE: Species listed with (uncertain/ambiguous) in brackets are where
     sequences matched multiple species equally well. For example,
@@ -107,7 +111,9 @@ both *Phytophthora cambivora* and *Phytophthora x cambivora*.
 
 In comparison, with metadata in file ``summary/with-metadata.samples.txt``,
 all the samples matched to a metadata row get grouped with a shared metadata
-header::
+header:
+
+.. code:: text
 
     Site: 01
     Altitude (m): 30
