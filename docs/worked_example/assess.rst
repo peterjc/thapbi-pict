@@ -3,6 +3,7 @@
 Assessing the classifier
 ========================
 
+This sample dataset includes two positive control mock communities.
 We know the species which went into the two different DNA mixes used,
 so for each sequenced positive control sample we can compare the
 expected list of species with the predicted list of species, and thus
