@@ -27,6 +27,8 @@ author = "Peter Cock"
 
 # The full version, including alpha/beta/rc tags
 release = thapbi_pict.__version__
+# Should we shorten this to major.minor only?:
+version = thapbi_pict.__version__
 
 # Sphinx vs ReadTheDocs conflict on default contents.rst vs index.rst
 master_doc = "index"
