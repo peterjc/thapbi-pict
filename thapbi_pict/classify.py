@@ -691,7 +691,7 @@ method_setup = {
 
 
 def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
-    """Implement the thapbi_pict classify command.
+    """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
     classifier output.

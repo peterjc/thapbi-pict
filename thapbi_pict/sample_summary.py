@@ -33,7 +33,7 @@ def main(
     metadata_index=None,
     debug=False,
 ):
-    """Implement the thapbi_pict sample-summary command.
+    """Implement the ``thapbi_pict sample-summary`` command.
 
     The expectation is that the inputs represent all the samples from
     a meaningful group, likely from multiple sequencing runs (plates).

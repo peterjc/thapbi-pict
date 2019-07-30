@@ -446,7 +446,7 @@ def main(
     debug=False,
     cpu=0,
 ):
-    """Implement the thapbi_pict prepare-reads command.
+    """Implement the ``thapbi_pict prepare-reads`` command.
 
     If there are controls, they will be used to potentially increase
     the minimum abundance threshold used for the non-control files.

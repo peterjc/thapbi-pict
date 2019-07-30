@@ -333,7 +333,7 @@ def main(
     confusion_output,
     debug=False,
 ):
-    """Implement the (species level) thapbi_pict assess command."""
+    """Implement the (species level) ``thapbi_pict assess`` command."""
     assert isinstance(inputs, list), inputs
     assert level in ["sample", "sseq", "useq"], level
 

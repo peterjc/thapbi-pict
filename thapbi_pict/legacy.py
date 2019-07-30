@@ -268,7 +268,7 @@ assert parse_fasta_entry("ACC-ONLY") == (0, "", "", "")
 def main(
     fasta_file, db_url, name=None, validate_species=False, genus_only=False, debug=True
 ):
-    """Implement the thapbi_pict legacy-import command."""
+    """Implement the ``thapbi_pict legacy-import`` command."""
     return import_fasta_file(
         fasta_file,
         db_url,

@@ -40,7 +40,7 @@ def main(
     genus_only=False,
     debug=True,
 ):
-    """Implement the thapbi_pict seq-import command."""
+    """Implement the ``thapbi_pict seq-import`` command."""
     assert isinstance(inputs, list)
 
     input_list = find_paired_files(inputs, ".fasta", ".%s.tsv" % method, debug=debug)

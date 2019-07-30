@@ -110,7 +110,7 @@ def main(
     metadata_index=None,
     debug=False,
 ):
-    """Implement the thapbi_pict plate-summary command.
+    """Implement the ``thapbi_pict plate-summary`` command.
 
     The expectation is that the inputs represent all the samples
     from one (96 well) plate, or some other meaningful batch.
