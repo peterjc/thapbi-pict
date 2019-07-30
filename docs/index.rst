@@ -7,7 +7,8 @@ THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 =================================================
 
 THAPBI PICT an ITS1-based diagnostic/profiling tool from the UK funded Tree
-Health and Plant Biosecurity Initiative (THAPBI) Phyto-Threats project,
+Health and Plant Biosecurity Initiative (THAPBI) `Phyto-Threats project
+<https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/>`_,
 focused on identifying *Phytophthora* species present in Illumina sequenced
 environmental samples.
 
