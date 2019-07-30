@@ -114,7 +114,7 @@ def run_trimmomatic(
     The input files may be gzipped.
 
     If the FASTA adapters file is not specified, will try to use
-    TruSeq3-PE.fa as bundled with a BioConda install of trimmomatic.
+    ``TruSeq3-PE.fa`` as bundled with a BioConda install of trimmomatic.
     """
     if not adapters:
         adapters = find_trimmomatic_adapters()
