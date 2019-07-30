@@ -6,7 +6,7 @@
 
 """Generate edit-distance network graph from FASTA files.
 
-This implementes the ``thapbi_pict edit-graph ...`` command.
+This implements the ``thapbi_pict edit-graph ...`` command.
 """
 
 import os

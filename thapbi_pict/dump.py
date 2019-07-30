@@ -6,7 +6,7 @@
 
 """Dumping out ITS1 database to text files.
 
-This implementes the ``thapbi_pict dump ...`` command.
+This implements the ``thapbi_pict dump ...`` command.
 """
 
 import sys
