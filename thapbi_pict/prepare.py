@@ -181,9 +181,9 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
 def save_nr_fasta(counts, output_fasta, min_abundance=0):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
-    The output FASTA records are named ">MD5_abundance\n", which is the
+    The output FASTA records are named ``>MD5_abundance\n``, which is the
     default style used in SWARM. This could in future be generalised,
-    for example ">MD5;size=abundance;\n" for the VSEARCH default.
+    for example ``>MD5;size=abundance;\n`` for the VSEARCH default.
 
     Results are sorted by decreasing abundance then alphabetically by
     sequence.
