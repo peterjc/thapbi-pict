@@ -1,0 +1,27 @@
+Python API
+==========
+
+.. automodule:: thapbi_pict
+   :members:
+      :undoc-members:
+         :show-inheritance:
+
+.. toctree::
+   :maxdepth: 1
+
+   thapbi_pict.assess
+   thapbi_pict.classify
+   thapbi_pict.db_import
+   thapbi_pict.db_orm
+   thapbi_pict.dump
+   thapbi_pict.edit_graph
+   thapbi_pict.hmm
+   thapbi_pict.legacy
+   thapbi_pict.ncbi
+   thapbi_pict.prepare
+   thapbi_pict.read_summary
+   thapbi_pict.sample_summary
+   thapbi_pict.seq_import
+   thapbi_pict.taxdump
+   thapbi_pict.utils
+   thapbi_pict.versions

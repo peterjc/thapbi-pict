@@ -1,5 +1,7 @@
 """Configuration file for the Sphinx documentation builder."""
 
+import os
+
 import thapbi_pict
 
 # This file only contains a selection of the most common options. For a full
@@ -35,13 +37,16 @@ master_doc = "index"
 
 # -- General configuration ---------------------------------------------------
 
+# autodoc options require Sphinx 1.8.0b1 or later:
+needs_sphinx = "1.8"
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 #
 # We are using SVG images which work fine in the HTML output, but need
 # 'sphinx.ext.imgconverter' for it to work in the PDF output on RTD.
-extensions = ["sphinx.ext.imgconverter"]
+extensions = ["sphinx.ext.imgconverter", "sphinx.ext.autodoc", "sphinx.ext.autosummary"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -50,6 +55,19 @@ templates_path = ["_templates"]
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+
+# -- Options for autodoc --------------------------------------------------
+
+# This requires Sphinx 1.8.0b1 or later:
+autodoc_default_values = {
+    "members": None,
+    "undoc-members": None,
+    "special-members": None,
+    "show-inheritance": None,
+    "member-order": "bysource",
+    "exclude-members": "__dict__,__weakref__,__module__",
+}
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -68,3 +86,25 @@ html_theme_options = {"prev_next_buttons_location": "both"}
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# -- Options for numpydoc -------------------------------------------------
+
+numpydoc_class_members_toctree = False
+
+# -- Magic to run sphinx-apidoc automatically -----------------------------
+
+# See https://github.com/rtfd/readthedocs.org/issues/1139
+# on which this is based.
+
+
+def run_apidoc(_):
+    """Call sphinx-apidoc on Bio and BioSQL modules."""
+    from sphinx.ext.apidoc import main as apidoc_main
+
+    apidoc_main(["-M", "-e", "-F", "-o", "api/", "../thapbi_pict"])
+    os.remove("api/thapbi_pict.rst")  # replaced with index.rst
+
+
+def setup(app):
+    """Over-ride Sphinx setup to trigger sphinx-apidoc."""
+    app.connect("builder-inited", run_apidoc)
