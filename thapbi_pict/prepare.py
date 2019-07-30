@@ -204,11 +204,11 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
-    """Trim and make non-redundant FASTA file from FASTA input.
+    r"""Trim and make non-redundant FASTA file from FASTA input.
 
     The read names are ignored and treated as abundance one!
     Makes a non-redundant FASTA file with the sequences named
-    MD5_abundance.
+    ``>MD5_abundance\n``.
 
     Returns the number of accepted sequences before de-duplication
     (integer), number of unique accepted sequences (integer), and
