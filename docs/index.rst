@@ -43,6 +43,7 @@ Key links:
    quick_start
    worked_example/index
    commands
+   api/index
    release_history
    development_notes
 
