@@ -494,12 +494,13 @@ def load_metadata(
     if metadata_sort=True, then the table rows are sorted based on the
     requested metadata - otherwise the table row order is preserved.
 
-    Returns:
-     - list of field sample metadata values (each a list of N values)
-     - matching list of associated sequenced sample(s),
-     - list of the N field names,
-     - matching default value (list of N empty strings).
-     - samples without metadata
+    Returns
+    -------
+    - list of field sample metadata values (each a list of N values)
+    - matching list of associated sequenced sample(s),
+    - list of the N field names,
+    - matching default value (list of N empty strings).
+    - samples without metadata
 
     Without labeling one of the metadata values as a field-sample ID,
     we cannot index the return values - instead expect caller to use

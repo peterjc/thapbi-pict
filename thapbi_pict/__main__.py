@@ -4,7 +4,7 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 
-"""This defines the thapbi_pict command line tool.
+"""Defines the ``thapbi_pict`` command line tool.
 
 This works via ``setup.py`` where under ``entry_points`` we define a
 ``console_scripts`` entry for ``thapbi_pict`` (executable name) pointing to
