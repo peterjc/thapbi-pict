@@ -4,3 +4,9 @@ max-line-length = 88
 extend-ignore =
     # See https://github.com/PyCQA/pycodestyle/issues/373
     E203,
+
+# =====================
+# flake-quote settings:
+# =====================
+# This matches black's output:
+inline-quotes = double
