@@ -19,7 +19,7 @@ File ``database/legacy/database.fasta`` mainly contains entries named like
 no space, *Species* (using underscores for spaces), underscore, *Accession*.
 There is sometimes a space and then free text. The clade can be ommitted.
 Sometimes ``Phytophthora`` is abbreviated to ``P.`` for the genus names.
-And there are some further free format entries. Automated parsing of these
+And there are some further free format entries - automated parsing of these
 is not currently planned.
 
 File ``database/legacy/Phytophthora_ITS_database_v0.004.fasta`` mainly has
@@ -40,6 +40,10 @@ File ``database/legacy/Phytophthora_ITS_database_v0.005.fasta`` follows the
 same naming pattern but adds four synthetic control sequences named
 ``Control_05 C1``, ``Control_14 C2``, ``Control_22 C3``, and finally
 ``Control_42 C4``. Note the use of a space here.
+
+File ``database/legacy/Phytophthora_ITS_database_v0.006.fasta`` is the same,
+but with a 11 sequences extended to fix the inadvertent loss of one or two
+trailing bases.
 """
 
 import re
