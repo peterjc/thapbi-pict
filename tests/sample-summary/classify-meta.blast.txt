@@ -18,7 +18,7 @@ Sequencing sample: P-infestans-T30-4
 
 Sequencing sample: multiple_its1
 
+ - Unknown
  - Nothophytophthora
  - Peronospora
- - Phytophthora
 
