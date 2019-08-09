@@ -34,6 +34,8 @@ from .utils import species_level
 from .versions import check_tools
 
 
+MIN_BLAST_BITSCORE = 100  # minimum BLAST HSP bitscore to consider
+
 fuzzy_matches = None  # global variable for onebp classifier
 
 
@@ -413,6 +415,8 @@ def method_blast(
                 sys.stderr.write(line)
             parts = line.rstrip("\n").split("\t")
             idn = parts[0]
+            if float(parts[11]) < MIN_BLAST_BITSCORE:
+                continue
             if idn not in blast_hits:
                 blast_hits[idn] = [parts[1]]
                 score = float(parts[11])
