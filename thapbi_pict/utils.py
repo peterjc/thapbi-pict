@@ -494,8 +494,8 @@ def load_metadata(
     if metadata_sort=True, then the table rows are sorted based on the
     requested metadata - otherwise the table row order is preserved.
 
-    Returns
-    -------
+    Return values:
+
     - list of field sample metadata values (each a list of N values)
     - matching list of associated sequenced sample(s),
     - list of the N field names,
