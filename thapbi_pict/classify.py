@@ -406,8 +406,10 @@ def method_blast(
     # and they will be missing in the BLAST output.
     # Therefore must look at the FASTA input file too.
 
-    # Load the top-equal BLAST results into a dict,
+    # Load the top-equal BLAST results into a dict, values are lists hit MD5,
+    # and the associated score in a second dict
     blast_hits = {}
+    blast_score = {}
     score = None
     with open(blast_out) as handle:
         for line in handle:
@@ -420,6 +422,7 @@ def method_blast(
             if idn not in blast_hits:
                 blast_hits[idn] = [parts[1]]
                 score = float(parts[11])
+                blast_score[idn] = parts[11]  # as string
             elif score == float(parts[11]):
                 # Tied hit
                 blast_hits[idn].append(parts[1])
@@ -431,11 +434,14 @@ def method_blast(
             abundance = abundance_from_read_name(idn)
             if idn in blast_hits:
                 db_md5s = blast_hits[idn]
+                score = blast_score[idn]
                 t = md5_to_taxon(db_md5s, session)
                 if not t:
                     sys.exit("ERROR: No taxon entry for %s" % idn)
                 taxid, genus_species, note = taxid_and_sp_lists(t)
-                note = ("%i BLAST hits. %s" % (len(db_md5s), note)).strip()
+                note = (
+                    "%i BLAST hits (bit score %s). %s" % (len(db_md5s), score, note)
+                ).strip()
             else:
                 taxid = 0
                 genus_species = ""
