@@ -113,6 +113,7 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
 def class_list_from_tally_and_db_list(tally, db_sp_list):
     """Sorted list of all class names used in a confusion table dict."""
     classes = set()
+    impossible = set()
     for expt, pred in tally:
         if expt:
             for sp in expt.split(";"):
@@ -121,10 +122,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                 ), "%s from expected value %s is not species-level" % (sp, pred)
                 classes.add(sp)
                 if sp not in db_sp_list:
-                    sys.stderr.write(
-                        "WARNING: Expected species %s was not a possible prediction.\n"
-                        % sp
-                    )
+                    impossible.add(sp)
         if pred:
             for sp in pred.split(";"):
                 assert species_level(
@@ -136,6 +134,12 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                         "ERROR: Species %s was not in the prediction file's header!"
                         % sp
                     )
+    if impossible:
+        sys.stderr.write(
+            "WARNING: %i expected species were not a possible prediction: %s\n"
+            % (len(impossible), ";".join(sorted(impossible)))
+        )
+
     classes.update(db_sp_list)
     return sorted(classes)
 
