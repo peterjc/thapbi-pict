@@ -37,7 +37,7 @@ done
 
 echo "Checking warning for unexpected species"
 set +o pipefail
-thapbi_pict assess -m identity --input tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "Expected species Phytophthora fallax was not a possible prediction"
+thapbi_pict assess -m identity --input tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "WARNING: 1 expected species were not a possible prediction: Phytophthora fallax"
 set -o pipefail
 
 
