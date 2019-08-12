@@ -782,7 +782,7 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
     seq_count = 0
     match_count = 0
     for filename in fasta_files:
-        sys.stderr.write("Running %s classifer on %s\n" % (method, filename))
+        sys.stderr.write("Running %s classifier on %s\n" % (method, filename))
         sys.stdout.flush()
         sys.stderr.flush()
 

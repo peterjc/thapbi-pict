@@ -1087,7 +1087,7 @@ def main(args=None):
         required=True,
         nargs="+",
         help="One or more prediction files (*.method.tsv) or folder names. "
-        "The files should follow this naming convention, where the classifer "
+        "The files should follow this naming convention, where the classifier "
         "method appearing in the extension can be set via -m / --method.",
     )
     parser_sample_summary.add_argument("-m", "--method", **ARG_METHOD_INPUT)

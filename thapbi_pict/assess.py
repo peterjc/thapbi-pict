@@ -387,7 +387,7 @@ def main(
         else:
             sys.exit("ERROR: Invalid level value %r" % level)
 
-    # Consistency check - we know swarm classifer breaks this, important at useq level
+    # Consistency check - we know swarm classifier breaks this, important at useq level
     if level in ["useq"]:
         md5_pred = {}
         md5_expt = {}
