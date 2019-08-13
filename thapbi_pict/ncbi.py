@@ -14,13 +14,13 @@ in FASTA format::
 
 Or, using the NCBI Entrez Direct command line tools::
 
-    esearch -db nucleotide \
+    $ esearch -db nucleotide \
             -query "its1 AND Phytophthora[Organism] AND 150:800[Sequence Length]" \
             | efetch -format fasta > example.fasta
 
 Then, import this into our ITS DB using::
 
-    thapbi_pict ncbi-import -d example.sqlite example.fasta
+    $ thapbi_pict ncbi-import -d example.sqlite example.fasta
 
 """  # noqa: E501
 
