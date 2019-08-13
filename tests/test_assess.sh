@@ -30,9 +30,9 @@ done
 echo "Checking classifier assessment at different levels"
 for LEVEL in sample sseq useq; do
     thapbi_pict assess -i tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -l $LEVEL -m identity
-    diff tests/assess/tally_$LEVEL.tsv $TMP/tally.tsv
-    diff tests/assess/assess_$LEVEL.tsv $TMP/assess.tsv
-    diff tests/assess/confusion_$LEVEL.tsv $TMP/confusion.tsv
+    diff $TMP/tally.tsv tests/assess/tally_$LEVEL.tsv
+    diff $TMP/assess.tsv tests/assess/assess_$LEVEL.tsv
+    diff $TMP/confusion.tsv tests/assess/confusion_$LEVEL.tsv
 done
 
 echo "Checking warning for unexpected species"
