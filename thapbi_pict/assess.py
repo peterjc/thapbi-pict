@@ -548,7 +548,7 @@ def main(
         except ZeroDivisionError:
             ad_hoc_loss = 0.0
         handle.write(
-            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\t%0.2f\n"
+            "%s\t%i\t%i\t%i\t%i\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.4f\t%0.3f\n"
             % (
                 sp,
                 tp,
