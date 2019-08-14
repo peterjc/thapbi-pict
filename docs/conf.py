@@ -82,6 +82,17 @@ html_theme = "sphinx_rtd_theme"
 # https://sphinx-rtd-theme.readthedocs.io/en/latest/configuring.html
 html_theme_options = {"prev_next_buttons_location": "both"}
 
+# Based on:
+# https://github.com/readthedocs/sphinx_rtd_theme/issues/231#issuecomment-126447493
+html_context = {
+    "display_github": True,  # Add 'Edit on Github' link instead of 'View page source'
+    "github_user": "peterjc",
+    "github_repo": "thapbi-pict",
+    "github_version": "master",
+    "conf_py_path": "/docs/",
+    # "source_suffix": source_suffix,
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
