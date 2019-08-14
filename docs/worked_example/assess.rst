@@ -224,14 +224,14 @@ You should be able to open this ``DNA15MIX.assess.tsv`` file in R, Excel, etc.
 ========================= === === === === === ===========
 Species                    TP  FP  FN  TN ... Ad-hoc-loss
 ========================= === === === === === ===========
-OVERALL                     8   0   7 132 ...        0.47
-Phytophthora acerina        0   0   0   1 ...        0.00
-Phytophthora agathidicida   0   0   0   1 ...        0.00
-Phytophthora alticola       0   0   0   1 ...        0.00
+OVERALL                     8   0   7 132 ...       0.467
+Phytophthora acerina        0   0   0   1 ...       0.000
+Phytophthora agathidicida   0   0   0   1 ...       0.000
+Phytophthora alticola       0   0   0   1 ...       0.000
 ...                       ... ... ... ... ...         ...
-Phytophthora austrocedri    1   0   0   0 ...        0.00
+Phytophthora austrocedri    1   0   0   0 ...       0.000
 ...                       ... ... ... ... ...         ...
-Phytophthora boehmeriae     0   0   1   0 ...        1.00
+Phytophthora boehmeriae     0   0   1   0 ...       1.000
 ...                       ... ... ... ... ...         ...
 ========================= === === === === === ===========
 
@@ -265,14 +265,14 @@ The table this time is similar:
 ========================== === === === === === ===========
 Species                     TP  FP  FN  TN ... Ad-hoc-loss
 ========================== === === === === === ===========
-OVERALL                     32   6  13 537 ...        0.37
-Phytophthora acerina         0   0   0   4 ...        0.00
-Phytophthora agathidicida    0   3   0   1 ...        1.00
-Phytophthora alticola        0   0   0   4 ...        0.00
+OVERALL                     32   6  13 537 ...       0.373
+Phytophthora acerina         0   0   0   4 ...       0.000
+Phytophthora agathidicida    0   3   0   1 ...       1.000
+Phytophthora alticola        0   0   0   4 ...       0.000
 ...                        ... ... ... ... ...         ...
-Phytophthora austrocedri     1   0   0   3 ...        0.00
+Phytophthora austrocedri     1   0   0   3 ...       0.000
 ...                        ... ... ... ... ...         ...
-Phytophthora boehmeriae      0   0   4   0 ...        1.00
+Phytophthora boehmeriae      0   0   4   0 ...       1.000
 ...                        ... ... ... ... ...         ...
 ========================== === === === === === ===========
 
