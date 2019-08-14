@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.3.9  *pending*  Record BLAST bit score for debugging. Merge ``thapbi assess`` warnings.
+v0.3.9  2019-08-14 Log BLAST bit score. Merge ``thapbi assess`` warnings, 3dp for ad-hoc loss.
 v0.3.8  2019-08-09 The ``blast`` classifier now applies a minimum BLAST bit score of 100.
 v0.3.7  2019-08-05 Added Python API to the main documentation.
 v0.3.6  2019-07-19 Added Zenodo FASTQ link to worked example, now includes ``assess`` command.
