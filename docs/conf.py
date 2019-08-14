@@ -1,6 +1,7 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
+import sys
 
 import thapbi_pict
 
@@ -108,12 +109,44 @@ numpydoc_class_members_toctree = False
 # on which this is based.
 
 
+def insert_github_link(filename):
+    """Insert file specific :github_url: metadata for theme breadcrumbs."""
+    assert "/" not in filename and filename.endswith(".rst")
+    with open("api/" + filename) as handle:
+        text = handle.read()
+    if ":github_url:" in text:
+        return
+
+    python = filename[:-4].replace(".", "/") + "/__init__.py"
+    if not os.path.isfile(os.path.join("../", python)):
+        python = filename[:-4].replace(".", "/") + ".py"
+    if not os.path.isfile(os.path.join("../", python)):
+        sys.stderr.write(
+            "WARNING: Could not map %s to a Python file, e.g. %s\n" % (filename, python)
+        )
+        return
+
+    text = ":github_url: https://github.com/%s/%s/blob/%s/%s\n\n%s" % (
+        html_context["github_user"],
+        html_context["github_repo"],
+        html_context["github_version"],
+        python,
+        text,
+    )
+    with open("api/" + filename, "w") as handle:
+        handle.write(text)
+
+
 def run_apidoc(_):
     """Call sphinx-apidoc on Bio and BioSQL modules."""
     from sphinx.ext.apidoc import main as apidoc_main
 
     apidoc_main(["-M", "-e", "-F", "-o", "api/", "../thapbi_pict"])
     os.remove("api/thapbi_pict.rst")  # replaced with index.rst
+
+    for f in os.listdir("api/"):
+        if f.endswith(".rst"):
+            insert_github_link(f)
 
 
 def setup(app):
