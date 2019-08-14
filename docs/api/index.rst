@@ -3,8 +3,8 @@ Python API
 
 .. automodule:: thapbi_pict
    :members:
-      :undoc-members:
-         :show-inheritance:
+   :undoc-members:
+   :show-inheritance:
 
 .. toctree::
    :maxdepth: 1
