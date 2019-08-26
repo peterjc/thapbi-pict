@@ -491,6 +491,25 @@ def pipeline(args=None):
     sys.stderr.write("All done!\n")
 
 
+def ena_submit(args=None):
+    """Subcommand to run multiple-output-folder summary at sample level."""
+    from .ena_submit import main
+
+    if args.metadata:
+        check_input_file(args.metadata)
+        if not args.metacols:
+            sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    return main(
+        inputs=args.input,
+        mapping=args.mapping,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
+        metadata_fieldnames=args.metafields,
+        metadata_index=args.metaindex,
+        debug=args.verbose,
+    )
+
+
 # Common arguments
 # ================
 
@@ -1424,6 +1443,52 @@ def main(args=None):
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=edit_graph)
     del subcommand_parser  # To prevent accidentally adding more
+
+    # submit samples to ENA
+    parser_submit = subparsers.add_parser(
+        "ena-submit",
+        description="Prepare paired FASTQ files for upload to ENA/SRA.",
+        epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA "
+        "with basic metadata. Assumes you have relevant information in a TSV metadata "
+        "table. Supports simple mapping between your terms and those in any associated "
+        "ontology. For example you might map field 'Sample source' to the GSC MIxS "
+        "field 'environment (material)', and map the value 'root-wash' to "
+        "'root matter' or 'ENVO_01000349').",
+    )
+    parser_submit.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    arg = parser_submit.add_argument("-t", "--metadata", **ARG_METADATA)
+    arg.required = True
+    arg.help = arg.help.replace("Optional", "Required")
+    del arg
+    arg = parser_submit.add_argument("-c", "--metacols", **ARG_METACOLS)
+    arg.required = True
+    arg.help = (
+        "Comma separated list (e.g. 2,3,5) of columns whose sample attributes "
+        "should be included in the XML output (e.g. geographic location, environment)."
+    )
+    del arg
+    arg = parser_submit.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    arg.help = arg.help.replace("If using metadata, which", "Which")
+    del arg
+    arg = parser_submit.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    arg.help = (
+        "If using metadata, which row should be used as the field names? Default 1."
+    )
+    del arg
+    parser_submit.add_argument(
+        "-m",
+        "--mapping",
+        type=str,
+        metavar="FILENAME",
+        help="Tabular file with two columns, mapping field names and/or values in "
+        "column one to the text to use in the XML in column two. For example, you "
+        "could map columns with field names 'Latitude' and 'Longitude' to 'geographic "
+        "location (latitude)' and 'geographic location (longitude)' to match Genomic "
+        "Standards Consortium (GSC) Minimum Information about any Sequence (MIxS).",
+    )
+    parser_submit.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_submit.set_defaults(func=ena_submit)
+    del parser_submit
 
     # What have we been asked to do?
     options = parser.parse_args(args)
