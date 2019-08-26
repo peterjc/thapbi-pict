@@ -500,12 +500,14 @@ def ena_submit(args=None):
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
-        inputs=args.input,
+        fastq=args.input,
+        samplexml=args.samplexml,
         mapping=args.mapping,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        tmp_dir=args.temp,
         debug=args.verbose,
     )
 
@@ -1456,6 +1458,16 @@ def main(args=None):
         "'root matter' or 'ENVO_01000349').",
     )
     parser_submit.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    parser_submit.add_argument(
+        "-s",
+        "--samplexml",
+        type=str,
+        default="",
+        metavar="PATH",
+        help="Output XML filename (all in one), or directory (one XML file per "
+        "FASTQ pair). Defaults to one XML file next to each FASTQ pair. "
+        "Use '-' for stdout.",
+    )
     arg = parser_submit.add_argument("-t", "--metadata", **ARG_METADATA)
     arg.required = True
     arg.help = arg.help.replace("Optional", "Required")
@@ -1486,6 +1498,8 @@ def main(args=None):
         "location (latitude)' and 'geographic location (longitude)' to match Genomic "
         "Standards Consortium (GSC) Minimum Information about any Sequence (MIxS).",
     )
+    # Can't use -t for --temp as already using for --metadata:
+    parser_submit.add_argument("--temp", **ARG_TEMPDIR)
     parser_submit.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_submit.set_defaults(func=ena_submit)
     del parser_submit
