@@ -499,6 +499,10 @@ def ena_submit(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    if not args.metancbitaxid and not args.defaultncbitaxid:
+        sys.exit(
+            "ERROR: Need -n / --metancbitaxid and/or --defaultncbitaxid arguments."
+        )
     return main(
         fastq=args.input,
         samplexml=args.output,
@@ -509,6 +513,7 @@ def ena_submit(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         metadata_ncbi_taxid=args.metancbitaxid,
+        default_ncbi_taxid=args.defaultncbitaxid,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1498,6 +1503,14 @@ def main(args=None):
         "If using metadata, which row should be used as the field names? Default 1."
     )
     del arg
+    parser_submit.add_argument(
+        "--defaultncbitaxid",
+        type=int,
+        default="0",  # We will reject this, would be rejected by ENA anyway
+        metavar="TAXID",
+        help="Default NCBI taxid, probably an environment metagenome taxid like "
+        "939928, rhizosphere metagenome. Required if -n / --metancbitaxid ommitted.",
+    )
     parser_submit.add_argument(
         "-m",
         "--mapping",

@@ -18,6 +18,10 @@ from .prepare import find_fastq_pairs
 from .utils import load_metadata_dict
 from .utils import sample_sort
 
+# Using https://www.ebi.ac.uk/ena/submit/drop-box/submit/
+# Taxon unclassified sequences id 12908 is not submittable.
+# Taxon metagenomes id 408169 is not submittable.
+# However, e.g. 939928 rhizosphere metagenome works.
 
 XML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
 <SAMPLE_SET>
@@ -33,6 +37,8 @@ XML_SAMPLE_HEADER = """  <SAMPLE alias="%s" center_name="">
 #     </SAMPLE_NAME>
 # """
 
+# From the test service, <SAMPLE_NAME> is required, and
+# need at least one entry giving the species (e.g. taxid).
 XML_SAMPLE_NAME = """    <SAMPLE_NAME>
       <TAXON_ID>%i</TAXON_ID>
     </SAMPLE_NAME>
@@ -67,10 +73,16 @@ def main(
     metadata_fieldnames=None,
     metadata_index=None,
     metadata_ncbi_taxid=None,
+    default_ncbi_taxid=None,
     tmp_dir=None,
     debug=False,
 ):
     """Implement the ``thapbi_pict ena-submit`` command."""
+    if default_ncbi_taxid:
+        default_ncbi_taxid = int(default_ncbi_taxid)
+    elif not metadata_ncbi_taxid:
+        sys.exit("ERROR: Missing taxid configuration.")
+
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
 
     if debug:
@@ -120,7 +132,7 @@ def main(
             # Add it to the columns list...
             added_taxid = True
             cols.append(metadata_ncbi_taxid)
-            metadata_cols = ",".join(cols)
+            metadata_cols = ",".join(str(_) for _ in cols)
         taxid_offset = cols.index(metadata_ncbi_taxid)
         del cols
 
@@ -158,9 +170,9 @@ def main(
                         % (sample, taxid)
                     )
             else:
-                taxid = None
+                taxid = default_ncbi_taxid
         else:
-            taxid = None
+            taxid = default_ncbi_taxid
         if added_taxid:
             meta = meta[:-1]
 
@@ -169,10 +181,8 @@ def main(
             sample_xml_handle.write(XML_HEADER)
         if debug:
             sys.stderr.write("DEBUG: %s\n" % stem)
-        sample_xml_handle.write(XML_SAMPLE_HEADER % stem)
-
-        if taxid is not None:
-            sample_xml_handle.write(XML_SAMPLE_NAME % taxid)
+        sample_xml_handle.write(XML_SAMPLE_HEADER % sample)
+        sample_xml_handle.write(XML_SAMPLE_NAME % taxid)
 
         if shared or metadata_cols:
             sample_xml_handle.write(XML_ATTRS_HEADER)
