@@ -501,7 +501,8 @@ def ena_submit(args=None):
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     return main(
         fastq=args.input,
-        samplexml=args.samplexml,
+        samplexml=args.output,
+        shared=args.shared,
         mapping=args.mapping,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
@@ -1459,8 +1460,8 @@ def main(args=None):
     )
     parser_submit.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     parser_submit.add_argument(
-        "-s",
-        "--samplexml",
+        "-o",
+        "--output",
         type=str,
         default="",
         metavar="PATH",
@@ -1497,6 +1498,17 @@ def main(args=None):
         "could map columns with field names 'Latitude' and 'Longitude' to 'geographic "
         "location (latitude)' and 'geographic location (longitude)' to match Genomic "
         "Standards Consortium (GSC) Minimum Information about any Sequence (MIxS).",
+    )
+    parser_submit.add_argument(
+        "-s",
+        "--shared",
+        type=str,
+        metavar="FILENAME",
+        help="Tabular file with two columns, containing additional field names and "
+        "values to be included in the XML for each sample. For example, "
+        "'ENA-CHECKLIST' and 'ERC000025' (GSC MIxS miscellaneous natural or "
+        "artificial environment), or 'project name' (mandatory on GSC MIxS "
+        "checklists) and 'Phyto-Threats'.",
     )
     # Can't use -t for --temp as already using for --metadata:
     parser_submit.add_argument("--temp", **ARG_TEMPDIR)

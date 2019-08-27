@@ -55,6 +55,7 @@ XML_FOOTER = """</SAMPLE_SET>
 def main(
     fastq,
     samplexml=None,
+    shared=None,
     mapping=None,
     metadata_file=None,
     metadata_cols=None,
@@ -68,6 +69,20 @@ def main(
 
     if debug:
         sys.stderr.write("Preparing %i FASTQ pairs\n" % len(fastq_file_pairs))
+
+    if shared:
+        if debug:
+            sys.stderr.write("Loading shared sample metadata from %s\n" % shared)
+        with open(shared) as handle:
+            shared_attr = []
+            for line in handle:
+                if line.startswith("#"):
+                    continue
+                key, value = line.rstrip("\n").split("\t", 1)
+                shared_attr.append(XML_ATTR % (key, value))
+            shared_attr = "".join(shared_attr)
+    else:
+        shared_attr = None
 
     combined_xml = samplexml and (samplexml == "-" or not os.path.isdir(samplexml))
 
@@ -118,8 +133,10 @@ def main(
         if debug:
             sys.stderr.write("DEBUG: %s\n" % stem)
         sample_xml_handle.write(XML_SAMPLE_HEADER % stem)
-        if metadata_cols:
+        if shared or metadata_cols:
             sample_xml_handle.write(XML_ATTRS_HEADER)
+            if shared:
+                sample_xml_handle.write(shared_attr)
             for key, value in zip(meta_names, metadata.get(sample, meta_default)):
                 if value:
                     # TODO: Apply mapping
