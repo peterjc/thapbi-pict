@@ -26,10 +26,15 @@ XML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
 XML_SAMPLE_HEADER = """  <SAMPLE alias="%s" center_name="">
 """
 
+# XML_SAMPLE_NAME = """    <SAMPLE_NAME>
+#       <TAXON_ID>1284369</TAXON_ID>
+#       <SCIENTIFIC_NAME>stomach metagenome</SCIENTIFIC_NAME>
+#       <COMMON_NAME></COMMON_NAME>
+#     </SAMPLE_NAME>
+# """
+
 XML_SAMPLE_NAME = """    <SAMPLE_NAME>
-      <TAXON_ID>1284369</TAXON_ID>
-      <SCIENTIFIC_NAME>stomach metagenome</SCIENTIFIC_NAME>
-      <COMMON_NAME></COMMON_NAME>
+      <TAXON_ID>%i</TAXON_ID>
     </SAMPLE_NAME>
 """
 
@@ -61,6 +66,7 @@ def main(
     metadata_cols=None,
     metadata_fieldnames=None,
     metadata_index=None,
+    metadata_ncbi_taxid=None,
     tmp_dir=None,
     debug=False,
 ):
@@ -106,9 +112,22 @@ def main(
     else:
         sample_xml_handle = None
 
+    added_taxid = False
+    if metadata_ncbi_taxid:
+        metadata_ncbi_taxid = int(metadata_ncbi_taxid)
+        cols = [int(_) for _ in metadata_cols.split(",")]
+        if metadata_ncbi_taxid not in [int(_) for _ in metadata_cols.split(",")]:
+            # Add it to the columns list...
+            added_taxid = True
+            cols.append(metadata_ncbi_taxid)
+            metadata_cols = ",".join(cols)
+        taxid_offset = cols.index(metadata_ncbi_taxid)
+        del cols
+
     samples = sample_sort(
         os.path.basename(stem) for stem, _raw_R1, _raw_R2 in fastq_file_pairs
     )
+
     (metadata, meta_names, meta_default, missing_meta) = load_metadata_dict(
         samples,
         metadata_file,
@@ -127,17 +146,39 @@ def main(
 
     for stem, _raw_R1, _raw_R2 in fastq_file_pairs:
         sample = os.path.split(stem)[1]
+        meta = list(zip(meta_names, metadata.get(sample, meta_default)))
+        if metadata_ncbi_taxid:
+            taxid = meta[taxid_offset][1]
+            if taxid:
+                try:
+                    taxid = int(taxid)
+                except ValueError:
+                    sys.exit(
+                        "ERROR: Expected integer for NCBI TAXID for %s, got %s"
+                        % (sample, taxid)
+                    )
+            else:
+                taxid = None
+        else:
+            taxid = None
+        if added_taxid:
+            meta = meta[:-1]
+
         if not combined_xml:
             sample_xml_handle = open(os.path.join(shared_tmp, sample + ".xml"), "w")
             sample_xml_handle.write(XML_HEADER)
         if debug:
             sys.stderr.write("DEBUG: %s\n" % stem)
         sample_xml_handle.write(XML_SAMPLE_HEADER % stem)
+
+        if taxid is not None:
+            sample_xml_handle.write(XML_SAMPLE_NAME % taxid)
+
         if shared or metadata_cols:
             sample_xml_handle.write(XML_ATTRS_HEADER)
             if shared:
                 sample_xml_handle.write(shared_attr)
-            for key, value in zip(meta_names, metadata.get(sample, meta_default)):
+            for key, value in meta:
                 if value:
                     # TODO: Apply mapping
                     sample_xml_handle.write(XML_ATTR % (key, value))

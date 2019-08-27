@@ -508,6 +508,7 @@ def ena_submit(args=None):
         metadata_cols=args.metacols,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        metadata_ncbi_taxid=args.metancbitaxid,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1483,6 +1484,15 @@ def main(args=None):
     arg = parser_submit.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     arg.help = arg.help.replace("If using metadata, which", "Which")
     del arg
+    parser_submit.add_argument(
+        "-n",
+        "--metancbitaxid",
+        type=str,
+        default="",
+        metavar="COL",
+        help="Column containing NCBI taxid, likely an environment metagenome "
+        "taxid like 939928, rhizosphere metagenome.",
+    )
     arg = parser_submit.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     arg.help = (
         "If using metadata, which row should be used as the field names? Default 1."
