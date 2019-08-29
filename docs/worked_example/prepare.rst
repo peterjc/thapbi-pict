@@ -141,7 +141,7 @@ another control had a maximum ITS1 abundance of 217, while the remaining
 controls had no ITS1 sequence above the default level. In that case, the tool
 would take maximum 217 as the abundance threshold for the non-control samples.
 
-For example, to lower the threshold from the default to 50, you could use:
+If you wished to lower the threshold from the default to 50, you could use:
 
 .. code:: console
 
@@ -172,7 +172,7 @@ For example, to lower the threshold from the default to 50, you could use:
 For the woody host data, each plate had a negative control sample which should
 contain no ITS1 sequences. We can specify the negative controls with ``-n`` or
 ``--negctrls`` by entering the four FASTQ filenames in full, but since they
-have a common prefix we can use a simple wild card:
+have a common prefix we can use a simple wildcard:
 
 .. code:: console
 
