@@ -74,7 +74,7 @@ or for running the combined pipeline command. The download is about 215MB:
     244
 
 Ideally confirm the MD5 checksum is ``3435aa5b567897ab23e6aac46fb822a9`` by
-running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` on
+running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` (on
 macOS). This is just to double check there were no problems with the download.
 
 If you skip the raw data, instead you must download the pre-prepared 122 FASTA
