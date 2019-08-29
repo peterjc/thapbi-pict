@@ -44,7 +44,7 @@ base pair different). The first line is a header comment line (starting with
 ``#``) labelling the columns, which are:
 
 * Unique sequence name in ``<checksum>_<abundance>`` format.
-* NCBI taxid of any predictions (semi-colon separated, as order as species)
+* NCBI taxid of any predictions (semi-colon separated, same order as species)
 * Genus-species of any predictions (semi-colon separated, alphabetical)
 * Text note field (arbitrary debug text from the tool)
 
