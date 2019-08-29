@@ -249,7 +249,7 @@ as the database will contain many species, while a community might contain
 only ten).
 
 Following this we get one line per species, considering this species in
-isolation (making this a tradiational and simpler to interpret classification
+isolation (making this a traditional and simpler to interpret classification
 problem). Here there is only one sample, so this time TP+FP+FN+TN=1.
 
 Next, let's run the assess command on all four positive control samples, just
