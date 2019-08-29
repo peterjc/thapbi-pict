@@ -32,7 +32,7 @@ replicates from each of 14 sample sites where the file name stem is
     $ ls -1 intermediate/*.fasta | wc -l
     122
 
-You should find 122 small FASTQ files in the ``intermediate/`` folder (or you
+You should find 122 small FASTA files in the ``intermediate/`` folder (or you
 can get these from the compressed file as described above). Note this is
 robust to being interupted and restarted (e.g. a job might time out on the
 cluster).
