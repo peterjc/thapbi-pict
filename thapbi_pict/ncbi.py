@@ -20,7 +20,7 @@ Or, using the NCBI Entrez Direct command line tools::
 
 Then, import this into our ITS DB using::
 
-    $ thapbi_pict ncbi-import -d example.sqlite example.fasta
+    $ thapbi_pict ncbi-import -d example.sqlite -i example.fasta
 
 """  # noqa: E501
 
