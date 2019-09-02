@@ -669,6 +669,8 @@ def load_metadata(
         if line.startswith("#"):
             line = line[1:]
         parts = line.rstrip("\n").split("\t")
+        if len(parts) < max(value_cols) + 1:
+            sys.exit("ERROR: Not enough columns in metadata name row")
         names = [parts[_].strip() for _ in value_cols]
         if debug:
             sys.stderr.write(
