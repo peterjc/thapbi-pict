@@ -65,7 +65,7 @@ XML_FOOTER = """</SAMPLE_SET>
 
 def main(
     fastq,
-    samplexml=None,
+    output=None,
     shared=None,
     mapping=None,
     metadata_file=None,
@@ -102,8 +102,6 @@ def main(
     else:
         shared_attr = None
 
-    combined_xml = samplexml and (samplexml == "-" or not os.path.isdir(samplexml))
-
     if tmp_dir:
         # Up to the user to remove the files
         tmp_obj = None
@@ -115,14 +113,14 @@ def main(
     if debug:
         sys.stderr.write("DEBUG: Temp folder %s\n" % shared_tmp)
 
-    if combined_xml:
-        if samplexml == "-":
-            sample_xml_handle = sys.stdout
-        else:
-            sample_xml_handle = open(os.path.join(shared_tmp, "combined.xml"), "w")
-        sample_xml_handle.write(XML_HEADER)
+    if output == "-":
+        sample_xml_handle = sys.stdout
+    elif os.path.isdir(output):
+        sample_xml_handle = open(os.path.join(shared_tmp, "sample.xml"), "w")
     else:
-        sample_xml_handle = None
+        sys.exit("ERROR: Output directory does not exist: %s\n" % output)
+
+    sample_xml_handle.write(XML_HEADER)
 
     added_taxid = False
     if metadata_ncbi_taxid:
@@ -175,10 +173,6 @@ def main(
             taxid = default_ncbi_taxid
         if added_taxid:
             meta = meta[:-1]
-
-        if not combined_xml:
-            sample_xml_handle = open(os.path.join(shared_tmp, sample + ".xml"), "w")
-            sample_xml_handle.write(XML_HEADER)
         if debug:
             sys.stderr.write("DEBUG: %s\n" % stem)
         sample_xml_handle.write(XML_SAMPLE_HEADER % sample)
@@ -194,18 +188,10 @@ def main(
                     sample_xml_handle.write(XML_ATTR % (key, value))
             sample_xml_handle.write(XML_ATTRS_FOOTER)
         sample_xml_handle.write(XML_SAMPLE_FOOTER)
-        if not combined_xml:
-            sample_xml_handle.write(XML_FOOTER)
-            sample_xml_handle.close()
-            shutil.move(
-                os.path.join(shared_tmp, sample + ".xml"),
-                os.path.join(
-                    samplexml if samplexml else os.path.split(stem)[0], sample + ".xml"
-                ),
-            )
 
-    if combined_xml:
-        sample_xml_handle.write(XML_FOOTER)
-        if samplexml != "-":
-            sample_xml_handle.close()
-            shutil.move(os.path.join(shared_tmp, "combined.xml"), samplexml)
+    sample_xml_handle.write(XML_FOOTER)
+    if output != "-":
+        sample_xml_handle.close()
+        shutil.move(
+            os.path.join(shared_tmp, "sample.xml"), os.path.join(output, "sample.xml")
+        )

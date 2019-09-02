@@ -505,7 +505,7 @@ def ena_submit(args=None):
         )
     return main(
         fastq=args.input,
-        samplexml=args.output,
+        output=args.output,
         shared=args.shared,
         mapping=args.mapping,
         metadata_file=args.metadata,
@@ -1469,11 +1469,10 @@ def main(args=None):
         "-o",
         "--output",
         type=str,
-        default="",
+        default=".",
         metavar="PATH",
-        help="Output XML filename (all in one), or directory (one XML file per "
-        "FASTQ pair). Defaults to one XML file next to each FASTQ pair. "
-        "Use '-' for stdout.",
+        help="Output directory for XML files (sample.xml, experiment.xml, run.xml). "
+        "Default '.' for current directory. Use '-' for stdout.",
     )
     arg = parser_submit.add_argument("-t", "--metadata", **ARG_METADATA)
     arg.required = True
