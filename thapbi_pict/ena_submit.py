@@ -23,7 +23,7 @@ from .utils import sample_sort
 # Taxon metagenomes id 408169 is not submittable.
 # However, e.g. 939928 rhizosphere metagenome works.
 
-XML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
+XML_SAMPLE_SET_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
 <SAMPLE_SET>
 """
 
@@ -59,8 +59,101 @@ XML_ATTRS_FOOTER = """    </SAMPLE_ATTRIBUTES>
 XML_SAMPLE_FOOTER = """  </SAMPLE>
 """
 
-XML_FOOTER = """</SAMPLE_SET>
+XML_SAMPLE_SET_FOOTER = """</SAMPLE_SET>
 """
+
+######################
+
+XML_EXPR_SET_HEADER = """<EXPERIMENT_SET>
+"""
+
+XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="%s">
+       <TITLE>%s</TITLE>
+       <STUDY_REF accession="%s"/>
+       <DESIGN>
+           <DESIGN_DESCRIPTION/>
+           <SAMPLE_DESCRIPTOR accession="%s"/>
+           <LIBRARY_DESCRIPTOR>
+               <LIBRARY_NAME/>
+               <LIBRARY_STRATEGY>RNA-Seq</LIBRARY_STRATEGY>
+               <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
+               <LIBRARY_SELECTION>DNA</LIBRARY_SELECTION>
+               <LIBRARY_LAYOUT>
+                   <PAIRED NOMINAL_LENGTH="250" NOMINAL_SDEV="30"/>
+               </LIBRARY_LAYOUT>
+               <LIBRARY_CONSTRUCTION_PROTOCOL>Nested PCR with Phytophthora ITS1 primers. Product amplified and indexed on 96-well plates before library preparation.</LIBRARY_CONSTRUCTION_PROTOCOL>
+           </LIBRARY_DESCRIPTOR>
+       </DESIGN>
+       <PLATFORM>
+           <ILLUMINA>
+               <INSTRUMENT_MODEL>Illumina MiSeq</INSTRUMENT_MODEL>
+           </ILLUMINA>
+       </PLATFORM>
+       <EXPERIMENT_ATTRIBUTES>
+           <EXPERIMENT_ATTRIBUTE>
+               <TAG>library preparation date</TAG>
+               <VALUE>%s</VALUE>
+           </EXPERIMENT_ATTRIBUTE>
+       </EXPERIMENT_ATTRIBUTES>
+   </EXPERIMENT>
+"""  # noqa: E501
+
+XML_EXPR_SET_FOOTER = """</EXPERIMENT_SET>
+"""
+
+######################
+
+XML_RUN_SET_HEADER = """<RUN_SET>
+"""
+
+XML_RUN_TEMPLATE = """    <RUN alias="run_%s" center_name="">
+        <EXPERIMENT_REF refname="exp_run_%s"/>
+        <DATA_BLOCK>
+            <FILES>
+                <FILE filename="%s" filetype="fastq"
+                    checksum_method="MD5" checksum="%s"/>
+                <FILE filename="%s" filetype="fastq"
+                    checksum_method="MD5" checksum="%s"/>
+            </FILES>
+        </DATA_BLOCK>
+    </RUN>
+"""
+
+XML_RUN_SET_FOOTER = """</RUN_SET>
+"""
+
+######################
+
+
+def write_expr(handle, pairs):
+    """Write experiment.xml to handle."""
+    handle.write(XML_EXPR_SET_HEADER)
+    for stem, _raw_R1, _raw_R2 in pairs:
+        sample = os.path.split(stem)[1]
+        title = ""
+        study_accession = ""
+        sample_accession = ""
+        seq_date = ""  # get from directory name?
+        handle.write(
+            XML_EXPR_TEMPLATE
+            % (sample, title, study_accession, sample_accession, seq_date)
+        )
+    handle.write(XML_EXPR_SET_FOOTER)
+
+
+def write_run(handle, pairs):
+    """Write run.xml to handle."""
+    handle.write(XML_RUN_SET_HEADER)
+    for stem, raw_R1, raw_R2 in pairs:
+        sample = os.path.split(stem)[1]
+        md5_R1 = md5_R2 = ""  # TODO
+        handle.write(
+            XML_RUN_TEMPLATE % (sample, sample, raw_R1, md5_R1, raw_R2, md5_R2)
+        )
+    handle.write(XML_RUN_SET_FOOTER)
+
+
+######################
 
 
 def main(
@@ -115,12 +208,17 @@ def main(
 
     if output == "-":
         sample_xml_handle = sys.stdout
+        expr_xml_handle = sys.stdout
+        run_xml_handle = sys.stdout
     elif os.path.isdir(output):
         sample_xml_handle = open(os.path.join(shared_tmp, "sample.xml"), "w")
+        expr_xml_handle = open(os.path.join(shared_tmp, "experiment.xml"), "w")
+        run_xml_handle = open(os.path.join(shared_tmp, "run.xml"), "w")
     else:
         sys.exit("ERROR: Output directory does not exist: %s\n" % output)
 
-    sample_xml_handle.write(XML_HEADER)
+    sample_xml_handle.write(XML_SAMPLE_SET_HEADER)
+    # expr_xml_handle.write(XML_EXPR_SET_HEADER)
 
     added_taxid = False
     if metadata_ncbi_taxid:
@@ -189,9 +287,15 @@ def main(
             sample_xml_handle.write(XML_ATTRS_FOOTER)
         sample_xml_handle.write(XML_SAMPLE_FOOTER)
 
-    sample_xml_handle.write(XML_FOOTER)
+    sample_xml_handle.write(XML_SAMPLE_SET_FOOTER)
+
+    write_expr(expr_xml_handle, fastq_file_pairs)
+
+    write_run(run_xml_handle, fastq_file_pairs)
+
     if output != "-":
         sample_xml_handle.close()
-        shutil.move(
-            os.path.join(shared_tmp, "sample.xml"), os.path.join(output, "sample.xml")
-        )
+        expr_xml_handle.close()
+        run_xml_handle.close()
+        for name in ("sample.xml", "experiment.xml", "run.xml"):
+            shutil.move(os.path.join(shared_tmp, name), os.path.join(output, name))
