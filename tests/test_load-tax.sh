@@ -24,7 +24,7 @@ thapbi_pict load-tax -d "sqlite:///:memory:" -t new_taxdump_2018-12-01
 if [ ! -f "taxdmp_2014-08-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2014-08-01.zip"; fi
 if [ ! -d "taxdmp_2014-08-01" ]; then unzip taxdmp_2014-08-01.zip -d taxdmp_2014-08-01; fi
 
-# Defaults to all Phytophthora
+# Defaults to all Oomycetes
 thapbi_pict load-tax -d "sqlite:///:memory:" -t taxdmp_2014-08-01
 
 # Request Phytophthora and Peronospora
