@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.0  *Pending*  Expanded default database to include all *Oomycetes* ITS1 from NCBI.
 v0.3.10 2019-09-05 Handle missing or empty input FASTQ files more gracefully.
 v0.3.9  2019-08-14 Log BLAST bit score. Merge ``thapbi assess`` warnings, 3dp for ad-hoc loss.
 v0.3.8  2019-08-09 The ``blast`` classifier now applies a minimum BLAST bit score of 100.
