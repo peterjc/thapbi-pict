@@ -7,12 +7,15 @@
 # file that should have been included as part of this package.
 
 IFS=$'\n\t'
-set -eux
+set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 # Note all tests here (initially) using default database:
 
+echo "============="
 echo "Checking dump"
+echo "============="
+set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 

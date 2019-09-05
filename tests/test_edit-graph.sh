@@ -7,12 +7,15 @@
 # file that should have been included as part of this package.
 
 IFS=$'\n\t'
-set -eux
+set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
+echo "==================="
 echo "Checking edit-graph"
+echo "==================="
+set -x
 thapbi_pict edit-graph 2>&1 | grep "If not using -i / --input argument, require -s / --showdb"
 thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --input argument"
 set -o pipefail

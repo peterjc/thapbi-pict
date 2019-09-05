@@ -7,12 +7,15 @@
 # file that should have been included as part of this package.
 
 IFS=$'\n\t'
-set -eux
+set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
+echo "======================"
 echo "Checking prepare-reads"
+echo "======================"
+set -x
 thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
 set -o pipefail
 

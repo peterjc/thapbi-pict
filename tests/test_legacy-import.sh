@@ -7,12 +7,15 @@
 # file that should have been included as part of this package.
 
 IFS=$'\n\t'
-set -eux
+set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
 
+echo "======================"
 echo "Checking legacy-import"
+echo "======================"
+set -x
 thapbi_pict legacy-import 2>&1 | grep "the following arguments are required"
 thapbi_pict legacy-import -d "sqlite:///:memory:" -i database/legacy/Phytophthora_ITS_database_v0.004.fasta 2>&1 | grep "Taxonomy table empty"
 set -o pipefail
