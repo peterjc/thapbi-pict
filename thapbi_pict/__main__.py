@@ -707,9 +707,10 @@ def main(args=None):
         "-a",
         "--ancestors",
         type=str,
-        default="4776",
+        default="4762",
         help="Comma separated list of NCBI taxids at genus level or higher. "
-        "Default is 4776 for Peronosporales, use 4783 for Phytophthora only.",
+        "Default is 4762 for Oomycetes, use 4776 for Peronosporales, or "
+        "4783 for Phytophthora only.",
     ),
     parser_load_tax.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_load_tax.set_defaults(func=load_tax)
