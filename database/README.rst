@@ -4,17 +4,17 @@ Default ITS1 database
 We include a default ITS1 database with THAPBI PICT using the following three
 sets of sequences:
 
-- Curated Phytophthora ITS1 sequences (at species level) from
+- Curated *Phytophthora* ITS1 sequences (at species level) from
   file ``legacy/Phytophthora_ITS_database_v0.005.fasta`` (in
   a subdirectory within the source code repository), including
   four G-BLOCKS synthetic controls.
 
-- NCBI Peronosporales (including Phytophthora) at genus level,
-  file ``2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
-  entries created with an NCBI Entrez search run on 2019-04-16::
+- NCBI *Oomycetes* (including *Phytophthora*) at genus level,
+  file ``2019-09-05-ITS_Oomycetes_32169.fasta`` with 32169
+  entries created with an NCBI Entrez search run on 2019-09-05::
 
       ((internal AND transcribed AND spacer) OR its1) AND
-      150:10000[sequence length] AND Peronosporales[organism]
+      150:10000[sequence length] AND Oomycetes[organism]
 
 - Observed ITS1 sequences from single isolate positive controls
   run on a MiSeq plate via ``thapbi_pict prepare-reads`` with

@@ -10,7 +10,7 @@ rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
 # In strict mode this will ignore the synthetic controls, we add them later:
 thapbi_pict legacy-import -d "$DB.sqlite" -i "$CURATED"
-thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.fasta -g
+thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-09-05-ITS_Oomycetes_32169.fasta -g
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations
