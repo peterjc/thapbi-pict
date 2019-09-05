@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.3.10 *Pending*  Handle missing or empty input FASTQ files more gracefully.
 v0.3.9  2019-08-14 Log BLAST bit score. Merge ``thapbi assess`` warnings, 3dp for ad-hoc loss.
 v0.3.8  2019-08-09 The ``blast`` classifier now applies a minimum BLAST bit score of 100.
 v0.3.7  2019-08-05 Added Python API to the main documentation.

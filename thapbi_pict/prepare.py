@@ -83,6 +83,24 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"), debug=Fa
                     sys.exit(
                         "ERROR: Did not recognise %r and %r as a pair\n" % (left, right)
                     )
+        if not os.path.isfile(left) and os.path.islink(left):
+            sys.stderr.write("WARNING: Ignoring %s as symlink broken\n" % left)
+            continue
+        if not os.path.isfile(right) and os.path.islink(right):
+            sys.stderr.write("WARNING: Ignoring %s as symlink broken\n" % right)
+            continue
+        for filename in (left, right):
+            if not os.path.isfile(filename):
+                if os.path.islink(filename):
+                    sys.exit("ERROR: Broken symlink: %s" % filename)
+                else:
+                    # What might cause this - other than deletion after our dir listing?
+                    sys.exit("ERROR: Missing file: %s" % filename)
+            if not os.stat(filename).st_size:
+                if filename.endswith(".gz"):
+                    sys.exit("ERROR: Empty gzip file %s" % filename)
+                else:
+                    sys.stderr.write("WARNING: Empty file %s\n" % filename)
         if not stem:
             sys.exit(
                 "ERROR: Did not recognise pair naming for %r and %r\n" % (left, right)
