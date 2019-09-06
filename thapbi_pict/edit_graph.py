@@ -339,6 +339,8 @@ def main(
     md5_list = list(md5_to_seq)
     wanted = set()
     n = len(md5_list)
+    todo = n * (n - 1) // 2
+    done = 0
     distances = np.zeros((n, n), np.uint)
     for i, check1 in enumerate(md5_list):
         seq1 = md5_to_seq[check1]
@@ -346,17 +348,24 @@ def main(
             if i < j:
                 seq2 = md5_to_seq[check2]
                 distances[i, j] = distances[j, i] = d = levenshtein(seq1, seq2)
+                done += 1
+                if debug and done % 100000 == 0:
+                    print(
+                        "DEBUG: Computed %i of %i Levenshtein edit distances (%i%%)"
+                        % (done, todo, int(done * 100.0 / todo))
+                    )
                 if d and d <= max_edit_dist:
                     wanted.add(check1)
                     wanted.add(check2)
+    assert done == todo, "%r vs %s" % (done, todo)
     sys.stderr.write(
-        "Computed %i Levenshtein edit distances between %i sequences.\n"
-        % (n * (n - 1), n)
+        "Computed %i Levenshtein edit distances between %i sequences.\n" % (done, n)
     )
     sys.stderr.write(
         "Will draw %i nodes with at least one edge (%i are isolated sequences).\n"
         % (len(wanted), n - len(wanted))
     )
+    del done, todo
 
     # Matrix computation of multi-step paths vs edit distances, e.g.
     # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
