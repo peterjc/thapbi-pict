@@ -8,6 +8,11 @@ sets of sequences (subject to HMM filtering and taxonomy filtering):
   ``legacy/Phytophthora_ITS_database_v0.005.fasta``, including four G-BLOCKS
   synthetic controls.
 
+- Curated *Oomycete* ITS1 sequences (at species level) from file
+  ``redekar/Redekar_et_al_2019_sup_table_3.fasta``, 1475 sequences
+  downloaded using the accession list in `Redekar et al. (2019)
+  <https://doi.org/10.1094/PBIOMES-10-18-0043-R>`_ Supplementary Table 3.
+
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level,
   file ``2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
   entries created with an NCBI Entrez search run on 2019-04-16::

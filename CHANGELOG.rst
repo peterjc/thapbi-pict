@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.4  *Pending*  Expanded ITS1 DB using sequences from Redekar et al. (2019) Sup. Table 3.
 v0.4.3  2019-09-06 New ``conflicts`` command reporting genus/species level conflicts in DB.
 v0.4.2  2019-09-26 Drop clade from taxonomy table, require unique species entries.
 v0.4.1  2019-09-16 Include NCBI strains/variants/etc and their synonyms as species synonyms.
