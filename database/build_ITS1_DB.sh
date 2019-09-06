@@ -12,7 +12,15 @@ thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX" -a 4762
 
 # In strict mode this will ignore the synthetic controls, we add them later:
 thapbi_pict legacy-import -d "$DB.sqlite" -i "$CURATED"
+
+# These are at genus level only
 thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.fasta -g
+
+# These are loaded at species level
+if [ ! -f redekar/Redekar_et_al_2019_sup_table_3.fasta ]; then
+   gunzip -k redekar/Redekar_et_al_2019_sup_table_3.fasta.gz
+fi
+thapbi_pict ncbi-import -d "$DB.sqlite" -i redekar/Redekar_et_al_2019_sup_table_3.fasta
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations

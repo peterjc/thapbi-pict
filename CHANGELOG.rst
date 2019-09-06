@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.1  *Pending*  Expanded ITS1 DB using sequences from Redekar et al. (2019) Sup. Table 3.
 v0.4.0  2019-09-12 NCBI taxonomy synonym support; taxonomy import defaults to all *Oomycetes*.
 v0.3.12 2019-09-12 New ``thapbi_pict dump`` option ``-m`` /  ``--minimal`` for DB comparison.
 v0.3.11 2019-09-09 Updated default DB and tests to use September 2019 NCBI taxonomy.
