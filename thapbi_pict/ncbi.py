@@ -77,9 +77,9 @@ def parse_fasta_entry(text):
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
         name = []
         rest = []
-    if rest and rest[0] == "x":
+    if len(rest) >= 2 and rest[0] == "x":
         # Hybrid
-        if name[0] == rest[1]:
+        if name[0] == rest[1] and len(rest) >= 3:
             # Genus repeated
             name.append("x")
             name.append(rest[2])
