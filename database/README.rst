@@ -19,7 +19,7 @@ sets of sequences:
   plate via ``thapbi_pict prepare-reads`` with default settings (plate level
   minimum abundance was 545, but in anycase import minimum default is 1000).
 
-- This used the NCBI taxonomy as of 2019-01-01, which means we rejected some
+- This used the NCBI taxonomy as of 2019-09-01, which means we rejected some
   of the curated FASTA file entries.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
