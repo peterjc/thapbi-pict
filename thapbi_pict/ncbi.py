@@ -77,6 +77,16 @@ def parse_fasta_entry(text):
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
         name = []
         rest = []
+    if rest and rest[0] == "x":
+        # Hybrid
+        if name[0] == rest[1]:
+            # Genus repeated
+            name.append("x")
+            name.append(rest[2])
+            rest = rest[3:]
+        else:
+            name.extend(rest[:2])
+            rest = rest[2:]
     return (taxid, clade, " ".join(name), " ".join(rest))
 
 
@@ -85,6 +95,24 @@ assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
     "",
     "Phytophthora drechsleri",
     "genes ...",
+)
+
+assert parse_fasta_entry(
+    "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+) == (
+    0,
+    "",
+    "Phytophthora humicola x inundata",
+    "isolate SCVWD597 internal transcribed spacer 1, ...",
+)
+
+assert parse_fasta_entry(
+    "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+) == (
+    0,
+    "",
+    "Phytophthora humicola x inundata",
+    "isolate SCVWD597 internal transcribed spacer 1, ...",
 )
 
 
