@@ -154,6 +154,12 @@ def main(tax, db_url, ancestors, debug=True):
             # genus="Phytophthora", species="infestans"
             species = species.split(" ", 1)[1]
 
+        if " x %s " % genus in species:
+            # Want to turn "Phytophthora medicaginis x Phytophthora cryptogea"
+            # into "Phytophthora medicaginis x cryptogea", and then take as the
+            # species just "medicaginis x cryptogea" (as in older NCBI taxonomy)
+            species = species.replace(" x %s " % genus, " x ")
+
         if species == "unclassified " + genus:
             # Another special case
             species = "unclassified"
