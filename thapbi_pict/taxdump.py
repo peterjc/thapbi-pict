@@ -80,6 +80,9 @@ def top_level_species(tree, ranks, names, genus_list):
     for taxid, name in names.items():
         if tree[taxid] in genus_list:
             if ranks[taxid] != "species":
+                if name.split(None, 1)[0].lower() == "unclassified":
+                    # Not worth including, nor giving a warning about
+                    continue
                 sys.stderr.write(
                     "WARNING: Treating %s '%s' (txid%i) as a species.\n"
                     % (ranks[taxid], name, taxid)
