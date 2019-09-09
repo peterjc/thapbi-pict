@@ -24,6 +24,16 @@ set -o pipefail
 if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
 if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip -d new_taxdump_2019-09-01; fi
 
+
+# Check hybrid like "Phytophthora humicola x Phytophthora inundata"
+# imports as genus="Phytophthora", species="humicola x inundata"
+export DB=$TMP/hybrid.sqlite
+rm -rf $DB
+thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
+thapbi_pict ncbi-import -d $DB -i tests/ncbi-import/hybrid.fasta
+if [ `thapbi_pict dump -d $DB | grep -c "humicola x inundata"` -ne "1" ]; then echo "Expected humicola x inundata"; false; fi
+
+
 # examples with multiple HMM matches in the sequence (tandem repeats etc)
 export DB=$TMP/multiple_hmm.sqlite
 rm -rf $DB
