@@ -241,7 +241,7 @@ def import_fasta_file(
         return
 
     # Connect to the DB,
-    Session = connect_to_db(db_url, echo=debug)
+    Session = connect_to_db(db_url, echo=False)  # echo=debug
     session = Session()
 
     if validate_species:
