@@ -11,7 +11,7 @@ v0.3.8  2019-08-09 The ``blast`` classifier now applies a minimum BLAST bit scor
 v0.3.7  2019-08-05 Added Python API to the main documentation.
 v0.3.6  2019-07-19 Added Zenodo FASTQ link to worked example, now includes ``assess`` command.
 v0.3.5  2019-07-12 Added missing ``T`` or ``CT`` to 11 of the legacy ITS1 sequences in the DB.
-v0.3.4  2019-07-08 Worked example using woody hosts dataset from Riddell et al. (2019).
+v0.3.4  2019-07-08 Worked example using woody hosts dataset from Riddell *et al.* (2019).
 v0.3.3  2019-07-04 Fixed regression in group coloring for ``read-summary`` Excel output.
 v0.3.2  2019-07-04 Read The Docs; use ``-i`` / ``--input`` consistently - no positional args.
 v0.3.1  2019-06-27 Reformatted documentation to use reStructuredText rather than Markdown.
