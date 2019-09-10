@@ -2,7 +2,7 @@ Default ITS1 database
 =====================
 
 We include a default ITS1 database with THAPBI PICT using the following three
-sets of sequences:
+sets of sequences (subject to HMM filtering and taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (at species level) from file
   ``legacy/Phytophthora_ITS_database_v0.005.fasta``, including four G-BLOCKS
