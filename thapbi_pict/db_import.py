@@ -48,10 +48,6 @@ def lookup_genus_taxonomy(session, genus, species):
     # Must check synonyms as often genus has changed...
     taxonomy = lookup_taxonomy_via_synonym(session, genus, species)
     if taxonomy and taxonomy.genus != genus:
-        sys.stderr.write(
-            "DEBUG: Genus correction via synonym, %s %s -> %s\n"
-            % (genus, species, taxonomy.genus)
-        )
         genus = taxonomy.genus
 
     # Can we find a match without knowing the taxid?
@@ -120,15 +116,12 @@ def lookup_taxonomy_via_synonym(session, genus, species):
     # Can we find it via a synonym?
     # SELECT * FROM taxonomy JOIN synonym ON taxonomy.id = synonym.taxonomy_id
     # WHERE synonym.name = ?
-    taxonomy = (
+    return (
         session.query(Taxonomy)
         .join(Synonym)
         .filter(Synonym.name == "%s %s" % (genus, species))
         .one_or_none()
     )
-    if taxonomy is not None:
-        sys.stderr.write("DEBUG: Synonom %s %s -> %r\n" % (genus, species, taxonomy))
-        return taxonomy
 
 
 def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species):
