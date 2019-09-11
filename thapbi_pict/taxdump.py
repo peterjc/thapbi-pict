@@ -127,7 +127,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.stderr.write("Filtered down to %i species names\n" % len(genus_species))
 
     # Connect to the DB,
-    Session = connect_to_db(db_url, echo=debug)
+    Session = connect_to_db(db_url, echo=False)  # echo=debug
     session = Session()
 
     g_old = 0
