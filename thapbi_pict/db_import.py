@@ -17,7 +17,10 @@ import os
 import sys
 
 from . import __version__
-from .db_orm import DataSource, ITS1, SequenceSource
+from .db_orm import DataSource
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Synonym
 from .db_orm import Taxonomy
 from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
@@ -56,7 +59,7 @@ def lookup_genus_taxonomy(session, genus):
 
 
 def lookup_species_taxonomy(session, clade, genus, species):
-    """Find this species entry in the taxonomy table (if present)."""
+    """Find this species entry in the taxonomy/synonym table (if present)."""
     assert isinstance(clade, str), clade
     assert isinstance(genus, str), genus
     assert isinstance(species, str), species
@@ -101,9 +104,22 @@ def lookup_species_taxonomy(session, clade, genus, species):
             session.add(taxonomy)  # Can we refactor this?
             return taxonomy
 
+    # Can we find it via a synonym?
+    # SELECT * FROM taxonomy JOIN synonym ON taxonomy.id = synonym.taxonomy_id
+    # WHERE synonym.name = ?
+    taxonomy = (
+        session.query(Taxonomy)
+        .join(Synonym)
+        .filter(Synonym.name == "%s %s" % (genus, species))
+        .one_or_none()
+    )
+    if taxonomy is not None:
+        sys.stderr.write("DEBUG: Synonom %s %s -> %r\n" % (genus, species, taxonomy))
+        return taxonomy
+
 
 def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species):
-    """Fuzzy search for this entry in the taxonomy table (if present)."""
+    """Fuzzy search for this entry in the taxonomy/synonym tables (if present)."""
     assert isinstance(clade, str), clade
     assert isinstance(sp_name, str), sp_name
     assert isinstance(sp_name_etc, str), sp_name_etc
