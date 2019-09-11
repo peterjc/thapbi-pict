@@ -76,6 +76,20 @@ class Taxonomy(Base):
         )
 
 
+class Synonym(Base):
+    """Database entry for a synonym of a taxonomy entry."""
+
+    __tablename__ = "synonym"
+
+    id = Column(Integer, primary_key=True)
+    taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
+    name = Column(String(100), nullable=False, unique=True)  # genus and species in one
+
+    def __repr__(self):
+        """Represent a synonym database entry as a string."""
+        return "Synonym(name=%s)" % self.name
+
+
 class ITS1(Base):
     """Database entry for a single ITS1 sequence."""
 
