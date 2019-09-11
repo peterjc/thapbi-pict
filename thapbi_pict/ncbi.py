@@ -87,40 +87,6 @@ def parse_fasta_entry(text):
         else:
             name.extend(rest[:2])
             rest = rest[2:]
-    # Lots of homotypic synonyms from Pythium changes:
-    if name == ["Pythium", "acanthophoron"]:
-        # taxid 2125992
-        name = ["Globisporangium acanthophoron"]
-    elif name == ["Pythium", "intermedium"]:
-        # taxid 1448053
-        name = ["Globisporangium intermedium"]
-    elif name == ["Pythium", "litorale"]:
-        # taxid 340183
-        name = ["Phytopythium", "litorale"]
-    elif name == ["Pythium", "marsipium"]:
-        # taxid 289623
-        name = ["Globisporangium", "marsipium"]
-    elif name == ["Pythium", "oedichilum"]:
-        # taxid 946373
-        name = ["Phytopythium", "oedochilum"]
-    elif name == ["Pythium", "orthogonon"]:
-        # taxid 2125994
-        name = ["Globisporangium", "orthogonon"]
-    elif name == ["Pythium", "paroecandrum"]:
-        # taxid 2125995
-        name = ["Globisporangium", "paroecandrum"]
-    elif name == ["Pythium", "spinosum"]:
-        # taxid 2125998
-        name = ["Globisporangium", "spinosum"]
-    elif name == ["Pythium", "undulatum"]:
-        # taxid 127444
-        name = ["Phytophthora", "undulata"]
-    elif name == ["Pythium", "ultimum"]:
-        # taxid 2052682
-        name = ["Globisporangium", "ultimum"]
-    elif name == ["Pythium", "vexans"]:
-        # taxid 907947
-        name = ["Phytopythium", "vexans"]
     return (taxid, clade, " ".join(name), " ".join(rest))
 
 
