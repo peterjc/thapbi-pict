@@ -13,6 +13,7 @@ The code is needed initially for loading an NCBI taxdump folder (files
 import os
 import sys
 
+from .db_orm import Synonym
 from .db_orm import Taxonomy
 from .db_orm import connect_to_db
 
@@ -39,15 +40,20 @@ def load_nodes(nodes_dmp):
 def load_names(names_dmp):
     """Load scientific names of species from NCBI taxdump names.dmp file."""
     names = {}
+    synonym = {}
     with open(names_dmp) as handle:
         for line in handle:
-            if not line.endswith("\t|\tscientific name\t|\n"):
-                continue
             parts = line.split("\t|\t", 3)
             taxid = int(parts[0].strip())
-            sci_name = parts[1].strip()
-            names[taxid] = sci_name
-    return names
+            name = parts[1].strip()
+            if line.endswith("\t|\tscientific name\t|\n"):
+                names[taxid] = name
+            elif line.endswith("\t|\tsynonym\t|\n"):
+                try:
+                    synonym[taxid].append(name)
+                except KeyError:
+                    synonym[taxid] = [name]
+    return names, synonym
 
 
 def check_ancestor(tree, ancestors, taxid):
@@ -109,7 +115,7 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write("Loaded %i nodes from nodes.dmp\n" % len(tree))
 
-    names = load_names(os.path.join(tax, "names.dmp"))
+    names, synonyms = load_names(os.path.join(tax, "names.dmp"))
     if debug:
         sys.stderr.write("Loaded %i scientific names from names.dmp\n" % len(names))
 
@@ -149,6 +155,8 @@ def main(tax, db_url, ancestors, debug=True):
 
     old = 0
     new = 0
+    s_old = 0
+    s_new = 0
     for taxid, genus, species in genus_species:
         clade = ""
 
@@ -182,11 +190,21 @@ def main(tax, db_url, ancestors, debug=True):
         else:
             old += 1
 
+        for name in synonyms.get(taxid, []):
+            # Is it already there?
+            synonym = session.query(Synonym).filter_by(name=name).one_or_none()
+            if synonym is None:
+                synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
+                session.add(synonym)
+                s_new += 1
+            else:
+                s_old += 1
+
     session.commit()
 
     sys.stderr.write(
-        "Loaded %i new genera, and %i new species entries into DB "
-        "(%i and %i already there)\n" % (g_new, new, g_old, old)
+        "Loaded %i new genera, and %i new species entries with %i synonyms into DB "
+        "(%i, %i and %i already there)\n" % (g_new, new, s_new, g_old, old, s_old)
     )
 
     return 0
