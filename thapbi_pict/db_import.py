@@ -42,9 +42,18 @@ def md5_hexdigest(filename, chunk_size=1024):
     return hash_md5.hexdigest()
 
 
-def lookup_genus_taxonomy(session, genus):
-    """Find this genus in the taxonomy table (if present)."""
+def lookup_genus_taxonomy(session, genus, species):
+    """Find this genus in the taxonomy/synonym table (if present)."""
     assert isinstance(genus, str), genus
+    # Must check synonyms as often genus has changed...
+    taxonomy = lookup_taxonomy_via_synonym(session, genus, species)
+    if taxonomy and taxonomy.genus != genus:
+        sys.stderr.write(
+            "DEBUG: Genus correction via synonym, %s %s -> %s\n"
+            % (genus, species, taxonomy.genus)
+        )
+        genus = taxonomy.genus
+
     # Can we find a match without knowing the taxid?
     taxonomy = session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
     if taxonomy is not None:
@@ -103,7 +112,11 @@ def lookup_species_taxonomy(session, clade, genus, species):
             )
             session.add(taxonomy)  # Can we refactor this?
             return taxonomy
+    return lookup_taxonomy_via_synonym(session, genus, species)
 
+
+def lookup_taxonomy_via_synonym(session, genus, species):
+    """Look at the synonym table, returns associated taxonomy (or None)."""
     # Can we find it via a synonym?
     # SELECT * FROM taxonomy JOIN synonym ON taxonomy.id = synonym.taxonomy_id
     # WHERE synonym.name = ?
@@ -335,10 +348,11 @@ def import_fasta_file(
             genus, species = name.split(None, 1) if name else ("", "")
             assert genus != "P.", title
             if genus_only:
-                # Genus is assumes to be one word, no fuzzy matching needed
+                # Genus assumed to be one word.
+                # Synonyms aside, shouldn't need fuzzy matching
                 # TODO: Take any taxid and walk up tree to genus?
                 # (useful in corner case of a genus being renamed)
-                taxonomy = lookup_genus_taxonomy(session, genus)
+                taxonomy = lookup_genus_taxonomy(session, genus, species)
             else:
                 # Time for some fuzzy matching...
                 taxonomy = find_taxonomy(
@@ -387,7 +401,7 @@ def import_fasta_file(
                     # A previous entry in this match could have had same sp,
                     assert not taxid
                     if genus_only:
-                        taxonomy = lookup_genus_taxonomy(session, genus)
+                        taxonomy = lookup_genus_taxonomy(session, genus, species)
                         if taxonomy is None:
                             clade = ""
                             species = ""
