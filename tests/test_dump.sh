@@ -19,11 +19,11 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ `thapbi_pict dump | grep -c -v "^#"` -ne 14966 ]; then echo "Wrong record count for table dump"; false; fi
-if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 14966 ]; then echo "Wrong record count for fasta dump"; false; fi
+if [ `thapbi_pict dump | grep -c -v "^#"` -ne 14989 ]; then echo "Wrong record count for table dump"; false; fi
+if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 14989 ]; then echo "Wrong record count for fasta dump"; false; fi
 
 # With genus filter,
-if [ `thapbi_pict dump -f fasta -g Phytophthora | grep -c "^>"` -ne 13020 ]; then echo "Wrong record count for Phytophthora genus"; false; fi
+if [ `thapbi_pict dump -f fasta -g Phytophthora | grep -c "^>"` -ne 13040 ]; then echo "Wrong record count for Phytophthora genus"; false; fi
 
 # With genus and species filter,
 if [ `thapbi_pict dump -f fasta -g Phytophthora -s "fallax, andina" | grep -c "^>"` -ne 7 ]; then echo "Wrong record count for two species"; false; fi
