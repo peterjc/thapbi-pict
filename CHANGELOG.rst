@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.3.12 2019-09-12 New ``thapbi_pict dump`` option ``-m`` /  ``--minimal`` for DB comparison.
 v0.3.11 2019-09-09 Updated default DB and tests to use September 2019 NCBI taxonomy.
 v0.3.10 2019-09-05 Handle missing or empty input FASTQ files more gracefully.
 v0.3.9  2019-08-14 Log BLAST bit score. Merge ``thapbi assess`` warnings, 3dp for ad-hoc loss.
