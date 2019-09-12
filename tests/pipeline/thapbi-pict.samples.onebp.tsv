@@ -1,11 +1,14 @@
 #Sample	TaxID	Species	Unambiguous	Seq-count
-DNAMIX_S95_L001	639000	Phytophthora plurivora	True	985
-DNAMIX_S95_L001	129364	Phytophthora rubi	True	829
-DNAMIX_S95_L001	4786	Phytophthora cryptogea	False	395
-DNAMIX_S95_L001	1821206	Phytophthora pseudocryptogea	True	301
-DNAMIX_S95_L001	1821206	Phytophthora pseudocryptogea	False	395
+DNAMIX_S95_L001	53984	Phytophthora citricola	False	985
+DNAMIX_S95_L001	639000	Phytophthora plurivora	False	985
+DNAMIX_S95_L001	53985	Phytophthora fragariae	False	829
+DNAMIX_S95_L001	129364	Phytophthora rubi	False	829
+DNAMIX_S95_L001	4786	Phytophthora cryptogea	True	395
+DNAMIX_S95_L001	4786	Phytophthora cryptogea	False	301
 DNAMIX_S95_L001	1642459	Phytophthora agathidicida	False	304
 DNAMIX_S95_L001	1642465	Phytophthora castaneae	False	304
+DNAMIX_S95_L001	129354	Phytophthora katsurae	False	304
+DNAMIX_S95_L001	1821206	Phytophthora pseudocryptogea	False	301
 DNAMIX_S95_L001	4784	Phytophthora capsici	False	297
 DNAMIX_S95_L001	132615	Phytophthora glovera	False	297
 DNAMIX_S95_L001	1771973	Phytophthora crassamura	False	267
