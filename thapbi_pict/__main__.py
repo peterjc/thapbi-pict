@@ -141,6 +141,7 @@ def dump(args=None):
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         output_filename=args.output,
         output_format=args.format,
+        minimal=args.minimal,
         clade=args.clade,
         genus=args.genus,
         species=args.species,
@@ -813,6 +814,13 @@ def main(args=None):
         type=str,
         default="-",
         help="File to write to (default '-' meaning stdout)",
+    )
+    parser_dump.add_argument(
+        "-m",
+        "--minimal",
+        action="store_true",
+        help="Minimal output, one record per trimmed sequence with MD5 and species "
+        "list - rather than all entries with original ID and full sequence.",
     )
     parser_dump.add_argument(
         "-f",
