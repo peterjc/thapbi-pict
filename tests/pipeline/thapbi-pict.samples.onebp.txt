@@ -5,11 +5,14 @@ DNAMIX_S95_L001
  - Phytophthora agathidicida (uncertain/ambiguous)
  - Phytophthora capsici (uncertain/ambiguous)
  - Phytophthora castaneae (uncertain/ambiguous)
+ - Phytophthora citricola (uncertain/ambiguous)
  - Phytophthora crassamura (uncertain/ambiguous)
- - Phytophthora cryptogea (uncertain/ambiguous)
+ - Phytophthora cryptogea
+ - Phytophthora fragariae (uncertain/ambiguous)
  - Phytophthora glovera (uncertain/ambiguous)
+ - Phytophthora katsurae (uncertain/ambiguous)
  - Phytophthora megasperma (uncertain/ambiguous)
- - Phytophthora plurivora
- - Phytophthora pseudocryptogea
- - Phytophthora rubi
+ - Phytophthora plurivora (uncertain/ambiguous)
+ - Phytophthora pseudocryptogea (uncertain/ambiguous)
+ - Phytophthora rubi (uncertain/ambiguous)
 
