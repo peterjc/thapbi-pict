@@ -1,18 +1,59 @@
 #Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
-OVERALL	32	6	13	537	0.71	0.99	0.84	0.77	0.0323	0.373
+OVERALL	32	15	13	1332	0.71	0.99	0.68	0.70	0.0201	0.467
+Achlya colorata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Achlya racemosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Achlya radiosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Achlya sparrowii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Albugo candida	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Aphanomyces cladogamus	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Aphanomyces cochlioides	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Aphanomyces euteiches	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Basidiophora entospora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Brevilegnia gracilis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium acanthophoron	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium intermedium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium marsipium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium orthogonon	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium paroecandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium spinosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Globisporangium ultimum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Halophytophthora avicenniae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Halophytophthora epistomium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Halophytophthora exoprolifera	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Halophytophthora polymorphica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Hyaloperonospora nesliae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Hyaloperonospora sisymbrii-sophiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Lagenidium caudatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Lagenidium giganteum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Leptolegnia CAL-2011b	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora aparines	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora calotheca	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora conglomerata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora radii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora sherardiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora valerianellae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora violae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora acerina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. botryosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. infestans	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. primulae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. rosacearum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. sansomeana	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora agathidicida	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
+Phytophthora alni	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora alticola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora amaranthi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora amnicola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora andina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora aquimorbida	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora arecae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora arenaria	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora asiatica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora asparagi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora attenuata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora austrocedri	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora balyanboodja	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora batemanensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora bilorbang	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora bisheria	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora boehmeriae	0	0	4	0	0.00	0.00	0.00	0.00	1.0000	1.000
@@ -30,7 +71,7 @@ Phytophthora chlamydospora	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
 Phytophthora chrysanthemi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cichorii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cinnamomi	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
-Phytophthora citricola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora citricola	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora citricola E	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora citrophthora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora clandestina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -49,7 +90,7 @@ Phytophthora flexuosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora fluvialis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora foliorum	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora formosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
-Phytophthora fragariae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora fragariae	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora fragariaefolia	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora frigida	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora gallica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -57,19 +98,26 @@ Phytophthora gemini	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora gibbosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora glovera	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora gonapodyides	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
+Phytophthora gregata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora hedraiandra	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora heveae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora hibernalis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora himalayensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora himalsilva	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora humicola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora hydrogena	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora hydropathica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora idaei	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora ilicis	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora infestans	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora inflata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora insolita	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora intercalaris	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora intricata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora inundata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora ipomoeae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora iranica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora katsurae	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora kernoviae	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora lactucae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora lacustris	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -124,17 +172,22 @@ Phytophthora richardiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora riparia	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora rosacearum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora rubi	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
+Phytophthora sansomea	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora sansomeana	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora sinensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora siskiyouensis	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora sojae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora stricta	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora sulawesiensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora syringae	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
+Phytophthora tabaci	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora tentaculata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora terminalis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora thermophila	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora trifolii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora tropicalis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora uliginosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora undulata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora uniformis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora vignae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora virginiana	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -143,6 +196,154 @@ Phytophthora x cambivora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x multiformis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x pelgrandis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x serendipita	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium aff. vexans	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium boreale	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium carbonicum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium citrinum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium helicoides	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium kandeliae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium litorale	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium megacarpum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium montanum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium oedochilum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium ostracodes	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium sindhum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium sp.	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytopythium vexans	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Plasmopara euphrasiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Plasmopara nivea	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Plasmopara pusilla	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Plasmoverna anemones-ranunculoides	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Plectospira myriandra	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pseudoperonospora cubensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythiogeton zeae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythiopsis terrestris	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium abappressorium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium acanthicum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium acrogynum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium adhaerens	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium afertile	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. diclinum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. dictyosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. dissotocum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. hydnosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. hypogynum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. iwayamai	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. periilum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. perplexum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. pleroticum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. polymastum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. torulosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aff. volutum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium amasculinum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium anandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium angustatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aphanidermatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium apiculatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium apleroticum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aquatile	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium aristosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium arrhenomanes	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium attrantheridium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium buismaniae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium camurandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium canariense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium capillosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium carolinianum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium catenulatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium cf. dictyosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium chondricola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium coloratum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium conidiophorum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium contiguanum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium cucurbitacearum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium cystogenes	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium deliense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium diclinum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium dimorphum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium dissimile	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium dissotocum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium echinulatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium erinaceum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium flevoense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium folliculosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium glomeratum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium graminicola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium grandisporangium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium helicandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium heterothallicum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium hydnosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium hypogynum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium inflatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium insidiosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium irregulare	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium jasmonium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium kashmirense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium longandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium longisporangium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium lutarium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium lycopersicum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium macrosporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium mamillatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium mastophorum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium megalacanthum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium middletonii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium minus	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium monospermum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium multisporum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium myriotylum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium nagaii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium nodosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium nunn	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium okanoganense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium oligandrum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium oopapillum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium ornacarpum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium ornamentatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium pachycaule	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium paddicum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium parvum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium pectinolyticum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium periilum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium periplocum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium perplexum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium phragmitis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium pleroticum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium plurisporium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium polymastum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium porphyrae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium prolatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium pyrilobum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium radiosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium rhizo-oryzae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium rhizosaccharum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium rostratifingens	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium salpingophorum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium scleroteichum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium segnitium	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium senticosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium splendens	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium sukuiense	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium sulcatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium takayamanum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium tardicrescens	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium torulosum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium tracheiphilum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium uncinulatum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium vanterpoolii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium violae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium volutum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Pythium zingiberis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia anisospora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia asterophora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia litoralis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia megasperma	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia monilifera	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia monoica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia parasitica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia terrestris	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia turfosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Saprolegnia unispora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 synthetic construct C1	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 synthetic construct C2	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 synthetic construct C3	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
