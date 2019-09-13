@@ -6,23 +6,22 @@
 
 r"""Code for THAPBI PICT to deal with importing NCBI FASTA files.
 
-For example, you might perform this search via the NCBI Entrez
-website, against the nucleotide database, then send it to file
-in FASTA format::
+For example, you might perform this search via the NCBI Entrez website,
+against the nucleotide database, then send it to file in FASTA format::
 
    its1 AND Phytophthora[Organism] AND 150:800[Sequence Length]
 
 Or, using the NCBI Entrez Direct command line tools::
 
     $ esearch -db nucleotide \
-            -query "its1 AND Phytophthora[Organism] AND 150:800[Sequence Length]" \
-            | efetch -format fasta > example.fasta
+        -query "its1 AND Phytophthora[Organism] AND 150:800[Sequence Length]" \
+        | efetch -format fasta > example.fasta
 
 Then, import this into our ITS DB using::
 
     $ thapbi_pict ncbi-import -d example.sqlite -i example.fasta
 
-"""  # noqa: E501
+"""
 
 import sys
 
