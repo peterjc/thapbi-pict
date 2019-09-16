@@ -31,7 +31,7 @@ thapbi_pict legacy-import -x -d "$DB.sqlite" -i controls.fasta
 
 # Ad-hoc fix for three unique sequences getting more than one genus in the NCBI,
 # should be Hyaloperonospora not Peronospora. Drop the entries saying Peronospora:
-sqlite3 ITS1_DB.sqlite "DELETE FROM its1_source WHERE its1_source.id in (SELECT its1_source.id FROM its1_source JOIN its1_sequence JOIN taxonomy WHERE its1_source.current_taxonomy_id=taxonomy.id AND its1_source.its1_id = its1_sequence.id AND taxonomy.genus='Peronospora' AND its1_sequence.md5 in ('71d4e062275062a6ed3863c71f137e77', 'e29a4c3d458c94842a8dc420dcfe946e', '320df1a347406a2eb13fbe329264ceb1'));"
+sqlite3 "$DB.sqlite" "DELETE FROM its1_source WHERE its1_source.id in (SELECT its1_source.id FROM its1_source JOIN its1_sequence JOIN taxonomy WHERE its1_source.current_taxonomy_id=taxonomy.id AND its1_source.its1_id = its1_sequence.id AND taxonomy.genus='Peronospora' AND its1_sequence.md5 in ('71d4e062275062a6ed3863c71f137e77', 'e29a4c3d458c94842a8dc420dcfe946e', '320df1a347406a2eb13fbe329264ceb1'));"
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
