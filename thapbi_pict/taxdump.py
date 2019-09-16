@@ -74,6 +74,29 @@ def genera_under_ancestors(tree, ranks, ancestors):
             yield taxid
 
 
+def children(tree, taxid):
+    """Return all taxid descended from given entry."""
+    answer = set()
+    for child, parent in tree.items():
+        if parent == taxid:
+            answer.add(child)
+            answer.update(children(tree, child))  # recurse!
+    assert taxid not in answer
+    return answer
+
+
+def synonyms_and_variants(tree, ranks, names, synonyms, species_taxid):
+    """Return all scientific names and synonyms of any variants etc under species."""
+    assert ranks[species_taxid] in ("species", "species group", "no rank"), ranks[
+        species_taxid
+    ]
+    variants = set(synonyms.get(species_taxid, []))  # include own synonyms
+    for taxid in children(tree, species_taxid):
+        variants.add(names[taxid])
+        variants.update(synonyms.get(taxid, []))  # values are already names
+    return sorted(variants)
+
+
 def top_level_species(tree, ranks, names, genus_list):
     """Find taxids for species under the genus_list.
 
@@ -190,7 +213,7 @@ def main(tax, db_url, ancestors, debug=True):
         else:
             old += 1
 
-        for name in synonyms.get(taxid, []):
+        for name in synonyms_and_variants(tree, ranks, names, synonyms, taxid):
             # Is it already there?
             synonym = session.query(Synonym).filter_by(name=name).one_or_none()
             if synonym is None:
