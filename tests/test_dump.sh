@@ -19,8 +19,8 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ `thapbi_pict dump | grep -c -v "^#"` -ne 14991 ]; then echo "Wrong source count for table dump"; false; fi
-if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 14991 ]; then echo "Wrong sourse count for fasta dump"; false; fi
+if [ `thapbi_pict dump | grep -c -v "^#"` -ne 15017 ]; then echo "Wrong source count for table dump"; false; fi
+if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 15017 ]; then echo "Wrong sourse count for fasta dump"; false; fi
 
 if [ `thapbi_pict dump --minimal | grep -c -v "^#"` -ne 3642 ]; then echo "Wrong sequence count for table dump"; false; fi
 if [ `thapbi_pict dump -m -f fasta | grep -c "^>"` -ne 3642 ]; then echo "Wrong sequence count for fasta dump"; false; fi
