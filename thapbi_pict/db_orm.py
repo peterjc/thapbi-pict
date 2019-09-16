@@ -77,7 +77,11 @@ class Taxonomy(Base):
 
 
 class Synonym(Base):
-    """Database entry for a synonym of a taxonomy entry."""
+    """Database entry for a synonym of a taxonomy entry.
+
+    In addition to direct synonyms, includes the names and synonyms of any
+    child nodes of the species (e.g. variants, strains, etc).
+    """
 
     __tablename__ = "synonym"
 
