@@ -182,6 +182,7 @@ def main(tax, db_url, ancestors, debug=True):
     s_new = 0
     for taxid, genus, species in genus_species:
         clade = ""
+        aliases = []
 
         if species.split(" ", 1)[0] == genus:
             # We are storing "Phytophthora infestans" as
@@ -192,6 +193,7 @@ def main(tax, db_url, ancestors, debug=True):
             # Want to turn "Phytophthora medicaginis x Phytophthora cryptogea"
             # into "Phytophthora medicaginis x cryptogea", and then take as the
             # species just "medicaginis x cryptogea" (as in older NCBI taxonomy)
+            aliases.append(genus + " " + species)
             species = species.replace(" x %s " % genus, " x ")
 
         if species == "unclassified " + genus:
@@ -213,13 +215,18 @@ def main(tax, db_url, ancestors, debug=True):
         else:
             old += 1
 
-        for name in synonyms_and_variants(tree, ranks, names, synonyms, taxid):
+        for name in (
+            synonyms_and_variants(tree, ranks, names, synonyms, taxid) + aliases
+        ):
             # Is it already there?
             synonym = session.query(Synonym).filter_by(name=name).one_or_none()
             if synonym is None:
                 synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
                 session.add(synonym)
                 s_new += 1
+            elif name in aliases:
+                # Don't double count it
+                pass
             else:
                 s_old += 1
 
