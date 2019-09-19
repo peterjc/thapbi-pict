@@ -21,11 +21,12 @@ from .db_orm import connect_to_db
 def load_nodes(nodes_dmp):
     """Load the NCBI taxdump nodes.dmp file.
 
-    Returns two dicts, the parent/child relationships, and the rank of
-    each node.
+    Returns three dicts, the parent/child relationships (two directions),
+    and the rank of each node.
     """
     tree = {}
-    ranks = {}
+    ranks = {}  # child points at parent
+    descendants = {}  # parent points at children and grandchildren etc
     with open(nodes_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -34,7 +35,11 @@ def load_nodes(nodes_dmp):
             rank = parts[2].strip()
             tree[taxid] = parent
             ranks[taxid] = rank
-    return tree, ranks
+            try:
+                descendants[parent].add(taxid)
+            except KeyError:
+                descendants[parent] = {taxid}
+    return tree, descendants, ranks
 
 
 def load_names(names_dmp):
@@ -74,24 +79,22 @@ def genera_under_ancestors(tree, ranks, ancestors):
             yield taxid
 
 
-def children(tree, taxid):
+def get_children(children, taxid):
     """Return all taxid descended from given entry."""
     answer = set()
-    for child, parent in tree.items():
-        if parent == taxid:
-            answer.add(child)
-            answer.update(children(tree, child))  # recurse!
-    assert taxid not in answer
+    for child in children.get(taxid, []):
+        answer.add(child)
+        answer.update(get_children(children, child))  # recurse!
     return answer
 
 
-def synonyms_and_variants(tree, ranks, names, synonyms, species_taxid):
+def synonyms_and_variants(children, ranks, names, synonyms, species_taxid):
     """Return all scientific names and synonyms of any variants etc under species."""
     assert ranks[species_taxid] in ("species", "species group", "no rank"), ranks[
         species_taxid
     ]
     variants = set(synonyms.get(species_taxid, []))  # include own synonyms
-    for taxid in children(tree, species_taxid):
+    for taxid in get_children(children, species_taxid):
         variants.add(names[taxid])
         variants.update(synonyms.get(taxid, []))  # values are already names
     return sorted(variants)
@@ -134,7 +137,7 @@ def main(tax, db_url, ancestors, debug=True):
     except ValueError:
         sys.exit("ERROR: Invalid ancestors argument: %r\n" % ancestors)
 
-    tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
+    tree, children, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
         sys.stderr.write("Loaded %i nodes from nodes.dmp\n" % len(tree))
 
@@ -216,7 +219,7 @@ def main(tax, db_url, ancestors, debug=True):
             old += 1
 
         for name in (
-            synonyms_and_variants(tree, ranks, names, synonyms, taxid) + aliases
+            synonyms_and_variants(children, ranks, names, synonyms, taxid) + aliases
         ):
             # Is it already there?
             synonym = session.query(Synonym).filter_by(name=name).one_or_none()
