@@ -63,13 +63,15 @@ def main(
             for idn, taxid, genus_species in parse_species_tsv(tsv_file):
                 if idn in meta_data:
                     sys.exit("ERROR: Duplicated identifier %r in %r" % (idn, tsv_file))
-                meta_data[idn] = (int(taxid), "", genus_species, "")
+                meta_data[idn] = (int(taxid), "", genus_species)
             if not meta_data:
                 sys.stderr.write(
                     "File %s has no sequences, ignoring %s\n" % (tsv_file, fasta_file)
                 )
                 continue
-            meta_fn = meta_data.get
+
+            def meta_fn(text, known_species=None):
+                return meta_data[text]
 
             def sequence_wanted(title):
                 """Check if identifier in TSV file, and passess abundance level."""
@@ -91,8 +93,8 @@ def main(
                         _, taxid, genus_species, _ = line.split("\t", 3)
             assert genus_species, "Didn't find expected wildcard species line"
 
-            def meta_fn(text):
-                return int(taxid), genus_species, ""
+            def meta_fn(text, known_species=None):
+                return int(taxid), genus_species
 
             def sequence_wanted(title):
                 """Check if identifier passess abundance level."""

@@ -107,18 +107,15 @@ assert split_composite_entry(
 ) == ["4_Phytophthora_alticola_HQ013214", "4_P._arenaria_HQ013219", "4a_P._other_XYZ"]
 
 
-def parse_fasta_entry(text):
+def parse_fasta_entry(text, known_species=None):
     """Split an entry of Clade_SpeciesName_Accession into fields.
 
-    Returns a tuple of taxid (always zero), clade, Species, and an
-    empty string (since any extra text in the species is already
-    included, unlike the NCBI FASTA parser where the end of the
-    species is not well defined). Discards the accession.
+    Returns a two-tuple of taxid (always zero), genus-species.
 
     Will also convert the underscores in the species name into spaces:
 
     >>> parse_fasta_entry('4_P._arenaria_HQ013219')
-    (0, 'P. arenaria', '')
+    (0, 'P. arenaria')
 
     Note - this assumes function ``split_composite_entry`` has already
     been used to break up any multiple species composite entries.
@@ -127,17 +124,17 @@ def parse_fasta_entry(text):
     underscore between the clade and species:
 
     >>> parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
-    (0, 'Phytophthora aff infestans', '')
+    (0, 'Phytophthora aff infestans')
 
     And the old variant without any clade at the start, e.g.
 
     >>> parse_fasta_entry('P._amnicola_CBS131652')
-    (0, 'P. amnicola', '')
+    (0, 'P. amnicola')
 
     And the old variant with just an accession, e.g.
 
     >>> parse_fasta_entry('VHS17779')
-    (0, '', '')
+    (0, '')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
@@ -145,7 +142,8 @@ def parse_fasta_entry(text):
     Handles the special case of the synthetic controls as follows:
 
     >>> parse_fasta_entry("Control_05 C1")
-    (0, 'synthetic construct C1', '')
+    (0, 'synthetic construct C1')
+
     """
     taxid = 0
 
@@ -157,19 +155,25 @@ def parse_fasta_entry(text):
     if parts[0] == "Control":
         # txid32630 is "synthetic construct", seems best taxonomy match
         if " " in text:
-            return (0, ("synthetic construct %s" % text.split(" ", 1)[1]).rstrip(), "")
+            return 0, ("synthetic construct %s" % text.split(" ", 1)[1]).rstrip()
         else:
-            return (0, ("synthetic construct %s" % " ".join(parts[1:])).rstrip(), "")
+            return 0, ("synthetic construct %s" % " ".join(parts[1:])).rstrip()
 
     if len(parts) == 1:
         # Legacy variant with just an accession
-        return (taxid, "", "")
+        return taxid, ""
 
     clade = parts[0]
 
     if clade in ("PPhytophthora", "P."):
         # Legacy error no clade and either extra P, or just P.
         clade = "Phytophthora"
+
+    # NCBI uses lower case "x" for hybrid species names,
+    # while the legacy FASTA files used upper case "X":
+    for i in range(1, len(parts)):
+        if parts[i] == "X":
+            parts[i] = "x"
 
     if "Phytophthora" in clade:
         # Legacy variant missing the first underscore
@@ -185,16 +189,20 @@ def parse_fasta_entry(text):
     if name[0] == "P.":
         name[0] = "Phytophthora"
 
+    if known_species:
+        tmp = name[:]
+        while tmp and " ".join(tmp) not in known_species:
+            tmp.pop()  # discard last word
+        if len(tmp) > 1:
+            # Found a perfect match
+            assert " ".join(tmp) in known_species
+            return taxid, " ".join(tmp)
+        del tmp
+
     # Crop species name at "voucher", e.g. 1_Phytophthora_idaei_voucher_HQ643246
     for crop in ["Voucher", "voucher"]:
         if crop in name:
             name = name[: name.index(crop)]
-
-    # NCBI uses lower case "x" for hybrid species names,
-    # while the legacy FASTA files used upper case "X":
-    for i in range(len(name)):
-        if name[i] == "X":
-            name[i] = "x"
 
     # Handle a couple of synonyms here, where our legacy file and the NCBI
     # do not agree. This is a temporary stop-gap without full synonym support.
@@ -210,38 +218,44 @@ def parse_fasta_entry(text):
 
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
-    return (taxid, " ".join(name), "")
+    return taxid, " ".join(name)
 
 
-assert parse_fasta_entry("Control_05 C1") == (0, "synthetic construct C1", "")
+assert parse_fasta_entry("Control_05 C1") == (0, "synthetic construct C1")
 assert parse_fasta_entry("7a_Phytophthora_alni_subsp._uniformis_AF139367") == (
     0,
     "Phytophthora uniformis",
-    "",
 )
 assert parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184") == (
     0,
     "Phytophthora austrocedrae",
-    "",
 )
 assert parse_fasta_entry("6_Phytophthora_taxon_cyperaceae_KJ372258") == (
     0,
     "Phytophthora balyanboodja",
-    "",
 )
-assert parse_fasta_entry("4_P._arenaria_HQ013219") == (0, "Phytophthora arenaria", "")
+assert parse_fasta_entry("4_P._arenaria_HQ013219") == (0, "Phytophthora arenaria")
 assert parse_fasta_entry("1Phytophthora_aff_infestans_P13660") == (
     0,
     "Phytophthora aff infestans",
-    "",
 )
-assert parse_fasta_entry("P._amnicola_CBS131652") == (0, "Phytophthora amnicola", "")
+assert parse_fasta_entry("P._amnicola_CBS131652") == (0, "Phytophthora amnicola")
 assert parse_fasta_entry("10_Phytophthora_boehmeriae_Voucher_HQ643149") == (
     0,
     "Phytophthora boehmeriae",
-    "",
 )
-assert parse_fasta_entry("ACC-ONLY") == (0, "", "")
+assert parse_fasta_entry("7a_Phytophthora_alni_subsp._multiformis_AF139368") == (
+    0,
+    "Phytophthora x multiformis",  # hard coded synonym
+)
+assert parse_fasta_entry(
+    "7a_Phytophthora_alni_subsp._multiformis_AF139368",
+    {"Phytophthora alni subsp. multiformis"},
+) == (
+    0,
+    "Phytophthora alni subsp. multiformis",  # pre-loaded known synonym
+)
+assert parse_fasta_entry("ACC-ONLY") == (0, "")
 
 
 def main(

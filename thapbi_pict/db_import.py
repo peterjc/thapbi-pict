@@ -24,145 +24,53 @@ from .db_orm import Taxonomy
 from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
 from .utils import genus_species_name
+from .utils import genus_species_split
 from .utils import md5seq
 from .utils import md5_hexdigest
 from .versions import check_tools
 
 
-def lookup_genus_taxonomy(session, genus, species):
-    """Find this genus in the taxonomy/synonym table (if present)."""
-    assert isinstance(genus, str), genus
-    # Must check synonyms as often genus has changed...
-    taxonomy = lookup_taxonomy_via_synonym(session, genus, species)
-    if taxonomy and taxonomy.genus != genus:
-        genus = taxonomy.genus
-
-    # Can we find a match without knowing the taxid?
-    taxonomy = session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
-    if taxonomy is not None:
-        # There was a unique entry already, use it.
-        # It may even have an NCBI taxid?
-        return taxonomy
-    # Can we find a unique match with taxid=0?
-    taxonomy = (
-        session.query(Taxonomy)
-        .filter_by(genus=genus, species="", ncbi_taxid=0)
-        .one_or_none()
-    )
-    if taxonomy is not None:
-        # There was a unique entry already, use it.
-        return taxonomy
+def load_taxonomy(session):
+    """Pre-load all the species and synonym names as a set."""
+    names = set()
+    view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
+    for taxonomy in view:
+        names.add(genus_species_name(taxonomy.genus, taxonomy.species))
+    for synonym in session.query(Synonym):
+        if synonym.name in names:
+            sys.stderr.write("WARNING: Synonym %s duplicated?\n" % synonym.name)
+        else:
+            names.add(synonym.name)
+    return names
 
 
-def lookup_species_taxonomy(session, genus, species):
+def lookup_species(session, name):
     """Find this species entry in the taxonomy/synonym table (if present)."""
-    assert isinstance(genus, str), genus
-    assert isinstance(species, str), species
-    # Can we find a match without knowing the taxid?
+    assert isinstance(name, str), name
+    genus, species = genus_species_split(name)
+    # Try main table
     taxonomy = (
         session.query(Taxonomy).filter_by(genus=genus, species=species).one_or_none()
     )
-    if taxonomy is not None:
-        # There was a unique entry already, use it.
-        # It may even have an NCBI taxid?
+    if taxonomy:
         return taxonomy
-
-    # Can we find a match with taxid=0?
-    taxonomy = (
-        session.query(Taxonomy)
-        .filter_by(genus=genus, species=species, ncbi_taxid=0)
-        .one_or_none()
-    )
-    if taxonomy is not None:
-        # There was a unique entry already, use it.
-        return taxonomy
-
-    return lookup_taxonomy_via_synonym(session, genus, species)
-
-
-def lookup_taxonomy_via_synonym(session, genus, species):
-    """Look at the synonym table, returns associated taxonomy (or None)."""
-    # Can we find it via a synonym?
-    # SELECT * FROM taxonomy JOIN synonym ON taxonomy.id = synonym.taxonomy_id
-    # WHERE synonym.name = ?
+    # Try synonyms
     return (
-        session.query(Taxonomy)
-        .join(Synonym)
-        .filter(Synonym.name == "%s %s" % (genus, species))
-        .one_or_none()
+        session.query(Taxonomy).join(Synonym).filter(Synonym.name == name).one_or_none()
     )
 
 
-def find_taxonomy(session, taxid, sp_name, sp_name_etc, validate_species):
-    """Fuzzy search for this entry in the taxonomy/synonym tables (if present)."""
-    assert isinstance(sp_name, str), sp_name
-    assert isinstance(sp_name_etc, str), sp_name_etc
-
-    if taxid:
-        # Perfect match?
-        genus, species = sp_name.split(" ", 1) if sp_name else ("", "")
-        taxonomy = (
-            session.query(Taxonomy)
-            .filter_by(ncbi_taxid=taxid, genus=genus, species=species)
-            .one_or_none()
-        )
-        if taxonomy is not None:
-            return taxonomy
-        # Ignoring species name
-        taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
-        if taxonomy is not None and taxonomy.species:
-            sys.stderr.write(
-                "WARNING: Using taxid %i, mapped %r to %s"
-                % (taxid, sp_name, genus_species_name(taxonomy.genus, taxonomy.species))
-            )
-            return taxonomy
-        sys.exit("WARNING: Could not uniquely match taxid %i\n" % taxid)
-
-    # First loop removes words (until just one word for species)
-    # in the hope of finding a match. This is for our legacy files.
-    # Second loop adds words (from the species_etc string) in the
-    # hope of finding a match. This is for the NCBI FASTA files.
-    genus, species = sp_name.split(" ", 1) if sp_name else ("", "")
-    while True:
-        # sys.stderr.write("DEBUG: Trying genus=%r, species=%r\n"
-        #                  % (genus, species))
-        taxonomy = lookup_species_taxonomy(session, genus, species)
-        if taxonomy:
-            return taxonomy
-
-        if not validate_species:
-            # If the DB has not been preloaded, we don't
-            # want to try trimming the species - it would
-            # make the import results order dependent etc.
-            return None
-
-        # No match! The DB has been preloaded, so can we trim
-        # unwanted text off species name to get a match?
-        if not species:
-            return None
-        words = species.split()
-        if len(words) == 1:
-            # Nope, give up the trimming approach
-            break
-        # Remove last word, loop and try again
-        species = " ".join(words[:-1])
-
-    # Removing words failed, can we try adding words?
-    if not sp_name or not sp_name_etc:
-        return None
-    extra = sp_name_etc.split(None, 6)
-    for i in range(1, max(5, len(extra))):
-        genus, species = sp_name.split(" ", 1)
-        species = " ".join([species] + extra[:i])
-        # sys.stderr.write(
-        #     "DEBUG: Extending species name, trying genus=%r, species=%r\n"
-        #     % (genus, species))
-        taxonomy = lookup_species_taxonomy(session, genus, species)
-        if taxonomy:
-            return taxonomy
-
-    # Failed to find a match
-    return None
+def lookup_genus(session, name):
+    """Find genus entry via taxonomy/synonym table (if present)."""
+    # Apply synonym (which might change the genus)
+    taxonomy = (
+        session.query(Taxonomy).join(Synonym).filter(Synonym.name == name).one_or_none()
+    )
+    if taxonomy:
+        genus = taxonomy.genus
+    else:
+        genus = genus_species_split(name)[0]
+    return session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
 
 
 def import_fasta_file(
@@ -205,6 +113,8 @@ def import_fasta_file(
 
     # Argument validation,
     if fasta_entry_fn is None:
+        if debug:
+            sys.stderr.write("DEBUG: Treating each FASTA entry as a singleton.\n")
 
         def fasta_entry_fn(text):
             """Treat all FASTA entries as singletons.
@@ -215,7 +125,7 @@ def import_fasta_file(
             return [text]
 
     if entry_taxonomy_fn is None:
-        raise ValueError("Need function to get meta-data from FASTA title.")
+        raise ValueError("Need function to get species from FASTA title.")
 
     if os.stat(fasta_file).st_size == 0:
         if debug:
@@ -226,14 +136,15 @@ def import_fasta_file(
     Session = connect_to_db(db_url, echo=False)  # echo=debug
     session = Session()
 
-    if validate_species:
-        count = (
-            session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
+    additional_taxonomy = {}  # any entries added this session
+    preloaded_taxonomy = load_taxonomy(session)
+    if validate_species and not preloaded_taxonomy:
+        sys.exit("ERROR: Taxonomy table empty, cannot validate species.\n")
+    if debug:
+        sys.stderr.write(
+            "Taxonomy/synonym tables contains %i distinct species names\n"
+            % len(preloaded_taxonomy)
         )
-        if debug:
-            sys.stderr.write("Taxonomy table contains %i distinct species\n" % count)
-        if not count:
-            sys.exit("ERROR: Taxonomy table empty, cannot validate species.\n")
 
     if not name:
         name = "Import of %s" % os.path.basename(fasta_file)
@@ -270,12 +181,17 @@ def import_fasta_file(
                     "DEBUG: Ignoring entry with no HMM matches: %s\n" % title
                 )
             continue
+        its1_seq_count += 1
 
         # One sequence can have multiple entries
         idn = title.split(None, 1)[0]
         if idn in idn_set:
             sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
+
+        if len(its1_seqs) > 1:
+            sys.stderr.write("WARNING: %i HMM matches in %s\n" % (len(its1_seqs), idn))
+            multiple_its1 = True
 
         entries = fasta_entry_fn(title)
         if not entries:
@@ -285,11 +201,11 @@ def import_fasta_file(
             )
             continue
 
-        accepted_entries = []  # Some or all may fail species validation
+        accepted = False
         for entry in entries:
             entry_count += 1
             try:
-                taxid, name, name_etc = entry_taxonomy_fn(entry)
+                taxid, name = entry_taxonomy_fn(entry, preloaded_taxonomy)
             except ValueError:
                 bad_entries += 1
                 sys.stderr.write(
@@ -297,98 +213,73 @@ def import_fasta_file(
                     % (entry if len(entry) < 60 else entry[:67] + "...")
                 )
                 continue
+
             assert isinstance(name, str), name
-            assert isinstance(name_etc, str), name_etc
 
             if name.lower().startswith("uncultured "):
                 bad_entries += 1
-                sys.stderr.write("WARNING: Ignoring %r\n" % entry)
+                sys.stderr.write(
+                    "WARNING: Ignoring %r\n"
+                    % (entry if len(entry) < 60 else entry[:67] + "...")
+                )
                 continue
 
             if not taxid and not name:
                 bad_entries += 1
                 sys.stderr.write("WARNING: No species information: %r\n" % idn)
                 continue
+
             # Load into the DB
+            #
             # Store "Phytophthora aff infestans" as
             # genus "Phytophthora", species "aff infestans"
+            #
+            # Note even for genus only, must check synonyms,
+            # e.g. "Pythium undulatum" -> "Phytophthora undulatum"
             if debug and not name:
                 sys.stderr.write("WARNING: No species information from %r\n" % entry)
-            genus, species = name.split(None, 1) if name else ("", "")
-            assert genus != "P.", title
+
+            assert not name.startswith("P."), title
+
             if genus_only:
-                # Genus assumed to be one word.
-                # Synonyms aside, shouldn't need fuzzy matching
-                # TODO: Take any taxid and walk up tree to genus?
-                # (useful in corner case of a genus being renamed)
-                taxonomy = lookup_genus_taxonomy(session, genus, species)
+                taxonomy = lookup_genus(session, name)
             else:
-                # Time for some fuzzy matching...
-                taxonomy = find_taxonomy(
-                    session, taxid, name, name_etc, validate_species
-                )
-            if taxonomy is None and validate_species:
-                bad_sp_entries += 1
-                if name and debug:
+                taxonomy = lookup_species(session, name)
+            if not taxonomy:
+                if debug:
                     sys.stderr.write(
                         "WARNING: Could not validate species %r from %r\n"
                         % (name, entry)
                     )
-                if not name:
-                    sys.stderr.write(
-                        "WARNING: Could not determine species from %r\n" % entry
+                if validate_species:
+                    bad_sp_entries += 1
+                    continue
+                if name in additional_taxonomy:
+                    # Appeared earlier in this import
+                    taxonomy = additional_taxonomy[name]
+                else:
+                    # Must add this now
+                    genus, species = genus_species_split(name)
+                    taxonomy = Taxonomy(
+                        genus=genus, species="" if genus_only else species, ncbi_taxid=0
                     )
-                # Do NOT write it to the DB!
-            else:
-                accepted_entries.append((entry, genus, species, taxid, taxonomy))
+                    session.add(taxonomy)
+                    additional_taxonomy[name] = taxonomy
 
-        if not accepted_entries:
-            continue
+            assert taxonomy is not None
+            for its1_seq in its1_seqs:
+                # its1_seq_count += 1
+                its1_md5 = md5seq(its1_seq)
 
-        if len(its1_seqs) > 1:
-            sys.stderr.write("WARNING: %i HMM matches in %s\n" % (len(its1_seqs), idn))
-            multiple_its1 = True
-
-        for its1_seq in its1_seqs:
-            its1_seq_count += 1
-            its1_md5 = md5seq(its1_seq)
-
-            # Is sequence already there? e.g. duplicate sequences in FASTA file
-            its1 = (
-                session.query(ITS1)
-                .filter_by(md5=its1_md5, sequence=its1_seq)
-                .one_or_none()
-            )
-            if its1 is None:
-                its1 = ITS1(md5=its1_md5, sequence=its1_seq)
-                session.add(its1)
-            good_seq_count += 1
-
-            for entry, genus, species, taxid, taxonomy in accepted_entries:
-                if taxonomy is None:
-                    assert not validate_species
-                    # A previous entry in this match could have had same sp,
-                    assert not taxid
-                    if genus_only:
-                        taxonomy = lookup_genus_taxonomy(session, genus, species)
-                        if taxonomy is None:
-                            species = ""
-                            taxid = None
-                            taxonomy = Taxonomy(
-                                genus=genus, species=species, ncbi_taxid=taxid
-                            )
-                            session.add(taxonomy)
-                    else:
-                        taxonomy = lookup_species_taxonomy(session, genus, species)
-                        if taxonomy is None:
-                            taxonomy = Taxonomy(
-                                genus=genus, species=species, ncbi_taxid=taxid
-                            )
-                            session.add(taxonomy)
-
-                assert taxonomy is not None
-                # Note we use the original FASTA identifier for traceablity
-                # but means the multi-entries get the same source accession
+                # Is sequence already there? e.g. duplicate sequences in FASTA file
+                its1 = (
+                    session.query(ITS1)
+                    .filter_by(md5=its1_md5, sequence=its1_seq)
+                    .one_or_none()
+                )
+                if its1 is None:
+                    its1 = ITS1(md5=its1_md5, sequence=its1_seq)
+                    session.add(its1)
                 record_entry = SequenceSource(
                     source_accession=entry.split(None, 1)[0],
                     source=db_source,
@@ -401,11 +292,14 @@ def import_fasta_file(
                     curated_trust=0,
                 )
                 session.add(record_entry)
-        good_entries += len(accepted_entries)  # single counting, misleading?
+            good_entries += 1  # count once?
+            accepted = True
+        if accepted:
+            good_seq_count += 1
 
     session.commit()
     sys.stderr.write(
-        "File %s had %i sequences. Found %i ITS1, of which %i accepted.\n"
+        "File %s had %i sequences. Found %i with ITS1, of which %i accepted.\n"
         % (fasta_file, seq_count, its1_seq_count, good_seq_count)
     )
     assert multiple_its1 or its1_seq_count <= seq_count, (its1_seq_count, seq_count)
@@ -422,5 +316,5 @@ def import_fasta_file(
             "Of %i potential entries, loaded %i entries, %i failed parsing.\n"
             % (entry_count, good_entries, bad_entries)
         )
-        assert bad_sp_entries == 0
+        assert bad_sp_entries == 0, bad_sp_entries
         assert entry_count == good_entries + bad_entries

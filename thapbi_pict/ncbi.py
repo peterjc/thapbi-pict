@@ -28,22 +28,31 @@ import sys
 from .db_import import import_fasta_file
 
 
-def parse_fasta_entry(text):
+def parse_fasta_entry(text, known_species=None):
     """Split an entry of Accession_Genus_Species_name_Description.
 
-    Returns a tuple: taxid (always zero), presumed genus-species
-    (here taken as two words by default), and spare text which might
-    be more of the species (for use with species name validation).
+    Returns a two-tuple: taxid (always zero), presumed genus-species
+    (taken as two words by default if cannot be matched to a provided
+    known species).
 
     >>> parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
-    (0, 'Phytophthora drechsleri', 'genes ...')
+    (0, 'Phytophthora drechsleri')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
     """  # noqa: E501
     parts = text.rstrip().split()
     taxid = 0
-    # acc = parts[0]
+    name = parts[1:]  # ignore accession
+
+    if known_species:
+        while name and " ".join(name) not in known_species:
+            name.pop()  # discard last word
+        if len(name) > 1:
+            # Found a perfect match
+            return taxid, " ".join(name)
+
+    # Heuristics
     name = parts[1:3]  # assumes "Genus species" only (2 words)
     rest = parts[3:]
     if len(name[0]) > 2 and name[0].startswith("P."):
@@ -57,41 +66,29 @@ def parse_fasta_entry(text):
         # Another special case
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
         name = []
-        rest = []
     if len(rest) >= 2 and rest[0] == "x":
         # Hybrid
         if name[0] == rest[1] and len(rest) >= 3:
             # Genus repeated
             name.append("x")
             name.append(rest[2])
-            rest = rest[3:]
         else:
             name.extend(rest[:2])
-            rest = rest[2:]
-    return (taxid, " ".join(name), " ".join(rest))
+    return taxid, " ".join(name)
 
 
 assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
     0,
     "Phytophthora drechsleri",
-    "genes ...",
 )
 
 assert parse_fasta_entry(
     "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
-) == (
-    0,
-    "Phytophthora humicola x inundata",
-    "isolate SCVWD597 internal transcribed spacer 1, ...",
-)
+) == (0, "Phytophthora humicola x inundata")
 
 assert parse_fasta_entry(
     "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
-) == (
-    0,
-    "Phytophthora humicola x inundata",
-    "isolate SCVWD597 internal transcribed spacer 1, ...",
-)
+) == (0, "Phytophthora humicola x inundata")
 
 
 def main(

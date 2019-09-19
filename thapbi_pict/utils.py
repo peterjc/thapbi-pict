@@ -58,6 +58,17 @@ def genus_species_name(genus, species):
         return genus
 
 
+def genus_species_split(name):
+    """Return (genus, species) splitting on first space.
+
+    If there are no spaces, returns (name, '') instead.
+    """
+    if " " in name:
+        return name.split(" ", 1)
+    else:
+        return name, ""
+
+
 def species_level(prediction):
     """Is this prediction at species level.
 
