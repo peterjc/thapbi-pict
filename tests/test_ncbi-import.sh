@@ -81,6 +81,8 @@ thapbi_pict ncbi-import -d $DB -i tests/ncbi-import/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "105" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "88" ]; then echo "Wrong its1_sequence count"; false; fi
+# Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum
+thapbi_pict dump -d /tmp/20th_Century_ITS1_validated.sqlite | cut -f 1-4 | grep AF271230.1 | grep Phytophthora
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "258" ]; then echo "Wrong taxonomy count"; false; fi
 # Other values subject to change
 
@@ -98,6 +100,8 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wr
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "107" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "90" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1380" ]; then echo "Wrong taxonomy count"; false; fi
+# Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum -> Phytophthora
+thapbi_pict dump -d /tmp/20th_Century_ITS1_genus_only.sqlite | cut -f1-3 | grep AF271230.1 | grep Phytophthora
 if [ `thapbi_pict dump -d $DB | grep -c 4783` -ne "107" ]; then echo "Should all be just genus"; false; fi
 
 # Now using the Phytophthora at species level, Peronosporaceae at genus level:
