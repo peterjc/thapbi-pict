@@ -19,7 +19,13 @@ thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.f
 # Working Party (IUFRO) 7.02.09, Phytophthoras in forests and natural ecosystems,
 # a decision was made to adhere to the original and correct version of the species
 # name, Phytophthora austrocedri.
+#
+# First, rename 'Phytophthora austrocedri' synonym to 'Phytophthora austrocedrae'
+sqlite3 ITS1_DB.sqlite "UPDATE synonym SET name='Phytophthora austrocedrae' WHERE name='Phytophthora austrocedri';"
+# Change 'Phytophthora austrocedrae' main entry to 'Phytophthora austrocedri'
 sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phytophthora' AND species='austrocedrae'"
+# Should now be able to import data using either name.
+# Will use 'Phytophthora austrocedri' in clasffier/assess
 
 # The known value files are now using Phytophthora austrocedri, not P. austrocedrae
 thapbi_pict seq-import -d "$DB.sqlite" -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
