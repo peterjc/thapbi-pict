@@ -169,12 +169,12 @@ def main(tax, db_url, ancestors, debug=True):
         # Is is already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
-            .filter_by(clade="", genus=genus, species="", ncbi_taxid=taxid)
+            .filter_by(genus=genus, species="", ncbi_taxid=taxid)
             .one_or_none()
         )
         if taxonomy is None:
             g_new += 1
-            taxonomy = Taxonomy(clade="", genus=genus, species="", ncbi_taxid=taxid)
+            taxonomy = Taxonomy(genus=genus, species="", ncbi_taxid=taxid)
             session.add(taxonomy)
         else:
             g_old += 1
@@ -184,7 +184,6 @@ def main(tax, db_url, ancestors, debug=True):
     s_old = 0
     s_new = 0
     for taxid, genus, species in genus_species:
-        clade = ""
         aliases = []
 
         if species.split(" ", 1)[0] == genus:
@@ -206,14 +205,12 @@ def main(tax, db_url, ancestors, debug=True):
         # Is is already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
-            .filter_by(clade=clade, genus=genus, species=species, ncbi_taxid=taxid)
+            .filter_by(genus=genus, species=species, ncbi_taxid=taxid)
             .one_or_none()
         )
         if taxonomy is None:
             new += 1
-            taxonomy = Taxonomy(
-                clade=clade, genus=genus, species=species, ncbi_taxid=taxid
-            )
+            taxonomy = Taxonomy(genus=genus, species=species, ncbi_taxid=taxid)
             session.add(taxonomy)
         else:
             old += 1

@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.2  2019-09-20 Dropped clade from the taxonomy table to simplify importing data.
 v0.4.1  2019-09-16 Include NCBI strains/variants/etc and their synonyms as species synonyms.
 v0.4.0  2019-09-12 NCBI taxonomy synonym support; taxonomy import defaults to all *Oomycetes*.
 v0.3.12 2019-09-12 New ``thapbi_pict dump`` option ``-m`` /  ``--minimal`` for DB comparison.

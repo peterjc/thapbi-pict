@@ -54,16 +54,13 @@ def lookup_genus_taxonomy(session, genus, species):
         return taxonomy
 
 
-def lookup_species_taxonomy(session, clade, genus, species):
+def lookup_species_taxonomy(session, genus, species):
     """Find this species entry in the taxonomy/synonym table (if present)."""
-    assert isinstance(clade, str), clade
     assert isinstance(genus, str), genus
     assert isinstance(species, str), species
     # Can we find a match without knowing the taxid?
     taxonomy = (
-        session.query(Taxonomy)
-        .filter_by(clade=clade, genus=genus, species=species)
-        .one_or_none()
+        session.query(Taxonomy).filter_by(genus=genus, species=species).one_or_none()
     )
     if taxonomy is not None:
         # There was a unique entry already, use it.
@@ -73,32 +70,13 @@ def lookup_species_taxonomy(session, clade, genus, species):
     # Can we find a match with taxid=0?
     taxonomy = (
         session.query(Taxonomy)
-        .filter_by(clade=clade, genus=genus, species=species, ncbi_taxid=0)
+        .filter_by(genus=genus, species=species, ncbi_taxid=0)
         .one_or_none()
     )
     if taxonomy is not None:
         # There was a unique entry already, use it.
         return taxonomy
 
-    # Can we find a match without the clade?
-    if clade:
-        # If there is a unique match without the clade,
-        # use it to get the NCBI taxid:
-        taxonomy = (
-            session.query(Taxonomy)
-            .filter_by(clade="", genus=genus, species=species)
-            .one_or_none()
-        )
-        if taxonomy is not None and taxonomy.ncbi_taxid:
-            # There was a unique entry already, use as template!
-            taxonomy = Taxonomy(
-                clade=clade,
-                genus=genus,
-                species=species,
-                ncbi_taxid=taxonomy.ncbi_taxid,
-            )
-            session.add(taxonomy)  # Can we refactor this?
-            return taxonomy
     return lookup_taxonomy_via_synonym(session, genus, species)
 
 
@@ -115,23 +93,14 @@ def lookup_taxonomy_via_synonym(session, genus, species):
     )
 
 
-def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species):
+def find_taxonomy(session, taxid, sp_name, sp_name_etc, validate_species):
     """Fuzzy search for this entry in the taxonomy/synonym tables (if present)."""
-    assert isinstance(clade, str), clade
     assert isinstance(sp_name, str), sp_name
     assert isinstance(sp_name_etc, str), sp_name_etc
 
     if taxid:
         # Perfect match?
         genus, species = sp_name.split(" ", 1) if sp_name else ("", "")
-        taxonomy = (
-            session.query(Taxonomy)
-            .filter_by(ncbi_taxid=taxid, clade=clade, genus=genus, species=species)
-            .one_or_none()
-        )
-        if taxonomy is not None:
-            return taxonomy
-        # Ignoring clade?
         taxonomy = (
             session.query(Taxonomy)
             .filter_by(ncbi_taxid=taxid, genus=genus, species=species)
@@ -157,7 +126,7 @@ def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species)
     while True:
         # sys.stderr.write("DEBUG: Trying genus=%r, species=%r\n"
         #                  % (genus, species))
-        taxonomy = lookup_species_taxonomy(session, clade, genus, species)
+        taxonomy = lookup_species_taxonomy(session, genus, species)
         if taxonomy:
             return taxonomy
 
@@ -188,7 +157,7 @@ def find_taxonomy(session, taxid, clade, sp_name, sp_name_etc, validate_species)
         # sys.stderr.write(
         #     "DEBUG: Extending species name, trying genus=%r, species=%r\n"
         #     % (genus, species))
-        taxonomy = lookup_species_taxonomy(session, clade, genus, species)
+        taxonomy = lookup_species_taxonomy(session, genus, species)
         if taxonomy:
             return taxonomy
 
@@ -317,7 +286,7 @@ def import_fasta_file(
         for entry in entries:
             entry_count += 1
             try:
-                taxid, clade, name, name_etc = entry_taxonomy_fn(entry)
+                taxid, name, name_etc = entry_taxonomy_fn(entry)
             except ValueError as e:
                 bad_entries += 1
                 sys.stderr.write("WARNING: %s - Can't parse: %r\n" % (e, idn))
@@ -330,7 +299,7 @@ def import_fasta_file(
                 sys.stderr.write("WARNING: Ignoring %r\n" % entry)
                 continue
 
-            if not taxid and not clade and not name:
+            if not taxid and not name:
                 bad_entries += 1
                 sys.stderr.write("WARNING: No species information: %r\n" % idn)
                 continue
@@ -350,7 +319,7 @@ def import_fasta_file(
             else:
                 # Time for some fuzzy matching...
                 taxonomy = find_taxonomy(
-                    session, taxid, clade, name, name_etc, validate_species
+                    session, taxid, name, name_etc, validate_species
                 )
             if taxonomy is None and validate_species:
                 bad_sp_entries += 1
@@ -365,7 +334,7 @@ def import_fasta_file(
                     )
                 # Do NOT write it to the DB!
             else:
-                accepted_entries.append((entry, clade, genus, species, taxid, taxonomy))
+                accepted_entries.append((entry, genus, species, taxid, taxonomy))
 
         if not accepted_entries:
             continue
@@ -389,7 +358,7 @@ def import_fasta_file(
                 session.add(its1)
             good_seq_count += 1
 
-            for entry, clade, genus, species, taxid, taxonomy in accepted_entries:
+            for entry, genus, species, taxid, taxonomy in accepted_entries:
                 if taxonomy is None:
                     assert not validate_species
                     # A previous entry in this match could have had same sp,
@@ -397,26 +366,17 @@ def import_fasta_file(
                     if genus_only:
                         taxonomy = lookup_genus_taxonomy(session, genus, species)
                         if taxonomy is None:
-                            clade = ""
                             species = ""
                             taxid = None
                             taxonomy = Taxonomy(
-                                clade=clade,
-                                genus=genus,
-                                species=species,
-                                ncbi_taxid=taxid,
+                                genus=genus, species=species, ncbi_taxid=taxid
                             )
                             session.add(taxonomy)
                     else:
-                        taxonomy = lookup_species_taxonomy(
-                            session, clade, genus, species
-                        )
+                        taxonomy = lookup_species_taxonomy(session, genus, species)
                         if taxonomy is None:
                             taxonomy = Taxonomy(
-                                clade=clade,
-                                genus=genus,
-                                species=species,
-                                ncbi_taxid=taxid,
+                                genus=genus, species=species, ncbi_taxid=taxid
                             )
                             session.add(taxonomy)
 
@@ -435,7 +395,6 @@ def import_fasta_file(
                     curated_trust=0,
                 )
                 session.add(record_entry)
-                # print(clade, species, acc)
         good_entries += len(accepted_entries)  # single counting, misleading?
 
     session.commit()

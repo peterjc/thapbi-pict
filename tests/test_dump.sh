@@ -32,10 +32,4 @@ if [ `thapbi_pict dump -f fasta -g Phytophthora -m | grep -c "^>"` -ne 2979 ]; t
 # With genus and species filter,
 if [ `thapbi_pict dump -f fasta -g Phytophthora -s "fallax, andina" | grep -c "^>"` -ne 7 ]; then echo "Wrong source for two species"; false; fi
 
-# With genus and clades
-if [ `thapbi_pict dump -f fasta -g Phytophthora -c 8a,8b | grep -c "^>"` -ne 17 ]; then echo "Wrong source for Phytophthora clade"; false; fi
-
-# With clades only (by DB construction will be Phytophthora only)
-if [ `thapbi_pict dump -c 8a,8b | grep -c -v "^#"` -ne 17 ]; then echo "Wrong source for clade"; false; fi
-
 echo "$0 - test_dump.sh passed"

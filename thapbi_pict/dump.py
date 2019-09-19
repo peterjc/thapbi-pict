@@ -33,7 +33,6 @@ def main(
     output_filename,
     output_format,
     minimal=False,
-    clade="",
     genus="",
     species="",
     debug=True,
@@ -62,16 +61,6 @@ def main(
     )
     # Sorting for reproducibility
     view = view.order_by(its1_seq.sequence, SequenceSource.id)
-
-    clade_list = []
-    if clade:
-        # Split on commas, convert "-" into "" meaning no entry
-        clade_list = ["" if _ == "-" else _ for _ in clade.split(",")]
-        for x in clade_list:
-            if not session.query(Taxonomy).filter_by(clade=x).count():
-                sys.stderr.write("WARNING: Clade %r not in database\n" % x)
-        view = view.filter(cur_tax.clade.in_(clade_list))
-    del clade
 
     genus_list = []
     if genus.strip():
@@ -112,7 +101,7 @@ def main(
         out_handle.write("#MD5\tSpecies\tSequence\n")
     else:
         out_handle.write(
-            "#Identifier\tClade\tGenus\tSpecies\tTaxID\tITS1-MD5\tITS1-seq\tSequence\n"
+            "#Identifier\tGenus\tSpecies\tTaxID\tITS1-MD5\tITS1-seq\tSequence\n"
         )
 
     if minimal:
@@ -160,10 +149,9 @@ def main(
                         seq_source.current_taxonomy.species,
                     )
                     out_handle.write(
-                        ">%s [clade=%s] [species=%s] [taxid=%s]\n%s\n"
+                        ">%s [species=%s] [taxid=%s]\n%s\n"
                         % (
                             seq_source.source_accession,
-                            none_str(seq_source.current_taxonomy.clade),
                             genus_species,
                             taxid,
                             seq_source.its1.sequence,
@@ -171,10 +159,9 @@ def main(
                     )
                 else:
                     out_handle.write(
-                        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+                        "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
                         % (
                             seq_source.source_accession,
-                            none_str(seq_source.current_taxonomy.clade),
                             none_str(seq_source.current_taxonomy.genus),
                             none_str(seq_source.current_taxonomy.species),
                             taxid,
@@ -190,10 +177,6 @@ def main(
                 sys.stderr.close()
                 sys.exit(1)
 
-            if clade_list:
-                assert (
-                    seq_source.current_taxonomy.clade in clade_list
-                ), seq_source.current_taxonomy
             if genus_list:
                 assert (
                     seq_source.current_taxonomy.genus in genus_list

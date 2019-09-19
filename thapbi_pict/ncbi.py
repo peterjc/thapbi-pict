@@ -31,23 +31,18 @@ from .db_import import import_fasta_file
 def parse_fasta_entry(text):
     """Split an entry of Accession_Genus_Species_name_Description.
 
-    Returns a tuple: taxid (always zero), clade (always empty),
-    presumed genus-species (here taken as two words by default),
-    and spare text which might be more of the species (for use
-    with species name validation).
-
-    Note we can't infer the clade without looking up the species,
-    so for now this returns an empty clade.
+    Returns a tuple: taxid (always zero), presumed genus-species
+    (here taken as two words by default), and spare text which might
+    be more of the species (for use with species name validation).
 
     >>> parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
-    ('', 'Phytophthora drechsleri', 'genes ...')
+    (0, 'Phytophthora drechsleri', 'genes ...')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
     """  # noqa: E501
     parts = text.rstrip().split()
     taxid = 0
-    clade = ""
     # acc = parts[0]
     name = parts[1:3]  # assumes "Genus species" only (2 words)
     rest = parts[3:]
@@ -73,12 +68,11 @@ def parse_fasta_entry(text):
         else:
             name.extend(rest[:2])
             rest = rest[2:]
-    return (taxid, clade, " ".join(name), " ".join(rest))
+    return (taxid, " ".join(name), " ".join(rest))
 
 
 assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
     0,
-    "",
     "Phytophthora drechsleri",
     "genes ...",
 )
@@ -87,7 +81,6 @@ assert parse_fasta_entry(
     "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
 ) == (
     0,
-    "",
     "Phytophthora humicola x inundata",
     "isolate SCVWD597 internal transcribed spacer 1, ...",
 )
@@ -96,7 +89,6 @@ assert parse_fasta_entry(
     "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
 ) == (
     0,
-    "",
     "Phytophthora humicola x inundata",
     "isolate SCVWD597 internal transcribed spacer 1, ...",
 )

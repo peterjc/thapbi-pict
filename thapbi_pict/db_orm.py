@@ -45,31 +45,19 @@ class Taxonomy(Base):
 
     __tablename__ = "taxonomy"
     __table_args__ = (
-        # Might have old entry with clade A, and new curated entry with clade B
-        # (but same genus, species and NCBI taxid)
-        Index(
-            "taxid_genus_species_clade",
-            "ncbi_taxid",
-            "genus",
-            "species",
-            "clade",
-            unique=True,
-        ),
         Index("taxid_genus_species", "ncbi_taxid", "genus", "species", unique=False),
         Index("genus_species", "genus", "species", unique=False),
     )
 
     id = Column(Integer, primary_key=True)
-    # Using empty string rather than Null (None) for clade, genus, species
-    clade = Column(String(10), nullable=False)  # TODO - Integer linked to table?
+    # Using empty string rather than Null (None) for genus, species
     ncbi_taxid = Column(Integer)
     genus = Column(String(100), nullable=False)
     species = Column(String(100), nullable=False)  # source may have variant/strain?
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""
-        return "Taxonomy(clade=%r, ncbi_taxid=%r, genus=%r, species=%r)" % (
-            self.clade,
+        return "Taxonomy(ncbi_taxid=%r, genus=%r, species=%r)" % (
             self.ncbi_taxid,
             self.genus,
             self.species,

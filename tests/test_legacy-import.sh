@@ -44,7 +44,7 @@ thapbi_pict legacy-import -x -d $DB -i database/legacy/Phytophthora_ITS_database
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "382" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "176" ]; then echo "Wrong its1_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "165" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "164" ]; then echo "Wrong taxonomy count"; false; fi
 if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "382" ]; then echo "Wrong FASTA record count"; false; fi
 if [ `thapbi_pict dump -d $DB | grep "synthetic" -c` -ne 4 ]; then echo "Missing four synthetic controls"; false; fi
 
@@ -73,10 +73,9 @@ if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "348" ]; then echo "W
 
 #thapbi_pict dump 2>&1 | grep "the following arguments are required"
 thapbi_pict dump -d database/legacy/Phytophthora_ITS_database_v0.005.sqlite -o /dev/null
-thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -c 8a,8b
+thapbi_pict dump -d "sqlite:///database/legacy/Phytophthora_ITS_database_v0.005.sqlite" -o /dev/null -g Phytophthora
 
 export DB=database/legacy/database_lax.sqlite
-thapbi_pict dump -d $DB -o /dev/null -c -
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora
 thapbi_pict dump -d $DB -o /dev/null -g Phytophthora -s "ilicis, sp. aff. meadii"
 
@@ -84,7 +83,6 @@ set +o pipefail
 thapbi_pict dump -d $DB -o /dev/null -s "ambiguous" 2>&1 | grep "requires a single genus"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytophthora" -s "ambiguous" 2>&1 | grep "not in database"
 thapbi_pict dump -d $DB -o /dev/null -g "Phytopthora" 2>&1 | grep "not in database"
-thapbi_pict dump -d $DB -o /dev/null -c "123" 2>&1 | grep "not in database"
 set -o pipefail
 
 echo "$0 - test_legacy-import.sh passed"
