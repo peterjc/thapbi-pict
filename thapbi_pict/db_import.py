@@ -43,8 +43,12 @@ def lookup_genus_taxonomy(session, genus, species):
         # There was a unique entry already, use it.
         # It may even have an NCBI taxid?
         return taxonomy
-    # Can we find a match with taxid=0?
-    taxonomy = session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
+    # Can we find a unique match with taxid=0?
+    taxonomy = (
+        session.query(Taxonomy)
+        .filter_by(genus=genus, species="", ncbi_taxid=0)
+        .one_or_none()
+    )
     if taxonomy is not None:
         # There was a unique entry already, use it.
         return taxonomy
