@@ -220,6 +220,19 @@ def md5seq(seq):
     return hashlib.md5(seq.upper().encode("ascii")).hexdigest()
 
 
+def md5_hexdigest(filename, chunk_size=1024):
+    """Return the MD5 hex-digest of the given file."""
+    hash_md5 = hashlib.md5()
+    with open(filename, "rb") as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                # EOF
+                break
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
 def cmd_as_string(cmd):
     """Express a list command as a suitably quoted string.
 

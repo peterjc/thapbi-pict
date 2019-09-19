@@ -12,7 +12,6 @@ and ``legacy.py`` which contain specific meta-data handling code for the
 different naming conventions.
 """
 
-import hashlib
 import os
 import sys
 
@@ -26,20 +25,8 @@ from .db_orm import connect_to_db
 from .hmm import filter_for_ITS1
 from .utils import genus_species_name
 from .utils import md5seq
+from .utils import md5_hexdigest
 from .versions import check_tools
-
-
-def md5_hexdigest(filename, chunk_size=1024):
-    """Return the MD5 hex-digest of the given file."""
-    hash_md5 = hashlib.md5()
-    with open(filename, "rb") as f:
-        while True:
-            chunk = f.read(chunk_size)
-            if not chunk:
-                # EOF
-                break
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
 
 
 def lookup_genus_taxonomy(session, genus, species):
