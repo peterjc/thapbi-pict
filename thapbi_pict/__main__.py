@@ -142,7 +142,6 @@ def dump(args=None):
         output_filename=args.output,
         output_format=args.format,
         minimal=args.minimal,
-        clade=args.clade,
         genus=args.genus,
         species=args.species,
         debug=args.verbose,
@@ -806,7 +805,7 @@ def main(args=None):
     parser_dump = subparsers.add_parser(
         "dump",
         description="Export an ITS1 database to a text file.",
-        epilog="e.g. 'thapbi_pict dump -d ... -c 8a,8b -o clade_8a_8b.txt'",
+        epilog="e.g. 'thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt'",
     )
     parser_dump.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_dump.add_argument(
@@ -830,15 +829,6 @@ def main(args=None):
         default="txt",
         choices=["txt", "fasta"],
         help="Format to write out (default 'txt' for debugging).",
-    )
-    parser_dump.add_argument(
-        "-c",
-        "--clade",
-        type=str,
-        default="",
-        help="Which clade(s) to export (comma separated list, "
-        "with '-' meaning no clade defined). "
-        "Default is not to filter by clade.",
     )
     parser_dump.add_argument(
         "-g",

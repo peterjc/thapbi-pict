@@ -118,7 +118,7 @@ def parse_fasta_entry(text):
     Will also convert the underscores in the species name into spaces:
 
     >>> parse_fasta_entry('4_P._arenaria_HQ013219')
-    ('4', 'P. arenaria', '')
+    (0, 'P. arenaria', '')
 
     Note - this assumes function ``split_composite_entry`` has already
     been used to break up any multiple species composite entries.
@@ -127,17 +127,17 @@ def parse_fasta_entry(text):
     underscore between the clade and species:
 
     >>> parse_fasta_entry('1Phytophthora_aff_infestans_P13660')
-    ('1', 'Phytophthora aff infestans', '')
+    (0, 'Phytophthora aff infestans', '')
 
     And the old variant without any clade at the start, e.g.
 
     >>> parse_fasta_entry('P._amnicola_CBS131652')
-    ('', 'P. amnicola', '')
+    (0, 'P. amnicola', '')
 
     And the old variant with just an accession, e.g.
 
     >>> parse_fasta_entry('VHS17779')
-    ('', '', '')
+    (0, '', '')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
@@ -145,7 +145,7 @@ def parse_fasta_entry(text):
     Handles the special case of the synthetic controls as follows:
 
     >>> parse_fasta_entry("Control_05 C1")
-    (0, '', 'synthetic construct C1', '')
+    (0, 'synthetic construct C1', '')
     """
     taxid = 0
 
@@ -157,23 +157,13 @@ def parse_fasta_entry(text):
     if parts[0] == "Control":
         # txid32630 is "synthetic construct", seems best taxonomy match
         if " " in text:
-            return (
-                0,
-                "",
-                ("synthetic construct %s" % text.split(" ", 1)[1]).rstrip(),
-                "",
-            )
+            return (0, ("synthetic construct %s" % text.split(" ", 1)[1]).rstrip(), "")
         else:
-            return (
-                0,
-                "",
-                ("synthetic construct %s" % " ".join(parts[1:])).rstrip(),
-                "",
-            )
+            return (0, ("synthetic construct %s" % " ".join(parts[1:])).rstrip(), "")
 
     if len(parts) == 1:
         # Legacy variant with just an accession
-        return (taxid, "", "", "")
+        return (taxid, "", "")
 
     clade = parts[0]
 
@@ -220,53 +210,38 @@ def parse_fasta_entry(text):
 
     if clade and not clade_re.fullmatch(clade):
         raise ValueError("Clade %s not recognised from %r" % (clade, text))
-    return (taxid, clade, " ".join(name), "")
+    return (taxid, " ".join(name), "")
 
 
-assert parse_fasta_entry("Control_05 C1") == (0, "", "synthetic construct C1", "")
+assert parse_fasta_entry("Control_05 C1") == (0, "synthetic construct C1", "")
 assert parse_fasta_entry("7a_Phytophthora_alni_subsp._uniformis_AF139367") == (
     0,
-    "7a",
     "Phytophthora uniformis",
     "",
 )
 assert parse_fasta_entry("8d_Phytophthora_austrocedri_DQ995184") == (
     0,
-    "8d",
     "Phytophthora austrocedrae",
     "",
 )
 assert parse_fasta_entry("6_Phytophthora_taxon_cyperaceae_KJ372258") == (
     0,
-    "6",
     "Phytophthora balyanboodja",
     "",
 )
-assert parse_fasta_entry("4_P._arenaria_HQ013219") == (
-    0,
-    "4",
-    "Phytophthora arenaria",
-    "",
-)
+assert parse_fasta_entry("4_P._arenaria_HQ013219") == (0, "Phytophthora arenaria", "")
 assert parse_fasta_entry("1Phytophthora_aff_infestans_P13660") == (
     0,
-    "1",
     "Phytophthora aff infestans",
     "",
 )
-assert parse_fasta_entry("P._amnicola_CBS131652") == (
-    0,
-    "",
-    "Phytophthora amnicola",
-    "",
-)
+assert parse_fasta_entry("P._amnicola_CBS131652") == (0, "Phytophthora amnicola", "")
 assert parse_fasta_entry("10_Phytophthora_boehmeriae_Voucher_HQ643149") == (
     0,
-    "10",
     "Phytophthora boehmeriae",
     "",
 )
-assert parse_fasta_entry("ACC-ONLY") == (0, "", "", "")
+assert parse_fasta_entry("ACC-ONLY") == (0, "", "")
 
 
 def main(

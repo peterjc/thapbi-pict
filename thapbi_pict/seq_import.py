@@ -92,7 +92,7 @@ def main(
             assert genus_species, "Didn't find expected wildcard species line"
 
             def meta_fn(text):
-                return (int(taxid), "", genus_species, "")
+                return int(taxid), genus_species, ""
 
             def sequence_wanted(title):
                 """Check if identifier passess abundance level."""
