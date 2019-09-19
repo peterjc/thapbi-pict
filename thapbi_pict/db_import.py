@@ -309,6 +309,10 @@ def import_fasta_file(
         idn_set.add(idn)
 
         entries = fasta_entry_fn(title)
+        if not entries:
+            sys.stderr.write("WARNING: Ignoring %r\n" % title)
+            continue
+
         accepted_entries = []  # Some or all may fail species validation
         for entry in entries:
             entry_count += 1
@@ -320,6 +324,12 @@ def import_fasta_file(
                 continue
             assert isinstance(name, str), name
             assert isinstance(name_etc, str), name_etc
+
+            if name.lower().startswith("uncultured "):
+                bad_entries += 1
+                sys.stderr.write("WARNING: Ignoring %r\n" % entry)
+                continue
+
             if not taxid and not clade and not name:
                 bad_entries += 1
                 sys.stderr.write("WARNING: No species information: %r\n" % idn)

@@ -28,19 +28,6 @@ import sys
 from .db_import import import_fasta_file
 
 
-def want_fasta_entry(text):
-    """Determine if an NCBI entry should be imported or not.
-
-    Note unlike the legacy FASTA import code, each FASTA record
-    is a single entity, so if wanted returns a list of one.
-    """
-    if text.split(None, 1)[0].lower == "uncultured":
-        # We can't trust this, even at genus level - reject
-        return []
-    else:
-        return [text]
-
-
 def parse_fasta_entry(text):
     """Split an entry of Accession_Genus_Species_name_Description.
 
@@ -124,7 +111,7 @@ def main(
         db_url,
         name=name,
         debug=debug,
-        fasta_entry_fn=want_fasta_entry,
+        fasta_entry_fn=None,
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
         genus_only=genus_only,
