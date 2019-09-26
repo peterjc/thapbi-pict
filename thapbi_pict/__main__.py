@@ -148,6 +148,17 @@ def dump(args=None):
     )
 
 
+def conflicts(args=None):
+    """Subcommand to look for taxonomic conflicts in a database."""
+    from .conflicts import main
+
+    return main(
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        output_filename=args.output,
+        debug=args.verbose,
+    )
+
+
 def prepare_reads(args=None):
     """Subcommand to prepare FASTA paired reads."""
     from .prepare import main
@@ -850,6 +861,25 @@ def main(args=None):
     parser_dump.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_dump.set_defaults(func=dump)
     del parser_dump  # To prevent acidentally adding more
+
+    # conflicts
+    parser_conflicts = subparsers.add_parser(
+        "conflicts",
+        description="Count genus or species conflicts in a marker database.",
+        epilog="Number of genus level conflicts is used as the return code. "
+        "e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
+    )
+    parser_conflicts.add_argument("-d", "--database", **ARG_DB_INPUT)
+    parser_conflicts.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        help="File to write to (default '-' meaning stdout)",
+    )
+    parser_conflicts.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_conflicts.set_defaults(func=conflicts)
+    del parser_conflicts
 
     # prepare reads
     parser_prepare_reads = subparsers.add_parser(
