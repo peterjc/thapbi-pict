@@ -62,10 +62,10 @@ if [ `thapbi_pict dump -d $DB | grep "synthetic" -c` -ne 4 ]; then echo "Missing
 
 # Try belatedly loading the NCBI taxonomy (Phytophthora only), expect some conflicts:
 if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 164 ]; then echo "Wrong species count"; false; fi
-thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01 -a 4783
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Phytophthora' AND species='infestans';"`-ne 2 ]; then echo "Expected\
- two P. infestans entries."; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "422" ]; then echo "Wrong taxonomy count"; false; fi
+thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01 -a 4783 -v
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Phytophthora' AND species='infestans';"`-ne 1 ]; then echo "Expected\
+ one P. infestans entry."; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "280" ]; then echo "Wrong taxonomy count"; false; fi
 if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 280 ]; then echo "Wrong species count"; false; fi
 
 # Now test with species name validation, load with Phytophthora

@@ -205,9 +205,18 @@ def main(tax, db_url, ancestors, debug=True):
         # Is is already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
-            .filter_by(genus=genus, species=species, ncbi_taxid=taxid)
+            .filter_by(genus=genus, species=species)
             .one_or_none()
         )
+        if taxonomy and taxonomy.ncbi_taxid != taxid:
+            # Prior entry had missing/different taxid, must update it
+            if debug or taxonomy.ncbi_taxid != 0:
+                sys.stderr.write(
+                    "WARNING: %s %s, updating NCBI taxid %i -> %i\n"
+                    % (genus, species, taxonomy.ncbi_taxid, taxid)
+                )
+            taxonomy.ncbi_taxid = taxid
+            session.add(taxonomy)
         if taxonomy is None:
             new += 1
             taxonomy = Taxonomy(genus=genus, species=species, ncbi_taxid=taxid)
