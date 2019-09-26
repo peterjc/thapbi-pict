@@ -19,6 +19,7 @@ tests/test_dump.sh
 tests/test_load-tax.sh
 tests/test_legacy-import.sh
 tests/test_ncbi-import.sh
+tests/test_conflicts.sh
 
 # Currently can't easily install these on TravisCI
 if ! [ -x "$(command -v flash)" ]; then
