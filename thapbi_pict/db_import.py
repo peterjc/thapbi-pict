@@ -279,7 +279,10 @@ def import_fasta_file(
 
         entries = fasta_entry_fn(title)
         if not entries:
-            sys.stderr.write("WARNING: Ignoring %r\n" % title)
+            sys.stderr.write(
+                "WARNING: Ignoring %r\n"
+                % (title if len(title) < 70 else title[:66] + "...")
+            )
             continue
 
         accepted_entries = []  # Some or all may fail species validation
@@ -287,9 +290,12 @@ def import_fasta_file(
             entry_count += 1
             try:
                 taxid, name, name_etc = entry_taxonomy_fn(entry)
-            except ValueError as e:
+            except ValueError:
                 bad_entries += 1
-                sys.stderr.write("WARNING: %s - Can't parse: %r\n" % (e, idn))
+                sys.stderr.write(
+                    "WARNING: Ignoring %r\n"
+                    % (entry if len(entry) < 60 else entry[:67] + "...")
+                )
                 continue
             assert isinstance(name, str), name
             assert isinstance(name_etc, str), name_etc
