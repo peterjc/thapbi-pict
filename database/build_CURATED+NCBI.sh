@@ -31,3 +31,5 @@ thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
 
 sqlite3 "$DB.sqlite" .dump > "$DB.sql"
+
+thapbi_pict conflicts -d "$DB.sqlite"
