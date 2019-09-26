@@ -26,6 +26,18 @@ thapbi_pict legacy-import -x -d $DB -i tests/legacy-import/dup_seqs.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "8" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "2" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "8" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 8 ]; then echo "Wrong species count"; false; fi
+
+if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
+if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip -d new_taxdump_2019-09-01; fi
+
+# Try belatedly loading the NCBI taxonomy (Phytophthora only), expect no conflicts:
+thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01 -a 4783
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Phytophthora' AND species='infestans';"` -ne 1 ]; then echo "Expected one P. infestans entry."; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "266" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 266 ]; then echo "Wrong species count"; false; fi
+
 
 export DB=database/legacy/database_lax.sqlite
 rm -rf $DB
@@ -48,9 +60,13 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "164" ]; then echo "Wro
 if [ `thapbi_pict dump -d $DB -f fasta | grep -c "^>"` -ne "382" ]; then echo "Wrong FASTA record count"; false; fi
 if [ `thapbi_pict dump -d $DB | grep "synthetic" -c` -ne 4 ]; then echo "Missing four synthetic controls"; false; fi
 
-
-if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
-if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip -d new_taxdump_2019-09-01; fi
+# Try belatedly loading the NCBI taxonomy (Phytophthora only), expect some conflicts:
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 164 ]; then echo "Wrong species count"; false; fi
+thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01 -a 4783
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Phytophthora' AND species='infestans';"`-ne 2 ]; then echo "Expected\
+ two P. infestans entries."; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "422" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 280 ]; then echo "Wrong species count"; false; fi
 
 # Now test with species name validation, load with Phytophthora
 # Then add 172 entries from v5, then 170 entries from v4
