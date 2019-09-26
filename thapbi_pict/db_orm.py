@@ -45,8 +45,8 @@ class Taxonomy(Base):
 
     __tablename__ = "taxonomy"
     __table_args__ = (
-        Index("taxid_genus_species", "ncbi_taxid", "genus", "species", unique=False),
-        Index("genus_species", "genus", "species", unique=False),
+        Index("taxid_genus_species", "ncbi_taxid", "genus", "species", unique=True),
+        Index("genus_species", "genus", "species", unique=True),
     )
 
     id = Column(Integer, primary_key=True)
