@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.3  2019-09-06 New ``conflicts`` command reporting genus/species level conflicts in DB.
+v0.4.3  2019-09-26 New ``conflicts`` command reporting genus/species level conflicts in DB.
 v0.4.2  2019-09-26 Drop clade from taxonomy table, require unique species entries.
 v0.4.1  2019-09-16 Include NCBI strains/variants/etc and their synonyms as species synonyms.
 v0.4.0  2019-09-12 NCBI taxonomy synonym support; taxonomy import defaults to all *Oomycetes*.
