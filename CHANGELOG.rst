@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.5  *Pending*  Apply primer trimming to ``ncbi-import`` (crop if primers found).
 v0.4.4  2019-10-02 New ``--hmm`` & ``--flip`` arguments for ``prepare-reads`` and ``pipeline``.
 v0.4.3  2019-09-26 New ``conflicts`` command reporting genus/species level conflicts in DB.
 v0.4.2  2019-09-26 Drop clade from taxonomy table, require unique species entries.
