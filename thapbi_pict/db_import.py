@@ -217,7 +217,7 @@ def import_fasta_file(
             assert isinstance(name, str), name
 
             if name.lower().startswith("uncultured "):
-                bad_entries += 1
+                bad_sp_entries += 1
                 sys.stderr.write(
                     "WARNING: Uncultured, so ignoring %r\n"
                     % (entry if len(entry) < 60 else entry[:67] + "...")
