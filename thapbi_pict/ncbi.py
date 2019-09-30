@@ -98,6 +98,9 @@ def main(
     name=None,
     validate_species=False,
     genus_only=False,
+    left_primer=None,
+    right_primer=None,
+    tmp_dir=None,
     debug=True,
 ):
     """Implement the ``thapbi_pict ncbi-import`` command."""
@@ -111,4 +114,7 @@ def main(
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
         genus_only=genus_only,
+        left_primer=left_primer,
+        right_primer=right_primer,
+        tmp_dir=tmp_dir,
     )
