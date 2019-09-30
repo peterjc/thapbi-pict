@@ -115,6 +115,9 @@ def ncbi_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
+        left_primer=args.left,
+        right_primer=args.right,
+        tmp_dir=args.temp,
         debug=args.verbose,
     )
 
@@ -543,8 +546,8 @@ ARG_PRIMER_LEFT = dict(  # noqa: C408
     type=str,
     default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
     metavar="PRIMER",
-    help="Left primer sequence, finds and removes from start of "
-    "merged read pairs. Can use IUPAC ambiguity codes. "
+    help="Left primer sequence, find and remove from start of "
+    "marker sequence. Can use IUPAC ambiguity codes. "
     "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
     "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202 and "
     "conserved 32bp 'TTTCCGTAGGTGAACCTGCGGAAGGATCATTA'.",
@@ -555,12 +558,12 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     type=str,
     default="GCARRGACTTTCGTCCCYRC",
     metavar="PRIMER",
-    help="Right primer sequence, finds and removes reverse "
-    "complement from end of merged read pairs. Can use "
+    help="Right primer sequence, find and remove reverse "
+    "complement from end of marker sequence. Can use "
     "IUPAC ambiguity codes. Default 20bp 5.8S-1R primer "
     "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
     "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
-    "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
+    "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
 )
 
 # "--hmm",
@@ -790,6 +793,9 @@ def main(args=None):
     parser_ncbi_import.add_argument("-n", "--name", **ARG_NAME)
     parser_ncbi_import.add_argument("-x", "--lax", **ARG_LAX)
     parser_ncbi_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    parser_ncbi_import.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
+    parser_ncbi_import.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    parser_ncbi_import.add_argument("-t", "--temp", **ARG_TEMPDIR)
     parser_ncbi_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_ncbi_import.set_defaults(func=ncbi_import)
     del parser_ncbi_import  # To prevent acidentally adding more

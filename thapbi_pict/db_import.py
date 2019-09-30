@@ -14,6 +14,9 @@ different naming conventions.
 
 import os
 import sys
+import tempfile
+
+from Bio.Seq import reverse_complement
 
 from . import __version__
 from .db_orm import DataSource
@@ -27,7 +30,29 @@ from .utils import genus_species_name
 from .utils import genus_species_split
 from .utils import md5seq
 from .utils import md5_hexdigest
+from .utils import run
 from .versions import check_tools
+
+
+def run_cutadapt_keep(
+    long_in, trimmed_out, left_primer, right_primer, debug=False, cpu=0
+):
+    """Run cutadapt on a single file, cropping at either primer if found,.
+
+    The input and/or output files may be compressed as long as they
+    have an appropriate suffix (e.g. gzipped with ``.gz`` suffix).
+    """
+    cmd = ["cutadapt"]
+    if cpu:
+        # Not compatible with --untrimmed-output
+        cmd += ["-j", str(cpu)]
+    # Can't do together as while RIGHT may match, LEFT might not
+    if left_primer:
+        cmd += ["-g", left_primer]
+    if right_primer:
+        cmd += ["-a", reverse_complement(right_primer)]
+    cmd += ["-o", trimmed_out, long_in]
+    return run(cmd, debug=debug)
 
 
 def load_taxonomy(session):
@@ -83,6 +108,9 @@ def import_fasta_file(
     entry_taxonomy_fn=None,
     validate_species=False,
     genus_only=False,
+    left_primer=None,
+    right_primer=None,
+    tmp_dir=None,
 ):
     """Import a FASTA file into the database.
 
@@ -109,9 +137,18 @@ def import_fasta_file(
     lines. However, the metadata for ``thapbi_pict seq-import``
     comes from a sister TSV file, and is cross-referenced by the
     FASTA sequence identifier.
+
+    For ``thapbi_pict legacy-import`` we expect pre-trimmed curated
+    marker sequences. For ``thapbi_pict seq-import`` the reads have
+    been primer-trimed by ``thapbi_pict prepare-reads``. However,
+    for ``thapbi_pict ncbi-import`` many of the sequences will be
+    longer than the marker region of interest - and thus should be
+    in-silico primer trimmed.
     """
     if hmm_stem:
         check_tools(["hmmscan"], debug)
+    if left_primer or right_primer:
+        check_tools(["cutadapt"], debug)
 
     # Argument validation,
     if fasta_entry_fn is None:
@@ -148,10 +185,34 @@ def import_fasta_file(
             % len(preloaded_taxonomy)
         )
 
+    md5 = md5_hexdigest(fasta_file)
+
     if not name:
         name = "Import of %s" % os.path.basename(fasta_file)
 
-    md5 = md5_hexdigest(fasta_file)
+    if left_primer or right_primer:
+        if tmp_dir:
+            # Up to the user to remove the files
+            tmp_obj = None
+            shared_tmp = tmp_dir
+        else:
+            tmp_obj = tempfile.TemporaryDirectory()
+            shared_tmp = tmp_obj.name
+
+        if left_primer:
+            trim_left = os.path.join(shared_tmp, "cutadapt_left.fasta")
+            run_cutadapt_keep(fasta_file, trim_left, left_primer, None, debug)  # cpu
+        else:
+            trim_left = fasta_file
+        if right_primer:
+            trimmed_fasta = os.path.join(shared_tmp, "cutadapt.fasta")
+            run_cutadapt_keep(
+                trim_left, trimmed_fasta, None, right_primer, debug
+            )  # cpu
+        else:
+            trimmed_fasta = trim_left
+    else:
+        trimmed_fasta = fasta_file
 
     # TODO - explicit check for reusing name, and/or unique in schema
     # TODO - explicit check for reusing MD5 (not just DB schema check)
@@ -177,7 +238,7 @@ def import_fasta_file(
     multiple_its1 = False
 
     for title, seq, hmm_name, its1_seqs in filter_for_ITS1(
-        fasta_file, hmm=hmm_stem, cache_dir=None
+        trimmed_fasta, hmm=hmm_stem, cache_dir=None
     ):
         seq_count += 1
         if not its1_seqs:
