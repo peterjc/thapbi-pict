@@ -28,4 +28,9 @@ thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
 
 sqlite3 "$DB.sqlite" .dump > "$DB.sql"
 
+cp "$DB.sqlite" "$DB-$VERSION.sqlite"
+cp "$DB.sql" "$DB-$VERSION.sql"
+cp "$DB.txt" "$DB-$VERSION.txt"
+cp "$DB.fasta" "$DB-$VERSION.fasta"
+
 thapbi_pict conflicts -d "$DB.sqlite"
