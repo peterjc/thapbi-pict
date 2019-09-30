@@ -76,6 +76,7 @@ def lookup_genus(session, name):
 def import_fasta_file(
     fasta_file,
     db_url,
+    hmm_stem=None,
     name=None,
     debug=True,
     fasta_entry_fn=None,
@@ -109,7 +110,8 @@ def import_fasta_file(
     comes from a sister TSV file, and is cross-referenced by the
     FASTA sequence identifier.
     """
-    check_tools(["hmmscan"], debug)
+    if hmm_stem:
+        check_tools(["hmmscan"], debug)
 
     # Argument validation,
     if fasta_entry_fn is None:
@@ -172,7 +174,9 @@ def import_fasta_file(
     idn_set = set()
     multiple_its1 = False
 
-    for title, seq, hmm_name, its1_seqs in filter_for_ITS1(fasta_file, cache_dir=None):
+    for title, seq, hmm_name, its1_seqs in filter_for_ITS1(
+        fasta_file, hmm=hmm_stem, cache_dir=None
+    ):
         seq_count += 1
         if not its1_seqs:
             assert not hmm_name, hmm_name

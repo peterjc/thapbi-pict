@@ -144,13 +144,15 @@ def perfect_match_in_db(session, seq, debug=False):
 
 
 def apply_method_to_file(
-    method_fn, fasta_file, session, read_report, shared_tmp_dir, debug=False
+    method_fn, fasta_file, session, hmm_stem, read_report, shared_tmp_dir, debug=False
 ):
     """Apply HMM filter to FASTA file, and call given method on each match."""
     count = 0
     tax_counts = Counter()
 
-    for title, full_seq, hmm_name, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+    for title, full_seq, hmm_name, seqs in filter_for_ITS1(
+        fasta_file, shared_tmp_dir, hmm=hmm_stem
+    ):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
         count += abundance
@@ -221,7 +223,14 @@ def apply_method_to_file(
 
 
 def method_identity(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    hmm_stem,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    debug=False,
+    cpu=0,
 ):
     """Classify using perfect identity.
 
@@ -244,6 +253,7 @@ def method_identity(
         perfect_match_in_db,
         fasta_file,
         session,
+        hmm_stem,
         read_report,
         shared_tmp_dir,
         debug=debug,
@@ -288,7 +298,14 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_onebp(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    hmm_stem,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    debug=False,
+    cpu=0,
 ):
     """Classify using identity or 1bp difference.
 
@@ -302,7 +319,13 @@ def method_onebp(
     (without having to worry about trimming for a partial match).
     """
     return apply_method_to_file(
-        onebp_match_in_db, fasta_file, session, read_report, shared_tmp_dir, debug=debug
+        onebp_match_in_db,
+        fasta_file,
+        session,
+        hmm_stem,
+        read_report,
+        shared_tmp_dir,
+        debug=debug,
     )
 
 
@@ -367,7 +390,14 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    hmm_stem,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    debug=False,
+    cpu=0,
 ):
     """Classify using BLAST.
 
@@ -517,6 +547,7 @@ def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
 def method_swarm_core(
     fasta_file,
     session,
+    hmm_stem,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -548,7 +579,9 @@ def method_swarm_core(
     # used in the DB entries
     its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
     with open(its_fasta, "w") as handle:
-        for title, _, hmm_name, seqs in filter_for_ITS1(fasta_file, shared_tmp_dir):
+        for title, _, hmm_name, seqs in filter_for_ITS1(
+            fasta_file, shared_tmp_dir, hmm=hmm_stem
+        ):
             if len(seqs) > 1:
                 sys.exit(
                     "ERROR: %i %s HMM matches from %s in %s"
@@ -628,7 +661,14 @@ def method_swarm_core(
 
 
 def method_swarm(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    hmm_stem,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    debug=False,
+    cpu=0,
 ):
     """SWARM classifier.
 
@@ -642,6 +682,7 @@ def method_swarm(
     return method_swarm_core(
         fasta_file,
         session,
+        hmm_stem,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -652,7 +693,14 @@ def method_swarm(
 
 
 def method_swarmid(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    hmm_stem,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    debug=False,
+    cpu=0,
 ):
     """SWARM classifier with 100% identity special case.
 
@@ -666,6 +714,7 @@ def method_swarmid(
     return method_swarm_core(
         fasta_file,
         session,
+        hmm_stem,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -700,7 +749,7 @@ method_setup = {
 }
 
 
-def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
+def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
@@ -835,7 +884,7 @@ def main(fasta, db_url, method, out_dir, tmp_dir, debug=False, cpu=0):
         if os.path.getsize(filename):
             # There are sequences to classify
             tax_counts = classify_file_fn(
-                filename, session, pred_handle, tmp, shared_tmp, debug, cpu
+                filename, session, hmm_stem, pred_handle, tmp, shared_tmp, debug, cpu
             )
         else:
             # No sequences, no taxonomy assignments

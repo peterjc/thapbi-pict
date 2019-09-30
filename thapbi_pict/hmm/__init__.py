@@ -79,7 +79,9 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan="hmmscan", debug=F
 
 def hmm_cache(hmm_file, cache_dir, debug=False):
     """Cache HMM files for calling hmmscan."""
+    assert hmm_file and hmm_file != "-", hmm_file
     old_dir, stem = os.path.split(hmm_file)
+    assert os.path.isdir(old_dir), hmm_file
 
     new = os.path.join(cache_dir, stem)
     if os.path.isfile(new):
@@ -101,72 +103,85 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
 
 
 def filter_for_ITS1(
-    input_fasta, cache_dir, min_length=100, max_length=250, debug=False
+    input_fasta, cache_dir, min_length=100, max_length=250, hmm=None, debug=False
 ):
     """Search for the ITS1 sequence(s) within FASTA entries.
 
     Expect one ITS1 match in the vast majority of cases.
     """
-    hmm = os.path.join(os.path.split(__file__)[0], "combined.hmm")
-    if cache_dir:
-        hmm = hmm_cache(hmm, cache_dir, debug=debug)
+    if not hmm:
+        if debug:
+            sys.stderr.write("DEBUG: Not applying any HMM filter\n")
+        for record in SeqIO.parse(input_fasta, "fasta"):
+            title = record.description
+            seq = str(record.seq).upper()
+            yield title, seq, "", [seq]
+    elif hmm == "-":
+        raise RuntimeError("Hyphen hmm argument not expanded to default")
+        # hmm = os.path.join(os.path.split(__file__)[0], "combined.hmm")
+    else:
+        # Actually apply the HMM
+        if cache_dir:
+            hmm = hmm_cache(hmm, cache_dir, debug=debug)
 
-    for record, result in run_and_parse_hmmscan(hmm, input_fasta, debug=debug):
-        title = record.description
-        seq = str(record.seq).upper()
-        if len(record) < min_length or not result:
-            yield title, seq, None, []
-            continue
+        for record, result in run_and_parse_hmmscan(hmm, input_fasta, debug=debug):
+            title = record.description
+            seq = str(record.seq).upper()
+            if len(record) < min_length or not result:
+                yield title, seq, None, []
+                continue
 
-        # Not interested in cases like this with no actual hits:
-        # [No individual domains that satisfy reporting thresholds
-        # (although complete target did)]
-        if debug and len([_ for _ in result if _]) > 1:
-            sys.stderr.write(
-                "DEBUG: %s matched HMM for %s\n"
-                % (record.id, ";".join(hit.id for hit in result))
-            )
+            # Not interested in cases like this with no actual hits:
+            # [No individual domains that satisfy reporting thresholds
+            # (although complete target did)]
+            if debug and len([_ for _ in result if _]) > 1:
+                sys.stderr.write(
+                    "DEBUG: %s matched HMM for %s\n"
+                    % (record.id, ";".join(hit.id for hit in result))
+                )
 
-        its1_seqs = [
-            (hit.id, seq[hsp.query_start : hsp.query_end])
-            for hit in result
-            for hsp in hit
-        ]
+            its1_seqs = [
+                (hit.id, seq[hsp.query_start : hsp.query_end])
+                for hit in result
+                for hsp in hit
+            ]
 
-        # Apply length filter to all the matches
-        if min_length:
-            its1_seqs = [_ for _ in its1_seqs if min_length <= len(_[1])]
-        if max_length:
-            its1_seqs = [_ for _ in its1_seqs if len(_[1]) <= max_length]
+            # Apply length filter to all the matches
+            if min_length:
+                its1_seqs = [_ for _ in its1_seqs if min_length <= len(_[1])]
+            if max_length:
+                its1_seqs = [_ for _ in its1_seqs if len(_[1]) <= max_length]
 
-        if not its1_seqs:
-            yield title, seq, None, []
-            continue
+            if not its1_seqs:
+                yield title, seq, None, []
+                continue
 
-        if len({_[0] for _ in its1_seqs}) > 1:
-            # Depending on the orthogonality of the HMM set, this could be fine
-            # (e.g. HMM for close sister genera), or a potential problen
-            # (e.g. two synthetic controls)
-            sys.stderr.write(
-                "ERROR: Conflicting HMM matches for %s: %s\n"
-                % (record.id, ";".join(sorted({_[0] for _ in its1_seqs})))
-            )
-            sys.stderr.write("%s length %s:\n" % (_[0], len(_[1])) for _ in its1_seqs)
-            sys.exit(1)
-        name = its1_seqs[0][0]  # Just checked all the same name
+            if len({_[0] for _ in its1_seqs}) > 1:
+                # Depending on the orthogonality of the HMM set, this could be fine
+                # (e.g. HMM for close sister genera), or a potential problen
+                # (e.g. two synthetic controls)
+                sys.stderr.write(
+                    "ERROR: Conflicting HMM matches for %s: %s\n"
+                    % (record.id, ";".join(sorted({_[0] for _ in its1_seqs})))
+                )
+                sys.stderr.write(
+                    "%s length %s:\n" % (_[0], len(_[1])) for _ in its1_seqs
+                )
+                sys.exit(1)
+            name = its1_seqs[0][0]  # Just checked all the same name
 
-        # Discard HMM names, keep just acceptable length sub-sequences
-        its1_seqs = [_[1] for _ in its1_seqs]
+            # Discard HMM names, keep just acceptable length sub-sequences
+            its1_seqs = [_[1] for _ in its1_seqs]
 
-        if len(set(its1_seqs)) < len(its1_seqs):
-            # e.g. DQ641247.1 Phytophthora ramorum isolate 2195
-            sys.stderr.write(
-                "WARNING: Discarding exactly duplicated ITS1 matches in %s\n"
-                % title.split(None, 1)[0]
-            )
-            new = []
-            for _ in its1_seqs:
-                if _ not in new:
-                    new.append(_)
-            its1_seqs = new
-        yield title, seq, name, its1_seqs
+            if len(set(its1_seqs)) < len(its1_seqs):
+                # e.g. DQ641247.1 Phytophthora ramorum isolate 2195
+                sys.stderr.write(
+                    "WARNING: Discarding exactly duplicated ITS1 matches in %s\n"
+                    % title.split(None, 1)[0]
+                )
+                new = []
+                for _ in its1_seqs:
+                    if _ not in new:
+                        new.append(_)
+                its1_seqs = new
+            yield title, seq, name, its1_seqs

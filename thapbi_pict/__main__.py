@@ -57,11 +57,9 @@ def expand_database_argument(text, exist=False, hyphen_default=False):
             # Expand to the default bundled DB
             text = os.path.join(os.path.split(__file__)[0], "ITS1_DB.sqlite")
         else:
-            sys.exit(
-                "ERROR: Using hyphen as a database default is not supported here.\n"
-            )
+            sys.exit("ERROR: Using hyphen as DB default is not supported here.")
     if not text:
-        sys.exit("ERROR: The database argument is required.\n")
+        sys.exit("ERROR: The database argument is required.")
     prefix = "sqlite:///"
     if text.startswith(prefix):
         db = text[len(prefix) :]
@@ -71,6 +69,23 @@ def expand_database_argument(text, exist=False, hyphen_default=False):
     if exist and db != ":memory:" and not os.path.isfile(db):
         sys.exit("ERROR: The database %s was not found.\n" % db)
     return prefix + db
+
+
+def expand_hmm_argument(text, hyphen_default=True):
+    """Validate/expand an HMMER3 HMM stem."""
+    if text == "-":
+        if hyphen_default:
+            # Expand to the default bundled HMM
+            text = os.path.join(os.path.split(__file__)[0], "hmm", "combined.hmm")
+        else:
+            sys.exit("ERROR: Using hyphen as HMM default is not supported here.")
+    if not text:
+        sys.stderr.write("WARNING: Applying no HMM filtering!\n")
+        return ""
+    for ext in (".h3f", ".h3i", ".h3m", ".h3p"):
+        if not os.path.isfile(text + ext):
+            sys.exit("ERROR: The HMM %s was not found (e.g. %s)" % (text, text + ext))
+    return text
 
 
 # Subcommand dispatch
@@ -96,6 +111,7 @@ def ncbi_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
+        hmm_stem=expand_hmm_argument(args.hmm),
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -111,6 +127,7 @@ def seq_import(args=None):
         inputs=args.input,
         method=args.method,
         db_url=expand_database_argument(args.database),
+        hmm_stem=expand_hmm_argument(args.hmm),
         min_abundance=args.abundance,
         name=args.name,
         validate_species=not args.lax,
@@ -126,6 +143,7 @@ def legacy_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
+        hmm_stem=expand_hmm_argument(args.hmm),
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -170,6 +188,7 @@ def prepare_reads(args=None):
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=args.output,
+        hmm_stem=expand_hmm_argument(args.hmm),
         primer_dir=args.primers,
         left_primer=args.left,
         right_primer=args.right,
@@ -196,6 +215,7 @@ def classify(args=None):
     return_code = main(
         fasta=args.input,
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        hmm_stem=expand_hmm_argument(args.hmm),
         method=args.method,
         out_dir=args.output,
         tmp_dir=args.temp,
@@ -317,10 +337,13 @@ def pipeline(args=None):
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
 
+    hmm = expand_hmm_argument(args.hmm)
+
     fasta_files = prepare(
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
+        hmm_stem=hmm,
         primer_dir=None,
         left_primer=ARG_PRIMER_LEFT["default"],
         right_primer=ARG_PRIMER_RIGHT["default"],
@@ -338,6 +361,7 @@ def pipeline(args=None):
     classified_files = classify(
         fasta=fasta_files,
         db_url=db,
+        hmm_stem=hmm,
         method=args.method,
         out_dir=intermediate_dir,
         tmp_dir=args.temp,
@@ -530,6 +554,16 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "looks for 'GYRGGGACGAAAGTCYYTGC' in merged reads.",
 )
 
+# "--hmm",
+ARG_HMM = dict(  # noqa: C408
+    type=str,
+    default="-",
+    metavar="PATH",
+    help="Location of HMMER3 Hidden Markov Model file, filename "
+    "stem without the '.h3i', '.h3f', etc extension. "
+    "Use '' for none, or '-' for supplied model (default).",
+)
+
 # Common pipeline arguments
 # =========================
 
@@ -688,6 +722,7 @@ def main(args=None):
     )
     parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
+    parser_pipeline.add_argument("--hmm", **ARG_HMM)
     parser_pipeline.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
@@ -738,6 +773,7 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
     parser_ncbi_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_ncbi_import.add_argument("--hmm", **ARG_HMM)
     parser_ncbi_import.add_argument("-n", "--name", **ARG_NAME)
     parser_ncbi_import.add_argument("-x", "--lax", **ARG_LAX)
     parser_ncbi_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -787,6 +823,7 @@ def main(args=None):
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
     parser_seq_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_seq_import.add_argument("--hmm", **ARG_HMM)
     parser_seq_import.add_argument("-n", "--name", **ARG_NAME)
     parser_seq_import.add_argument("-x", "--lax", **ARG_LAX)
     parser_seq_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -805,6 +842,7 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
     parser_legacy_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_legacy_import.add_argument("--hmm", **ARG_HMM)
     parser_legacy_import.add_argument("-n", "--name", **ARG_NAME)
     parser_legacy_import.add_argument("-x", "--lax", **ARG_LAX)
     parser_legacy_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -907,6 +945,7 @@ def main(args=None):
         "default is next to each input file.",
     )
     parser_prepare_reads.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    parser_prepare_reads.add_argument("--hmm", **ARG_HMM)
     parser_prepare_reads.add_argument(
         "-p",
         "--primers",
@@ -933,6 +972,7 @@ def main(args=None):
     )
     parser_classify.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     parser_classify.add_argument("-d", "--database", **ARG_DB_INPUT)
+    parser_classify.add_argument("--hmm", **ARG_HMM)
     parser_classify.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_classify.add_argument(
         "-o",
