@@ -196,7 +196,7 @@ def import_fasta_file(
         entries = fasta_entry_fn(title)
         if not entries:
             sys.stderr.write(
-                "WARNING: Ignoring %r\n"
+                "WARNING: Based on name, ignoring %r\n"
                 % (title if len(title) < 70 else title[:66] + "...")
             )
             continue
@@ -209,7 +209,7 @@ def import_fasta_file(
             except ValueError:
                 bad_entries += 1
                 sys.stderr.write(
-                    "WARNING: Ignoring %r\n"
+                    "WARNING: Could not parse entry %r\n"
                     % (entry if len(entry) < 60 else entry[:67] + "...")
                 )
                 continue
@@ -219,7 +219,7 @@ def import_fasta_file(
             if name.lower().startswith("uncultured "):
                 bad_entries += 1
                 sys.stderr.write(
-                    "WARNING: Ignoring %r\n"
+                    "WARNING: Uncultured, so ignoring %r\n"
                     % (entry if len(entry) < 60 else entry[:67] + "...")
                 )
                 continue
