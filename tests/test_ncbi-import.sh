@@ -82,7 +82,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wr
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "105" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "88" ]; then echo "Wrong its1_sequence count"; false; fi
 # Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum
-thapbi_pict dump -d /tmp/20th_Century_ITS1_validated.sqlite | cut -f 1-4 | grep AF271230.1 | grep Phytophthora
+thapbi_pict dump -d $DB | cut -f 1-4 | grep AF271230.1 | grep Phytophthora
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "258" ]; then echo "Wrong taxonomy count"; false; fi
 # Other values subject to change
 
@@ -109,7 +109,8 @@ export DB=$TMP/20th_Century_ITS1_mixed.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1380" ]; then echo "Wrong taxonomy count"; false; fi
-thapbi_pict ncbi-import -d $DB -i tests/ncbi-import/20th_Century_ITS1.fasta
+# Make the bundled HMM explicit to test using --hmm here:
+thapbi_pict ncbi-import -d $DB -i tests/ncbi-import/20th_Century_ITS1.fasta --hmm thapbi_pict/hmm/combined.hmm
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "105" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "88" ]; then echo "Wrong its1_sequence count"; false; fi
