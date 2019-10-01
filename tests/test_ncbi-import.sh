@@ -101,7 +101,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "107" ]; then echo "
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "90" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1380" ]; then echo "Wrong taxonomy count"; false; fi
 # Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum -> Phytophthora
-thapbi_pict dump -d /tmp/20th_Century_ITS1_genus_only.sqlite | cut -f1-3 | grep AF271230.1 | grep Phytophthora
+thapbi_pict dump -d $DB | cut -f1-3 | grep AF271230.1 | grep Phytophthora
 if [ `thapbi_pict dump -d $DB | grep -c 4783` -ne "107" ]; then echo "Should all be just genus"; false; fi
 
 # Now using the Phytophthora at species level, Peronosporaceae at genus level:
