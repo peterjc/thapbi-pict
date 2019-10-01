@@ -42,6 +42,14 @@ if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 2
 export DB=database/legacy/database_lax.sqlite
 rm -rf $DB
 thapbi_pict legacy-import -x -d $DB -i database/legacy/database.fasta
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "151" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "131" ]; then echo "Wrong its1_sequence count"; false; fi
+# Now try without the HMM filter, no cropping, so more unique (long) sequences
+rm -rf $DB
+thapbi_pict legacy-import -x -d $DB -i database/legacy/database.fasta --hmm ''
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "151" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "142" ]; then echo "Wrong its1_sequence count"; false; fi
+
 
 thapbi_pict legacy-import -x -d "sqlite:///:memory:" -i database/legacy/Phytophthora_ITS_database_v0.004.fasta
 

@@ -28,6 +28,14 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
 
+rm -rf $TMP/DNAMIX_S95_L001.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5 --hmm thapbi_pict/hmm/combined.hmm
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+
+rm -rf $TMP/DNAMIX_S95_L001.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5 --hmm ''
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+
 echo "Generating mock control file"
 # Using just 50 real reads (50 * 4 = 200 lines)
 set +o pipefail
@@ -46,5 +54,11 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
 diff $TMP/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+
+rm -rf $TMP/DNAMIX_S95_L001.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100 --hmm ''
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
+# Should be identical but without the HMM names in the FASTA title lines:
+diff <(grep -v ">" $TMP/DNAMIX_S95_L001.fasta) <(grep -v "^>" tests/prepare-reads/DNAMIX_S95_L001.fasta)
 
 echo "$0 - test_prepare-reads.sh passed"
