@@ -221,7 +221,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     return accepted
 
 
-def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
+def make_nr_fasta(input_fasta, input_rc, output_fasta, min_abundance=0, debug=False):
     r"""Trim and make non-redundant FASTA file from FASTA input.
 
     The read names are ignored and treated as abundance one!
@@ -238,6 +238,15 @@ def make_nr_fasta(input_fasta, output_fasta, min_abundance=0, debug=False):
     with open(input_fasta) as handle:
         for _, seq in SimpleFastaParser(handle):
             counts[seq.upper()] += 1
+    if input_rc:
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Combining %r and %r (RC) for unique sequences\n"
+                % (input_fasta, input_rc)
+            )
+        with open(input_rc) as handle:
+            for _, seq in SimpleFastaParser(handle):
+                counts[reverse_complement(seq.upper())] += 1
     return (
         sum(counts.values()),
         len(counts),
@@ -372,31 +381,9 @@ def prepare_sample(
     if not os.path.isfile(merged_fastq):
         sys.exit("ERROR: Expected file %r from flash\n" % merged_fastq)
 
-    # flip
-    # Hoping cutadapt will add support for this shortly, as a stop-gap
-    # generate a doubled up FASTQ file
-    if flip:
-        doubled = os.path.join(tmp, "flash.extendedWithRC.fastq")
-        if debug:
-            sys.stderr.write("DEBUG: Generating FASTQ file with rev-comp as well\n")
-
-        from Bio import SeqIO
-
-        with open(doubled, "w") as handle:
-            for record in SeqIO.parse(merged_fastq, "fastq"):
-                handle.write(record.format("fastq"))
-                handle.write(
-                    record.reverse_complement(
-                        id=True,
-                        name=True,
-                        description=record.description + " (rev-comp)",
-                    ).format("fastq")
-                )
-        merged_fastq = doubled
-
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
-    if failed_primer_name:
+    if flip or failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
         bad_primer_fasta = None
@@ -412,10 +399,35 @@ def prepare_sample(
     if not os.path.isfile(trimmed_fasta):
         sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_fasta)
 
+    if flip:
+        # Call cutadapt again - with primers reversed, and flip output,
+        flipped_fasta = os.path.join(tmp, "cutadapt_flipped.fasta")
+        if failed_primer_name:
+            bad_primer_fasta2 = os.path.join(tmp, "bad_primers2.fasta")
+        else:
+            bad_primer_fasta2 = None
+        run_cutadapt(
+            bad_primer_fasta,
+            flipped_fasta,
+            bad_primer_fasta2,
+            right_primer,
+            left_primer,
+            debug=debug,
+            cpu=cpu,
+        )
+        if not os.path.isfile(trimmed_fasta):
+            sys.exit("ERROR: Expected file %r from cutadapt\n" % flipped_fasta)
+    else:
+        flipped_fasta = None
+
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
     (count, uniq_count, acc_uniq_count, max_hmm_abundance) = make_nr_fasta(
-        trimmed_fasta, merged_fasta, min_abundance=min_abundance, debug=debug
+        trimmed_fasta,
+        flipped_fasta,
+        merged_fasta,
+        min_abundance=min_abundance,
+        debug=debug,
     )
     if debug:
         sys.stderr.write(
