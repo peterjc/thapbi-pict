@@ -327,6 +327,7 @@ def prepare_sample(
     failed_primer_name,
     left_primer,
     right_primer,
+    flip,
     hmm_stem,
     min_abundance,
     control,
@@ -388,6 +389,25 @@ def prepare_sample(
     )
     if not os.path.isfile(trimmed_fasta):
         sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_fasta)
+
+    if flip:
+        # Only check those which failed to find primers on initial orientation
+        trimmed_flipped_fasta = os.path.join(tmp, "cutadapt_flipped.fasta")
+        if failed_primer_name:
+            bad_primer_fasta = os.path.join(tmp, "bad_primers_flipped.fasta")
+        else:
+            bad_primer_fasta = None
+        run_cutadapt(
+            merged_fastq,
+            trimmed_flipped_fasta,
+            bad_primer_fasta,
+            reverse_complement(right_primer),
+            reverse_complement(left_primer),
+            debug=debug,
+            cpu=cpu,
+        )
+        if not os.path.isfile(trimmed_flipped_fasta):
+            sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_flipped_fasta)
 
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
@@ -590,6 +610,7 @@ def main(
             failed_primer_name,
             left_primer,
             right_primer,
+            flip,
             hmm_stem,
             control_min_abundance if control else sample_min_abundance,
             control,
