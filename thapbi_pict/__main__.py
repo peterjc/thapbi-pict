@@ -192,6 +192,7 @@ def prepare_reads(args=None):
         primer_dir=args.primers,
         left_primer=args.left,
         right_primer=args.right,
+        flip=args.flip,
         min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -345,8 +346,9 @@ def pipeline(args=None):
         out_dir=intermediate_dir,
         hmm_stem=hmm,
         primer_dir=None,
-        left_primer=ARG_PRIMER_LEFT["default"],
-        right_primer=ARG_PRIMER_RIGHT["default"],
+        left_primer=args.left,
+        right_primer=args.right,
+        flip=args.flip,
         min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -528,6 +530,13 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
 
 # Prepare reads arguments
 # =======================
+
+# "--flip",
+ARG_FLIP = dict(  # noqa: C408
+    default=False,
+    action="store_true",
+    help="Also check reverse complement when looking for primers.",
+)
 
 # "-l", "--left",
 ARG_PRIMER_LEFT = dict(  # noqa: C408
@@ -723,6 +732,10 @@ def main(args=None):
     parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_pipeline.add_argument("--hmm", **ARG_HMM)
+    # Not using -l and -r for primers as used -r for report:
+    parser_pipeline.add_argument("--left", **ARG_PRIMER_LEFT)
+    parser_pipeline.add_argument("--right", **ARG_PRIMER_RIGHT)
+    parser_pipeline.add_argument("--flip", **ARG_FLIP)
     parser_pipeline.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
     parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
@@ -956,6 +969,7 @@ def main(args=None):
     )
     parser_prepare_reads.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
     parser_prepare_reads.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    parser_prepare_reads.add_argument("--flip", **ARG_FLIP)
     parser_prepare_reads.add_argument("-t", "--temp", **ARG_TEMPDIR)
     parser_prepare_reads.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_prepare_reads.add_argument("--cpu", **ARG_CPU)

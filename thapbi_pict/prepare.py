@@ -463,6 +463,7 @@ def main(
     primer_dir,
     left_primer,
     right_primer,
+    flip=False,
     min_abundance=100,
     tmp_dir=None,
     debug=False,

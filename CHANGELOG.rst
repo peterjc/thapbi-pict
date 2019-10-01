@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.4  2019-10-01 Added ``--hmm`` argument for overriding provided ITS1 HMM, or using none.
+v0.4.4  2019-10-01 New ``--hmm`` & ``--flip`` arguments for ``prepare-reads`` and ``pipeline``.
 v0.4.3  2019-09-26 New ``conflicts`` command reporting genus/species level conflicts in DB.
 v0.4.2  2019-09-26 Drop clade from taxonomy table, require unique species entries.
 v0.4.1  2019-09-16 Include NCBI strains/variants/etc and their synonyms as species synonyms.
