@@ -443,8 +443,8 @@ def method_blast(
     score = None
     with open(blast_out) as handle:
         for line in handle:
-            if debug:
-                sys.stderr.write(line)
+            # if debug:
+            #     sys.stderr.write(line)
             parts = line.rstrip("\n").split("\t")
             idn = parts[0]
             if float(parts[11]) < MIN_BLAST_BITSCORE:
