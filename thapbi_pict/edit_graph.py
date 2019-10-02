@@ -36,6 +36,9 @@ from .utils import split_read_name_abundance
 genus_color = {
     # From the VGA colors, in order of DB abundance,
     # dark red for other, grey for none, dark orange for conflicts
+    #
+    # Oomycetes; Peronosporales:
+    # ==========================
     "Phytophthora": "#FF0000",  # Red
     "Peronospora": "#00FF00",  # Lime
     "Hyaloperonospora": "#0000FF",  # Blue
@@ -50,6 +53,14 @@ genus_color = {
     # Basidiophora
     # Calycofera
     # Plasmoverna
+    #
+    # Nematoda:
+    # =========
+    "Globodera": "#FF0000",  # Red
+    "Heterodera": "#00FF00",  # Lime
+    #
+    # Special cases:
+    # ==============
     "synthetic": "#FFA500",  # Orange
 }
 
