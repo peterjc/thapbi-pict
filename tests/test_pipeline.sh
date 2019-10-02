@@ -35,8 +35,9 @@ touch $TMP/intermediate/unwanted.identity.tsv
 touch $TMP/intermediate/distraction.fasta
 touch $TMP/intermediate/ignore-me.onebp.tsv
 # Run again with some explicit options set (shouldn't change output)
+# Using --flip will have no effect as already have the intermediate files
 rm -rf $TMP/output/*
-thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output -m onebp -a 250 -r report --hmm thapbi_pict/hmm/combined.hmm
+thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output -m onebp -a 250 -r report --hmm thapbi_pict/hmm/combined.hmm --flip
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/report.samples.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/report.samples.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
