@@ -18,8 +18,13 @@ time tests/test_woody_hosts.sh
 time tests/test_dump.sh
 time tests/test_load-tax.sh
 time tests/test_legacy-import.sh
-time tests/test_ncbi-import.sh
 time tests/test_conflicts.sh
+
+if ! [ -x "$(command -v cutadapt)" ]; then
+    echo 'WARNING: cutadapt not installed, skipping some tests'
+else
+    time tests/test_ncbi-import.sh
+fi
 
 # Currently can't easily install these on TravisCI
 if ! [ -x "$(command -v flash)" ]; then
