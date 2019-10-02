@@ -133,7 +133,7 @@ def top_level_species(children, ranks, names, genus_list):
                         "WARNING: Ignoring sub-genus %s with no children\n" % name
                     )
             else:
-                if name.split(None, 1)[0].lower() == "unclassified":
+                if name.split(None, 1)[0].lower() in ("unclassified", "unidentified"):
                     # Not worth including, nor giving a warning about
                     continue
                 if name.lower() in ("environmental samples"):
