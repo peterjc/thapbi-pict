@@ -167,6 +167,8 @@ def import_fasta_file(
     its1_seq_count = 0
     good_seq_count = 0
 
+    bad_species = set()
+
     entry_count = 0
     bad_entries = 0
     bad_sp_entries = 0
@@ -250,11 +252,12 @@ def import_fasta_file(
             else:
                 taxonomy = lookup_species(session, name)
             if not taxonomy:
-                if debug:
+                if debug and name not in bad_species:
                     sys.stderr.write(
                         "WARNING: Could not validate species %r from %r\n"
                         % (name, entry)
                     )
+                bad_species.add(name)  # To avoid repeat warnings
                 if validate_species:
                     bad_sp_entries += 1
                     continue
@@ -322,3 +325,8 @@ def import_fasta_file(
         )
         assert bad_sp_entries == 0, bad_sp_entries
         assert entry_count == good_entries + bad_entries
+
+    if validate_species or debug:
+        sys.stderr.write(
+            "Could not validate %i difference species names\n" % len(bad_species)
+        )
