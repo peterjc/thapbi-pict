@@ -328,5 +328,5 @@ def import_fasta_file(
 
     if validate_species or debug:
         sys.stderr.write(
-            "Could not validate %i difference species names\n" % len(bad_species)
+            "Could not validate %i different species names\n" % len(bad_species)
         )
