@@ -13,13 +13,13 @@ python -c "import thapbi_pict; print('Direct import says version ' + thapbi_pict
 thapbi_pict -v
 python -m thapbi_pict -v
 
-tests/test_woody_hosts.sh
+time tests/test_woody_hosts.sh
 
-tests/test_dump.sh
-tests/test_load-tax.sh
-tests/test_legacy-import.sh
-tests/test_ncbi-import.sh
-tests/test_conflicts.sh
+time tests/test_dump.sh
+time tests/test_load-tax.sh
+time tests/test_legacy-import.sh
+time tests/test_ncbi-import.sh
+time tests/test_conflicts.sh
 
 # Currently can't easily install these on TravisCI
 if ! [ -x "$(command -v flash)" ]; then
@@ -27,13 +27,17 @@ if ! [ -x "$(command -v flash)" ]; then
 elif ! [ -x "$(command -v cutadapt)" ]; then
     echo 'WARNING: cutadapt not installed, skipping some tests'
 else
-    tests/test_prepare-reads.sh
-    tests/test_pipeline.sh
+    time tests/test_prepare-reads.sh
+    time tests/test_pipeline.sh
 fi
 
-tests/test_classify.sh
-tests/test_seq-import.sh
-tests/test_assess.sh
-tests/test_sample-summary.sh
-tests/test_read-summary.sh
-tests/test_edit-graph.sh
+time tests/test_classify.sh
+time tests/test_seq-import.sh
+time tests/test_assess.sh
+time tests/test_sample-summary.sh
+time tests/test_read-summary.sh
+time tests/test_edit-graph.sh
+
+echo "================="
+echo "Test suite passed"
+echo "================="
