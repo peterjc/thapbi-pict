@@ -539,6 +539,11 @@ def load_metadata(
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
+    if not metadata_file or not metadata_cols:
+        if debug:
+            sys.stderr.write("DEBUG: Not loading any metadata\n")
+        return [], [], [], [], sequenced_samples
+
     if debug:
         sys.stderr.write(
             "DEBUG: Loading metadata from %r, column specification %r, "
@@ -549,11 +554,6 @@ def load_metadata(
             sys.stderr.write(
                 "DEBUG: Have %i sequenced samples\n" % len(sequenced_samples)
             )
-
-    if not metadata_file or not metadata_cols:
-        if debug:
-            sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], [], sequenced_samples
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
