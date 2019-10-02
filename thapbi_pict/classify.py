@@ -771,6 +771,8 @@ def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
         req_tools = method_tool_check[method]
     except KeyError:
         req_tools = []
+    if not hmm_stem and "hmmscan" in req_tools:
+        req_tools.remove("hmmscan")
     check_tools(req_tools, debug)
 
     # Connect to the DB,
