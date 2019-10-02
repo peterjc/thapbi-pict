@@ -100,7 +100,7 @@ def synonyms_and_variants(children, ranks, names, synonyms, species_taxid):
     return sorted(variants)
 
 
-def top_level_species(tree, ranks, names, genus_list):
+def top_level_species(tree, children, ranks, names, genus_list):
     """Find taxids for species under the genus_list.
 
     Rather than just taking all taxids with rank species, we
@@ -109,9 +109,24 @@ def top_level_species(tree, ranks, names, genus_list):
     (taxid 211524), which has no rank, as a species level ID
     AND to ignore all the species rank entries under it.
     """
+    # TODO - refactor to use children rather than tree?
     for taxid, name in names.items():
         if tree[taxid] in genus_list:
-            if ranks[taxid] != "species":
+            if ranks[taxid] == "species":
+                yield taxid, names[tree[taxid]], name
+            elif ranks[taxid] == "subgenus":
+                if taxid in children:
+                    sys.stderr.write(
+                        "WARNING: Collapsing sub-genus %s into parent\n" % name
+                    )
+                    for child in children[taxid]:
+                        if ranks[child] == "species":
+                            yield child, names[tree[taxid]], names[child]
+                else:
+                    sys.stderr.write(
+                        "WARNING: Ignoring sub-genus %s with no children\n" % name
+                    )
+            else:
                 if name.split(None, 1)[0].lower() == "unclassified":
                     # Not worth including, nor giving a warning about
                     continue
@@ -122,7 +137,7 @@ def top_level_species(tree, ranks, names, genus_list):
                     "WARNING: Treating %s '%s' (txid%i) as a species.\n"
                     % (ranks[taxid], name, taxid)
                 )
-            yield taxid, names[tree[taxid]], name
+                yield taxid, names[tree[taxid]], name
 
 
 def main(tax, db_url, ancestors, debug=True):
@@ -157,7 +172,7 @@ def main(tax, db_url, ancestors, debug=True):
             % (len(genus_list), ", ".join(sorted(names[_] for _ in genus_list)))
         )
 
-    genus_species = list(top_level_species(tree, ranks, names, genus_list))
+    genus_species = list(top_level_species(tree, children, ranks, names, genus_list))
     if debug:
         sys.stderr.write("Filtered down to %i species names\n" % len(genus_species))
 

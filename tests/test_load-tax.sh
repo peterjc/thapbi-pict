@@ -36,6 +36,10 @@ thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 4783,70742
 # Request all Peronosporales
 thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 4776
 
+# 6231 = Nematoda
+thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 6231
+# thapbi_pict load-tax -d sqlite:///:memory: -t new_taxdump_2019-09-01 -a 6231
+
 # Check this error condition
 set +o pipefail
 thapbi_pict load-tax -d sqlite:///:memory: -t taxdmp_2014-08-01 -a 12908 2>&1 | grep "Could not identify any genus names"
