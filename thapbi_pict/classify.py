@@ -282,6 +282,12 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     count = 0
     for its1 in view:
         count += 1
+        if count == 4000:
+            # Warn once, this is a somewhat arbitrary threshold
+            sys.stderr.write(
+                "WARNING: Database contains so many unique sequences "
+                "that building a cloud of 1bp variants may run out of memory...\n"
+            )
         its1_seq = its1.sequence
         for variant in onebp_variants(its1_seq):
             try:
