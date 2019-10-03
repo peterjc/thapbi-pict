@@ -227,7 +227,7 @@ def main(
             # TODO: Refactor this shared code with sample-summary?
             sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
             if sample.startswith("Undetermined"):
-                sys.stderr.write("WARNING: Ignoring %s\n" % fasta_file)
+                sys.stderr.write("WARNING: Ignoring %s for edit-graph\n" % fasta_file)
                 continue
             if sample in samples:
                 sys.exit("Duplicate sample name %s" % sample)
