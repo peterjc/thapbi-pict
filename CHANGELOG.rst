@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.7  *Pending*  New ``--minlen`` & ``--maxlen`` args for ``prepare-reads`` and ``pipeline``.
 v0.4.6  2019-10-02 Forgot to include updated DB with the PyPI release.
 v0.4.5  2019-10-02 Apply primer trimming to ``ncbi-import`` (crop if primers found).
 v0.4.4  2019-10-02 New ``--hmm`` & ``--flip`` arguments for ``prepare-reads`` and ``pipeline``.

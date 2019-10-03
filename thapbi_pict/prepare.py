@@ -156,7 +156,15 @@ def run_trimmomatic(
 
 
 def run_cutadapt(
-    long_in, trimmed_out, bad_out, left_primer, right_primer, debug=False, cpu=0
+    long_in,
+    trimmed_out,
+    bad_out,
+    left_primer,
+    right_primer,
+    min_len=None,
+    max_len=None,
+    debug=False,
+    cpu=0,
 ):
     """Run cutadapt on a single file (i.e. after merging paired FASTQ).
 
@@ -171,6 +179,10 @@ def run_cutadapt(
         if cpu:
             # Not compatible with --untrimmed-output
             cmd += ["-j", str(cpu)]
+    if min_len:
+        cmd += ["-m", str(min_len)]
+    if max_len:
+        cmd += ["-M", str(max_len)]
     cmd += [
         # -a LEFT...RIGHT = left-anchored
         # -g LEFT...RIGHT = non-anchored
@@ -221,7 +233,15 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     return accepted
 
 
-def make_nr_fasta(input_fasta, input_rc, output_fasta, min_abundance=0, debug=False):
+def make_nr_fasta(
+    input_fasta,
+    input_rc,
+    output_fasta,
+    min_abundance=0,
+    min_len=0,
+    max_len=sys.maxsize,
+    debug=False,
+):
     r"""Trim and make non-redundant FASTA file from FASTA input.
 
     The read names are ignored and treated as abundance one!
@@ -237,6 +257,7 @@ def make_nr_fasta(input_fasta, input_rc, output_fasta, min_abundance=0, debug=Fa
     counts = Counter()
     with open(input_fasta) as handle:
         for _, seq in SimpleFastaParser(handle):
+            assert min_len <= len(seq) <= max_len, "%s len %s" % (_, len(seq))
             counts[seq.upper()] += 1
     if input_rc:
         if debug:
@@ -246,6 +267,7 @@ def make_nr_fasta(input_fasta, input_rc, output_fasta, min_abundance=0, debug=Fa
             )
         with open(input_rc) as handle:
             for _, seq in SimpleFastaParser(handle):
+                assert min_len <= len(seq) <= max_len, "%s len %s (RC)" % (_, len(seq))
                 counts[reverse_complement(seq.upper())] += 1
     return (
         sum(counts.values()),
@@ -337,6 +359,8 @@ def prepare_sample(
     left_primer,
     right_primer,
     flip,
+    min_len,
+    max_len,
     hmm_stem,
     min_abundance,
     control,
@@ -393,6 +417,8 @@ def prepare_sample(
         bad_primer_fasta,
         left_primer,
         right_primer,
+        min_len=min_len,
+        max_len=max_len,
         debug=debug,
         cpu=cpu,
     )
@@ -412,6 +438,8 @@ def prepare_sample(
             bad_primer_fasta2,
             right_primer,
             left_primer,
+            min_len=min_len,
+            max_len=max_len,
             debug=debug,
             cpu=cpu,
         )
@@ -427,6 +455,8 @@ def prepare_sample(
         flipped_fasta,
         merged_fasta,
         min_abundance=min_abundance,
+        min_len=min_len,
+        max_len=max_len,
         debug=debug,
     )
     if debug:
@@ -500,6 +530,8 @@ def main(
     right_primer,
     flip=False,
     min_abundance=100,
+    min_length=0,
+    max_length=sys.maxsize,
     tmp_dir=None,
     debug=False,
     cpu=0,
@@ -626,6 +658,8 @@ def main(
             left_primer,
             right_primer,
             flip,
+            min_length,
+            max_length,
             hmm_stem,
             control_min_abundance if control else sample_min_abundance,
             control,
