@@ -197,6 +197,8 @@ def prepare_reads(args=None):
         right_primer=args.right,
         flip=args.flip,
         min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -353,6 +355,8 @@ def pipeline(args=None):
         right_primer=args.right,
         flip=args.flip,
         min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -533,6 +537,22 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
 
 # Prepare reads arguments
 # =======================
+
+# "--minlen",
+ARG_MIN_LENGTH = dict(  # noqa: C408
+    type=int,
+    default=25,
+    metavar="LENGTH",
+    help="Minimum length sequence to accept (default 25).",
+)
+
+# "--maxlen",
+ARG_MAX_LENGTH = dict(  # noqa: C408
+    type=int,
+    default=1000,
+    metavar="LENGTH",
+    help="Maximum length sequence to accept (default 1000).",
+)
 
 # "--flip",
 ARG_FLIP = dict(  # noqa: C408
@@ -735,6 +755,8 @@ def main(args=None):
     parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
     parser_pipeline.add_argument("--hmm", **ARG_HMM)
+    parser_pipeline.add_argument("--minlen", **ARG_MIN_LENGTH)
+    parser_pipeline.add_argument("--maxlen", **ARG_MAX_LENGTH)
     # Not using -l and -r for primers as used -r for report:
     parser_pipeline.add_argument("--left", **ARG_PRIMER_LEFT)
     parser_pipeline.add_argument("--right", **ARG_PRIMER_RIGHT)
@@ -965,6 +987,8 @@ def main(args=None):
     )
     parser_prepare_reads.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     parser_prepare_reads.add_argument("--hmm", **ARG_HMM)
+    parser_prepare_reads.add_argument("--minlen", **ARG_MIN_LENGTH)
+    parser_prepare_reads.add_argument("--maxlen", **ARG_MAX_LENGTH)
     parser_prepare_reads.add_argument(
         "-p",
         "--primers",
