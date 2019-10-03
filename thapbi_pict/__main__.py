@@ -93,7 +93,7 @@ def expand_hmm_argument(text, hyphen_default=True):
 
 
 def load_tax(args=None):
-    """Subcommand to load an NCBI taxonomy dump into an ITS1 database."""
+    """Subcommand to load an NCBI taxonomy dump into a basebase."""
     from .taxdump import main
 
     return main(
@@ -105,7 +105,7 @@ def load_tax(args=None):
 
 
 def ncbi_import(args=None):
-    """Subcommand to import an NCBI ITS1 FASTA file into a database."""
+    """Subcommand to import an NCBI FASTA file into a basebase."""
     from .ncbi import main
 
     return main(
@@ -123,7 +123,7 @@ def ncbi_import(args=None):
 
 
 def seq_import(args=None):
-    """Subcommand to import classified ITS1 sequences into a database."""
+    """Subcommand to import prepared and classified sequences into a basebase."""
     from .seq_import import main
 
     return main(
@@ -140,7 +140,7 @@ def seq_import(args=None):
 
 
 def legacy_import(args=None):
-    """Subcommand to import a legacy ITS1 FASTA file into a database."""
+    """Subcommand to import a legacy ITS1 FASTA file into a basebase."""
     from .legacy import main
 
     return main(
@@ -181,7 +181,7 @@ def conflicts(args=None):
 
 
 def prepare_reads(args=None):
-    """Subcommand to prepare FASTA paired reads."""
+    """Subcommand to prepare FASTA files from paired FASTQ reads."""
     from .prepare import main
 
     check_output_directory(args.output)
@@ -209,7 +209,7 @@ def prepare_reads(args=None):
 
 
 def classify(args=None):
-    """Subcommand to classify ITS1 sequences using a database."""
+    """Subcommand to classify FASTA sequences using a database."""
     from .classify import main
 
     if args.output:
@@ -458,7 +458,7 @@ def pipeline(args=None):
 
 # "-d", "--database",
 ARG_DB_INPUT = dict(  # noqa: C408
-    type=str, default="-", help="ITS1 database to use, default '-' is bundled database."
+    type=str, default="-", help="Marker database to use, default '-' for bundled DB."
 )
 
 # "-i", "--input",
@@ -466,7 +466,7 @@ ARG_INPUT_FASTA = dict(  # noqa: C408
     type=str,
     required=True,
     nargs="+",
-    help="One or more ITS1 FASTA filenames or folder names "
+    help="One or more prepared FASTA filenames or folder names "
     "(containing files named *.fasta).",
 )
 
@@ -538,7 +538,7 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
 ARG_FLIP = dict(  # noqa: C408
     default=False,
     action="store_true",
-    help="Also check reverse complement when looking for primers.",
+    help="Also check reverse complement strand for primers.",
 )
 
 # "-l", "--left",
@@ -573,7 +573,7 @@ ARG_HMM = dict(  # noqa: C408
     metavar="PATH",
     help="Location of HMMER3 Hidden Markov Model file, filename "
     "stem without the '.h3i', '.h3f', etc extension. "
-    "Use '' for none, or '-' for supplied model (default).",
+    "Use '' for none, or '-' for supplied ITS1 model (default).",
 )
 
 # Common pipeline arguments
@@ -584,7 +584,7 @@ ARG_INPUT_FASTQ = dict(  # noqa: C408
     type=str,
     required=True,
     nargs="+",
-    help="One or more ITS1 FASTQ filenames or folder names "
+    help="One or more paired FASTQ filenames or folder names "
     "(containing files named *.fastq or *.fastq.gz).",
 )
 
@@ -594,17 +594,17 @@ ARG_CONTROLS = dict(  # noqa: C408
     nargs="+",
     help="One or more negative control FASTQ filenames or folder "
     "names (which can be duplicated in the FASTQ argument). "
-    "ITS1 levels in these paired reads are used to increase "
-    "the minimum abundance threshold automatically.",
+    "Marker levels in these files are used to increase  minimum "
+    "abundance threshold automatically.",
 )
 
 # "-a", "--abundance",
 ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     type=int,
     default=str(DEFAULT_MIN_ABUNDANCE),
-    help="Mininum abundance applied to the unique ITS1 sequences "
+    help="Mininum abundance applied to unique marker sequences "
     "in each sample (i.e. each FASTQ pair), default %i. "
-    "This may be increased based on any FASTQ controls." % DEFAULT_MIN_ABUNDANCE,
+    "May be increased based on negative controls." % DEFAULT_MIN_ABUNDANCE,
 )
 
 # Common metadata arguments
@@ -651,8 +651,8 @@ ARG_METAGROUPS = dict(  # noqa: C408
     "background color bands.  All samples with the same metadata value must "
     "be grouped together after sorting, as the colors are reused. "
     "Zero (default) is interpretted as the first column requested as metadata "
-    "output (which would also be the primary sorting key, and thus ensures all "
-    "members of the same group will be together).",
+    "output (the primary sorting key, ensuring all members of the same group "
+    "will be together).",
 )
 
 # "-f", "--metafields",
@@ -701,7 +701,7 @@ def main(args=None):
     # pipeline (listing first as likely to be the most used subcommand)
     parser_pipeline = subparsers.add_parser(
         "pipeline",
-        description="Run default classification pipeline on FASTQ files.",
+        description="Run default classification pipeline on paired FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
         "classify, sample-summary, read-summary, edit-graph) with their defaults, "
         "with only a minority of settings available here.",
@@ -941,7 +941,7 @@ def main(args=None):
     # prepare reads
     parser_prepare_reads = subparsers.add_parser(
         "prepare-reads",
-        description="Trim and merge paired FASTQ files of ITS1 amplicons.",
+        description="Trim and merge paired FASTQ files of marker amplicons.",
         epilog="Each pair of input files should follow the naming style"
         "XXX_1.fastq[.gz] and XXX_2.fastq[.gz], or "
         "XXX_R1.fastq[.gz] and XXX_R2.fastq[.gz], or "
@@ -985,7 +985,7 @@ def main(args=None):
     # classify
     parser_classify = subparsers.add_parser(
         "classify",
-        description="Classify FASTA file of ITS1 sequences by species.",
+        description="Classify FASTA file of marker sequences by species.",
         epilog="Each input file XXX.fasta will result in an output file "
         "named XXX.method.tsv in the specified output directory (default "
         "input dir).",
@@ -1000,8 +1000,8 @@ def main(args=None):
         type=str,
         default="",
         metavar="DIRNAME",
-        help="Directory to write output reports to, default (empty "
-        "string) is next to each input file. Use '-' for stdout.",
+        help="Directory for output reports. Default '' means next to "
+        "each input file. Use '-' for stdout.",
     )
     parser_classify.add_argument("-t", "--temp", **ARG_TEMPDIR)
     parser_classify.add_argument("-v", "--verbose", **ARG_VERBOSE)
@@ -1012,7 +1012,7 @@ def main(args=None):
     # assess-classification
     parser_assess = subparsers.add_parser(
         "assess",
-        description="Assess accuracy of ITS1 read classification.",
+        description="Assess accuracy of marker sequence classification.",
         epilog="Takes as input predictions named XXX.method.tsv "
         "and matching expected classifications in XXX.known.tsv "
         "(which can be in different directories) to produce a "
@@ -1220,7 +1220,7 @@ def main(args=None):
     # edit-graph
     parser_edit_graph = subparsers.add_parser(
         "edit-graph",
-        description="Draw network graph of sequences using edit distance.",
+        description="Draw network graph of marker sequences using edit distance.",
         epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
         "The output is a network graph (in a choice of format) with unique "
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
@@ -1232,7 +1232,7 @@ def main(args=None):
         "work well.",
     )
     arg = parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
-    arg.help += " Use '' to mean no database."
+    arg.help += " Used for labels and colors. Use '' to mean no DB."
     del arg
     # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
     arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
