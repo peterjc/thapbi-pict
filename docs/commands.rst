@@ -42,13 +42,13 @@ the results, and these are described in the :ref:`worked example
 * ``assess`` - compare classifier output to known positive controls
 
 There are further sub-commands to do with making or inspecting an SQLite3
-format ITS1 database:
+format barcode marker sequence database:
 
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy
 * ``ncbi-import`` - import a FASTA file using the NCBI style naming
 * ``import-seq`` - import prepared reads with known species assignment (single isolate positive controls)
-* ``legacy-import`` - import a FASTA file using the style of our legacy curated ITS1 dataset
+* ``legacy-import`` - import a FASTA file using the style of our legacy curated *Phytophthora* ITS1 dataset
 
 Start with reading the help for any command using ``-h`` or ``--help`` as follows:
 
