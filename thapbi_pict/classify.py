@@ -425,11 +425,6 @@ def method_blast(
     against a BLAST database of our ITS1 database entries.
     """
 
-    if min_abundance > 1:
-        sys.stderr.write(
-            "WARNING: Applying minimum abundance after running BLAST (could be slow)\n"
-        )
-
     blast_out = os.path.join(shared_tmp_dir, "blast.tsv")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     if not (
@@ -813,6 +808,11 @@ def main(
     if not hmm_stem and "hmmscan" in req_tools:
         req_tools.remove("hmmscan")
     check_tools(req_tools, debug)
+
+    if method == "blast" and min_abundance > 1:
+        sys.stderr.write(
+            "WARNING: Will apply minimum abundance after call BLAST (could be slow)\n"
+        )
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
