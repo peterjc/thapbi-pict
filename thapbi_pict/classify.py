@@ -424,6 +424,12 @@ def method_blast(
     Another simplistic classifier, run the ITS1 reads through blastn
     against a BLAST database of our ITS1 database entries.
     """
+
+    if min_abundance > 1:
+        sys.stderr.write(
+            "WARNING: Applying minimum abundance after running BLAST (could be slow)\n"
+        )
+
     blast_out = os.path.join(shared_tmp_dir, "blast.tsv")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     if not (
