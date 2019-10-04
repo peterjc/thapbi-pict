@@ -223,6 +223,7 @@ def classify(args=None):
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         hmm_stem=expand_hmm_argument(args.hmm),
         method=args.method,
+        min_abundance=args.abundance,
         out_dir=args.output,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -372,6 +373,7 @@ def pipeline(args=None):
         db_url=db,
         hmm_stem=hmm,
         method=args.method,
+        min_abundance=args.abundance,
         out_dir=intermediate_dir,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -1026,6 +1028,15 @@ def main(args=None):
         metavar="DIRNAME",
         help="Directory for output reports. Default '' means next to "
         "each input file. Use '-' for stdout.",
+    )
+    parser_classify.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default="1",
+        help="Mininum abundance to require before considering a classification. "
+        "Default is one meaning look at everything, but rather than re-running "
+        "the FASTA preparation, you can apply it here.",
     )
     parser_classify.add_argument("-t", "--temp", **ARG_TEMPDIR)
     parser_classify.add_argument("-v", "--verbose", **ARG_VERBOSE)

@@ -144,7 +144,14 @@ def perfect_match_in_db(session, seq, debug=False):
 
 
 def apply_method_to_file(
-    method_fn, fasta_file, session, hmm_stem, read_report, shared_tmp_dir, debug=False
+    method_fn,
+    fasta_file,
+    session,
+    hmm_stem,
+    min_abundance,
+    read_report,
+    shared_tmp_dir,
+    debug=False,
 ):
     """Apply HMM filter to FASTA file, and call given method on each match."""
     count = 0
@@ -155,6 +162,8 @@ def apply_method_to_file(
     ):
         idn = title.split(None, 1)[0]
         abundance = abundance_from_read_name(idn)
+        if min_abundance > 1 and abundance < min_abundance:
+            continue
         count += abundance
         if not seqs:
             taxid = 0
@@ -226,6 +235,7 @@ def method_identity(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -254,6 +264,7 @@ def method_identity(
         fasta_file,
         session,
         hmm_stem,
+        min_abundance,
         read_report,
         shared_tmp_dir,
         debug=debug,
@@ -307,6 +318,7 @@ def method_onebp(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -329,6 +341,7 @@ def method_onebp(
         fasta_file,
         session,
         hmm_stem,
+        min_abundance,
         read_report,
         shared_tmp_dir,
         debug=debug,
@@ -399,6 +412,7 @@ def method_blast(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -468,6 +482,9 @@ def method_blast(
         for title, _ in SimpleFastaParser(handle):
             idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
+            if min_abundance > 1 and abundance < min_abundance:
+                # Calling BLAST on this was a wasted effort
+                continue
             if idn in blast_hits:
                 db_md5s = blast_hits[idn]
                 score = blast_score[idn]
@@ -554,6 +571,7 @@ def method_swarm_core(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -588,6 +606,9 @@ def method_swarm_core(
         for title, _, hmm_name, seqs in filter_for_ITS1(
             fasta_file, shared_tmp_dir, hmm=hmm_stem
         ):
+            abundance = abundance_from_read_name(title)
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
             if len(seqs) > 1:
                 sys.exit(
                     "ERROR: %i %s HMM matches from %s in %s"
@@ -670,6 +691,7 @@ def method_swarm(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -689,6 +711,7 @@ def method_swarm(
         fasta_file,
         session,
         hmm_stem,
+        min_abundance,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -702,6 +725,7 @@ def method_swarmid(
     fasta_file,
     session,
     hmm_stem,
+    min_abundance,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -721,6 +745,7 @@ def method_swarmid(
         fasta_file,
         session,
         hmm_stem,
+        min_abundance,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -755,7 +780,9 @@ method_setup = {
 }
 
 
-def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
+def main(
+    fasta, db_url, hmm_stem, method, min_abundance, out_dir, tmp_dir, debug=False, cpu=0
+):
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
@@ -892,7 +919,15 @@ def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
         if os.path.getsize(filename):
             # There are sequences to classify
             tax_counts = classify_file_fn(
-                filename, session, hmm_stem, pred_handle, tmp, shared_tmp, debug, cpu
+                filename,
+                session,
+                hmm_stem,
+                min_abundance,
+                pred_handle,
+                tmp,
+                shared_tmp,
+                debug,
+                cpu,
             )
         else:
             # No sequences, no taxonomy assignments

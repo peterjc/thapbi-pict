@@ -38,11 +38,11 @@ mkdir -p $TMP/thapbi_swarm
 mkdir -p $TMP/thapbi_blast
 
 # Explicitly setting output directory, would be here anyway:
-thapbi_pict classify -m identity -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
-thapbi_pict classify -m onebp -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
-thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
-thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
-thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta
+thapbi_pict classify -m identity -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/ -a 267
+thapbi_pict classify -m onebp -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp -a 267
+thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast -a 267
+thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm -a 267
+thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -a 267
 
 # Passing one directory name (should get all 4 FASTA files):
 rm -rf $TMP/legacy
