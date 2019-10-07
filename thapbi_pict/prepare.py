@@ -270,10 +270,10 @@ def make_nr_fasta(
                 assert min_len <= len(seq) <= max_len, "%s len %s (RC)" % (_, len(seq))
                 counts[reverse_complement(seq.upper())] += 1
     return (
-        sum(counts.values()),
+        sum(counts.values()) if counts else 0,
         len(counts),
         save_nr_fasta(counts, output_fasta, min_abundance),
-        max(counts.values()),
+        max(counts.values()) if counts else 0,
     )
 
 
