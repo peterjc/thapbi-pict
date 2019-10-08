@@ -1,0 +1,70 @@
+# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
+"""Prepare a non-redundant FASTA file using MD5 naming.
+
+This implements the ``thapbi_pict fasta-nr ...`` command, and does part
+of the work of the ``thapbi_pict prepare-reads`` command.
+"""
+
+import sys
+
+from collections import Counter
+
+from Bio.Seq import reverse_complement
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
+from .prepare import save_nr_fasta
+from .utils import abundance_from_read_name
+
+
+def main(
+    inputs,
+    revcomp,
+    output,
+    min_abundance=0,
+    min_length=0,
+    max_length=sys.maxsize,
+    debug=False,
+):
+    """Implement the ``thapbi_pict fasta-nr`` command."""
+    if isinstance(inputs, str):
+        inputs = [inputs]
+    if isinstance(revcomp, str):
+        revcomp = [revcomp]
+    assert isinstance(inputs, list)
+    assert isinstance(revcomp, list)
+
+    counts = Counter()
+    for filename in inputs:
+        # Assuming FASTA for now
+        if debug:
+            sys.stderr.write("DEBUG: Parsing %s\n" % filename)
+        with open(filename) as handle:
+            for _, seq in SimpleFastaParser(handle):
+                if min_length <= len(seq) <= max_length:
+                    a = abundance_from_read_name(_)
+                    counts[seq.upper()] += a
+    for filename in revcomp:
+        if debug:
+            sys.stderr.write("DEBUG: Parsing %s (will reverse complement)\n" % filename)
+        with open(filename) as handle:
+            for _, seq in SimpleFastaParser(handle):
+                if min_length <= len(seq) <= max_length:
+                    a = abundance_from_read_name(_)
+                    counts[reverse_complement(seq.upper())] += a
+
+    if counts:
+        sys.stderr.write(
+            "Loaded %i unique sequences from %i in total within length range, "
+            "max abundance %i\n"
+            % (len(counts), sum(counts.values()), max(counts.values()))
+        )
+    else:
+        sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
+
+    accepted = save_nr_fasta(counts, output, min_abundance=min_abundance)
+    sys.stderr.write("Saved %i unique sequences\n" % accepted)

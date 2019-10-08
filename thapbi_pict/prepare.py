@@ -220,16 +220,23 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
     Returns the number of sequences accepted (above any minimum
     abundance specified).
+
+    Use output_fasta='-' for standard out.
     """
     accepted = 0
     values = sorted((-count, seq) for seq, count in counts.items())
-    with open(output_fasta, "w") as out_handle:
-        for count, seq in values:
-            if -count < min_abundance:
-                # Sorted, so everything hereafter is too rare
-                break
-            out_handle.write(">%s_%i\n%s\n" % (md5seq(seq), -count, seq))
-            accepted += 1
+    if output_fasta == "-":
+        out_handle = sys.stdout
+    else:
+        out_handle = open(output_fasta, "w")
+    for count, seq in values:
+        if -count < min_abundance:
+            # Sorted, so everything hereafter is too rare
+            break
+        out_handle.write(">%s_%i\n%s\n" % (md5seq(seq), -count, seq))
+        accepted += 1
+    if output_fasta != "-":
+        out_handle.close()
     return accepted
 
 
