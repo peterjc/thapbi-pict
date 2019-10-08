@@ -31,12 +31,17 @@ def main(
     debug=False,
 ):
     """Implement the ``thapbi_pict fasta-nr`` command."""
+    if not inputs:
+        inputs = []
+    if not revcomp:
+        revcomp = []
     if isinstance(inputs, str):
         inputs = [inputs]
     if isinstance(revcomp, str):
         revcomp = [revcomp]
     assert isinstance(inputs, list)
     assert isinstance(revcomp, list)
+    assert inputs or revcomp
 
     counts = Counter()
     for filename in inputs:
