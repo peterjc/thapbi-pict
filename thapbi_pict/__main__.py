@@ -210,6 +210,24 @@ def prepare_reads(args=None):
         return return_code
 
 
+def fasta_nr(args=None):
+    """Subcommand to prepare non-redundant MD5 named FASTA files."""
+    from .fasta_nr import main
+
+    if not (args.input or args.revcomp):
+        sys.exit("ERROR: Require at least one of -i/--input or -r/--revcomp")
+
+    return main(
+        inputs=args.input,
+        revcomp=args.revcomp,
+        output=args.output,
+        min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
+        debug=args.verbose,
+    )
+
+
 def classify(args=None):
     """Subcommand to classify FASTA sequences using a database."""
     from .classify import main
@@ -1005,6 +1023,53 @@ def main(args=None):
     parser_prepare_reads.add_argument("--cpu", **ARG_CPU)
     parser_prepare_reads.set_defaults(func=prepare_reads)
     del parser_prepare_reads  # To prevent acidentally adding more
+
+    parser_fasta_nr = subparsers.add_parser(
+        "fasta-nr",
+        description="Prepare non-redundant FASTA file using MD5 naming.",
+        epilog="Each unique sequence will be named <MD5>_<count> using "
+        "the MD5 checksum of the upper case sequence and its total "
+        "abundance. Input files may use <prefix>_<count> naming, this "
+        "count will be used for the associated sequence.",
+    )
+    parser_fasta_nr.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=False,
+        nargs="+",
+        metavar="INPUT",
+        help="One or more FASTA files.",
+    )
+    parser_fasta_nr.add_argument(
+        "-r",
+        "--revcomp",
+        type=str,
+        required=False,
+        metavar="INPUT",
+        help="One or more FASTA files as input "
+        "to be reverse-complemented on loading.",
+    )
+    parser_fasta_nr.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="PATH",
+        help="Single output filename, '-' for stdout (default).",
+    )
+    parser_fasta_nr.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default=str(DEFAULT_MIN_ABUNDANCE),
+        help="Mininum abundance to require before outputing a sequence. "
+        "Default %i as in prepare-reads." % DEFAULT_MIN_ABUNDANCE,
+    )
+    parser_fasta_nr.add_argument("--minlen", **ARG_MIN_LENGTH)
+    parser_fasta_nr.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    parser_fasta_nr.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_fasta_nr.set_defaults(func=fasta_nr)
 
     # classify
     parser_classify = subparsers.add_parser(
