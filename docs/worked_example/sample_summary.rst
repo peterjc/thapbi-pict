@@ -96,7 +96,7 @@ Note we get ``Site_1_sample_1`` then ``Site_1_sample_10`` and then
 ``Site_1_sample_2`` etc. The alphabetic sort order problem again.
 
 As to the meaning of this list, those are the species identified - in some
-cases with a cavaet. The file starts with a tiny explanation:
+cases with a caveat. The file starts with a tiny explanation:
 
 .. code:: text
 
