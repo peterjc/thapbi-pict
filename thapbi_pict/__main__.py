@@ -1063,9 +1063,9 @@ def main(args=None):
         "-a",
         "--abundance",
         type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE),
+        default=0,
         help="Mininum abundance to require before outputing a sequence. "
-        "Default %i as in prepare-reads." % DEFAULT_MIN_ABUNDANCE,
+        "Default no minimum.",
     )
     parser_fasta_nr.add_argument("--minlen", **ARG_MIN_LENGTH)
     parser_fasta_nr.add_argument("--maxlen", **ARG_MAX_LENGTH)
