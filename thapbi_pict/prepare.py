@@ -581,6 +581,10 @@ def main(
             % len(control_file_pairs)
         )
 
+    if not os.path.isdir(out_dir):
+        sys.stderr.write("Making output directory %r\n" % out_dir)
+        os.mkdir(out_dir)
+
     if tmp_dir:
         # Up to the user to remove the files
         tmp_obj = None

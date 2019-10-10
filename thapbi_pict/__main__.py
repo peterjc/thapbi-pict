@@ -184,7 +184,7 @@ def prepare_reads(args=None):
     """Subcommand to prepare FASTA files from paired FASTQ reads."""
     from .prepare import main
 
-    check_output_directory(args.output)
+    check_output_directory(args.output, must_exist=False)
     if args.temp:
         check_output_directory(args.temp)
     return_code = main(
