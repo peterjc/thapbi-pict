@@ -581,7 +581,7 @@ def main(
             % len(control_file_pairs)
         )
 
-    if not os.path.isdir(out_dir):
+    if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
         sys.stderr.write("Making output directory %r\n" % out_dir)
         os.mkdir(out_dir)
 
