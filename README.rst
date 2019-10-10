@@ -42,7 +42,7 @@ ITS1.
 Installation
 ------------
 
-We recommend installing this tool on Linux using the
+We recommend installing this tool on Linux or macOS using the
 `Conda <https://conda.io/>`__ packaging system, via the
 `BioConda <https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
@@ -51,8 +51,7 @@ We recommend installing this tool on Linux using the
 
    $ conda install thapbi_pict
 
-The same should work on macOS, but the command line dependencies likely
-rule out using Windows directly.
+Sadly the command line dependencies likely rule out using Windows directly.
 
 Alternatively, since the software is on the `Python Package Index
 (PyPI) <https://pypi.python.org/>`__, the following command will install
