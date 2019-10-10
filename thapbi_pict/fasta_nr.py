@@ -10,6 +10,7 @@ This implements the ``thapbi_pict fasta-nr ...`` command, and does part
 of the work of the ``thapbi_pict prepare-reads`` command.
 """
 
+import os
 import sys
 
 from collections import Counter
@@ -42,6 +43,19 @@ def main(
     assert isinstance(inputs, list)
     assert isinstance(revcomp, list)
     assert inputs or revcomp
+
+    if os.path.isdir(output):
+        if len(inputs + revcomp) == 1:
+            output = os.path.join(output, os.path.basename((inputs + revcomp)[0]))
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: Single input with directory as ouput, writing to %s\n"
+                    % output
+                )
+        else:
+            sys.exit(
+                "ERROR: Output directory can only be used with a single input file"
+            )
 
     counts = Counter()
     for filename in inputs:

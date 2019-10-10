@@ -1056,7 +1056,8 @@ def main(args=None):
         type=str,
         default="-",
         metavar="PATH",
-        help="Single output filename, '-' for stdout (default).",
+        help="Single output filename, '-' for stdout (default). "
+        "Can be a directory if a single -i/-r input file given.",
     )
     parser_fasta_nr.add_argument(
         "-a",
