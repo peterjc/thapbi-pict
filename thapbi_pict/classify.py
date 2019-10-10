@@ -827,6 +827,10 @@ def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
     if debug:
         sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
 
+    if not os.path.isdir(out_dir):
+        sys.stderr.write("Making output directory %r\n" % out_dir)
+        os.mkdir(out_dir)
+
     if tmp_dir:
         # Up to the user to remove the files
         tmp_obj = None

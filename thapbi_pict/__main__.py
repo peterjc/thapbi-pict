@@ -37,13 +37,13 @@ def check_input_file(filename):
         sys.exit("ERROR: Could not find input file: %s" % filename)
 
 
-def check_output_directory(out_dir):
+def check_output_directory(out_dir, must_exist=True):
     """Command line validation of output directory value."""
     if out_dir == "-" or os.path.isdir(out_dir):
         return True
     elif os.path.isfile(out_dir):
         sys.exit("ERROR: Output directory name is a file: %s\n" % out_dir)
-    else:
+    elif must_exist:
         sys.exit("ERROR: Output directory does not exist")
 
 
@@ -215,7 +215,7 @@ def classify(args=None):
     from .classify import main
 
     if args.output:
-        check_output_directory(args.output)
+        check_output_directory(args.output, must_exist=False)
     if args.temp:
         check_output_directory(args.temp)
     return_code = main(
