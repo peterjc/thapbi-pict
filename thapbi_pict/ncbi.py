@@ -55,6 +55,7 @@ def parse_fasta_entry(text, known_species=None):
     # Heuristics
     name = parts[1:3]  # assumes "Genus species" only (2 words)
     rest = parts[3:]
+    assert name, text
     if len(name[0]) > 2 and name[0].startswith("P."):
         # Special case, but can we assume these are Phytophthora?
         # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
