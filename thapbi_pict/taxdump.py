@@ -190,12 +190,26 @@ def main(tax, db_url, ancestors, debug=True):
     g_new = 0
     for taxid in genus_list:
         genus = names[taxid]
-        # Is is already there? e.g. prior import
+        # Is genus already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
             .filter_by(genus=genus, species="", ncbi_taxid=taxid)
             .one_or_none()
         )
+        if taxonomy is None:
+            # Is genus there without an NCBI taxid?
+            taxonomy = (
+                session.query(Taxonomy).filter_by(genus=genus, species="").one_or_none()
+            )
+            if taxonomy and taxonomy.ncbi_taxid != taxid:
+                # Prior entry had missing/different taxid, must update it
+                if debug or taxonomy.ncbi_taxid != 0:
+                    sys.stderr.write(
+                        "WARNING: %s %s, updating NCBI taxid %i -> %i\n"
+                        % (genus, "", taxonomy.ncbi_taxid, taxid)
+                    )
+                taxonomy.ncbi_taxid = taxid
+                session.add(taxonomy)
         if taxonomy is None:
             g_new += 1
             taxonomy = Taxonomy(genus=genus, species="", ncbi_taxid=taxid)
@@ -226,7 +240,7 @@ def main(tax, db_url, ancestors, debug=True):
             # Another special case
             species = "unclassified"
 
-        # Is is already there? e.g. prior import
+        # Is species already there? e.g. prior import
         taxonomy = (
             session.query(Taxonomy)
             .filter_by(genus=genus, species=species)
