@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.8  *Pending*  New ``fasta-nr`` command for use in alternatives to ``prepare-reads``.
+v0.4.8  2019-10-11 New ``fasta-nr`` command for use in alternatives to ``prepare-reads``.
 v0.4.7  2019-10-10 New ``--minlen`` & ``--maxlen`` args for ``prepare-reads`` and ``pipeline``.
 v0.4.6  2019-10-02 Forgot to include updated DB with the PyPI release.
 v0.4.5  2019-10-02 Apply primer trimming to ``ncbi-import`` (crop if primers found).
