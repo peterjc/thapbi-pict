@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Python and RST checks
           command: |
-            pip install --upgrade pip setuptools
+            # pip install --upgrade pip setuptools
             pip install black
             black --check .
             # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
