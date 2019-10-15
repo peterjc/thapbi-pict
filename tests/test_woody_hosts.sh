@@ -34,6 +34,17 @@ echo "Decompressing prepare-reads output"
 echo "=================================="
 time tar -jxvf tests/woody_hosts/intermediate.tar.bz2 -C $TMP/woody_hosts/ | wc -l
 
+if [ -d tests/woody_hosts/raw_data/ ]; then
+   echo "================================="
+   echo "Running woody hosts prepare-reads"
+   echo "================================="
+   mkdir $TMP/woody_hosts/intermediate_new
+   time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/woody_hosts/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
+   for f in $TMP/woody_hosts/intermediate/*.fasta; do
+       diff $f $TMP/woody_hosts/intermediate_new/${f##*/}
+   done
+fi
+
 echo "============================"
 echo "Running woody hosts classify"
 echo "============================"
