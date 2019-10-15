@@ -54,7 +54,9 @@ jobs:
             python setup.py sdist --formats=gztar
             python setup.py bdist_wheel
             echo "Installing our wheel..."
-            python -m pip install dist/thapbi_pict-*.whl
+            cd dist
+            python -m pip install thapbi_pict-*.whl
+            cd ..
       - run:
           name: Test
           command: |
