@@ -313,6 +313,7 @@ def sample_summary(args=None):
     return main(
         inputs=args.input,
         output=args.output,
+        excel=args.excel,
         human_output=args.human,
         method=args.method,
         min_abundance=args.abundance,
@@ -429,6 +430,7 @@ def pipeline(args=None):
     return_code = sample_summary(
         inputs=classified_files,
         output=stem + ".samples.tsv",
+        excel=stem + ".samples.xlsx",
         human_output=stem + ".samples.txt",
         method=args.method,
         min_abundance=args.abundance,
@@ -1345,6 +1347,15 @@ def main(args=None):
         metavar="FILENAME",
         help="File to write sample species classification summary table to. "
         "Default is '-' meaning to stdout.",
+    )
+    subcommand_parser.add_argument(
+        "-e",
+        "--excel",
+        type=str,
+        default="",
+        metavar="FILENAME",
+        help="File to write summary samples vs species Excel table to. "
+        "Default is '' meaning no output.",
     )
     subcommand_parser.add_argument(
         "-r",
