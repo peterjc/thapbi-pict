@@ -24,6 +24,7 @@ from .utils import sample_sort
 def main(
     inputs,
     output,
+    excel,
     human_output,
     method,
     min_abundance=1,
