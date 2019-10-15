@@ -312,6 +312,7 @@ def sample_summary(args=None):
         # metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        require_metadata=args.requiremeta,
         debug=args.verbose,
     )
 
@@ -1303,6 +1304,12 @@ def main(args=None):
     parser_sample_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
     parser_sample_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     parser_sample_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    parser_sample_summary.add_argument(
+        "-q",
+        "--requiremeta",
+        action="store_true",
+        help="Ignore any input files without metadata.",
+    )
     parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_sample_summary.set_defaults(func=sample_summary)
     del parser_sample_summary  # To prevent acidentally adding more

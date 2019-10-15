@@ -498,6 +498,7 @@ def load_metadata(
     metadata_index_sep=";",
     sequenced_samples=None,
     metadata_sort=True,
+    require_metadata=False,
     debug=False,
 ):
     """Load specified metadata as several lists.
@@ -649,10 +650,18 @@ def load_metadata(
             )
         missing_meta = [_ for _ in sequenced_samples if _ not in back]
         if missing_meta:
-            sys.stderr.write(
-                "WARNING: %s sequenced samples without metadata, %s (etc)\n"
-                % (len(missing_meta), missing_meta[0])
-            )
+            if require_metadata:
+                if debug:
+                    sys.stderr.write(
+                        "DEBUG: Ignoring %s sequenced samples without metadata\n"
+                        % len(missing_meta)
+                    )
+                missing_meta = []
+            else:
+                sys.stderr.write(
+                    "WARNING: %s sequenced samples without metadata, %s (etc)\n"
+                    % (len(missing_meta), missing_meta[0])
+                )
 
     bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
     if bad:

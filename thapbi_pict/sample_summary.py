@@ -31,6 +31,7 @@ def main(
     metadata_cols=None,
     metadata_fieldnames=None,
     metadata_index=None,
+    require_metadata=False,
     debug=False,
 ):
     """Implement the ``thapbi_pict sample-summary`` command.
@@ -89,6 +90,7 @@ def main(
         metadata_index,
         sequenced_samples=samples,
         metadata_sort=True,
+        require_metadata=require_metadata,
         debug=debug,
     )
 
@@ -123,6 +125,7 @@ def main(
     # Note already sorted on metadata values, discarded the order in the table
     batches = list(zip(metadata_rows, metadata_samples))
     if missing_meta:
+        assert not require_metadata
         batches.append([meta_default, missing_meta])
     for metadata, sample_batch in batches:
         if human and meta_names:
@@ -136,6 +139,7 @@ def main(
                     human.write("\n")
                 else:
                     human.write("Missing metadata\n\n")
+                    assert not require_metadata
                 if not sample_batch:
                     human.write("Has not been sequenced.\n\n")
                 # elif len(sample_batch) == 1:
