@@ -35,11 +35,11 @@ jobs:
       - run:
           name: Python and RST checks
           command: |
-            # pip install --upgrade pip setuptools
-            pip install black
+            # python -m pip install --upgrade pip setuptools
+            python -m pip install black
             black --check .
             # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
-            pip install flake8==3.6 flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
+            python -m pip install flake8==3.6 flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
             flake8 .
             restructuredtext-lint *.rst database/*.rst tests/*/*.rst
       - run:
@@ -53,7 +53,8 @@ jobs:
             chmod a-w thapbi_pict/ITS1_DB.sqlite
             python setup.py sdist --formats=gztar
             python setup.py bdist_wheel
-            pip install dist/thapbi_pict-*.whl
+            echo "Installing our wheel..."
+            python -m pip install dist/thapbi_pict-*.whl
       - run:
           name: Test
           command: |

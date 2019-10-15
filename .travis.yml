@@ -29,9 +29,9 @@ before_install:
  - "if grep -n -r '[[:blank:]]$' *.rst */*.rst */*/*.rst; then echo 'Please remove trailing whitespace in RST files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi"
- - pip install --upgrade pip setuptools
+ - python -m pip install --upgrade pip setuptools
  # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
- - pip install flake8==3.6 flake8-black flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear flake8-pie flake8-comprehensions pygments
+ - python -m pip install flake8==3.6 flake8-black flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear flake8-pie flake8-comprehensions pygments
  - echo "Using flake8 (including black) to check Python code"
  - flake8 .
  - echo "Using restructuredtext-lint to check non-Sphinx documentation"
@@ -40,14 +40,14 @@ before_install:
 install:
  # Already installed external dependencies with apt packages (above)
  # Deliberatly not installing Python dependencies here, pip should do it...
- # pip install -r requirements.txt
+ # python -m pip install -r requirements.txt
  # Make a tar-ball, and try installing from that
  - rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
  - sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
  - chmod a-w thapbi_pict/ITS1_DB.sqlite
  - python setup.py sdist --formats=gztar
  - python setup.py bdist_wheel
- - pip install dist/thapbi_pict-*.whl
+ - python -m pip install dist/thapbi_pict-*.whl
 
 script:
  # Now unpack tests from the sdist tar-ball
