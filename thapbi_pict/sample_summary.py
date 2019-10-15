@@ -56,7 +56,9 @@ def main(
     if not tsv_files:
         sys.exit("ERROR: No input files found\n")
 
-    different_predictions = set()  # includes A;B;C ambiguous entries
+    genus_predictions = set()
+    sample_genus_counts = {}
+    species_predictions = set()  # includes A;B;C ambiguous entries
     sample_species_counts = {}
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
@@ -64,12 +66,21 @@ def main(
             sys.exit("ERROR: Duplicate sample name: %s\n" % sample)
         samples.add(sample)
         sample_species_counts[sample] = Counter()
+        sample_genus_counts[sample] = Counter()
         for name, taxid_list, sp_list in parse_species_tsv(
             predicted_file, min_abundance
         ):
             # New:
-            different_predictions.add(sp_list)  # as string with any ; included
+            species_predictions.add(sp_list)  # as string with any ; included
             sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
+            genus_list = {sp.split(" ", 1)[0] for sp in sp_list.split(";")}
+            genus_predictions.update(genus_list)
+            if len(genus_list) > 1:
+                sys.stderr.write(
+                    "WARNING: Conflicting genus for %s from %s\n" % (name, sample)
+                )
+            for genus in genus_list:
+                sample_genus_counts[sample][genus] += abundance_from_read_name(name)
             # Old:
             taxid_list = taxid_list.split(";")
             sp_list = sp_list.split(";")
@@ -81,12 +92,13 @@ def main(
                 else:
                     sp_to_taxid[sp] = taxid
                 counts[sample, sp, unambig] += abundance_from_read_name(name)
-    different_predictions = sorted(different_predictions)  # turn into a list
+    species_predictions = sorted(species_predictions)  # turn into a list
+    genus_predictions = sorted(genus_predictions)  # turn into a list
 
     if debug:
         sys.stderr.write(
-            " %i samples with predictions for %i species (inc. combinations)\n"
-            % (len(samples), len(different_predictions))
+            " %i samples with predictions for %i genera\n"
+            % (len(samples), len(genus_predictions))
         )
 
     samples = sample_sort(samples)
@@ -128,16 +140,24 @@ def main(
     if handle:
         if meta_names:
             handle.write(
-                "#%s\tSequencing sample\tSeq-count\t%s\n"
+                "#%s\tSequencing sample\tSeq-count\t%s\t%s\n"
                 % (
                     "\t".join(meta_names),
-                    "\t".join(_ if _ else "Unknown" for _ in different_predictions),
+                    "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
+                    "\t".join(
+                        _ for _ in species_predictions if _ not in genus_predictions
+                    ),
                 )
             )
         else:
             handle.write(
-                "#Sequencing sample\tSeq-count\t%s\n"
-                % "\t".join(_ if _ else "Unknown" for _ in different_predictions)
+                "#Sequencing sample\tSeq-count\t%s\t%s\n"
+                % (
+                    "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
+                    "\t".join(
+                        _ for _ in species_predictions if _ not in genus_predictions
+                    ),
+                )
             )
     if human:
         human.write(
@@ -183,13 +203,18 @@ def main(
                         if metadata:
                             handle.write("\t".join(metadata) + "\t")
                         handle.write(
-                            "%s\t%i\t%s\n"
+                            "%s\t%i\t%s\t%s\n"
                             % (
                                 sample,
                                 sum(sample_species_counts[sample].values()),
                                 "\t".join(
+                                    str(sample_genus_counts[sample][genus])
+                                    for genus in genus_predictions
+                                ),
+                                "\t".join(
                                     str(sample_species_counts[sample][sp])
-                                    for sp in different_predictions
+                                    for sp in species_predictions
+                                    if sp not in genus_predictions
                                 ),
                             )
                         )
