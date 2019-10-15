@@ -55,14 +55,22 @@ def main(
         )
     if not tsv_files:
         sys.exit("ERROR: No input files found\n")
+
+    different_predictions = set()  # includes A;B;C ambiguous entries
+    sample_species_counts = {}
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
         if sample in samples:
             sys.exit("ERROR: Duplicate sample name: %s\n" % sample)
         samples.add(sample)
+        sample_species_counts[sample] = Counter()
         for name, taxid_list, sp_list in parse_species_tsv(
             predicted_file, min_abundance
         ):
+            # New:
+            different_predictions.add(sp_list)  # as string with any ; included
+            sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
+            # Old:
             taxid_list = taxid_list.split(";")
             sp_list = sp_list.split(";")
             assert len(taxid_list) == len(sp_list), predicted_file
@@ -73,9 +81,13 @@ def main(
                 else:
                     sp_to_taxid[sp] = taxid
                 counts[sample, sp, unambig] += abundance_from_read_name(name)
+    different_predictions = sorted(different_predictions)  # turn into a list
 
     if debug:
-        sys.stderr.write("Loaded predictions for %i samples\n" % len(samples))
+        sys.stderr.write(
+            " %i samples with predictions for %i species (inc. combinations)\n"
+            % (len(samples), len(different_predictions))
+        )
 
     samples = sample_sort(samples)
     (
@@ -114,7 +126,19 @@ def main(
         human = None
 
     if handle:
-        handle.write("#Sample\tTaxID\tSpecies\tUnambiguous\tSeq-count\n")
+        if meta_names:
+            handle.write(
+                "#%s\tSequencing sample\tSeq-count\t%s\n"
+                % (
+                    "\t".join(meta_names),
+                    "\t".join(_ if _ else "Unknown" for _ in different_predictions),
+                )
+            )
+        else:
+            handle.write(
+                "#Sequencing sample\tSeq-count\t%s\n"
+                % "\t".join(_ if _ else "Unknown" for _ in different_predictions)
+            )
     if human:
         human.write(
             "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
@@ -153,31 +177,34 @@ def main(
         for sample in sample_batch:
             if sample not in samples:
                 sys.stderr.write("WARNING: Missing %s\n" % sample)
+            else:
+                if handle:
+                    try:
+                        if metadata:
+                            handle.write("\t".join(metadata) + "\t")
+                        handle.write(
+                            "%s\t%i\t%s\n"
+                            % (
+                                sample,
+                                sum(sample_species_counts[sample].values()),
+                                "\t".join(
+                                    str(sample_species_counts[sample][sp])
+                                    for sp in different_predictions
+                                ),
+                            )
+                        )
+                    except BrokenPipeError:
+                        # Stop trying to write to stdout (eg piped to head)
+                        handle = None
             all_sp = set()
             unambig_sp = set()
             for sp in sp_to_taxid:
                 for unambig in [True, False]:
                     count = counts[sample, sp, unambig]
                     if count:
-                        if handle:
-                            try:
-                                handle.write(
-                                    "%s\t%s\t%s\t%s\t%i\n"
-                                    % (sample, sp_to_taxid[sp], sp, unambig, count)
-                                )
-                            except BrokenPipeError:
-                                # Stop trying to write to stdout (eg piped to head)
-                                handle = None
                         all_sp.add(sp)
                         if unambig:
                             unambig_sp.add(sp)
-            if not all_sp and handle:
-                try:
-                    # Match unclassified count output: TaxID zero, blank species, True
-                    handle.write("%s\t%s\t%s\t%s\t%i\n" % (sample, "0", "", True, 0))
-                except BrokenPipeError:
-                    handle = None
-
             if human:
                 try:
                     if meta_names:
