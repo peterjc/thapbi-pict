@@ -44,11 +44,11 @@ thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fast
 thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
 thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta
 
-# Passing one directory name (should get all 4 FASTA files):
+# Passing one directory name (should get all 5 FASTA files):
 rm -rf $TMP/legacy
 mkdir -p $TMP/legacy
 thapbi_pict classify -m identity -d $DB -i database/legacy/ -o $TMP/legacy
-if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "4" ]; then echo "Expected 4 files"; false; fi
+if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "5" ]; then echo "Expected 5 files"; false; fi
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
