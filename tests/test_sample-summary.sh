@@ -39,6 +39,11 @@ for M in identity onebp blast; do
     diff $TMP/human.txt tests/sample-summary/classify-meta.$M.txt
     # This currently does not include metadata, and sorting does not change as only one sample
     diff $TMP/computer.tsv tests/sample-summary/classify.$M.tsv
+    # Now require metadata...
+    rm -rf $TMP/human.txt $TMP/computer.tsv
+    thapbi_pict sample-summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -r $TMP/human.txt -o $TMP/computer.tsv -i tests/classify/ -q
+    diff $TMP/human.txt tests/sample-summary/classify-meta-req.$M.txt
+    diff $TMP/computer.tsv tests/sample-summary/classify-meta.$M.tsv
 done
 
 # More complicated metadata testing
@@ -50,6 +55,11 @@ for M in identity; do
     # And again, but with metadata
     rm -rf $TMP/human.txt $TMP/computer.tsv
     thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -i tests/assess/
+    diff $TMP/human.txt tests/sample-summary/assess-meta.$M.txt
+    diff $TMP/computer.tsv tests/sample-summary/assess-meta.$M.tsv
+    # And now requiring the metadata (no change):
+    rm -rf $TMP/human.txt $TMP/computer.tsv
+    thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -i tests/assess/ -q
     diff $TMP/human.txt tests/sample-summary/assess-meta.$M.txt
     diff $TMP/computer.tsv tests/sample-summary/assess-meta.$M.tsv
 done
