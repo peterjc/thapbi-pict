@@ -69,13 +69,13 @@ def write_pdf(G, filename):
     """Render NetworkX graph to PDF using GraphViz fdp."""
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
     default = G.graph["node_default"]["color"]
-    node_colors = [G.node[_].get("color", default) for _ in G]
+    node_colors = [G.nodes[_].get("color", default) for _ in G]
 
     default = 1.0
-    node_sizes = [G.node[_].get("size", default) for _ in G]
+    node_sizes = [G.nodes[_].get("size", default) for _ in G]
 
     default = ""
-    node_labels = {_: G.node[_].get("label", default) for _ in G}
+    node_labels = {_: G.nodes[_].get("label", default) for _ in G}
 
     default = G.graph["edge_default"]["style"]
     edge_styles = [G.edges[_].get("style", default) for _ in G.edges()]
