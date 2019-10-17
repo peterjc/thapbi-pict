@@ -22,12 +22,12 @@ set -o pipefail
 if [ `thapbi_pict dump | grep -c -v "^#"` -ne 15008 ]; then echo "Wrong source count for table dump"; false; fi
 if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 15008 ]; then echo "Wrong sourse count for fasta dump"; false; fi
 
-if [ `thapbi_pict dump --minimal | grep -c -v "^#"` -ne 3636 ]; then echo "Wrong sequence count for table dump"; false; fi
-if [ `thapbi_pict dump -m -f fasta | grep -c "^>"` -ne 3636 ]; then echo "Wrong sequence count for fasta dump"; false; fi
+if [ `thapbi_pict dump --minimal | grep -c -v "^#"` -ne 3635 ]; then echo "Wrong sequence count for table dump"; false; fi
+if [ `thapbi_pict dump -m -f fasta | grep -c "^>"` -ne 3635 ]; then echo "Wrong sequence count for fasta dump"; false; fi
 
 # With genus filter,
 if [ `thapbi_pict dump -f fasta -g Phytophthora | grep -c "^>"` -ne 13033 ]; then echo "Wrong source for Phytophthora genus"; false; fi
-if [ `thapbi_pict dump -f fasta -g Phytophthora -m | grep -c "^>"` -ne 2968 ]; then echo "Wrong sequence for Phytophthora genus"; false; fi
+if [ `thapbi_pict dump -f fasta -g Phytophthora -m | grep -c "^>"` -ne 2967 ]; then echo "Wrong sequence for Phytophthora genus"; false; fi
 
 # With genus and species filter,
 if [ `thapbi_pict dump -f fasta -g Phytophthora -s "fallax, andina" | grep -c "^>"` -ne 7 ]; then echo "Wrong source for two species"; false; fi
