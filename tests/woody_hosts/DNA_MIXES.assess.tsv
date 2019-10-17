@@ -1,6 +1,8 @@
 #Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
-OVERALL	32	6	13	537	0.71	0.99	0.84	0.77	0.0323	0.373
+OVERALL	32	6	13	549	0.71	0.99	0.84	0.77	0.0317	0.373
 Phytophthora acerina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. meadii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora aff. meadii AdP-2013	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora agathidicida	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora alticola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora amaranthi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -39,6 +41,7 @@ Phytophthora colocasiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora constricta	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora crassamura	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cryptogea	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora cuyabensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora dauci	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora drechsleri	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora elongata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
