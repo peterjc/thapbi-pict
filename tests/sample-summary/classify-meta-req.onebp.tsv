@@ -1,0 +1,5 @@
+#Sample	TaxID	Species	Unambiguous	Seq-count
+P-infestans-T30-4	283009	Phytophthora andina	False	62500
+P-infestans-T30-4	4787	Phytophthora infestans	False	62500
+P-infestans-T30-4	283007	Phytophthora ipomoeae	False	62500
+P-infestans-T30-4	0		True	500
