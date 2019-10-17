@@ -26,3 +26,4 @@ include database/legacy/Phytophthora_ITS_database_v0.006.fasta
 recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
 
 include tests/woody_hosts/intermediate.tar.bz2
+exclude tests/woody_hosts/raw_data/*.fastq.gz
