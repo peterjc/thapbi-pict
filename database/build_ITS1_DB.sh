@@ -31,8 +31,6 @@ sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phy
 thapbi_pict seq-import -d "$DB.sqlite" -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
 
 # Add the G-BLOCK synthetic controls (in lax mode as not in the taxonomy)
-# (Extra grep to remove -- lines on macOS output)
-grep -A 1 ">Control_" "$CURATED" | grep -v "\-\-" > controls.fasta
 thapbi_pict legacy-import -x -d "$DB.sqlite" -i controls.fasta
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
