@@ -5,11 +5,10 @@ We include a default ITS1 database with THAPBI PICT using the following three
 sets of sequences (subject to HMM filtering and taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (at species level) from file
-  ``legacy/Phytophthora_ITS_database_v0.006.fasta``, including four G-BLOCKS
-  synthetic controls.
+  ``database/legacy/Phytophthora_ITS_database_v0.006.fasta``
 
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level,
-  file ``2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
+  file ``database/2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
   entries created with an NCBI Entrez search run on 2019-04-16::
 
       ((internal AND transcribed AND spacer) OR its1) AND
@@ -18,6 +17,8 @@ sets of sequences (subject to HMM filtering and taxonomy filtering):
 - Observed ITS1 sequences from single isolate positive controls run on a MiSeq
   plate via ``thapbi_pict prepare-reads`` with default settings (plate level
   minimum abundance was 545, but in anycase import minimum default is 1000).
+
+- Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
 - This used the NCBI taxonomy as of 2019-09-01, which means we rejected some
   of the curated FASTA file entries.
