@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.10 2019-10-21 New ``curated-import`` command.
+v0.4.10 2019-10-21 New ``curated-import`` command, reworked handling of curated DB entries.
 v0.4.9  2019-10-17 New ``sample-summary`` switch ``-q`` / ``--requiremeta``. NetworkX v2.4 fix.
 v0.4.8  2019-10-11 New ``fasta-nr`` command for use in alternatives to ``prepare-reads``.
 v0.4.7  2019-10-10 New ``--minlen`` & ``--maxlen`` args for ``prepare-reads`` and ``pipeline``.
