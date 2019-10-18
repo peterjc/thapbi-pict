@@ -28,6 +28,14 @@ import sys
 from .db_import import import_fasta_file
 
 
+def split_ctrl_a(text):
+    """Split FASTA title line on the CTRL+A character.
+
+    This is to mimick the NCBI BLAST NR FASTA file convention.
+    """
+    return text.split(chr(1))
+
+
 def parse_fasta_entry(text, known_species=None):
     """Split an entry of Accession_Genus_Species_name_Description.
 
@@ -111,7 +119,7 @@ def main(
         hmm_stem=hmm_stem,
         name=name,
         debug=debug,
-        fasta_entry_fn=None,
+        fasta_entry_fn=split_ctrl_a,
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
         genus_only=genus_only,
