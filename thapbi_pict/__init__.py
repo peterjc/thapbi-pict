@@ -25,4 +25,4 @@ automatically from the ``docs/`` folder of the `software repository
 within the source code which document the Python API.
 """
 
-__version__ = "0.4.9"
+__version__ = "0.4.10"
