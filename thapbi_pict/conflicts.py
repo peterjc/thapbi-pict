@@ -64,11 +64,11 @@ def main(db_url, output_filename, debug=False):
 
     genus_conflicts = 0
     out_handle.write("#MD5\tLevel\tConflicts\n")
-    for md5, genus in md5_to_genus.items():
+    for md5, genus in sorted(md5_to_genus.items()):
         if len(genus) > 1:
             out_handle.write("%s\t%s\t%s\n" % (md5, "genus", ";".join(sorted(genus))))
             genus_conflicts += 1
-    for md5, species in md5_to_species.items():
+    for md5, species in sorted(md5_to_species.items()):
         if len(species) > 1:
             out_handle.write(
                 "%s\t%s\t%s\n" % (md5, "species", ";".join(sorted(species)))
