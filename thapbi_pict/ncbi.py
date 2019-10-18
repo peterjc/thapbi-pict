@@ -71,6 +71,10 @@ def parse_fasta_entry(text, known_species=None):
             "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], parts[0])
         )
         name = ["Phytophthora", name[0][2:]]
+    while rest and name[-1] in ("taxon", "aff.", "cf.", "x"):
+        # Looks like species name needs at least one more word...
+        # Note that sp. or sp doesn't always have another word.
+        name.append(rest.pop(0))
     if name[0] == "Sequence":
         # Another special case
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
