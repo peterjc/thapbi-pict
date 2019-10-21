@@ -8,7 +8,7 @@ DB=CURATED+NCBI
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict ncbi-import -d "$DB.sqlite" -i "$CURATED" --left '' --right ''
+thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED"
 thapbi_pict ncbi-import -d "$DB.sqlite" -i 2019-04-03-ITS_Peronosporales_16394.fasta -g
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
