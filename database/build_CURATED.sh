@@ -23,7 +23,7 @@ sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C2');"
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C3');"
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C4');"
-thapbi_pict ncbi-import -d "$DB.sqlite" -i controls.fasta --left '' --right ''
+thapbi_pict curated-import -d "$DB.sqlite" -i controls.fasta
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
