@@ -26,14 +26,7 @@ Then, import this into our ITS DB using::
 import sys
 
 from .db_import import import_fasta_file
-
-
-def split_ctrl_a(text):
-    """Split FASTA title line on the CTRL+A character.
-
-    This is to mimick the NCBI BLAST NR FASTA file convention.
-    """
-    return text.split(chr(1))
+from .db_import import split_ctrl_a
 
 
 def parse_fasta_entry(text, known_species=None):
