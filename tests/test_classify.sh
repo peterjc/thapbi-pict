@@ -20,14 +20,15 @@ thapbi_pict classify 2>&1 | grep "the following arguments are required"
 thapbi_pict classify -d "sqlite:///:memory:" -i hypothetical_example.fasta 2>&1 | grep "cannot classify anything"
 set -o pipefail
 
-export DB=$TMP/legacy_004_and_005_validated.sqlite
-if [ ! -f $DB ]; then echo "Run test_legacy-import.sh to setup test DB"; false; fi
-
-rm -rf database/legacy/*.identity.tsv
+export DB=$TMP/curated.sqlite
+if [ ! -f $DB ]; then echo "Run test_curated-import.sh to setup test DB"; false; fi
 
 # Passing one filename; default output dir:
-thapbi_pict classify -m identity -d $DB -i database/legacy/database.fasta
-if [ "`grep -c -v '^#' database/legacy/database.identity.tsv`" -ne "`grep -c '^>' database/legacy/database.fasta`" ]; then echo "Expected one line per input seq"; false; fi
+rm -rf $TMP/classify/
+mkdir -p $TMP/classify/
+cp database/Phytophthora_ITS1_curated.fasta $TMP/classify/
+thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta
+if [ "`grep -c -v '^#' $TMP/classify/Phytophthora_ITS1_curated.identity.tsv`" -ne "`grep -c '^>' $TMP/classify/Phytophthora_ITS1_curated.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
@@ -44,11 +45,13 @@ thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fast
 thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
 thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta
 
-# Passing one directory name (should get all 4 FASTA files):
-rm -rf $TMP/legacy
-mkdir -p $TMP/legacy
-thapbi_pict classify -m identity -d $DB -i database/legacy/ -o $TMP/legacy
-if [ "`ls -1 $TMP/legacy/*.identity.tsv | wc -l`" -ne "4" ]; then echo "Expected 4 files"; false; fi
+# Passing one directory name (should get all 2 FASTA files):
+rm -rf $TMP/duo
+mkdir -p $TMP/duo
+cp database/Phytophthora_ITS1_curated.fasta $TMP/duo/
+cp database/controls.fasta $TMP/duo/
+thapbi_pict classify -m identity -d $DB -i $TMP/duo -o $TMP/duo
+if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 files"; false; fi
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv

@@ -22,7 +22,7 @@ set -o pipefail
 thapbi_pict conflicts -o $TMP/conflicts.tsv
 diff $TMP/conflicts.tsv tests/conflicts/default.tsv
 
-if [ ! -f $TMP/dup_seqs.sqlite ]; then echo "Run tests/test_legacy-import.sh to setup test DB"; false; fi
+if [ ! -f $TMP/dup_seqs.sqlite ]; then echo "Run tests/test_curated-import.sh to setup test DB"; false; fi
 thapbi_pict conflicts -d $TMP/dup_seqs.sqlite -o $TMP/dup_seqs.tsv
 diff $TMP/dup_seqs.tsv tests/conflicts/dup_seqs.tsv
 

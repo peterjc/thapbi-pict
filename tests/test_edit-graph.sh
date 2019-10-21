@@ -39,13 +39,13 @@ thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200
 
 
 # No database, generic FASTA file, have to use explicit abundance thresholds of 1:
-if [ `thapbi_pict edit-graph -d '' -i database/legacy/Phytophthora_ITS_database_v0.005.fasta -a 1 -t 1 | grep -c "<node "` -ne 176 ]; then echo "Wrong node count"; false; fi
-# WARNING: Sequence(s) in database/legacy/Phytophthora_ITS_database_v0.005.fasta not using MD5_abundance naming
-# Loaded 176 unique sequences from 1 FASTA files.
-# Minimum total abundance threshold 1 left 176 sequences from FASTA files.
-# Computed 30800 Levenshtein edit distances between 176 sequences.
-# Will draw 103 nodes with at least one edge (73 are isolated sequences).
-# Including high abundance isolated sequences, will draw 176 nodes.
-# 176
+if [ `thapbi_pict edit-graph -d '' -i database/Phytophthora_ITS1_curated.fasta -a 1 -t 1 | grep -c "<node "` -ne 167 ]; then echo "Wrong node count"; false; fi
+# WARNING: Sequence(s) in database/Phytophthora_ITS1_curated.fasta not using MD5_abundance naming
+# Loaded 167 unique sequences from 1 FASTA files.
+# Minimum total abundance threshold 1 left 167 sequences from FASTA files.
+# Computed 13861 Levenshtein edit distances between 167 sequences.
+# Will draw 104 nodes with at least one edge (63 are isolated sequences).
+# Including high abundance isolated sequences, will draw 167 nodes.
+# 167
 
 echo "$0 - test_edit-graph.sh passed"
