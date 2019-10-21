@@ -139,6 +139,21 @@ def seq_import(args=None):
     )
 
 
+def curated_import(args=None):
+    """Subcommand to import a curated marker FASTA file into the basebase."""
+    from .curated import main
+
+    return main(
+        fasta_file=args.input,
+        db_url=expand_database_argument(args.database),
+        hmm_stem=expand_hmm_argument(args.hmm),
+        name=args.name,
+        validate_species=not args.lax,
+        genus_only=args.genus,
+        debug=args.verbose,
+    )
+
+
 def legacy_import(args=None):
     """Subcommand to import a legacy ITS1 FASTA file into a basebase."""
     from .legacy import main
@@ -890,6 +905,26 @@ def main(args=None):
     parser_seq_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
     parser_seq_import.set_defaults(func=seq_import)
     del parser_seq_import  # To prevent acidentally adding more
+
+    # curated-import
+    parser_curated_import = subparsers.add_parser(
+        "curated-import",
+        description="Load a curated marker FASTA file into a database. "
+        "Treats the FASTA title lines as identitier, space, species. "
+        "By default verifies species names against a pre-loaded taxonomy, "
+        "non-matching entries are rejected.",
+    )
+    parser_curated_import.add_argument(
+        "-i", "--input", type=str, required=True, help="One FASTA marker filename."
+    )
+    parser_curated_import.add_argument("-d", "--database", **ARG_DB_WRITE)
+    parser_curated_import.add_argument("--hmm", **ARG_HMM)
+    parser_curated_import.add_argument("-n", "--name", **ARG_NAME)
+    parser_curated_import.add_argument("-x", "--lax", **ARG_LAX)
+    parser_curated_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    parser_curated_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    parser_curated_import.set_defaults(func=curated_import)
+    del parser_curated_import  # To prevent acidentally adding more
 
     # legacy-import
     parser_legacy_import = subparsers.add_parser(
