@@ -8,7 +8,7 @@ DB=CURATED
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict ncbi-import -d "$DB.sqlite" -i "$CURATED" --left '' --right '' -v
+thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED" -v
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations
