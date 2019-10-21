@@ -5,7 +5,7 @@ We include a default ITS1 database with THAPBI PICT using the following three
 sets of sequences (subject to HMM filtering and taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (at species level) from file
-  ``database/legacy/Phytophthora_ITS_database_v0.006.fasta``
+  ``database/Phytophthora_ITS1_curated.fasta``
 
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level,
   file ``database/2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
