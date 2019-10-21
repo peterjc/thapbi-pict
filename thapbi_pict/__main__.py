@@ -154,21 +154,6 @@ def curated_import(args=None):
     )
 
 
-def legacy_import(args=None):
-    """Subcommand to import a legacy ITS1 FASTA file into a basebase."""
-    from .legacy import main
-
-    return main(
-        fasta_file=args.input,
-        db_url=expand_database_argument(args.database),
-        hmm_stem=expand_hmm_argument(args.hmm),
-        name=args.name,
-        validate_species=not args.lax,
-        genus_only=args.genus,
-        debug=args.verbose,
-    )
-
-
 def dump(args=None):
     """Subcommand to dump a database to a text file."""
     from .dump import main
@@ -924,25 +909,6 @@ def main(args=None):
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=curated_import)
-    del subcommand_parser  # To prevent acidentally adding more
-
-    # legacy-import
-    subcommand_parser = subparsers.add_parser(
-        "legacy-import",
-        description="Load one of our legacy ITS1 FASTA files into a database. "
-        "By default verifies species names against a pre-loaded taxonomy, "
-        "non-matching entries are rejected.",
-    )
-    subcommand_parser.add_argument(
-        "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
-    )
-    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
-    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
-    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
-    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=legacy_import)
     del subcommand_parser  # To prevent acidentally adding more
 
     # dump
