@@ -753,16 +753,16 @@ def main(args=None):
     )
 
     # pipeline (listing first as likely to be the most used subcommand)
-    parser_pipeline = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "pipeline",
         description="Run default classification pipeline on paired FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
         "classify, sample-summary, read-summary, edit-graph) with their defaults, "
         "with only a minority of settings available here.",
     )
-    parser_pipeline.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
-    parser_pipeline.add_argument("-n", "--negctrls", **ARG_CONTROLS)
-    parser_pipeline.add_argument(
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -770,14 +770,14 @@ def main(args=None):
         metavar="DIRNAME",
         help="Output directory. Required.",
     )
-    parser_pipeline.add_argument(
+    subcommand_parser.add_argument(
         "-r",
         "--report",
         type=str,
         metavar="STEM",
         help="Stem for generating report filenames.",
     )
-    parser_pipeline.add_argument(
+    subcommand_parser.add_argument(
         "-s",
         "--sampleout",
         type=str,
@@ -786,33 +786,33 @@ def main(args=None):
         help="Output directory for intermediate files for each sample "
         "(FASTQ pair). Defaults to -o / --output.",
     )
-    parser_pipeline.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
-    parser_pipeline.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_pipeline.add_argument("--hmm", **ARG_HMM)
-    parser_pipeline.add_argument("--minlen", **ARG_MIN_LENGTH)
-    parser_pipeline.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     # Not using -l and -r for primers as used -r for report:
-    parser_pipeline.add_argument("--left", **ARG_PRIMER_LEFT)
-    parser_pipeline.add_argument("--right", **ARG_PRIMER_RIGHT)
-    parser_pipeline.add_argument("--flip", **ARG_FLIP)
-    parser_pipeline.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
-    parser_pipeline.add_argument("-t", "--metadata", **ARG_METADATA)
-    parser_pipeline.add_argument("-c", "--metacols", **ARG_METACOLS)
-    parser_pipeline.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    parser_pipeline.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
-    parser_pipeline.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("--left", **ARG_PRIMER_LEFT)
+    subcommand_parser.add_argument("--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument("--flip", **ARG_FLIP)
+    subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
+    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
+    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
+    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     # Can't use -t for --temp as already using for --metadata:
-    parser_pipeline.add_argument("--temp", **ARG_TEMPDIR)
-    parser_pipeline.add_argument("--cpu", **ARG_CPU)
-    parser_pipeline.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_pipeline.set_defaults(func=pipeline)
-    del parser_pipeline
+    subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("--cpu", **ARG_CPU)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=pipeline)
+    del subcommand_parser
 
     # load-tax
-    parser_load_tax = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "load-tax", description="Load an NCBI taxonomy dump into an ITS1 database."
     )
-    parser_load_tax.add_argument(
+    subcommand_parser.add_argument(
         "-t",
         "--tax",
         type=str,
@@ -820,8 +820,8 @@ def main(args=None):
         metavar="DIRNAME",
         help="Folder containing NCBI taxonomy files 'names.dmp' etc.",
     )
-    parser_load_tax.add_argument("-d", "--database", **ARG_DB_WRITE)
-    parser_load_tax.add_argument(
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument(
         "-a",
         "--ancestors",
         type=str,
@@ -830,34 +830,34 @@ def main(args=None):
         "Default is 4762 for Oomycetes, use 4776 for Peronosporales, or "
         "4783 for Phytophthora only.",
     ),
-    parser_load_tax.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_load_tax.set_defaults(func=load_tax)
-    del parser_load_tax  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=load_tax)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # ncbi-import
-    parser_ncbi_import = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "ncbi-import",
         description="Load an NCBI format ITS1 FASTA file into a database. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    parser_ncbi_import.add_argument(
+    subcommand_parser.add_argument(
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
-    parser_ncbi_import.add_argument("-d", "--database", **ARG_DB_WRITE)
-    parser_ncbi_import.add_argument("--hmm", **ARG_HMM)
-    parser_ncbi_import.add_argument("-n", "--name", **ARG_NAME)
-    parser_ncbi_import.add_argument("-x", "--lax", **ARG_LAX)
-    parser_ncbi_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    parser_ncbi_import.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
-    parser_ncbi_import.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
-    parser_ncbi_import.add_argument("-t", "--temp", **ARG_TEMPDIR)
-    parser_ncbi_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_ncbi_import.set_defaults(func=ncbi_import)
-    del parser_ncbi_import  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
+    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
+    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=ncbi_import)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # seq-import
-    parser_seq_import = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "seq-import",
         description="Load classified sequences from one or more processed "
         "FASTA files into an ITS1 database. e.g. Using 'known' classifier "
@@ -866,7 +866,7 @@ def main(args=None):
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    parser_seq_import.add_argument(
+    subcommand_parser.add_argument(
         "-i",
         "--input",
         type=str,
@@ -876,7 +876,7 @@ def main(args=None):
         "(names containing files named *.fasta and *.method.tsv, where "
         "method is set via the -m / --method argument).",
     )
-    parser_seq_import.add_argument(
+    subcommand_parser.add_argument(
         "-m",
         "--method",
         type=str,
@@ -886,7 +886,7 @@ def main(args=None):
         "the convention used in the classifier assessment command for "
         "known trusted species assignments (i.e. positive controls).",
     )
-    parser_seq_import.add_argument(
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -897,76 +897,76 @@ def main(args=None):
         "classification pipeline - be cautious what goes in your "
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
-    parser_seq_import.add_argument("-d", "--database", **ARG_DB_WRITE)
-    parser_seq_import.add_argument("--hmm", **ARG_HMM)
-    parser_seq_import.add_argument("-n", "--name", **ARG_NAME)
-    parser_seq_import.add_argument("-x", "--lax", **ARG_LAX)
-    parser_seq_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    parser_seq_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_seq_import.set_defaults(func=seq_import)
-    del parser_seq_import  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
+    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=seq_import)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # curated-import
-    parser_curated_import = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "curated-import",
         description="Load a curated marker FASTA file into a database. "
         "Treats the FASTA title lines as identitier, space, species. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    parser_curated_import.add_argument(
+    subcommand_parser.add_argument(
         "-i", "--input", type=str, required=True, help="One FASTA marker filename."
     )
-    parser_curated_import.add_argument("-d", "--database", **ARG_DB_WRITE)
-    parser_curated_import.add_argument("--hmm", **ARG_HMM)
-    parser_curated_import.add_argument("-n", "--name", **ARG_NAME)
-    parser_curated_import.add_argument("-x", "--lax", **ARG_LAX)
-    parser_curated_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    parser_curated_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_curated_import.set_defaults(func=curated_import)
-    del parser_curated_import  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
+    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=curated_import)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # legacy-import
-    parser_legacy_import = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "legacy-import",
         description="Load one of our legacy ITS1 FASTA files into a database. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    parser_legacy_import.add_argument(
+    subcommand_parser.add_argument(
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
-    parser_legacy_import.add_argument("-d", "--database", **ARG_DB_WRITE)
-    parser_legacy_import.add_argument("--hmm", **ARG_HMM)
-    parser_legacy_import.add_argument("-n", "--name", **ARG_NAME)
-    parser_legacy_import.add_argument("-x", "--lax", **ARG_LAX)
-    parser_legacy_import.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    parser_legacy_import.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_legacy_import.set_defaults(func=legacy_import)
-    del parser_legacy_import  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
+    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=legacy_import)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # dump
-    parser_dump = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "dump",
         description="Export an ITS1 database to a text file.",
         epilog="e.g. 'thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt'",
     )
-    parser_dump.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_dump.add_argument(
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
         default="-",
         help="File to write to (default '-' meaning stdout)",
     )
-    parser_dump.add_argument(
+    subcommand_parser.add_argument(
         "-m",
         "--minimal",
         action="store_true",
         help="Minimal output, one record per trimmed sequence with MD5 and species "
         "list - rather than all entries with original ID and full sequence.",
     )
-    parser_dump.add_argument(
+    subcommand_parser.add_argument(
         "-f",
         "--format",
         type=str,
@@ -974,7 +974,7 @@ def main(args=None):
         choices=["txt", "fasta"],
         help="Format to write out (default 'txt' for debugging).",
     )
-    parser_dump.add_argument(
+    subcommand_parser.add_argument(
         "-g",
         "--genus",
         type=str,
@@ -982,7 +982,7 @@ def main(args=None):
         help="Which genus (or genera) to export (comma separated list). "
         "Default is not to filter by genus.",
     )
-    parser_dump.add_argument(
+    subcommand_parser.add_argument(
         "-s",
         "--species",
         type=str,
@@ -991,31 +991,31 @@ def main(args=None):
         "spaces after each comma). Requires a single genus argument be given. "
         "Default is not to filter by species.",
     )
-    parser_dump.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_dump.set_defaults(func=dump)
-    del parser_dump  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=dump)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # conflicts
-    parser_conflicts = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "conflicts",
         description="Count genus or species conflicts in a marker database.",
         epilog="Number of genus level conflicts is used as the return code. "
         "e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
     )
-    parser_conflicts.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_conflicts.add_argument(
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
         default="-",
         help="File to write to (default '-' meaning stdout)",
     )
-    parser_conflicts.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_conflicts.set_defaults(func=conflicts)
-    del parser_conflicts
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=conflicts)
+    del subcommand_parser
 
     # prepare reads
-    parser_prepare_reads = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "prepare-reads",
         description="Trim and merge paired FASTQ files of marker amplicons.",
         epilog="Each pair of input files should follow the naming style"
@@ -1028,9 +1028,9 @@ def main(args=None):
         "checksum and their abundance, and sorted by decreasing "
         "abundance then alphabetically by sequence.",
     )
-    parser_prepare_reads.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
-    parser_prepare_reads.add_argument("-n", "--negctrls", **ARG_CONTROLS)
-    parser_prepare_reads.add_argument(
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1039,11 +1039,11 @@ def main(args=None):
         help="Directory to write output FASTA files to, "
         "default is next to each input file.",
     )
-    parser_prepare_reads.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
-    parser_prepare_reads.add_argument("--hmm", **ARG_HMM)
-    parser_prepare_reads.add_argument("--minlen", **ARG_MIN_LENGTH)
-    parser_prepare_reads.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    parser_prepare_reads.add_argument(
+    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument(
         "-p",
         "--primers",
         type=str,
@@ -1051,16 +1051,16 @@ def main(args=None):
         metavar="DIRNAME",
         help="Where to write optional failed primer FASTA files.",
     )
-    parser_prepare_reads.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
-    parser_prepare_reads.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
-    parser_prepare_reads.add_argument("--flip", **ARG_FLIP)
-    parser_prepare_reads.add_argument("-t", "--temp", **ARG_TEMPDIR)
-    parser_prepare_reads.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_prepare_reads.add_argument("--cpu", **ARG_CPU)
-    parser_prepare_reads.set_defaults(func=prepare_reads)
-    del parser_prepare_reads  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
+    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument("--flip", **ARG_FLIP)
+    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.add_argument("--cpu", **ARG_CPU)
+    subcommand_parser.set_defaults(func=prepare_reads)
+    del subcommand_parser  # To prevent acidentally adding more
 
-    parser_fasta_nr = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "fasta-nr",
         description="Prepare non-redundant FASTA file using MD5 naming.",
         epilog="Each unique sequence will be named <MD5>_<count> using "
@@ -1068,7 +1068,7 @@ def main(args=None):
         "abundance. Input files may use <prefix>_<count> naming, this "
         "count will be used for the associated sequence.",
     )
-    parser_fasta_nr.add_argument(
+    subcommand_parser.add_argument(
         "-i",
         "--input",
         type=str,
@@ -1077,7 +1077,7 @@ def main(args=None):
         metavar="INPUT",
         help="One or more FASTA files.",
     )
-    parser_fasta_nr.add_argument(
+    subcommand_parser.add_argument(
         "-r",
         "--revcomp",
         type=str,
@@ -1086,7 +1086,7 @@ def main(args=None):
         help="One or more FASTA files as input "
         "to be reverse-complemented on loading.",
     )
-    parser_fasta_nr.add_argument(
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1095,7 +1095,7 @@ def main(args=None):
         help="Single output filename, '-' for stdout (default). "
         "Can be a directory if a single -i/-r input file given.",
     )
-    parser_fasta_nr.add_argument(
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -1103,24 +1103,24 @@ def main(args=None):
         help="Mininum abundance to require before outputing a sequence. "
         "Default no minimum.",
     )
-    parser_fasta_nr.add_argument("--minlen", **ARG_MIN_LENGTH)
-    parser_fasta_nr.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    parser_fasta_nr.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_fasta_nr.set_defaults(func=fasta_nr)
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=fasta_nr)
 
     # classify
-    parser_classify = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "classify",
         description="Classify FASTA file of marker sequences by species.",
         epilog="Each input file XXX.fasta will result in an output file "
         "named XXX.method.tsv in the specified output directory (default "
         "input dir).",
     )
-    parser_classify.add_argument("-i", "--input", **ARG_INPUT_FASTA)
-    parser_classify.add_argument("-d", "--database", **ARG_DB_INPUT)
-    parser_classify.add_argument("--hmm", **ARG_HMM)
-    parser_classify.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
-    parser_classify.add_argument(
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1129,14 +1129,14 @@ def main(args=None):
         help="Directory for output reports. Default '' means next to "
         "each input file. Use '-' for stdout.",
     )
-    parser_classify.add_argument("-t", "--temp", **ARG_TEMPDIR)
-    parser_classify.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_classify.add_argument("--cpu", **ARG_CPU)
-    parser_classify.set_defaults(func=classify)
-    del parser_classify  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.add_argument("--cpu", **ARG_CPU)
+    subcommand_parser.set_defaults(func=classify)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # assess-classification
-    parser_assess = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "assess",
         description="Assess accuracy of marker sequence classification.",
         epilog="Takes as input predictions named XXX.method.tsv "
@@ -1148,7 +1148,7 @@ def main(args=None):
         "each other using this, but a known set of positive controls "
         "is the expected benchmark.",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-i",
         "--input",
         type=str,
@@ -1159,7 +1159,7 @@ def main(args=None):
         "*.known.tsv, where these filenames can be set via "
         "-m / --method and -k / --known arguments. ",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-l",
         "--level",
         type=str,
@@ -1169,7 +1169,7 @@ def main(args=None):
         "by sequences from each sample), sequence level within samples, "
         "or at unique sequence level (over all samples).",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-k",
         "--known",
         type=str,
@@ -1178,8 +1178,8 @@ def main(args=None):
         "against which the method in -m / --method is assessed. "
         "This could be any defined method, default is 'known'.",
     )
-    parser_assess.add_argument("-m", "--method", **ARG_METHOD_INPUT)
-    parser_assess.add_argument(
+    subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -1188,7 +1188,7 @@ def main(args=None):
         "Default is one meaning look at everything, but rather than re-running "
         "the classifier with a stricter minimum abundance you can apply it here.",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1197,7 +1197,7 @@ def main(args=None):
         help="File to write species level classification assessment table to. "
         "Default is '-' meaning to stdout.",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-t",
         "--table",
         type=str,
@@ -1205,7 +1205,7 @@ def main(args=None):
         help="File to write expected-to-predicted mapping tally table to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
-    parser_assess.add_argument(
+    subcommand_parser.add_argument(
         "-c",
         "--confusion",
         type=str,
@@ -1213,12 +1213,12 @@ def main(args=None):
         help="File to write species level confusion matrix to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
-    parser_assess.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_assess.set_defaults(func=assess_classification)
-    del parser_assess  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=assess_classification)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # read-summary
-    parser_read_summary = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "read-summary",
         description="Sequence-level summary report on classifier output.",
         epilog="Assumes you've run prepare-reads and classify, and have "
@@ -1227,7 +1227,7 @@ def main(args=None):
         "by the prepare-reads step, can be thousands of rows) and one column "
         "per sample (typically 96 samples).",
     )
-    parser_read_summary.add_argument(
+    subcommand_parser.add_argument(
         "-i",
         "--input",
         type=str,
@@ -1238,7 +1238,7 @@ def main(args=None):
         "it expects to find paired files using these extensions. "
         "The classifier method extension can be set via -m / --method.",
     )
-    parser_read_summary.add_argument(
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1247,7 +1247,7 @@ def main(args=None):
         help="File to write summary sequence vs samples TSV table to. "
         "Default is '-' meaning to stdout.",
     )
-    parser_read_summary.add_argument(
+    subcommand_parser.add_argument(
         "-e",
         "--excel",
         type=str,
@@ -1256,7 +1256,7 @@ def main(args=None):
         help="File to write summary sequence vs samples Excel table to. "
         "Default is '' meaning no output.",
     )
-    parser_read_summary.add_argument(
+    subcommand_parser.add_argument(
         "-m",
         "--method",
         type=str,
@@ -1264,7 +1264,7 @@ def main(args=None):
         help="Classifier method(s) to report, comma separaed list (used to infer "
         "filenames), default is '%s' (only)." % DEFAULT_METHOD,
     )
-    parser_read_summary.add_argument(
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -1276,17 +1276,17 @@ def main(args=None):
         "that negative control samples will include low abundance entries)."
         % DEFAULT_MIN_ABUNDANCE,
     )
-    parser_read_summary.add_argument("-t", "--metadata", **ARG_METADATA)
-    parser_read_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
-    parser_read_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    parser_read_summary.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
-    parser_read_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    parser_read_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_read_summary.set_defaults(func=read_summary)
-    del parser_read_summary  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
+    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
+    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=read_summary)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # sample-summary
-    parser_sample_summary = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "sample-summary",
         description="Sample-level summary report on classifier output.",
         epilog="Assumes you've run prepare-reads and classify, and have "
@@ -1295,7 +1295,7 @@ def main(args=None):
         "predicted to be present, and the associated sequence count. "
         "Intended to be used for samples over multiple sequencing plates.",
     )
-    parser_sample_summary.add_argument(
+    subcommand_parser.add_argument(
         "-i",
         "--input",
         type=str,
@@ -1305,8 +1305,8 @@ def main(args=None):
         "The files should follow this naming convention, where the classifier "
         "method appearing in the extension can be set via -m / --method.",
     )
-    parser_sample_summary.add_argument("-m", "--method", **ARG_METHOD_INPUT)
-    parser_sample_summary.add_argument(
+    subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -1318,7 +1318,7 @@ def main(args=None):
         "that negative control samples will include low abundance entries)."
         % DEFAULT_MIN_ABUNDANCE,
     )
-    parser_sample_summary.add_argument(
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1327,7 +1327,7 @@ def main(args=None):
         help="File to write sample species classification summary table to. "
         "Default is '-' meaning to stdout.",
     )
-    parser_sample_summary.add_argument(
+    subcommand_parser.add_argument(
         "-r",
         "--human",
         type=str,
@@ -1335,22 +1335,22 @@ def main(args=None):
         help="File to write human readable smaple level species predictions to. "
         "Can use '-' meaning to stdout. Default is not to write this file.",
     )
-    parser_sample_summary.add_argument("-t", "--metadata", **ARG_METADATA)
-    parser_sample_summary.add_argument("-c", "--metacols", **ARG_METACOLS)
-    parser_sample_summary.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    parser_sample_summary.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    parser_sample_summary.add_argument(
+    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
+    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument(
         "-q",
         "--requiremeta",
         action="store_true",
         help="Ignore any input files without metadata.",
     )
-    parser_sample_summary.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_sample_summary.set_defaults(func=sample_summary)
-    del parser_sample_summary  # To prevent acidentally adding more
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=sample_summary)
+    del subcommand_parser  # To prevent acidentally adding more
 
     # edit-graph
-    parser_edit_graph = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "edit-graph",
         description="Draw network graph of marker sequences using edit distance.",
         epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
@@ -1363,14 +1363,14 @@ def main(args=None):
         "Both 'Perfuse Force Directed' and 'Edge-weighted Spring Embedded' "
         "work well.",
     )
-    arg = parser_edit_graph.add_argument("-d", "--database", **ARG_DB_INPUT)
+    arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for labels and colors. Use '' to mean no DB."
     del arg
     # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
-    arg = parser_edit_graph.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    arg = subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     arg.required = False
     del arg
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
@@ -1378,7 +1378,7 @@ def main(args=None):
         help="Mininum sample level abundance for FASTA sequences. "
         "Default %i reflects default in prepare-reads." % DEFAULT_MIN_ABUNDANCE,
     )
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-t",
         "--total",
         type=int,
@@ -1387,14 +1387,14 @@ def main(args=None):
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
     )
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-s",
         "--showdb",
         action="store_true",
         help="Show DB entries, regardless of their abundance in the "
         "FASTA inputs. Required if only drawing DB entries.",
     )
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-e",
         "--editdist",
         type=int,
@@ -1402,7 +1402,7 @@ def main(args=None):
         choices=[1, 2, 3],
         help="Maximum edit distance to draw. Default and maximum 3.",
     )
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1410,7 +1410,7 @@ def main(args=None):
         metavar="FILENAME",
         help="Write graph here. Default is '-' meaning stdout.",
     )
-    parser_edit_graph.add_argument(
+    subcommand_parser.add_argument(
         "-f",
         "--format",
         type=str,
@@ -1418,9 +1418,9 @@ def main(args=None):
         choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
         help="Format to write out (default 'xgmml' for Cytoscape).",
     )
-    parser_edit_graph.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_edit_graph.set_defaults(func=edit_graph)
-    del parser_edit_graph  # To prevent accidentally adding more
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=edit_graph)
+    del subcommand_parser  # To prevent accidentally adding more
 
     # What have we been asked to do?
     options = parser.parse_args(args)
