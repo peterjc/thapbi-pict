@@ -395,7 +395,7 @@ def import_fasta_file(
         assert bad_sp_entries == 0, bad_sp_entries
         assert entry_count == good_entries + bad_entries
 
-    if validate_species or debug:
+    if bad_species and (validate_species or debug):
         sys.stderr.write(
             "Could not validate %i different species names\n" % len(bad_species)
         )
