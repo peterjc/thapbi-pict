@@ -18,6 +18,7 @@ time tests/test_woody_hosts.sh
 time tests/test_dump.sh
 time tests/test_load-tax.sh
 time tests/test_legacy-import.sh
+time tests/test_curated-import.sh
 time tests/test_conflicts.sh
 
 if ! [ -x "$(command -v cutadapt)" ]; then
