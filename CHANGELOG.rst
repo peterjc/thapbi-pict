@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.13 2019-11-23 Fix 5 cases missing ``A`` near end, ``...CTGAAAACT`` to ``...CTGAAAAACT``.
 v0.4.12 2019-11-22 Removed now unused ``legacy-import`` and ``database/legacy/`` files.
 v0.4.11 2019-11-21 Updated the curated DB entries, focused on truncated sequences.
 v0.4.10 2019-10-21 New ``curated-import`` command, reworked handling of curated DB entries.
