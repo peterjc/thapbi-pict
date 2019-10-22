@@ -1,7 +1,8 @@
 #Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
-OVERALL	32	6	13	537	0.71	0.99	0.84	0.77	0.0323	0.373
+OVERALL	32	7	13	592	0.71	0.99	0.82	0.76	0.0311	0.385
 Phytophthora acerina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora agathidicida	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
+Phytophthora aleatoria	0	1	0	3	0.00	0.75	0.00	0.00	0.2500	1.000
 Phytophthora alticola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora amaranthi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora amnicola	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -26,6 +27,8 @@ Phytophthora capensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora capsici	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora captiosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora castaneae	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
+Phytophthora castanetorum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora chesapeakensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora chlamydospora	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
 Phytophthora chrysanthemi	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cichorii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -36,7 +39,9 @@ Phytophthora citrophthora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora clandestina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cocois	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora colocasiae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora condilina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora constricta	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora cooljarloo	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora crassamura	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora cryptogea	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora dauci	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -70,10 +75,13 @@ Phytophthora intricata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora inundata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora ipomoeae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora iranica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora irrigata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora kernoviae	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
+Phytophthora kwongonina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora lactucae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora lacustris	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora lateralis	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
+Phytophthora lilii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora litchii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora litoralis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora macilentosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -97,6 +105,7 @@ Phytophthora nicotianae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora niederhauserii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora obscura	4	0	0	0	1.00	0.00	1.00	1.00	0.0000	0.000
 Phytophthora occultans	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora oleae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora ornamentata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora pachypleura	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora palmivora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -113,6 +122,8 @@ Phytophthora polonica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora porri	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora primulae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora pseudocryptogea	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora pseudolactucae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora pseudorosacearum	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora pseudosyringae	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora pseudotsugae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora psychrophila	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
@@ -134,10 +145,13 @@ Phytophthora terminalis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora thermophila	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora trifolii	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora tropicalis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora tubulina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora tyrrhenica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora uliginosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora uniformis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora vignae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora virginiana	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Phytophthora vulcanica	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x alni	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x cambivora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora x multiformis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
