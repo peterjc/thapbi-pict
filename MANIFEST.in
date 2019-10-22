@@ -16,10 +16,8 @@ include thapbi_pict/ITS1_DB.sqlite
 # e.g. NCBI taxonomy or symlinks to control plate positive controls.
 include database/README.rst
 include database/ITS1_DB.sql
-include database/legacy/database.fasta
-include database/legacy/Phytophthora_ITS_database_v0.004.fasta
-include database/legacy/Phytophthora_ITS_database_v0.005.fasta
-include database/legacy/Phytophthora_ITS_database_v0.006.fasta
+include database/controls.fasta
+include database/Phytophthora_ITS1_curated.fasta
 
 # The following is better than a blanket include wildcard * but
 # this still risks unwanted includes of any working files:
