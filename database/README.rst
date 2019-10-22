@@ -5,7 +5,10 @@ We include a default ITS1 database with THAPBI PICT using the following three
 sets of sequences (subject to HMM filtering and taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (at species level) from file
-  ``database/Phytophthora_ITS1_curated.fasta``
+  ``database/Phytophthora_ITS1_curated.fasta``. This is sorted by sequence.
+  Examples sharing the same trimmed sequence are recorded as a single record
+  following the NCBI BLAST NR FASTA convention by using a ``Ctrl+A`` separator,
+  ASCII character 1. In emacs, you can type this using ``Ctrl+q 1 <RET>``.
 
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level,
   file ``database/2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
