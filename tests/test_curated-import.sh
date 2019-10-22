@@ -12,9 +12,9 @@ set -eu
 
 export TMP=${TMP:-/tmp}
 
-echo "======================"
+echo "======================="
 echo "Checking curated-import"
-echo "======================"
+echo "======================="
 set -x
 thapbi_pict curated-import 2>&1 | grep "the following arguments are required"
 thapbi_pict curated-import -d "sqlite:///:memory:" -i database/controls.fasta 2>&1 | grep "Taxonomy table empty"
@@ -30,17 +30,23 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "4" ]; then echo "
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "4" ]; then echo "Wrong taxonomy count"; false; fi
 if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 4 ]; then echo "Wrong species count"; false; fi
 
-export DB=$TMP/contols_strict.sqlite
+# See also database/build_CURATED.sh
+export DB=$TMP/curated.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
-# Add the G-BLOCK synthetic controls
-sqlite3 $DB "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C1');"
-sqlite3 $DB "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C2');"
-sqlite3 $DB "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C3');"
-sqlite3 $DB "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C4');"
-thapbi_pict curated-import -d $DB -i database/controls.fasta -v
+thapbi_pict curated-import -d $DB -i database/Phytophthora_ITS1_curated.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "4" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "4" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "171" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "156" ]; then echo "Wrong its1_sequence count"; false; fi
+
+export DB=$TMP/dup_seqs.sqlite
+rm -rf $DB
+thapbi_pict curated-import -x -d $DB -i tests/curated-import/dup_seqs.fasta
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "8" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "2" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "8" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 8 ]; then echo "Wrong species count"; false; fi
+
 
 echo "$0 - test_curated-import.sh passed"
