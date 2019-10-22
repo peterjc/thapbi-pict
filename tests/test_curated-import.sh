@@ -36,8 +36,8 @@ rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
 thapbi_pict curated-import -d $DB -i database/Phytophthora_ITS1_curated.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "171" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "156" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "190" ]; then echo "Wrong its1_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "171" ]; then echo "Wrong its1_sequence count"; false; fi
 
 export DB=$TMP/dup_seqs.sqlite
 rm -rf $DB
