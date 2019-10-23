@@ -34,14 +34,6 @@ from .utils import run
 from .versions import check_tools
 
 
-def split_ctrl_a(text):
-    """Split FASTA title line on the CTRL+A character.
-
-    This is to mimick the NCBI BLAST NR FASTA file convention.
-    """
-    return text.split(chr(1))
-
-
 def run_cutadapt_keep(
     long_in, trimmed_out, left_primer, right_primer, debug=False, cpu=0
 ):
