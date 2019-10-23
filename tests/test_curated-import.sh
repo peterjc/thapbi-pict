@@ -41,7 +41,8 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "156" ]; then echo
 
 export DB=$TMP/dup_seqs.sqlite
 rm -rf $DB
-thapbi_pict curated-import -x -d $DB -i tests/curated-import/dup_seqs.fasta
+# Note this uses semi-colon separator
+thapbi_pict curated-import -x -d $DB -i tests/curated-import/dup_seqs.fasta -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "8" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "2" ]; then echo "Wrong its1_sequence count"; false; fi
