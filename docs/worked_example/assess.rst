@@ -37,8 +37,9 @@ plate, a set of 15 *Phytophthora* species (listed here alphabetically):
 Quoting from the :ref:`sample summary report <sample_summary>`, using the
 default settings for classification of ``DNA15MIX``, we got:
 
+- *Phytophthora aleatoria* (uncertain/ambiguous)
 - *Phytophthora austrocedri*
-- *Phytophthora cactorum*
+- *Phytophthora cactorum* (uncertain/ambiguous)
 - *Phytophthora gonapodyides*
 - *Phytophthora ilicis*
 - *Phytophthora kernoviae*
@@ -46,9 +47,13 @@ default settings for classification of ``DNA15MIX``, we got:
 - *Phytophthora pseudosyringae*
 - *Phytophthora ramorum*
 
-The good news is that all eight are correct classifications (eight true
-positives, 8 TP, and no false positves, 0 FP). The bad news is we are missing
-seven expected species (seven false negatives, 7 FN):
+The good news is that eight are correct classifications (eight true
+positives, 8 TP, and one false positves, 1 FP). That false positive
+*Phytophthora aleatoria* was indistinguishable from *P. cactorum*
+(a similar example is discussed below in more detail).
+
+The bad news is we are missing seven expected species (seven false
+negatives, 7 FN):
 
 - *Phytophthora boehmeriae*
 - *Phytophthora cambivora*
@@ -161,8 +166,9 @@ grep to show all the non-header lines with this species name:
 The same applies to *Phytophthora capsici* and *Phytophthora glovera*,
 although in this case both were in the mixture.
 
-Overall, the tool has done a faultless job on these three positive control
-samples from the ten species mix.
+Overall, given the uniqueness limitations of the ITS1 marker, the tool has
+done a faultless job on these three positive control samples from the ten
+species mix.
 
 Running thapbi_pict assess
 --------------------------
@@ -204,12 +210,12 @@ five columns:
 .. code:: console
 
     $ thapbi_pict assess -i positive_controls/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv | cut -f 1-5
-    Assessed onebp vs known in 1 files (147 species; 1 sample level predictions)
+    Assessed onebp vs known in 1 files (161 species; 1 sample level predictions)
     #Species                  TP  FP  FN  TN
-    OVERALL                    8   0   7 132
+    OVERALL                    8   1   7 145
     Phytophthora acerina       0   0   0   1
     Phytophthora agathidicida  0   0   0   1
-    Phytophthora alticola      0   0   0   1
+    Phytophthora aleatoria     0   1   0   1
     ...
 
 More usually, you would output to a named file, and look at that:
@@ -224,10 +230,10 @@ You should be able to open this ``DNA15MIX.assess.tsv`` file in R, Excel, etc.
 ========================= === === === === === ===========
 Species                    TP  FP  FN  TN ... Ad-hoc-loss
 ========================= === === === === === ===========
-OVERALL                     8   0   7 132 ...       0.467
+OVERALL                     8   1   7 145 ...       0.500
 Phytophthora acerina        0   0   0   1 ...       0.000
 Phytophthora agathidicida   0   0   0   1 ...       0.000
-Phytophthora alticola       0   0   0   1 ...       0.000
+Phytophthora aleatoria      0   1   0   1 ...       1.000
 ...                       ... ... ... ... ...         ...
 Phytophthora austrocedri    1   0   0   0 ...       0.000
 ...                       ... ... ... ... ...         ...
@@ -235,10 +241,10 @@ Phytophthora boehmeriae     0   0   1   0 ...       1.000
 ...                       ... ... ... ... ...         ...
 ========================= === === === === === ===========
 
-The ``OVERALL`` line tells us that there were 8 true positives, 0 false
-positives, 7 false negatives, and 132 true negatives. The final number needs a
-little explanation. First, 8+0+7+132 = 147, which is the number of species in
-the database. With only one sample being considered, 132 is the number of other
+The ``OVERALL`` line tells us that there were 8 true positives, 1 false
+positives, 7 false negatives, and 145 true negatives. The final number needs a
+little explanation. First, 8+1+7+145 = 161, which is the number of species in
+the database. With only one sample being considered, 145 is the number of other
 species in the database which the tool correctly says are not present.
 
 The additional columns (not shown) include traditional metrics like
@@ -258,17 +264,17 @@ by giving the input directory names (it will work out the common filenames):
 .. code:: console
 
     $ thapbi_pict assess -i positive_controls/ intermediate/ -o thabpi-pict.assess.tsv
-    Assessed onebp vs known in 4 files (147 species; 4 sample level predictions)
+    Assessed onebp vs known in 4 files (161 species; 4 sample level predictions)
 
 The table this time is similar:
 
 ========================== === === === === === ===========
 Species                     TP  FP  FN  TN ... Ad-hoc-loss
 ========================== === === === === === ===========
-OVERALL                     32   6  13 537 ...       0.373
+OVERALL                     32   7  13 592 ...       0.385
 Phytophthora acerina         0   0   0   4 ...       0.000
 Phytophthora agathidicida    0   3   0   1 ...       1.000
-Phytophthora alticola        0   0   0   4 ...       0.000
+Phytophthora aleatoria       0   1   0   3 ...       1.000
 ...                        ... ... ... ... ...         ...
 Phytophthora austrocedri     1   0   0   3 ...       0.000
 ...                        ... ... ... ... ...         ...
@@ -276,8 +282,8 @@ Phytophthora boehmeriae      0   0   4   0 ...       1.000
 ...                        ... ... ... ... ...         ...
 ========================== === === === === === ===========
 
-This time the ``OVERALL`` line says we had 32 TP, 6 FP, 13 FN and 537 TN. That
-total 32+6+13+537 = 588 = 4 * 147, the number of samples times the number of
+This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 592 TN. That
+total 32+7+13+592 = 644 = 4 * 161, the number of samples times the number of
 species in the database.
 
 This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
