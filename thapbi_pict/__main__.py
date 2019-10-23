@@ -117,6 +117,7 @@ def ncbi_import(args=None):
         genus_only=args.genus,
         left_primer=args.left,
         right_primer=args.right,
+        sep=args.sep,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -150,6 +151,7 @@ def curated_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
+        sep=args.sep,
         debug=args.verbose,
     )
 
@@ -529,6 +531,14 @@ ARG_CPU = dict(  # noqa: C408
 # Common import arguments
 # =======================
 
+# "-s", "--sep",
+ARG_FASTA_SEP = dict(  # noqa: C408
+    type=str,
+    default=chr(1),
+    metavar="CHAR",
+    help="FASTA description entry separator, default Ctrl+A.",
+)
+
 # "-d", "--database",
 ARG_DB_WRITE = dict(  # noqa: C408
     type=str, required=True, help="Which database to write to (or create)."
@@ -836,6 +846,7 @@ def main(args=None):
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
     subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=ncbi_import)
@@ -907,6 +918,7 @@ def main(args=None):
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=curated_import)
     del subcommand_parser  # To prevent acidentally adding more

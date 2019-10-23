@@ -7,7 +7,6 @@
 """Code for THAPBI PICT to import curated FASTA marker files."""
 
 from .db_import import import_fasta_file
-from .db_import import split_ctrl_a
 
 
 def parse_fasta_entry(text, known_species=None):
@@ -45,16 +44,19 @@ def main(
     name=None,
     validate_species=False,
     genus_only=False,
+    sep=None,
     debug=True,
 ):
     """Implement the ``thapbi_pict legacy-import`` command."""
+    if not sep:
+        sep = chr(1)
     return import_fasta_file(
         fasta_file,
         db_url,
         hmm_stem=hmm_stem,
         name=name,
         debug=debug,
-        fasta_entry_fn=split_ctrl_a,
+        fasta_entry_fn=lambda descr: [_.strip() for _ in descr.split(sep)],
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
         genus_only=genus_only,
