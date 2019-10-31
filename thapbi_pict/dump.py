@@ -40,7 +40,8 @@ def main(
 ):
     """Run the database dump with arguments from the command line."""
     if not sep:
-        sep = chr(1)
+        # TODO - Use this argument for tab/comma/etc in txt output?
+        sep = ";"
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)

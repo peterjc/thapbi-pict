@@ -44,12 +44,10 @@ def main(
     name=None,
     validate_species=False,
     genus_only=False,
-    sep=None,
+    sep=";",
     debug=True,
 ):
     """Implement the ``thapbi_pict legacy-import`` command."""
-    if not sep:
-        sep = chr(1)
     return import_fasta_file(
         fasta_file,
         db_url,
