@@ -25,7 +25,7 @@ from .classify import method_classify_file as method_classifier
 
 DEFAULT_METHOD = "onebp"
 DEFAULT_MIN_ABUNDANCE = 100
-
+CTRL_A = chr(1)
 
 # Argument validation functions
 # =============================
@@ -535,9 +535,9 @@ ARG_CPU = dict(  # noqa: C408
 # "-s", "--sep",
 ARG_FASTA_SEP = dict(  # noqa: C408
     type=str,
-    default=chr(1),
+    default=";",
     metavar="CHAR",
-    help="FASTA description entry separator, default Ctrl+A.",
+    help="FASTA description entry separator, default semi-colon.",
 )
 
 # "-d", "--database",
@@ -847,7 +847,14 @@ def main(args=None):
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
     subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
-    subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
+    subcommand_parser.add_argument(
+        "-s",
+        "--sep",
+        type=str,
+        default=CTRL_A,
+        metavar="CHAR",
+        help="FASTA description entry separator, default Ctrl+A.",
+    )
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=ncbi_import)

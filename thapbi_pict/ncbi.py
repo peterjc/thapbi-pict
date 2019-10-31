@@ -106,12 +106,10 @@ def main(
     left_primer=None,
     right_primer=None,
     tmp_dir=None,
-    sep=None,
+    sep=";",
     debug=True,
 ):
     """Implement the ``thapbi_pict ncbi-import`` command."""
-    if not sep:
-        sep = chr(1)
     return import_fasta_file(
         fasta_file,
         db_url,
