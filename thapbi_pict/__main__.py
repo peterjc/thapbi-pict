@@ -167,6 +167,7 @@ def dump(args=None):
         minimal=args.minimal,
         genus=args.genus,
         species=args.species,
+        sep=args.sep,
         debug=args.verbose,
     )
 
@@ -969,6 +970,7 @@ def main(args=None):
         "spaces after each comma). Requires a single genus argument be given. "
         "Default is not to filter by species.",
     )
+    subcommand_parser.add_argument("--sep", **ARG_FASTA_SEP)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=dump)
     del subcommand_parser  # To prevent acidentally adding more

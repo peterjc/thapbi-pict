@@ -35,9 +35,13 @@ def main(
     minimal=False,
     genus="",
     species="",
+    sep=None,
     debug=True,
 ):
     """Run the database dump with arguments from the command line."""
+    if not sep:
+        sep = chr(1)
+
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
@@ -134,6 +138,32 @@ def main(
                 sys.stderr.close()
                 sys.exit(1)
         entry_count = len(md5_seq)
+    elif output_format == "fasta":
+        seq_entry = {}
+        for seq_source in view:
+            seq = seq_source.its1.sequence
+            entry = "%s %s" % (
+                seq_source.source_accession,
+                genus_species_name(
+                    seq_source.current_taxonomy.genus,
+                    seq_source.current_taxonomy.species,
+                ),
+            )
+            if seq in seq_entry:
+                seq_entry[seq].add(entry)
+            else:
+                seq_entry[seq] = {entry}
+        for seq, entries in sorted(seq_entry.items()):
+            # entry_count += len(entries)
+            try:
+                out_handle.write(">%s\n%s\n" % (sep.join(sorted(entries)), seq))
+            except BrokenPipeError:
+                # Likely writing to stdout | head, or similar
+                # If so, stdout has been closed
+                sys.stderr.write("Aborting with broken pipe\n")
+                sys.stderr.close()
+                sys.exit(1)
+        entry_count = len(seq_entry)  # number of FASTA entries
     else:
         for seq_source in view:
             entry_count += 1
@@ -143,33 +173,18 @@ def main(
                 else ""
             )
             try:
-                if output_format == "fasta":
-                    genus_species = genus_species_name(
-                        seq_source.current_taxonomy.genus,
-                        seq_source.current_taxonomy.species,
+                out_handle.write(
+                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+                    % (
+                        seq_source.source_accession,
+                        none_str(seq_source.current_taxonomy.genus),
+                        none_str(seq_source.current_taxonomy.species),
+                        taxid,
+                        seq_source.its1.md5,
+                        seq_source.its1.sequence,
+                        seq_source.sequence,
                     )
-                    out_handle.write(
-                        ">%s [species=%s] [taxid=%s]\n%s\n"
-                        % (
-                            seq_source.source_accession,
-                            genus_species,
-                            taxid,
-                            seq_source.its1.sequence,
-                        )
-                    )
-                else:
-                    out_handle.write(
-                        "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
-                        % (
-                            seq_source.source_accession,
-                            none_str(seq_source.current_taxonomy.genus),
-                            none_str(seq_source.current_taxonomy.species),
-                            taxid,
-                            seq_source.its1.md5,
-                            seq_source.its1.sequence,
-                            seq_source.sequence,
-                        )
-                    )
+                )
             except BrokenPipeError:
                 # Likely writing to stdout | head, or similar
                 # If so, stdout has been closed
