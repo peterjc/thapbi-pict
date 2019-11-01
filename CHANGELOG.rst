@@ -4,10 +4,10 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.14 2019-11-23 Configurable FASTA entry separator for ``curated-import`` & ``ncbi-import``.
-v0.4.13 2019-11-22 Fix 5 cases missing ``A`` near end, ``...CTGAAAACT`` to ``...CTGAAAAACT``.
-v0.4.12 2019-11-22 Removed now unused ``legacy-import`` and ``database/legacy/`` files.
-v0.4.11 2019-11-21 Updated the curated DB entries, focused on truncated sequences.
+v0.4.14 2019-10-23 Configurable FASTA entry separator for ``curated-import`` & ``ncbi-import``.
+v0.4.13 2019-10-22 Fix 5 cases missing ``A`` near end, ``...CTGAAAACT`` to ``...CTGAAAAACT``.
+v0.4.12 2019-10-22 Removed now unused ``legacy-import`` and ``database/legacy/`` files.
+v0.4.11 2019-10-21 Updated the curated DB entries, focused on truncated sequences.
 v0.4.10 2019-10-21 New ``curated-import`` command, reworked handling of curated DB entries.
 v0.4.9  2019-10-17 New ``sample-summary`` switch ``-q`` / ``--requiremeta``. NetworkX v2.4 fix.
 v0.4.8  2019-10-11 New ``fasta-nr`` command for use in alternatives to ``prepare-reads``.
