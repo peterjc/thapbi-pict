@@ -115,15 +115,15 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wr
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "105" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "88" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep  "species=Phytophthora " -c` -ne 105 ]; then echo "Wrong Phytophthora species count"; false; fi
+if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep  " Phytophthora " -c` -ne 88 ]; then echo "Wrong Phytophthora species count"; false; fi
 thapbi_pict ncbi-import -d $DB -i tests/ncbi-import/20th_Century_ITS1_Peronosporaceae.fasta -g
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "241" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "96" ]; then echo "Wrong its1_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 # 105 + 107 + 29 = 241
-if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c "species=Phytophthora "` -ne 105 ]; then echo "Wrong Phytophthora species count";	false; fi
-if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c "species=Phytophthora\]"` -ne 107 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
-if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep -c -v "Phytophthora"` -ne 29 ]; then echo "Wrong sister genus count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c -E "Phytophthora\t[a-z]"` -ne 105 ]; then echo "Wrong Phytophthora species count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c -E "Phytophthora\t\t"` -ne 107 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c -v "Phytophthora"` -ne 29 ]; then echo "Wrong sister genus count"; false; fi
 
 echo "$0 - test_ncbi-import.sh passed"
