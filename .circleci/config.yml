@@ -36,8 +36,7 @@ jobs:
       - run:
           name: Python and RST checks
           command: |
-            # python -m pip install --upgrade pip setuptools
-            python -m pip install black
+            conda install black
             black --check .
             # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
             python -m pip install flake8==3.6 flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
@@ -46,6 +45,7 @@ jobs:
       - run:
           name: Installation
           command: |
+            conda install curl
             conda install --file requirements-ext.txt
             # Also installing the Python requirements here - pip should do it, but not all with C code have wheels
             conda install --file requirements.txt
