@@ -50,8 +50,11 @@ set -o pipefail
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/MOCK_CONTROL.fasta
+rm -rf $TMP/pool/
+mkdir  $TMP/pool/
+cp tests/reads/DNAMIX_S95_L001_*.fastq.gz $TMP/MOCK_CONTROL_R?.fastq $TMP/pool/
 # Starting low threshold, should be increased to 19, so get new output count...
-thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 5 -n $TMP/MOCK_CONTROL_R?.fastq
+thapbi_pict prepare-reads -o $TMP -i $TMP/pool/ -a 5 -n $TMP/pool/MOCK_CONTROL_R?.fastq
 if [ `grep -c "^>" $TMP/MOCK_CONTROL.fasta` -ne "1" ]; then echo "Wrong FASTA control output count"; false; fi
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "9" ]; then echo "Wrong FASTA output count"; false; fi
 
