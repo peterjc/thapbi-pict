@@ -533,13 +533,13 @@ def prepare_sample(
         shutil.move(bad_primer_fasta, failed_primer_name)
 
     if debug:
-        sys.stderr.write(
+	sys.stderr.write(
             "DEBUG: Filtered %s down to %i unique sequences "
             "above %s min abundance threshold %i (max abundance %i)\n"
             % (
                 stem,
-                uniq_count,
-                "control" if control else "sample",
+		uniq_count,
+		"control" if control else "sample",
                 min_abundance,
                 max(max_hmm_abundance.values(), default=0),
             )
