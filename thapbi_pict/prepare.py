@@ -361,8 +361,8 @@ def prepare_sample(
     stem,
     raw_R1,
     raw_R2,
-    fasta_name,
-    failed_primer_name,
+    out_dir,
+    primer_dir,
     left_primer,
     right_primer,
     flip,
@@ -382,12 +382,31 @@ def prepare_sample(
     Return unique sequence count, max abundance (dict keyed by
     HMM name), and hmm_cropping_warning count.
     """
-    sys.stderr.write(
-        "Starting to prepare %s %s (min abundance set to %i)\n"
-        % ("control" if control else "sample", fasta_name, min_abundance)
-    )
-    sys.stdout.flush()
-    sys.stderr.flush()
+    folder, stem = os.path.split(stem)
+    if out_dir and out_dir != "-":
+        folder = out_dir
+    fasta_name = os.path.join(folder, "%s.fasta" % stem)
+    if primer_dir:
+        failed_primer_name = os.path.join(primer_dir, "%s.failed-primers.fasta" % stem)
+    else:
+        failed_primer_name = None
+
+    if os.path.isfile(fasta_name) and (
+        failed_primer_name is None or os.path.isfile(failed_primer_name)
+    ):
+        if debug:
+            sys.stderr.write("DEBUG: Skipping %s as already done\n" % stem)
+        if control:
+            uniq_count, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
+            return uniq_count, max_hmm_abundance, 0
+        else:
+            return None, {}, 0
+
+    if debug:
+        sys.stderr.write(
+            "DEBUG: Starting to prepare %s %s (min abundance set to %i)\n"
+            % ("control" if control else "sample", fasta_name, min_abundance)
+        )
 
     tmp = os.path.join(shared_tmp, stem)
     if not os.path.isdir(tmp):
@@ -474,11 +493,12 @@ def prepare_sample(
         )
 
     if not acc_uniq_count:
-        sys.stderr.write(
-            "%s had %i unique sequences, "
-            "but none above %s minimum abundance threshold %i\n"
-            % (stem, uniq_count, "control" if control else "sample", min_abundance)
-        )
+        if debug:
+            sys.stderr.write(
+                "%s had %i unique sequences, "
+                "but none above %s minimum abundance threshold %i\n"
+                % (stem, uniq_count, "control" if control else "sample", min_abundance)
+            )
         with open(fasta_name, "w"):
             # Write empty file
             pass
@@ -506,6 +526,12 @@ def prepare_sample(
     uniq_count, max_hmm_abundance, cropping = filter_fasta_for_its1(
         merged_fasta, dedup, stem, shared_tmp, hmm_stem=hmm_stem, debug=debug
     )
+
+    # File done
+    shutil.move(dedup, fasta_name)
+    if failed_primer_name:
+        shutil.move(bad_primer_fasta, failed_primer_name)
+
     if debug:
         sys.stderr.write(
             "DEBUG: Filtered %s down to %i unique sequences "
@@ -518,11 +544,6 @@ def prepare_sample(
                 max(max_hmm_abundance.values(), default=0),
             )
         )
-
-    # File done
-    shutil.move(dedup, fasta_name)
-    if failed_primer_name:
-        shutil.move(bad_primer_fasta, failed_primer_name)
 
     return uniq_count, max_hmm_abundance, cropping
 
@@ -609,63 +630,12 @@ def main(
         sys.stdout.flush()
         sys.stderr.flush()
 
-        folder, stem = os.path.split(stem)
-        if out_dir and out_dir != "-":
-            folder = out_dir
-        fasta_name = os.path.join(folder, "%s.fasta" % stem)
-        fasta_files_prepared.append(fasta_name)
-        if primer_dir:
-            failed_primer_name = os.path.join(
-                primer_dir, "%s.failed-primers.fasta" % stem
-            )
-        else:
-            failed_primer_name = None
-
-        if os.path.isfile(fasta_name) and (
-            failed_primer_name is None or os.path.isfile(failed_primer_name)
-        ):
-            if control:
-                (uniq_count, max_abundance_by_hmm) = abundance_values_in_fasta(
-                    fasta_name
-                )
-                # TODO - Refactor this duplicated logging?
-                max_its1_abundance = max(
-                    (
-                        max_abundance_by_hmm[_]
-                        for _ in max_abundance_by_hmm
-                        if not _.startswith("SynCtrl")
-                    ),
-                    default=0,
-                )
-                sys.stderr.write(
-                    "Control %s had %i unique sequences "
-                    "over control abundance threshold %i (max ITS abundance %i), "
-                    % (stem, uniq_count, control_min_abundance, max_its1_abundance)
-                )
-                if sample_min_abundance < max_its1_abundance:
-                    sys.stderr.write(
-                        "increasing sample abundance threshold from %i\n"
-                        % sample_min_abundance
-                    )
-                else:
-                    sys.stderr.write(
-                        "keeping sample abundance threshold at %i\n"
-                        % sample_min_abundance
-                    )
-                sample_min_abundance = max(sample_min_abundance, max_its1_abundance)
-                continue
-            else:
-                sys.stderr.write(
-                    "WARNING: Skipping %s as already exists\n" % fasta_name
-                )
-                continue
-
         uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
-            fasta_name,
-            failed_primer_name,
+            out_dir,
+            primer_dir,
             left_primer,
             right_primer,
             flip,
@@ -678,6 +648,8 @@ def main(
             debug=debug,
             cpu=cpu,
         )
+        if uniq_count:
+            assert max_abundance_by_hmm, max_abundance_by_hmm
         hmm_cropping_warning += hmm_cropping
         max_its1_abundance = max(
             (
@@ -719,6 +691,8 @@ def main(
                     % (stem, max_its1_abundance, sample_min_abundance)
                 )
             sample_min_abundance = max(sample_min_abundance, max_its1_abundance)
+        elif uniq_count is None:
+            sys.stderr.write("Sample %s already done\n" % stem)
         else:
             sys.stderr.write(
                 "Wrote %s with %i unique sequences "
