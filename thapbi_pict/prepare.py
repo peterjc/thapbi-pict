@@ -533,13 +533,13 @@ def prepare_sample(
         shutil.move(bad_primer_fasta, failed_primer_name)
 
     if debug:
-	sys.stderr.write(
+        sys.stderr.write(
             "DEBUG: Filtered %s down to %i unique sequences "
             "above %s min abundance threshold %i (max abundance %i)\n"
             % (
                 stem,
-		uniq_count,
-		"control" if control else "sample",
+                uniq_count,
+                "control" if control else "sample",
                 min_abundance,
                 max(max_hmm_abundance.values(), default=0),
             )
@@ -579,11 +579,6 @@ def main(
     check_tools(["trimmomatic", "flash", "cutadapt"], debug)
     if hmm_stem:
         check_tools(["hmmscan"], debug)
-
-    # Will keep control_min_abundance fixed,
-    # will increase min_abundance using max from the controls
-    control_min_abundance = min_abundance
-    sample_min_abundance = min_abundance
 
     if not negative_controls:
         control_file_pairs = []
@@ -626,10 +621,17 @@ def main(
 
     fasta_files_prepared = []  # return value
 
+    pool_worst_control = {}  # folder as key, max abundance as value
     for control, stem, raw_R1, raw_R2 in file_pairs:
         sys.stdout.flush()
         sys.stderr.flush()
 
+        pool_key = os.path.abspath(os.path.split(stem)[0])
+        min_a = (
+            min_abundance
+            if control
+            else max(min_abundance, pool_worst_control.get(pool_key, 0))
+        )
         fasta_file, uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
             stem,
             raw_R1,
@@ -642,7 +644,7 @@ def main(
             min_length,
             max_length,
             hmm_stem,
-            control_min_abundance if control else sample_min_abundance,
+            min_a,
             control,
             shared_tmp,
             debug=debug,
@@ -660,15 +662,15 @@ def main(
             ),
             default=0,
         )
-
-        # Update threshold and logging
         if control:
+            sys.stderr.write(
+                "Control %s has %i unique sequences "
+                "over control abundance threshold %i (max marker abundance %i)\n"
+                % (stem, uniq_count, min_abundance, max_its1_abundance)
+            )
+            if max_its1_abundance > pool_worst_control.get(pool_key, 0):
+                pool_worst_control[pool_key] = max_its1_abundance
             if debug:
-                sys.stderr.write(
-                    "Control %s has %i unique sequences "
-                    "over control abundance threshold %i\n"
-                    % (stem, uniq_count, control_min_abundance)
-                )
                 sys.stderr.write(
                     "Control %s max abundance breakdown %s\n"
                     % (
@@ -679,26 +681,13 @@ def main(
                         ),
                     )
                 )
-            if sample_min_abundance < max_its1_abundance:
-                sys.stderr.write(
-                    "Control %s max ITS1 abundance %i, "
-                    "increasing sample abundance threshold from %i\n"
-                    % (stem, max_its1_abundance, sample_min_abundance)
-                )
-            else:
-                sys.stderr.write(
-                    "Control %s max ITS1 abundance %i, "
-                    "keeping sample abundance threshold at %i\n"
-                    % (stem, max_its1_abundance, sample_min_abundance)
-                )
-            sample_min_abundance = max(sample_min_abundance, max_its1_abundance)
         elif uniq_count is None:
             sys.stderr.write("Sample %s already done\n" % stem)
         else:
             sys.stderr.write(
-                "Wrote %s with %i unique sequences "
-                "over sample abundance theshold %i (max ITS abundance %i)\n"
-                % (stem, uniq_count, sample_min_abundance, max_its1_abundance)
+                "Sample %s has %i unique sequences "
+                "over abundance threshold %i (max marker abundance %i)\n"
+                % (stem, uniq_count, min_a, max_its1_abundance)
             )
 
     if tmp_dir:

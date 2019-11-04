@@ -642,10 +642,11 @@ ARG_INPUT_FASTQ = dict(  # noqa: C408
 ARG_CONTROLS = dict(  # noqa: C408
     type=str,
     nargs="+",
-    help="One or more negative control FASTQ filenames or folder "
-    "names (which can be duplicated in the FASTQ argument). "
-    "Marker levels in these files are used to increase  minimum "
-    "abundance threshold automatically.",
+    # Does accept folder names, but kind of pointless...
+    help="One or more negative control paired FASTQ filenames "
+    "(which may also appear in the inputs). High marker levels "
+    "will increase the minimum abundance threshold of other "
+    "FASTQ files in the same folder.",
 )
 
 # "-a", "--abundance",
