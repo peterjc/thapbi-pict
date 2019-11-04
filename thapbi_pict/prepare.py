@@ -394,8 +394,6 @@ def prepare_sample(
     if os.path.isfile(fasta_name) and (
         failed_primer_name is None or os.path.isfile(failed_primer_name)
     ):
-        if debug:
-            sys.stderr.write("DEBUG: Skipping %s as already done\n" % stem)
         if control:
             uniq_count, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
             return fasta_name, uniq_count, max_hmm_abundance, 0
