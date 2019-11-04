@@ -379,8 +379,8 @@ def prepare_sample(
 
     Runs trimmomatic, pear, does primer filtering, does HMM filtering.
 
-    Return unique sequence count, max abundance (dict keyed by
-    HMM name), and hmm_cropping_warning count.
+    Returns fasta filename,  unique sequence count, max abundance
+    (dict keyed by HMM name), and hmm_cropping_warning count.
     """
     folder, stem = os.path.split(stem)
     if out_dir and out_dir != "-":
@@ -398,9 +398,9 @@ def prepare_sample(
             sys.stderr.write("DEBUG: Skipping %s as already done\n" % stem)
         if control:
             uniq_count, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
-            return uniq_count, max_hmm_abundance, 0
+            return fasta_name, uniq_count, max_hmm_abundance, 0
         else:
-            return None, {}, 0
+            return fasta_name, None, {}, 0
 
     if debug:
         sys.stderr.write(
@@ -504,7 +504,7 @@ def prepare_sample(
             pass
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
-        return 0, {}, 0
+        return fasta_name, 0, {}, 0
 
     if debug:
         sys.stderr.write(
@@ -545,7 +545,7 @@ def prepare_sample(
             )
         )
 
-    return uniq_count, max_hmm_abundance, cropping
+    return fasta_name, uniq_count, max_hmm_abundance, cropping
 
 
 def main(
@@ -630,7 +630,7 @@ def main(
         sys.stdout.flush()
         sys.stderr.flush()
 
-        uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
+        fasta_file, uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
@@ -648,6 +648,7 @@ def main(
             debug=debug,
             cpu=cpu,
         )
+        fasta_files_prepared.append(fasta_file)
         if uniq_count:
             assert max_abundance_by_hmm, max_abundance_by_hmm
         hmm_cropping_warning += hmm_cropping
