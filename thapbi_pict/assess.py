@@ -335,6 +335,7 @@ def main(
     assess_output,
     map_output,
     confusion_output,
+    ignore_prefixes=None,
     debug=False,
 ):
     """Implement the (species level) ``thapbi_pict assess`` command."""
@@ -342,7 +343,7 @@ def main(
     assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
-        inputs, ".%s.tsv" % method, ".%s.tsv" % known, debug=False
+        inputs, ".%s.tsv" % method, ".%s.tsv" % known, ignore_prefixes, debug=False
     )
 
     if not input_list:

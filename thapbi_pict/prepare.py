@@ -31,7 +31,9 @@ from .versions import check_tools
 hmm_cropping_warning = 0  # global variable for warning msg
 
 
-def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"), debug=False):
+def find_fastq_pairs(
+    filenames_or_folders, ext=(".fastq", ".fastq.gz"), ignore_prefixes=None, debug=False
+):
     """Interpret a list of filenames and/or foldernames.
 
     Returns a list of tuples (stem, left filename, right filename)
@@ -51,6 +53,11 @@ def find_fastq_pairs(filenames_or_folders, ext=(".fastq", ".fastq.gz"), debug=Fa
             for root, _, files in os.walk(x):
                 for f in files:
                     if f.endswith(ext):
+                        if ignore_prefixes and f.startswith(ignore_prefixes):
+                            sys.stderr.write(
+                                "WARNING: Ignoring %s\n" % os.path.join(root, f)
+                            )
+                            continue
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
             answer.append(x)
@@ -558,6 +565,7 @@ def main(
     min_abundance=100,
     min_length=0,
     max_length=sys.maxsize,
+    ignore_prefixes=None,
     tmp_dir=None,
     debug=False,
     cpu=0,
@@ -581,9 +589,13 @@ def main(
     if not negative_controls:
         control_file_pairs = []
     else:
-        control_file_pairs = find_fastq_pairs(negative_controls, debug=debug)
+        control_file_pairs = find_fastq_pairs(
+            negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
+        )
 
-    fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
+    fastq_file_pairs = find_fastq_pairs(
+        fastq, ignore_prefixes=ignore_prefixes, debug=debug
+    )
     fastq_file_pairs = [_ for _ in fastq_file_pairs if _ not in control_file_pairs]
 
     # Make a unified file list, with control flag
@@ -648,6 +660,8 @@ def main(
             debug=debug,
             cpu=cpu,
         )
+        if fasta_file in fasta_files_prepared:
+            sys.exit("ERROR: Multiple files named %s" % fasta_file)
         fasta_files_prepared.append(fasta_file)
         if uniq_count:
             assert max_abundance_by_hmm, max_abundance_by_hmm

@@ -108,6 +108,7 @@ def main(
     metadata_groups=None,
     metadata_fieldnames=None,
     metadata_index=None,
+    ignore_prefixes=None,
     debug=False,
 ):
     """Implement the ``thapbi_pict plate-summary`` command.
@@ -159,7 +160,10 @@ def main(
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for fasta_file in find_requested_files(
-        [_ for _ in inputs if not _.endswith(".tsv")], ".fasta", debug
+        [_ for _ in inputs if not _.endswith(".tsv")],
+        ".fasta",
+        ignore_prefixes,
+        debug=debug,
     ):
         sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
         samples.add(sample)
@@ -214,7 +218,10 @@ def main(
         if debug:
             sys.stderr.write("Loading predictions for %s\n" % method)
         tsv_files = find_requested_files(
-            [_ for _ in inputs if not _.endswith(".fasta")], ".%s.tsv" % method, debug
+            [_ for _ in inputs if not _.endswith(".fasta")],
+            ".%s.tsv" % method,
+            ignore_prefixes,
+            debug,
         )
         if len(samples) != len(tsv_files):
             sys.exit(
