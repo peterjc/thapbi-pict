@@ -190,6 +190,7 @@ def main(
     always_show_db=False,
     total_min_abundance=0,
     max_edit_dist=3,
+    ignore_prefixes=None,
     debug=False,
 ):
     """Run the edit-graph command with arguments from the command line.
@@ -223,12 +224,11 @@ def main(
     if inputs:
         if debug:
             sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
-        for fasta_file in find_requested_files(inputs, ".fasta", debug):
+        for fasta_file in find_requested_files(
+            inputs, ".fasta", ignore_prefixes, debug=debug
+        ):
             # TODO: Refactor this shared code with sample-summary?
             sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
-            if sample.startswith("Undetermined"):
-                sys.stderr.write("WARNING: Ignoring %s for edit-graph\n" % fasta_file)
-                continue
             if sample in samples:
                 sys.exit("Duplicate sample name %s" % sample)
             samples.add(sample)

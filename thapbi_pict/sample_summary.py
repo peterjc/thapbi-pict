@@ -32,6 +32,7 @@ def main(
     metadata_fieldnames=None,
     metadata_index=None,
     require_metadata=False,
+    ignore_prefixes=None,
     debug=False,
 ):
     """Implement the ``thapbi_pict sample-summary`` command.
@@ -47,7 +48,7 @@ def main(
     samples = set()
     counts = Counter()
     sp_to_taxid = {}
-    tsv_files = find_requested_files(inputs, ".%s.tsv" % method, debug)
+    tsv_files = find_requested_files(inputs, ".%s.tsv" % method, ignore_prefixes, debug)
     if debug:
         sys.stderr.write(
             "Loading %i sample predictions using method %s\n" % (len(tsv_files), method)

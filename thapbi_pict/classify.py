@@ -755,7 +755,17 @@ method_setup = {
 }
 
 
-def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
+def main(
+    fasta,
+    db_url,
+    hmm_stem,
+    method,
+    out_dir,
+    ignore_prefixes,
+    tmp_dir,
+    debug=False,
+    cpu=0,
+):
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
@@ -823,7 +833,7 @@ def main(fasta, db_url, hmm_stem, method, out_dir, tmp_dir, debug=False, cpu=0):
     if not count:
         sys.exit("ERROR: ITS1 table empty, cannot classify anything.\n")
 
-    fasta_files = find_requested_files(fasta, ext=".fasta", debug=debug)
+    fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
     if debug:
         sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
 

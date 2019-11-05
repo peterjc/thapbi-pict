@@ -355,11 +355,14 @@ def abundance_values_in_fasta(fasta_file):
     return total_a, max_a
 
 
-def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
+def find_requested_files(
+    filenames_or_folders, ext=".fasta", ignore_prefixes=None, debug=False
+):
     """Interpret a list of filenames and/or foldernames.
 
     The extensions argument can be a tuple.
     """
+    assert ignore_prefixes  # DEBUG - TODO - remove this
     answer = []
     for x in filenames_or_folders:
         if os.path.isdir(x):
@@ -369,9 +372,19 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
                 for f in files:
                     if f.endswith(ext):
                         # Check not a directory?
+                        if ignore_prefixes and f.startswith(ignore_prefixes):
+                            if debug:
+                                sys.stderr.write(
+                                    "DEBUG: Ignoring %s\n" % os.path.join(root, f)
+                                )
+                            continue
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
             if x.endswith(ext):
+                if ignore_prefixes and x.startswith(ignore_prefixes):
+                    if debug:
+                        sys.stderr.write("DEBUG: Ignoring %s\n" % os.path.join(root, x))
+                    continue
                 answer.append(x)
             else:
                 sys.exit(
@@ -384,7 +397,9 @@ def find_requested_files(filenames_or_folders, ext=".fasta", debug=False):
     return sorted(set(answer))
 
 
-def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
+def find_paired_files(
+    filenames_or_folders, ext1, ext2, ignore_prefixes=None, debug=False
+):
     """Interpret a list of filenames and/or foldernames to find pairs.
 
     Looks for paired files named XXX.ext1 and XXX.ext2 which can be
@@ -400,7 +415,10 @@ def find_paired_files(filenames_or_folders, ext1, ext2, debug=False):
     assert ext1.startswith("."), ext1
     assert ext2.startswith("."), ext2
     file_list = find_requested_files(
-        filenames_or_folders, ext=(ext1, ext2), debug=debug
+        filenames_or_folders,
+        ext=(ext1, ext2),
+        ignore_prefixes=ignore_prefixes,
+        debug=debug,
     )
     ext1_list = [_ for _ in file_list if _.endswith(ext1)]
     ext2_list = [_ for _ in file_list if _.endswith(ext2)]

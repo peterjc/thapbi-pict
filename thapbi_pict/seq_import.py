@@ -39,12 +39,15 @@ def main(
     name=None,
     validate_species=False,
     genus_only=False,
+    ignore_prefixes=None,
     debug=True,
 ):
     """Implement the ``thapbi_pict seq-import`` command."""
     assert isinstance(inputs, list)
 
-    input_list = find_paired_files(inputs, ".fasta", ".%s.tsv" % method, debug=debug)
+    input_list = find_paired_files(
+        inputs, ".fasta", ".%s.tsv" % method, ignore_prefixes, debug=debug
+    )
 
     if not input_list:
         sys.exit(

@@ -26,6 +26,7 @@ from .classify import method_classify_file as method_classifier
 DEFAULT_METHOD = "onebp"
 DEFAULT_MIN_ABUNDANCE = 100
 CTRL_A = chr(1)
+IGNORE_PREFIXES = ("Undetermined",)
 
 # Argument validation functions
 # =============================
@@ -136,6 +137,7 @@ def seq_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
 
@@ -202,6 +204,7 @@ def prepare_reads(args=None):
         min_abundance=args.abundance,
         min_length=args.minlen,
         max_length=args.maxlen,
+        ignore_prefixes=IGNORE_PREFIXES,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -245,6 +248,7 @@ def classify(args=None):
         hmm_stem=expand_hmm_argument(args.hmm),
         method=args.method,
         out_dir=args.output,
+        ignore_prefixes=IGNORE_PREFIXES,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -269,6 +273,7 @@ def assess_classification(args=None):
         assess_output=args.output,
         map_output=args.table,
         confusion_output=args.confusion,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
 
@@ -292,6 +297,7 @@ def read_summary(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
 
@@ -316,6 +322,7 @@ def sample_summary(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         require_metadata=args.requiremeta,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
 
@@ -339,6 +346,7 @@ def edit_graph(args=None):
         total_min_abundance=args.total,
         always_show_db=args.showdb,
         max_edit_dist=args.editdist,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
 
@@ -379,6 +387,7 @@ def pipeline(args=None):
         min_abundance=args.abundance,
         min_length=args.minlen,
         max_length=args.maxlen,
+        ignore_prefixes=IGNORE_PREFIXES,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -395,6 +404,7 @@ def pipeline(args=None):
         hmm_stem=hmm,
         method=args.method,
         out_dir=intermediate_dir,
+        ignore_prefixes=IGNORE_PREFIXES,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -427,6 +437,7 @@ def pipeline(args=None):
         # metadata_groups=args.metagroups
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
     if return_code:
@@ -445,6 +456,7 @@ def pipeline(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        ignore_prefixes=IGNORE_PREFIXES,
         debug=args.verbose,
     )
     if return_code:
@@ -469,6 +481,7 @@ def pipeline(args=None):
             # total_min_abundance=args.total,
             # always_show_db=args.showdb,
             # max_edit_dist=args.editdist,
+            ignore_prefixes=IGNORE_PREFIXES,
             debug=args.verbose,
         )
         if return_code:
