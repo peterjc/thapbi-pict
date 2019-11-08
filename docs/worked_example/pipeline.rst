@@ -58,8 +58,12 @@ for the report filenames.
 Conclusions
 -----------
 
-For the THAPBI Phyto-Threats project our datasets span multiple plates, but
-we want to set plate-specific minimum abundance threholds. With the current
-tool design, we must therefore run the ``prepare-reads`` stage at plate level,
-while running the reports at experiment level over multiple plates at once.
-This tension means we do not actually use the ``pipeline`` command as is.
+For the THAPBI Phyto-Threats project our datasets span multiple plates, but we
+want to set plate-specific minimum abundance threholds. That is taken care of
+as long as each plate is in its own directory. For example, you might have
+``raw_data/plate_NNN/*.fastq.gz`` and run the pipeline with ``-i raw_data/``).
+
+However, while you could run the pipeline command on all the data in one go,
+with access to a computer cluster it will likely be faster to run at least the
+(slowest)  ``prepare-reads`` stage on separate cluster nodes (e.g. one cluster
+job for each plate).
