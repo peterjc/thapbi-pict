@@ -137,7 +137,7 @@ def seq_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -204,7 +204,7 @@ def prepare_reads(args=None):
         min_abundance=args.abundance,
         min_length=args.minlen,
         max_length=args.maxlen,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -248,7 +248,7 @@ def classify(args=None):
         hmm_stem=expand_hmm_argument(args.hmm),
         method=args.method,
         out_dir=args.output,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -273,7 +273,7 @@ def assess_classification(args=None):
         assess_output=args.output,
         map_output=args.table,
         confusion_output=args.confusion,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -297,7 +297,7 @@ def read_summary(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -322,7 +322,7 @@ def sample_summary(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         require_metadata=args.requiremeta,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -346,7 +346,7 @@ def edit_graph(args=None):
         total_min_abundance=args.total,
         always_show_db=args.showdb,
         max_edit_dist=args.editdist,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -387,7 +387,7 @@ def pipeline(args=None):
         min_abundance=args.abundance,
         min_length=args.minlen,
         max_length=args.maxlen,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -404,7 +404,7 @@ def pipeline(args=None):
         hmm_stem=hmm,
         method=args.method,
         out_dir=intermediate_dir,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -437,7 +437,7 @@ def pipeline(args=None):
         # metadata_groups=args.metagroups
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
     if return_code:
@@ -456,7 +456,7 @@ def pipeline(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
-        ignore_prefixes=IGNORE_PREFIXES,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
     if return_code:
@@ -481,7 +481,7 @@ def pipeline(args=None):
             # total_min_abundance=args.total,
             # always_show_db=args.showdb,
             # max_edit_dist=args.editdist,
-            ignore_prefixes=IGNORE_PREFIXES,
+            ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
         )
         if return_code:
@@ -507,6 +507,16 @@ ARG_INPUT_FASTA = dict(  # noqa: C408
     nargs="+",
     help="One or more prepared FASTA filenames or folder names "
     "(containing files named *.fasta).",
+)
+
+# "--ignore-prefixes",
+ARG_IGNORE_PREFIXES = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    metavar="STEM",
+    default=IGNORE_PREFIXES,
+    help="One or more filename prefixes to ignore, default %s"
+    % ", ".join(repr(_) for _ in IGNORE_PREFIXES),
 )
 
 # "-m", "--method",
@@ -771,6 +781,7 @@ def main(args=None):
         "with only a minority of settings available here.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     subcommand_parser.add_argument(
         "-o",
@@ -894,6 +905,7 @@ def main(args=None):
         "(names containing files named *.fasta and *.method.tsv, where "
         "method is set via the -m / --method argument).",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-m",
         "--method",
@@ -1030,6 +1042,7 @@ def main(args=None):
         "abundance then alphabetically by sequence.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
     subcommand_parser.add_argument(
         "-o",
@@ -1078,6 +1091,7 @@ def main(args=None):
         metavar="INPUT",
         help="One or more FASTA files.",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-r",
         "--revcomp",
@@ -1118,6 +1132,7 @@ def main(args=None):
         "input dir).",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--hmm", **ARG_HMM)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
@@ -1160,6 +1175,7 @@ def main(args=None):
         "*.known.tsv, where these filenames can be set via "
         "-m / --method and -k / --known arguments. ",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-l",
         "--level",
@@ -1239,6 +1255,7 @@ def main(args=None):
         "it expects to find paired files using these extensions. "
         "The classifier method extension can be set via -m / --method.",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-o",
         "--output",
@@ -1306,6 +1323,7 @@ def main(args=None):
         "The files should follow this naming convention, where the classifier "
         "method appearing in the extension can be set via -m / --method.",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     subcommand_parser.add_argument(
         "-a",
@@ -1371,6 +1389,7 @@ def main(args=None):
     arg = subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     arg.required = False
     del arg
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-a",
         "--abundance",
