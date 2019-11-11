@@ -51,7 +51,7 @@ What the prepare command does can be briefly summarised as follows:
 * Quality trim the FASTQ reads (pairs where either read becomes too short are
   discarded).
 * Merge the overlapping paired FASTQ reads into single sequences (pairs which
-  do not overlap are discarded, for example from unexpectedly long fragements,
+  do not overlap are discarded, for example from unexpectedly long fragments,
   or not enough left after quality trimming).
 * Primer trim (reads without both primers are discarded).
 * Convert into a non-redundant FASTA file, with the sequence name recording
