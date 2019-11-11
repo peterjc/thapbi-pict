@@ -44,6 +44,14 @@ def find_fastq_pairs(
     (so that we can directly compare file lists which could have been
     defined inconsistently by the user).
     """
+    if ignore_prefixes:
+        assert isinstance(ignore_prefixes, tuple), ignore_prefixes
+    if debug and ignore_prefixes:
+        sys.stderr.write(
+            "DEBUG: Finding FASTQ pairs ignoring prefixes: %s\n"
+            % ", ".join(repr(_) for _ in ignore_prefixes)
+        )
+
     answer = []
     for x in filenames_or_folders:
         x = os.path.normpath(os.path.relpath(x))
@@ -55,11 +63,15 @@ def find_fastq_pairs(
                     if f.endswith(ext):
                         if ignore_prefixes and f.startswith(ignore_prefixes):
                             sys.stderr.write(
-                                "WARNING: Ignoring %s\n" % os.path.join(root, f)
+                                "WARNING: Ignoring %s due to prefix\n"
+                                % os.path.join(root, f)
                             )
                             continue
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
+            if ignore_prefixes and os.path.split(x)[1].startswith(ignore_prefixes):
+                sys.stderr.write("WARNING: Ignoring %s due to prefix\n" % x)
+                continue
             answer.append(x)
         else:
             sys.exit("ERROR: %r is not a file or a directory\n" % x)
@@ -76,7 +88,9 @@ def find_fastq_pairs(
             tuple("_I2_001" + _ for _ in ext)
         ):
             if debug:
-                sys.stderr.write("WARNING: Ignoring %r and %r\n" % (left, right))
+                sys.stderr.write(
+                    "WARNING: Ignoring %r and %r due to suffix\n" % (left, right)
+                )
             continue
         stem = None
         for suffix_left, suffix_right in zip(
@@ -586,12 +600,12 @@ def main(
     if hmm_stem:
         check_tools(["hmmscan"], debug)
 
-    if not negative_controls:
-        control_file_pairs = []
-    else:
+    if negative_controls:
         control_file_pairs = find_fastq_pairs(
             negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
         )
+    else:
+        control_file_pairs = []
 
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
