@@ -368,7 +368,7 @@ def find_requested_files(
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
-            for root, _, files in os.walk(x):
+            for root, _, files in os.walk(x, followlinks=True):
                 for f in files:
                     if f.endswith(ext):
                         # Check not a directory?
