@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.4.16 2019-11-15 Bug fix in ``fasta-nr`` when using input records with descriptions.
 v0.4.15 2019-11-04 Harmonised ``dump`` FASTA & ``curated-import`` with semi-colon separator.
 v0.4.14 2019-10-23 Configurable FASTA entry separator for ``curated-import`` & ``ncbi-import``.
 v0.4.13 2019-10-22 Fix 5 cases missing ``A`` near end, ``...CTGAAAACT`` to ``...CTGAAAAACT``.
