@@ -58,7 +58,7 @@ def find_fastq_pairs(
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write("Walking directory %r\n" % x)
-            for root, _, files in os.walk(x):
+            for root, _, files in os.walk(x, followlinks=True):
                 for f in files:
                     if f.endswith(ext):
                         if ignore_prefixes and f.startswith(ignore_prefixes):
