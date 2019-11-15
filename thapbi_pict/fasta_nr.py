@@ -65,7 +65,7 @@ def main(
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_)
+                    a = abundance_from_read_name(_.split(None, 1)[0])
                     counts[seq.upper()] += a
     for filename in revcomp:
         if debug:
@@ -73,7 +73,7 @@ def main(
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_)
+                    a = abundance_from_read_name(_.split(None, 1)[0])
                     counts[reverse_complement(seq.upper())] += a
 
     if counts:
