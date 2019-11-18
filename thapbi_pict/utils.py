@@ -349,7 +349,10 @@ def abundance_values_in_fasta(fasta_file):
     with open(fasta_file) as handle:
         for title, _ in SimpleFastaParser(handle):
             a = abundance_from_read_name(title.split(None, 1)[0])
-            hmm = title.split(None, 1)[1].strip()
+            try:
+                hmm = title.split(None, 1)[1].strip()
+            except IndexError:
+                hmm = ""  # prepared with no HMM
             max_a[hmm] = max(a, max_a[hmm])
             total_a += a
     return total_a, max_a
