@@ -37,8 +37,7 @@ for M in identity onebp blast; do
     rm -rf $TMP/human.txt $TMP/computer.tsv
     thapbi_pict sample-summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -r $TMP/human.txt -o $TMP/computer.tsv -i tests/classify/
     diff $TMP/human.txt tests/sample-summary/classify-meta.$M.txt
-    # This currently does not include metadata, and sorting does not change as only first sample has metadata
-    diff $TMP/computer.tsv tests/sample-summary/classify.$M.tsv
+    diff $TMP/computer.tsv tests/sample-summary/classify-meta.$M.tsv
     # Now require metadata...
     rm -rf $TMP/human.txt $TMP/computer.tsv
     thapbi_pict sample-summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -r $TMP/human.txt -o $TMP/computer.tsv -i tests/classify/ -q
