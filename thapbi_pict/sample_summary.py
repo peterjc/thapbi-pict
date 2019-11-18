@@ -46,8 +46,6 @@ def main(
         sys.exit("ERROR: No output file specified.\n")
 
     samples = set()
-    counts = Counter()
-    sp_to_taxid = {}
     tsv_files = find_requested_files(inputs, ".%s.tsv" % method, ignore_prefixes, debug)
     if debug:
         sys.stderr.write(
@@ -67,10 +65,9 @@ def main(
         samples.add(sample)
         sample_species_counts[sample] = Counter()
         sample_genus_counts[sample] = Counter()
-        for name, taxid_list, sp_list in parse_species_tsv(
+        for name, _taxid_list, sp_list in parse_species_tsv(
             predicted_file, min_abundance
         ):
-            # New:
             species_predictions.add(sp_list)  # as string with any ; included
             sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
             genus_list = {sp.split(" ", 1)[0] for sp in sp_list.split(";")}
@@ -81,17 +78,6 @@ def main(
                 )
             for genus in genus_list:
                 sample_genus_counts[sample][genus] += abundance_from_read_name(name)
-            # Old:
-            taxid_list = taxid_list.split(";")
-            sp_list = sp_list.split(";")
-            assert len(taxid_list) == len(sp_list), predicted_file
-            unambig = len(sp_list) == 1
-            for sp, taxid in zip(sp_list, taxid_list):
-                if sp in sp_to_taxid:
-                    assert sp_to_taxid[sp] == taxid, "Clash for taxid %s" % taxid
-                else:
-                    sp_to_taxid[sp] = taxid
-                counts[sample, sp, unambig] += abundance_from_read_name(name)
     species_predictions = sorted(species_predictions)  # turn into a list
     genus_predictions = sorted(genus_predictions)  # turn into a list
 
@@ -221,16 +207,15 @@ def main(
                     except BrokenPipeError:
                         # Stop trying to write to stdout (eg piped to head)
                         handle = None
-            all_sp = set()
-            unambig_sp = set()
-            for sp in sp_to_taxid:
-                for unambig in [True, False]:
-                    count = counts[sample, sp, unambig]
-                    if count:
-                        all_sp.add(sp)
-                        if unambig:
-                            unambig_sp.add(sp)
             if human:
+                all_sp = set()
+                unambig_sp = set()
+                for sp_list, count in sample_species_counts[sample].items():
+                    if count:
+                        sp_list = sp_list.split(";")
+                        all_sp.update(sp_list)
+                        if len(sp_list) == 1:
+                            unambig_sp.add(sp_list[0])
                 try:
                     if meta_names:
                         human.write("Sequencing sample: %s\n\n" % sample)
