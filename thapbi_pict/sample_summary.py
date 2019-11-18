@@ -81,6 +81,7 @@ def main(
                 sample_genus_counts[sample][genus] += abundance_from_read_name(name)
     species_predictions = sorted(species_predictions)  # turn into a list
     genus_predictions = sorted(genus_predictions)  # turn into a list
+    species_columns = [_ for _ in species_predictions if _ not in genus_predictions]
 
     if debug:
         sys.stderr.write(
@@ -138,7 +139,6 @@ def main(
     else:
         human = None
 
-    species_columns = [_ for _ in species_predictions if _ not in genus_predictions]
     if handle:
         if meta_names:
             handle.write(
@@ -158,6 +158,16 @@ def main(
                 )
             )
     if worksheet:
+        col_offset = len(meta_names)
+        # If there are lots of species, set narrow column widths
+        cols = len(genus_predictions) + len(species_columns)
+        if cols > 50:
+            # Set column width to 2
+            worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 2)
+        elif cols > 20:
+            # Set column width to 4
+            worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 4)
+        del cols
         for offset, name in enumerate(meta_names):
             worksheet.write_string(current_row, offset, name)
         col_offset = len(meta_names)
@@ -171,6 +181,7 @@ def main(
             worksheet.write_string(
                 current_row, col_offset + 2 + len(genus_predictions) + offset, sp
             )
+        worksheet.freeze_panes(current_row + 1, col_offset + 2)
 
     if human:
         human.write(
