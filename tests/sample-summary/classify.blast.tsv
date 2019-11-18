@@ -1,7 +1,3 @@
-#Sample	TaxID	Species	Unambiguous	Seq-count
-P-infestans-T30-4	283009	Phytophthora andina	False	63000
-P-infestans-T30-4	4787	Phytophthora infestans	False	63000
-P-infestans-T30-4	283007	Phytophthora ipomoeae	False	63000
-multiple_its1	70742	Peronospora	True	13702
-multiple_its1	0		True	12345
-multiple_its1	2025987	Nothophytophthora	True	1234
+#Sequencing sample	Seq-count	Unknown	Nothophytophthora	Peronospora	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
+P-infestans-T30-4	63000	0	0	0	63000	63000
+multiple_its1	27281	12345	1234	13702	0	0
