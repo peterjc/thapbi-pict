@@ -68,8 +68,9 @@ ls $TMP/woody_hosts/summary/with-metadata.samples.*
 if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
 if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.samples.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
 
-# Should be identical apart from row order
-diff <(sort $TMP/woody_hosts/summary/no-metadata.samples.tsv) <(sort $TMP/woody_hosts/summary/with-metadata.samples.tsv)
+# Should be identical apart from row order if discard extra leading columns
+# Discarding the header row as only one will still have hash at start
+diff <(grep -v "^#" $TMP/woody_hosts/summary/no-metadata.samples.tsv | sort) <(grep -v "^#" $TMP/woody_hosts/summary/with-metadata.samples.tsv | cut -f 16- | sort)
 
 echo "================================"
 echo "Running woody hosts read-summary"
