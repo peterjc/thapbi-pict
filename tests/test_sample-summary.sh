@@ -21,8 +21,8 @@ thapbi_pict sample-summary -o '' -i tests/classify 2>&1 | grep "No output file s
 set -o pipefail
 
 # Passing filename, default method, explicit min abundance
-rm -rf $TMP/human.txt $TMP/computer.tsv
-thapbi_pict sample-summary -m identity -a 1 -r $TMP/human.txt -o $TMP/computer.tsv -i tests/classify/*.identity.tsv
+rm -rf $TMP/human.txt $TMP/computer.tsv $TMP/computer.xlsx
+thapbi_pict sample-summary -m identity -a 1 -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/classify/*.identity.tsv
 diff $TMP/human.txt tests/sample-summary/classify.identity.txt
 diff $TMP/computer.tsv tests/sample-summary/classify.identity.tsv
 
@@ -47,18 +47,18 @@ done
 
 # More complicated metadata testing
 for M in identity; do
-    rm -rf $TMP/human.txt $TMP/computer.tsv
-    thapbi_pict sample-summary -m $M -r $TMP/human.txt -o $TMP/computer.tsv -i tests/assess/
+    rm -rf $TMP/human.txt $TMP/computer.tsv $TMP/computer.xlsx
+    thapbi_pict sample-summary -m $M -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/assess/
     diff $TMP/human.txt tests/sample-summary/assess.$M.txt
     diff $TMP/computer.tsv tests/sample-summary/assess.$M.tsv
     # And again, but with metadata
-    rm -rf $TMP/human.txt $TMP/computer.tsv
-    thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -i tests/assess/
+    rm -rf $TMP/human.txt $TMP/computer.tsv $TMP/computer.xlsx
+    thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/assess/
     diff $TMP/human.txt tests/sample-summary/assess-meta.$M.txt
     diff $TMP/computer.tsv tests/sample-summary/assess-meta.$M.tsv
     # And now requiring the metadata (no change):
-    rm -rf $TMP/human.txt $TMP/computer.tsv
-    thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -i tests/assess/ -q
+    rm -rf $TMP/human.txt $TMP/computer.tsv $TMP/computer.xlsx
+    thapbi_pict sample-summary -m $M -t tests/assess/meta.tsv -x 2 -c 1 -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/assess/ -q
     diff $TMP/human.txt tests/sample-summary/assess-meta.$M.txt
     diff $TMP/computer.tsv tests/sample-summary/assess-meta.$M.tsv
 done

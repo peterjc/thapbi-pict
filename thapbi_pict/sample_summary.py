@@ -115,6 +115,20 @@ def main(
     else:
         handle = None
 
+    if excel:
+        import xlsxwriter
+
+        workbook = xlsxwriter.Workbook(excel)
+        worksheet = workbook.add_worksheet("Sequence vs samples")
+        red_conditional_format = workbook.add_format(
+            # Maraschino red
+            {"bg_color": "#FF2600", "font_color": "#000000"}
+        )
+    else:
+        workbook = None
+        worksheet = None
+    current_row = 0
+
     if human_output == "-":
         if debug:
             sys.stderr.write("DEBUG: Output human report to stdout...\n")
@@ -124,6 +138,7 @@ def main(
     else:
         human = None
 
+    species_columns = [_ for _ in species_predictions if _ not in genus_predictions]
     if handle:
         if meta_names:
             handle.write(
@@ -131,9 +146,7 @@ def main(
                 % (
                     "\t".join(meta_names),
                     "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                    "\t".join(
-                        _ for _ in species_predictions if _ not in genus_predictions
-                    ),
+                    "\t".join(species_columns),
                 )
             )
         else:
@@ -141,11 +154,24 @@ def main(
                 "#Sequencing sample\tSeq-count\t%s\t%s\n"
                 % (
                     "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                    "\t".join(
-                        _ for _ in species_predictions if _ not in genus_predictions
-                    ),
+                    "\t".join(species_columns),
                 )
             )
+    if worksheet:
+        for offset, name in enumerate(meta_names):
+            worksheet.write_string(current_row, offset, name)
+        col_offset = len(meta_names)
+        worksheet.write_string(current_row, col_offset, "Sequencing sample")
+        worksheet.write_string(current_row, col_offset + 1, "Seq-count")
+        for offset, genus in enumerate(genus_predictions):
+            worksheet.write_string(
+                current_row, col_offset + 2 + offset, genus if genus else "Unknown"
+            )
+        for offset, sp in enumerate(species_columns):
+            worksheet.write_string(
+                current_row, col_offset + 2 + len(genus_predictions) + offset, sp
+            )
+
     if human:
         human.write(
             "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
@@ -208,6 +234,31 @@ def main(
                     except BrokenPipeError:
                         # Stop trying to write to stdout (eg piped to head)
                         handle = None
+                if worksheet:
+                    current_row += 1
+                    assert len(meta_names) == len(metadata)
+                    for offset, value in enumerate(metadata):
+                        worksheet.write_string(current_row, offset, value)
+                    assert col_offset == len(meta_names)
+                    worksheet.write_string(current_row, col_offset, sample)
+                    worksheet.write_number(
+                        current_row,
+                        col_offset + 1,
+                        sum(sample_species_counts[sample].values()),
+                    )
+                    for offset, genus in enumerate(genus_predictions):
+                        worksheet.write_number(
+                            current_row,
+                            col_offset + 2 + offset,
+                            sample_genus_counts[sample][genus],
+                        )
+                    for offset, sp in enumerate(species_columns):
+                        worksheet.write_number(
+                            current_row,
+                            col_offset + 2 + len(genus_predictions) + offset,
+                            sample_species_counts[sample][sp],
+                        )
+
             if human:
                 all_sp = set()
                 unambig_sp = set()
@@ -234,6 +285,22 @@ def main(
                 except BrokenPipeError:
                     # Stop trying to write to stdout (e.g. piped to head)
                     human = None
+
+    if worksheet:
+        worksheet.conditional_format(
+            1,
+            col_offset + 1,
+            current_row,
+            col_offset + 1 + len(genus_predictions) + len(species_columns),
+            {
+                "type": "cell",
+                "criteria": "greater than",
+                "value": 0,
+                "format": red_conditional_format,
+            },
+        )
+    if workbook:
+        workbook.close()
 
     if output != "-" and handle:
         handle.close()
