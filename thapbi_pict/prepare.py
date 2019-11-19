@@ -28,9 +28,6 @@ from .utils import run
 from .versions import check_tools
 
 
-hmm_cropping_warning = 0  # global variable for warning msg
-
-
 def find_fastq_pairs(
     filenames_or_folders, ext=(".fastq", ".fastq.gz"), ignore_prefixes=None, debug=False
 ):
@@ -315,23 +312,18 @@ def filter_fasta_for_its1(
 
     Assumes the SWARM naming convention.
 
-    Returns the number of unique sequences (integer),
-    maximum abundance (dict keyed by HMM name), and number
-    of cropping warnings.
+    Returns the number of unique sequences (integer), and
+    maximum abundance (dict keyed by HMM name).
     """
-    exp_left = 0
-    exp_right = 0
-    margin = 10
-    cropping_warning = 0
     max_hmm_abundance = Counter()
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_name, hmm_seqs in filter_for_ITS1(
+        for title, full_seq, hmm_name in filter_for_ITS1(
             input_fasta, shared_tmp_dir, hmm=hmm_stem, debug=debug
         ):
-            if not hmm_seqs:
+            if hmm_name is None:
                 # Using HMM match(es) as a presense/absense filter
                 continue
             assert hmm_name or not hmm_stem, hmm_name
@@ -342,40 +334,7 @@ def filter_fasta_for_its1(
                 abundance_from_read_name(title.split(None, 1)[0]),
             )
 
-            # Now some debugging...
-            if len(hmm_seqs) == 1:
-                hmm_seq = hmm_seqs[0]
-                left = full_seq.index(hmm_seq)
-                right = len(full_seq) - left - len(hmm_seq)
-                if not (
-                    exp_left - margin < left < exp_left + margin
-                    and exp_right - margin < right < exp_right + margin
-                ):
-                    cropping_warning += 1
-                    sys.stderr.write(
-                        "WARNING: %r has HMM cropping %i left, %i right, "
-                        "giving %i, vs %i bp from fixed trimming\n"
-                        % (
-                            title.split(None, 1)[0],
-                            left,
-                            right,
-                            len(hmm_seq),
-                            len(full_seq) - exp_left - exp_right,
-                        )
-                    )
-            else:
-                sys.stderr.write(
-                    "WARNING: %i %s HMM matches from %s\n"
-                    % (len(hmm_seqs), hmm_name, title)
-                )
-
-    if cropping_warning:
-        sys.stderr.write(
-            "WARNING: HMM cropping very different from fixed trimming "
-            "in %i sequences in %s\n" % (cropping_warning, stem)
-        )
-
-    return count, max_hmm_abundance, cropping_warning
+    return count, max_hmm_abundance
 
 
 def prepare_sample(
@@ -400,8 +359,8 @@ def prepare_sample(
 
     Runs trimmomatic, pear, does primer filtering, does HMM filtering.
 
-    Returns fasta filename,  unique sequence count, max abundance
-    (dict keyed by HMM name), and hmm_cropping_warning count.
+    Returns fasta filename, unique sequence count, and max abundance
+    (dict keyed by HMM name).
     """
     folder, stem = os.path.split(stem)
     if out_dir and out_dir != "-":
@@ -417,9 +376,9 @@ def prepare_sample(
     ):
         if control:
             uniq_count, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
-            return fasta_name, uniq_count, max_hmm_abundance, 0
+            return fasta_name, uniq_count, max_hmm_abundance
         else:
-            return fasta_name, None, {}, 0
+            return fasta_name, None, {}
 
     if debug:
         sys.stderr.write(
@@ -523,7 +482,7 @@ def prepare_sample(
             pass
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
-        return fasta_name, 0, {}, 0
+        return fasta_name, 0, {}
 
     if debug:
         sys.stderr.write(
@@ -542,7 +501,7 @@ def prepare_sample(
 
     # Determine if ITS1 region is present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
-    uniq_count, max_hmm_abundance, cropping = filter_fasta_for_its1(
+    uniq_count, max_hmm_abundance = filter_fasta_for_its1(
         merged_fasta, dedup, stem, shared_tmp, hmm_stem=hmm_stem, debug=debug
     )
 
@@ -564,7 +523,7 @@ def prepare_sample(
             )
         )
 
-    return fasta_name, uniq_count, max_hmm_abundance, cropping
+    return fasta_name, uniq_count, max_hmm_abundance
 
 
 def main(
@@ -592,8 +551,6 @@ def main(
     For use in the pipeline command, returns a filename listing of the
     FASTA files created.
     """
-    hmm_cropping_warning = 0
-
     assert isinstance(fastq, list)
 
     check_tools(["trimmomatic", "flash", "cutadapt"], debug)
@@ -656,7 +613,7 @@ def main(
             if control
             else max(min_abundance, pool_worst_control.get(pool_key, 0))
         )
-        fasta_file, uniq_count, max_abundance_by_hmm, hmm_cropping = prepare_sample(
+        fasta_file, uniq_count, max_abundance_by_hmm = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
@@ -679,7 +636,6 @@ def main(
         fasta_files_prepared.append(fasta_file)
         if uniq_count:
             assert max_abundance_by_hmm, max_abundance_by_hmm
-        hmm_cropping_warning += hmm_cropping
         max_its1_abundance = max(
             (
                 max_abundance_by_hmm[_]
@@ -722,13 +678,6 @@ def main(
         )
     else:
         tmp_obj.cleanup()
-
-    if hmm_cropping_warning:
-        sys.stderr.write(
-            "WARNING: HMM cropping very different from fixed trimming "
-            "in %i sequences over %i paired FASTQ files\n"
-            % (hmm_cropping_warning, len(file_pairs))
-        )
 
     sys.stdout.flush()
     sys.stderr.flush()

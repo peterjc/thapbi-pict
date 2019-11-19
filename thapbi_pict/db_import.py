@@ -235,14 +235,12 @@ def import_fasta_file(
     bad_sp_entries = 0
     good_entries = 0
     idn_set = set()
-    multiple_its1 = False
 
-    for title, seq, hmm_name, its1_seqs in filter_for_ITS1(
+    for title, seq, hmm_name in filter_for_ITS1(
         trimmed_fasta, hmm=hmm_stem, cache_dir=None
     ):
         seq_count += 1
-        if not its1_seqs:
-            assert not hmm_name, hmm_name
+        if hmm_name is None:
             if debug:
                 sys.stderr.write(
                     "DEBUG: Ignoring entry with no HMM matches: %s\n" % title
@@ -255,10 +253,6 @@ def import_fasta_file(
         if idn in idn_set:
             sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
         idn_set.add(idn)
-
-        if len(its1_seqs) > 1:
-            sys.stderr.write("WARNING: %i HMM matches in %s\n" % (len(its1_seqs), idn))
-            multiple_its1 = True
 
         entries = fasta_entry_fn(title)
         if not entries:
@@ -335,7 +329,10 @@ def import_fasta_file(
                     additional_taxonomy[name] = taxonomy
 
             assert taxonomy is not None
-            for its1_seq in its1_seqs:
+            # at this point we don't have the full sequence
+            # prior to any primer removal...
+            its1_seq = seq
+            if True:
                 # its1_seq_count += 1
                 its1_md5 = md5seq(its1_seq)
 
@@ -370,9 +367,9 @@ def import_fasta_file(
         "File %s had %i sequences. Found %i with ITS1, of which %i accepted.\n"
         % (fasta_file, seq_count, its1_seq_count, good_seq_count)
     )
-    assert multiple_its1 or its1_seq_count <= seq_count, (its1_seq_count, seq_count)
+    assert its1_seq_count <= seq_count, (its1_seq_count, seq_count)
     assert bad_entries <= entry_count, (bad_entries, entry_count)
-    assert multiple_its1 or good_entries <= entry_count, (good_entries, entry_count)
+    assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
             "Of %i potential entries, %i unparsable, %i failed sp. validation, %i OK.\n"
