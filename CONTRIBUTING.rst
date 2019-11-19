@@ -98,7 +98,7 @@ only to prevent accidental edits:
 
 .. code:: console
 
-   $ sqlite3 thapb_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+   $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
    $ chmod a-w thapbi_pict/ITS1_DB.sqlite
 
 Assuming your default Python is at least version 3.5, to install the
