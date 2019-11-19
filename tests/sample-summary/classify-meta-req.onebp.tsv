@@ -1,2 +1,2 @@
-#TaxID	Species	Description	Date	Sequencing sample	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
-4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	63000	500	0	62500	62500
+#TaxID	Species	Description	Date	Sequencing sample	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora ramorum
+4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	63000	500	0	62500	0	62500	0	0	0
