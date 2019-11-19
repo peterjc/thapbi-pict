@@ -15,13 +15,16 @@ The first output reports from the pipeline can be generated separately by the
     ...
 
 To mimic what the pipeline command would do, run the following, where we have
-to give names to the computer readable TSV (``-o`` or ``--output``) and human
-readable TXT outputs (``-r`` or ``--report``):
+to give names to the computer readable TSV (``-o`` or ``--output``), equivalent
+Excel (``-e`` or ``--excel``), and human readable plain text TXT outputs
+(``-r`` or ``--report``):
 
 .. code:: console
 
     $ thapbi_pict sample-summary -i intermediate/ \
-      -o summary/thapbi-pict.samples.tsv -r summary/thapbi-pict.samples.txt
+      -o summary/thapbi-pict.samples.tsv \
+      -e summary/thapbi-pict.samples.xlxs \
+      -r summary/thapbi-pict.samples.txt
     ...
 
 Note the trailing slash ``\`` at the end of the first line indicates the
@@ -36,23 +39,18 @@ and row numbers):
 .. code:: console
 
     $ time thapbi_pict sample-summary -i intermediate/ \
-      -o summary/with-metadata.samples.tsv -r summary/with-metadata.samples.txt \
+      -o summary/with-metadata.samples.tsv \
+      -e summary/with-metadata.samples.xlsx \
+      -r summary/with-metadata.samples.txt \
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
 
-This time the even longer command has been shown split over three lines.
+This time the even longer command has been shown split over five lines.
 
-The computer readable TSV file does not include the metadata directly, so the
-the two versions differ only in the line order:
+The computer readable TSV and equivalent Excel file will include the metadata
+as additional leading columns, and also differ in the line order.
 
-.. code:: console
-
-    $ diff <(sort summary/thapbi-pict.samples.tsv) <(sort summary/with-metadata.samples.tsv)
-    $ diff summary/thapbi-pict.samples.tsv summary/with-metadata.samples.tsv
-    ...
-
-The changes in the human readable text file are more interesting, and that is
-discussed next.
+We next focus on the changes in the human readable text file.
 
 Sample Report
 -------------
