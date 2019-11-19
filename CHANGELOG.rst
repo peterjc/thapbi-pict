@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.18 2019-11-18 Reworked the table output from ``sample-summary`` (now species vs samples).
+v0.4.18 2019-11-19 Reworked ``sample-summary`` table output, now samples vs species with Excel.
 v0.4.17 2019-11-15 Control based minimum abundance threshold applied at folders level.
 v0.4.16 2019-11-15 Bug fix in ``fasta-nr`` when using input records with descriptions.
 v0.4.15 2019-11-04 Harmonised ``dump`` FASTA & ``curated-import`` with semi-colon separator.
