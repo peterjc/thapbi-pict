@@ -125,6 +125,10 @@ def main(
             # Maraschino red
             {"bg_color": "#FF2600", "font_color": "#000000"}
         )
+        vertical_text_format = workbook.add_format(
+            # Vertical text, reading up the page
+            {"rotation": 90}
+        )
     else:
         workbook = None
         worksheet = None
@@ -159,6 +163,8 @@ def main(
             )
     if worksheet:
         col_offset = len(meta_names)
+        # Set first row to be tall, with vertical text
+        worksheet.set_row(0, 150, vertical_text_format)
         # If there are lots of species, set narrow column widths
         cols = len(genus_predictions) + len(species_columns)
         if cols > 50:
