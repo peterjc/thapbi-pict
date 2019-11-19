@@ -89,20 +89,20 @@ The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is hosted by
 Funding
 -------
 
-The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
+The Phyto-Threats project was supported from 2016 to 2019 under the Tree
+Health and Plant Biosecurity Initiative (THAPBI), jointly funded by the
 Biotechnology and Biological Sciences Research Council (`BBSRC
-<https://bbsrc.ukri.org/>`_), the Department for Environment, Food and Rural
+<https://bbsrc.ukri.org/>`_), Department for Environment, Food and Rural
 affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
-the Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
-the `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
-the Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
-and the `Scottish Government <https://www.gov.scot/>`_, under the Tree
-Health and Plant Biosecurity Initiative (THAPBI).
+Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
+`Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
+Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
+and `Scottish Government <https://www.gov.scot/>`_, 
 
 Background
 ----------
 
-This continues earlier work including:
+THAPBI PICT continues earlier work including:
 
 - https://github.com/widdowquinn/THAPBI
 - https://github.com/widdowquinn/THAPBI-pycits
