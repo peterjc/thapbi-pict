@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.4.19 *Pending*  Additional curated entries in default ITS1 database.
+v0.4.19 2019-11-19 Additional curated entries in default ITS1 database.
 v0.4.18 2019-11-19 Reworked ``sample-summary`` table output, now samples vs species with Excel.
 v0.4.17 2019-11-15 Control based minimum abundance threshold applied at folders level.
 v0.4.16 2019-11-15 Bug fix in ``fasta-nr`` when using input records with descriptions.
