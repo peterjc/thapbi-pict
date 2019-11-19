@@ -532,18 +532,11 @@ def method_swarm_core(
     # used in the DB entries
     its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
     with open(its_fasta, "w") as handle:
-        for title, _, hmm_name, seqs in filter_for_ITS1(
+        for title, seq, hmm_name in filter_for_ITS1(
             fasta_file, shared_tmp_dir, hmm=hmm_stem
         ):
-            if len(seqs) > 1:
-                sys.exit(
-                    "ERROR: %i %s HMM matches from %s in %s"
-                    % (len(seqs), hmm_name, title.split(None, 1)[0], fasta_file)
-                )
-            if not seqs:
+            if hmm_name is None:
                 continue
-            seq = seqs[0]
-            # Note leaving the MD5 based name as is (MD5 of full seq)
             handle.write(">%s\n%s\n" % (title, seq))
 
     if identity:
