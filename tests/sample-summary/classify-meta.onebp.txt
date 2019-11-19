@@ -20,6 +20,12 @@ Sequencing sample: P-infestans-T30-4
 Sequencing sample: hmm_trim
 
  - Unknown
+ - Phytophthora aleatoria (uncertain/ambiguous)
+ - Phytophthora cactorum (uncertain/ambiguous)
+ - Phytophthora cambivora (uncertain/ambiguous)
+ - Phytophthora cinnamomi
+ - Phytophthora ramorum
+ - Phytophthora x cambivora (uncertain/ambiguous)
 
 Sequencing sample: multiple_its1
 
