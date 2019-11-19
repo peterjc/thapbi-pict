@@ -56,11 +56,13 @@ echo "Running woody hosts sample-summary"
 echo "=================================="
 time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
             -o $TMP/woody_hosts/summary/no-metadata.samples.tsv \
+            -e $TMP/woody_hosts/summary/no-metadata.samples.xlsx \
             -r $TMP/woody_hosts/summary/no-metadata.samples.txt
 ls $TMP/woody_hosts/summary/no-metadata.samples.*
 
 time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
             -o $TMP/woody_hosts/summary/with-metadata.samples.tsv \
+            -e $TMP/woody_hosts/summary/with-metadata.samples.xlsx \
             -r $TMP/woody_hosts/summary/with-metadata.samples.txt \
             -t tests/woody_hosts/site_metadata.tsv \
             -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
