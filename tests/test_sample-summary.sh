@@ -22,7 +22,7 @@ set -o pipefail
 
 # Passing filename, default method, explicit min abundance
 rm -rf $TMP/human.txt $TMP/computer.tsv $TMP/computer.xlsx
-thapbi_pict sample-summary -m identity -a 1 -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/classify/*.identity.tsv
+thapbi_pict sample-summary -m identity -a 99 -r $TMP/human.txt -o $TMP/computer.tsv -e $TMP/computer.xlsx -i tests/classify/*.identity.tsv
 diff $TMP/human.txt tests/sample-summary/classify.identity.txt
 diff $TMP/computer.tsv tests/sample-summary/classify.identity.tsv
 

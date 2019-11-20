@@ -7,6 +7,10 @@ P-infestans-T30-4
  - Phytophthora infestans (uncertain/ambiguous)
  - Phytophthora ipomoeae (uncertain/ambiguous)
 
+hmm_trim
+
+ - Unknown
+
 multiple_its1
 
  - Unknown

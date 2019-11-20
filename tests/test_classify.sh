@@ -63,10 +63,18 @@ done
 
 rm -rf $TMP/multiple_its1.*.tsv
 # Have not handled this in swarm classifier....
-for  M in identity onebp blast; do
+for M in identity onebp blast; do
     echo "Checking multiple HMM containing sequences with $M"
     thapbi_pict classify -i tests/classify/multiple_its1.fasta -o $TMP/ -m $M
     diff $TMP/multiple_its1.$M.tsv tests/classify/multiple_its1.$M.tsv
+done
+
+rm -rf $TMP/hmm_trim.*.tsv
+# Swarm classifier can't cope with multiple HMM hits...
+for M in identity onebp blast; do
+    echo "Checking HMM trim corner cases with $M"
+    thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M
+    diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
 done
 
 echo "$0 - test_classify.sh passed"
