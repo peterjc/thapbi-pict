@@ -1,0 +1,10 @@
+NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+
+P-infestans-T30-4
+
+ - Phytophthora andina (uncertain/ambiguous)
+ - Phytophthora infestans (uncertain/ambiguous)
+ - Phytophthora ipomoeae (uncertain/ambiguous)
+ - Phytophthora mirabilis (uncertain/ambiguous)
+ - Phytophthora phaseoli (uncertain/ambiguous)
+
