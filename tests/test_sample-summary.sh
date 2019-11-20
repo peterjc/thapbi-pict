@@ -28,7 +28,7 @@ diff $TMP/computer.tsv tests/sample-summary/classify.identity.tsv
 
 # Passing a folder, trying different methods
 # Skipping swarm based classifiers and they don't work on one of the test cases
-for M in identity onebp blast; do
+for M in identity onebp blast swarmid swarm; do
     rm -rf $TMP/human.txt $TMP/computer.tsv
     thapbi_pict sample-summary -m $M -r $TMP/human.txt --output $TMP/computer.tsv --input tests/classify/
     diff $TMP/human.txt tests/sample-summary/classify.$M.txt
