@@ -97,7 +97,7 @@ affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-envi
 Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
 `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
 Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
-and `Scottish Government <https://www.gov.scot/>`_, 
+and `Scottish Government <https://www.gov.scot/>`_.
 
 Background
 ----------
