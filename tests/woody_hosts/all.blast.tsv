@@ -1,95 +1,94 @@
-#sequence-name	taxid	genus-species:Basidiophora;Bremia;Calycofera;Hyaloperonospora;Nothophytophthora;Novotelnova;Paraperonospora;Perofascia;Peronosclerospora;Peronospora;Phytophthora;Phytophthora acerina;Phytophthora agathidicida;Phytophthora aleatoria;Phytophthora alticola;Phytophthora amaranthi;Phytophthora amnicola;Phytophthora andina;Phytophthora aquimorbida;Phytophthora arenaria;Phytophthora asiatica;Phytophthora asparagi;Phytophthora attenuata;Phytophthora austrocedri;Phytophthora balyanboodja;Phytophthora bilorbang;Phytophthora bisheria;Phytophthora boehmeriae;Phytophthora borealis;Phytophthora botryosa;Phytophthora brassicae;Phytophthora cactorum;Phytophthora cajani;Phytophthora cambivora;Phytophthora capensis;Phytophthora capsici;Phytophthora captiosa;Phytophthora castaneae;Phytophthora castanetorum;Phytophthora chesapeakensis;Phytophthora chlamydospora;Phytophthora chrysanthemi;Phytophthora cichorii;Phytophthora cinnamomi;Phytophthora citricola;Phytophthora citricola E;Phytophthora citrophthora;Phytophthora clandestina;Phytophthora cocois;Phytophthora colocasiae;Phytophthora condilina;Phytophthora constricta;Phytophthora cooljarloo;Phytophthora crassamura;Phytophthora cryptogea;Phytophthora dauci;Phytophthora drechsleri;Phytophthora elongata;Phytophthora erythroseptica;Phytophthora europaea;Phytophthora fallax;Phytophthora flexuosa;Phytophthora fluvialis;Phytophthora foliorum;Phytophthora formosa;Phytophthora fragariae;Phytophthora fragariaefolia;Phytophthora frigida;Phytophthora gallica;Phytophthora gemini;Phytophthora gibbosa;Phytophthora glovera;Phytophthora gonapodyides;Phytophthora hedraiandra;Phytophthora heveae;Phytophthora hibernalis;Phytophthora himalsilva;Phytophthora humicola;Phytophthora idaei;Phytophthora ilicis;Phytophthora infestans;Phytophthora intercalaris;Phytophthora intricata;Phytophthora inundata;Phytophthora ipomoeae;Phytophthora iranica;Phytophthora irrigata;Phytophthora kernoviae;Phytophthora kwongonina;Phytophthora lactucae;Phytophthora lacustris;Phytophthora lateralis;Phytophthora lilii;Phytophthora litchii;Phytophthora litoralis;Phytophthora macilentosa;Phytophthora macrochlamydospora;Phytophthora meadii;Phytophthora medicaginis;Phytophthora megakarya;Phytophthora megasperma;Phytophthora melonis;Phytophthora mengei;Phytophthora mexicana;Phytophthora mirabilis;Phytophthora mississippiae;Phytophthora morindae;Phytophthora moyootj;Phytophthora multivesiculata;Phytophthora multivora;Phytophthora nagaii;Phytophthora nemorosa;Phytophthora nicotianae;Phytophthora niederhauserii;Phytophthora obscura;Phytophthora occultans;Phytophthora oleae;Phytophthora ornamentata;Phytophthora pachypleura;Phytophthora palmivora;Phytophthora parsiana;Phytophthora parvispora;Phytophthora phaseoli;Phytophthora pini;Phytophthora pinifolia;Phytophthora pisi;Phytophthora pistaciae;Phytophthora plurivora;Phytophthora pluvialis;Phytophthora polonica;Phytophthora porri;Phytophthora primulae;Phytophthora pseudocryptogea;Phytophthora pseudolactucae;Phytophthora pseudorosacearum;Phytophthora pseudosyringae;Phytophthora pseudotsugae;Phytophthora psychrophila;Phytophthora quercetorum;Phytophthora quercina;Phytophthora quininea;Phytophthora ramorum;Phytophthora richardiae;Phytophthora riparia;Phytophthora rosacearum;Phytophthora rubi;Phytophthora sansomeana;Phytophthora siskiyouensis;Phytophthora sojae;Phytophthora stricta;Phytophthora syringae;Phytophthora tentaculata;Phytophthora terminalis;Phytophthora thermophila;Phytophthora trifolii;Phytophthora tropicalis;Phytophthora tubulina;Phytophthora tyrrhenica;Phytophthora uliginosa;Phytophthora uniformis;Phytophthora vignae;Phytophthora virginiana;Phytophthora vulcanica;Phytophthora x alni;Phytophthora x cambivora;Phytophthora x multiformis;Phytophthora x pelgrandis;Phytophthora x serendipita;Plasmopara;Plasmoverna;Protobremia;Pseudoperonospora;synthetic construct C1;synthetic construct C2;synthetic construct C3;synthetic construct C4	note
-a559aa4d00a28f11b83012e762391259_166195	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 322). Unique taxonomy match
-ffb8fbb83fa26a101c2fddf2af13cf95_85124	631361	Phytophthora austrocedri	1 BLAST hits (bit score 320). Unique taxonomy match
-1160e5ab7fdd0189461f9ba0f3b5821f_29407	67594	Phytophthora syringae	1 BLAST hits (bit score 320). Unique taxonomy match
-af3654932ad7a06c5f4af3c738706c76_29366	78237	Phytophthora gonapodyides	1 BLAST hits (bit score 359). Unique taxonomy match
-eaf42569c8b95c8bf4f9bf1b65a96ce4_29204	53983;2056922	Phytophthora cambivora;Phytophthora x cambivora	1 BLAST hits (bit score 368).
-140ccd03a87b423a1f06521f08131464_20743	78237	Phytophthora gonapodyides	1 BLAST hits (bit score 353). Unique taxonomy match
-868e1ad838c7ec587dfd05b9dd4556ec_17728	4783	Phytophthora	1 BLAST hits (bit score 361). Unique taxonomy match
-213078ce5a17705827465b0d3dafaf2a_16738	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum	1 BLAST hits (bit score 340).
-1de0db9a9d08e998befe17e8ffba95f3_16455	53983	Phytophthora cambivora	1 BLAST hits (bit score 366). Unique taxonomy match
-7f27d3a8f7150e0ee7ad64073e6da6b5_12580	164328	Phytophthora ramorum	1 BLAST hits (bit score 315). Unique taxonomy match
-58525deb483ba2a0bfda1440298c0319_10029	0		No BLAST hit
-c38eede78b16a616f16cfcb835e942fc_9191	89335	Phytophthora ilicis	1 BLAST hits (bit score 320). Unique taxonomy match
-f21947a21986b3c72466d0974b28d3b0_8365	1692154	Phytophthora chlamydospora	1 BLAST hits (bit score 361). Unique taxonomy match
-cebe31c44895ddaf68aebca4ff4dc562_8287	1985165	Phytophthora castanetorum	1 BLAST hits (bit score 335). Unique taxonomy match
-9e8f051c64c2b9cc3b6fcb27559418ca_6624	639000	Phytophthora plurivora	1 BLAST hits (bit score 279). Unique taxonomy match
-100daeac2033cfa5578d5dcd33d3f511_5685	180901	Phytophthora psychrophila	1 BLAST hits (bit score 324). Unique taxonomy match
-0368431c779b6d3b2555f68f90d047c5_4098	4783	Phytophthora	1 BLAST hits (bit score 322). Unique taxonomy match
-fbc6fcd7e66bed1a036f142df6dfd8ba_3889	1104319	Phytophthora obscura	1 BLAST hits (bit score 316). Unique taxonomy match
-742f1f7a934f2df075be6f2eea756fc9_3707	164328	Phytophthora ramorum	1 BLAST hits (bit score 309). Unique taxonomy match
-df02db00df453e2bc7df425c835ba48c_3071	4786	Phytophthora cryptogea	1 BLAST hits (bit score 320). Unique taxonomy match
-0712f0304dbba3c6f3920a6f4c3fd27a_2898	4785	Phytophthora cinnamomi	1 BLAST hits (bit score 366). Unique taxonomy match
-e9afe2b8e586c06c60f87e6210700d66_2814	180902	Phytophthora uliginosa	1 BLAST hits (bit score 364). Unique taxonomy match
-91cbe5e14621227e700e127b328109da_2512	4783	Phytophthora	1 BLAST hits (bit score 110). Unique taxonomy match
-079fac4dac81e83e324da8cec0a57413_2344	129360	Phytophthora primulae	1 BLAST hits (bit score 311). Unique taxonomy match
-6803c088eb1e53bb2e44bffecbaa0fdd_2242	4784;132615	Phytophthora capsici;Phytophthora glovera	1 BLAST hits (bit score 259).
-e138a46152f57561ec24666122512dba_2111	0		No BLAST hit
-2b8e7a64e493e5c191e92f21596b4256_2010	1821206	Phytophthora pseudocryptogea	1 BLAST hits (bit score 322). Unique taxonomy match
-3c5abe04bcb6e780fb4e08d805c6f9a6_1821	0		No BLAST hit
-527f4fcc957f605eb4111404527d5a60_1655	0		No BLAST hit
-5122dde24762f8e3d6a54e3f79077254_1550	1642459;1642465	Phytophthora agathidicida;Phytophthora castaneae	1 BLAST hits (bit score 337).
-5696b47c47824d949e31bb40848119d6_1503	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-0a3d7eea3d524edb9a5df0f454be89d7_1457	325452	Phytophthora kernoviae	1 BLAST hits (bit score 311). Unique taxonomy match
-df9f417f20674fab352234185ffae376_1329	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 311). Unique taxonomy match
-5410883b0425ad404d446665afb292f2_1125	0		No BLAST hit
-6844d9a2a4b3170bfed0b5b40e354d34_1021	436079	Phytophthora siskiyouensis	1 BLAST hits (bit score 259). Unique taxonomy match
-1a757792ee175409b47632888037da1b_925	4783	Phytophthora	1 BLAST hits (bit score 313). Unique taxonomy match
-2ba87367bdbb87cc37521bed773ffa37_922	129364	Phytophthora rubi	1 BLAST hits (bit score 366). Unique taxonomy match
-9c1b8b6be3365ddd37c6d0b82b5c6d29_849	0		No BLAST hit
-d9f5ed85e585d5e52c93a872300daffc_843	0		No BLAST hit
-c9211eb69473adcf5a1e97f9fe3c1e60_810	70742	Peronospora	2 BLAST hits (bit score 322). Unique taxonomy match
-eb9e0bc85ece6f772b89bc1c1634d360_751	0		No BLAST hit
-cdb9f7305c0bd86b7ea817de2767ca93_744	129355	Phytophthora lateralis	1 BLAST hits (bit score 315). Unique taxonomy match
-b20eea3853149a223cb2d51f883a13ff_719	1985168	Phytophthora vulcanica	1 BLAST hits (bit score 366). Unique taxonomy match
-794edee98bcbc94cf10f0dca7ebd6d5c_672	295481;1567491	Phytophthora hedraiandra;Phytophthora x serendipita	1 BLAST hits (bit score 340).
-618f4a97f1a103b4a7e6c8c032127700_669	78237	Phytophthora gonapodyides	1 BLAST hits (bit score 348). Unique taxonomy match
-f69213a597d555c3ae808996d4bd66fa_640	53983	Phytophthora cambivora	1 BLAST hits (bit score 361). Unique taxonomy match
-8afd86527a36fabe841b4723b2de93bd_607	360399	Phytophthora fallax	1 BLAST hits (bit score 311). Unique taxonomy match
-e22f0600a097a07df98f8609310252a6_605	4783	Phytophthora	1 BLAST hits (bit score 355). Unique taxonomy match
-d44c0eaf3375d805a839110e5a72ac98_585	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum	1 BLAST hits (bit score 335).
-aa6f6ab6909e337b59e89498ada8d0fe_565	0		No BLAST hit
-0bcf42845b326a38004d44a318828b15_547	631361	Phytophthora austrocedri	1 BLAST hits (bit score 315). Unique taxonomy match
-acd5dc7df5a3acc7162e7cce55c689ba_544	164328	Phytophthora ramorum	1 BLAST hits (bit score 309). Unique taxonomy match
-245141760ecdcbc2caa7caf46d7bacb0_539	4783	Phytophthora	1 BLAST hits (bit score 320). Unique taxonomy match
-9482953506eb93e2e60e29a6c6baf0ab_516	162131	Paraperonospora	1 BLAST hits (bit score 326). Unique taxonomy match
-8c5af825b1f934efba39f84701dc2d6c_482	631361	Phytophthora austrocedri	1 BLAST hits (bit score 315). Unique taxonomy match
-4bedcf7c49a7a854e4c4c4a2f7b1dcd7_426	631361	Phytophthora austrocedri	2 BLAST hits (bit score 315). Unique taxonomy match
-e8aa0b53937b895bcbd83b1ce87aad64_423	4784	Phytophthora capsici	1 BLAST hits (bit score 257). Unique taxonomy match
-81880f400a60fdf88507a0332d6f382a_422	4783	Phytophthora	1 BLAST hits (bit score 278). Unique taxonomy match
-03fc6e8c819f68bf5154a5f710a725d1_398	4786	Phytophthora cryptogea	1 BLAST hits (bit score 315). Unique taxonomy match
-835befb9a7e90549a582c3508829d386_398	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-3069dcfb430f23fcf6467b960bbe4869_377	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-6e51a5e45ab3b7d82a2f217abd72a49f_372	0		No BLAST hit
-3ad4759eee115a19f64ec5e04261431b_360	53983	Phytophthora cambivora	1 BLAST hits (bit score 368). Unique taxonomy match
-5d8fdaab79dd0c8796dc48c0f66e6da6_355	631361	Phytophthora austrocedri	1 BLAST hits (bit score 315). Unique taxonomy match
-20985cd29142653ad5e1a6ecc489d6b0_354	164328	Phytophthora ramorum	1 BLAST hits (bit score 303). Unique taxonomy match
-b831dfeddd1d11a31991ce8953001a61_330	596104	Phytophthora multivora	1 BLAST hits (bit score 279). Unique taxonomy match
-7ca9974124838fd376df720458ad609e_317	0		No BLAST hit
-98e95535e5f3c294cafc23660a0a467e_293	631361	Phytophthora austrocedri	1 BLAST hits (bit score 315). Unique taxonomy match
-267217170be3c041b45c0b3db72feffb_292	53983	Phytophthora cambivora	1 BLAST hits (bit score 368). Unique taxonomy match
-e3f186a97ceae82bdfa93418308a6aa6_291	53983	Phytophthora cambivora	1 BLAST hits (bit score 368). Unique taxonomy match
-8b91065d51c43a58afc08b2fb2a50732_286	4783	Phytophthora	1 BLAST hits (bit score 353). Unique taxonomy match
-171b76d33469c9f281620c0e87025849_277	631361	Phytophthora austrocedri	1 BLAST hits (bit score 320). Unique taxonomy match
-494ee3d2bf4862cfd990b8ca2c520d1d_276	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-9c1d75446539a07c954b59162622a279_273	78237	Phytophthora gonapodyides	1 BLAST hits (bit score 348). Unique taxonomy match
-bfc256f58c5436f41cc63c90fb0902c8_252	53983	Phytophthora cambivora	1 BLAST hits (bit score 366). Unique taxonomy match
-fe056ddbc456d46e3dff09120800012f_250	0		No BLAST hit
-c706fbbf14eb69f0c40c4c4b7b796639_229	1985168	Phytophthora vulcanica	1 BLAST hits (bit score 361). Unique taxonomy match
-4f7e4737868a7a6990d02abede849d6a_229	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-791003473ab97eded747c88f093f9453_218	631361	Phytophthora austrocedri	1 BLAST hits (bit score 320). Unique taxonomy match
-8a58991938bcb91b960a6dc5b61d6685_207	1104319	Phytophthora obscura	1 BLAST hits (bit score 311). Unique taxonomy match
-d8cb5b0c973a521f384666d5263027d5_196	221518	Phytophthora pseudosyringae	2 BLAST hits (bit score 316). Unique taxonomy match
-2925177b03c50045b1ca85daac9551c0_193	221518	Phytophthora pseudosyringae	1 BLAST hits (bit score 316). Unique taxonomy match
-7e99a9005489f3f7f0588f19b7e0cdf1_178	53983;2056922	Phytophthora cambivora;Phytophthora x cambivora	1 BLAST hits (bit score 363).
-15d18dd2dbd5e66495d2e9c7aa13c209_165	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum	1 BLAST hits (bit score 335).
-3e3949133c40d1e98c770765621a6095_158	0		No BLAST hit
-729ff44162ca12bc572dab94ea321608_154	53983	Phytophthora cambivora	1 BLAST hits (bit score 368). Unique taxonomy match
-0ae2cc6b224826f178ec0f73e0dade8d_124	67594	Phytophthora syringae	1 BLAST hits (bit score 315). Unique taxonomy match
-da12decaca6430fb44c296a7371520ca_117	78237	Phytophthora gonapodyides	1 BLAST hits (bit score 348). Unique taxonomy match
-80fd6c9b6ba8bb38108d43f9d0576d99_114	631361	Phytophthora austrocedri	1 BLAST hits (bit score 315). Unique taxonomy match
-d80934ce8f3c9fa61b1e811f89c23d87_111	4783	Phytophthora	1 BLAST hits (bit score 320). Unique taxonomy match
-1723881edac8d0e636cf040318e0c76d_104	221518	Phytophthora pseudosyringae	2 BLAST hits (bit score 316). Unique taxonomy match
-07d3f46a79aba67acbfb676f73dd8ae1_104	0		No BLAST hit
-c93a474f4fae34c5e8a9202d3022a583_101	164328	Phytophthora ramorum	1 BLAST hits (bit score 303). Unique taxonomy match
-2695064ca46b5909c0ef24a3ccb280f3_100	53983	Phytophthora cambivora	1 BLAST hits (bit score 361). Unique taxonomy match
+a559aa4d00a28f11b83012e762391259_166195	221518	Phytophthora pseudosyringae
+ffb8fbb83fa26a101c2fddf2af13cf95_85124	631361	Phytophthora austrocedri
+1160e5ab7fdd0189461f9ba0f3b5821f_29407	67594	Phytophthora syringae
+af3654932ad7a06c5f4af3c738706c76_29366	78237	Phytophthora gonapodyides
+eaf42569c8b95c8bf4f9bf1b65a96ce4_29204	53983;2056922	Phytophthora cambivora;Phytophthora x cambivora
+140ccd03a87b423a1f06521f08131464_20743	78237	Phytophthora gonapodyides
+868e1ad838c7ec587dfd05b9dd4556ec_17728	4783	Phytophthora
+213078ce5a17705827465b0d3dafaf2a_16738	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum
+1de0db9a9d08e998befe17e8ffba95f3_16455	53983	Phytophthora cambivora
+7f27d3a8f7150e0ee7ad64073e6da6b5_12580	164328	Phytophthora ramorum
+58525deb483ba2a0bfda1440298c0319_10029	0	
+c38eede78b16a616f16cfcb835e942fc_9191	89335	Phytophthora ilicis
+f21947a21986b3c72466d0974b28d3b0_8365	1692154	Phytophthora chlamydospora
+cebe31c44895ddaf68aebca4ff4dc562_8287	1985165	Phytophthora castanetorum
+9e8f051c64c2b9cc3b6fcb27559418ca_6624	639000	Phytophthora plurivora
+100daeac2033cfa5578d5dcd33d3f511_5685	180901	Phytophthora psychrophila
+0368431c779b6d3b2555f68f90d047c5_4098	4783	Phytophthora
+fbc6fcd7e66bed1a036f142df6dfd8ba_3889	1104319	Phytophthora obscura
+742f1f7a934f2df075be6f2eea756fc9_3707	164328	Phytophthora ramorum
+df02db00df453e2bc7df425c835ba48c_3071	4786	Phytophthora cryptogea
+0712f0304dbba3c6f3920a6f4c3fd27a_2898	4785	Phytophthora cinnamomi
+e9afe2b8e586c06c60f87e6210700d66_2814	180902	Phytophthora uliginosa
+91cbe5e14621227e700e127b328109da_2512	4783	Phytophthora
+079fac4dac81e83e324da8cec0a57413_2344	129360	Phytophthora primulae
+6803c088eb1e53bb2e44bffecbaa0fdd_2242	4784;132615	Phytophthora capsici;Phytophthora glovera
+e138a46152f57561ec24666122512dba_2111	0	
+2b8e7a64e493e5c191e92f21596b4256_2010	1821206	Phytophthora pseudocryptogea
+3c5abe04bcb6e780fb4e08d805c6f9a6_1821	0	
+527f4fcc957f605eb4111404527d5a60_1655	0	
+5122dde24762f8e3d6a54e3f79077254_1550	1642459;1642465	Phytophthora agathidicida;Phytophthora castaneae
+5696b47c47824d949e31bb40848119d6_1503	221518	Phytophthora pseudosyringae
+0a3d7eea3d524edb9a5df0f454be89d7_1457	325452	Phytophthora kernoviae
+df9f417f20674fab352234185ffae376_1329	221518	Phytophthora pseudosyringae
+5410883b0425ad404d446665afb292f2_1125	0	
+6844d9a2a4b3170bfed0b5b40e354d34_1021	436079	Phytophthora siskiyouensis
+1a757792ee175409b47632888037da1b_925	4783	Phytophthora
+2ba87367bdbb87cc37521bed773ffa37_922	129364	Phytophthora rubi
+9c1b8b6be3365ddd37c6d0b82b5c6d29_849	0	
+d9f5ed85e585d5e52c93a872300daffc_843	0	
+c9211eb69473adcf5a1e97f9fe3c1e60_810	70742	Peronospora
+eb9e0bc85ece6f772b89bc1c1634d360_751	0	
+cdb9f7305c0bd86b7ea817de2767ca93_744	129355	Phytophthora lateralis
+b20eea3853149a223cb2d51f883a13ff_719	1985168	Phytophthora vulcanica
+794edee98bcbc94cf10f0dca7ebd6d5c_672	295481;1567491	Phytophthora hedraiandra;Phytophthora x serendipita
+618f4a97f1a103b4a7e6c8c032127700_669	78237	Phytophthora gonapodyides
+f69213a597d555c3ae808996d4bd66fa_640	53983	Phytophthora cambivora
+8afd86527a36fabe841b4723b2de93bd_607	360399	Phytophthora fallax
+e22f0600a097a07df98f8609310252a6_605	4783	Phytophthora
+d44c0eaf3375d805a839110e5a72ac98_585	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum
+aa6f6ab6909e337b59e89498ada8d0fe_565	0	
+0bcf42845b326a38004d44a318828b15_547	631361	Phytophthora austrocedri
+acd5dc7df5a3acc7162e7cce55c689ba_544	164328	Phytophthora ramorum
+245141760ecdcbc2caa7caf46d7bacb0_539	4783	Phytophthora
+9482953506eb93e2e60e29a6c6baf0ab_516	162131	Paraperonospora
+8c5af825b1f934efba39f84701dc2d6c_482	631361	Phytophthora austrocedri
+4bedcf7c49a7a854e4c4c4a2f7b1dcd7_426	631361	Phytophthora austrocedri
+e8aa0b53937b895bcbd83b1ce87aad64_423	4784	Phytophthora capsici
+81880f400a60fdf88507a0332d6f382a_422	4783	Phytophthora
+03fc6e8c819f68bf5154a5f710a725d1_398	4786	Phytophthora cryptogea
+835befb9a7e90549a582c3508829d386_398	221518	Phytophthora pseudosyringae
+3069dcfb430f23fcf6467b960bbe4869_377	221518	Phytophthora pseudosyringae
+6e51a5e45ab3b7d82a2f217abd72a49f_372	0	
+3ad4759eee115a19f64ec5e04261431b_360	53983	Phytophthora cambivora
+5d8fdaab79dd0c8796dc48c0f66e6da6_355	631361	Phytophthora austrocedri
+20985cd29142653ad5e1a6ecc489d6b0_354	164328	Phytophthora ramorum
+b831dfeddd1d11a31991ce8953001a61_330	596104	Phytophthora multivora
+7ca9974124838fd376df720458ad609e_317	0	
+98e95535e5f3c294cafc23660a0a467e_293	631361	Phytophthora austrocedri
+267217170be3c041b45c0b3db72feffb_292	53983	Phytophthora cambivora
+e3f186a97ceae82bdfa93418308a6aa6_291	53983	Phytophthora cambivora
+8b91065d51c43a58afc08b2fb2a50732_286	4783	Phytophthora
+171b76d33469c9f281620c0e87025849_277	631361	Phytophthora austrocedri
+494ee3d2bf4862cfd990b8ca2c520d1d_276	221518	Phytophthora pseudosyringae
+9c1d75446539a07c954b59162622a279_273	78237	Phytophthora gonapodyides
+bfc256f58c5436f41cc63c90fb0902c8_252	53983	Phytophthora cambivora
+fe056ddbc456d46e3dff09120800012f_250	0	
+c706fbbf14eb69f0c40c4c4b7b796639_229	1985168	Phytophthora vulcanica
+4f7e4737868a7a6990d02abede849d6a_229	221518	Phytophthora pseudosyringae
+791003473ab97eded747c88f093f9453_218	631361	Phytophthora austrocedri
+8a58991938bcb91b960a6dc5b61d6685_207	1104319	Phytophthora obscura
+d8cb5b0c973a521f384666d5263027d5_196	221518	Phytophthora pseudosyringae
+2925177b03c50045b1ca85daac9551c0_193	221518	Phytophthora pseudosyringae
+7e99a9005489f3f7f0588f19b7e0cdf1_178	53983;2056922	Phytophthora cambivora;Phytophthora x cambivora
+15d18dd2dbd5e66495d2e9c7aa13c209_165	2496075;29920	Phytophthora aleatoria;Phytophthora cactorum
+3e3949133c40d1e98c770765621a6095_158	0	
+729ff44162ca12bc572dab94ea321608_154	53983	Phytophthora cambivora
+0ae2cc6b224826f178ec0f73e0dade8d_124	67594	Phytophthora syringae
+da12decaca6430fb44c296a7371520ca_117	78237	Phytophthora gonapodyides
+80fd6c9b6ba8bb38108d43f9d0576d99_114	631361	Phytophthora austrocedri
+d80934ce8f3c9fa61b1e811f89c23d87_111	4783	Phytophthora
+1723881edac8d0e636cf040318e0c76d_104	221518	Phytophthora pseudosyringae
+07d3f46a79aba67acbfb676f73dd8ae1_104	0	
+c93a474f4fae34c5e8a9202d3022a583_101	164328	Phytophthora ramorum
+2695064ca46b5909c0ef24a3ccb280f3_100	53983	Phytophthora cambivora

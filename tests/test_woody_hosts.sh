@@ -51,8 +51,10 @@ echo "======================================="
 thapbi_pict fasta-nr -i $TMP/woody_hosts/intermediate/*.fasta -o $TMP/woody_hosts/all.fasta
 diff $TMP/woody_hosts/all.fasta tests/woody_hosts/all.fasta
 for M in onebp identity blast; do
-    # Writing to stdout to set a single filename
-    thapbi_pict classify -i $TMP/woody_hosts/all.fasta -o - -m $M > $TMP/woody_hosts/all.$M.tsv
+    # Writing to stdout to set a single filename.
+    # Discarding the comment column, and the header,
+    # leaving the most stable core part of the output
+    thapbi_pict classify -i $TMP/woody_hosts/all.fasta -o - -m $M | grep -v "^#" | cut -f 1-3 > $TMP/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts/all.$M.tsv tests/woody_hosts/all.$M.tsv
 done
 
