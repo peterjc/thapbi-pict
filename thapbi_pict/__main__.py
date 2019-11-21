@@ -245,7 +245,6 @@ def classify(args=None):
     return_code = main(
         fasta=args.input,
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
-        hmm_stem=expand_hmm_argument(args.hmm),
         method=args.method,
         out_dir=args.output,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -402,7 +401,6 @@ def pipeline(args=None):
     classified_files = classify(
         fasta=fasta_files,
         db_url=db,
-        hmm_stem=hmm,
         method=args.method,
         out_dir=intermediate_dir,
         ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed

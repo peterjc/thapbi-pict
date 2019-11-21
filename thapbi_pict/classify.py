@@ -23,7 +23,6 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
 from .db_orm import ITS1, SequenceSource, Taxonomy
-from .hmm import filter_for_ITS1
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string, run
 from .utils import find_requested_files
@@ -143,67 +142,36 @@ def perfect_match_in_db(session, seq, debug=False):
     return taxid_and_sp_lists(t)
 
 
-def apply_method_to_file(
-    method_fn, fasta_file, session, hmm_stem, read_report, shared_tmp_dir, debug=False
-):
-    """Apply HMM filter to FASTA file, and call given method on each match."""
+def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=False):
+    """Call given method on each sequence in the FASTA file."""
     count = 0
     tax_counts = Counter()
 
-    for title, seq, hmm_name in filter_for_ITS1(
-        fasta_file, shared_tmp_dir, hmm=hmm_stem
-    ):
-        idn = title.split(None, 1)[0]
-        abundance = abundance_from_read_name(idn)
-        count += abundance
-        if hmm_name is None:
-            taxid = 0
-            genus_species = ""
-            note = "No ITS1 HMM match"
-        else:
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
+            abundance = abundance_from_read_name(idn)
+            count += abundance
             assert seq == seq.upper(), seq
             taxid, genus_species, note = method_fn(session, seq, debug=debug)
-        tax_counts[genus_species] += abundance
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+            tax_counts[genus_species] += abundance
+            read_report.write(
+                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
+            )
     assert count == sum(tax_counts.values())
     return tax_counts
 
 
 def method_identity(
-    fasta_file,
-    session,
-    hmm_stem,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
-    purposes. It uses HMMER3 to find any ITS1 match, and then
-    looks for a perfect identical entry in the database.
-
-    This assumes the same HMM was used to trim the entries in our
-    database, and thus an exact match is resonable to expect
-    (without having to worry about trimming for a partial match).
+    purposes. It looks for a perfect identical entry in the database.
     """
-    # The FASTA file should have long sequences which might
-    # contain a known ITS1 sequence as a substring. If the
-    # search were inverted, the SQL LIKE command could likely
-    # be used (e.g. via SQLalchemey's contains operator).
-    #
-    # Plan B is brute force - we can run hmmscan to find any
-    # ITS1 matchs, and then look for 100% equality in the DB.
     return apply_method_to_file(
-        perfect_match_in_db,
-        fasta_file,
-        session,
-        hmm_stem,
-        read_report,
-        shared_tmp_dir,
-        debug=debug,
+        perfect_match_in_db, fasta_file, session, read_report, debug=debug
     )
 
 
@@ -251,34 +219,16 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_onebp(
-    fasta_file,
-    session,
-    hmm_stem,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using identity or 1bp difference.
 
     This is a deliberately simple approach, based on the perfect
-    identity classifier. It uses HMMER3 to find any ITS1 match,
-    and then compares it to a dictionary of all the database
-    entries and their 1bp variants.
-
-    This assumes the same HMM was used to trim the entries in our
-    database, and thus an exact match is resonable to expect
-    (without having to worry about trimming for a partial match).
+    identity classifier. It compares each sequence to a dictionary
+    of all the database entries and their 1bp variants.
     """
     return apply_method_to_file(
-        onebp_match_in_db,
-        fasta_file,
-        session,
-        hmm_stem,
-        read_report,
-        shared_tmp_dir,
-        debug=debug,
+        onebp_match_in_db, fasta_file, session, read_report, debug=debug
     )
 
 
@@ -343,14 +293,7 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file,
-    session,
-    hmm_stem,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """Classify using BLAST.
 
@@ -500,7 +443,6 @@ def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
 def method_swarm_core(
     fasta_file,
     session,
-    hmm_stem,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -511,8 +453,7 @@ def method_swarm_core(
     """Classify using SWARM.
 
     Uses the previously generated dump of the database to a
-    swarm-ready FASTA file, and the ITS1 subsequences found
-    via HMM from the prepared non-redundant input FASTA, as
+    swarm-ready FASTA file, and non-redundant input FASTA, as
     input to swarm.
 
     Uses the database sequences to assign species to clusters,
@@ -528,22 +469,11 @@ def method_swarm_core(
     if not os.path.isfile(db_fasta):
         sys.exit("ERROR: Missing generated file %s\n" % db_fasta)
 
-    # Trim down the sequences to the same HMM matched subsequence
-    # used in the DB entries
-    its_fasta = os.path.join(tmp_dir, "swarm_in.fasta")
-    with open(its_fasta, "w") as handle:
-        for title, seq, hmm_name in filter_for_ITS1(
-            fasta_file, shared_tmp_dir, hmm=hmm_stem
-        ):
-            if hmm_name is None:
-                continue
-            handle.write(">%s\n%s\n" % (title, seq))
-
     if identity:
-        seq_dict = SeqIO.index(its_fasta, "fasta")
+        seq_dict = SeqIO.index(fasta_file, "fasta")
 
     swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
-    run_swarm([its_fasta, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
+    run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
 
     if not os.path.isfile(swarm_clusters):
         sys.exit(
@@ -607,14 +537,7 @@ def method_swarm_core(
 
 
 def method_swarm(
-    fasta_file,
-    session,
-    hmm_stem,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """SWARM classifier.
 
@@ -628,7 +551,6 @@ def method_swarm(
     return method_swarm_core(
         fasta_file,
         session,
-        hmm_stem,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -639,14 +561,7 @@ def method_swarm(
 
 
 def method_swarmid(
-    fasta_file,
-    session,
-    hmm_stem,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    debug=False,
-    cpu=0,
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
 ):
     """SWARM classifier with 100% identity special case.
 
@@ -660,7 +575,6 @@ def method_swarmid(
     return method_swarm_core(
         fasta_file,
         session,
-        hmm_stem,
         read_report,
         tmp_dir,
         shared_tmp_dir,
@@ -672,10 +586,10 @@ def method_swarmid(
 
 method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
-    "identity": ["hmmscan"],
-    "onebp": ["hmmscan"],
-    "swarm": ["hmmscan", "swarm"],
-    "swarmid": ["hmmscan", "swarm"],
+    "identity": [],
+    "onebp": [],
+    "swarm": ["swarm"],
+    "swarmid": ["swarm"],
 }
 
 method_classify_file = {
@@ -695,17 +609,7 @@ method_setup = {
 }
 
 
-def main(
-    fasta,
-    db_url,
-    hmm_stem,
-    method,
-    out_dir,
-    ignore_prefixes,
-    tmp_dir,
-    debug=False,
-    cpu=0,
-):
+def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, cpu=0):
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
@@ -727,8 +631,6 @@ def main(
         req_tools = method_tool_check[method]
     except KeyError:
         req_tools = []
-    if not hmm_stem and "hmmscan" in req_tools:
-        req_tools.remove("hmmscan")
     check_tools(req_tools, debug)
 
     # Connect to the DB,
@@ -846,7 +748,7 @@ def main(
         if os.path.getsize(filename):
             # There are sequences to classify
             tax_counts = classify_file_fn(
-                filename, session, hmm_stem, pred_handle, tmp, shared_tmp, debug, cpu
+                filename, session, pred_handle, tmp, shared_tmp, debug, cpu
             )
         else:
             # No sequences, no taxonomy assignments
