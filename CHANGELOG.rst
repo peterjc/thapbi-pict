@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.5.0  *Pending*  Only use HMM as a filter, not for trimming in DB import or classify steps.
+v0.5.0  2019-11-21 Only use HMM as a filter, not for trimming in DB import or classify steps.
 v0.4.19 2019-11-19 Additional curated entries in default ITS1 database.
 v0.4.18 2019-11-19 Reworked ``sample-summary`` table output, now samples vs species with Excel.
 v0.4.17 2019-11-15 Control based minimum abundance threshold applied at folders level.
