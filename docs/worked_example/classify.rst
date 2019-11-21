@@ -91,5 +91,5 @@ header lines, then find species):
     intermediate/DNA10MIX_diluted25x.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_363    129364  Phytophthora rubi  Unique taxonomy match
     intermediate/DNA10MIX_undiluted.onebp.tsv:2ba87367bdbb87cc37521bed773ffa37_274     129364  Phytophthora rubi  Unique taxonomy match
 
-The summary reports would also answer this paricular question, but this kind
+The summary reports would also answer this particular question, but this kind
 of search can be useful for exploring specific questions.
