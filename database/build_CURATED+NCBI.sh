@@ -3,7 +3,7 @@ VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
 CURATED=Phytophthora_ITS1_curated.fasta
-TAX=new_taxdump_2019-09-01
+TAX=new_taxdump_2019-11-01
 DB=CURATED+NCBI
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
