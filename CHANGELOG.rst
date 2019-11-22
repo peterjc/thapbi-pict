@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.5.1  2019-11-22 Updated NCBI taxonomy, adds *Phytophthora oreophila* and *P. cacuminis*.
 v0.5.0  2019-11-21 Only use HMM as a filter, not for trimming in DB import or classify steps.
 v0.4.19 2019-11-19 Additional curated entries in default ITS1 database.
 v0.4.18 2019-11-19 Reworked ``sample-summary`` table output, now samples vs species with Excel.

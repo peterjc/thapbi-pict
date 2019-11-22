@@ -22,7 +22,7 @@ sets of sequences (subject to HMM filtering and taxonomy filtering):
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2019-09-01, which means we rejected some
+- This used the NCBI taxonomy as of 2019-11-01, which means we rejected some
   of the curated FASTA file entries.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
