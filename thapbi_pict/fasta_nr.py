@@ -26,6 +26,7 @@ def main(
     inputs,
     revcomp,
     output,
+    counts=False,
     min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
@@ -57,7 +58,7 @@ def main(
                 "ERROR: Output directory can only be used with a single input file"
             )
 
-    counts = Counter()
+    seq_counts = Counter()
     for filename in inputs:
         # Assuming FASTA for now
         if debug:
@@ -65,25 +66,25 @@ def main(
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_.split(None, 1)[0])
-                    counts[seq.upper()] += a
+                    a = 1 if counts else abundance_from_read_name(_.split(None, 1)[0])
+                    seq_counts[seq.upper()] += a
     for filename in revcomp:
         if debug:
             sys.stderr.write("DEBUG: Parsing %s (will reverse complement)\n" % filename)
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_.split(None, 1)[0])
+                    a = 1 if counts else abundance_from_read_name(_.split(None, 1)[0])
                     counts[reverse_complement(seq.upper())] += a
 
     if counts:
         sys.stderr.write(
             "Loaded %i unique sequences from %i in total within length range, "
             "max abundance %i\n"
-            % (len(counts), sum(counts.values()), max(counts.values()))
+            % (len(seq_counts), sum(seq_counts.values()), max(seq_counts.values()))
         )
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
-    accepted = save_nr_fasta(counts, output, min_abundance=min_abundance)
+    accepted = save_nr_fasta(seq_counts, output, min_abundance=min_abundance)
     sys.stderr.write("Saved %i unique sequences\n" % accepted)

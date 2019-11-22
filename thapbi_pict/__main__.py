@@ -227,6 +227,7 @@ def fasta_nr(args=None):
         inputs=args.input,
         revcomp=args.revcomp,
         output=args.output,
+        counts=args.counts,
         min_abundance=args.abundance,
         min_length=args.minlen,
         max_length=args.maxlen,
@@ -1080,9 +1081,9 @@ def main(args=None):
         "fasta-nr",
         description="Prepare non-redundant FASTA file using MD5 naming.",
         epilog="Each unique sequence will be named <MD5>_<count> using "
-        "the MD5 checksum of the upper case sequence and its total "
-        "abundance. Input files may use <prefix>_<count> naming, this "
-        "count will be used for the associated sequence.",
+        "the MD5 checksum of the upper case sequence. By default total "
+        "abundance is used, where inputs follow <prefix>_<count> naming. "
+        "Use -c / --counts for a simple count.",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1111,6 +1112,13 @@ def main(args=None):
         metavar="PATH",
         help="Single output filename, '-' for stdout (default). "
         "Can be a directory if a single -i/-r input file given.",
+    )
+    subcommand_parser.add_argument(
+        "-c",
+        "--counts",
+        action="store_true",
+        help="Name output with number of times each sequence appeared, "
+        "rather than their total abundance.",
     )
     subcommand_parser.add_argument(
         "-a",
