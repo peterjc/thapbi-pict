@@ -34,7 +34,6 @@ def main(
     inputs,
     method,
     db_url,
-    hmm_stem,
     min_abundance=1000,
     name=None,
     validate_species=False,
@@ -113,7 +112,7 @@ def main(
         import_fasta_file(
             fasta_file,
             db_url,
-            hmm_stem,
+            "",  # not using HMM as prepare-reads did this for us
             name,
             fasta_entry_fn=sequence_wanted,
             entry_taxonomy_fn=meta_fn,

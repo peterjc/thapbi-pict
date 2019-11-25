@@ -132,7 +132,6 @@ def seq_import(args=None):
         inputs=args.input,
         method=args.method,
         db_url=expand_database_argument(args.database),
-        hmm_stem=expand_hmm_argument(args.hmm),
         min_abundance=args.abundance,
         name=args.name,
         validate_species=not args.lax,
@@ -928,7 +927,6 @@ def main(args=None):
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
