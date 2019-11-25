@@ -112,7 +112,6 @@ def main(
         import_fasta_file(
             fasta_file,
             db_url,
-            "",  # not using HMM as prepare-reads did this for us
             name,
             fasta_entry_fn=sequence_wanted,
             entry_taxonomy_fn=meta_fn,

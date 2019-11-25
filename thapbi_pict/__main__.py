@@ -112,7 +112,6 @@ def ncbi_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
-        hmm_stem=expand_hmm_argument(args.hmm),
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -148,7 +147,6 @@ def curated_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
-        hmm_stem=expand_hmm_argument(args.hmm),
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -865,7 +863,7 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -946,7 +944,6 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One FASTA marker filename."
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
