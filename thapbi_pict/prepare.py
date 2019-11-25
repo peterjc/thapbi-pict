@@ -324,10 +324,12 @@ def filter_fasta_for_its1(
             input_fasta, shared_tmp_dir, hmm=hmm_stem, debug=debug
         ):
             if hmm_name is None:
-                # Using HMM match(es) as a presense/absense filter
-                continue
-            assert hmm_name or not hmm_stem, hmm_name
-            out_handle.write(">%s %s\n%s\n" % (title, hmm_name, full_seq))
+                # Using HMM match(es) to spot control reads
+                hmm_name = ""
+            if hmm_name:
+                out_handle.write(">%s %s\n%s\n" % (title, hmm_name, full_seq))
+            else:
+                out_handle.write(">%s\n%s\n" % (title, full_seq))
             count += 1
             max_hmm_abundance[hmm_name] = max(
                 max_hmm_abundance[hmm_name],
@@ -499,7 +501,7 @@ def prepare_sample(
             )
         )
 
-    # Determine if ITS1 region is present using hmmscan,
+    # Determine if synthetic controls are present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
     uniq_count, max_hmm_abundance = filter_fasta_for_its1(
         merged_fasta, dedup, stem, shared_tmp, hmm_stem=hmm_stem, debug=debug
@@ -552,6 +554,9 @@ def main(
     FASTA files created.
     """
     assert isinstance(fastq, list)
+
+    if negative_controls and not hmm_stem:
+        sys.exit("ERROR: If using negative controls, must use --hmm too.")
 
     check_tools(["trimmomatic", "flash", "cutadapt"], debug)
     if hmm_stem:
@@ -640,7 +645,7 @@ def main(
             (
                 max_abundance_by_hmm[_]
                 for _ in max_abundance_by_hmm
-                if not _.startswith("SynCtrl")
+                if not _.startswith("SynCtrl")  # TODO - make this configurable?
             ),
             default=0,
         )
