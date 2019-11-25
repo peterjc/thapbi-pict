@@ -77,7 +77,7 @@ def expand_hmm_argument(text, hyphen_default=True):
     if text == "-":
         if hyphen_default:
             # Expand to the default bundled HMM
-            text = os.path.join(os.path.split(__file__)[0], "hmm", "combined.hmm")
+            text = os.path.join(os.path.split(__file__)[0], "hmm", "controls.hmm")
         else:
             sys.exit("ERROR: Using hyphen as HMM default is not supported here.")
     if not text:
