@@ -6,6 +6,8 @@
 
 """Code for THAPBI PICT to import curated FASTA marker files."""
 
+import sys
+
 from .db_import import import_fasta_file
 
 
@@ -40,6 +42,8 @@ assert parse_fasta_entry("P13660 Phytophthora aff infestans") == (
 def main(
     fasta_file,
     db_url,
+    min_length=0,
+    max_length=sys.maxsize,
     name=None,
     validate_species=False,
     genus_only=False,
@@ -50,6 +54,8 @@ def main(
     return import_fasta_file(
         fasta_file,
         db_url,
+        min_length=min_length,
+        max_length=max_length,
         name=name,
         debug=debug,
         fasta_entry_fn=lambda descr: [_.strip() for _ in descr.split(sep)],
