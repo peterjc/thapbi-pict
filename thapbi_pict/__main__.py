@@ -597,9 +597,9 @@ ARG_GENUS_ONLY = dict(  # noqa: C408
 # "--minlen",
 ARG_MIN_LENGTH = dict(  # noqa: C408
     type=int,
-    default=25,
+    default=100,
     metavar="LENGTH",
-    help="Minimum length sequence to accept (default 25).",
+    help="Minimum length sequence to accept (default 100).",
 )
 
 # "--maxlen",
