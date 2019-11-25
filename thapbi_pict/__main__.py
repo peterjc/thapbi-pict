@@ -1132,7 +1132,6 @@ def main(args=None):
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument(
         "-o",
