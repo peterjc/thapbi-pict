@@ -112,6 +112,8 @@ def ncbi_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
+        min_length=args.minlen,
+        max_length=args.maxlen,
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -132,6 +134,8 @@ def seq_import(args=None):
         method=args.method,
         db_url=expand_database_argument(args.database),
         min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -147,6 +151,8 @@ def curated_import(args=None):
     return main(
         fasta_file=args.input,
         db_url=expand_database_argument(args.database),
+        min_length=args.minlen,
+        max_length=args.maxlen,
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
@@ -863,7 +869,8 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -925,6 +932,9 @@ def main(args=None):
         "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    # min/max length redundant if using prepare-reads?:
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
@@ -944,6 +954,8 @@ def main(args=None):
         "-i", "--input", type=str, required=True, help="One FASTA marker filename."
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)

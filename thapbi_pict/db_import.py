@@ -101,6 +101,8 @@ def lookup_genus(session, name):
 def import_fasta_file(
     fasta_file,
     db_url,
+    min_length=0,
+    max_length=sys.maxsize,
     name=None,
     debug=True,
     fasta_entry_fn=None,
@@ -235,6 +237,13 @@ def import_fasta_file(
     with open(trimmed_fasta) as handle:
         for title, seq in SimpleFastaParser(handle):
             seq_count += 1
+
+            if not (min_length <= len(seq) <= max_length):
+                if debug:
+                    sys.stderr.write(
+                        "DEBUG: Rejected %s as length %i\n" % (title, len(seq))
+                    )
+                continue
 
             # One sequence can have multiple entries
             idn = title.split(None, 1)[0]
