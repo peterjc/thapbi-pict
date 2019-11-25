@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.5.4  2019-11-25 Only use HMM to detect synthetic read negative controls.
 v0.5.3  2019-11-25 Replace HMM filter on importing to the database with length check only.
 v0.5.2  2019-11-25 Removed redundant use of HMM filter in ``seq-import`` command.
 v0.5.1  2019-11-22 Updated NCBI taxonomy, adds *Phytophthora oreophila* and *P. cacuminis*.

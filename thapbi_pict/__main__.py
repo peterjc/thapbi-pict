@@ -647,9 +647,9 @@ ARG_HMM = dict(  # noqa: C408
     type=str,
     default="-",
     metavar="PATH",
-    help="Location of HMMER3 Hidden Markov Model file, filename "
-    "stem without the '.h3i', '.h3f', etc extension. "
-    "Use '' for none, or '-' for supplied ITS1 model (default).",
+    help="Location of negative control HMMER3 Hidden Markov Model "
+    "file, filename stem without the '.h3i', '.h3f', etc extension. "
+    "Use '' for none, or '-' for default four synthetic controls (default).",
 )
 
 # Common pipeline arguments
