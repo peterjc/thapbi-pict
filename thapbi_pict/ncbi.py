@@ -99,7 +99,6 @@ assert parse_fasta_entry(
 def main(
     fasta_file,
     db_url,
-    hmm_stem=None,
     name=None,
     validate_species=False,
     genus_only=False,
@@ -113,7 +112,6 @@ def main(
     return import_fasta_file(
         fasta_file,
         db_url,
-        hmm_stem=hmm_stem,
         name=name,
         debug=debug,
         fasta_entry_fn=lambda descr: [_.strip() for _ in descr.split(sep)],
