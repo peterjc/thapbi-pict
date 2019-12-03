@@ -102,7 +102,7 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
     return new
 
 
-def filter_for_ITS1(
+def filter_for_hmm(
     input_fasta, cache_dir, min_length=100, max_length=250, hmm=None, debug=False
 ):
     """Search for the ITS1 sequence(s) within FASTA entries.

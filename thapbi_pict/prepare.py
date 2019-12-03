@@ -20,7 +20,7 @@ from collections import Counter
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .hmm import filter_for_ITS1
+from .hmm import filter_for_hmm
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import md5seq
@@ -320,7 +320,7 @@ def filter_fasta_for_its1(
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
-        for title, full_seq, hmm_name in filter_for_ITS1(
+        for title, full_seq, hmm_name in filter_for_hmm(
             input_fasta, shared_tmp_dir, hmm=hmm_stem, debug=debug
         ):
             if hmm_name is None:
