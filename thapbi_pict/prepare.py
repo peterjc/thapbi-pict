@@ -641,14 +641,8 @@ def main(
         fasta_files_prepared.append(fasta_file)
         if uniq_count:
             assert max_abundance_by_hmm, max_abundance_by_hmm
-        max_its1_abundance = max(
-            (
-                max_abundance_by_hmm[_]
-                for _ in max_abundance_by_hmm
-                if not _.startswith("SynCtrl")  # TODO - make this configurable?
-            ),
-            default=0,
-        )
+        # Any HMM is assumed to be a synthetic control, no HMM means biological
+        max_its1_abundance = max_abundance_by_hmm.get("", 0)
         if control:
             sys.stderr.write(
                 "Control %s has %i unique sequences "
