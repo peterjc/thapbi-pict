@@ -64,7 +64,7 @@ jobs:
             # Unpack the tests from the sdist tar-ball
             tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
-            tar --wildcards '*/combined.hmm*' -zxvf dist/thapbi_pict-*.tar.gz
+            tar --wildcards '*/controls.hmm*' -zxvf dist/thapbi_pict-*.tar.gz
             cd thapbi_pict-*/
             # Run the tests (and confirm the tar-ball is complete)
             tests/run_tests.sh

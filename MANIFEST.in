@@ -9,7 +9,7 @@ recursive-include thapbi_pict *.py
 
 # Placing the HMM and DB binary files within the Python tree as
 # the simplest way to get them included in a wheel for install:
-recursive-include thapbi_pict/hmm combined.*
+recursive-include thapbi_pict/hmm controls.hmm*
 include thapbi_pict/ITS1_DB.sqlite
 
 # Deliberately not bothering to anything in database via wildcards.
