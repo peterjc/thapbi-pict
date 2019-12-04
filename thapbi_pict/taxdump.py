@@ -139,11 +139,32 @@ def top_level_species(children, ranks, names, genus_list):
                 if name.lower() in ("environmental samples"):
                     # Again silently ignore
                     continue
+                # e.g. Hyaloperonospora parasitica species group
                 sys.stderr.write(
                     "WARNING: Treating %s '%s' (txid%i) as a species.\n"
                     % (ranks[taxid], name, taxid)
                 )
                 yield taxid, names[genus_taxid], name
+
+
+def not_top_species(top_species, children, ranks, names, genus_list):
+    """Takes set of species taxid to ignore, returns the rest.
+
+    Intended usage is to map minor-species as genus aliases, for
+    example all the species under unclassified Phytophthora will
+    be treated as synonyms of the genus Phytophthora.
+    """
+    for genus_taxid in genus_list:
+        if genus_taxid not in children:
+            continue
+        for taxid in children[genus_taxid]:
+            if ranks[taxid] == "species":
+                if taxid not in top_species:
+                    yield genus_taxid, names[taxid]
+            if taxid in children:
+                # recurse...
+                for _ in not_top_species(top_species, children, ranks, names, [taxid]):
+                    yield genus_taxid, _[1]
 
 
 def main(tax, db_url, ancestors, debug=True):
@@ -181,6 +202,16 @@ def main(tax, db_url, ancestors, debug=True):
     genus_species = list(top_level_species(children, ranks, names, genus_list))
     if debug:
         sys.stderr.write("Filtered down to %i species names\n" % len(genus_species))
+
+    minor_species = list(
+        not_top_species(
+            {_[0] for _ in genus_species}, children, ranks, names, genus_list
+        )
+    )
+    if debug:
+        sys.stderr.write(
+            "Treating %is minor species names as genus aliases\n" % len(minor_species)
+        )
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug
@@ -276,6 +307,32 @@ def main(tax, db_url, ancestors, debug=True):
                 pass
             else:
                 s_old += 1
+
+    # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
+    for genus_taxid, name in minor_species:
+        # Is it already there?
+        taxonomy = (
+            session.query(Taxonomy).filter_by(ncbi_taxid=genus_taxid).one_or_none()
+        )
+        assert taxonomy is not None
+        assert taxonomy.id is not None, taxonomy
+        synonym = session.query(Synonym).filter_by(name=name).one_or_none()
+        if synonym is None:
+            synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
+            session.add(synonym)
+            s_new += 1
+        elif name in aliases:
+            # Don't double count it
+            pass
+        else:
+            if debug:
+                # See this with Hyaloperonospora parasitica species group,
+                # treated as a species with entries under it already set as aliases
+                sys.stderr.write(
+                    "Minor species %r -> NCBI %s, table %s pre-existing -> %s\n"
+                    % (name, genus_taxid, taxonomy.id, synonym.taxonomy_id)
+                )
+            s_old += 1
 
     session.commit()
 
