@@ -148,7 +148,7 @@ def top_level_species(children, ranks, names, genus_list):
 
 
 def not_top_species(top_species, children, ranks, names, genus_list):
-    """Takes set of species taxid to ignore, returns the rest.
+    """Find all 'minor' species, takes set of species taxid to ignore.
 
     Intended usage is to map minor-species as genus aliases, for
     example all the species under unclassified Phytophthora will
