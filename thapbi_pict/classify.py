@@ -152,8 +152,7 @@ def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=Fals
             idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
             count += abundance
-            assert seq == seq.upper(), seq
-            taxid, genus_species, note = method_fn(session, seq, debug=debug)
+            taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
             tax_counts[genus_species] += abundance
             read_report.write(
                 "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
