@@ -620,13 +620,12 @@ ARG_FLIP = dict(  # noqa: C408
 # "-l", "--left",
 ARG_PRIMER_LEFT = dict(  # noqa: C408
     type=str,
-    default="GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
+    default="GAAGGTGAAGTCGTAACAAGG",
     metavar="PRIMER",
     help="Left primer sequence, find and remove from start of "
     "marker sequence. Can use IUPAC ambiguity codes. "
     "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
-    "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202 and "
-    "conserved 32bp 'TTTCCGTAGGTGAACCTGCGGAAGGATCATTA'.",
+    "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
 )
 
 # "-r", "--right",
