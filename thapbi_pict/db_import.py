@@ -332,7 +332,7 @@ def import_fasta_file(
                 assert taxonomy is not None
                 # at this point we don't have the full sequence
                 # prior to any primer removal...
-                its1_seq = seq
+                its1_seq = seq.upper()
                 if True:
                     # its1_seq_count += 1
                     its1_md5 = md5seq(its1_seq)
