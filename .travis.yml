@@ -29,7 +29,7 @@ before_install:
  - "if grep -n -r '[[:blank:]]$' *.rst */*.rst */*/*.rst; then echo 'Please remove trailing whitespace in RST files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi"
  - "if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi"
- - grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | sort -u -c -f
+ - grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
  - python -m pip install --upgrade pip setuptools
  # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
  - python -m pip install flake8==3.6 flake8-black flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear flake8-pie flake8-comprehensions pygments
