@@ -110,8 +110,8 @@ echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
 time thapbi_pict edit-graph -i $TMP/woody_hosts/intermediate/ -o $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml
-if [ `grep -c "<node " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 94 ]; then echo "Wrong node count"; false; fi
-if [ `grep -c "<edge " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 65 ]; then echo "Wrong edge count"; false; fi
+if [ `grep -c "<node " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 99 ]; then echo "Wrong node count"; false; fi
+if [ `grep -c "<edge " $TMP/woody_hosts/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then echo "Wrong edge count"; false; fi
 
 echo "=========================="
 echo "Running woody hosts assess"
