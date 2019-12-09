@@ -15,7 +15,7 @@ separately (122 pairs, a little over 200MB in total).
 There are multiple replicates from each of 14 sample sites, with FASTQ files
 ``Site_<N>_sample_<X>_R1.fastq.gz`` and ``Site_<N>_sample_<X>_R2.fastq.gz``
 (plus controls with a different pattern), which as the first step of the
-typical THAPBO PICT workflow (``thapbi_pict prepare-reads``) are transformed
+typical THAPBI PICT workflow (``thapbi_pict prepare-reads``) are transformed
 in FASTA files named ``Site_<N>_sample_<X>.fasta`` (etc). We include these
 FASTA files here as a compressed file, so after decompression they can be
 used to follow the rest of a typical analysis:
