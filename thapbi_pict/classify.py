@@ -14,7 +14,7 @@ import shutil
 import sys
 import tempfile
 
-from collections import Counter
+from collections import Counter, OrderedDict
 
 from sqlalchemy.orm import aliased, contains_eager
 
@@ -33,7 +33,7 @@ from .utils import species_level
 from .versions import check_tools
 
 
-MIN_BLAST_BITSCORE = 100  # minimum BLAST HSP bitscore to consider
+MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
 fuzzy_matches = None  # global variable for onebp classifier
 
@@ -332,6 +332,12 @@ def method_blast(
     # and they will be missing in the BLAST output.
     # Therefore must look at the FASTA input file too.
 
+    query_length = OrderedDict()
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
+            query_length[idn] = len(seq)
+
     # Load the top-equal BLAST results into a dict, values are lists hit MD5,
     # and the associated score in a second dict
     blast_hits = {}
@@ -343,7 +349,8 @@ def method_blast(
             #     sys.stderr.write(line)
             parts = line.rstrip("\n").split("\t")
             idn = parts[0]
-            if float(parts[11]) < MIN_BLAST_BITSCORE:
+            if float(parts[3]) / query_length[idn] < MIN_BLAST_COVERAGE:
+                # Too short
                 continue
             if idn not in blast_hits:
                 blast_hits[idn] = [parts[1]]
@@ -354,28 +361,24 @@ def method_blast(
                 blast_hits[idn].append(parts[1])
 
     tax_counts = Counter()
-    with open(fasta_file) as handle:
-        for title, _ in SimpleFastaParser(handle):
-            idn = title.split(None, 1)[0]
-            abundance = abundance_from_read_name(idn)
-            if idn in blast_hits:
-                db_md5s = blast_hits[idn]
-                score = blast_score[idn]
-                t = md5_to_taxon(db_md5s, session)
-                if not t:
-                    sys.exit("ERROR: No taxon entry for %s" % idn)
-                taxid, genus_species, note = taxid_and_sp_lists(t)
-                note = (
-                    "%i BLAST hits (bit score %s). %s" % (len(db_md5s), score, note)
-                ).strip()
-            else:
-                taxid = 0
-                genus_species = ""
-                note = "No BLAST hit"
-            read_report.write(
-                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
-            )
-            tax_counts[genus_species] += abundance
+    for idn in query_length:
+        abundance = abundance_from_read_name(idn)
+        if idn in blast_hits:
+            db_md5s = blast_hits[idn]
+            score = blast_score[idn]
+            t = md5_to_taxon(db_md5s, session)
+            if not t:
+                sys.exit("ERROR: No taxon entry for %s" % idn)
+            taxid, genus_species, note = taxid_and_sp_lists(t)
+            note = (
+                "%i BLAST hits (bit score %s). %s" % (len(db_md5s), score, note)
+            ).strip()
+        else:
+            taxid = 0
+            genus_species = ""
+            note = "No BLAST hit"
+        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+        tax_counts[genus_species] += abundance
     return tax_counts
 
 
