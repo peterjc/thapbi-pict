@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.5.8  2019-12-11 Correction to start of a *P. parsiana* curated sequence in our DB.
 v0.5.7  2019-12-09 Replace min bit score with min percentage coverage in ``blast`` classifier.
 v0.5.6  2019-12-04 Import species under "unclassified *Phytophthora*" as genus *Phytophthora*.
 v0.5.5  2019-12-03 Updated NCBI taxonomy, adds *Phytophthora caryae* and *P. pseudopolonica*.
