@@ -18,23 +18,14 @@ Sequencing sample: P-infestans-T30-4
 
 Sequencing sample: hmm_trim
 
+ - Unknown
  - Phytophthora aleatoria (uncertain/ambiguous)
- - Phytophthora asparagi
  - Phytophthora cactorum (uncertain/ambiguous)
  - Phytophthora cambivora (uncertain/ambiguous)
- - Phytophthora capsici (uncertain/ambiguous)
  - Phytophthora cinnamomi
  - Phytophthora cryptogea (uncertain/ambiguous)
- - Phytophthora dauci (uncertain/ambiguous)
- - Phytophthora fragariaefolia (uncertain/ambiguous)
- - Phytophthora gemini
- - Phytophthora glovera (uncertain/ambiguous)
- - Phytophthora litoralis
- - Phytophthora mengei (uncertain/ambiguous)
- - Phytophthora mexicana (uncertain/ambiguous)
  - Phytophthora pseudocryptogea (uncertain/ambiguous)
  - Phytophthora ramorum
- - Phytophthora tropicalis (uncertain/ambiguous)
  - Phytophthora x cambivora (uncertain/ambiguous)
 
 Sequencing sample: multiple_its1

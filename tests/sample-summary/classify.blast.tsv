@@ -1,4 +1,4 @@
-#Sequencing sample	Seq-count	Unknown	Nothophytophthora	Peronospora	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora asparagi	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora capsici;Phytophthora glovera;Phytophthora mengei;Phytophthora mexicana;Phytophthora tropicalis	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora dauci;Phytophthora fragariaefolia	Phytophthora gemini	Phytophthora litoralis	Phytophthora ramorum
-P-infestans-T30-4	63000	0	0	0	63000	0	63000	0	0	0	0	0	0	0	0	0
-hmm_trim	71864	0	0	0	71864	409	0	281	296	215	24104	160	34986	9520	263	1630
-multiple_its1	27281	12345	1234	13702	0	0	0	0	0	0	0	0	0	0	0	0
+#Sequencing sample	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora ramorum
+P-infestans-T30-4	63000	0	0	63000	0	63000	0	0	0	0
+hmm_trim	71864	68851	0	3013	409	0	296	518	160	1630
+multiple_its1	27281	13579	13702	0	0	0	0	0	0	0
