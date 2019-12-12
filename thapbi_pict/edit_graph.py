@@ -235,6 +235,7 @@ def main(
             with open(fasta_file) as handle:
                 md5_warn = False
                 for title, seq in SimpleFastaParser(handle):
+                    seq = seq.upper()
                     idn, abundance = split_read_name_abundance(title.split(None, 1)[0])
                     md5 = md5seq(seq)
                     if idn != md5:
@@ -246,7 +247,7 @@ def main(
                     md5_abundance[md5] += abundance
                     md5_sample_count[md5] += 1
                     if md5 in md5_to_seq:
-                        assert md5_to_seq[md5] == seq
+                        assert md5_to_seq[md5] == seq, "%s vs %s" % (md5, seq)
                     else:
                         md5_to_seq[md5] = seq
                 if md5_warn:
