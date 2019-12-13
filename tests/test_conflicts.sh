@@ -17,6 +17,7 @@ export TMP=${TMP:-/tmp}
 echo "=================="
 echo "Checking conflicts"
 echo "=================="
+set -x
 set -o pipefail
 
 thapbi_pict conflicts -o $TMP/conflicts.tsv
