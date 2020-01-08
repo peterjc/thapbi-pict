@@ -61,7 +61,7 @@ def main(
     for filename in inputs:
         # Assuming FASTA for now
         if debug:
-            sys.stderr.write("DEBUG: Parsing %s\n" % filename)
+            sys.stderr.write(f"DEBUG: Parsing {filename}\n")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
@@ -69,7 +69,7 @@ def main(
                     counts[seq.upper()] += a
     for filename in revcomp:
         if debug:
-            sys.stderr.write("DEBUG: Parsing %s (will reverse complement)\n" % filename)
+            sys.stderr.write(f"DEBUG: Parsing {filename} (will reverse complement)\n")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 if min_length <= len(seq) <= max_length:
@@ -86,4 +86,4 @@ def main(
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
     accepted = save_nr_fasta(counts, output, min_abundance=min_abundance)
-    sys.stderr.write("Saved %i unique sequences\n" % accepted)
+    sys.stderr.write(f"Saved {accepted:d} unique sequences\n")

@@ -47,31 +47,31 @@ def main(
     assert isinstance(inputs, list)
 
     input_list = find_paired_files(
-        inputs, ".fasta", ".%s.tsv" % method, ignore_prefixes, debug=debug
+        inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug=debug
     )
 
     if not input_list:
         sys.exit(
-            "ERROR: Need *.fasta files with matching *.%s.tsv classification\n" % method
+            f"ERROR: Need *.fasta files with matching *.{method}.tsv classification\n"
         )
 
     sys.stderr.write(
-        "Importing %i FASTA files with %s classifications\n" % (len(input_list), method)
+        f"Importing {len(input_list):d} FASTA files with {method} classifications\n"
     )
 
     for fasta_file, tsv_file in input_list:
         if debug:
-            sys.stderr.write("DEBUG: Loading meta-data from %s\n" % tsv_file)
+            sys.stderr.write(f"DEBUG: Loading meta-data from {tsv_file}\n")
         meta_data = {}
         # Apply minimum abundance threshold during FASTA loading
         try:
             for idn, taxid, genus_species in parse_species_tsv(tsv_file):
                 if idn in meta_data:
-                    sys.exit("ERROR: Duplicated identifier %r in %r" % (idn, tsv_file))
+                    sys.exit(f"ERROR: Duplicated identifier {idn!r} in {tsv_file!r}")
                 meta_data[idn] = (int(taxid), "", genus_species)
             if not meta_data:
                 sys.stderr.write(
-                    "File %s has no sequences, ignoring %s\n" % (tsv_file, fasta_file)
+                    f"File {tsv_file} has no sequences, ignoring {fasta_file}\n"
                 )
                 continue
 
@@ -109,7 +109,7 @@ def main(
                 else:
                     return [idn]
 
-            sys.stderr.write("File %s wild card for %s\n" % (tsv_file, genus_species))
+            sys.stderr.write(f"File {tsv_file} wild card for {genus_species}\n")
 
         import_fasta_file(
             fasta_file,

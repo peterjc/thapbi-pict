@@ -60,7 +60,7 @@ def parse_fasta_entry(text, known_species=None):
         # Special case, but can we assume these are Phytophthora?
         # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
         sys.stderr.write(
-            "WARNING: Assuming %s from %s is Phytophthora\n" % (name[0], parts[0])
+            f"WARNING: Assuming {name[0]} from {parts[0]} is Phytophthora\n"
         )
         name = ["Phytophthora", name[0][2:]]
     while rest and name[-1] in ("taxon", "aff.", "cf.", "x"):

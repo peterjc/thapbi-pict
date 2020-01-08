@@ -73,7 +73,7 @@ def main(
         genus_list = [_.strip() for _ in genus.strip().split(",")]
         for x in genus_list:
             if not session.query(Taxonomy).filter_by(genus=x).count():
-                sys.stderr.write("WARNING: Genus %r not in database\n" % x)
+                sys.stderr.write(f"WARNING: Genus {x!r} not in database\n")
         view = view.filter(cur_tax.genus.in_(genus_list))
     del genus
 
@@ -157,7 +157,7 @@ def main(
         for seq, entries in sorted(seq_entry.items()):
             # entry_count += len(entries)
             try:
-                out_handle.write(">%s\n%s\n" % (sep.join(sorted(entries)), seq))
+                out_handle.write(f">{sep.join(sorted(entries))}\n{seq}\n")
             except BrokenPipeError:
                 # Likely writing to stdout | head, or similar
                 # If so, stdout has been closed
@@ -203,7 +203,7 @@ def main(
                 ), seq_source.current_taxonomy
 
     if output_filename == "-":
-        sys.stderr.write("Wrote %i %s format entries\n" % (entry_count, output_format))
+        sys.stderr.write(f"Wrote {entry_count:d} {output_format} format entries\n")
     else:
         out_handle.close()
         sys.stderr.write(

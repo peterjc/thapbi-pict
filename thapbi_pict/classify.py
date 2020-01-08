@@ -155,7 +155,7 @@ def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=Fals
             taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
             tax_counts[genus_species] += abundance
             read_report.write(
-                "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
+                f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n"
             )
     assert count == sum(tax_counts.values())
     return tax_counts
@@ -251,7 +251,7 @@ def onebp_match_in_db(session, seq, debug=False):
         # reported too, but that would most likely be a DB problem...
         for db_seq in [seq] + fuzzy_matches[seq]:
             its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
-            assert db_seq, "Could not find %s (%s) in DB?" % (db_seq, md5seq(db_seq))
+            assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.extend(
                 _.current_taxonomy
                 for _ in session.query(SequenceSource).filter_by(its1=its1)
@@ -282,10 +282,10 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
         for its1 in view:
             md5 = its1.md5
             its1_seq = its1.sequence
-            handle.write(">%s\n%s\n" % (md5, its1_seq))
+            handle.write(f">{md5}\n{its1_seq}\n")
             count += 1
     sys.stderr.write(
-        "Wrote %i unique sequences from DB to FASTA file for BLAST database.\n" % count
+        f"Wrote {count:d} unique sequences from DB to FASTA file for BLAST database.\n"
     )
     cmd = ["makeblastdb", "-dbtype", "nucl", "-in", db_fasta, "-out", blast_db]
     run(cmd, debug)
@@ -306,7 +306,7 @@ def method_blast(
         and os.path.isfile(blast_db + ".nin")
         and os.path.isfile(blast_db + ".nsq")
     ):
-        sys.exit("ERROR: Missing generated BLAST database %s.n*\n" % blast_db)
+        sys.exit(f"ERROR: Missing generated BLAST database {blast_db}.n*\n")
     cmd = [
         "blastn",
         "-db",
@@ -325,7 +325,7 @@ def method_blast(
     run(cmd, debug)
 
     if not os.path.isfile(blast_out):
-        sys.exit("ERROR: BLAST did not produce expected output file %s\n" % blast_out)
+        sys.exit(f"ERROR: BLAST did not produce expected output file {blast_out}\n")
 
     # We want to report on entries without a BLAST hit,
     # and they will be missing in the BLAST output.
@@ -367,16 +367,16 @@ def method_blast(
             score = blast_score[idn]
             t = md5_to_taxon(db_md5s, session)
             if not t:
-                sys.exit("ERROR: No taxon entry for %s" % idn)
+                sys.exit(f"ERROR: No taxon entry for {idn}")
             taxid, genus_species, note = taxid_and_sp_lists(t)
             note = (
-                "%i BLAST hits (bit score %s). %s" % (len(db_md5s), score, note)
+                f"{len(db_md5s):d} BLAST hits (bit score {score}). {note}"
             ).strip()
         else:
             taxid = 0
             genus_species = ""
             note = "No BLAST hit"
-        read_report.write("%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note))
+        read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
         tax_counts[genus_species] += abundance
     return tax_counts
 
@@ -397,14 +397,14 @@ def make_swarm_db_fasta(db_fasta, session):
             # Using md5_ref_abundance to avoid duplicating any exact
             # sequence matching read which would be md5_abundance
             abundance = 1  # need to look at sequence_source join...
-            handle.write(">%s_db_%i\n%s\n" % (md5, abundance, its1_seq))
+            handle.write(f">{md5}_db_{abundance:d}\n{its1_seq}\n")
             count += 1
     sys.stderr.write(
-        "Wrote %i unique sequences from DB to FASTA file for SWARM.\n" % count
+        f"Wrote {count:d} unique sequences from DB to FASTA file for SWARM.\n"
     )
     if skip:
         sys.stderr.write(
-            "WARNING: Skipped %i DB sequences due to ambiguous bases.\n" % skip
+            f"WARNING: Skipped {skip:d} DB sequences due to ambiguous bases.\n"
         )
     return count
 
@@ -469,7 +469,7 @@ def method_swarm_core(
     """
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
-        sys.exit("ERROR: Missing generated file %s\n" % db_fasta)
+        sys.exit(f"ERROR: Missing generated file {db_fasta}\n")
 
     if identity:
         seq_dict = SeqIO.index(fasta_file, "fasta")
@@ -479,7 +479,7 @@ def method_swarm_core(
 
     if not os.path.isfile(swarm_clusters):
         sys.exit(
-            "ERROR: Swarm did not produce expected output file %s\n" % swarm_clusters
+            f"ERROR: Swarm did not produce expected output file {swarm_clusters}\n"
         )
     cluster_count = 0
     count = 0
@@ -530,10 +530,10 @@ def method_swarm_core(
                         )
                         continue
                 read_report.write(
-                    "%s\t%s\t%s\t%s\n" % (idn, str(taxid), genus_species, note)
+                    f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n"
                 )
             tax_counts[genus_species] += abundance
-    sys.stderr.write("Swarm generated %i clusters\n" % cluster_count)
+    sys.stderr.write(f"Swarm generated {cluster_count:d} clusters\n")
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -641,7 +641,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     count = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
     if debug:
-        sys.stderr.write("Taxonomy table contains %i distinct species.\n" % count)
+        sys.stderr.write(f"Taxonomy table contains {count:d} distinct species.\n")
     if not count:
         sys.exit("ERROR: Taxonomy table empty, cannot classify anything.\n")
 
@@ -673,7 +673,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     count = session.query(ITS1).count()
     if debug:
-        sys.stderr.write("ITS1 table contains %i distinct sequences.\n" % count)
+        sys.stderr.write(f"ITS1 table contains {count:d} distinct sequences.\n")
     if not count:
         sys.exit("ERROR: ITS1 table empty, cannot classify anything.\n")
 
@@ -682,7 +682,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
 
     if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
-        sys.stderr.write("Making output directory %r\n" % out_dir)
+        sys.stderr.write(f"Making output directory {out_dir!r}\n")
         os.mkdir(out_dir)
 
     if tmp_dir:
@@ -694,7 +694,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         shared_tmp = tmp_obj.name
 
     if debug:
-        sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
+        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
     if setup_fn:
         setup_fn(session, shared_tmp, debug, cpu)
 
@@ -703,7 +703,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
     seq_count = 0
     match_count = 0
     for filename in fasta_files:
-        sys.stderr.write("Running %s classifier on %s\n" % (method, filename))
+        sys.stderr.write(f"Running {method} classifier on {filename}\n")
         sys.stdout.flush()
         sys.stderr.flush()
 
@@ -711,21 +711,21 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         stem = os.path.splitext(stem)[0]
         if not out_dir:
             # Use input folder
-            output_name = os.path.join(folder, "%s.%s.tsv" % (stem, method))
+            output_name = os.path.join(folder, f"{stem}.{method}.tsv")
         elif out_dir == "-":
             output_name = None
         else:
-            output_name = os.path.join(out_dir, "%s.%s.tsv" % (stem, method))
+            output_name = os.path.join(out_dir, f"{stem}.{method}.tsv")
 
         classifier_output.append(output_name)
 
         if output_name is not None and os.path.isfile(output_name):
-            sys.stderr.write("WARNING: Skipping %s as already exists\n" % output_name)
+            sys.stderr.write(f"WARNING: Skipping {output_name} as already exists\n")
             # TODO: Count the number of sequences and matches?
             continue
 
         if debug:
-            sys.stderr.write("DEBUG: Output %s\n" % output_name)
+            sys.stderr.write(f"DEBUG: Output {output_name}\n")
 
         tmp = os.path.join(shared_tmp, stem)
         if not os.path.isdir(tmp):
@@ -734,9 +734,9 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
             os.mkdir(tmp)
 
         if debug:
-            sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+            sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
         # Using same file names, but in tmp folder:
-        tmp_pred = os.path.join(tmp, "%s.%s.tsv" % (stem, method))
+        tmp_pred = os.path.join(tmp, f"{stem}.{method}.tsv")
         # Run the classifier and write the sequence report:
         if output_name is None:
             pred_handle = sys.stdout
@@ -773,7 +773,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     if tmp_dir:
         sys.stderr.write(
-            "WARNING: Please remove temporary files written to %s\n" % tmp_dir
+            f"WARNING: Please remove temporary files written to {tmp_dir}\n"
         )
     else:
         tmp_obj.cleanup()

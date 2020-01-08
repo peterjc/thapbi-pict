@@ -54,7 +54,7 @@ def find_fastq_pairs(
         x = os.path.normpath(os.path.relpath(x))
         if os.path.isdir(x):
             if debug:
-                sys.stderr.write("Walking directory %r\n" % x)
+                sys.stderr.write(f"Walking directory {x!r}\n")
             for root, _, files in os.walk(x, followlinks=True):
                 for f in files:
                     if f.endswith(ext):
@@ -67,11 +67,11 @@ def find_fastq_pairs(
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
             if ignore_prefixes and os.path.split(x)[1].startswith(ignore_prefixes):
-                sys.stderr.write("WARNING: Ignoring %s due to prefix\n" % x)
+                sys.stderr.write(f"WARNING: Ignoring {x} due to prefix\n")
                 continue
             answer.append(x)
         else:
-            sys.exit("ERROR: %r is not a file or a directory\n" % x)
+            sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?
     answer = sorted(set(answer))
     if len(answer) % 2:
@@ -86,7 +86,7 @@ def find_fastq_pairs(
         ):
             if debug:
                 sys.stderr.write(
-                    "WARNING: Ignoring %r and %r due to suffix\n" % (left, right)
+                    f"WARNING: Ignoring {left!r} and {right!r} due to suffix\n"
                 )
             continue
         stem = None
@@ -99,29 +99,29 @@ def find_fastq_pairs(
                 stem = left.rsplit(suffix_left, 1)[0]
                 if stem != right.rsplit(suffix_right, 1)[0]:
                     sys.exit(
-                        "ERROR: Did not recognise %r and %r as a pair\n" % (left, right)
+                        f"ERROR: Did not recognise {left!r} and {right!r} as a pair\n"
                     )
         if not os.path.isfile(left) and os.path.islink(left):
-            sys.stderr.write("WARNING: Ignoring %s as symlink broken\n" % left)
+            sys.stderr.write(f"WARNING: Ignoring {left} as symlink broken\n")
             continue
         if not os.path.isfile(right) and os.path.islink(right):
-            sys.stderr.write("WARNING: Ignoring %s as symlink broken\n" % right)
+            sys.stderr.write(f"WARNING: Ignoring {right} as symlink broken\n")
             continue
         for filename in (left, right):
             if not os.path.isfile(filename):
                 if os.path.islink(filename):
-                    sys.exit("ERROR: Broken symlink: %s" % filename)
+                    sys.exit(f"ERROR: Broken symlink: {filename}")
                 else:
                     # What might cause this - other than deletion after our dir listing?
-                    sys.exit("ERROR: Missing file: %s" % filename)
+                    sys.exit(f"ERROR: Missing file: {filename}")
             if not os.stat(filename).st_size:
                 if filename.endswith(".gz"):
-                    sys.exit("ERROR: Empty gzip file %s" % filename)
+                    sys.exit(f"ERROR: Empty gzip file {filename}")
                 else:
-                    sys.stderr.write("WARNING: Empty file %s\n" % filename)
+                    sys.stderr.write(f"WARNING: Empty file {filename}\n")
         if not stem:
             sys.exit(
-                "ERROR: Did not recognise pair naming for %r and %r\n" % (left, right)
+                f"ERROR: Did not recognise pair naming for {left!r} and {right!r}\n"
             )
         pairs.append((stem, left, right))
 
@@ -139,7 +139,7 @@ def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
     )
     if os.path.isfile(filename):
         return filename
-    sys.exit("ERROR: Could not find %s installed with trimmomatic." % fasta_name)
+    sys.exit(f"ERROR: Could not find {fasta_name} installed with trimmomatic.")
 
 
 def run_trimmomatic(
@@ -156,12 +156,12 @@ def run_trimmomatic(
         adapters = find_trimmomatic_adapters()
     if not os.path.isfile(adapters):
         sys.exit(
-            "ERROR: Missing Illumina adapters file for trimmomatic: %s\n" % adapters
+            f"ERROR: Missing Illumina adapters file for trimmomatic: {adapters}\n"
         )
     if " " in adapters:
         # Can we do this with slash escaping? Clever quoting?
         sys.exit(
-            "ERROR: Spaces in the adapter filename are a bad idea: %s\n" % adapters
+            f"ERROR: Spaces in the adapter filename are a bad idea: {adapters}\n"
         )
     cmd = ["trimmomatic", "PE"]
     if cpu:
@@ -169,7 +169,7 @@ def run_trimmomatic(
     cmd += ["-phred33"]
     # We don't want the unpaired left and right output files, so /dev/null
     cmd += [left_in, right_in, left_out, os.devnull, right_out, os.devnull]
-    cmd += ["ILLUMINACLIP:%s:2:30:10" % adapters]
+    cmd += [f"ILLUMINACLIP:{adapters}:2:30:10"]
     return run(cmd, debug=debug)
 
 
@@ -205,7 +205,7 @@ def run_cutadapt(
         # -a LEFT...RIGHT = left-anchored
         # -g LEFT...RIGHT = non-anchored
         "-g",
-        "%s...%s" % (left_primer, reverse_complement(right_primer)),
+        f"{left_primer}...{reverse_complement(right_primer)}",
         "-o",
         trimmed_out,
         long_in,
@@ -251,7 +251,7 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
         if -count < min_abundance:
             # Sorted, so everything hereafter is too rare
             break
-        out_handle.write(">%s_%i\n%s\n" % (md5seq(seq), -count, seq))
+        out_handle.write(f">{md5seq(seq)}_{-count:d}\n{seq}\n")
         accepted += 1
     if output_fasta != "-":
         out_handle.close()
@@ -282,7 +282,7 @@ def make_nr_fasta(
     counts = Counter()
     with open(input_fasta) as handle:
         for _, seq in SimpleFastaParser(handle):
-            assert min_len <= len(seq) <= max_len, "%s len %s" % (_, len(seq))
+            assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
             counts[seq.upper()] += 1
     if input_rc:
         if debug:
@@ -292,7 +292,7 @@ def make_nr_fasta(
             )
         with open(input_rc) as handle:
             for _, seq in SimpleFastaParser(handle):
-                assert min_len <= len(seq) <= max_len, "%s len %s (RC)" % (_, len(seq))
+                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)} (RC)"
                 counts[reverse_complement(seq.upper())] += 1
     return (
         sum(counts.values()) if counts else 0,
@@ -327,9 +327,9 @@ def filter_fasta_for_its1(
                 # Using HMM match(es) to spot control reads
                 hmm_name = ""
             if hmm_name:
-                out_handle.write(">%s %s\n%s\n" % (title, hmm_name, full_seq))
+                out_handle.write(f">{title} {hmm_name}\n{full_seq}\n")
             else:
-                out_handle.write(">%s\n%s\n" % (title, full_seq))
+                out_handle.write(f">{title}\n{full_seq}\n")
             count += 1
             max_hmm_abundance[hmm_name] = max(
                 max_hmm_abundance[hmm_name],
@@ -367,9 +367,9 @@ def prepare_sample(
     folder, stem = os.path.split(stem)
     if out_dir and out_dir != "-":
         folder = out_dir
-    fasta_name = os.path.join(folder, "%s.fasta" % stem)
+    fasta_name = os.path.join(folder, f"{stem}.fasta")
     if primer_dir:
-        failed_primer_name = os.path.join(primer_dir, "%s.failed-primers.fasta" % stem)
+        failed_primer_name = os.path.join(primer_dir, f"{stem}.failed-primers.fasta")
     else:
         failed_primer_name = None
 
@@ -395,7 +395,7 @@ def prepare_sample(
         os.mkdir(tmp)
 
     if debug:
-        sys.stderr.write("DEBUG: Temp folder of %s is %s\n" % (stem, tmp))
+        sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
 
     # trimmomatic
     trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
@@ -403,13 +403,13 @@ def prepare_sample(
     run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
     for _ in (trim_R1, trim_R2):
         if not os.path.isfile(_):
-            sys.exit("ERROR: Expected file %r from trimmomatic\n" % _)
+            sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
 
     # flash
     merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
     run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
     if not os.path.isfile(merged_fastq):
-        sys.exit("ERROR: Expected file %r from flash\n" % merged_fastq)
+        sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
@@ -429,7 +429,7 @@ def prepare_sample(
         cpu=cpu,
     )
     if not os.path.isfile(trimmed_fasta):
-        sys.exit("ERROR: Expected file %r from cutadapt\n" % trimmed_fasta)
+        sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
 
     if flip:
         # Call cutadapt again - with primers reversed, and flip output,
@@ -450,7 +450,7 @@ def prepare_sample(
             cpu=cpu,
         )
         if not os.path.isfile(trimmed_fasta):
-            sys.exit("ERROR: Expected file %r from cutadapt\n" % flipped_fasta)
+            sys.exit(f"ERROR: Expected file {flipped_fasta!r} from cutadapt\n")
     else:
         flipped_fasta = None
 
@@ -591,7 +591,7 @@ def main(
         )
 
     if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
-        sys.stderr.write("Making output directory %r\n" % out_dir)
+        sys.stderr.write(f"Making output directory {out_dir!r}\n")
         os.mkdir(out_dir)
 
     if tmp_dir:
@@ -603,7 +603,7 @@ def main(
         shared_tmp = tmp_obj.name
 
     if debug:
-        sys.stderr.write("DEBUG: Shared temp folder %s\n" % shared_tmp)
+        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
 
     fasta_files_prepared = []  # return value
 
@@ -637,7 +637,7 @@ def main(
             cpu=cpu,
         )
         if fasta_file in fasta_files_prepared:
-            sys.exit("ERROR: Multiple files named %s" % fasta_file)
+            sys.exit(f"ERROR: Multiple files named {fasta_file}")
         fasta_files_prepared.append(fasta_file)
         if uniq_count:
             assert max_abundance_by_hmm, max_abundance_by_hmm
@@ -663,7 +663,7 @@ def main(
                     )
                 )
         elif uniq_count is None:
-            sys.stderr.write("Sample %s already done\n" % stem)
+            sys.stderr.write(f"Sample {stem} already done\n")
         else:
             sys.stderr.write(
                 "Sample %s has %i unique sequences "
@@ -673,7 +673,7 @@ def main(
 
     if tmp_dir:
         sys.stderr.write(
-            "WARNING: Please remove temporary files written to %s\n" % tmp_dir
+            f"WARNING: Please remove temporary files written to {tmp_dir}\n"
         )
     else:
         tmp_obj.cleanup()

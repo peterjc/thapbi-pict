@@ -119,7 +119,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
             for sp in expt.split(";"):
                 assert species_level(
                     sp
-                ), "%s from expected value %s is not species-level" % (sp, pred)
+                ), f"{sp} from expected value {pred} is not species-level"
                 classes.add(sp)
                 if sp not in db_sp_list:
                     impossible.add(sp)
@@ -127,12 +127,11 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
             for sp in pred.split(";"):
                 assert species_level(
                     sp
-                ), "%s from prediction %s is not species-level" % (sp, pred)
+                ), f"{sp} from prediction {pred} is not species-level"
                 classes.add(sp)
                 if sp and sp not in db_sp_list:
                     sys.exit(
-                        "ERROR: Species %s was not in the prediction file's header!"
-                        % sp
+                        f"ERROR: Species {sp} was not in the prediction file's header!"
                     )
     if impossible:
         sys.stderr.write(
@@ -147,9 +146,9 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
 def save_mapping(tally, filename, level, debug=False):
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
-        handle.write("#%s-count\tExpected\tPredicted\n" % level)
+        handle.write(f"#{level}-count\tExpected\tPredicted\n")
         for expt, pred in sorted(tally):
-            handle.write("%i\t%s\t%s\n" % (tally[expt, pred], expt, pred))
+            handle.write(f"{tally[expt, pred]:d}\t{expt}\t{pred}\n")
     if debug:
         sys.stderr.write(
             "DEBUG: Wrote %i entry mapping table (total %i) to %s\n"
@@ -241,7 +240,7 @@ def save_confusion_matrix(
     assert total >= sum(tally.values())
     if total != exp_total:
         sys.exit(
-            "ERROR: Expected %i but confusion matrix total %i" % (exp_total, total)
+            f"ERROR: Expected {exp_total:d} but confusion matrix total {total:d}"
         )
 
 
@@ -343,11 +342,11 @@ def main(
     assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
-        inputs, ".%s.tsv" % method, ".%s.tsv" % known, ignore_prefixes, debug=False
+        inputs, f".{method}.tsv", f".{known}.tsv", ignore_prefixes, debug=False
     )
 
     if not input_list:
-        sys.exit("ERROR: Found no pairs *.%s.tsv with *.%s.tsv" % (method, known))
+        sys.exit(f"ERROR: Found no pairs *.{method}.tsv with *.{known}.tsv")
 
     db_sp_list = None
     file_count = 0
@@ -355,7 +354,7 @@ def main(
 
     for predicted_file, expected_file in input_list:
         if debug:
-            sys.stderr.write("Assessing %s vs %s\n" % (predicted_file, expected_file))
+            sys.stderr.write(f"Assessing {predicted_file} vs {expected_file}\n")
         if db_sp_list is None:
             # Note this will ignore genus level classifications:
             db_sp_list = parse_species_list_from_tsv(predicted_file)
@@ -364,7 +363,7 @@ def main(
         if debug:
             assert db_sp_list is not None, db_sp_list
             sys.stderr.write(
-                "DEBUG: %s says DB had %i species\n" % (predicted_file, len(db_sp_list))
+                f"DEBUG: {predicted_file} says DB had {len(db_sp_list):d} species\n"
             )
 
         file_count += 1
@@ -390,7 +389,7 @@ def main(
                 except KeyError:
                     global_tally[expt, pred] = values
         else:
-            sys.exit("ERROR: Invalid level value %r" % level)
+            sys.exit(f"ERROR: Invalid level value {level!r}")
 
     # Consistency check - we know swarm classifier breaks this, important at useq level
     if level in ["useq"]:
@@ -450,8 +449,7 @@ def main(
         sys.exit("ERROR: Failed to load DB species list from headers")
     if debug and db_sp_list:
         sys.stderr.write(
-            "Classifier DB had %i species: %s\n"
-            % (len(db_sp_list), ", ".join(db_sp_list))
+            f"Classifier DB had {len(db_sp_list):d} species: {', '.join(db_sp_list)}\n"
         )
     for sp in db_sp_list:
         assert species_level(sp), sp

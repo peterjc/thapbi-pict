@@ -47,10 +47,10 @@ def main(
         sys.exit("ERROR: No output file specified.\n")
 
     samples = set()
-    tsv_files = find_requested_files(inputs, ".%s.tsv" % method, ignore_prefixes, debug)
+    tsv_files = find_requested_files(inputs, f".{method}.tsv", ignore_prefixes, debug)
     if debug:
         sys.stderr.write(
-            "Loading %i sample predictions using method %s\n" % (len(tsv_files), method)
+            f"Loading {len(tsv_files):d} sample predictions using method {method}\n"
         )
     if not tsv_files:
         sys.exit("ERROR: No input files found\n")
@@ -62,7 +62,7 @@ def main(
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
         if sample in samples:
-            sys.exit("ERROR: Duplicate sample name: %s\n" % sample)
+            sys.exit(f"ERROR: Duplicate sample name: {sample}\n")
         samples.add(sample)
         sample_species_counts[sample] = Counter()
         sample_genus_counts[sample] = Counter()
@@ -75,7 +75,7 @@ def main(
             genus_predictions.update(genus_list)
             if len(genus_list) > 1:
                 sys.stderr.write(
-                    "WARNING: Conflicting genus for %s from %s\n" % (name, sample)
+                    f"WARNING: Conflicting genus for {name} from {sample}\n"
                 )
             for genus in genus_list:
                 sample_genus_counts[sample][genus] += abundance_from_read_name(name)
@@ -210,7 +210,7 @@ def main(
                 if metadata:
                     for name, value in zip(meta_names, metadata):
                         if value:
-                            human.write("%s: %s\n" % (name, value))
+                            human.write(f"{name}: {value}\n")
                     human.write("\n")
                 else:
                     human.write("Missing metadata\n\n")
@@ -226,7 +226,7 @@ def main(
         # Now do the samples in this batch
         for sample in sample_batch:
             if sample not in samples:
-                sys.stderr.write("WARNING: Missing %s\n" % sample)
+                sys.stderr.write(f"WARNING: Missing {sample}\n")
             else:
                 if handle:
                     try:
@@ -287,15 +287,15 @@ def main(
                             unambig_sp.add(sp_list[0])
                 try:
                     if meta_names:
-                        human.write("Sequencing sample: %s\n\n" % sample)
+                        human.write(f"Sequencing sample: {sample}\n\n")
                     else:
-                        human.write("%s\n\n" % sample)
+                        human.write(f"{sample}\n\n")
                     for sp in sorted(all_sp):
                         if sp not in unambig_sp:
-                            sp = "%s (uncertain/ambiguous)" % sp
+                            sp = f"{sp} (uncertain/ambiguous)"
                         if not sp:
                             sp = "Unknown"
-                        human.write(" - %s\n" % sp)
+                        human.write(f" - {sp}\n")
                     if not all_sp:
                         human.write(" - No data\n")
                     human.write("\n")

@@ -35,7 +35,7 @@ IGNORE_PREFIXES = ("Undetermined",)
 def check_input_file(filename):
     """Command line validation of an input filename."""
     if not os.path.isfile(filename):
-        sys.exit("ERROR: Could not find input file: %s" % filename)
+        sys.exit(f"ERROR: Could not find input file: {filename}")
 
 
 def check_output_directory(out_dir, must_exist=True):
@@ -43,7 +43,7 @@ def check_output_directory(out_dir, must_exist=True):
     if out_dir == "-" or os.path.isdir(out_dir):
         return True
     elif os.path.isfile(out_dir):
-        sys.exit("ERROR: Output directory name is a file: %s\n" % out_dir)
+        sys.exit(f"ERROR: Output directory name is a file: {out_dir}\n")
     elif must_exist:
         sys.exit("ERROR: Output directory does not exist")
 
@@ -68,7 +68,7 @@ def expand_database_argument(text, exist=False, hyphen_default=False):
     else:
         db = text
     if exist and db != ":memory:" and not os.path.isfile(db):
-        sys.exit("ERROR: The database %s was not found.\n" % db)
+        sys.exit(f"ERROR: The database {db} was not found.\n")
     return prefix + db
 
 
@@ -446,7 +446,7 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
         sys.exit(return_code)
-    sys.stderr.write("Wrote %s.samples.*\n" % stem)
+    sys.stderr.write(f"Wrote {stem}.samples.*\n")
 
     return_code = read_summary(
         inputs=fasta_files + classified_files,
@@ -465,13 +465,13 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
         sys.exit(return_code)
-    sys.stderr.write("Wrote %s.reads.*\n" % stem)
+    sys.stderr.write(f"Wrote {stem}.reads.*\n")
 
     edit_graph_filename = stem + ".edit-graph.xgmml"
     if os.path.isfile(edit_graph_filename):
         # This is slow to compute on complex sample sets
         sys.stderr.write(
-            "WARNING: Skipping %s as already exists\n" % edit_graph_filename
+            f"WARNING: Skipping {edit_graph_filename} as already exists\n"
         )
     else:
         # The XGMML output has minimal dependencies compared to PDF output
@@ -490,7 +490,7 @@ def pipeline(args=None):
         if return_code:
             sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
             sys.exit(return_code)
-        sys.stderr.write("Wrote %s\n" % edit_graph_filename)
+        sys.stderr.write(f"Wrote {edit_graph_filename}\n")
 
     sys.stderr.write("All done!")
 
@@ -527,7 +527,7 @@ ARG_METHOD_OUTPUT = dict(  # noqa: C408
     type=str,
     default=DEFAULT_METHOD,
     choices=list(method_classifier),
-    help="Classify method to run, default is '%s'." % DEFAULT_METHOD,
+    help=f"Classify method to run, default is '{DEFAULT_METHOD}'.",
 )
 
 # "-m", "--method",
@@ -535,7 +535,7 @@ ARG_METHOD_INPUT = dict(  # noqa: C408
     type=str,
     default=DEFAULT_METHOD,
     choices=list(method_classifier),
-    help="Classify method (to infer filenames), default '%s'." % DEFAULT_METHOD,
+    help=f"Classify method (to infer filenames), default '{DEFAULT_METHOD}'.",
 )
 
 # "-t", "--temp",
@@ -762,13 +762,13 @@ def main(args=None):
     parser = argparse.ArgumentParser(
         prog="thapbi_pict",
         description=(
-            "THAPBI Phytophthora ITS1 Classifier Tool (PICT), v%s." % __version__
+            f"THAPBI Phytophthora ITS1 Classifier Tool (PICT), v{__version__}."
         ),
         epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help. "
         "Please see https://thapbi-pict.readthedocs.io/ for documentation.",
     )
     parser.add_argument(
-        "-v", "--version", action="version", version="THAPBI PICT v%s" % __version__
+        "-v", "--version", action="version", version=f"THAPBI PICT v{__version__}"
     )
     subparsers = parser.add_subparsers(
         title="subcommands", help="Each subcommand has its own additional help."

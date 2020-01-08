@@ -126,7 +126,7 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             if not label:
                 label = "{%s}" % n[:6]  # start of MD5, prefixed for sorting
             # weight = node["weight"]
-            handle.write('  <node id="%s" label="%s">\n' % (n, label))
+            handle.write(f'  <node id="{n}" label="{label}">\n')
             color = node["color"]
             # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
             # Rescale to use range 5 to 50.
@@ -136,7 +136,7 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                 'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
             )
             # Cytoscape hides the node ID (presumably assumes not usually user facing):
-            handle.write('    <att type="string" name="MD5" value="%s"/>\n' % n)
+            handle.write(f'    <att type="string" name="MD5" value="{n}"/>\n')
             handle.write(
                 '    <att type="integer" name="Total-abundance" value="%i"/>\n'
                 % node.get("abundance", 0)
@@ -230,7 +230,7 @@ def main(
             # TODO: Refactor this shared code with sample-summary?
             sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
             if sample in samples:
-                sys.exit("Duplicate sample name %s" % sample)
+                sys.exit(f"Duplicate sample name {sample}")
             samples.add(sample)
             with open(fasta_file) as handle:
                 md5_warn = False
@@ -247,7 +247,7 @@ def main(
                     md5_abundance[md5] += abundance
                     md5_sample_count[md5] += 1
                     if md5 in md5_to_seq:
-                        assert md5_to_seq[md5] == seq, "%s vs %s" % (md5, seq)
+                        assert md5_to_seq[md5] == seq, f"{md5} vs {seq}"
                     else:
                         md5_to_seq[md5] = seq
                 if md5_warn:
@@ -274,7 +274,7 @@ def main(
 
     if db_url:
         if debug:
-            sys.stderr.write("DEBUG: Connecting to database %s\n" % db_url)
+            sys.stderr.write(f"DEBUG: Connecting to database {db_url}\n")
         # Connect to the DB,
         Session = connect_to_db(db_url, echo=False)  # echo=debug
         session = Session()
@@ -369,9 +369,9 @@ def main(
                 if d and d <= max_edit_dist:
                     wanted.add(check1)
                     wanted.add(check2)
-    assert done == todo, "%r vs %s" % (done, todo)
+    assert done == todo, f"{done!r} vs {todo}"
     sys.stderr.write(
-        "Computed %i Levenshtein edit distances between %i sequences.\n" % (done, n)
+        f"Computed {done:d} Levenshtein edit distances between {n:d} sequences.\n"
     )
     sys.stderr.write(
         "Will draw %i nodes with at least one edge (%i are isolated sequences).\n"
@@ -527,7 +527,7 @@ def main(
         )
         assert edge_count == edge_count1 + edge_count2 + edge_count3
         sys.stderr.write(
-            "DEBUG: Dropped %i redundant 2-bp or 3-bp edges.\n" % redundant
+            f"DEBUG: Dropped {redundant:d} redundant 2-bp or 3-bp edges.\n"
         )
 
     render = {
@@ -541,7 +541,7 @@ def main(
         write_fn = render[graph_format]
     except KeyError:
         # Typically this would be caught in __main__.py
-        sys.exit("ERROR: Unexpected graph output format: %s" % graph_format)
+        sys.exit(f"ERROR: Unexpected graph output format: {graph_format}")
 
     write_fn(G, "/dev/stdout" if graph_output == "-" else graph_output)
 

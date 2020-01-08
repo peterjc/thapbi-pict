@@ -37,7 +37,7 @@ class DataSource(Base):
 
     def __repr__(self):
         """Represent a DataSource database entry as a string."""
-        return "DataSource(name=%r, ...)" % self.name
+        return f"DataSource(name={self.name!r}, ...)"
 
 
 class Taxonomy(Base):
@@ -79,7 +79,7 @@ class Synonym(Base):
 
     def __repr__(self):
         """Represent a synonym database entry as a string."""
-        return "Synonym(name=%s)" % self.name
+        return f"Synonym(name={self.name})"
 
 
 class ITS1(Base):
@@ -93,7 +93,7 @@ class ITS1(Base):
 
     def __repr__(self):
         """Represent an ITS1 database entry as a string."""
-        return "ITS1(md5=%r, sequence=%r)" % (self.md5, self.sequence)
+        return f"ITS1(md5={self.md5!r}, sequence={self.sequence!r})"
 
 
 class SequenceSource(Base):
