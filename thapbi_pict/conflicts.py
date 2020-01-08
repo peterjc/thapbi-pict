@@ -70,9 +70,7 @@ def main(db_url, output_filename, debug=False):
             genus_conflicts += 1
     for md5, species in sorted(md5_to_species.items()):
         if len(species) > 1:
-            out_handle.write(
-                f"{md5}\t{'species'}\t{';'.join(sorted(species))}\n"
-            )
+            out_handle.write(f"{md5}\t{'species'}\t{';'.join(sorted(species))}\n")
 
     if output_filename != "-":
         out_handle.close()

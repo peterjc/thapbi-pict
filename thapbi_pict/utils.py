@@ -459,9 +459,7 @@ def parse_species_list_from_tsv(tabular_file):
     with open(tabular_file) as handle:
         line = handle.readline()
     if not line.startswith("#") or line.count("\t") != 3:
-        sys.exit(
-            f"ERROR: {tabular_file} does not have 4 column TSV header:\n{line}"
-        )
+        sys.exit(f"ERROR: {tabular_file} does not have 4 column TSV header:\n{line}")
     parts = line.rstrip("\n").split("\t")
     if (
         parts[0] != "#sequence-name"
@@ -687,9 +685,7 @@ def load_metadata(
     bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
     if bad:
         print(bad)
-        sys.exit(
-            f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)"
-        )
+        sys.exit(f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)")
     del back
 
     return meta, index, names, default, missing_meta

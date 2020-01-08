@@ -155,14 +155,10 @@ def run_trimmomatic(
     if not adapters:
         adapters = find_trimmomatic_adapters()
     if not os.path.isfile(adapters):
-        sys.exit(
-            f"ERROR: Missing Illumina adapters file for trimmomatic: {adapters}\n"
-        )
+        sys.exit(f"ERROR: Missing Illumina adapters file for trimmomatic: {adapters}\n")
     if " " in adapters:
         # Can we do this with slash escaping? Clever quoting?
-        sys.exit(
-            f"ERROR: Spaces in the adapter filename are a bad idea: {adapters}\n"
-        )
+        sys.exit(f"ERROR: Spaces in the adapter filename are a bad idea: {adapters}\n")
     cmd = ["trimmomatic", "PE"]
     if cpu:
         cmd += ["-threads", str(cpu)]
