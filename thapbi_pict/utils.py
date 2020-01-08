@@ -53,7 +53,7 @@ def genus_species_name(genus, species):
     assert genus and genus == genus.strip()
     if species:
         assert species == species.strip()
-        return "%s %s" % (genus, species)
+        return f"{genus} {species}"
     else:
         return genus
 
@@ -191,7 +191,7 @@ def expand_IUPAC_ambiguity_codes(seq):
     ambig_letters = set(seq).difference(["A", "C", "G", "T"])
     for nuc in ambig_letters:
         if nuc not in ambiguous_dna_values:
-            raise ValueError("%r is not an IUPAC ambiguous DNA letter" % nuc)
+            raise ValueError(f"{nuc!r} is not an IUPAC ambiguous DNA letter")
     if not ambig_letters:
         yield seq
     else:
@@ -320,7 +320,7 @@ def abundance_from_read_name(text, debug=False):
         return int(text.rsplit("_", 1)[1])
     except (ValueError, IndexError):
         if debug:
-            sys.stderr.write("WARNING: No abundance suffix in %r\n" % text)
+            sys.stderr.write(f"WARNING: No abundance suffix in {text!r}\n")
         return 1
 
 
@@ -338,7 +338,7 @@ def split_read_name_abundance(text, debug=False):
         return prefix, int(abundance)
     except (ValueError, IndexError):
         if debug:
-            sys.stderr.write("WARNING: No abundance suffix in %r\n" % text)
+            sys.stderr.write(f"WARNING: No abundance suffix in {text!r}\n")
         return text, 1
 
 
@@ -370,7 +370,7 @@ def find_requested_files(
     for x in filenames_or_folders:
         if os.path.isdir(x):
             if debug:
-                sys.stderr.write("Walking directory %r\n" % x)
+                sys.stderr.write(f"Walking directory {x!r}\n")
             for root, _, files in os.walk(x, followlinks=True):
                 for f in files:
                     if f.endswith(ext):
@@ -395,7 +395,7 @@ def find_requested_files(
                     % (x, ext)
                 )
         else:
-            sys.exit("ERROR: %r is not a file or a directory\n" % x)
+            sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?
     return sorted(set(answer))
 
@@ -433,9 +433,9 @@ def find_paired_files(
 
     # This could happen if have same filename used in different folders:
     if len(ext1_dict) < len(ext1_list):
-        sys.exit("ERROR: Duplicate *%s file names" % ext1)
+        sys.exit(f"ERROR: Duplicate *{ext1} file names")
     if len(ext2_dict) < len(ext2_list):
-        sys.exit("ERROR: Duplicate *%s file names" % ext2)
+        sys.exit(f"ERROR: Duplicate *{ext2} file names")
     del ext1_list, ext2_list
 
     input_list = []
@@ -446,7 +446,7 @@ def find_paired_files(
             # Acceptable in motivating use case where on a given plate
             # only some of the samples would be known positive controls:
             sys.stderr.write(
-                "WARNING: Have %s but missing %s%s\n" % (ext1_dict[stem], stem, ext2)
+                f"WARNING: Have {ext1_dict[stem]} but missing {stem}{ext2}\n"
             )
     # TODO: Check for XXX.ext2 without XXX.ext1 here?
     del ext1_dict, ext2_dict
@@ -460,7 +460,7 @@ def parse_species_list_from_tsv(tabular_file):
         line = handle.readline()
     if not line.startswith("#") or line.count("\t") != 3:
         sys.exit(
-            "ERROR: %s does not have 4 column TSV header:\n%s" % (tabular_file, line)
+            f"ERROR: {tabular_file} does not have 4 column TSV header:\n{line}"
         )
     parts = line.rstrip("\n").split("\t")
     if (
@@ -469,7 +469,7 @@ def parse_species_list_from_tsv(tabular_file):
         or not parts[2].startswith("genus-species")
         or parts[3] != "note"
     ):
-        sys.stderr.write("%r\n" % parts)
+        sys.stderr.write(f"{parts!r}\n")
         sys.exit(
             "ERROR: %s does not have expected 4 column TSV headers "
             "(sequence-name, taxid, genus-species:..., note):\n%s"
@@ -688,7 +688,7 @@ def load_metadata(
     if bad:
         print(bad)
         sys.exit(
-            "ERROR: Duplicated metadata for %i samples, %s (etc)" % (len(bad), bad[1])
+            f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)"
         )
     del back
 

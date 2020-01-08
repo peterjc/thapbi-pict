@@ -216,10 +216,10 @@ def main(
     methods = method.split(",")
     for method in methods:
         if debug:
-            sys.stderr.write("Loading predictions for %s\n" % method)
+            sys.stderr.write(f"Loading predictions for {method}\n")
         tsv_files = find_requested_files(
             [_ for _ in inputs if not _.endswith(".fasta")],
-            ".%s.tsv" % method,
+            f".{method}.tsv",
             ignore_prefixes,
             debug,
         )

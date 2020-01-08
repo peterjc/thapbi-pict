@@ -124,13 +124,13 @@ def top_level_species(children, ranks, names, genus_list):
             elif ranks[taxid] == "subgenus":
                 if taxid in children:
                     sys.stderr.write(
-                        "WARNING: Collapsing sub-genus %s into parent\n" % name
+                        f"WARNING: Collapsing sub-genus {name} into parent\n"
                     )
                     for _ in top_level_species(children, ranks, names, [taxid]):
                         yield _
                 else:
                     sys.stderr.write(
-                        "WARNING: Ignoring sub-genus %s with no children\n" % name
+                        f"WARNING: Ignoring sub-genus {name} with no children\n"
                     )
             else:
                 if name.split(None, 1)[0].lower() in ("unclassified", "unidentified"):
@@ -170,17 +170,17 @@ def not_top_species(top_species, children, ranks, names, genus_list):
 def main(tax, db_url, ancestors, debug=True):
     """Load an NCBI taxdump into an ITS1 database."""
     if not os.path.isdir(tax):
-        sys.exit("ERROR: Could not find taxdump directory: %r\n" % tax)
+        sys.exit(f"ERROR: Could not find taxdump directory: {tax!r}\n")
     for filename in ("names.dmp", "nodes.dmp"):
         if not os.path.isfile(os.path.join(tax, filename)):
             sys.exit(
-                "ERROR: Missing %s in the taxdump directory: %r\n" % (filename, tax)
+                f"ERROR: Missing {filename} in the taxdump directory: {tax!r}\n"
             )
 
     try:
         ancestors = [int(_) for _ in ancestors.split(",")]
     except ValueError:
-        sys.exit("ERROR: Invalid ancestors argument: %r\n" % ancestors)
+        sys.exit(f"ERROR: Invalid ancestors argument: {ancestors!r}\n")
 
     tree, children, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
@@ -260,12 +260,12 @@ def main(tax, db_url, ancestors, debug=True):
             # genus="Phytophthora", species="infestans"
             species = species.split(" ", 1)[1]
 
-        if " x %s " % genus in species:
+        if f" x {genus} " in species:
             # Want to turn "Phytophthora medicaginis x Phytophthora cryptogea"
             # into "Phytophthora medicaginis x cryptogea", and then take as the
             # species just "medicaginis x cryptogea" (as in older NCBI taxonomy)
             aliases.append(genus + " " + species)
-            species = species.replace(" x %s " % genus, " x ")
+            species = species.replace(f" x {genus} ", " x ")
 
         if species == "unclassified " + genus:
             # Another special case

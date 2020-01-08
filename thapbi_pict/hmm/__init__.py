@@ -50,9 +50,9 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan="hmmscan", debug=F
     Bio.SeqIO, and the HMMER3 text parser in Bio.SearchIO.
     """
     if not os.path.isfile(fasta_input_file):
-        raise ValueError("Missing FASTA input %r" % fasta_input_file)
+        raise ValueError(f"Missing FASTA input {fasta_input_file!r}")
     if not os.path.isfile(hmm_file):
-        raise ValueError("Missing HMM input %r" % hmm_file)
+        raise ValueError(f"Missing HMM input {hmm_file!r}")
 
     # TODO - Once this is working, refactor to parse stdout
     tmp_dir = tempfile.mkdtemp()
@@ -70,7 +70,7 @@ def run_and_parse_hmmscan(hmm_file, fasta_input_file, hmmscan="hmmscan", debug=F
         SeqIO.parse(fasta_input_file, "fasta"), SearchIO.parse(hmm_out, "hmmer3-text")
     ):
         if record.id != result.id:
-            raise ValueError("FASTA %s vs HMMER %s" % (record.id, result.id))
+            raise ValueError(f"FASTA {record.id} vs HMMER {result.id}")
         yield record, result
 
     os.remove(hmm_out)
@@ -89,7 +89,7 @@ def hmm_cache(hmm_file, cache_dir, debug=False):
         return new
 
     if debug:
-        sys.stderr.write("DEBUG: Caching HMM at %s\n" % new)
+        sys.stderr.write(f"DEBUG: Caching HMM at {new}\n")
 
     # Copy the extra files first:
     for f in os.listdir(old_dir):
@@ -168,7 +168,7 @@ def filter_for_hmm(
                     % (record.id, ";".join(sorted({_[0] for _ in its1_seqs})))
                 )
                 sys.stderr.write(
-                    "%s length %s:\n" % (_[0], len(_[1])) for _ in its1_seqs
+                    f"{_[0]} length {len(_[1])}:\n" for _ in its1_seqs
                 )
                 sys.exit(1)
             name = its1_seqs[0][0]  # Just checked all the same name

@@ -63,7 +63,7 @@ def load_taxonomy(session):
         names.add(genus_species_name(taxonomy.genus, taxonomy.species))
     for synonym in session.query(Synonym):
         if synonym.name in names:
-            sys.stderr.write("WARNING: Synonym %s duplicated?\n" % synonym.name)
+            sys.stderr.write(f"WARNING: Synonym {synonym.name} duplicated?\n")
         else:
             names.add(synonym.name)
     return names
@@ -167,7 +167,7 @@ def import_fasta_file(
 
     if os.stat(fasta_file).st_size == 0:
         if debug:
-            sys.stderr.write("Ignoring empty FASTA file %s\n" % fasta_file)
+            sys.stderr.write(f"Ignoring empty FASTA file {fasta_file}\n")
         return
 
     # Connect to the DB,
@@ -219,7 +219,7 @@ def import_fasta_file(
         name=name,
         uri=fasta_file,
         md5=md5,
-        notes="Imported with thapbi_pict legacy_import v%s" % __version__,
+        notes=f"Imported with thapbi_pict legacy_import v{__version__}",
     )
     session.add(db_source)
 
@@ -241,14 +241,14 @@ def import_fasta_file(
             if not (min_length <= len(seq) <= max_length):
                 if debug:
                     sys.stderr.write(
-                        "DEBUG: Rejected %s as length %i\n" % (title, len(seq))
+                        f"DEBUG: Rejected {title} as length {len(seq):d}\n"
                     )
                 continue
 
             # One sequence can have multiple entries
             idn = title.split(None, 1)[0]
             if idn in idn_set:
-                sys.stderr.write("WARNING: Duplicated identifier %r\n" % idn)
+                sys.stderr.write(f"WARNING: Duplicated identifier {idn!r}\n")
             idn_set.add(idn)
 
             entries = fasta_entry_fn(title)
@@ -284,7 +284,7 @@ def import_fasta_file(
 
                 if not taxid and not name:
                     bad_entries += 1
-                    sys.stderr.write("WARNING: No species information: %r\n" % idn)
+                    sys.stderr.write(f"WARNING: No species information: {idn!r}\n")
                     continue
 
                 # Load into the DB
@@ -296,7 +296,7 @@ def import_fasta_file(
                 # e.g. "Pythium undulatum" -> "Phytophthora undulatum"
                 if debug and not name:
                     sys.stderr.write(
-                        "WARNING: No species information from %r\n" % entry
+                        f"WARNING: No species information from {entry!r}\n"
                     )
 
                 assert not name.startswith("P."), title
