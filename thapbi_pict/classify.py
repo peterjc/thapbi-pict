@@ -154,9 +154,7 @@ def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=Fals
             count += abundance
             taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
             tax_counts[genus_species] += abundance
-            read_report.write(
-                f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n"
-            )
+            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -369,9 +367,7 @@ def method_blast(
             if not t:
                 sys.exit(f"ERROR: No taxon entry for {idn}")
             taxid, genus_species, note = taxid_and_sp_lists(t)
-            note = (
-                f"{len(db_md5s):d} BLAST hits (bit score {score}). {note}"
-            ).strip()
+            note = (f"{len(db_md5s):d} BLAST hits (bit score {score}). {note}").strip()
         else:
             taxid = 0
             genus_species = ""
@@ -529,9 +525,7 @@ def method_swarm_core(
                             )
                         )
                         continue
-                read_report.write(
-                    f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n"
-                )
+                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
             tax_counts[genus_species] += abundance
     sys.stderr.write(f"Swarm generated {cluster_count:d} clusters\n")
     assert count == sum(tax_counts.values())

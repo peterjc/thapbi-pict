@@ -167,9 +167,7 @@ def filter_for_hmm(
                     "ERROR: Conflicting HMM matches for %s: %s\n"
                     % (record.id, ";".join(sorted({_[0] for _ in its1_seqs})))
                 )
-                sys.stderr.write(
-                    f"{_[0]} length {len(_[1])}:\n" for _ in its1_seqs
-                )
+                sys.stderr.write(f"{_[0]} length {len(_[1])}:\n" for _ in its1_seqs)
                 sys.exit(1)
             name = its1_seqs[0][0]  # Just checked all the same name
             yield title, seq, name

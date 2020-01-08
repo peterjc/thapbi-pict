@@ -173,9 +173,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.exit(f"ERROR: Could not find taxdump directory: {tax!r}\n")
     for filename in ("names.dmp", "nodes.dmp"):
         if not os.path.isfile(os.path.join(tax, filename)):
-            sys.exit(
-                f"ERROR: Missing {filename} in the taxdump directory: {tax!r}\n"
-            )
+            sys.exit(f"ERROR: Missing {filename} in the taxdump directory: {tax!r}\n")
 
     try:
         ancestors = [int(_) for _ in ancestors.split(",")]

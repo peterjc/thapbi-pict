@@ -239,9 +239,7 @@ def save_confusion_matrix(
         )
     assert total >= sum(tally.values())
     if total != exp_total:
-        sys.exit(
-            f"ERROR: Expected {exp_total:d} but confusion matrix total {total:d}"
-        )
+        sys.exit(f"ERROR: Expected {exp_total:d} but confusion matrix total {total:d}")
 
 
 def extract_binary_tally(class_name, tally):

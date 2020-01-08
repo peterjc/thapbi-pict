@@ -470,9 +470,7 @@ def pipeline(args=None):
     edit_graph_filename = stem + ".edit-graph.xgmml"
     if os.path.isfile(edit_graph_filename):
         # This is slow to compute on complex sample sets
-        sys.stderr.write(
-            f"WARNING: Skipping {edit_graph_filename} as already exists\n"
-        )
+        sys.stderr.write(f"WARNING: Skipping {edit_graph_filename} as already exists\n")
     else:
         # The XGMML output has minimal dependencies compared to PDF output
         return_code = edit_graph(
