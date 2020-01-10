@@ -35,24 +35,35 @@ Setup
 -----
 
 We assume you have your command line terminal open in a new empty folder
-dedicated to this analysis. Start by making three sub-folders as follows:
+dedicated to this analysis. Start by fetching files ``PRJNA417859.txt``
+(originally downloaded from the ENA) and ``metadata.tsv`` (generated from it,
+ready for use in reporting). These are including with the THAPBI PICT source
+code in the folder ``tests/recycled_water/`` but can be downloaded:
 
 .. code:: console
 
-   $ mkdir raw_data/ intermediate/ summary/
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/PRJNA417859.txt
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/metadata.tsv
 
-We will use the file ``PRJNA417859.txt`` (originally downloaded from the ENA)
-to automated downloading the FASTA files, which together are about 5GB:
+Next, we will download the gzip-compressed FASTQ files into a sub-directory
+named ``raw_data/``. You may find the ENA bulk download helper application
+easier, but the following should also work in principle:
 
 .. code:: console
 
-    $ echo TODO
-    $ ls -1 raw_data/*.fastq.gz | wc -l
+    $ mkdir raw_data
+    $ cd raw_data/
+    $ for URL in `cut -f 6 PRJNA417859.txt | sed "s/;/ /g"`; do wget "ftp://$URL"; done
+    $ cd ..
+
+If that worked you should have 768 files named ``SRR6303585_1.fastq.gz`` and
+``SRR6303585_2.fastq.gz`` (the pair for ``SRR6303585`` aka ``OSU484``) though
+to ``SRR6303968_1.fastq.gz`` and ``SRR6303968_2.fastq.gz`` (the pair for
+``SRR6303968`` aka ``OSU476``):
+
+.. code:: console
+
+    $ ls -1 raw_data/SRR*.fastq.gz | wc -l
     768
 
-We will also need ``metadata.tsv`` (extracted from ``PRJNA417859.txt``)::
-
-.. code:: console
-
-    $ echo TODO
-
+There is no need to decompress the files.
