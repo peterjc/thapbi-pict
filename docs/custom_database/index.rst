@@ -16,3 +16,4 @@ covers more than just *Phytophthora*.
    :maxdepth: 1
 
    sample_data
+   defaults
