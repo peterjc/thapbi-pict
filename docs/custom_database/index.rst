@@ -17,3 +17,4 @@ covers more than just *Phytophthora*.
 
    sample_data
    defaults
+   primers
