@@ -6,6 +6,10 @@ extend-ignore =
     E203,
     # See https://github.com/sbdchd/flake8-pie/issues/24
     PIE782,
+    # We like f-strings
+    SFS301,
+    # Still have a few string percent formatting lines,
+    SFS101,
 
 # =====================
 # flake-quote settings:
