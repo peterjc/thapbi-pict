@@ -1,36 +1,33 @@
 Pipeline with custom primers
 ============================
 
-Running thapbi-pict pipeline
-----------------------------
+Running thapbi-pict prepare-reads
+---------------------------------
 
 We first ran the pipeline command with
 `:ref:default settings <recycle_water_defaults>`, but now we will give the
-actual primers used. Again we assume you have setup the FASTQ files in
-``raw_data/``, now run the pipeline command as follows where we set the
-left and right primer sequences specifically:
+actual primers used. We will see that the *Phytophthora* FASTA sequences
+extracted are now about 60bp longer, and many more non-*Phytophthora* are
+also accepted.
+
+Critically we will no longer get any matches against the default database
+with the default classifier (it is too strict, the extra 60bp makes the
+matches too distant). Before we can run the entire pipeline, we will need
+to build a custom database. But first, we will examine the new FASTA
+intermediate files.
+
+Again we assume you have setup the FASTQ files in ``raw_data/``, and just
+run the prepare-reads step:
 
 .. code:: console
 
-    $ mkdir intermediate_primers/ summary_primers/
-    $ thapbi_pict pipeline \
-      -i raw_data/ -o summary_primers/ -s intermediate_primers/ \
-      --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC \
-      -r recycled-water-primers -t metadata.tsv -c 1,2,3,4,5,6,7
+    $ mkdir intermediate_primers/
+    $ thapbi_pict prepare-reads \
+      -i raw_data/ -o intermediate_primers/ \
+      --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
     ...
     $ ls -1 intermediate_primers/SRR*.fasta | wc -l
     384
-    $ ls -1 intermediate_primers/SRR*.onebp.tsv | wc -l
-    384
-    $ ls -1 summary/summary_primers/thapbi-pict.*
-    recycled-water-primers.reads.tsv
-    recycled-water-primers.reads.xlsx
-    recycled-water-primers.samples.tsv
-    recycled-water-primers.samples.txt
-    recycled-water-primers.edit-graph.xgmml
-
-Again we used ``-r`` (or ``--report``) to specify a stem for the report
-filenames, and the metadata is exactly as before.
 
 Here we said the left primer is ``GAAGGTGAAGTCGTAACAAGG`` (same as the THAPBI
 PICT default), but that the right primer is ``AGCGTTCTTCATCGATGTGC``. This has
@@ -41,8 +38,207 @@ and *Phytopythium* species.
 i.e. We should now find the *Phytophthora* FASTA sequences extracted are about
 60bp longer, and many more non-*Phytophthora* are accepted.
 
+Will now pick a couple of samples to compare and contrast with the first run.
+For clarity these examples are deliberately from the less diverse samples.
+The FASTA sequences have been line wrapped at 60bp for display.
 
-Results
--------
+Simple Example
+--------------
 
-Will pick a couple of samples to compare and contrast with the first run...
+We will start with ``SRR6303586`` aka ``OSU483``, a leaf-baiting sample from
+a reservoir. Here is with the default primer trimming:
+
+.. code:: console
+
+    $ cat intermediate_defaults/SRR6303586.fasta
+    >11b74237bf44899f24ace62be657172a_35127
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAA
+    CCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGG
+    GTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAA
+    CTAGTAGCTATCAATTTTAAACCCTTTCTTTAAATACTGAACATACT
+    >3cd14145747f26f7461cbba643388ff6_10275
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAA
+    CCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGG
+    GTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAA
+    CTAGTAGCTATCAATTTTAAACTCTTTCTTTAAATACTGAACATACT
+    >9ba3657d5ecb7d8f35ce7f5feacbc3f7_580
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGG
+    TCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAAC
+    TAGTAGCTATCAATTTTAAACCCTTTCTTTAAATACTGAACATACT
+    >5bddf030b013e783a218734230c6f542_155
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGG
+    TCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAAC
+    TAGTAGCTATCAATTTTAAACTCTTTCTTTAAATACTGAACATACT
+```
+
+Four very similar sequences (differing in the length of the poly-A run, seven
+is more common than six, and a ``C/T`` SNP towards the end), all matched to
+*Phytophthora chlamydospora* with THAPBI PICT's default settings.
+
+With the actual primers, we again get four sequences passing the abundance threshold:
+
+.. code:: console
+
+    $ cat intermediate_primers/SRR6303586.fasta
+    >3299108b021ef15f5a0a238bea7bd428_31993
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAA
+    CCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGG
+    GTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAA
+    CTAGTAGCTATCAATTTTAAACCCTTTCTTTAAATACTGAACATACTGTGGGGACGAAAG
+    TCTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
+    >2497b040bf359fa2a90a3f7031682d69_9361
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAA
+    CCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGG
+    GTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAA
+    CTAGTAGCTATCAATTTTAAACTCTTTCTTTAAATACTGAACATACTGTGGGGACGAAAG
+    TCTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
+    >1874773b48078ca8c21c4b780d9925ff_524
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGG
+    TCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAAC
+    TAGTAGCTATCAATTTTAAACCCTTTCTTTAAATACTGAACATACTGTGGGGACGAAAGT
+    CTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
+    >9cb84c3adabe30e32b3bdbfb5d3b2f23_138
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGG
+    TCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAAC
+    TAGTAGCTATCAATTTTAAACTCTTTCTTTAAATACTGAACATACTGTGGGGACGAAAGT
+    CTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
+
+
+Again four very similar sequences, each as before but extended by
+``GTGGGGACGAAAGTCTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC``.
+The abundances are similar but slightly lower - there would have been
+some minor variants in this last region (below the abundance threshold),
+which would have been pooled when using the default primer settings,
+giving higher totals.
+
+You can verify by NCBI BLAST online that the first and third (the
+``C`` form) give perfect full length matches to published *Phytophthora
+chlamydospora*, while an exact match to the ``T`` forms has not been
+published at the time of writing (yet they occurs at good abundance in
+many of these samples).
+
+Losing sequences
+----------------
+
+If you examine ``SRR6303588`` you will see a similar example,
+starting with five unique sequences (with one only just above the
+default abundance threshold), dropping to four unique sequences.
+
+Finding *Pythium*
+-----------------
+
+Now for a more interesting example, ``SRR6303596`` aka ``OSU121``,
+another leaf baiting sample but from runoff water. With the defaults:
+
+.. code:: console
+
+    $ cat intermediate_defaults/SRR6303596.fasta
+    >3dd3b5989ee07ed2d2b3fac826dbb94f_954
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAATCTTTCCACGTGAAT
+    TGTTTTGCTGTACCTTTGGGCTTCGCCGTTGTCTTGTTCTTTTGTAAGAGAAAGGGGGAG
+    GCGCGGTTGGAGGCCATCAGGGGTGTGTTCGTCGCGGTTTGTTTCTTTTGTTGGAACTTG
+    CGCGCGGATGCGTCCTTTTGTCAACCCATTTTTTGAATGAAAAACTGATCATACT
+
+There was a single sequence, with no matches (NCBI BLAST suggests
+this is *Phytopythium litorale*). Now with the actual primers this
+sequence is still present but only the second most abundant sequence:
+
+.. code:: console
+
+    $ cat intermediate_primers/SRR6303596.fasta
+    >d010b82be0848d8eb87750dde4005989_38802
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAAACTTTCCACGTGAAC
+    CGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGGGCTGCTTA
+    ATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAA
+    ACGAAAGTCTTTGGTTTTAATCAATAACAACTTTCAGCAGTGGATGTCTAGGCTC
+    >3497a4f0f3039ea129e2e537a9e5a187_849
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAATCTTTCCACGTGAAT
+    TGTTTTGCTGTACCTTTGGGCTTCGCCGTTGTCTTGTTCTTTTGTAAGAGAAAGGGGGAG
+    GCGCGGTTGGAGGCCATCAGGGGTGTGTTCGTCGCGGTTTGTTTCTTTTGTTGGAACTTG
+    CGCGCGGATGCGTCCTTTTGTCAACCCATTTTTTGAATGAAAAACTGATCATACTGTGGG
+    GACGAAAGTCTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
+    >327de436be9b13bf1f0599bc47534be3_377
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAACTTTCCACGTGAACC
+    GTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGGGCTGCTTAA
+    TTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAAA
+    CGAAAGTCTTTGGTTTTAATCAATAACAACTTTCAGCAGTGGATGTCTAGGCTC
+    >3c33bb926ff3193d9c7e7a28d81eb527_182
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAAACTTTCCACGTGAAC
+    CGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGGGCTGCTTA
+    ATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGGAA
+    ACGAAAGTCTTTGGTTTTAATCAATAACAACTTTCAGCAGTGGATGTCTAGGCTC
+    >577807a2479083d44b0480e2434e1698_115
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAAACTTTCCACGTGAAC
+    CGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGGGCTGCTTA
+    ATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAA
+    ACGAAAGTCTTTGGTTTTAATCAATAACAACTTTCAGCAGTGGATGTCTAGGCGC
+    >d2d6f8220fc01aaca358680dc2bebe20_107
+    TTTCCGTAGGTGAGCCTGCGGAAGGATCATTACCACACCAAAAAAACTTTCCACGTGAAC
+    CGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGGGCTGCTTA
+    ATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAA
+    ACGAAAGTCTTTGGTTTTAATCAATAACAACTTTCAGCAGTGGATGTCTAGGCTC
+
+The probable *Phytopythium litorale* has been joined by five shorter
+and very similar sequences (differing by a handful of SNPs and a
+poly-A length change), which NCBI BLAST matches suggest are all
+*Pythium coloratum/dissotocum*.
+
+Finding more
+------------
+
+Another interesting example, ``SRR6303948`` aka ``OSU536.s203``,
+from a runoff filtration sample. First with the default settings,
+a single unique sequence matching *Phytophthora ramorum*:
+
+.. code:: console
+
+    $ cat intermediate_defaults/SRR6303948.fasta
+    >dcd6316eb77be50ee344fbeca6e005c7_1437
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAAAACCCTTAGTTGGGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGG
+    CTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTAGTAGCCCACTTTTTAAACCC
+    ATTCCTAAATACTGAATATACT
+
+Now with the actual primers, we get a further five sequences - and the
+extended *Phytophthora ramorum* sequence drops to the second most abundant:
+
+.. code:: console
+
+    $ cat intermediate_primers/SRR6303948.fasta
+    >490d63f5bdc2cf480a950eda7b985caa_5121
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAAACACCCCACGTGAAT
+    TGTACTGTATGAGCTATGTGCTGCGGATTTCTGCGGCTTAGCGAAGGTTTCGAAAGAGAC
+    CGATGTACTTTTAAACCCCTTTACATTACTGTCTGATAAATTACATTGCAAACATTTAAA
+    GTGGTTGCTCTTAATTTAACATACAACTTTCAACAGTGGATGTCTAGGCTC
+    >4b8389448e5b6f0b9099318d82034154_1254
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAAC
+    CGTATCAAAACCCTTAGTTGGGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGG
+    CTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTAGTAGCCCACTTTTTAAACCC
+    ATTCCTAAATACTGAATATACTGTGGGGACGAAAGTCTCTGCTTTTAACTAGATAGCAAC
+    TTTCAGCAGTGGATGTCTAGGCTC
+    >4fcfcc8d9b50b5e8ee706e2f1c32adb6_419
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCAAAAAAACTTACCACGTGAAT
+    CTGTACTGTTTAGTTTTGTGCTGCGTTCGAAAGGATGCGGCTAAACGAAGGTTGGCTTGA
+    TTACTTCGGTAATTAGGCTGGCTGATGTACTCTTTTAAACCCCTTCATACCAAAATACTG
+    ATTTATACTGTGAGAATGAAAATTCTTGCTTTTAACTAGATAACAACTTTCAACAGTGGA
+    TGTCTAGGCTC
+    >5f9e5ffa56d9d0eb1210c2601e9439ad_218
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTGAATCTATCACAATCCACACCTGTGAACT
+    TGCTTGTTGGCCTCTGCATGTGCTTCGGTATGTGCAGGTTGAGCCGATCGGATTAACTTC
+    TGGTCGGCTTGGGGCCTCAACCCAATCCTCGGATTGGTTTGGGGTCGGTCTCTATTAACA
+    ACCAACACCAAACCAAACTATAAAAAAACTGAGAATGGCTTAGAGCCAAACTCACTAACC
+    AAGACAACTCTGAACAACGGATATCTTGGCTA
+    >38a69bf6e00c66cb62c273d297092282_174
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAACTTTCCACGTGAATC
+    GTTCTATATAGCTTTGTGCTTTGCGGAAACGCGAGGCTAAGCGAAGGATTAGCAAAGTAG
+    TACTTCGGTGCGAAACACTTTTCCGATGTATTTTTCAAACCCTTTTACTTATACTGAACT
+    ATACTCTAAGACGAAAGTCTTGGTTTTAATCCACAACAACTTTCAGCAGTGGATGTCTAG
+    GCTC
+
+NCBI BLAST suggests the new sequences could all be *Oomycetes*, but there
+are no very close matches - and some of the tenous best matches include
+uncultured fungus, green algae, and even green plants.
