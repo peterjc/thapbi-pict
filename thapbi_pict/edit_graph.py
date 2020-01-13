@@ -252,12 +252,10 @@ def main(
                         md5_to_seq[md5] = seq
                 if md5_warn:
                     sys.stderr.write(
-                        "WARNING: Sequence(s) in %s not using MD5_abundance naming\n"
-                        % fasta_file
+                        f"WARNING: Sequence(s) in {fasta_file} not using MD5_abundance naming\n"
                     )
         sys.stderr.write(
-            "Loaded %i unique sequences from %i FASTA files.\n"
-            % (len(md5_in_fasta), len(samples))
+            f"Loaded {len(md5_in_fasta):d} unique sequences from {len(samples):d} FASTA files.\n"
         )
         # Drop low total abundance FASTA sequences now (before compute distances)
         if total_min_abundance:
@@ -267,9 +265,7 @@ def main(
                     md5_in_fasta.remove(md5)
                     del md5_to_seq[md5]
             sys.stderr.write(
-                "Minimum total abundance threshold %i "
-                "left %i sequences from FASTA files.\n"
-                % (total_min_abundance, len(md5_in_fasta))
+                f"Minimum total abundance threshold {total_min_abundance:d} left {len(md5_in_fasta):d} sequences from FASTA files.\n"
             )
 
     if db_url:
@@ -325,21 +321,10 @@ def main(
 
     if db_url and inputs and always_show_db:
         sys.stderr.write(
-            "DB had %i sequences (%i not in FASTA), "
-            "FASTA had %i sequences (%i not in DB).\n"
-            % (
-                len(md5_in_db),
-                len(md5_in_db.difference(md5_in_fasta)),
-                len(md5_in_fasta),
-                len(md5_in_fasta.difference(md5_in_db)),
-            )
+            f"DB had {len(md5_in_db):d} sequences ({len(md5_in_db.difference(md5_in_fasta)):d} not in FASTA), FASTA had {len(md5_in_fasta):d} sequences ({len(md5_in_fasta.difference(md5_in_db)):d} not in DB).\n"
         )
         sys.stderr.write(
-            "DB and FASTA had %i sequences in common; %i combined.\n"
-            % (
-                len(md5_in_db.intersection(md5_in_fasta)),
-                len(md5_in_db.union(md5_in_fasta)),
-            )
+            f"DB and FASTA had {len(md5_in_db.intersection(md5_in_fasta)):d} sequences in common; {len(md5_in_db.union(md5_in_fasta)):d} combined.\n"
         )
 
     if not md5_to_seq:
@@ -518,12 +503,10 @@ def main(
 
     if debug:
         sys.stderr.write(
-            "DEBUG: %i edges up to maximum edit distance %i\n"
-            % (edge_count, max_edit_dist)
+            f"DEBUG: {edge_count:d} edges up to maximum edit distance {max_edit_dist:d}\n"
         )
         sys.stderr.write(
-            "DEBUG: %i one-bp edges; %i two-bp edges; %i three-bp edges.\n"
-            % (edge_count1, edge_count2, edge_count3)
+            f"DEBUG: {edge_count1:d} one-bp edges; {edge_count2:d} two-bp edges; {edge_count3:d} three-bp edges.\n"
         )
         assert edge_count == edge_count1 + edge_count2 + edge_count3
         sys.stderr.write(

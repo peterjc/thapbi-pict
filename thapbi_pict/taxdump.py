@@ -113,8 +113,7 @@ def top_level_species(children, ranks, names, genus_list):
         assert ranks[genus_taxid] in ("genus", "subgenus")
         if genus_taxid not in children:
             sys.stderr.write(
-                "WARNING: Genus %s (%i) has no children\n"
-                % (names[genus_taxid], genus_taxid)
+                f"WARNING: Genus {names[genus_taxid]} ({genus_taxid:d}) has no children\n"
             )
             continue
         for taxid in children[genus_taxid]:
@@ -141,8 +140,7 @@ def top_level_species(children, ranks, names, genus_list):
                     continue
                 # e.g. Hyaloperonospora parasitica species group
                 sys.stderr.write(
-                    "WARNING: Treating %s '%s' (txid%i) as a species.\n"
-                    % (ranks[taxid], name, taxid)
+                    f"WARNING: Treating {ranks[taxid]} '{name}' (txid{taxid:d}) as a species.\n"
                 )
                 yield taxid, names[genus_taxid], name
 
@@ -193,8 +191,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
     if debug:
         sys.stderr.write(
-            "Identified %i genera under specified ancestor node: %s\n"
-            % (len(genus_list), ", ".join(sorted(names[_] for _ in genus_list)))
+            f"Identified {len(genus_list):d} genera under specified ancestor node: {', '.join(sorted(names[_] for _ in genus_list))}\n"
         )
 
     genus_species = list(top_level_species(children, ranks, names, genus_list))
@@ -234,8 +231,7 @@ def main(tax, db_url, ancestors, debug=True):
                 # Prior entry had missing/different taxid, must update it
                 if debug or taxonomy.ncbi_taxid != 0:
                     sys.stderr.write(
-                        "WARNING: %s %s, updating NCBI taxid %i -> %i\n"
-                        % (genus, "", taxonomy.ncbi_taxid, taxid)
+                        f"WARNING: {genus} {''}, updating NCBI taxid {taxonomy.ncbi_taxid:d} -> {taxid:d}\n"
                     )
                 taxonomy.ncbi_taxid = taxid
                 session.add(taxonomy)
@@ -279,8 +275,7 @@ def main(tax, db_url, ancestors, debug=True):
             # Prior entry had missing/different taxid, must update it
             if debug or taxonomy.ncbi_taxid != 0:
                 sys.stderr.write(
-                    "WARNING: %s %s, updating NCBI taxid %i -> %i\n"
-                    % (genus, species, taxonomy.ncbi_taxid, taxid)
+                    f"WARNING: {genus} {species}, updating NCBI taxid {taxonomy.ncbi_taxid:d} -> {taxid:d}\n"
                 )
             taxonomy.ncbi_taxid = taxid
             session.add(taxonomy)
@@ -327,16 +322,14 @@ def main(tax, db_url, ancestors, debug=True):
                 # See this with Hyaloperonospora parasitica species group,
                 # treated as a species with entries under it already set as aliases
                 sys.stderr.write(
-                    "Minor species %r -> NCBI %s, table %s pre-existing -> %s\n"
-                    % (name, genus_taxid, taxonomy.id, synonym.taxonomy_id)
+                    f"Minor species {name!r} -> NCBI {genus_taxid}, table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
                 )
             s_old += 1
 
     session.commit()
 
     sys.stderr.write(
-        "Loaded %i new genera, and %i new species entries with %i synonyms into DB "
-        "(%i, %i and %i already there)\n" % (g_new, new, s_new, g_old, old, s_old)
+        f"Loaded {g_new:d} new genera, and {new:d} new species entries with {s_new:d} synonyms into DB ({g_old:d}, {old:d} and {s_old:d} already there)\n"
     )
 
     return 0

@@ -418,8 +418,7 @@ def pipeline(args=None):
             sys.exit(return_code)
     if len(fasta_files) != len(classified_files):
         sys.exit(
-            "ERROR: %i FASTA files but %i classified"
-            % (len(fasta_files), len(classified_files))
+            f"ERROR: {len(fasta_files):d} FASTA files but {len(classified_files):d} classified"
         )
 
     if args.report:
@@ -676,9 +675,7 @@ ARG_CONTROLS = dict(  # noqa: C408
 ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     type=int,
     default=str(DEFAULT_MIN_ABUNDANCE),
-    help="Mininum abundance applied to unique marker sequences "
-    "in each sample (i.e. each FASTQ pair), default %i. "
-    "May be increased based on negative controls." % DEFAULT_MIN_ABUNDANCE,
+    help=f"Mininum abundance applied to unique marker sequences in each sample (i.e. each FASTQ pair), default {DEFAULT_MIN_ABUNDANCE:d}. May be increased based on negative controls.",
 )
 
 # Common metadata arguments
@@ -1282,20 +1279,14 @@ def main(args=None):
         "--method",
         type=str,
         default=DEFAULT_METHOD,
-        help="Classifier method(s) to report, comma separaed list (used to infer "
-        "filenames), default is '%s' (only)." % DEFAULT_METHOD,
+        help=f"Classifier method(s) to report, comma separaed list (used to infer filenames), default is '{DEFAULT_METHOD}' (only).",
     )
     subcommand_parser.add_argument(
         "-a",
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance to require for the report. "
-        "Default %i reflects default in prepare-reads. Rather than re-running "
-        "the prepare or classifier steps with a stricter minimum abundance you "
-        "can apply it here. Use zero or one to look at everything (but beware "
-        "that negative control samples will include low abundance entries)."
-        % DEFAULT_MIN_ABUNDANCE,
+        help=f"Mininum sample level abundance to require for the report. Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads. Rather than re-running the prepare or classifier steps with a stricter minimum abundance you can apply it here. Use zero or one to look at everything (but beware that negative control samples will include low abundance entries).",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
@@ -1333,12 +1324,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance to require for the report. "
-        "Default %i reflects default in prepare-reads. Rather than re-running "
-        "the prepare or classifier steps with a stricter minimum abundance you "
-        "can apply it here. Use zero or one to look at everything (but beware "
-        "that negative control samples will include low abundance entries)."
-        % DEFAULT_MIN_ABUNDANCE,
+        help=f"Mininum sample level abundance to require for the report. Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads. Rather than re-running the prepare or classifier steps with a stricter minimum abundance you can apply it here. Use zero or one to look at everything (but beware that negative control samples will include low abundance entries).",
     )
     subcommand_parser.add_argument(
         "-o",
@@ -1407,8 +1393,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance for FASTA sequences. "
-        "Default %i reflects default in prepare-reads." % DEFAULT_MIN_ABUNDANCE,
+        help=f"Mininum sample level abundance for FASTA sequences. Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads.",
     )
     subcommand_parser.add_argument(
         "-t",

@@ -308,8 +308,7 @@ def import_fasta_file(
                 if not taxonomy:
                     if debug and name not in bad_species:
                         sys.stderr.write(
-                            "WARNING: Could not validate species %r from %r\n"
-                            % (name, entry)
+                            f"WARNING: Could not validate species {name!r} from {entry!r}\n"
                         )
                     bad_species.add(name)  # To avoid repeat warnings
                     if validate_species:
@@ -365,21 +364,18 @@ def import_fasta_file(
 
     session.commit()
     sys.stderr.write(
-        "File %s had %i sequences, of which %i accepted.\n"
-        % (fasta_file, seq_count, good_seq_count)
+        f"File {fasta_file} had {seq_count:d} sequences, of which {good_seq_count:d} accepted.\n"
     )
     assert bad_entries <= entry_count, (bad_entries, entry_count)
     assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
-            "Of %i potential entries, %i unparsable, %i failed sp. validation, %i OK.\n"
-            % (entry_count, bad_entries, bad_sp_entries, good_entries)
+            f"Of {entry_count:d} potential entries, {bad_entries:d} unparsable, {bad_sp_entries:d} failed sp. validation, {good_entries:d} OK.\n"
         )
         assert entry_count == good_entries + bad_entries + bad_sp_entries
     else:
         sys.stderr.write(
-            "Of %i potential entries, loaded %i entries, %i failed parsing.\n"
-            % (entry_count, good_entries, bad_entries)
+            f"Of {entry_count:d} potential entries, loaded {good_entries:d} entries, {bad_entries:d} failed parsing.\n"
         )
         assert bad_sp_entries == 0, bad_sp_entries
         assert entry_count == good_entries + bad_entries

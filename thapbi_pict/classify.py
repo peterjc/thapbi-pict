@@ -136,8 +136,7 @@ def perfect_match_in_db(session, seq, debug=False):
     )
     if not t:
         sys.exit(
-            "ERROR: perfect_match_in_db, no taxonomy for id=%s md5=%s sequence=%s\n"
-            % (its1.id, its1.md5, its1.sequence)
+            f"ERROR: perfect_match_in_db, no taxonomy for id={its1.id} md5={its1.md5} sequence={its1.sequence}\n"
         )
     return taxid_and_sp_lists(t)
 
@@ -216,8 +215,7 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
                 fuzzy_matches[md5] = [its1_seq]
 
     sys.stderr.write(
-        "Expanded %i ITS1 sequences from DB into cloud of %i 1bp different variants\n"
-        % (count, len(fuzzy_matches))
+        f"Expanded {count:d} ITS1 sequences from DB into cloud of {len(fuzzy_matches):d} 1bp different variants\n"
     )
 
 
@@ -263,14 +261,10 @@ def onebp_match_in_db(session, seq, debug=False):
                 for _ in session.query(SequenceSource).filter_by(its1=its1)
             )
         t = list(set(t))
-        note = "%i ITS1 matches with up to 1bp diff, %i taxonomy entries" % (
-            len(fuzzy_matches[md5]),
-            len(t),
-        )
+        note = f"{len(fuzzy_matches[md5]):d} ITS1 matches with up to 1bp diff, {len(t):d} taxonomy entries"
         if not t:
             sys.exit(
-                "ERROR: onebp: %i matches but no taxonomy entries for %s\n"
-                % (len(fuzzy_matches[md5]), seq)
+                f"ERROR: onebp: {len(fuzzy_matches[md5]):d} matches but no taxonomy entries for {seq}\n"
             )
         taxid, genus_species, _ = taxid_and_sp_lists(t)
     elif not genus_species:
@@ -505,17 +499,13 @@ def method_swarm_core(
                 t = md5_to_taxon(db_md5s, session)
                 taxid, genus_species, note = taxid_and_sp_lists(t)
                 note = (
-                    "Cluster #%i - %i seqs and %i DB entries. %s"
-                    % (cluster_count, len(read_idns), len(db_md5s), note)
+                    f"Cluster #{cluster_count:d} - {len(read_idns):d} seqs and {len(db_md5s):d} DB entries. {note}"
                 ).strip()
             else:
                 # Cannot classify, report
                 taxid = 0
                 genus_species = ""
-                note = "Cluster #%i - %i seqs but no DB entry" % (
-                    cluster_count,
-                    len(read_idns),
-                )
+                note = f"Cluster #{cluster_count:d} - {len(read_idns):d} seqs but no DB entry"
             for idn in read_idns:
                 if identity:
                     # Does this match any of the ITS1 seq in our DB?
@@ -623,8 +613,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     if method not in method_classify_file:
         sys.exit(
-            "ERROR: Invalid method name %r, should be one of: %s\n"
-            % (method, ", ".join(sorted(method_classify_file)))
+            f"ERROR: Invalid method name {method!r}, should be one of: {', '.join(sorted(method_classify_file))}\n"
         )
     classify_file_fn = method_classify_file[method]
     try:
@@ -757,8 +746,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         else:
             # No sequences, no taxonomy assignments
             sys.stderr.write(
-                "WARNING: Skipping %s classifier on %s as zero sequences\n"
-                % (method, filename)
+                f"WARNING: Skipping {method} classifier on {filename} as zero sequences\n"
             )
             tax_counts = Counter()
             pred_handle.write("#(no sequences to classify)\n")
@@ -781,8 +769,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         tmp_obj.cleanup()
 
     sys.stderr.write(
-        "%s classifier assigned species/genus to %i of %i sequences from %i files\n"
-        % (method, match_count, seq_count, len(fasta_files))
+        f"{method} classifier assigned species/genus to {match_count:d} of {seq_count:d} sequences from {len(fasta_files):d} files\n"
     )
 
     sys.stdout.flush()
