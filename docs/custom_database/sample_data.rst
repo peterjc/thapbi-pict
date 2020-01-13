@@ -66,4 +66,14 @@ to ``SRR6303968_1.fastq.gz`` and ``SRR6303968_2.fastq.gz`` (the pair for
     $ ls -1 raw_data/SRR*.fastq.gz | wc -l
     768
 
+At this point it is worth checking there were no partial downloads or data
+corruption by validating the MD5 checksums given by the ENA:
+
+.. code:: console
+
+    $ cd raw_data/
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/MD5SUM.txt
+    $ md5sum -c MD5SUM.txt
+    $ cd ..
+
 There is no need to decompress the files.
