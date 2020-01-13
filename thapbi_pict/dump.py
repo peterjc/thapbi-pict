@@ -143,13 +143,7 @@ def main(
         seq_entry = {}
         for seq_source in view:
             seq = seq_source.its1.sequence
-            entry = "%s %s" % (
-                seq_source.source_accession,
-                genus_species_name(
-                    seq_source.current_taxonomy.genus,
-                    seq_source.current_taxonomy.species,
-                ),
-            )
+            entry = f"{seq_source.source_accession} {genus_species_name(seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species)}"
             if seq in seq_entry:
                 seq_entry[seq].add(entry)
             else:
@@ -175,16 +169,7 @@ def main(
             )
             try:
                 out_handle.write(
-                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
-                    % (
-                        seq_source.source_accession,
-                        none_str(seq_source.current_taxonomy.genus),
-                        none_str(seq_source.current_taxonomy.species),
-                        taxid,
-                        seq_source.its1.md5,
-                        seq_source.its1.sequence,
-                        seq_source.sequence,
-                    )
+                    f"{seq_source.source_accession}\t{none_str(seq_source.current_taxonomy.genus)}\t{none_str(seq_source.current_taxonomy.species)}\t{taxid}\t{seq_source.its1.md5}\t{seq_source.its1.sequence}\t{seq_source.sequence}\n"
                 )
             except BrokenPipeError:
                 # Likely writing to stdout | head, or similar
@@ -207,6 +192,5 @@ def main(
     else:
         out_handle.close()
         sys.stderr.write(
-            "Wrote %i %s format entries to %r\n"
-            % (entry_count, output_format, output_filename)
+            f"Wrote {entry_count:d} {output_format} format entries to {output_filename!r}\n"
         )

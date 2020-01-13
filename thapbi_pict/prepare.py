@@ -283,8 +283,7 @@ def make_nr_fasta(
     if input_rc:
         if debug:
             sys.stderr.write(
-                "DEBUG: Combining %r and %r (RC) for unique sequences\n"
-                % (input_fasta, input_rc)
+                f"DEBUG: Combining {input_fasta!r} and {input_rc!r} (RC) for unique sequences\n"
             )
         with open(input_rc) as handle:
             for _, seq in SimpleFastaParser(handle):
@@ -380,8 +379,7 @@ def prepare_sample(
 
     if debug:
         sys.stderr.write(
-            "DEBUG: Starting to prepare %s %s (min abundance set to %i)\n"
-            % ("control" if control else "sample", fasta_name, min_abundance)
+            f"DEBUG: Starting to prepare {'control' if control else 'sample'} {fasta_name} (min abundance set to {min_abundance:d})\n"
         )
 
     tmp = os.path.join(shared_tmp, stem)
@@ -463,17 +461,13 @@ def prepare_sample(
     )
     if debug:
         sys.stderr.write(
-            "Merged %i paired FASTQ reads into %i unique sequences, "
-            "%i above min abundance %i (max abundance %i)\n"
-            % (count, uniq_count, acc_uniq_count, min_abundance, max_hmm_abundance)
+            f"Merged {count:d} paired FASTQ reads into {uniq_count:d} unique sequences, {acc_uniq_count:d} above min abundance {min_abundance:d} (max abundance {max_hmm_abundance:d})\n"
         )
 
     if not acc_uniq_count:
         if debug:
             sys.stderr.write(
-                "%s had %i unique sequences, "
-                "but none above %s minimum abundance threshold %i\n"
-                % (stem, uniq_count, "control" if control else "sample", min_abundance)
+                f"{stem} had {uniq_count:d} unique sequences, but none above {'control' if control else 'sample'} minimum abundance threshold {min_abundance:d}\n"
             )
         with open(fasta_name, "w"):
             # Write empty file
@@ -484,17 +478,7 @@ def prepare_sample(
 
     if debug:
         sys.stderr.write(
-            "Merged %s %i paired FASTQ reads into %i unique sequences, "
-            "%i above %s min abundance %i (max abundance %i)\n"
-            % (
-                stem,
-                count,
-                uniq_count,
-                acc_uniq_count,
-                "control" if control else "sample",
-                min_abundance,
-                max_hmm_abundance,
-            )
+            f"Merged {stem} {count:d} paired FASTQ reads into {uniq_count:d} unique sequences, {acc_uniq_count:d} above {'control' if control else 'sample'} min abundance {min_abundance:d} (max abundance {max_hmm_abundance:d})\n"
         )
 
     # Determine if synthetic controls are present using hmmscan,
@@ -510,15 +494,7 @@ def prepare_sample(
 
     if debug:
         sys.stderr.write(
-            "DEBUG: Filtered %s down to %i unique sequences "
-            "above %s min abundance threshold %i (max abundance %i)\n"
-            % (
-                stem,
-                uniq_count,
-                "control" if control else "sample",
-                min_abundance,
-                max(max_hmm_abundance.values(), default=0),
-            )
+            f"DEBUG: Filtered {stem} down to {uniq_count:d} unique sequences above {'control' if control else 'sample'} min abundance threshold {min_abundance:d} (max abundance {max(max_hmm_abundance.values(), default=0):d})\n"
         )
 
     return fasta_name, uniq_count, max_hmm_abundance
@@ -577,8 +553,7 @@ def main(
 
     if debug:
         sys.stderr.write(
-            "Preparing %i data FASTQ pairs, and %i control FASTQ pairs\n"
-            % (len(fastq_file_pairs), len(control_file_pairs))
+            f"Preparing {len(fastq_file_pairs):d} data FASTQ pairs, and {len(control_file_pairs):d} control FASTQ pairs\n"
         )
     if control_file_pairs and not fastq_file_pairs:
         sys.stderr.write(
@@ -641,9 +616,7 @@ def main(
         max_its1_abundance = max_abundance_by_hmm.get("", 0)
         if control:
             sys.stderr.write(
-                "Control %s has %i unique sequences "
-                "over control abundance threshold %i (max marker abundance %i)\n"
-                % (stem, uniq_count, min_abundance, max_its1_abundance)
+                f"Control {stem} has {uniq_count:d} unique sequences over control abundance threshold {min_abundance:d} (max marker abundance {max_its1_abundance:d})\n"
             )
             if max_its1_abundance > pool_worst_control.get(pool_key, 0):
                 pool_worst_control[pool_key] = max_its1_abundance
@@ -662,9 +635,7 @@ def main(
             sys.stderr.write(f"Sample {stem} already done\n")
         else:
             sys.stderr.write(
-                "Sample %s has %i unique sequences "
-                "over abundance threshold %i (max marker abundance %i)\n"
-                % (stem, uniq_count, min_a, max_its1_abundance)
+                f"Sample {stem} has {uniq_count:d} unique sequences over abundance threshold {min_a:d} (max marker abundance {max_its1_abundance:d})\n"
             )
 
     if tmp_dir:

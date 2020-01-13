@@ -38,8 +38,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
         # All the same not helpful for banding
         if debug:
             sys.stderr.write(
-                "DEBUG: All samples had same metadata in color grouping field: %r\n"
-                % meta_groups[0]
+                f"DEBUG: All samples had same metadata in color grouping field: {meta_groups[0]!r}\n"
             )
         return default
 
@@ -85,8 +84,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
                 # Metadata values are not grouped, can't use for banding
                 # (might be able to use with a color key?)
                 sys.stderr.write(
-                    "WARNING: Metadata not grouped nicely for coloring: "
-                    "%s and then %s (again).\n" % (", ".join(debug_msg), value)
+                    f"WARNING: Metadata not grouped nicely for coloring: {', '.join(debug_msg)} and then {value} (again).\n"
                 )
                 # if debug:
                 #     sys.stderr.write("DEBUG: %r\n" % meta_groups)
@@ -130,21 +128,18 @@ def main(
             value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
         except ValueError:
             sys.exit(
-                "ERROR: Output metadata columns should be a comma separated list "
-                "of positive integers, not %r." % metadata_cols
+                f"ERROR: Output metadata columns should be a comma separated list of positive integers, not {metadata_cols!r}."
             )
     if metadata_groups:
         try:
             group_col = int(metadata_groups) - 1
         except ValueError:
             sys.exit(
-                "ERROR: Invalid metadata group column, should be positive or 0, not %r."
-                % metadata_groups
+                f"ERROR: Invalid metadata group column, should be positive or 0, not {metadata_groups!r}."
             )
         if group_col not in value_cols:
             sys.exit(
-                "ERROR: Metadata group column %i not included in reported metadata.\n"
-                % metadata_groups
+                f"ERROR: Metadata group column {metadata_groups:d} not included in reported metadata.\n"
             )
         group_col = value_cols.index(group_col)  # i.e. which of requested columns
         del value_cols
@@ -225,8 +220,7 @@ def main(
         )
         if len(samples) != len(tsv_files):
             sys.exit(
-                "ERROR: Identified %i samples from FASTA files, but %i TSV files for %s"
-                % (len(samples), len(tsv_files), method)
+                f"ERROR: Identified {len(samples):d} samples from FASTA files, but {len(tsv_files):d} TSV files for {method}"
             )
         for predicted_file in tsv_files:
             sample = os.path.basename(predicted_file).rsplit(".", 2)[0]

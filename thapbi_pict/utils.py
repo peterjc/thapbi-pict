@@ -391,8 +391,7 @@ def find_requested_files(
                 answer.append(x)
             else:
                 sys.exit(
-                    "ERROR: Specified filename %r does not have expected extension %r."
-                    % (x, ext)
+                    f"ERROR: Specified filename {x!r} does not have expected extension {ext!r}."
                 )
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
@@ -469,14 +468,11 @@ def parse_species_list_from_tsv(tabular_file):
     ):
         sys.stderr.write(f"{parts!r}\n")
         sys.exit(
-            "ERROR: %s does not have expected 4 column TSV headers "
-            "(sequence-name, taxid, genus-species:..., note):\n%s"
-            % (tabular_file, line)
+            f"ERROR: {tabular_file} does not have expected 4 column TSV headers (sequence-name, taxid, genus-species:..., note):\n{line}"
         )
     if not parts[2].startswith("genus-species:"):
         sys.exit(
-            "ERROR: %s does not have species list in genus-species column header:\n%s"
-            % (tabular_file, line)
+            f"ERROR: {tabular_file} does not have species list in genus-species column header:\n{line}"
         )
     return [_ for _ in parts[2][14:].split(";") if species_level(_)]
 
@@ -489,8 +485,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
                 continue
             if line.count("\t") != 3:
                 sys.exit(
-                    "ERROR: %s is not 4 column TSV "
-                    "(name, taxid, genus-species, note):\n%s" % (tabular_file, line)
+                    f"ERROR: {tabular_file} is not 4 column TSV (name, taxid, genus-species, note):\n{line}"
                 )
             name, taxid, genus_species, _ = line.split("\t", 3)
             if name == "*":
@@ -566,9 +561,7 @@ def load_metadata(
 
     if debug:
         sys.stderr.write(
-            "DEBUG: Loading metadata from %r, column specification %r, "
-            "field names from row %r\n"
-            % (metadata_file, metadata_cols, metadata_name_row)
+            f"DEBUG: Loading metadata from {metadata_file!r}, column specification {metadata_cols!r}, field names from row {metadata_name_row!r}\n"
         )
         if sequenced_samples is not None:
             sys.stderr.write(
@@ -579,8 +572,7 @@ def load_metadata(
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
     except ValueError:
         sys.exit(
-            "ERROR: Output metadata columns should be a comma separated list "
-            "of positive integers, not %r." % metadata_cols
+            f"ERROR: Output metadata columns should be a comma separated list of positive integers, not {metadata_cols!r}."
         )
     if min(value_cols) < 0:
         sys.exit("ERROR: Invalid metadata output column, should all be positive.")
@@ -588,8 +580,7 @@ def load_metadata(
         sample_col = int(metadata_index) - 1
         if sample_col < 0:
             sys.exit(
-                "ERROR: Invalid metadata index column, should be positive, not %r."
-                % metadata_index
+                f"ERROR: Invalid metadata index column, should be positive, not {metadata_index!r}."
             )
     else:
         sample_col = value_cols[0]  # Default is first output column
@@ -619,8 +610,7 @@ def load_metadata(
         names = [parts[_].strip() for _ in value_cols]
         if debug:
             sys.stderr.write(
-                "DEBUG: Row %i gave metadata field names: %r\n"
-                % (metadata_name_row, names)
+                f"DEBUG: Row {metadata_name_row:d} gave metadata field names: {names!r}\n"
             )
 
     # Remove header lines,
@@ -654,8 +644,7 @@ def load_metadata(
                 back[sample] = {i}
     if debug:
         sys.stderr.write(
-            "DEBUG: Loaded metadata for %i field samples, %i sequenced samples\n"
-            % (len(meta), len(back))
+            f"DEBUG: Loaded metadata for {len(meta):d} field samples, {len(back):d} sequenced samples\n"
         )
 
     missing_meta = []
@@ -664,8 +653,7 @@ def load_metadata(
         missing_files = [_ for _ in back if _ not in sequenced_samples]
         if missing_files:
             sys.stderr.write(
-                "WARNING: Missing %i sequenced samples listed in metadata, %s (etc)\n"
-                % (len(missing_files), missing_files[0])
+                f"WARNING: Missing {len(missing_files):d} sequenced samples listed in metadata, {missing_files[0]} (etc)\n"
             )
         missing_meta = [_ for _ in sequenced_samples if _ not in back]
         if missing_meta:
@@ -678,8 +666,7 @@ def load_metadata(
                 missing_meta = []
             else:
                 sys.stderr.write(
-                    "WARNING: %s sequenced samples without metadata, %s (etc)\n"
-                    % (len(missing_meta), missing_meta[0])
+                    f"WARNING: {len(missing_meta)} sequenced samples without metadata, {missing_meta[0]} (etc)\n"
                 )
 
     bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
