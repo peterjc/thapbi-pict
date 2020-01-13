@@ -71,14 +71,14 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
             # Should now have (possibly empty) string of genus-species;...
             for sp in expt[2].split(";"):
                 if sp:
-                    assert species_level(sp), (
-                        f"Expectation {expt[2]} is not all species level from {expected_file}"
-                    )
+                    assert species_level(
+                        sp
+                    ), f"Expectation {expt[2]} is not all species level from {expected_file}"
             for sp in pred[2].split(";"):
                 if sp:
-                    assert species_level(sp), (
-                        f"Prediction {pred[2]} is not all species level from {predicted_file}"
-                    )
+                    assert species_level(
+                        sp
+                    ), f"Prediction {pred[2]} is not all species level from {predicted_file}"
             try:
                 counter[expt[2], pred[2]].add(md5)
             except KeyError:
@@ -406,9 +406,9 @@ def main(
                         sys.exit(0)  # Deliberately not an error
                 else:
                     md5_expt[md5] = expt
-        assert sorted(md5_pred) == sorted(md5_expt), (
-            f"Unique sequence species assignements: {len(md5_expt):d} expected vs {len(md5_pred):d} predicted"
-        )
+        assert sorted(md5_pred) == sorted(
+            md5_expt
+        ), f"Unique sequence species assignements: {len(md5_expt):d} expected vs {len(md5_pred):d} predicted"
         if debug:
             sys.stderr.write(
                 "DEBUG: %i unique sequences with predictions/expectations\n"
