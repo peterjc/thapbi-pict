@@ -139,7 +139,8 @@ def filter_for_hmm(
             # (although complete target did)]
             if debug and len([_ for _ in result if _]) > 1:
                 sys.stderr.write(
-                    f"DEBUG: {record.id} matched HMM for {';'.join(hit.id for hit in result)}\n"
+                    f"DEBUG: {record.id} matched HMM for"
+                    f" {';'.join(hit.id for hit in result)}\n"
                 )
 
             its1_seqs = [
@@ -163,7 +164,8 @@ def filter_for_hmm(
                 # (e.g. HMM for close sister genera), or a potential problen
                 # (e.g. two synthetic controls)
                 sys.stderr.write(
-                    f"ERROR: Conflicting HMM matches for {record.id}: {';'.join(sorted({_[0] for _ in its1_seqs}))}\n"
+                    f"ERROR: Conflicting HMM matches for {record.id}:"
+                    f" {';'.join(sorted({_[0] for _ in its1_seqs}))}\n"
                 )
                 sys.stderr.write(f"{_[0]} length {len(_[1])}:\n" for _ in its1_seqs)
                 sys.exit(1)
