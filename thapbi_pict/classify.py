@@ -186,7 +186,12 @@ def seq_method_identity(seq, session, debug=False):
 
 
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare a dictionary of DB variants from the ITS1 DB entries."""
+    """Prepare a dictionary of DB variants from the DB marker sequences.
+
+    Because MD5 checksums are shorter than the typical ITS1 markers,
+    they are used as the dictionary keys to save memory. We assume there
+    are no collisions.
+    """
     global fuzzy_matches
     fuzzy_matches = {}
 
@@ -202,12 +207,13 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
             )
         its1_seq = its1.sequence
         for variant in onebp_variants(its1_seq):
+            md5 = md5seq(variant)
             try:
                 # This variant is 1bp different to multiple DB entries...
-                fuzzy_matches[variant].append(its1_seq)
+                fuzzy_matches[md5].append(its1_seq)
             except KeyError:
                 # Thus far this variant is only next to one DB entry:
-                fuzzy_matches[variant] = [its1_seq]
+                fuzzy_matches[md5] = [its1_seq]
 
     sys.stderr.write(
         "Expanded %i ITS1 sequences from DB into cloud of %i 1bp different variants\n"
@@ -239,15 +245,17 @@ def onebp_match_in_db(session, seq, debug=False):
     taxid, genus_species, note = perfect_match_in_db(session, seq)
     if any(species_level(_) for _ in genus_species.split(";")):
         # Found 100% identical match(es) in DB at species level, done :)
-        pass
-    elif seq in fuzzy_matches:
-        # No species level exact matches, so do we have 1bp off match(es)?
+        return taxid, genus_species, note
+
+    # No species level exact matches, so do we have 1bp off match(es)?
+    md5 = md5seq(seq)
+    if md5 in fuzzy_matches:
         t = []
         # TODO - Refactor this 2-query-per-loop into one lookup?
         # Including [seq] here in order to retain any perfect genus match.
         # If there are any *different* genus matches 1bp away, they'll be
         # reported too, but that would most likely be a DB problem...
-        for db_seq in [seq] + fuzzy_matches[seq]:
+        for db_seq in [seq] + fuzzy_matches[md5]:
             its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.extend(
@@ -256,13 +264,13 @@ def onebp_match_in_db(session, seq, debug=False):
             )
         t = list(set(t))
         note = "%i ITS1 matches with up to 1bp diff, %i taxonomy entries" % (
-            len(fuzzy_matches[seq]),
+            len(fuzzy_matches[md5]),
             len(t),
         )
         if not t:
             sys.exit(
                 "ERROR: onebp: %i matches but no taxonomy entries for %s\n"
-                % (len(fuzzy_matches[seq]), seq)
+                % (len(fuzzy_matches[md5]), seq)
             )
         taxid, genus_species, _ = taxid_and_sp_lists(t)
     elif not genus_species:
