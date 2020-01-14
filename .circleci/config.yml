@@ -15,10 +15,6 @@ jobs:
           command: |
             conda config --set always_yes yes --set changeps1 no --set channel_priority strict
             conda update -q conda
-            # In future point at project-env.yml file here:
-            conda create -q -n myenv python=3.7
-            source activate myenv
-            python --version
             conda config --add channels defaults
             conda config --add channels bioconda
             conda config --add channels conda-forge
@@ -36,19 +32,35 @@ jobs:
       - run:
           name: Python and RST checks
           command: |
-            conda install black
-            black --check .
-            # pydocstyle==4.0.0 broke flake8-docstrings https://gitlab.com/pycqa/flake8-docstrings/issues/36
-            python -m pip install flake8==3.6 flake8-blind-except "pydocstyle<4.0.0" flake8-docstrings flake8-rst-docstrings restructuredtext-lint flake8-bugbear pygments
-            flake8 .
+            conda create -q -n linting python=3.7
+            source activate linting
+            python --version
+            python -m pip install restructuredtext-lint pygments
             restructuredtext-lint *.rst database/*.rst tests/*/*.rst
+            python -m pip install  black
+            black --check .
+            python -m pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings flake8-bugbear
+            flake8 .
+            echo "Python and RST checks passed."
+      - run:
+          name: Dependencies
+          command: |
+            conda create -q -n testing python=3.7
+            source activate testing
+            python --version
+            conda install --file requirements-ext.txt
+            echo "External (non-Python) dependencies installed"
+            conda install curl
+            echo "Installed curl"
+            # For installing the Python requirements either conda or pip should work,
+            # but conda preferable if there are packages with C code but no wheel
+            conda install --file requirements.txt
+            # python -m pip install -r requirements.txt
+            echo "Python dependencies installed"
       - run:
           name: Installation
           command: |
-            conda install curl
-            conda install --file requirements-ext.txt
-            # Also installing the Python requirements here - pip should do it, but not all with C code have wheels
-            conda install --file requirements.txt
+            source activate testing
             rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
             sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
             chmod a-w thapbi_pict/ITS1_DB.sqlite
@@ -58,9 +70,11 @@ jobs:
             cd dist
             python -m pip install thapbi_pict-*.whl
             cd ..
+            echo "THAPBI PICT should now be installed"
       - run:
           name: Test
           command: |
+            source activate testing
             # Unpack the tests from the sdist tar-ball
             tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
