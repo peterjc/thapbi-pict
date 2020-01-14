@@ -57,7 +57,10 @@ class Taxonomy(Base):
 
     def __repr__(self):
         """Represent a taxonomy database entry as a string."""
-        return f"Taxonomy(ncbi_taxid={self.ncbi_taxid!r}, genus={self.genus!r}, species={self.species!r})"
+        return (
+            f"Taxonomy(ncbi_taxid={self.ncbi_taxid!r},"
+            f" genus={self.genus!r}, species={self.species!r})"
+        )
 
 
 class Synonym(Base):

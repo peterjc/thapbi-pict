@@ -85,7 +85,8 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f" {len(samples):d} samples with predictions for {len(genus_predictions):d} genera\n"
+            f" {len(samples):d} samples"
+            f" with predictions for {len(genus_predictions):d} genera\n"
         )
 
     samples = sample_sort(samples)

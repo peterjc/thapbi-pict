@@ -62,7 +62,8 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
         ):
             if not expt[0] == pred[0]:
                 sys.exit(
-                    f"ERROR: Sequence name mismatch in {expected_file} vs {predicted_file}, {expt[0]} vs {pred[0]}\n"
+                    f"ERROR: Sequence name mismatch in {expected_file} vs"
+                    f" {predicted_file}, {expt[0]} vs {pred[0]}\n"
                 )
             md5, abundance = split_read_name_abundance(expt[0])
             if min_abundance > 1 and abundance < min_abundance:
@@ -71,14 +72,16 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
             # Should now have (possibly empty) string of genus-species;...
             for sp in expt[2].split(";"):
                 if sp:
-                    assert species_level(
-                        sp
-                    ), f"Expectation {expt[2]} is not all species level from {expected_file}"
+                    assert species_level(sp), (
+                        f"Expectation {expt[2]} is not all species level from"
+                        f" {expected_file}"
+                    )
             for sp in pred[2].split(";"):
                 if sp:
-                    assert species_level(
-                        sp
-                    ), f"Prediction {pred[2]} is not all species level from {predicted_file}"
+                    assert species_level(sp), (
+                        f"Prediction {pred[2]} is not all species level from"
+                        f" {predicted_file}"
+                    )
             try:
                 counter[expt[2], pred[2]].add(md5)
             except KeyError:
@@ -132,7 +135,8 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                     )
     if impossible:
         sys.stderr.write(
-            f"WARNING: {len(impossible):d} expected species were not a possible prediction: {';'.join(sorted(impossible))}\n"
+            f"WARNING: {len(impossible):d} expected species were not a"
+            f" possible prediction: {';'.join(sorted(impossible))}\n"
         )
 
     classes.update(db_sp_list)
@@ -147,7 +151,8 @@ def save_mapping(tally, filename, level, debug=False):
             handle.write(f"{tally[expt, pred]:d}\t{expt}\t{pred}\n")
     if debug:
         sys.stderr.write(
-            f"DEBUG: Wrote {len(tally):d} entry mapping table (total {sum(tally.values()):d}) to {filename}\n"
+            f"DEBUG: Wrote {len(tally):d} entry mapping table"
+            f" (total {sum(tally.values()):d}) to {filename}\n"
         )
 
 
@@ -229,7 +234,8 @@ def save_confusion_matrix(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Wrote {len(rows):d} x {len(cols):d} confusion matrix (total {total:d}) to {filename}\n"
+            f"DEBUG: Wrote {len(rows):d} x {len(cols):d} confusion matrix"
+            f" (total {total:d}) to {filename}\n"
         )
     assert total >= sum(tally.values())
     if total != exp_total:
@@ -393,7 +399,9 @@ def main(
                 if md5 in md5_pred:
                     if pred != md5_pred[md5]:
                         sys.stderr.write(
-                            f"WARNING: Conflicting predictions for {md5}, {pred} vs {md5_pred[md5]}\nCannot do unique sequence classifier assessment.\n"
+                            f"WARNING: Conflicting predictions for {md5},"
+                            f" {pred} vs {md5_pred[md5]}"
+                            "\nCannot do unique sequence classifier assessment.\n"
                         )
                         sys.exit(0)  # Deliberately not an error
                 else:
@@ -401,14 +409,17 @@ def main(
                 if md5 in md5_expt:
                     if expt != md5_expt[md5]:
                         sys.stderr.write(
-                            f"WARNING: Conflicting expectations for {md5}, {expt} vs {md5_expt[md5]}\nCannot do unique sequence classifier assessment.\n"
+                            f"WARNING: Conflicting expectations for {md5},"
+                            f" {expt} vs {md5_expt[md5]}"
+                            "\nCannot do unique sequence classifier assessment.\n"
                         )
                         sys.exit(0)  # Deliberately not an error
                 else:
                     md5_expt[md5] = expt
-        assert sorted(md5_pred) == sorted(
-            md5_expt
-        ), f"Unique sequence species assignements: {len(md5_expt):d} expected vs {len(md5_pred):d} predicted"
+        assert sorted(md5_pred) == sorted(md5_expt), (
+            "Unique sequence species assignements:"
+            f" {len(md5_expt):d} expected vs {len(md5_pred):d} predicted"
+        )
         if debug:
             sys.stderr.write(
                 "DEBUG: %i unique sequences with predictions/expectations\n"
@@ -428,7 +439,8 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Assessing {sum(global_tally.values()):d} {level} level predictions\n"
+            f"DEBUG: Assessing {sum(global_tally.values()):d}"
+            f" {level} level predictions\n"
         )
 
     if db_sp_list is None:
@@ -445,7 +457,8 @@ def main(
     assert sp_list
     if debug:
         sys.stderr.write(
-            f"Classifier DB had {len(db_sp_list):d} species, including expected values have {len(sp_list):d} species\n"
+            f"Classifier DB had {len(db_sp_list):d} species,"
+            " including expected values have {len(sp_list):d} species\n"
         )
     for sp in sp_list:
         assert species_level(sp), sp
@@ -453,7 +466,9 @@ def main(
     number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
 
     sys.stderr.write(
-        f"Assessed {method} vs {known} in {file_count:d} files ({len(sp_list):d} species; {sum(global_tally.values()):d} {level} level predictions)\n"
+        f"Assessed {method} vs {known} in {file_count:d} files"
+        f" ({len(sp_list):d} species;"
+        f" {sum(global_tally.values()):d} {level} level predictions)\n"
     )
 
     assert file_count == len(input_list)
@@ -549,11 +564,13 @@ def main(
 
     if multi_class_total1 != number_of_classes_and_examples:
         sys.exit(
-            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d}, but species times samples = {number_of_classes_and_examples:d}\n"
+            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d},"
+            f" but species times samples = {number_of_classes_and_examples:d}\n"
         )
     if multi_class_total1 != multi_class_total2 and multi_class_total2:
         sys.exit(
-            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d}, but sum for species was {multi_class_total2:d}\n"
+            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d},"
+            f" but sum for species was {multi_class_total2:d}\n"
         )
 
     if assess_output != "-":

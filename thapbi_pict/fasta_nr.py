@@ -49,7 +49,8 @@ def main(
             output = os.path.join(output, os.path.basename((inputs + revcomp)[0]))
             if debug:
                 sys.stderr.write(
-                    f"DEBUG: Single input with directory as ouput, writing to {output}\n"
+                    "DEBUG: Single input with directory as ouput,"
+                    f" writing to {output}\n"
                 )
         else:
             sys.exit(
@@ -77,7 +78,8 @@ def main(
 
     if counts:
         sys.stderr.write(
-            f"Loaded {len(counts):d} unique sequences from {sum(counts.values()):d} in total within length range, max abundance {max(counts.values()):d}\n"
+            f"Loaded {len(counts):d} unique sequences from {sum(counts.values()):d}"
+            f" in total within length range, max abundance {max(counts.values()):d}\n"
         )
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
