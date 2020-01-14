@@ -25,3 +25,4 @@ recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
 
 include tests/woody_hosts/intermediate.tar.bz2
 exclude tests/woody_hosts/raw_data/*.fastq.gz
+exclude tests/woody_hosts/intermediate/*
