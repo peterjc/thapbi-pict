@@ -25,7 +25,7 @@ def parse_fasta_entry(text, known_species=None):
     acc, sp = text.split(None, 1)
     taxid = 0
     # if sp not in known_species:
-    #     sys.stderr.write("WARNING: Unexpected species name %s\n" % sp)
+    #     sys.stderr.write(f"WARNING: Unexpected species name {sp}\n")
     return taxid, sp
 
 

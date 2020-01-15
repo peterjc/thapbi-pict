@@ -180,14 +180,14 @@ def import_fasta_file(
         sys.exit("ERROR: Taxonomy table empty, cannot validate species.\n")
     if debug:
         sys.stderr.write(
-            "Taxonomy/synonym tables contains %i distinct species names\n"
-            % len(preloaded_taxonomy)
+            "Taxonomy/synonym tables contains"
+            f" {len(preloaded_taxonomy)} distinct species names\n"
         )
 
     md5 = md5_hexdigest(fasta_file)
 
     if not name:
-        name = "Import of %s" % os.path.basename(fasta_file)
+        name = "Import of " + os.path.basename(fasta_file)
 
     if left_primer or right_primer:
         if tmp_dir:
@@ -386,5 +386,5 @@ def import_fasta_file(
 
     if bad_species and (validate_species or debug):
         sys.stderr.write(
-            "Could not validate %i different species names\n" % len(bad_species)
+            f"Could not validate {len(bad_species)} different species names\n"
         )

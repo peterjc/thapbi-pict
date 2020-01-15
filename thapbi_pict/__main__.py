@@ -85,7 +85,7 @@ def expand_hmm_argument(text, hyphen_default=True):
         return ""
     for ext in (".h3f", ".h3i", ".h3m", ".h3p"):
         if not os.path.isfile(text + ext):
-            sys.exit("ERROR: The HMM %s was not found (e.g. %s)" % (text, text + ext))
+            sys.exit(f"ERROR: The HMM {text} was not found (e.g. {text + ext})")
     return text
 
 
@@ -922,11 +922,13 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE * 10),
-        help="Mininum abundance to require before importing a sequence, "
-        "over-and-above whatever was used to prepare the FASTA file. "
-        "Default here is %i, ten times the default of %i used for the "
-        "classification pipeline - be cautious what goes in your "
-        "ITS1 database)." % (DEFAULT_MIN_ABUNDANCE * 10, DEFAULT_MIN_ABUNDANCE),
+        help=(
+            "Mininum abundance to require before importing a sequence, "
+            "over-and-above whatever was used to prepare the FASTA file. "
+            f"Default here is {DEFAULT_MIN_ABUNDANCE * 10}, ten times the default "
+            f" of {DEFAULT_MIN_ABUNDANCE} used for the classification pipeline - "
+            "be cautious what goes in your ITS1 database)."
+        ),
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
     # min/max length redundant if using prepare-reads?:

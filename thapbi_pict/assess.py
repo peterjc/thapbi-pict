@@ -422,8 +422,7 @@ def main(
         )
         if debug:
             sys.stderr.write(
-                "DEBUG: %i unique sequences with predictions/expectations\n"
-                % len(md5_pred)
+                f"DEBUG: {len(md5_pred)} unique seqs with predictions/expectations\n"
             )
         del md5_pred
         # Convert from sets of values to integer counts

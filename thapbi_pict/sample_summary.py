@@ -217,10 +217,6 @@ def main(
                     assert not require_metadata
                 if not sample_batch:
                     human.write("Has not been sequenced.\n\n")
-                # elif len(sample_batch) == 1:
-                #     human.write("Has been sequenced once:\n\n")
-                # else:
-                #     human.write("Has been sequenced %i times:\n\n")
             except BrokenPipeError:
                 human = None
         # Now do the samples in this batch

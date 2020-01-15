@@ -315,12 +315,10 @@ def main(
         md5_in_db = set(md5_species)
         if always_show_db:
             sys.stderr.write(
-                "Loaded %i unique sequences from database\n" % len(md5_in_db)
+                f"Loaded {len(md5_in_db)} unique sequences from database\n"
             )
         else:
-            sys.stderr.write(
-                "Matched %i unique sequences in database\n" % len(md5_in_db)
-            )
+            sys.stderr.write(f"Matched {len(md5_in_db)} unique sequences in database\n")
 
     if db_url and inputs and always_show_db:
         sys.stderr.write(
@@ -355,8 +353,8 @@ def main(
                 done += 1
                 if debug and done % 100000 == 0:
                     print(
-                        "DEBUG: Computed %i of %i Levenshtein edit distances (%i%%)"
-                        % (done, todo, int(done * 100.0 / todo))
+                        f"DEBUG: Computed {done} of {todo} Levenshtein edit distances"
+                        f"({int(done * 100.0 / todo)}%)"
                     )
                 if d and d <= max_edit_dist:
                     wanted.add(check1)
@@ -366,8 +364,8 @@ def main(
         f"Computed {done:d} Levenshtein edit distances between {n:d} sequences.\n"
     )
     sys.stderr.write(
-        "Will draw %i nodes with at least one edge (%i are isolated sequences).\n"
-        % (len(wanted), n - len(wanted))
+        f"Will draw {len(wanted)} nodes with at least one edge"
+        f" ({n - len(wanted)} are isolated sequences).\n"
     )
     del done, todo
 
@@ -388,8 +386,8 @@ def main(
                 wanted.add(md5)
     if inputs:
         sys.stderr.write(
-            "Including high abundance isolated sequences, will draw %i nodes.\n"
-            % len(wanted)
+            "Including high abundance isolated sequences,"
+            f" will draw {len(wanted)} nodes.\n"
         )
 
     if md5_sample_count:

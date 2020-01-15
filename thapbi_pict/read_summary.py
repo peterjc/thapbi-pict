@@ -66,7 +66,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
         # (Almost) all same or (almost) unique not helpful
         if debug:
             sys.stderr.write(
-                "DEBUG: %i groups not suitable for coloring\n" % len(set(meta_groups))
+                f"DEBUG: {len(set(meta_groups))} groups not suitable for coloring\n"
             )
         return default
 
@@ -88,8 +88,6 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
                     "WARNING: Metadata not grouped nicely for coloring:"
                     f" {', '.join(debug_msg)} and then {value} (again).\n"
                 )
-                # if debug:
-                #     sys.stderr.write("DEBUG: %r\n" % meta_groups)
                 return default
             bands.append(max(bands) + 1)
             debug_msg.append(value)
@@ -200,12 +198,10 @@ def main(
     for row, r_samples in zip(metadata_rows, metadata_samples):
         for sample in r_samples:
             if sample in samples:
-                # print(sample, row)
                 metadata[sample] = row
                 assert sample not in new, sample
                 new.append(sample)
     for sample in missing_meta:
-        # print("Missing metadata for %s" % sample)
         assert sample not in new, sample
         new.append(sample)
     assert set(samples) == set(new)
@@ -330,7 +326,7 @@ def main(
     )
     if worksheet:
         worksheet.write_string(current_row, 0, "ITS1-MD5")
-        worksheet.write_string(current_row, 1, "%s-predictions" % ",".join(methods))
+        worksheet.write_string(current_row, 1, ",".join(methods) + "-predictions")
         worksheet.write_string(current_row, 2, "Sequence")
         worksheet.write_string(current_row, 3, "Sample-count")
         worksheet.write_string(current_row, 4, "Total-abundance")

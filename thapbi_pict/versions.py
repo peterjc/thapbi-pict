@@ -59,7 +59,7 @@ def check_tools(names, debug):
         else:
             sys.exit(f"ERROR: Unsupported external tool name, {name}")
     if missing:
-        sys.exit("ERROR: Missing external tool(s): %s" % ", ".join(missing))
+        sys.exit("ERROR: Missing external tool(s): " + ",".join(missing))
     else:
         return versions
 

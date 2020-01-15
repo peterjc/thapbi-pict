@@ -60,7 +60,7 @@ def main(db_url, output_filename, debug=False):
                 except KeyError:
                     md5_to_species[md5] = {genus_species}
 
-    sys.stderr.write("Loaded taxonomy for %i sequences from DB\n" % len(md5_to_seq))
+    sys.stderr.write(f"Loaded taxonomy for {len(md5_to_seq)} sequences from DB\n")
 
     genus_conflicts = 0
     out_handle.write("#MD5\tLevel\tConflicts\n")

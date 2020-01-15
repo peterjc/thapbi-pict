@@ -262,11 +262,11 @@ def run(cmd, debug=False, attempts=1):
         if debug:
             if attempts:
                 sys.stderr.write(
-                    "Attempt %i of %i calling command: %s\n"
-                    % (i + 1, attempts, cmd_as_string(cmd))
+                    f"Attempt {i + 1} of {attempts} calling command:"
+                    f" {cmd_as_string(cmd)}\n"
                 )
             else:
-                sys.stderr.write("Calling command: %s\n" % cmd_as_string(cmd))
+                sys.stderr.write(f"Calling command: {cmd_as_string(cmd)}\n")
         try:
             # On Python 3.7 onwards, could use capture_output=True
             # rather than stdout=PIPE and stderr=PIPE
@@ -290,8 +290,8 @@ def run(cmd, debug=False, attempts=1):
         except subprocess.CalledProcessError as e:
             if i + 1 < attempts:
                 sys.stderr.write(
-                    "WARNING: Attempt %i of %i failed with return code %i, cmd:\n%s\n"
-                    % (i + 1, attempts, e.returncode, cmd_as_string(cmd))
+                    f"WARNING: Attempt {i + 1} of {attempts} failed"
+                    f" with return code {e.returncode}, cmd:\n{cmd_as_string(cmd)}\n"
                 )
                 time.sleep(min(5, i + 1))
             else:
@@ -303,8 +303,8 @@ def run(cmd, debug=False, attempts=1):
                     sys.stdout.flush()
                     sys.stderr.write(e.stderr)
                 sys.exit(
-                    "ERROR: Attempt %i of %i failed with return code %i, cmd:\n%s\n"
-                    % (i + 1, attempts, e.returncode, cmd_as_string(cmd))
+                    f"ERROR: Attempt {i + 1} of {attempts} failed"
+                    f" with return code {e.returncode}, cmd:\n{cmd_as_string(cmd)}\n"
                 )
 
 
@@ -378,7 +378,7 @@ def find_requested_files(
                         if ignore_prefixes and f.startswith(ignore_prefixes):
                             if debug:
                                 sys.stderr.write(
-                                    "DEBUG: Ignoring %s\n" % os.path.join(root, f)
+                                    f"DEBUG: Ignoring {os.path.join(root, f)}\n"
                                 )
                             continue
                         answer.append(os.path.join(root, f))
@@ -571,7 +571,7 @@ def load_metadata(
         )
         if sequenced_samples is not None:
             sys.stderr.write(
-                "DEBUG: Have %i sequenced samples\n" % len(sequenced_samples)
+                f"DEBUG: Have {len(sequenced_samples)} sequenced samples\n"
             )
 
     try:
@@ -594,7 +594,7 @@ def load_metadata(
         sample_col = value_cols[0]  # Default is first output column
     if debug:
         sys.stderr.write(
-            "DEBUG: Matching sample names to metadata column %i\n" % (sample_col + 1)
+            f"DEBUG: Matching sample names to metadata column {sample_col + 1}\n"
         )
 
     names = [""] * len(value_cols)  # default
@@ -671,8 +671,8 @@ def load_metadata(
             if require_metadata:
                 if debug:
                     sys.stderr.write(
-                        "DEBUG: Ignoring %s sequenced samples without metadata\n"
-                        % len(missing_meta)
+                        f"DEBUG: Ignoring {len(missing_meta)} sequenced samples"
+                        " without metadata\n"
                     )
                 missing_meta = []
             else:

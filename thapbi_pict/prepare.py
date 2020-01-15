@@ -60,8 +60,8 @@ def find_fastq_pairs(
                     if f.endswith(ext):
                         if ignore_prefixes and f.startswith(ignore_prefixes):
                             sys.stderr.write(
-                                "WARNING: Ignoring %s due to prefix\n"
-                                % os.path.join(root, f)
+                                f"WARNING: Ignoring {os.path.join(root, f)}"
+                                " due to prefix\n"
                             )
                             continue
                         answer.append(os.path.join(root, f))
@@ -75,7 +75,7 @@ def find_fastq_pairs(
     # Warn if there were duplicates?
     answer = sorted(set(answer))
     if len(answer) % 2:
-        sys.exit("ERROR: Found %i FASTQ files, expected pairs\n" % len(answer))
+        sys.exit(f"ERROR: Found {len(answer)} FASTQ files, expected pairs\n")
 
     pairs = []
     while answer:
@@ -571,8 +571,8 @@ def main(
         )
     if control_file_pairs and not fastq_file_pairs:
         sys.stderr.write(
-            "WARNING: %i control FASTQ pairs, no non-control reads!\n"
-            % len(control_file_pairs)
+            f"WARNING: {len(control_file_pairs)} control FASTQ pairs,"
+            " no non-control reads!\n"
         )
 
     if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
@@ -642,8 +642,7 @@ def main(
                     % (
                         stem,
                         ", ".join(
-                            "%s: %i" % (k, v)
-                            for k, v in sorted(max_abundance_by_hmm.items())
+                            f"{k}: {v}" for k, v in sorted(max_abundance_by_hmm.items())
                         ),
                     )
                 )

@@ -96,7 +96,7 @@ def main(
             .count()
         ):
             sys.stderr.write(
-                "WARNING: '%s' not in database\n" % genus_species_name(genus_list[0], x)
+                f"WARNING: '{genus_species_name(genus_list[0], x)}' not in database\n"
             )
 
     if output_format == "fasta":

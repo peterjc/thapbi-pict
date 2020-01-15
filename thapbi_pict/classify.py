@@ -528,8 +528,8 @@ def method_swarm_core(
                                 idn,
                                 str(taxid2),
                                 genus_species2,
-                                "Cluster #%i - %i seqs, but this seq itself in DB"
-                                % (cluster_count, len(read_idns)),
+                                f"Cluster #{cluster_count} - {len(read_idns)} seqs,"
+                                " but this seq itself in DB",
                             )
                         )
                         continue
@@ -668,7 +668,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(
-            "ITS1 entries in DB linked to %i distrinct species.\n" % len(db_sp_list)
+            f"ITS1 entries in DB linked to {len(db_sp_list)} distrinct species.\n"
         )
     if not db_sp_list:
         sys.exit("ERROR: Have no ITS1 entries in DB with species information.\n")
@@ -681,7 +681,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
     if debug:
-        sys.stderr.write("Classifying %i input FASTA files\n" % len(fasta_files))
+        sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
 
     if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
         sys.stderr.write(f"Making output directory {out_dir!r}\n")

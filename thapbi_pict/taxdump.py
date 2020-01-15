@@ -182,11 +182,11 @@ def main(tax, db_url, ancestors, debug=True):
 
     tree, children, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
-        sys.stderr.write("Loaded %i nodes from nodes.dmp\n" % len(tree))
+        sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
 
     names, synonyms = load_names(os.path.join(tax, "names.dmp"))
     if debug:
-        sys.stderr.write("Loaded %i scientific names from names.dmp\n" % len(names))
+        sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
     genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
     if not genus_list:
@@ -199,7 +199,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     genus_species = list(top_level_species(children, ranks, names, genus_list))
     if debug:
-        sys.stderr.write("Filtered down to %i species names\n" % len(genus_species))
+        sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
     minor_species = list(
         not_top_species(
@@ -208,7 +208,7 @@ def main(tax, db_url, ancestors, debug=True):
     )
     if debug:
         sys.stderr.write(
-            "Treating %is minor species names as genus aliases\n" % len(minor_species)
+            f"Treating {len(minor_species)} minor species names as genus aliases\n"
         )
 
     # Connect to the DB,

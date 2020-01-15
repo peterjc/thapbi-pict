@@ -124,5 +124,5 @@ def main(
             genus_only=genus_only,
         )
 
-    sys.stderr.write("Imported %i FASTA files\n" % len(input_list))
+    sys.stderr.write(f"Imported {len(input_list)} FASTA files\n")
     return 0
