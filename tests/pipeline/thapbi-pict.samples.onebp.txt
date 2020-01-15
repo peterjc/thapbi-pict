@@ -13,3 +13,7 @@ DNAMIX_S95_L001
  - Phytophthora pseudocryptogea
  - Phytophthora rubi
 
+SRR6303948_sample
+
+ - No data
+
