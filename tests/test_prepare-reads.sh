@@ -74,4 +74,15 @@ if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA
 # Should be identical but without the HMM names in the FASTA title lines:
 diff <(grep -v ">" $TMP/DNAMIX_S95_L001.fasta) <(grep -v "^>" tests/prepare-reads/DNAMIX_S95_L001.fasta)
 
+# Testing primers (default)
+rm -rf $TMP/SRR6303948*.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2
+diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_default.fasta
+
+# Testing primers (actual)
+rm -rf $TMP/SRR6303948*.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2 \
+	    --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
+diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_primers.fasta
+
 echo "$0 - test_prepare-reads.sh passed"
