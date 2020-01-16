@@ -47,8 +47,9 @@ format barcode marker sequence database:
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy
 * ``ncbi-import`` - import a FASTA file using the NCBI style naming
+* ``curated-import`` - import a FASTA file where the descriptions are just the species names
 * ``import-seq`` - import prepared reads with known species assignment (single isolate positive controls)
-* ``legacy-import`` - import a FASTA file using the style of our legacy curated *Phytophthora* ITS1 dataset
+* ``conflicts`` - report on genus or species level conflicts in the database
 
 Start with reading the help for any command using ``-h`` or ``--help`` as follows:
 
