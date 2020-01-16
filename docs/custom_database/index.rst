@@ -3,8 +3,8 @@
 Worked Example with Custom DB
 =============================
 
-The first :ref:``../worked_exmple`` applied the default analysis pipeline
-to some real *Phytophthora* ITS1 data from woody-host trees, using the
+The first :ref:`worked example <worked_example>` applied the default analysis
+pipeline to some real *Phytophthora* ITS1 data from woody-host trees, using the
 same PCR primers as the THAPBI PICT defaults, and with the default database
 of *Phytophthora* ITS1 data the tool provides.
 
