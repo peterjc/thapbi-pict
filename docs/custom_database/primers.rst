@@ -76,7 +76,7 @@ Four very similar sequences (differing in the length of the poly-A run, seven
 is more common than six, and a ``C/T`` SNP towards the end), all matched to
 *Phytophthora chlamydospora* with THAPBI PICT's default settings.
 
-With the actual primers, we again get four sequences passing the abundance threshold:
+With the new primer setting, we again get four sequences passing the abundance threshold:
 
 .. code:: console
 
@@ -138,9 +138,9 @@ another leaf baiting sample but from runoff water. With the defaults:
     CTTCGCCGTTGTCTTGTTCTTTTGTAAGAGAAAGGGGGAGGCGCGGTTGGAGGCCATCAGGGGTGTGTTCGTCGCGGTTT
     GTTTCTTTTGTTGGAACTTGCGCGCGGATGCGTCCTTTTGTCAACCCATTTTTTGAATGAAAAACTGATCATACT
 
-There was a single sequence, with no matches (NCBI BLAST suggests
-this is *Phytopythium litorale*). Now with the actual primers this
-sequence is still present but only the second most abundant sequence:
+There was a single sequence, with no matches (NCBI BLAST suggests this is
+*Phytopythium litorale*). Now with the revised primer settings this sequence
+is still present but only the second most abundant sequence:
 
 .. code:: console
 
@@ -191,8 +191,8 @@ a single unique sequence matching *Phytophthora ramorum*:
     GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
     GTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
 
-Now with the actual primers, we get a further five sequences - and the
-extended *Phytophthora ramorum* sequence drops to the second most abundant:
+Now with the revised primer settings, we get a further five sequences - and
+the extended *Phytophthora ramorum* sequence drops to second most abundant:
 
 .. code:: console
 
