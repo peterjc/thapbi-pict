@@ -46,6 +46,7 @@ Key links:
    installation
    quick_start
    worked_example/index
+   custom_database/index
    commands
    api/index
    release_history
