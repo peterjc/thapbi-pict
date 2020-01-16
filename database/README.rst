@@ -8,6 +8,10 @@ sets of sequences (subject to taxonomy filtering):
   ``database/Phytophthora_ITS1_curated.fasta``. This is sorted by sequence.
   Examples sharing the same trimmed sequence are recorded as a single record
   with multiple semi-colon separated *accession genus species* entries.
+  Sadly many published sequences are missing the first 32bp which our default
+  primers would amplify, namely ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA``. This
+  has been assumed and added to the FASTA in lower case as needed - at the
+  time of writing no exceptions are known.
 
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level,
   file ``database/2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
