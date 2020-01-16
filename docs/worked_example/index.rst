@@ -1,6 +1,6 @@
 .. _worked_example:
 
-Worked Example with default DB
+Worked Example with Default DB
 ==============================
 
 The :ref:`quick_start` described a simplified use of the THAPBI PICT tool to
