@@ -18,8 +18,8 @@ target is wider covering *Phytophthora*, *Pythium*, and *Phytopythium*.
 They therefore used a slightly different set of PCR primers:
 
     *PCR was performed using the primers internal transcribed spacer
-    (ITS)6 (* ``5′ GAAGGTGAAGTCGTAACAAGG 3′`` *) that binds the small subunit
-    rDNA upstream of the ITS1 region and ITS7 (* ``5′ AGCGTTCTTCATCGATGTGC 3′`` *)
+    (ITS)6 (5′* ``GAAGGTGAAGTCGTAACAAGG`` *3′ *) that binds the small subunit
+    rDNA upstream of the ITS1 region and ITS7 (5′* ``AGCGTTCTTCATCGATGTGC`` *3′)
     that binds within the 5.8S rDNA (Cooke et al. 2000)*
 
 The left primer (ITS6) matches the THAPBI PICT default, but their right primer
