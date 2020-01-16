@@ -17,10 +17,10 @@ choice of primers where *Phytophthora* are the main target, but here the
 target is wider covering *Phytophthora*, *Pythium*, and *Phytopythium*.
 They therefore used a slightly different set of PCR primers:
 
-    PCR was performed using the primers internal transcribed spacer
+    *PCR was performed using the primers internal transcribed spacer
     (ITS)6 (``5′ GAAGGTGAAGTCGTAACAAGG 3′``) that binds the small subunit
     rDNA upstream of the ITS1 region and ITS7 (``5′ AGCGTTCTTCATCGATGTGC 3′``)
-    that binds within the 5.8S rDNA (Cooke et al. 2000)
+    that binds within the 5.8S rDNA (Cooke et al. 2000)*
 
 The left primer (ITS6) matches the THAPBI PICT default, but their right primer
 (ITS7) matches about 60bp further downstream in *Phytophthora*. This means we
@@ -45,9 +45,9 @@ we have inserted the expected sequence - and have yet to find a counter
 example. However, Redekar *et al* took the other obvious choice, and
 remove it from their reads:
 
-    trimming extra bases from read1: an additional 32 bases from the 5′ end
+    *trimming extra bases from read1: an additional 32 bases from the 5′ end
     of read1, which mapped to 18S segment, were trimmed as the oomycete ITS
-    reference database does not include the 18S segment;
+    reference database does not include the 18S segment;*
 
 We can do something similar in THAPBI PICT by treating this typically
 conserved 32bp region as part of the left primer - requiring it be present
