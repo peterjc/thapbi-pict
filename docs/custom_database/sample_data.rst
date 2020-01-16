@@ -8,15 +8,54 @@ Sample data
 
 This example is based on the following paper from another research group:
 
-* Redekar et al (2019) Diversity of *Phytophthora*, *Pythium*, and
+* Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
   *Phytopythium* species in recycled irrigation water in a container nursery.
   https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
-Importantly, they used a different but overlapping set of PCR primers. Their
-left primer matches the THAPBI PICT default, but their right primer would
-match about 60bp downstream in *Phytophthora*. This means we can use the
-default settings and get meaningful but blinkered results (for the subset of
-the data which the narrower primer set would have amplified).
+The THAPBI PICT default primer values reflect the Phyto-Threats project's
+choice of primers where *Phytophthora* are the main target, but here the
+target is wider covering *Phytophthora*, *Pythium*, and *Phytopythium*.
+They therefore used a slightly different set of PCR primers:
+
+    PCR was performed using the primers internal transcribed spacer
+    (ITS)6 (``5′ GAAGGTGAAGTCGTAACAAGG 3′``) that binds the small subunit
+    rDNA upstream of the ITS1 region and ITS7 (``5′ AGCGTTCTTCATCGATGTGC 3′``)
+    that binds within the 5.8S rDNA (Cooke et al. 2000)
+
+The left primer (ITS6) matches the THAPBI PICT default, but their right primer
+(ITS7) matches about 60bp further downstream in *Phytophthora*. This means we
+can use THAPBI PICT default settings and get meaningful but blinkered results
+(for the subset of the data which our narrower primer set would have amplified,
+using a *Phytophthora* centric database).
+
+In order to classify beyound *Phytophthora*, we need to build a THABPI PICT
+database including *Pythium* and *Phytopythium*. Redekar *et al* (2019)
+Supplementary Table 3 provides a list of 1454 unique accessions and the
+species they assigned to it (not always the same as that listed on the NCBI
+record, as those annotations can change). Looking at those sequences, bar
+a handful they extend though the right primer. However, only about 50 have
+the left primer sequence included (depending how stringent you are), and
+the rest are also missing the next 32bp.
+
+The ITS6 primer is situated within a highly conserved region, and the next
+32bp is highly conserved, usually ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA``.
+Unfortunately, the majority of published *Oomycetes* ITS1 sequences omit
+this. For the curated *Phytophthora* in the THAPBI PICT default database,
+we have inserted the expected sequence - and have yet to find a counter
+example. However, Redekar *et al* took the other obvious choice, and
+remove it from their reads:
+
+    trimming extra bases from read1: an additional 32 bases from the 5′ end
+    of read1, which mapped to 18S segment, were trimmed as the oomycete ITS
+    reference database does not include the 18S segment;
+
+We can do something similar in THAPBI PICT by treating this typically
+conserved 32bp region as part of the left primer - requiring it be present
+(while allowing some ambiguity) and removing it - leaving a shorter fragment
+which can be matched to a database built of those 1454 accessions.
+
+Raw data
+--------
 
 The raw data is 384 paired FASTQ files (samples to ``SAMN08012674`` to
 ``SAMN08013057``, runs ``SRR6303585`` to ``SRR6303968``),
