@@ -1,7 +1,7 @@
-.. _worked_example:
+.. _custom_database:
 
-Worked Example
-==============
+Worked Example with Custom DB
+=============================
 
 The first :ref:``../worked_exmple`` applied the default analysis pipeline
 to some real *Phytophthora* ITS1 data from woody-host trees, using the

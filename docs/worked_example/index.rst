@@ -1,7 +1,7 @@
 .. _worked_example:
 
-Worked Example
-==============
+Worked Example with default DB
+==============================
 
 The :ref:`quick_start` described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
