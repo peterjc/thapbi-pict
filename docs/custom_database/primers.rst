@@ -5,7 +5,7 @@ Running thapbi-pict prepare-reads
 ---------------------------------
 
 We first ran the pipeline command with
-`:ref:default settings <recycle_water_defaults>`, but now we will give the
+`:ref:default settings <custom_database_defaults>`, but now we will give the
 actual primers used. We will see that the *Phytophthora* FASTA sequences
 extracted are now about 60bp longer, and many more non-*Phytophthora* are
 also accepted.

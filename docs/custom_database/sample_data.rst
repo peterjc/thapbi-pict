@@ -1,4 +1,4 @@
-.. _sample_data:
+.. _custom_database_sample_data:
 
 Introduction
 ============

@@ -1,3 +1,5 @@
+.. _custom_database_defaults
+
 Pipeline with defaults
 ======================
 
