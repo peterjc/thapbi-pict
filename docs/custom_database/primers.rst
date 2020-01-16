@@ -1,8 +1,9 @@
+
 Specifying custom primers
 =========================
 
-Running thapbi-pict prepare-reads
----------------------------------
+Running prepare-reads step
+--------------------------
 
 We first ran the pipeline command with :ref:`default settings
 <custom_database_defaults>`, but now we will give the
@@ -42,8 +43,8 @@ Will now pick a couple of samples to compare and contrast with the first run.
 For clarity these examples are deliberately from the less diverse samples.
 The FASTA sequences have been line wrapped at 60bp for display.
 
-Simple Example
---------------
+Longer sequences
+----------------
 
 We will start with ``SRR6303586`` aka ``OSU483``, a leaf-baiting sample from
 a reservoir. Here is with the default primer trimming:
