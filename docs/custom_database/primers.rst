@@ -1,5 +1,5 @@
-Pipeline with custom primers
-============================
+Specifying custom primers
+=========================
 
 Running thapbi-pict prepare-reads
 ---------------------------------
