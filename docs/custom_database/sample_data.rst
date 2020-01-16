@@ -13,7 +13,7 @@ This example is based on the following paper from another research group:
   https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
 Importantly, they used a different but overlapping set of PCR primers. Their
-left primer matched the THAPBI PICT default, but thier right primer would
+left primer matches the THAPBI PICT default, but their right primer would
 match about 60bp downstream in *Phytophthora*. This means we can use the
 default settings and get meaningful but blinkered results (for the subset of
 the data which the narrower primer set would have amplified).
