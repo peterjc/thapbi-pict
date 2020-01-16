@@ -35,10 +35,10 @@ as follows, and you should get five output report files:
     recycled-water-defaults.edit-graph.xgmml
 
 Here we used ``-r`` (or ``--report``) to specify a different stem for the
-report filenames. The metadata options were described earlier in -- this is
-perhaps an idealised example in that ``metadata.tsv`` was created so that
-we could just all seven columns of the table, and the sample name (filename
-prefix) is in the first column.
+report filenames. The :ref:`sample metadata options <metadata>` were described
+earlier -- this is perhaps an idealised example in that ``metadata.tsv`` was
+created so that we could just all seven columns of the table, and the sample
+name (filename prefix) is in the first column.
 
 
 Results
