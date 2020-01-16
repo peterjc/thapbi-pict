@@ -71,7 +71,6 @@ a reservoir. Here is with the default primer trimming:
     CGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGG
     TCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAAC
     TAGTAGCTATCAATTTTAAACTCTTTCTTTAAATACTGAACATACT
-```
 
 Four very similar sequences (differing in the length of the poly-A run, seven
 is more common than six, and a ``C/T`` SNP towards the end), all matched to
