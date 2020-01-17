@@ -134,7 +134,7 @@ NCBI website, we see it in GenBank format which is a little different::
     SOURCE      Phytophthora aquimorbida
       ORGANISM  Phytophthora aquimorbida
                 Eukaryota; Stramenopiles; Oomycetes; Peronosporales;
-		Peronosporaceae; Phytophthora.
+                Peronosporaceae; Phytophthora.
     ...
 
 The NCBI metadata has the species *Phytophthora aquimorbida* separate
