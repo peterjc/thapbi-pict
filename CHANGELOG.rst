@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.6.3  2020-01-20 Treat NCBI taxonomy "includes" as synonyms, adds 396 new species aliases.
 v0.6.2  2020-01-14 Memory optimisation to the default ``onebp`` classifier.
 v0.6.1  2020-01-08 Requires at least Python 3.6 as now using f-strings (internal change only).
 v0.6.0  2020-01-08 Stop discarding normally conserved 32bp start of *Phytophthora* ITS1 marker.

@@ -53,7 +53,11 @@ def load_names(names_dmp):
             name = parts[1].strip()
             if line.endswith("\t|\tscientific name\t|\n"):
                 names[taxid] = name
-            elif line.endswith("\t|\tsynonym\t|\n"):
+            elif line.endswith("\t|\tsynonym\t|\n") or line.endswith(
+                "\t|\tincludes\t|\n"
+            ):
+                # e.g. Phytophthora aquimorbida 'includes' Phytophthora sp. CCH-2009b
+                # which we want to treat like a synonym
                 try:
                     synonym[taxid].append(name)
                 except KeyError:
