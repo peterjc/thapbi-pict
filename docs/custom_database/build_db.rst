@@ -50,7 +50,7 @@ from the NCBI:
     $ for ACC in `cut -f 1 ../Redekar_et_al_2019_sup_table_3.tsv`; do curl -L -o "$ACC.fasta" "https://www.ebi.ac.uk/ena/browser/api/fasta/$ACC"; done
     ...
     $ ls -1 *.fasta | wc -l
-    1454    
+    1454
     $ cd ..
 
 We will now turn that folder of FASTA files into a single combined file:
