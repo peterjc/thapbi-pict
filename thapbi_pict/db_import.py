@@ -237,18 +237,16 @@ def import_fasta_file(
     with open(trimmed_fasta) as handle:
         for title, seq in SimpleFastaParser(handle):
             seq_count += 1
+            idn = title.split(None, 1)[0]
 
             if not (min_length <= len(seq) <= max_length):
                 if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Rejected {title} as length {len(seq):d}\n"
-                    )
+                    sys.stderr.write(f"DEBUG: Rejected {idn} as length {len(seq)}\n")
                 continue
 
             # One sequence can have multiple entries
-            idn = title.split(None, 1)[0]
             if idn in idn_set:
-                sys.stderr.write(f"WARNING: Duplicated identifier {idn!r}\n")
+                sys.stderr.write(f"WARNING: Duplicated identifier {idn}\n")
             idn_set.add(idn)
 
             entries = fasta_entry_fn(title)
