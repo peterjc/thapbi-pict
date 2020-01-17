@@ -75,9 +75,12 @@ We can now load this 1454 sequence FASTA file into a new THAPBI PICT database:
     File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1451 accepted.
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
-So far so good - all 1454 sequences were loaded.
+So far so good - but only 1451 of the 1454 sequences were loaded.
+If you run that again with ``-v`` or ``--verbose`` you will see the missing
+three sequences are all *Pythium heterothallicum* entries which were shorter
+than the default minimum length.
 
-The ``-x`` (or ``--lax``) turns of species name validation, we'll come back
+The ``-x`` (or ``--lax``) turns off species name validation, we'll come back
 to this later.
 
 Notice we specified the left and right primers (as discussed in :ref:`primers`).
@@ -157,6 +160,62 @@ Species validation
 THAPBI PICT by default validates imports against the NCBI taxonomy, and
 that includes support for known synonyms. This requires downloading the
 taxonomy files and running the ``thapbi-pict load-tax`` command.
+
+The NCBI currently provide their taxonomy dump in two formats, old and new.
+THAPBI PICT supports both, we'll use the old format as the download is half
+the size - we only need the ``names.dmp`` and ``nodes.dmp`` files::
+
+.. code:: console
+
+    $ curl -L -O https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2020-01-01.zip
+    $ unzip -d taxdmp_2020-01-01 taxdmp_2020-01-01.zip
+    ...
+    $ ls taxdmp_2020-01-01/n*.dmp
+    taxdmp_2020-01-01/names.dmp  taxdmp_2020-01-01/nodes.dmp
+
+Now building the database is a two-step process, first importing the
+taxonomy, and second importing the sequences.
+
+If you are working with different organisms you will also need to set the
+``-a`` or ``--ancestors`` option which defaults to `NCBI taxonomy ID 4762
+<https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=4762>`_ for
+*Oomycetes*.
+
+.. code:: console
+
+    $ rm -rf with_validation.sqlite  # remove it if already there
+    $ thapbi_pict load-tax -d with_validation.sqlite -t taxdmp_2020-01-01/
+    WARNING: Treating species group 'Hyaloperonospora parasitica species group' (txid453155) as a species.
+    WARNING: Genus Elongisporangium (1448050) has no children
+    Loaded 81 new genera, and 1028 new species entries with 2636 synonyms into DB (0, 0 and 7 already there)
+    $ thapbi_pict ncbi-import -d with_validation.sqlite \
+      -i Redekar_et_al_2019_sup_table_3_download.fasta \
+      --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
+      --right AGCGTTCTTCATCGATGTGC
+    File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1444 accepted.
+    Of 1451 potential entries, 0 unparsable, 7 failed sp. validation, 1444 OK.
+    Could not validate 3 different species names
+
+Notice this time we run ``thapbi_pict ncbi-import`` with the ``-x`` (``--lax``)
+option, and it complains about three species names and seven entries - but which?
+If you repeat this but add ``-v`` or ``--verbose`` to the import command you can
+see:
+
+- *Phytophthora sansomea* from five accessions including
+  `HQ261667.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ261667.1>`_,
+  where it looks like it a typo for *Phytophthora sansomeana*.
+- *Phytophthora lagoariana* from
+  `EF590256.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EF590256.1>`_,
+  which the NCBI says should be "*Phytophthora* sp. 'lagoariana'"
+- *Phytophthora novaeguinee* from
+  `EU035774.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EU035774.1>`_,
+  which the NCBI says should be "*Phytophthora* sp. *novaeguinee*"
+
+Strict validation has its downsides when combined with uncurated metadata.
+One fix would be to download the data in GenBank or TinySeq XML format which
+would give the species separately and solve this problem. Alternatively,
+supply curated data as described next.
+
 
 Curated import
 --------------
