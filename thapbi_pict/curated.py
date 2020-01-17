@@ -1,4 +1,4 @@
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -47,6 +47,8 @@ def main(
     name=None,
     validate_species=False,
     genus_only=False,
+    left_primer=None,
+    right_primer=None,
     sep=";",
     debug=True,
 ):
@@ -62,4 +64,6 @@ def main(
         entry_taxonomy_fn=parse_fasta_entry,
         validate_species=validate_species,
         genus_only=genus_only,
+        left_primer=left_primer,
+        right_primer=right_primer,
     )
