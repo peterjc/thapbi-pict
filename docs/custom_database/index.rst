@@ -19,3 +19,4 @@ requires a different database of markers.
    sample_data
    defaults
    primers
+   build_db
