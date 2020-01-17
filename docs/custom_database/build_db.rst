@@ -1,7 +1,7 @@
 .. _custom_database_building:
 
-Introduction
-============
+Building a custom database
+==========================
 
 This example is based on the following paper from another research group:
 
@@ -55,8 +55,11 @@ from the NCBI:
 
 We will now turn that folder of FASTA files into a single combined file:
 
+.. code:: console
+
     $ rm -rf Redekar_et_al_2019_sup_table_3_download.fasta
-    $ for ACC in `cut -f 1 Redekar_et_al_2019_sup_table_3.tsv`; do cat "cache/$ACC.fasta" >> Redekar_et_al_2019_sup_table_3_download.fasta; done
+    $ for ACC in `cut -f 1 Redekar_et_al_2019_sup_table_3.tsv`; do \
+      cat "cache/$ACC.fasta" >> Redekar_et_al_2019_sup_table_3_download.fasta; done
     $ grep -c "^>" Redekar_et_al_2019_sup_table_3_download.fasta
     1454
 
