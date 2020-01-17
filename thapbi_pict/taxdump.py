@@ -336,8 +336,8 @@ def main(tax, db_url, ancestors, debug=True):
 
     sys.stderr.write(
         f"Loaded {g_new:d} new genera, and {new:d} new species entries"
-        " with {s_new:d} synonyms into DB"
-        " ({g_old:d}, {old:d} and {s_old:d} already there)\n"
+        f" with {s_new:d} synonyms into DB"
+        f" ({g_old:d}, {old:d} and {s_old:d} already there)\n"
     )
 
     return 0
