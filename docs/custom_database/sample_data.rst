@@ -54,8 +54,8 @@ conserved 32bp region as part of the left primer - requiring it be present
 (while allowing some ambiguity) and removing it - leaving a shorter fragment
 which can be matched to a database built of those 1454 accessions.
 
-Raw data
---------
+Raw FASTQ data
+--------------
 
 The raw data is 384 paired FASTQ files (samples to ``SAMN08012674`` to
 ``SAMN08013057``, runs ``SRR6303585`` to ``SRR6303968``),
@@ -70,19 +70,23 @@ which we provide as file ``PRJNA417859.txt``. With a little scripting this
 can be reformatted extracting the relevant :ref:`sample metadata <metadata>`
 for use with THAPBI PICT.
 
+
 Setup
 -----
 
 We assume you have your command line terminal open in a new empty folder
 dedicated to this analysis. Start by fetching files ``PRJNA417859.txt``
-(originally downloaded from the ENA) and ``metadata.tsv`` (generated from it,
-ready for use in reporting). These are including with the THAPBI PICT source
-code in the folder ``tests/recycled_water/`` but can be downloaded:
+(originally downloaded from the ENA), ``metadata.tsv`` (generated from it,
+ready for use in reporting), and ``Redekar_et_al_2019_sup_table_3.tsv``
+(based on the Excel format Supplementary Table 3 from the paper). These are
+included with the THAPBI PICT source code in folder ``tests/recycled_water/``
+but can be downloaded:
 
 .. code:: console
 
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/PRJNA417859.txt
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/metadata.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/Redekar_et_al_2019_sup_table_3.tsv
 
 Next, we will download the gzip-compressed FASTQ files into a sub-directory
 named ``raw_data/``. You may find the ENA bulk download helper application
