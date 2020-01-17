@@ -1,4 +1,4 @@
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -156,6 +156,8 @@ def curated_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
+        left_primer=args.left,
+        right_primer=args.right,
         sep=args.sep,
         debug=args.verbose,
     )
@@ -625,6 +627,9 @@ ARG_PRIMER_LEFT = dict(  # noqa: C408
     "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
     "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
 )
+ARG_PRIMER_LEFT_BLANK = dict(  # noqa: C408
+    type=str, default="", metavar="PRIMER", help="Left primer sequence, default blank."
+)
 
 # "-r", "--right",
 ARG_PRIMER_RIGHT = dict(  # noqa: C408
@@ -637,6 +642,9 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
     "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
+)
+ARG_PRIMER_RIGHT_BLANK = dict(  # noqa: C408
+    type=str, default="", metavar="PRIMER", help="Right primer sequence, default blank."
 )
 
 # "--hmm",
@@ -860,7 +868,9 @@ def main(args=None):
         "ncbi-import",
         description="Load an NCBI format ITS1 FASTA file into a database. "
         "By default verifies species names against a pre-loaded taxonomy, "
-        "non-matching entries are rejected.",
+        "non-matching entries are rejected. In lax mode uses heuristics to "
+        "split the species and any following free text - see also the "
+        "curated-import command which avoids this ambiguity.",
     )
     subcommand_parser.add_argument(
         "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
@@ -946,6 +956,9 @@ def main(args=None):
         "curated-import",
         description="Load a curated marker FASTA file into a database. "
         "Treats the FASTA title lines as identitier, space, species. "
+        "Also supports multiple entries in a single record using a FASTA "
+        "title line of identifier1, space, species1, separator, identifier2, "
+        "space, species2, etc. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
@@ -958,6 +971,8 @@ def main(args=None):
     subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
     subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
     subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT_BLANK)
+    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT_BLANK)
     subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=curated_import)

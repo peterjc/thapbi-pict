@@ -220,8 +220,13 @@ supply curated data as described next.
 Curated import
 --------------
 
-The ``thapbi_pict curated-import`` mentioned above differs from the
-``thapbi_pict ncbi-import`` command in two key points. First, it expects
-the sequences to be pre-trimmed (it does not look for an remove primers).
+The ``thapbi_pict curated-import`` used above differs from the
+``thapbi_pict ncbi-import`` command in two key points. First, by default it
+expects the sequences to be pre-trimmed (it does not do primer trimming).
 Second, it does not use heuristics but simply assumes the FASTA description
 line is an identifier followed by the species name *only*.
+
+Well actually, ``thapbi_pict curated-import`` is a little more sophisiticated
+as it allows a non-redundant FASTA input where a single sequence can have
+several entries in the same record using a separator which defaults to the
+semi-colon, e.g. ``>ID2 genus species one;ID2 genus species two``.
