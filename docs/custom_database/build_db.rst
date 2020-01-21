@@ -203,7 +203,10 @@ see:
 
 - *Phytophthora sansomea* from five accessions including
   `HQ261667.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ261667.1>`_,
-  where it looks like it a typo for *Phytophthora sansomeana*.
+  where it looks like it a typo for *Phytophthora sansomeana* (although the
+  full story here is likely more complicated - both existed in the NCBI
+  taxonomy of December 2019 as taxid 358102 and 555429 respectively, but were
+  merged in the Janurary 2020 release *without* defining a synonym).
 - *Phytophthora lagoariana* from
   `EF590256.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EF590256.1>`_,
   which the NCBI says should be "*Phytophthora* sp. 'lagoariana'"
@@ -211,10 +214,13 @@ see:
   `EU035774.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EU035774.1>`_,
   which the NCBI says should be "*Phytophthora* sp. *novaeguinee*"
 
-Strict validation has its downsides when combined with uncurated metadata.
-One fix would be to download the data in GenBank or TinySeq XML format which
-would give the species separately and solve this problem. Alternatively,
-supply curated data as described next.
+Strict validation has its downsides when combined with uncurated metadata
+and unrecorded synonyms.
+
+In this case the problem wasn't actually splitting the species name from the
+free text, but if it were, one fix would be to download the data in GenBank or
+TinySeq XML format rather than FASTA, which would give the species separately.
+Alternatively, THAPBI PICT will accept curated species data as described next.
 
 
 Curated import
@@ -225,8 +231,3 @@ The ``thapbi_pict curated-import`` used above differs from the
 expects the sequences to be pre-trimmed (it does not do primer trimming).
 Second, it does not use heuristics but simply assumes the FASTA description
 line is an identifier followed by the species name *only*.
-
-Well actually, ``thapbi_pict curated-import`` is a little more sophisiticated
-as it allows a non-redundant FASTA input where a single sequence can have
-several entries in the same record using a separator which defaults to the
-semi-colon, e.g. ``>ID2 genus species one;ID2 genus species two``.
