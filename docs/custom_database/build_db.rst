@@ -163,7 +163,7 @@ taxonomy files and running the ``thapbi-pict load-tax`` command.
 
 The NCBI currently provide their taxonomy dump in two formats, old and new.
 THAPBI PICT supports both, we'll use the old format as the download is half
-the size - we only need the ``names.dmp`` and ``nodes.dmp`` files::
+the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
 
 .. code:: console
 
