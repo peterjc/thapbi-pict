@@ -256,7 +256,6 @@ NCBI taxonomy validation:
     $ thapbi_pict curated-import -x \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -i Redekar_et_al_2019_sup_table_3.fasta
-    ...
     File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
