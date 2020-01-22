@@ -260,3 +260,79 @@ NCBI taxonomy validation:
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
 As above, three short sequences were rejected - giving in total 1451 entries.
+
+
+Taxonomic conflicts
+-------------------
+
+The ITS1 region is not ideal as a barcode sequence.  In the *Phytophthora*
+there are many cases where the same marker is shared by multiple species.
+The ``thapbi_pict conflicts`` command is provided to check for this, or
+worse -- conflicts at genus level:
+
+.. code:: console
+
+    $ thapbi_pict conflicts -h
+    ...
+
+Let's run this on the custom database, with output to a file:
+
+.. code:: console
+
+    $ thapbi_pict conflicts -d Redekar_et_al_2019_sup_table_3.sqlite -o conflicts.tsv
+    Loaded taxonomy for 838 sequences from DB
+
+This produces a plain text tab separated table ``conflicts.tsv`` which starts
+as follows:
+
+================================ ======= =====================================
+MD5                              Level   Conflicts
+-------------------------------- ------- -------------------------------------
+2a5b0b1f6404009e2987d004ff7e3a9c genus   Phytopythium;Pythium
+3550a51c172b547e7626e8f99a942341 genus   Phytopythium;Pythium
+87e588784b04ba5f4538ff91acb50c0f genus   Lagenidium;Pythium
+9bb2ab5b9f88256516f2ae618c16a62e genus   Brevilegnia;Pythium
+077ae505c0ad210aa4c071417a4f2f9a species Saprolegnia monilifera;Saprolegnia unispora
+0966d89e2bcd49b6986db8231d7790bb species Phytophthora asparagi;Phytophthora taxon asparagi
+...                              ...     ...
+================================ ======= =====================================
+
+There are 77 species level conflicts, some of which might be subspecies etc.
+However, more concerning is four genus level conflicts - all involving *Pythium*.
+
+One way to see which accessions are a problem is filtering the dump command
+output, e.g.
+
+.. code:: console
+
+    $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
+      | cut -f 1-5 | grep 2a5b0b1f6404009e2987d004ff7e3a9c
+    HQ643387.1  Phytopythium  litorale  2a5b0b1f6404009e2987d004ff7e3a9c
+    HQ643677.1  Pythium       litorale  2a5b0b1f6404009e2987d004ff7e3a9c
+
+In this case the NCBI has `HQ643387.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643387.1>`_
+and `HQ643677.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643677.1>`_ both as
+*Phytopythium litorale*, with *Pythium litoralis* as a homotypic synonym.
+
+Likewise, using the same approach, ``3550a51c172b547e7626e8f99a942341`` is
+from `HQ643393.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643393.1>`_ and
+`HQ643394.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643394.1>`_ labelled
+as *Phytopythium oedochilum* and
+`HQ643712.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643712.1>`_ labelled
+as *Pythium oedichilum* - which again the NCBI list as a homotypic synonym.
+
+On the other hand, ``87e588784b04ba5f4538ff91acb50c0f`` is from
+`HQ643136.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643136.1>`_ labelled
+as *Lagenidium caudatum*
+`HQ643539.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643539.1>`_ labelled
+as *Pythium flevoense*
+- and the NCBI still lists these as separate species in separate family.
+
+While ``9bb2ab5b9f88256516f2ae618c16a62e`` is from multiple accessions for
+*Pythium ultimum* or *Pythium ultimum var. ultimum* plus
+`HQ643127.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643127.1>`_ labelled
+as *Brevilegnia gracilis*. Again, currently listed as a separate species in
+a separate family.
+
+This kind of fluidity in the taxonomy makes it key to document which version
+of the taxonomy you are using (month and year for the NCBI taxonomy).
