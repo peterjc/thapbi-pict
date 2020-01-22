@@ -35,7 +35,7 @@ filtering at genus or species level, for example:
       -g Phytophthora -s fallax -o P_fallax.tsv
     Wrote 8 txt format entries to 'P_fallax.tsv'
 
-This would give a a short table, summarised as follows:
+This gives a short table, summarised as follows:
 
 ========== ============ ======= ===== ================================ ======== ========
 Identifier Genus        Species TaxID ITS1-MD5                         ITS1-seq Sequence
