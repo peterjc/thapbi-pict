@@ -21,3 +21,4 @@ requires a different database of markers.
    primers
    build_db
    examine_db
+   pipeline
