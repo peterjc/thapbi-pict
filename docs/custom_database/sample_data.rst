@@ -77,7 +77,7 @@ Setup
 We assume you have your command line terminal open in a new empty folder
 dedicated to this analysis. Start by fetching files ``PRJNA417859.txt``
 (originally downloaded from the ENA), ``metadata.tsv`` (generated from it,
-ready for use in reporting), and ``Redekar_et_al_2019_sup_table_3.tsv``
+ready for use in reporting), and ``Redekar_et_al_2019_sup_table_3.*``
 (based on the Excel format Supplementary Table 3 from the paper). These are
 included with the THAPBI PICT source code in folder ``tests/recycled_water/``
 but can be downloaded:
@@ -87,6 +87,7 @@ but can be downloaded:
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/PRJNA417859.txt
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/metadata.tsv
     $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/Redekar_et_al_2019_sup_table_3.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/Redekar_et_al_2019_sup_table_3.fasta
 
 Next, we will download the gzip-compressed FASTQ files into a sub-directory
 named ``raw_data/``. You may find the ENA bulk download helper application

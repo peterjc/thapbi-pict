@@ -231,3 +231,33 @@ The ``thapbi_pict curated-import`` used above differs from the
 expects the sequences to be pre-trimmed (it does not do primer trimming).
 Second, it does not use heuristics but simply assumes the FASTA description
 line is an identifier followed by the species name *only*.
+
+We have provided file ``Redekar_et_al_2019_sup_table_3.fasta`` which contains
+primer trimmed versions of the full sequences of each accession, plus the
+species name as given in Redekar *et al.* 2019 Supplementary Table 3. This
+ought to be very close to the trimmed sequences used in their database.
+
+This was constructed with a short Python script parsing the information in
+``Redekar_et_al_2019_sup_table_3.tsv`` and the downloaded full sequences.
+Then ``cutadapt -g GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA ...``
+found and removed only 64 left prefixes. This was followed by running
+``cutadapt -a GCACATCGATGAAGAACGCT ...`` which trimmed 1439 sequences (99.9%)
+and warned that the "adapter" might be incomplete because the sequence
+preceeding it was highly conserved. That left 1451 sequences, but with many
+duplicates. This was made non-redundant giving 841 unique sequences with
+de-duplicated entries recorded with semi-colon separated FASTA title lines.
+
+Now, let's load the FASTA file into a new THAPBI PICT database, without any
+NCBI taxonomy validation:
+
+.. code:: console
+
+    $ rm -rf Redekar_et_al_2019_sup_table_3.sqlite  # remove it if already there
+    $ thapbi_pict curated-import -x \
+      -d Redekar_et_al_2019_sup_table_3.sqlite \
+      -i Redekar_et_al_2019_sup_table_3.fasta
+    ...
+    File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
+    Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
+
+As above, three short sequences were rejected - giving in total 1451 entries.
