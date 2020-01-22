@@ -196,7 +196,7 @@ If you are working with different organisms you will also need to set the
     Of 1451 potential entries, 0 unparsable, 7 failed sp. validation, 1444 OK.
     Could not validate 3 different species names
 
-Notice this time we run ``thapbi_pict ncbi-import`` with the ``-x`` (``--lax``)
+Notice this time we run ``thapbi_pict ncbi-import`` without the ``-x`` (``--lax``)
 option, and it complains about three species names and seven entries - but which?
 If you repeat this but add ``-v`` or ``--verbose`` to the import command you can
 see:
