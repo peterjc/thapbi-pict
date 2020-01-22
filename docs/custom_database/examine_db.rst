@@ -37,7 +37,7 @@ filtering at genus or species level, for example:
 
 This would give a a short table, summarised as follows:
 
-========== ============	======= ===== ================================ ======== ========
+========== ============ ======= ===== ================================ ======== ========
 Identifier Genus        Species TaxID ITS1-MD5                         ITS1-seq Sequence
 ---------- ------------ ------- ----- -------------------------------- -------- --------
 DQ297398.1 Phytophthora fallax        693cf88b7f57bcc7a3532a6b7ff0268a CCACA... CCACA...
