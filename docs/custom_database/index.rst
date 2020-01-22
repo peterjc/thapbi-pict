@@ -20,3 +20,4 @@ requires a different database of markers.
    defaults
    primers
    build_db
+   examine_db

@@ -301,7 +301,7 @@ There are 77 species level conflicts, some of which might be subspecies etc.
 However, more concerning is four genus level conflicts - all involving *Pythium*.
 
 One way to see which accessions are a problem is filtering the dump command
-output, e.g.
+output (introduced properly in :ref:`custom_database_examine`), e.g.
 
 .. code:: console
 
