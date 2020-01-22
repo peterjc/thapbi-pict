@@ -110,3 +110,33 @@ Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to::
 This discards the original accessions and instead uses ``>``, MD5 checksum, space,
 semi-colon separated list of taxonomic assignments, new line, sequences, new line.
 Again, there is deliberatly no sequence line wrapping.
+
+Edit graph
+----------
+
+In the worked example with the default database, we introduced the ``edit-graph``
+command for use with CytoScape to examine the sequence space of the samples. It
+can also be run on a database alone provided you include the ``-s`` or ``--showdb``
+switch:
+
+.. code:: console
+
+    $ thapbi_pict edit-graph -s \
+      -d Redekar_et_al_2019_sup_table_3.sqlite \
+      -o Redekar_et_al_2019_sup_table_3.xgmml
+    Loaded 838 unique sequences from database
+    Computed 350703 Levenshtein edit distances between 838 sequences.
+    Will draw 533 nodes with at least one edge (305 are isolated sequences).
+
+Of the 838 unique sequences in the database, just over three hundred are
+isolated sequences (over 3bp edits away from anything else). The remaining
+five hundred plus give us an interesting edit distance graph.
+
+Opening this in CytoScape the first thing that struck me was the largest two
+components are both for *Pythium regulare* - suggesting if these are truely
+all from one species that it has at least two distinct ITS1 markers in the
+genome?
+
+Another use of this view would be to consider the genus conflicts reported
+by the ``thapbi_pict conflicts`` command - most of the handful of *Lagenidium*
+and *Brevilegnia* nodes are isolated.
