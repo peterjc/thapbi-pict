@@ -334,5 +334,49 @@ While ``9bb2ab5b9f88256516f2ae618c16a62e`` is from multiple accessions for
 as *Brevilegnia gracilis*. Again, currently listed as a separate species in
 a separate family.
 
-This kind of fluidity in the taxonomy makes it key to document which version
-of the taxonomy you are using (month and year for the NCBI taxonomy).
+Those assignments might have changed since this was written, using the
+January 2020 NCBI taxonomy.
+
+
+Curated import with synonyms
+----------------------------
+
+We can solve *Pythium litoralis* and *Pythium oedichilum* being moved under
+*Phytopythium* by pre-loading the NCBI taxonomy for its synonyms, but still
+run in lax mode (as otherwise quite a few entries are rejected):
+
+.. code:: console
+
+    $ rm -rf Redekar_et_al_2019_sup_table_3_synonyms.sqlite  # remove if present
+    $ thapbi_pict load-tax \
+      -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
+      -t -t taxdmp_2020-01-01/
+    ...
+    $ thapbi_pict curated-import -x \
+      -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
+      -i Redekar_et_al_2019_sup_table_3.fasta
+    $ thapbi_pict conflicts -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite
+    Loaded taxonomy for 838 sequences from DB
+    #MD5                              Level    Conflicts
+    87e588784b04ba5f4538ff91acb50c0f  genus    Lagenidium;Pythium
+    9bb2ab5b9f88256516f2ae618c16a62e  genus    Brevilegnia;Globisporangium
+    ff35f216832110904cc6fd1c9def33fd  genus    Achlya;Saprolegnia
+    077ae505c0ad210aa4c071417a4f2f9a  species  Saprolegnia monilifera;Saprolegnia unispora
+    ...
+
+This solved the two conflicts we expected, but introduced a new conflict on
+``ff35f216832110904cc6fd1c9def33fd`` from
+`HQ644008.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ644008.1>`_ and
+`HQ644009.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ644009.1>`_ as
+labelled as *Saprolegnia subterranea*, and
+`HQ644006.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ644006.1>`_ labelled
+as *Saprolegnia sp. CAL-2011 rodrigueziana*, but which the NCBI says is now
+part of *Achlya rodrigueziana*. Also, *Pythium ultimum* is now a basionym
+for *Globisporangium ultimum*.
+
+It might be better to update the *Pythium litoralis* and *Pythium oedichilum*
+entries in the curated FASTA file to say *Phytopythium*? Or, depending on your
+motivation, just leave their species assignments as is.
+
+Taxonomy is fluid, so if using any single authority, make sure to document which
+version (e.g. month and year for the NCBI taxonomy).
