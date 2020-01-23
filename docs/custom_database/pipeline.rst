@@ -56,7 +56,7 @@ more matches:
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
-      -d Redekar_et_al_2019_sup_table_3.sqlite -m blastp \
+      -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -r recycled-water-custom-blast -t metadata.tsv -c 1,2,3,4,5,6,7
     ...
     blast classifier assigned species/genus to 4281041 of 9956078 sequences from 384 files
