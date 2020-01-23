@@ -706,7 +706,6 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
     seq_count = 0
     match_count = 0
     for filename in fasta_files:
-        sys.stderr.write(f"Running {method} classifier on {filename}\n")
         sys.stdout.flush()
         sys.stderr.flush()
 
@@ -738,6 +737,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
                     del a, parts
             continue
 
+        sys.stderr.write(f"Running {method} classifier on {filename}\n")
         if debug:
             sys.stderr.write(f"DEBUG: Output {output_name}\n")
 
