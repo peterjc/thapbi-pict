@@ -42,7 +42,8 @@ the results, and these are described in the :ref:`worked example
 * ``assess`` - compare classifier output to known positive controls
 
 There are further sub-commands to do with making or inspecting an SQLite3
-format barcode marker sequence database:
+format barcode marker sequence database, most of which are covered in the
+second :ref:`worked example, with a custom database <custom_database>`:
 
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy
