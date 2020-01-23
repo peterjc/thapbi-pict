@@ -724,7 +724,16 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
         if output_name is not None and os.path.isfile(output_name):
             sys.stderr.write(f"WARNING: Skipping {output_name} as already exists\n")
-            # TODO: Count the number of sequences and matches?
+            # Count the number of sequences and matches
+            with open(output_name) as handle:
+                for line in handle:
+                    if line.startswith("#"):
+                        continue
+                    parts = line.rstrip("\n").split("\t")
+                    # MD5_abundance, taxids, species, notes
+                    seq_count += 1
+                    if parts[2].strip():
+                        match_count += 1
             continue
 
         if debug:
