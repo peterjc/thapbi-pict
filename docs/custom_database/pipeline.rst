@@ -77,3 +77,70 @@ classifier performance of the various algorithm and database combinations.
 However we can say that this database and indeed the published *Oomycetes*
 ITS1 sequences in general is relatively sparse outside *Phytophthora* (and
 even there, we as a community have room for improvement).
+
+Results
+-------
+
+We will focus on the same four low diversity samples for a brief comparison
+of the defaults, custom DB with ``onebp``, and custom DB with ``blast``.
+This information is extracted from the sample reports (new files
+``summary/recycled-water-custom-onebp.samples.txt`` and
+``summary/recycled-water-custom-blast.samples.txt``).
+
+``SRR6303586`` aka ``OSU483``:
+
+- With defaults:
+
+  - *Phytophthora chlamydospora*
+
+- With custom DB and ``onebp`` or ``blast``:
+
+  - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
+  - *Phytophthora taxon pgchlamydo*
+
+``SRR6303588`` aka ``OSU482``:
+
+- With defaults:
+
+  - Unknown
+  - *Phytophthora chlamydospora*
+
+- With custom DB and ``onebp`` or ``blast``:
+
+  - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
+  - *Phytophthora taxon pgchlamydo*
+
+``SRR6303596`` aka ``OSU121``:
+
+- With defaults:
+
+  - Unknown
+
+- With custom DB and ``onebp`` or ``blast``:
+
+  - *Phytopythium litorale* (as discussed earlier, since renamed *Pythium litoralis*)
+  - *Pythium aff. diclinum* (uncertain/ambiguous)
+  - *Pythium aff. dictyosporum* (uncertain/ambiguous)
+  - *Pythium aff. dissotocum* (uncertain/ambiguous)
+  - *Pythium cf. dictyosporum* (uncertain/ambiguous)
+  - *Pythium coloratum* (uncertain/ambiguous)
+  - *Pythium diclinum* (uncertain/ambiguous)
+  - *Pythium dissotocum* (uncertain/ambiguous)
+  - *Pythium lutarium*
+  - *Pythium sp.* CAL-2011f (uncertain/ambiguous)
+  - *Pythium sp.* group F (uncertain/ambiguous)
+
+``SRR6303948`` aka ``OSU536.s203``:
+
+- With defaults:
+
+  - *Phytophthora ramorum*
+
+- With custom DB and ``onebp`` or ``blast``:
+
+  - Unknown
+  - *Phytophthora ramorum*
+
+So, not too dramatic - and on this subset using ``onebp`` versus ``blast`` seems not to matter.
+
+Interestingly the two databases differ on exactly which *Phytophthora* are present. The main change is with these settings and the new database `SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this example was selected), and ``SRR6303948`` has some unknown *Oomycete(s)* (as discussed earlier in the primer section).
