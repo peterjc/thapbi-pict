@@ -289,7 +289,6 @@ as follows:
 ================================ ======= =====================================
 MD5                              Level   Conflicts
 -------------------------------- ------- -------------------------------------
-2a5b0b1f6404009e2987d004ff7e3a9c genus   Phytopythium;Pythium
 3550a51c172b547e7626e8f99a942341 genus   Phytopythium;Pythium
 87e588784b04ba5f4538ff91acb50c0f genus   Lagenidium;Pythium
 9bb2ab5b9f88256516f2ae618c16a62e genus   Brevilegnia;Pythium
@@ -299,7 +298,7 @@ MD5                              Level   Conflicts
 ================================ ======= =====================================
 
 There are 77 species level conflicts, some of which might be subspecies etc.
-However, more concerning is four genus level conflicts - all involving *Pythium*.
+However, more concerning is three genus level conflicts - all involving *Pythium*.
 
 One way to see which accessions are a problem is filtering the dump command
 output (introduced properly in :ref:`custom_database_examine`), e.g.
@@ -307,20 +306,19 @@ output (introduced properly in :ref:`custom_database_examine`), e.g.
 .. code:: console
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
-      | cut -f 1-5 | grep 2a5b0b1f6404009e2987d004ff7e3a9c
-    HQ643387.1  Phytopythium  litorale  2a5b0b1f6404009e2987d004ff7e3a9c
-    HQ643677.1  Pythium       litorale  2a5b0b1f6404009e2987d004ff7e3a9c
+      | cut -f 1-5 | grep 3550a51c172b547e7626e8f99a942341
+    HQ643393.1  Phytopythium  oedochilum  3550a51c172b547e7626e8f99a942341
+    HQ643394.1  Phytopythium  oedochilum  3550a51c172b547e7626e8f99a942341
+    HQ643712.1  Pythium       oedichilum  3550a51c172b547e7626e8f99a942341
+    Wrote 1451 txt format entries
 
-In this case the NCBI has `HQ643387.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643387.1>`_
-and `HQ643677.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643677.1>`_ both as
-*Phytopythium litorale*, with *Pythium litoralis* as a homotypic synonym.
-
-Likewise, using the same approach, ``3550a51c172b547e7626e8f99a942341`` is
-from `HQ643393.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643393.1>`_ and
-`HQ643394.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643394.1>`_ labelled
-as *Phytopythium oedochilum* and
-`HQ643712.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643712.1>`_ labelled
-as *Pythium oedichilum* - which again the NCBI list as a homotypic synonym.
+In this case the NCBI has
+`HQ643393.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643393.1>`_,
+`HQ643394.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643394.1>`_, and
+`HQ643712.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643712.1>`_ all
+labelled as *Phytopythium oedochilum*, which has *Pythium oedichilum* listed
+as a homotypic synonym. We did not find this sequence in the dataset, but if
+it had been it is likely this oversight would have been fixed by the authors.
 
 On the other hand, ``87e588784b04ba5f4538ff91acb50c0f`` is from
 `HQ643136.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643136.1>`_ labelled
@@ -330,7 +328,7 @@ as *Pythium flevoense*
 - and the NCBI still lists these as separate species in separate family.
 
 While ``9bb2ab5b9f88256516f2ae618c16a62e`` is from multiple accessions for
-*Pythium ultimum* or *Pythium ultimum var. ultimum* plus
+*Pythium ultimum* or *Pythium ultimum var. ultimum* plus one odd one out --
 `HQ643127.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643127.1>`_ labelled
 as *Brevilegnia gracilis*. Again, currently listed as a separate species in
 a separate family.
@@ -342,9 +340,9 @@ January 2020 NCBI taxonomy.
 Curated import with synonyms
 ----------------------------
 
-We can solve *Pythium litoralis* and *Pythium oedichilum* being moved under
-*Phytopythium* by pre-loading the NCBI taxonomy for its synonyms, but still
-run in lax mode (as otherwise quite a few entries are rejected):
+We can solve *Pythium oedichilum* being moved under *Phytopythium* by
+pre-loading the NCBI taxonomy for its synonyms, but still run in lax mode (as
+otherwise quite a few entries are rejected):
 
 .. code:: console
 
@@ -365,7 +363,7 @@ run in lax mode (as otherwise quite a few entries are rejected):
     077ae505c0ad210aa4c071417a4f2f9a  species  Saprolegnia monilifera;Saprolegnia unispora
     ...
 
-This solved the two conflicts we expected, but introduced a new conflict on
+This solved the conflict we expected, but introduced a new conflict on
 ``ff35f216832110904cc6fd1c9def33fd`` from
 `HQ644008.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ644008.1>`_ and
 `HQ644009.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ644009.1>`_ as
@@ -375,9 +373,9 @@ as *Saprolegnia sp. CAL-2011 rodrigueziana*, but which the NCBI says is now
 part of *Achlya rodrigueziana*. Also, *Pythium ultimum* is now a basionym
 for *Globisporangium ultimum*.
 
-It might be better to update the *Pythium litoralis* and *Pythium oedichilum*
-entries in the curated FASTA file to say *Phytopythium*? Or, depending on your
-motivation, just leave their species assignments as is.
+It might be better to update the *Pythium oedichilum* entries in the curated TSV
+and FASTA file to say *Phytopythium*? Or, depending on your motivation, just leave
+the species assignments as is.
 
 Taxonomy is fluid, so if using any single authority, make sure to document which
 version (e.g. month and year for the NCBI taxonomy).
