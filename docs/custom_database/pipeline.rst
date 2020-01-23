@@ -54,6 +54,11 @@ The ``blast`` based classifier makes more matches:
     ...
     blast classifier assigned species/genus to 4281041 of 9956078 sequences from 384 files
     ...
+    Wrote summary/recycled-water-custom-blast.samples.*
+    Wrote summary/recycled-water-custom-blast.reads.*
+    Loaded 3054 unique sequences from 384 FASTA files.
+    Matched 81 unique sequences in database
+    ...
     $ ls -1 intermediate/SRR*.blast.tsv | wc -l
     384
 
