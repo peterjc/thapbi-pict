@@ -11,12 +11,14 @@ Python API
 
    thapbi_pict.assess
    thapbi_pict.classify
+   thapbi_pict.conflicts
+   thapbi_pict.curated
    thapbi_pict.db_import
    thapbi_pict.db_orm
    thapbi_pict.dump
    thapbi_pict.edit_graph
+   thapbi_pict.fasta_nr
    thapbi_pict.hmm
-   thapbi_pict.legacy
    thapbi_pict.ncbi
    thapbi_pict.prepare
    thapbi_pict.read_summary
