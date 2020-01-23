@@ -83,7 +83,8 @@ than the default minimum length.
 The ``-x`` (or ``--lax``) turns off species name validation, we'll come back
 to this later.
 
-Notice we specified the left and right primers (as discussed in :ref:`primers`).
+Notice we specified the left and right primers (as discussed in
+:ref:`primers <custom_database_primers>`).
 In this context THAPBI PICT will look for and discard the left and right
 primers in isolation - neither has to be present. This is to cope with
 pre-trimmed entries, or cases like the *Oomycetes* markers where the

@@ -1,3 +1,4 @@
+.. _custom_database_primers:
 
 Specifying custom primers
 =========================

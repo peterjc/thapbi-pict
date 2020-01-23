@@ -148,4 +148,5 @@ Interestingly the two databases differ on exactly which *Phytophthora* are
 present. The main change is with these settings and the new database
 ``SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this
 example was selected), and ``SRR6303948`` has some unknown *Oomycete(s)* (as
-discussed earlier in the primer section).
+discussed earlier at the end of the :ref:`primers <custom_database_primers>`
+section).
