@@ -23,6 +23,8 @@ as follows, and you should get five output report files:
       -i raw_data/ -o summary_defaults/ -s intermediate_defaults/ \
       -r recycled-water-defaults -t metadata.tsv -c 1,2,3,4,5,6,7
     ...
+    onebp classifier assigned species/genus to 1880182 of 2605870 sequences from 384 files
+    ...
     $ ls -1 intermediate_defaults/SRR*.fasta | wc -l
     384
     $ ls -1 intermediate_defaults/SRR*.onebp.tsv | wc -l
@@ -40,6 +42,8 @@ earlier -- this is perhaps an idealised example in that ``metadata.tsv`` was
 created so that we could just all seven columns of the table, and the sample
 name (filename prefix) is in the first column.
 
+Notice the output reported a taxonomic assignment for 1880182 of 2605870
+reads - that's 72%.
 
 Results
 -------
