@@ -647,7 +647,7 @@ def main(
                     )
                 )
         elif uniq_count is None:
-            sys.stderr.write(f"Sample {stem} already done\n")
+            sys.stderr.write(f"Skipping {fasta_file} as already done\n")
         else:
             sys.stderr.write(
                 f"Sample {stem} has {uniq_count:d} unique sequences over"

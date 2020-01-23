@@ -722,7 +722,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         classifier_output.append(output_name)
 
         if output_name is not None and os.path.isfile(output_name):
-            sys.stderr.write(f"WARNING: Skipping {output_name} as already exists\n")
+            sys.stderr.write(f"Skipping {output_name} as already done\n")
             # Count the number of sequences and matches
             with open(output_name) as handle:
                 for line in handle:
