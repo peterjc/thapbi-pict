@@ -141,6 +141,11 @@ This information is extracted from the sample reports (new files
   - Unknown
   - *Phytophthora ramorum*
 
-So, not too dramatic - and on this subset using ``onebp`` versus ``blast`` seems not to matter.
+So, not too dramatic - and on this subset using ``onebp`` versus ``blast``
+seems not to matter.
 
-Interestingly the two databases differ on exactly which *Phytophthora* are present. The main change is with these settings and the new database `SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this example was selected), and ``SRR6303948`` has some unknown *Oomycete(s)* (as discussed earlier in the primer section).
+Interestingly the two databases differ on exactly which *Phytophthora* are
+present. The main change is with these settings and the new database
+``SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this
+example was selected), and ``SRR6303948`` has some unknown *Oomycete(s)* (as
+discussed earlier in the primer section).
