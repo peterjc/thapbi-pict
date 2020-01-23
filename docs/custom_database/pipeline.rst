@@ -70,7 +70,7 @@ more matches:
     384
 
 Better, in that we are up to 43% of the reads with a taxonomic assignment
-(4281041 of 9956078 reads). But how many of this are false positives? Sadly,
+(4281041 of 9956078 reads). But how many of these are false positives? Sadly,
 we don't have any controls for this dataset in order to objectively assess the
 classifier performance of the various algorithm and database combinations.
 
