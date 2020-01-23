@@ -118,7 +118,7 @@ This information is extracted from the sample reports (new files
 
 - With custom DB and ``onebp`` or ``blast``:
 
-  - *Phytopythium litorale* (as discussed earlier, since renamed *Pythium litoralis*)
+  - *Phytopythium litorale*
   - *Pythium aff. diclinum* (uncertain/ambiguous)
   - *Pythium aff. dictyosporum* (uncertain/ambiguous)
   - *Pythium aff. dissotocum* (uncertain/ambiguous)
@@ -147,6 +147,7 @@ seems not to matter.
 Interestingly the two databases differ on exactly which *Phytophthora* are
 present. The main change is with these settings and the new database
 ``SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this
-example was selected), and ``SRR6303948`` has some unknown *Oomycete(s)* (as
+example was selected) plus *Phytopythium litorale* (originally known as
+*Pythium litoralis*), and ``SRR6303948`` has some unknown *Oomycete(s)* (as
 discussed earlier at the end of the :ref:`primers <custom_database_primers>`
 section).
