@@ -83,7 +83,7 @@ macOS). This is just to double check there were no problems with the download.
 If you skip the raw data, instead you must download the pre-prepared 122 FASTA
 files into your intermediate data sub-folder as ``intermediate/*.fasta``.
 These are provided as a small compressed file included in the THAPBI PICT
-source code ``tests/woody_hosts/woody_hosts_fasta.tar.bz2``, or can easily be
+source code ``tests/woody_hosts/intermediate.tar.bz2``, or can easily be
 downloaded:
 
 .. code:: console
