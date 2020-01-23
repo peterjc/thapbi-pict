@@ -9,7 +9,7 @@ Running thapbi_pict read-summary
 The second report from the pipeline can be generated separately by the
 ``thapbi_pict read-summary`` command:
 
-.. code::
+.. code:: console
 
     $ thapbi_pict read-summary -h
     ...
@@ -18,7 +18,7 @@ To mimick the filenames the pipeline command would use, we must set the
 two output filenames explicitly, with ``-o`` or ``-output`` for the TSV
 format table and ``-e`` or ``--excel`` for the Excel format table:
 
-.. code::
+.. code:: console
 
     $ thapbi_pict read-summary -i intermediate/ \
       -o summary/thapbi-pict.reads.tsv -e summary/thapbi-pict.reads.xlxs
@@ -30,7 +30,7 @@ version which adds some visual formatting to improve usability.
 This also command will accept the same :ref:`metadata <metadata>` arguments as
 used earlier:
 
-.. code::
+.. code:: console
 
     $ thapbi_pict read-summary -i intermediate/ \
       -o summary/with-metadata.samples.tsv -e summary/with-metadata.samples.xlsx \
