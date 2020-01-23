@@ -351,7 +351,7 @@ run in lax mode (as otherwise quite a few entries are rejected):
     $ rm -rf Redekar_et_al_2019_sup_table_3_synonyms.sqlite  # remove if present
     $ thapbi_pict load-tax \
       -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
-      -t -t taxdmp_2020-01-01/
+      -t taxdmp_2020-01-01/
     ...
     $ thapbi_pict curated-import -x \
       -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
