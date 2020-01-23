@@ -731,9 +731,11 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
                         continue
                     parts = line.rstrip("\n").split("\t")
                     # MD5_abundance, taxids, species, notes
-                    seq_count += 1
+                    a = abundance_from_read_name(parts[0])
+                    seq_count += a
                     if parts[2].strip():
-                        match_count += 1
+                        match_count += a
+                    del a, parts
             continue
 
         if debug:
