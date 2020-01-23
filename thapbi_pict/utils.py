@@ -1,4 +1,4 @@
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -226,8 +226,23 @@ assert sorted(expand_IUPAC_ambiguity_codes("GYRGGGACGAAAGTCYYTGC")) == [
 ]
 
 
+def md5seq_16b(seq):
+    r"""Return MD5 16-byte digest hash of the (upper case) sequence.
+
+    >>> md5seq_16b("ACGT")
+    b'\xf1\xf8\xf4\xbfA;\x16\xad\x13W"\xaaE\x91\x04>'
+
+    """
+    return hashlib.md5(seq.upper().encode("ascii")).digest()
+
+
 def md5seq(seq):
-    """Return MD5 hash of the (upper case) sequence."""
+    """Return MD5 32-letter hex digest of the (upper case) sequence.
+
+    >>> md5seq("ACGT")
+    'f1f8f4bf413b16ad135722aa4591043e'
+
+    """
     return hashlib.md5(seq.upper().encode("ascii")).hexdigest()
 
 

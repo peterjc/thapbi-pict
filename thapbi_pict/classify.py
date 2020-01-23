@@ -1,4 +1,4 @@
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -28,6 +28,7 @@ from .utils import cmd_as_string, run
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
+from .utils import md5seq_16b
 from .utils import onebp_variants
 from .utils import species_level
 from .versions import check_tools
@@ -207,13 +208,13 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
             )
         its1_seq = its1.sequence
         for variant in onebp_variants(its1_seq):
-            md5 = md5seq(variant)
+            md5_16b = md5seq_16b(variant)
             try:
                 # This variant is 1bp different to multiple DB entries...
-                fuzzy_matches[md5].append(its1_seq)
+                fuzzy_matches[md5_16b].append(its1_seq)
             except KeyError:
                 # Thus far this variant is only next to one DB entry:
-                fuzzy_matches[md5] = [its1_seq]
+                fuzzy_matches[md5_16b] = [its1_seq]
 
     sys.stderr.write(
         f"Expanded {count:d} ITS1 sequences from DB into cloud of"
@@ -248,14 +249,14 @@ def onebp_match_in_db(session, seq, debug=False):
         return taxid, genus_species, note
 
     # No species level exact matches, so do we have 1bp off match(es)?
-    md5 = md5seq(seq)
-    if md5 in fuzzy_matches:
+    md5_16b = md5seq_16b(seq)
+    if md5_16b in fuzzy_matches:
         t = []
         # TODO - Refactor this 2-query-per-loop into one lookup?
         # Including [seq] here in order to retain any perfect genus match.
         # If there are any *different* genus matches 1bp away, they'll be
         # reported too, but that would most likely be a DB problem...
-        for db_seq in [seq] + fuzzy_matches[md5]:
+        for db_seq in [seq] + fuzzy_matches[md5_16b]:
             its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.extend(
@@ -264,12 +265,12 @@ def onebp_match_in_db(session, seq, debug=False):
             )
         t = list(set(t))
         note = (
-            f"{len(fuzzy_matches[md5]):d} ITS1 matches with up to 1bp diff,"
+            f"{len(fuzzy_matches[md5_16b]):d} ITS1 matches with up to 1bp diff,"
             f" {len(t):d} taxonomy entries"
         )
         if not t:
             sys.exit(
-                f"ERROR: onebp: {len(fuzzy_matches[md5]):d} matches"
+                f"ERROR: onebp: {len(fuzzy_matches[md5_16b]):d} matches"
                 f" but no taxonomy entries for {seq}\n"
             )
         taxid, genus_species, _ = taxid_and_sp_lists(t)
