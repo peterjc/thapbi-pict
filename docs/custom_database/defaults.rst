@@ -1,4 +1,4 @@
-.. _custom_database_defaults
+.. _custom_database_defaults:
 
 Pipeline with defaults
 ======================

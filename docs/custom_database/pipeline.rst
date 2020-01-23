@@ -1,4 +1,4 @@
-.. _custom_database_pipeline
+.. _custom_database_pipeline:
 
 Pipeline with custom database
 =============================
