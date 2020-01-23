@@ -60,10 +60,11 @@ Raw FASTQ data
 The raw data is 384 paired FASTQ files (samples to ``SAMN08012674`` to
 ``SAMN08013057``, runs ``SRR6303585`` to ``SRR6303968``),
 available from the NCBI Sequence Read Archive under bioproject
-`PRJNA417859 <https://www.ncbi.nlm.nih.gov/bioproject/PRJNA417859/>`_,
+`PRJNA417859 (NCBI) <https://www.ncbi.nlm.nih.gov/bioproject/PRJNA417859/>`_,
 or equivalently from the European Nucleotide Archive under project
-`PRJNA417859 <https://www.ebi.ac.uk/ena/data/view/PRJNA417859>`_. Downloaded
-we have 768 gzip-compressed FASTQ files (384 pairs), taking about 5GB on disk.
+`PRJNA417859 (ENA) <https://www.ebi.ac.uk/ena/data/view/PRJNA417859>`_.
+Downloaded we have 768 gzip-compressed FASTQ files (384 pairs), taking about
+5GB on disk.
 
 The ENA makes it easy to download the project metadata as a table, a copy of
 which we provide as file ``PRJNA417859.txt``. With a little scripting this
