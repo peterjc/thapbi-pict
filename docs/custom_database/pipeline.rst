@@ -96,7 +96,7 @@ This information is extracted from the sample reports (new files
 - With custom DB and ``onebp`` or ``blast``:
 
   - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
-  - *Phytophthora taxon pgchlamydo*
+  - *Phytophthora chlamydospora*
 
 ``SRR6303588`` aka ``OSU482``:
 
@@ -108,7 +108,7 @@ This information is extracted from the sample reports (new files
 - With custom DB and ``onebp`` or ``blast``:
 
   - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
-  - *Phytophthora taxon pgchlamydo*
+  - *Phytophthora chlamydospora*
 
 ``SRR6303596`` aka ``OSU121``:
 
