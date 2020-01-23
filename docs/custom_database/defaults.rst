@@ -48,4 +48,62 @@ reads - that's 72%.
 Results
 -------
 
-Will pick a couple of samples to compare and contrast with the second run...
+We will compare and contrast the following four samples with the second run
+using different primers and a custom database. These were deliberatly picked
+from the less diverse samples for clarity.
+
+For now, here is a formatted excerpt from the sample report in file
+``recycled-water-defaults.samples.txt``:
+
+    :Accession: SRR6303586
+    :Sample: OSU483
+    :Source: Reservoir
+    :Site: K
+    :Process: Leaf baiting
+    :Period: 18
+    :Year-Month: 2016-01
+
+    Sequencing sample: SRR6303586
+
+    - *Phytophthora chlamydospora*
+
+    :Accession: SRR6303588
+    :Sample: OSU482
+    :Source: Reservoir
+    :Site: J
+    :Process: Leaf baiting
+    :Period: 18
+    :Year-Month: 2016-01
+
+    Sequencing sample: SRR6303588
+
+    - Unknown
+    - *Phytophthora chlamydospora*
+
+    :Accession: SRR6303596
+    :Sample: OSU121
+    :Source: Runoff
+    :Site: H
+    :Process: Leaf baiting
+    :Period: 2
+    :Year-Month: 2015-05
+
+    Sequencing sample: SRR6303596
+
+    - Unknown
+
+    :Accession: SRR6303948
+    :Sample: OSU536.s203
+    :Source: Runoff
+    :Site: H
+    :Process: Filtration
+    :Period: 22
+    :Year-Month: 2016-03
+
+    Sequencing sample: SRR6303948
+
+    - *Phytophthora ramorum*
+
+Three of these four have *Phytophthora*, and two have some unknown(s).
+However, this is discarding all the reads which do not match the default
+*Phytophthora* centric primers.
