@@ -781,6 +781,7 @@ HQ643377.1	Phytopythium citrinum
 HQ643378.1	Phytopythium citrinum
 HQ643379.1	Phytopythium citrinum
 HQ643380.1	Phytopythium citrinum
+HQ643381.1	Phytopythium cucurbitacearum
 HQ643382.1	Phytopythium helicoides
 HQ643383.1	Phytopythium helicoides
 HQ643384.1	Phytopythium helicoides
@@ -789,6 +790,11 @@ HQ643134.1	Phytopythium kandeliae
 HQ643385.1	Phytopythium litorale
 HQ643386.2	Phytopythium litorale
 HQ643387.1	Phytopythium litorale
+HQ643673.1	Phytopythium litorale
+HQ643674.1	Phytopythium litorale
+HQ643675.1	Phytopythium litorale
+HQ643676.1	Phytopythium litorale
+HQ643677.1	Phytopythium litorale
 HQ643388.2	Phytopythium megacarpum
 HQ643389.2	Phytopythium montanum
 HQ643390.1	Phytopythium montanum
@@ -800,10 +806,18 @@ HQ643395.1	Phytopythium ostracodes
 HQ643396.2	Phytopythium sindhum
 HQ261730.1	Phytopythium sp. AL-2010
 HQ643401.1	Phytopythium sp. AL-2010
+HQ261725.1	Phytopythium sp. amazonianum
+HQ261726.1	Phytopythium sp. amazonianum
+HQ261727.1	Phytopythium sp. amazonianum
+HQ261728.1	Phytopythium sp. amazonianum
+HQ261729.1	Phytopythium sp. amazonianum
 HQ643397.1	Phytopythium sp. CAL-2011b
 HQ643398.1	Phytopythium sp. CAL-2011b
 HQ643399.1	Phytopythium sp. CAL-2011b
+AF271224.1	Phytopythium vexans
 HQ643400.2	Phytopythium vexans
+HQ643954.1	Phytopythium vexans
+HQ643955.1	Phytopythium vexans
 EF553509.1	Plasmopara euphrasiae
 HM004513.1	Plasmopara nivea
 HM004512.1	Plasmopara pusilla
@@ -925,7 +939,6 @@ HQ643512.1	Pythium conidiophorum
 HQ643513.1	Pythium conidiophorum
 HQ643514.1	Pythium contiguanum
 HQ643515.2	Pythium cryptoirregulare
-HQ643381.1	Pythium cucurbitacearum
 HQ643516.1	Pythium cylindrosporum
 HQ643517.1	Pythium cylindrosporum
 HQ643518.2	Pythium cystogenes
@@ -1086,11 +1099,6 @@ HQ643669.1	Pythium iwayamai
 HQ643670.1	Pythium jasmonium
 HQ643671.2	Pythium kashmirense
 HQ643672.1	Pythium kunmingense
-HQ643673.1	Pythium litorale
-HQ643674.1	Pythium litorale
-HQ643675.1	Pythium litorale
-HQ643676.1	Pythium litorale
-HQ643677.1	Pythium litorale
 HQ643678.1	Pythium longandrum
 HQ643679.1	Pythium longandrum
 HQ643680.1	Pythium longisporangium
@@ -1195,11 +1203,6 @@ HQ261737.1	Pythium sp. AL-2010
 HQ261738.1	Pythium sp. AL-2010
 HQ261739.1	Pythium sp. AL-2010
 HQ261740.1	Pythium sp. AL-2010
-HQ261725.1	Pythium sp. amazonianum
-HQ261726.1	Pythium sp. amazonianum
-HQ261727.1	Pythium sp. amazonianum
-HQ261728.1	Pythium sp. amazonianum
-HQ261729.1	Pythium sp. amazonianum
 HQ643478.1	Pythium sp. balticum
 HQ643729.1	Pythium sp. CAL-2011e
 HQ643774.1	Pythium sp. CAL-2011f
@@ -1384,9 +1387,6 @@ HQ643950.1	Pythium vanterpoolii
 HQ643951.1	Pythium vanterpoolii
 HQ643952.1	Pythium vanterpoolii
 HQ643953.1	Pythium vanterpoolii
-AF271224.1	Pythium vexans
-HQ643954.1	Pythium vexans
-HQ643955.1	Pythium vexans
 HQ643956.2	Pythium viniferum
 HQ643957.1	Pythium violae
 HQ643958.1	Pythium violae
