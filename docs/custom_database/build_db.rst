@@ -172,11 +172,11 @@ the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
 
 .. code:: console
 
-    $ curl -L -O https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2020-01-01.zip
-    $ unzip -d taxdmp_2020-01-01 taxdmp_2020-01-01.zip
+    $ curl -L -O https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2019-12-01.zip
+    $ unzip -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
     ...
-    $ ls taxdmp_2020-01-01/n*.dmp
-    taxdmp_2020-01-01/names.dmp  taxdmp_2020-01-01/nodes.dmp
+    $ ls taxdmp_2019-12-01/n*.dmp
+    taxdmp_2019-12-01/names.dmp  taxdmp_2019-12-01/nodes.dmp
 
 Now building the database is a two-step process, first importing the
 taxonomy, and second importing the sequences.
@@ -189,29 +189,23 @@ If you are working with different organisms you will also need to set the
 .. code:: console
 
     $ rm -rf with_validation.sqlite  # remove it if already there
-    $ thapbi_pict load-tax -d with_validation.sqlite -t taxdmp_2020-01-01/
+    $ thapbi_pict load-tax -d with_validation.sqlite -t taxdmp_2019-12-01/
     WARNING: Treating species group 'Hyaloperonospora parasitica species group' (txid453155) as a species.
     WARNING: Genus Elongisporangium (1448050) has no children
-    Loaded 81 new genera, and 1028 new species entries with 2636 synonyms into DB (0, 0 and 7 already there)
+    Loaded 78 new genera, and 1053 new species entries with 2606 synonyms into DB (0, 0 and 7 already there)
     $ thapbi_pict ncbi-import -d with_validation.sqlite \
       -i Redekar_et_al_2019_sup_table_3_download.fasta \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC
-    File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1444 accepted.
-    Of 1451 potential entries, 0 unparsable, 7 failed sp. validation, 1444 OK.
-    Could not validate 3 different species names
+    File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1449 accepted.
+    Of 1451 potential entries, 0 unparsable, 2 failed sp. validation, 1449 OK.
+    Could not validate 2 different species names
 
-Notice this time we run ``thapbi_pict ncbi-import`` without the ``-x`` (``--lax``)
-option, and it complains about three species names and seven entries - but which?
+Notice this time we ran ``thapbi_pict ncbi-import`` without the ``-x`` (``--lax``)
+option, and it complained about two species names and two entries - but which?
 If you repeat this but add ``-v`` or ``--verbose`` to the import command you can
 see:
 
-- *Phytophthora sansomea* from five accessions including
-  `HQ261667.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ261667.1>`_,
-  where it looks like it a typo for *Phytophthora sansomeana* (although the
-  full story here is likely more complicated - both existed in the NCBI
-  taxonomy of December 2019 as taxid 358102 and 555429 respectively, but were
-  merged in the Janurary 2020 release *without* defining a synonym).
 - *Phytophthora lagoariana* from
   `EF590256.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EF590256.1>`_,
   which the NCBI says should be "*Phytophthora* sp. 'lagoariana'"
@@ -220,12 +214,19 @@ see:
   which the NCBI says should be "*Phytophthora* sp. *novaeguinee*"
 
 Strict validation has its downsides when combined with uncurated metadata
-and unrecorded synonyms.
+and unrecorded synonyms. It is also a moving target - in this case if rather
+than December 2019, we had used the January 2020 NCBI taxonomy, this merged
+*Phytophthora sansomea* (taxid 358102) into *Phytophthora sansomeana*
+(taxid 555429) without setting an alias - affecting five more accessions here.
 
 In this case the problem wasn't actually splitting the species name from the
-free text, but if it were, one fix would be to download the data in GenBank or
-TinySeq XML format rather than FASTA, which would give the species separately.
-Alternatively, THAPBI PICT will accept curated species data as described next.
+free text, but rather the (older) species name in the description did not
+match the (newer) annotated species name used in the NCBI taxonomy, or one of
+the defined synonyms.
+
+One fix would be to download the data in GenBank, EMBL or TinySeq XML format
+rather than FASTA, which would give the species separately. Alternatively,
+THAPBI PICT will accept curated species data as described next.
 
 
 Curated import
@@ -239,9 +240,12 @@ line is an identifier followed by the species name *only*.
 
 We have provided file ``Redekar_et_al_2019_sup_table_3.fasta`` which contains
 primer trimmed versions of the full sequences of each accession, plus the
-species name as given in Redekar *et al.* 2019 Supplementary Table 3. This
-ought to be very close to the trimmed sequences used in their database.
+species name from ``Redekar_et_al_2019_sup_table_3.tsv`` which was based on
+those given in Redekar *et al.* 2019 Supplementary Table 3 but with some light
+curation to better match the NCBI usage.
 
+The sequencing trimming ought to be very close to that used in the Redekar
+*et al.* 2019 paper's database.
 This was constructed with a short Python script parsing the information in
 ``Redekar_et_al_2019_sup_table_3.tsv`` and the downloaded full sequences.
 Then ``cutadapt -g GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA ...``
@@ -252,19 +256,22 @@ preceeding it was highly conserved. That left 1451 sequences, but with many
 duplicates. This was made non-redundant giving 841 unique sequences with
 de-duplicated entries recorded with semi-colon separated FASTA title lines.
 
-Now, let's load the FASTA file into a new THAPBI PICT database, without any
-NCBI taxonomy validation:
+Now, let's load the FASTA file into a new THAPBI PICT database with the NCBI
+taxonomy pre-loaded, but not enforced (``-x`` or ``--lax`` mode):
 
 .. code:: console
 
     $ rm -rf Redekar_et_al_2019_sup_table_3.sqlite  # remove it if already there
+    $ thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
     $ thapbi_pict curated-import -x \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -i Redekar_et_al_2019_sup_table_3.fasta
     File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
-As above, three short sequences were rejected - giving in total 1451 entries.
+Again, just three short sequences were rejected - giving in total 1451 entries.
+However this time the vast majority are recorded with an NCBI taxid, just a
+five exceptions.
 
 
 Taxonomic conflicts
@@ -353,7 +360,7 @@ otherwise quite a few entries are rejected):
     $ rm -rf Redekar_et_al_2019_sup_table_3_synonyms.sqlite  # remove if present
     $ thapbi_pict load-tax \
       -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
-      -t taxdmp_2020-01-01/
+      -t taxdmp_2019-12-01/
     ...
     $ thapbi_pict curated-import -x \
       -d Redekar_et_al_2019_sup_table_3_synonyms.sqlite \
