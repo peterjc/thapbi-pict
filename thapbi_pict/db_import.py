@@ -304,7 +304,7 @@ def import_fasta_file(
                 else:
                     taxonomy = lookup_species(session, name)
                 if not taxonomy:
-                    if validate_species and debug and name not in bad_species:
+                    if preloaded_taxonomy and debug and name not in bad_species:
                         sys.stderr.write(
                             "WARNING: Could not validate species"
                             f" {name!r} from {entry!r}\n"
