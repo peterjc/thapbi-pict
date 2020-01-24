@@ -14,12 +14,14 @@ accessions given in Supplementary Table 3 in Excel format. We will need to
 collect these sequences in FASTA format.
 
 We have taken their list of accessions and species names (ignoring voucher or
-isolate numbers), added missing accession versions as needed, deduplicated,
-and made a simple tab-separated plain text table, with 1454 entries. In the
-setup instructions for this example you should have got a copy of this file,
-named ``Redekar_et_al_2019_sup_table_3.tsv``.
+isolate numbers), edited some punctuation to match the NCBI taxonomy, added
+some missing accession version suffixes, deduplicated, and made a simple
+tab-separated plain text table, with 1454 entries. In the setup instructions
+for this example you should have got a copy of this file, named
+``Redekar_et_al_2019_sup_table_3.tsv``, and a matching FASTA file which we
+use later.
 
-This file is sorted alphabetically by species then accession, and starts:
+This table is sorted alphabetically by species then accession, and starts:
 
 ========== ===================
 Accession  Species
@@ -148,12 +150,14 @@ the NCBI taxonomy database under `taxonomy ID 611798
 <https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=611798>`_.
 
 THAPBI PICT offers two solutions. First, the import commands by default
-expect a pre-loaded NCBI taxonomy in the database for validation purposes,
-and this includes synoym support. This allows ``thapbi_pict ncbi-import``
-to try as many words as possible from the FASTA description in looking
-for a match in the NCBI taxonomy. In the example above we disabled this
-with ``-x`` (or ``--lax``). Second, ``thapbi_pict curated-import`` takes
-the *entire* FASTA description (after the identifier) as the species name.
+expect a pre-loaded NCBI taxonomy in the database for validation purposes.
+This allows ``thapbi_pict ncbi-import`` to try as many words as possible
+from the FASTA description in looking for a match in the NCBI taxonomy,
+including synonyms. If that fails and lax mode is used (``-x`` or
+``--lax``), it falls back on heuristics to identify which part of the
+description is the species. In the example above didn't preload a
+taxonomy. Second, ``thapbi_pict curated-import`` takes the *entire*
+FASTA description (after the identifier) as the species name.
 
 Species validation
 ------------------
