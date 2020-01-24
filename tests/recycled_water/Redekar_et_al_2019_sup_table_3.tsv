@@ -674,6 +674,9 @@ HQ261679.1	Phytophthora sojae
 HQ643347.1	Phytophthora sojae
 HQ643348.1	Phytophthora sojae
 HQ643349.1	Phytophthora sojae
+EF590256.1	Phytophthora sp. 'lagoariana'
+HQ261694.1	Phytophthora sp. 'lagoariana'
+HQ261695.1	Phytophthora sp. 'lagoariana'
 HQ261680.1	Phytophthora sp. AL-2010a
 HQ261704.1	Phytophthora sp. AL-2010b
 HQ261705.1	Phytophthora sp. AL-2010b
@@ -702,8 +705,6 @@ HQ261690.1	Phytophthora sp. glovera
 HQ261691.1	Phytophthora sp. kelmania
 HQ261692.1	Phytophthora sp. kelmania
 HQ643351.1	Phytophthora sp. kelmania
-HQ261694.1	Phytophthora sp. lagoariana
-HQ261695.1	Phytophthora sp. lagoariana
 HQ261696.1	Phytophthora sp. napoensis
 HQ261697.1	Phytophthora sp. napoensis
 HQ261698.1	Phytophthora sp. napoensis
@@ -736,7 +737,6 @@ KC478759.1	Phytophthora taxon castitis
 EF564803.1	Phytophthora taxon cuyabensis
 AF541908.1	Phytophthora taxon forestsoil
 EF437222.1	Phytophthora taxon kunnunara
-EF590256.1	Phytophthora taxon lagoariana
 EF680320.1	Phytophthora taxon napoensis
 EU035774.1	Phytophthora taxon novaeguinee
 EU240038.1	Phytophthora taxon oaksoil
