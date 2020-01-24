@@ -245,11 +245,11 @@ those given in Redekar *et al.* 2019 Supplementary Table 3 but with some light
 curation to better match the NCBI usage.
 
 The sequencing trimming ought to be very close to that used in the Redekar
-*et al.* 2019 paper's database.
-This was constructed with a short Python script parsing the information in
-``Redekar_et_al_2019_sup_table_3.tsv`` and the downloaded full sequences.
+*et al.* 2019 paper's database. This file was constructed with a short Python
+script parsing the information in ``Redekar_et_al_2019_sup_table_3.tsv`` and
+the downloaded full sequences.
 Then ``cutadapt -g GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA ...``
-found and removed only 64 left prefixes. This was followed by running
+found and removed 64 left prefixes. This was followed by running
 ``cutadapt -a GCACATCGATGAAGAACGCT ...`` which trimmed 1439 sequences (99.9%)
 and warned that the "adapter" might be incomplete because the sequence
 preceeding it was highly conserved. That left 1451 sequences, but with many
@@ -270,8 +270,28 @@ taxonomy pre-loaded, but not enforced (``-x`` or ``--lax`` mode):
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
 Again, just three short sequences were rejected - giving in total 1451 entries.
-However this time the vast majority are recorded with an NCBI taxid, just a
-five exceptions.
+However this time the vast majority are recorded with an NCBI taxid, just four
+exceptions (visible if you run the last command with ``-v`` or ``--verbose``):
+
+- *Phytophthora taxon aquatilis* from
+  `FJ666126.1 <https://www.ncbi.nlm.nih.gov/nucleotide/FJ666126.1>`_,
+  which the NCBI say should be *Phytophthora* sp. CCH-2009a
+- *Phytophthora fragaefolia* from
+  `AB305065.1 <https://www.ncbi.nlm.nih.gov/nucleotide/AB305065.1>`_,
+  which the NCBI say should be *Phytophthora fragariaefolia*.
+- *Phytophthora citricola sensu stricto* from
+  `FJ560913.1 <https://www.ncbi.nlm.nih.gov/nucleotide/FJ560913.1>`_,
+  which the NCBI say should be just *Phytophthora citricola*.
+- *Phytopythium sp. amazonianum* from
+  `HQ261725.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ261725.1>`_,
+  which the NCBI say should be *Pythium* sp. 'amazonianum'.
+
+None of these are clear cut (there were a lot more conflicts, mostly down to
+differences in punctuation, already addressed in preparing the TSV and FASTA
+file).
+
+If you left off the ``-x`` (or ``--lax``) option, those four would not have
+been imported into the database.
 
 
 Taxonomic conflicts
