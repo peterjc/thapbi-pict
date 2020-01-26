@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.6.5  2020-01-26 Do ``--flip`` in ``prepare-reads`` using cutadapt v2.8 or later.
 v0.6.4  2020-01-23 ``curated-import`` accepts primers. Reduced memory usage for ``onebp``.
 v0.6.3  2020-01-20 Treat NCBI taxonomy "includes" as synonyms, adds 396 new species aliases.
 v0.6.2  2020-01-14 Memory optimisation to the default ``onebp`` classifier.
