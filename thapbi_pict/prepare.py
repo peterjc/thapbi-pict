@@ -177,6 +177,7 @@ def run_cutadapt(
     right_primer,
     min_len=None,
     max_len=None,
+    flip=False,
     debug=False,
     cpu=0,
 ):
@@ -197,6 +198,8 @@ def run_cutadapt(
         cmd += ["-m", str(min_len)]
     if max_len:
         cmd += ["-M", str(max_len)]
+    if flip:
+        cmd += ["--revcomp"]
     cmd += [
         # -a LEFT...RIGHT = left-anchored
         # -g LEFT...RIGHT = non-anchored
@@ -256,7 +259,6 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 def make_nr_fasta(
     input_fasta,
-    input_rc,
     output_fasta,
     min_abundance=0,
     min_len=0,
@@ -280,16 +282,6 @@ def make_nr_fasta(
         for _, seq in SimpleFastaParser(handle):
             assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
             counts[seq.upper()] += 1
-    if input_rc:
-        if debug:
-            sys.stderr.write(
-                f"DEBUG: Combining {input_fasta!r} and {input_rc!r} (RC)"
-                " for unique sequences\n"
-            )
-        with open(input_rc) as handle:
-            for _, seq in SimpleFastaParser(handle):
-                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)} (RC)"
-                counts[reverse_complement(seq.upper())] += 1
     return (
         sum(counts.values()) if counts else 0,
         len(counts),
@@ -409,7 +401,7 @@ def prepare_sample(
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
-    if flip or failed_primer_name:
+    if failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
         bad_primer_fasta = None
@@ -421,40 +413,17 @@ def prepare_sample(
         right_primer,
         min_len=min_len,
         max_len=max_len,
+        flip=flip,
         debug=debug,
         cpu=cpu,
     )
     if not os.path.isfile(trimmed_fasta):
         sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
 
-    if flip:
-        # Call cutadapt again - with primers reversed, and flip output,
-        flipped_fasta = os.path.join(tmp, "cutadapt_flipped.fasta")
-        if failed_primer_name:
-            bad_primer_fasta2 = os.path.join(tmp, "bad_primers2.fasta")
-        else:
-            bad_primer_fasta2 = None
-        run_cutadapt(
-            bad_primer_fasta,
-            flipped_fasta,
-            bad_primer_fasta2,
-            right_primer,
-            left_primer,
-            min_len=min_len,
-            max_len=max_len,
-            debug=debug,
-            cpu=cpu,
-        )
-        if not os.path.isfile(trimmed_fasta):
-            sys.exit(f"ERROR: Expected file {flipped_fasta!r} from cutadapt\n")
-    else:
-        flipped_fasta = None
-
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
     (count, uniq_count, acc_uniq_count, max_hmm_abundance) = make_nr_fasta(
         trimmed_fasta,
-        flipped_fasta,
         merged_fasta,
         min_abundance=min_abundance,
         min_len=min_len,
