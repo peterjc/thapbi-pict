@@ -141,9 +141,9 @@ If not, skip directly to:
 .. code:: bash
 
    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
-   twine upload dist/thapbi_pict-X.Y.Z*
    git tag vX.Y.Z
    git push origin master --tags
+   twine upload dist/thapbi_pict-X.Y.Z*
 
 The PyPI upload should trigger an automated pull request updating the
 `THAPBI PICT BioConda recipe
