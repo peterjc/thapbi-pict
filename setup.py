@@ -80,6 +80,11 @@ setup(
     url="https://github.com/peterjc/thapbi-pict",  # For now at least
     download_url="https://github.com/peterjc/thapbi-pict",
     description="THAPBI Phytophthora ITS1 Classifier Tool (PICT).",
+    project_urls={
+        "Documentation": "https://thapbi-pict.readthedocs.io/",
+        "Source": "https://github.com/peterjc/thapbi-pict/",
+        "Tracker": "https://github.com/peterjc/thapbi-pict/issues",
+    },
     long_description=readme_rst,
     long_description_content_type="text/x-rst",
     classifiers=[
