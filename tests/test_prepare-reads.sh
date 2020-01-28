@@ -85,4 +85,18 @@ thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2 
 	    --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
 diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_primers.fasta
 
+echo "Testing --flip works"
+# Took only 50 reads from original file (about 6%),
+# dropping abudnance threshold from 100 to only 10.
+
+rm -rf $TMP/sample.fasta
+thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
+            -i tests/nematodes/sample_R*.fastq.gz -a 2 -o $TMP/
+diff $TMP/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
+
+rm -rf $TMP/sample.fasta
+thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
+	    -i tests/nematodes/sample_R*.fastq.gz -a 2 --flip -o $TMP/
+diff $TMP/sample.fasta tests/nematodes/sample_flip_a10.fasta
+
 echo "$0 - test_prepare-reads.sh passed"
