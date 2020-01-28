@@ -91,12 +91,12 @@ echo "Testing --flip works"
 
 rm -rf $TMP/sample.fasta
 thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
-            -i tests/nematodes/sample_R*.fastq.gz -a 2 -o $TMP/
+            -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
 
 rm -rf $TMP/sample.fasta
 thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
-	    -i tests/nematodes/sample_R*.fastq.gz -a 2 --flip -o $TMP/
+	    -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_flip_a10.fasta
 
 echo "$0 - test_prepare-reads.sh passed"
