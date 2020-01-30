@@ -705,6 +705,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     seq_count = 0
     match_count = 0
+    skipped_samples = set()
     for filename in fasta_files:
         sys.stdout.flush()
         sys.stderr.flush()
@@ -722,7 +723,9 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         classifier_output.append(output_name)
 
         if output_name is not None and os.path.isfile(output_name):
-            sys.stderr.write(f"Skipping {output_name} as already done\n")
+            skipped_samples.add(output_name)
+            if debug:
+                sys.stderr.write(f"Skipping {output_name} as already done\n")
             # Count the number of sequences and matches
             with open(output_name) as handle:
                 for line in handle:
@@ -784,6 +787,11 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
             pred_handle.close()
             # Move our temp file into position...
             shutil.move(tmp_pred, output_name)
+
+    if skipped_samples:
+        sys.stderr.write(
+            f"Skipped {len(skipped_samples)} previously classified samples\n"
+        )
 
     if tmp_dir:
         sys.stderr.write(

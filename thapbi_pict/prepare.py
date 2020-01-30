@@ -561,6 +561,7 @@ def main(
 
     fasta_files_prepared = []  # return value
 
+    skipped_samples = set()
     pool_worst_control = {}  # folder as key, max abundance as value
     for control, stem, raw_R1, raw_R2 in file_pairs:
         sys.stdout.flush()
@@ -616,13 +617,25 @@ def main(
                     )
                 )
         elif uniq_count is None:
-            sys.stderr.write(f"Skipping {fasta_file} as already done\n")
+            skipped_samples.add(stem)
+            if debug:
+                sys.stderr.write(f"Skipping {fasta_file} as already done\n")
         else:
             sys.stderr.write(
                 f"Sample {stem} has {uniq_count:d} unique sequences over"
                 f" abundance threshold {min_a:d}"
                 f" (max marker abundance {max_its1_abundance:d})\n"
             )
+
+    if skipped_samples:
+        sys.stderr.write(
+            f"Skipped {len(skipped_samples)} previously prepared samples.\n"
+        )
+    for pool_key in sorted(pool_worst_control):
+        sys.stderr.write(
+            os.path.relpath(pool_key)
+            + f" abundance threshold {pool_worst_control[pool_key]}\n"
+        )
 
     if tmp_dir:
         sys.stderr.write(
