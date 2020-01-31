@@ -20,7 +20,7 @@ The test uses a minimum abundance threshold of 10 (as it is only a subsample),
 which with the defaults gives only 9 copies of the most abundant sequence, and
 thus no output. Adding --flip to the command brings this to 12 copies, and a
 single accepted sequence.
-    
+
 From an NCBI BLAST online, the dominant sequence and handful of the lower
 abundance variants are perfect or 99% identical matches to published Globodera
 rostochiensis ITS1.
