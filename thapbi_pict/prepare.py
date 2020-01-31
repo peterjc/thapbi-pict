@@ -59,10 +59,11 @@ def find_fastq_pairs(
                 for f in files:
                     if f.endswith(ext):
                         if ignore_prefixes and f.startswith(ignore_prefixes):
-                            sys.stderr.write(
-                                f"WARNING: Ignoring {os.path.join(root, f)}"
-                                " due to prefix\n"
-                            )
+                            if debug:
+                                sys.stderr.write(
+                                    f"WARNING: Ignoring {os.path.join(root, f)}"
+                                    " due to prefix\n"
+                                )
                             continue
                         answer.append(os.path.join(root, f))
         elif os.path.isfile(x):
@@ -599,11 +600,12 @@ def main(
         # Any HMM is assumed to be a synthetic control, no HMM means biological
         max_its1_abundance = max_abundance_by_hmm.get("", 0)
         if control:
-            sys.stderr.write(
-                f"Control {stem} has {uniq_count:d} unique sequences over"
-                f" control abundance threshold {min_abundance:d}"
-                f" (max marker abundance {max_its1_abundance:d})\n"
-            )
+            if debug or max_its1_abundance > min_abundance:
+                sys.stderr.write(
+                    f"Control {stem} has max marker abundance {max_its1_abundance:d}"
+                    f" ({uniq_count:d} unique sequences over default threshold"
+                    f" {min_abundance:d})\n"
+                )
             if max_its1_abundance > pool_worst_control.get(pool_key, 0):
                 pool_worst_control[pool_key] = max_its1_abundance
             if debug:
