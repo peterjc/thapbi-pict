@@ -492,7 +492,7 @@ def pipeline(args=None):
             sys.exit(return_code)
         sys.stderr.write(f"Wrote {edit_graph_filename}\n")
 
-    sys.stderr.write("All done!")
+    sys.stderr.write("All done!\n")
 
 
 # Common arguments
