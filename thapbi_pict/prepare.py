@@ -606,7 +606,8 @@ def main(
                     f" ({uniq_count:d} unique sequences over default threshold"
                     f" {min_abundance:d})\n"
                 )
-            if max_its1_abundance > pool_worst_control.get(pool_key, 0):
+            if max_its1_abundance > pool_worst_control.get(pool_key, -1):
+                # Record even if zero, nice to have for summary later
                 pool_worst_control[pool_key] = max_its1_abundance
             if debug:
                 sys.stderr.write(
