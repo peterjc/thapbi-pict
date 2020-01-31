@@ -275,12 +275,13 @@ def main(
             if human:
                 all_sp = set()
                 unambig_sp = set()
-                for sp_list, count in sample_species_counts[sample].items():
-                    if count:
-                        sp_list = sp_list.split(";")
-                        all_sp.update(sp_list)
-                        if len(sp_list) == 1:
-                            unambig_sp.add(sp_list[0])
+                if sample in sample_species_counts:
+                    for sp_list, count in sample_species_counts[sample].items():
+                        if count:
+                            sp_list = sp_list.split(";")
+                            all_sp.update(sp_list)
+                            if len(sp_list) == 1:
+                                unambig_sp.add(sp_list[0])
                 try:
                     if meta_names:
                         human.write(f"Sequencing sample: {sample}\n\n")
