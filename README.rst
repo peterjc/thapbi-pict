@@ -53,8 +53,8 @@ We recommend installing this tool on Linux or macOS using the
 
 Sadly the command line dependencies likely rule out using Windows directly.
 
-Alternatively, since the software is on the `Python Package Index
-(PyPI) <https://pypi.python.org/>`__, the following command will install
+Alternatively, since `the software is on the Python Package Index (PyPI)
+<https://pypi.org/project/thapbi-pict/>`__, the following command will install
 it along with its Python dependencies:
 
 .. code:: console
