@@ -635,10 +635,16 @@ def main(
             f"Skipped {len(skipped_samples)} previously prepared samples.\n"
         )
     for pool_key in sorted(pool_worst_control):
-        sys.stderr.write(
-            os.path.relpath(pool_key)
-            + f" abundance threshold {pool_worst_control[pool_key]}\n"
-        )
+        if pool_worst_control[pool_key] > min_abundance:
+            sys.stderr.write(
+                os.path.relpath(pool_key)
+                + f" abundance threshold raised to {pool_worst_control[pool_key]}\n"
+            )
+        else:
+            sys.stderr.write(
+                os.path.relpath(pool_key)
+                + f" negative control abundance {pool_worst_control[pool_key]} (good)"
+            )
 
     if tmp_dir:
         sys.stderr.write(
