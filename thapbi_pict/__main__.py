@@ -17,6 +17,7 @@ import sys
 
 from . import __version__
 from .classify import method_classify_file as method_classifier
+from .utils import find_requested_files
 
 
 # Common command line defaults
@@ -362,6 +363,7 @@ def pipeline(args=None):
     from .classify import main as classify
     from .sample_summary import main as sample_summary
     from .read_summary import main as read_summary
+    from .assess import main as assess
     from .edit_graph import main as edit_graph
 
     check_output_directory(args.output)
@@ -468,6 +470,31 @@ def pipeline(args=None):
         sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
         sys.exit(return_code)
     sys.stderr.write(f"Wrote {stem}.reads.*\n")
+
+    # TODO - Support known setting...
+    known_files = find_requested_files(
+        args.input,
+        ".known.tsv",
+        ignore_prefixes=tuple(args.ignore_prefixes),
+        debug=args.verbose,
+    )
+    if known_files:
+        return_code = assess(
+            inputs=known_files + classified_files,
+            level="sample",  # =args.level,
+            known="known",  # =args.known,
+            method=args.method,
+            min_abundance=args.abundance,
+            assess_output=stem + ".assess.tsv",
+            map_output=stem + ".assess.tally.tsv",
+            confusion_output=stem + ".assess.confusion.tsv",
+            ignore_prefixes=tuple(args.ignore_prefixes),
+            debug=args.verbose,
+        )
+        if return_code:
+            sys.stderr.write("ERROR: Pipeline aborted during assess\n")
+            sys.exit(return_code)
+        sys.stderr.write(f"Wrote {stem}.assess.*\n")
 
     edit_graph_filename = stem + ".edit-graph.xgmml"
     if os.path.isfile(edit_graph_filename):
