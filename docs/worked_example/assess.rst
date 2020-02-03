@@ -288,3 +288,28 @@ species in the database.
 
 This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
 samples.
+
+Running assessment as part of pipeline
+--------------------------------------
+
+Provided they follow the expected naming convention, if you include your
+control files ``*.known.tsv`` as one of the pipeline inputs, it will call
+the classifier assessment (at sample level) after runing the classifier and
+producing the main reports:
+
+    $ thapbi_pict pipeline -i raw_data/ positive_controls/ \
+      -s intermediate/ -o summary/ \
+      -n raw_data/NEGATIVE*.fastq.gz -r with-metadata \
+      -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
+    ...
+    $ ls -1 summary/with-metadata.*
+    with-metadata.reads.tsv
+    with-metadata.reads.xlsx
+    with-metadata.samples.tsv
+    with-metadata.samples.txt
+    with-metadata.assess.confusion.tsv
+    with-metadata.assess.tally.tsv
+    with-metadata.assess.tsv
+    with-metadata.edit-graph.xgmml
+
+The file ``summary/with-metadata.assess.tsv`` will match the output above.
