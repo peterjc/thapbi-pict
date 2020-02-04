@@ -457,7 +457,7 @@ def main(
     if debug:
         sys.stderr.write(
             f"Classifier DB had {len(db_sp_list):d} species,"
-            " including expected values have {len(sp_list):d} species\n"
+            f" including expected values have {len(sp_list):d} species\n"
         )
     for sp in sp_list:
         assert species_level(sp), sp
