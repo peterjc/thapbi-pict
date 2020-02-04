@@ -46,7 +46,7 @@ def check_output_directory(out_dir, must_exist=True):
     elif os.path.isfile(out_dir):
         sys.exit(f"ERROR: Output directory name is a file: {out_dir}\n")
     elif must_exist:
-        sys.exit("ERROR: Output directory does not exist")
+        sys.exit(f"ERROR: Output directory does not exist: {out_dir}\n")
 
 
 def expand_database_argument(text, exist=False, hyphen_default=False):
