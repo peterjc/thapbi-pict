@@ -1,0 +1,32 @@
+Accession	MiSeq-name	Condition	Replicate	Sample-type	Group	Protocol
+SRR5314337	FMockE.HC_S190	MockE_HC	1	fungal mock community	even	high PCR cycle number
+SRR5314339	FMockE.HC1_S178	MockE_HC	1	fungal mock community	even	high PCR cycle number
+SRR5314338	FMockE.HC3_S107	MockE_HC	3	fungal mock community	even	high PCR cycle number
+SRR5314336	FMockE.LE1_S165	MockE_LE	1	fungal mock community	even	long PCR extension time
+SRR5314335	FMockE.LE2_S177	MockE_LE	2	fungal mock community	even	long PCR extension time
+SRR5314334	FMockE.LE3_S189	MockE_LE	3	fungal mock community	even	long PCR extension time
+SRR5314333	FMockE1_S152	MockE_SW	1	fungal mock community	even	standard workflow
+SRR5314332	FMockE2_S164	MockE_SW	2	fungal mock community	even	standard workflow
+SRR5314331	FMockE3_S176	MockE_SW	3	fungal mock community	even	standard workflow
+SRR5314363	FMockA.HC1_S119	MockA_HC	1	fungal mock community	staggered A	high PCR cycle number
+SRR5314362	FMockA.HC2_S131	MockA_HC	2	fungal mock community	staggered A	high PCR cycle number
+SRR5314361	FMockA.HC3_S143	MockA_HC	3	fungal mock community	staggered A	high PCR cycle number
+SRR5314360	FMockA.LE1_S106	MockA_LE	1	fungal mock community	staggered A	long PCR extension time
+SRR5314359	FMockA.LE2_S118	MockA_LE	2	fungal mock community	staggered A	long PCR extension time
+SRR5314358	FMockA.LE3_S130	MockA_LE	3	fungal mock community	staggered A	long PCR extension time
+SRR5314357	FMockA1_S188	MockA_SW	1	fungal mock community	staggered A	standard workflow
+SRR5314356	FMockA2_S105	MockA_SW	2	fungal mock community	staggered A	standard workflow
+SRR5314355	FMockA3_S117	MockA_SW	3	fungal mock community	staggered A	standard workflow
+SRR5314351	FMockB.HC1_S155	MockB_HC	1	fungal mock community	staggered B	high PCR cycle number
+SRR5314350	FMockB.HC2_S167	MockB_HC	2	fungal mock community	staggered B	high PCR cycle number
+SRR5314349	FMockB.HC3_S179	MockB_HC	3	fungal mock community	staggered B	high PCR cycle number
+SRR5314348	FMockB.LE1_S142	MockB_LE	1	fungal mock community	staggered B	long PCR extension time
+SRR5314347	FMockB.LE2_S154	MockB_LE	2	fungal mock community	staggered B	long PCR extension time
+SRR5314346	FMockB.LE3_S166	MockB_LE	3	fungal mock community	staggered B	long PCR extension time
+SRR5314345	FMockB1_S129	MockB_SW	1	fungal mock community	staggered B	standard workflow
+SRR5314344	FMockB2_S141	MockB_SW	2	fungal mock community	staggered B	standard workflow
+SRR5314343	FMockB3_S153	MockB_SW	3	fungal mock community	staggered B	standard workflow
+SRR5314317	NegDNAA_S163	Neg_DNA	1	negative control	from DNA extraction	standard workflow
+SRR5314316	NegDNAB_S175	Neg_DNA	2	negative control	from DNA extraction	standard workflow
+SRR5314315	NegPCRA_S187	Neg_PCR	1	negative control	from PCR step	standard workflow
+SRR5314314	NegPCRB_S104	Neg_PCR	2	negative control	from PCR step	standard workflow

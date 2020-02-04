@@ -1,0 +1,31 @@
+Accession	MiSeq-name	Condition	Replicate	Sample-type	Group	Protocol
+SRR5838512	MockEGoTq1_S17	MockE_GoTaq	1	fungal mock community	even	GoTaq
+SRR5838511	MockEGoTq2_S18	MockE_GoTaq	2	fungal mock community	even	GoTaq
+SRR5838531	MockEGoTq3_S19	MockE_GoTaq	3	fungal mock community	even	GoTaq
+SRR5838532	MockEPhGn1_S27	MockE_Phusion	1	fungal mock community	even	Phusion
+SRR5838529	MockEPhGn2_S28	MockE_Phusion	2	fungal mock community	even	Phusion
+SRR5838530	MockEPhGn3_S29	MockE_Phusion	3	fungal mock community	even	Phusion
+SRR5838527	MockEPrmp1_S7	MockE_PreAmp	1	fungal mock community	even	PreAmp
+SRR5838528	MockEPrmp2_S8	MockE_PreAmp	2	fungal mock community	even	PreAmp
+SRR5838525	MockEPrmp3_S9	MockE_PreAmp	3	fungal mock community	even	PreAmp
+SRR5838518	MockAGoTq1_S11	MockA_GoTaq	1	fungal mock community	staggered A	GoTaq
+SRR5838517	MockAGoTq2_S12	MockA_GoTaq	2	fungal mock community	staggered A	GoTaq
+SRR5838520	MockAGoTq3_S13	MockA_GoTaq	3	fungal mock community	staggered A	GoTaq
+SRR5838519	MockAPhGn1_S21	MockA_Phusion	1	fungal mock community	staggered A	Phusion
+SRR5838514	MockAPhGn2_S22	MockA_Phusion	2	fungal mock community	staggered A	Phusion
+SRR5838513	MockAPhGn3_S23	MockA_Phusion	3	fungal mock community	staggered A	Phusion
+SRR5838516	MockAPrmp1_S1	MockA_PreAmp	1	fungal mock community	staggered A	PreAmp
+SRR5838515	MockAPrmp2_S2	MockA_PreAmp	2	fungal mock community	staggered A	PreAmp
+SRR5838522	MockAPrmp3_S3	MockA_PreAmp	3	fungal mock community	staggered A	PreAmp
+SRR5838521	MockBGoTq1_S14	MockB_GoTaq	1	fungal mock community	staggered B	GoTaq
+SRR5838510	MockBGoTq2_S15	MockB_GoTaq	2	fungal mock community	staggered B	GoTaq
+SRR5838509	MockBGoTq3_S16	MockB_GoTaq	3	fungal mock community	staggered B	GoTaq
+SRR5838508	MockBPhGn1_S24	MockB_Phusion	1	fungal mock community	staggered B	Phusion
+SRR5838507	MockBPhGn2_S25	MockB_Phusion	2	fungal mock community	staggered B	Phusion
+SRR5838506	MockBPhGn3_S26	MockB_Phusion	3	fungal mock community	staggered B	Phusion
+SRR5838505	MockBPrmp1_S4	MockB_PreAmp	1	fungal mock community	staggered B	PreAmp
+SRR5838504	MockBPrmp2_S5	MockB_PreAmp	2	fungal mock community	staggered B	PreAmp
+SRR5838503	MockBPrmp3_S6	MockB_PreAmp	3	fungal mock community	staggered B	PreAmp
+SRR5838526	NegCtlGoTq_S20	Neg_GoTaq	1	negative control		GoTaq
+SRR5838523	NegCtlPhGn_S30	Neg_Phusion	1	negative control		Phusion
+SRR5838524	NegCtlPrmp_S10	Neg_PreAmp	1	negative control		PreAmp

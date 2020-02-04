@@ -33,3 +33,9 @@ prune tests/woody_hosts/intermediate/
 
 prune tests/recycled_water/cache/
 prune tests/recycled_water/taxdmp_2020-01-01/
+
+include examples/fungal_mock/*
+include examples/fungal_mock/amp_lib_one/metadata.tsv
+include examples/fungal_mock/amp_lib_two/metadata.tsv
+include examples/fungal_mock/amp_lib_one/raw_data/MD5SUM.txt
+include examples/fungal_mock/amp_lib_two/raw_data/MD5SUM.txt
