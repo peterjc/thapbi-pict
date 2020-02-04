@@ -270,6 +270,9 @@ def main(
                 f"Minimum total abundance threshold {total_min_abundance:d}"
                 " left {len(md5_in_fasta):d} sequences from FASTA files.\n"
             )
+        if len(md5_to_seq) > 5000:
+            sys.stderr.write("WARNING: Over 5000 sequences to plot; aborting edit-graph\n")
+            return 1  # avoiding sys.exit as could be called from pipeline
 
     if db_url:
         if debug:
