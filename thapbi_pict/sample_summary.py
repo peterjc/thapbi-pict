@@ -1,4 +1,4 @@
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -14,6 +14,7 @@ import sys
 
 from collections import Counter
 
+from .utils import color_bands
 from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
@@ -131,6 +132,20 @@ def main(
         vertical_text_format = workbook.add_format(
             # Vertical text, reading up the page
             {"rotation": 90}
+        )
+        sample_color_bands = [
+            # Simple rolling rainbow pastel pallet
+            workbook.add_format({"bg_color": c, "font_color": "#000000"})
+            for c in [
+                "#FFCCDA",  # pink
+                "#F7D6B7",  # orange
+                "#FFFFCC",  # yellow
+                "#CCFFDD",  # green
+                "#CCF7FF",  # blue
+            ]
+        ]
+        sample_formats = color_bands(
+            [_[group_col] for _ in metadata_rows], sample_color_bands, debug=debug,
         )
     else:
         workbook = None
@@ -251,28 +266,35 @@ def main(
                         # Stop trying to write to stdout (eg piped to head)
                         handle = None
                 if worksheet:
+                    try:
+                        cell_format = sample_formats[current_row]  # sample number
+                    except IndexError:
+                        cell_format = None
                     current_row += 1
                     assert len(meta_names) == len(metadata)
                     for offset, value in enumerate(metadata):
-                        worksheet.write_string(current_row, offset, value)
+                        worksheet.write_string(current_row, offset, value, cell_format)
                     assert col_offset == len(meta_names)
-                    worksheet.write_string(current_row, col_offset, sample)
+                    worksheet.write_string(current_row, col_offset, sample, cell_format)
                     worksheet.write_number(
                         current_row,
                         col_offset + 1,
                         sum(sample_species_counts[sample].values()),
+                        cell_format,
                     )
                     for offset, genus in enumerate(genus_predictions):
                         worksheet.write_number(
                             current_row,
                             col_offset + 2 + offset,
                             sample_genus_counts[sample][genus],
+                            cell_format,
                         )
                     for offset, sp in enumerate(species_columns):
                         worksheet.write_number(
                             current_row,
                             col_offset + 2 + len(genus_predictions) + offset,
                             sample_species_counts[sample][sp],
+                            cell_format,
                         )
 
             if human:
