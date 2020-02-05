@@ -324,7 +324,7 @@ def sample_summary(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
-        # metadata_groups=args.metagroups,
+        metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         require_metadata=args.requiremeta,
@@ -441,7 +441,7 @@ def pipeline(args=None):
         min_abundance=args.abundance,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
-        # metadata_groups=args.metagroups
+        metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -1413,6 +1413,7 @@ def main(args=None):
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument(
         "-q",

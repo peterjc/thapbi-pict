@@ -657,7 +657,9 @@ def load_metadata(
                 f"DEBUG: Row {metadata_name_row:d} gave metadata field names:"
                 f" {names!r}\n"
             )
-            sys.stderr.write(f"DEBUG: Grouping on {names[group_col]} for colour bands\n")
+            sys.stderr.write(
+                f"DEBUG: Grouping on {names[group_col]} for colour bands\n"
+            )
 
     # Remove header lines,
     lines = [_ for _ in lines[metadata_name_row:] if not _.startswith("#")]
