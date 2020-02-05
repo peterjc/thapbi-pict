@@ -36,6 +36,7 @@ else
     time tests/test_pipeline.sh
 fi
 
+time tests/test_fasta-nr.sh
 time tests/test_classify.sh
 time tests/test_seq-import.sh
 time tests/test_assess.sh
