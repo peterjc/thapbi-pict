@@ -526,6 +526,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
 def load_metadata(
     metadata_file,
     metadata_cols,
+    metadata_groups=None,
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
@@ -576,7 +577,10 @@ def load_metadata(
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], [], sequenced_samples
+        return [], [], [], [], sequenced_samples, 0
+
+    if metadata_groups and not metadata_cols:
+        sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
 
     if debug:
         sys.stderr.write(
@@ -612,6 +616,23 @@ def load_metadata(
             f"DEBUG: Matching sample names to metadata column {sample_col + 1}\n"
         )
 
+    if metadata_groups:
+        try:
+            group_col = int(metadata_groups) - 1
+        except ValueError:
+            sys.exit(
+                "ERROR: Invalid metadata group column, should be positive or 0,"
+                f" not {metadata_groups!r}."
+            )
+        if group_col not in value_cols:
+            sys.exit(
+                f"ERROR: Metadata group column {metadata_groups:d}"
+                " not included in reported metadata.\n"
+            )
+        group_col = value_cols.index(group_col)  # i.e. which of requested columns
+    else:
+        group_col = 0  # Default is the first requested column
+
     names = [""] * len(value_cols)  # default
     meta = {}
     default = [""] * len(value_cols)
@@ -636,6 +657,7 @@ def load_metadata(
                 f"DEBUG: Row {metadata_name_row:d} gave metadata field names:"
                 f" {names!r}\n"
             )
+            sys.stderr.write(f"DEBUG: Grouping on {names[group_col]} for colour bands\n")
 
     # Remove header lines,
     lines = [_ for _ in lines[metadata_name_row:] if not _.startswith("#")]
@@ -702,7 +724,7 @@ def load_metadata(
         sys.exit(f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)")
     del back
 
-    return meta, index, names, default, missing_meta
+    return meta, index, names, default, missing_meta, group_col
 
 
 def color_bands(meta_groups, sample_color_bands, debug=False):
@@ -748,8 +770,9 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
         # (Almost) all same or (almost) unique not helpful
         if debug:
             sys.stderr.write(
-                f"DEBUG: {len(set(meta_groups))} groups not suitable for coloring\n"
+                f"DEBUG: {len(set(meta_groups))} groups not suitable for coloring:\n"
             )
+            sys.stderr.write(";".join(sorted(set(meta_groups))) + "\n")
         return default
 
     bands = []
