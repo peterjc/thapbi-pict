@@ -16,83 +16,12 @@ from collections import Counter
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+from .utils import color_bands
 from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import sample_sort
 from .utils import split_read_name_abundance
-
-
-def color_bands(meta_groups, sample_color_bands, debug=False):
-    """Return a list for formats, one for each sample."""
-    default = [None] * len(meta_groups)
-
-    min_groups = 3
-    max_groups = 0.8 * len(meta_groups)
-    if min_groups > max_groups:
-        if debug:
-            sys.stderr.write("DEBUG: Not enough columns to bother with coloring\n")
-        return default
-
-    if len(set(meta_groups)) == 1:
-        # All the same not helpful for banding
-        if debug:
-            sys.stderr.write(
-                "DEBUG: All samples had same metadata in color grouping field:"
-                f" {meta_groups[0]!r}\n"
-            )
-        return default
-
-    if max_groups < len(set(meta_groups)):
-        if debug:
-            sys.stderr.write(
-                "DEBUG: Too many coloring groups, trying first word only\n"
-            )
-        # Attempting heuristic, taking the first word/field will work on schemes like
-        # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
-        meta_groups = [
-            _.replace("-", " ").replace("_", " ").split(None, 1)[0] if _ else ""
-            for _ in meta_groups
-        ]
-        if len(set(meta_groups)) == 1:
-            # That didn't work.
-            if debug:
-                sys.stderr.write(
-                    "DEBUG: Too many coloring groups, but first word only was unique\n"
-                )
-            return default
-
-    if len(set(meta_groups)) < min_groups or max_groups < len(set(meta_groups)):
-        # (Almost) all same or (almost) unique not helpful
-        if debug:
-            sys.stderr.write(
-                f"DEBUG: {len(set(meta_groups))} groups not suitable for coloring\n"
-            )
-        return default
-
-    bands = []
-    debug_msg = []
-    for s, value in enumerate(meta_groups):
-        if s == 0:
-            bands.append(0)
-            debug_msg.append(value)
-        elif value == meta_groups[s - 1]:
-            # Same
-            bands.append(bands[-1])
-        else:
-            # Different
-            if value in meta_groups[:s]:
-                # Metadata values are not grouped, can't use for banding
-                # (might be able to use with a color key?)
-                sys.stderr.write(
-                    "WARNING: Metadata not grouped nicely for coloring:"
-                    f" {', '.join(debug_msg)} and then {value} (again).\n"
-                )
-                return default
-            bands.append(max(bands) + 1)
-            debug_msg.append(value)
-    assert len(set(bands)) == max(bands) + 1, bands
-    return [sample_color_bands[_ % len(sample_color_bands)] for _ in bands]
 
 
 def main(
