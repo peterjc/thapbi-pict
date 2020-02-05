@@ -22,6 +22,6 @@ set -o pipefail
 rm -rf $TMP/all.fasta
 thapbi_pict fasta-nr -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/all.fasta
 # Should be identical bar the loss of the HMM names in FASTA descriptions
-diff /tmp/pc40583/all.fasta <(cut -f 1 -d " " tests/prepare-reads/DNAMIX_S95_L001.fasta)
+diff $TMP/all.fasta <(cut -f 1 -d " " tests/prepare-reads/DNAMIX_S95_L001.fasta)
 
 echo "$0 - test_fasta-nr.sh passed"
