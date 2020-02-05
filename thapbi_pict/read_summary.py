@@ -1,4 +1,4 @@
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -48,36 +48,6 @@ def main(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
-    # Which column are we using for group coloring?
-    if metadata_groups and not metadata_cols:
-        sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
-    if metadata_cols:
-        # Tiny code duplication from load_metadata:
-        try:
-            value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
-        except ValueError:
-            sys.exit(
-                "ERROR: Output metadata columns should be a comma separated list"
-                f" of positive integers, not {metadata_cols!r}."
-            )
-    if metadata_groups:
-        try:
-            group_col = int(metadata_groups) - 1
-        except ValueError:
-            sys.exit(
-                "ERROR: Invalid metadata group column, should be positive or 0,"
-                f" not {metadata_groups!r}."
-            )
-        if group_col not in value_cols:
-            sys.exit(
-                f"ERROR: Metadata group column {metadata_groups:d}"
-                " not included in reported metadata.\n"
-            )
-        group_col = value_cols.index(group_col)  # i.e. which of requested columns
-        del value_cols
-    else:
-        group_col = 0  # Default is the first requested column
-
     samples = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
@@ -111,9 +81,11 @@ def main(
         meta_names,
         meta_default,
         missing_meta,
+        group_col,
     ) = load_metadata(
         metadata_file,
         metadata_cols,
+        metadata_groups,
         metadata_fieldnames,
         metadata_index,
         sequenced_samples=samples,
