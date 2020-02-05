@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.6.6  *Pending*  Call classifier assessment from ``pipeline`` if ``*.known.tsv`` given.
+v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
 v0.6.5  2020-01-27 Do ``--flip`` in ``prepare-reads`` using cutadapt v2.8 or later.
 v0.6.4  2020-01-23 ``curated-import`` accepts primers. Reduced memory usage for ``onebp``.
 v0.6.3  2020-01-20 Treat NCBI taxonomy "includes" as synonyms, adds 396 new species aliases.
