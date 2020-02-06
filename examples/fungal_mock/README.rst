@@ -3,10 +3,10 @@
 Introduction
 ============
 
-Sample data
+Data source
 -----------
 
-Based on the two amplicon sequencing libraries from this paper:
+This example is based on the two amplicon sequencing libraries from this paper:
 
     Bakker (2018) A fungal mock community control for amplicon sequencing experiments
     https://doi.org/10.1111/1755-0998.12760
@@ -29,8 +29,8 @@ ITS4‐KYO3 primer pair (``GATGAAGAACGYAGYRAA`` and ``CTBTTVCCKCTTCACTCG``),
 with lower yields as per supplementary Table S5 vs S6.
 
 
-Setup
------
+Provided files
+--------------
 
 Either clone the THAPBI PICT source code repository, on decompress the
 latest source code release (``.tar.gz`` file). You should find it contains
@@ -101,3 +101,34 @@ For each of the primer settings (a small fragment of ITS1 on ``amp_lib_one/``,
 a larger fragment of ITS1 and an ITS2 marker on ``amp_lib_two/``), it will make a
 simple database using the provided ``ITS1.fasta`` or ``ITS2.fasta`` file. It will
 then call the pipeline using the ``identity``, ``onebp`` and ``blast`` classifiers.
+
+Metadata
+--------
+
+The amplicon specific files ``metadata.tsv`` have seven columns:
+
+1. Accession, assigned by the public archive, e.g. "SRR5314337"
+2. MiSeq-name, author's filename stem, e.g. "FMockE.HC_S190"
+3. Condition, based on author's naming without replicate suffix, e.g. "MockE_HC"
+4. Replicate, numeric, e.g. "1"
+5. Sample-type, either "fungal mock community" or "negative control"
+6. Group, e.g. "even" or "staggered A"
+7. Protocol, e.g. "high PCR cycle number" or "standard workflow"
+
+When calling THAPBI PICT, the meta data commands are given as follows:
+
+.. code:: console
+
+    $ thapbi_pict ... -t metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+
+Argument ``-x 1`` indicates the filename stem can be found in column 1, Accession.
+We might have downloaded the files and used the author original names, in which
+case ``-x 2`` ought to work.
+
+Argument ``-c 5,6,7,3,4,2`` says which columns to display and sort by. This means
+Sample-type, Group, Protocol, Condition, Replicate, MiSeq Name. The purpose here
+is to group the samples logically (sorting on accession or MiSeq Name would not
+work), and suitable for group colouring.
+
+Argument ``-g 6`` means assign colour bands using column 6, Group. This is used
+in the Excel reports.
