@@ -25,7 +25,11 @@ recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
 
 include tests/reads/SRR6303948_sample_?.fastq
 include tests/woody_hosts/intermediate.tar.bz2
-exclude tests/woody_hosts/raw_data/*.fastq.gz
-exclude tests/woody_hosts/intermediate/*
-exclude tests/recycled_water/cache/*
-exclude tests/recycled_water/taxdmp_2020-01-01/*
+
+prune tests/woody_hosts/raw_data/
+prune tests/woody_hosts/positive_controls/
+prune tests/woody_hosts/summary/
+prune tests/woody_hosts/intermediate/
+
+prune tests/recycled_water/cache/
+prune tests/recycled_water/taxdmp_2020-01-01/
