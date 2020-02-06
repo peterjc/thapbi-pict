@@ -274,7 +274,8 @@ def main(
             sys.stderr.write(
                 "WARNING: Over 5000 sequences to plot; aborting edit-graph\n"
             )
-            return 1  # avoiding sys.exit as could be called from pipeline
+            # Special return value for use within pipeline
+            return 2
 
     if db_url:
         if debug:

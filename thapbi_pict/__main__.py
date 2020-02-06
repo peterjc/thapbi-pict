@@ -514,7 +514,10 @@ def pipeline(args=None):
             ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
         )
-        if return_code:
+        if return_code == 2:
+            # Special value indicating graph skipped as too large
+            pass
+        elif return_code:
             sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
             sys.exit(return_code)
         sys.stderr.write(f"Wrote {edit_graph_filename}\n")
