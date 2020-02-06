@@ -46,12 +46,12 @@ negative control from PCR step       NegPCRB_S104 SRR5314314  3860
 
 Amplicon library two, ITS1 using the ITS1f/ITS2 primer pair:
 
-============================= ============== ==========	=====
+============================= ============== ========== =====
 Descrption                    MiSeq-name     Accession  Count
 ----------------------------- -------------- ---------- -----
-negative control with GoTaq   NegCtlGoTq_S20 SRR5838526	    2
-negative control with Phusion NegCtlPhGn_S30 SRR5838523	    8
-negative control with reAmp   NegCtlPrmp_S10 SRR5838524	    9
+negative control with GoTaq   NegCtlGoTq_S20 SRR5838526     2
+negative control with Phusion NegCtlPhGn_S30 SRR5838523     8
+negative control with reAmp   NegCtlPrmp_S10 SRR5838524     9
 ============================= ============== ========== =====
 
 Amplicon library two, ITS2 using the ITS3‐KYO2 and ITS4‐KYO3 primer pair:
