@@ -47,6 +47,7 @@ Key links:
    quick_start
    worked_example/index
    custom_database/index
+   fungal_mock/index
    commands
    api/index
    release_history
