@@ -89,9 +89,9 @@ files downloaded correctly:
 
 .. code:: console
 
-   $ cd	amp_lib_two/raw_data/
+   $ cd amp_lib_two/raw_data/
    $ md5sum -c MD5SUM.txt
-   $ cd	../../
+   $ cd ../../
 
 Running the pipeline
 --------------------
