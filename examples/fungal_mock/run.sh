@@ -12,10 +12,12 @@ function analyse {
     # Using minimum of 2 gives 75k unique, minimum of 10 gives 8.8k unique.
     # Using minimum of 100 (default) gives under 800 unique over samples.
     mkdir -p $LIBRARY/$NAME
-    thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
-		-i $LIBRARY/raw_data/ $LIBRARY/expected/ \
-		-s $LIBRARY/$NAME -o $LIBRARY/ -r $NAME -a 10 \
-		-t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+    for METHOD in identity onebp blast; do
+        thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
+                    -i $LIBRARY/raw_data/ $LIBRARY/expected/ -m $METHOD \
+                    -s $LIBRARY/$NAME -o $LIBRARY/ -r $NAME.$METHOD -a 10 \
+                    -t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+    done
     echo "$NAME done"
 }
 
