@@ -4,7 +4,7 @@ Presence and absence
 This example is a controlled setup where we know what the classifier
 ought ideally to report for every single sample.
 
-We have a handful of negative controls (which should have no marker
+We have replicated negative controls (which should have no marker
 sequences present), and plenty of positive controls (which should
 have the expected 19 species only).
 
@@ -30,7 +30,9 @@ sequence even if only supported by one read.
 otherwise THAPBI PICT would not replace the older higher threshold files).
 
 If you do this, just how bad are the contamination levels? These little
-tables were extracted manually from the sample level reports.
+tables were extracted manually from the sample level reports run with
+``-a 1`` (accepting even sequences seen in only one read). The counts
+are the total number of reads.
 
 Amplicon library one, ITS1 using the BITS/B58S3 primer pair, samples
 replicated in duplicate:
