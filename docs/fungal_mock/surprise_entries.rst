@@ -5,6 +5,9 @@ In the previous section, we highlighted several unexpected contaminants in the
 negative controls which could not be explained as cross-contamination from the
 mock community.
 
+Amplicon library one - ITS1
+---------------------------
+
 Specifically from the first amplicon library for ITS1 we saw the following -
 which appear to be unique to the negative controls (not in any mock community
 samples):
@@ -22,10 +25,32 @@ Conversly the read reports show plenty of unassigned sequences - things which
 did not match the very narrow database built from ``ITS1.fasta`` or
 ``ITS2.fasta`` containing the markers expected from the mock community *only*.
 
-For example, ``5ca0acd7dd9d76fdd32c61c13ca5c881`` which perfectly matches
+Some might reflect additional alternative copies of ITS1 in the genomes.
+
+For example, ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abudnance
+sequence ``e055cb2efa2e1e0eb32d201e018b8609`` (a 3bp edit away) look like
+*glomeromycetes*, perhaps a *Rhizophagus* (from the mock community), but
+could be from a *Glomus* species.
+
+Or, ``85775735614d45d056ce5f1b67f8d2b2`` which has good BLAST matches to
+several different *Fusarium* species.
+
+On the other hand,  ``5ca0acd7dd9d76fdd32c61c13ca5c881`` which perfectly matches
 fungus *Epicoccum nigrum* and *Epicoccum layuense*. Present at low levels in
-multiple samples, This was the dominant sequence in ``SRR5314339`` aka
+multiple samples, this was the dominant sequence in ``SRR5314339`` aka
 ``FMockE.HC1_S178``, which was a high PCR cycle number replicate of the even
 mixture. Perhaps this was a stray fragment of *Epicoccum* which by chance was
 amplified early in the PCR? This example was not highlighed in the original
-paper.
+paper but is exactly the kind of thing you should worry about with a high PCR
+cycle number.
+
+Amplicon library two - ITS1
+---------------------------
+
+These primers amplified a larger fragment to that in the first amplicon library.
+Many of the unexpected sequences are therefore the same. For instance, here
+``57b06dff740b38bd6a0375abd9db3972`` and 3bp away ``05007e829ab71427b49743994a14105f``
+are *glomeromycetes* matches - perhaps *Rhizophagus* (from the mock community).
+While ``7e31840276e0b10db32a26cef0abda33`` and 1bp different
+``e6f59a48cd979a95dc672dd54c9fcf02`` are probably *Fusarium*. As is
+``610caedb1a5699836310fce9dbb9c5fa``.
