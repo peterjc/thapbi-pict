@@ -34,7 +34,14 @@ prune tests/woody_hosts/intermediate/
 prune tests/recycled_water/cache/
 prune tests/recycled_water/taxdmp_2020-01-01/
 
-include examples/fungal_mock/*
+include examples/fungal_mock/README.rst
+include examples/fungal_mock/PRJNA377530.txt
+include examples/fungal_mock/ITS1.fasta
+include examples/fungal_mock/ITS2.fasta
+include examples/fungal_mock/mock_community.known.tsv
+include examples/fungal_mock/negative_control.known.tsv
+include examples/fungal_mock/setup.sh
+include examples/fungal_mock/run.sh
 include examples/fungal_mock/amp_lib_one/metadata.tsv
 include examples/fungal_mock/amp_lib_two/metadata.tsv
 include examples/fungal_mock/amp_lib_one/raw_data/MD5SUM.txt
