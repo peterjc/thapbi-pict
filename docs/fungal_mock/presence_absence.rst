@@ -166,7 +166,7 @@ of the three:
 
 .. code:: console
 
-    $ cut -f 1-5 examples/fungal_mock/amp_lib_one/BITS_B58S3.blast.assess.tsv
+    $ cut -f 1-5 amp_lib_one/BITS_B58S3.blast.assess.tsv
     ...
 
 Or, open this plain text tab separated Excel. You should see:
@@ -231,7 +231,7 @@ ITS1f/ITS2 primer is more successful:
 
 .. code:: console
 
-    $ cut -f 1-5 examples/fungal_mock/amp_lib_two/ITS1f_ITS2.blast.assess.tsv | tsv
+    $ cut -f 1-5 amp_lib_two/ITS1f_ITS2.blast.assess.tsv | tsv
     ...
 
 ========================== === === === ==
@@ -280,7 +280,7 @@ primers:
 
 .. code:: console
 
-    $ cut -f 1-5 examples/fungal_mock/amp_lib_two/ITS3-KYO2_ITS4-KYO3.blast.assess.tsv
+    $ cut -f 1-5 amp_lib_two/ITS3-KYO2_ITS4-KYO3.blast.assess.tsv
     ...
 
 ========================== === === === ==
