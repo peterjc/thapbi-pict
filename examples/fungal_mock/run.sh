@@ -9,7 +9,7 @@ function analyse {
 
     echo "Running analysis with minimum abundance threshold ten"
     # No threshold (-a 0 or -a 1) gives 450k total unique entries over samples
-    # Using minimum of 2 gives 75k unique, minimum of 10 gives 8.8k unique.
+    # Using minimum of 2 gives 75k unique, 5 gives 22k, and 10 gives 8.8k unique.
     # Using minimum of 100 (default) gives under 800 unique over samples.
     mkdir -p $LIBRARY/$NAME
     for METHOD in identity onebp blast; do
