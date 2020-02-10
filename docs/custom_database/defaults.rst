@@ -30,10 +30,10 @@ as follows, and you should get five output report files:
     $ ls -1 intermediate_defaults/SRR*.onebp.tsv | wc -l
     384
     $ ls -1 summary/summary_defaults/thapbi-pict.*
-    recycled-water-defaults.reads.tsv
-    recycled-water-defaults.reads.xlsx
-    recycled-water-defaults.samples.tsv
-    recycled-water-defaults.samples.txt
+    recycled-water-defaults.reads.onebp.tsv
+    recycled-water-defaults.reads.onebp.xlsx
+    recycled-water-defaults.samples.onebp.tsv
+    recycled-water-defaults.samples.onebp.txt
     recycled-water-defaults.edit-graph.xgmml
 
 Here we used ``-r`` (or ``--report``) to specify a different stem for the
@@ -53,7 +53,7 @@ using different primers and a custom database. These were deliberatly picked
 from the less diverse samples for clarity.
 
 For now, here is a formatted excerpt from the sample report in file
-``recycled-water-defaults.samples.txt``:
+``recycled-water-defaults.samples.onebp.txt``:
 
     :Accession: SRR6303586
     :Sample: OSU483

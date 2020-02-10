@@ -426,6 +426,8 @@ def pipeline(args=None):
             f"but {len(classified_files):d} classified"
         )
 
+    method = args.method
+
     if args.report:
         stem = os.path.join(args.output, args.report)
     else:
@@ -434,9 +436,9 @@ def pipeline(args=None):
 
     return_code = sample_summary(
         inputs=classified_files,
-        output=stem + ".samples.tsv",
-        excel=stem + ".samples.xlsx",
-        human_output=stem + ".samples.txt",
+        output=f"{stem}.samples.{method}.tsv",
+        excel=f"{stem}.samples.{method}.xlsx",
+        human_output=f"{stem}.samples.{method}.txt",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -450,12 +452,12 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
         sys.exit(return_code)
-    sys.stderr.write(f"Wrote {stem}.samples.*\n")
+    sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
 
     return_code = read_summary(
         inputs=fasta_files + classified_files,
-        output=stem + ".reads.tsv",
-        excel=stem + ".reads.xlsx",
+        output=f"{stem}.reads.{method}.tsv",
+        excel=f"{stem}.reads.{method}.xlsx",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -469,7 +471,7 @@ def pipeline(args=None):
     if return_code:
         sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
         sys.exit(return_code)
-    sys.stderr.write(f"Wrote {stem}.reads.*\n")
+    sys.stderr.write(f"Wrote {stem}.reads.{method}.*\n")
 
     # TODO - Support known setting...
     known_files = find_requested_files(
@@ -485,18 +487,18 @@ def pipeline(args=None):
             known="known",  # =args.known,
             method=args.method,
             min_abundance=args.abundance,
-            assess_output=stem + ".assess.tsv",
-            map_output=stem + ".assess.tally.tsv",
-            confusion_output=stem + ".assess.confusion.tsv",
+            assess_output=f"{stem}.assess.{method}.tsv",
+            map_output=f"{stem}.assess.tally.{method}.tsv",
+            confusion_output=f"{stem}.assess.confusion.{method}.tsv",
             ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
         )
         if return_code:
             sys.stderr.write("ERROR: Pipeline aborted during assess\n")
             sys.exit(return_code)
-        sys.stderr.write(f"Wrote {stem}.assess.*\n")
+        sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
 
-    edit_graph_filename = stem + ".edit-graph.xgmml"
+    edit_graph_filename = stem + ".edit-graph.xgmml"  # independent of method
     if os.path.isfile(edit_graph_filename):
         # This is slow to compute on complex sample sets
         sys.stderr.write(f"WARNING: Skipping {edit_graph_filename} as already exists\n")

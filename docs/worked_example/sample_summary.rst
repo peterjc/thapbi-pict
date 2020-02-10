@@ -22,9 +22,9 @@ Excel (``-e`` or ``--excel``), and human readable plain text TXT outputs
 .. code:: console
 
     $ thapbi_pict sample-summary -i intermediate/ \
-      -o summary/thapbi-pict.samples.tsv \
-      -e summary/thapbi-pict.samples.xlxs \
-      -r summary/thapbi-pict.samples.txt
+      -o summary/thapbi-pict.samples.onebp.tsv \
+      -e summary/thapbi-pict.samples.onebp.xlxs \
+      -r summary/thapbi-pict.samples.onebp.txt
     ...
 
 Note the trailing slash ``\`` at the end of the first line indicates the
@@ -39,9 +39,9 @@ and row numbers):
 .. code:: console
 
     $ time thapbi_pict sample-summary -i intermediate/ \
-      -o summary/with-metadata.samples.tsv \
-      -e summary/with-metadata.samples.xlsx \
-      -r summary/with-metadata.samples.txt \
+      -o summary/with-metadata.samples.onebp.tsv \
+      -e summary/with-metadata.samples.onebp.xlsx \
+      -r summary/with-metadata.samples.onebp.txt \
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
 
@@ -73,7 +73,7 @@ samples in the order given in column 16, i.e. ``Site_1_sample_1``,
 ``Site_1_sample_2``, ..., ``Site_1_sample_10`` as desired.
 
 Pulling out the ``Site_1_sample_1`` example, without metadata in file
-``summary/thapbi-pict.samples.txt`` we see:
+``summary/thapbi-pict.samples.onebp.txt`` we see:
 
 .. code:: text
 
@@ -107,7 +107,7 @@ In this case, as you may recall from when we looked at the classifier output
 file ``intermediate/Site_1_sample_1.onebp.tsv``, one of the sequences matched
 both *Phytophthora cambivora* and *Phytophthora x cambivora*.
 
-In comparison, with metadata in file ``summary/with-metadata.samples.txt``,
+In comparison, with metadata in file ``summary/with-metadata.samples.onebp.txt``,
 all the samples matched to a metadata row get grouped with a shared metadata
 header:
 

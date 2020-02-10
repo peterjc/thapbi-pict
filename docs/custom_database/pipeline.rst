@@ -16,12 +16,12 @@ our custom database built with matching primer trimmed entries:
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
-      -r recycled-water-custom-onebp -t metadata.tsv -c 1,2,3,4,5,6,7
+      -r recycled-water-custom -t metadata.tsv -c 1,2,3,4,5,6,7
     ...
     onebp classifier assigned species/genus to 3577559 of 9956078 sequences from 384 files
     ...
-    Wrote summary/recycled-water-custom-onebp.samples.*
-    Wrote summary/recycled-water-custom-onebp.reads.*
+    Wrote summary/recycled-water-custom.samples.onebp.*
+    Wrote summary/recycled-water-custom.reads.onebp.*
     Loaded 3054 unique sequences from 384 FASTA files.
     Matched 81 unique sequences in database
     ...
@@ -30,11 +30,11 @@ our custom database built with matching primer trimmed entries:
     $ ls -1 intermediate/SRR*.onebp.tsv | wc -l
     384
     $ ls -1 summary/summary/thapbi-pict.*
-    recycled-water-custom-onebp.reads.tsv
-    recycled-water-custom-onebp.reads.xlsx
-    recycled-water-custom-onebp.samples.tsv
-    recycled-water-custom-onebp.samples.txt
-    recycled-water-custom-onebp.edit-graph.xgmml
+    recycled-water-custom.reads.onebp.tsv
+    recycled-water-custom.reads.onebp.xlsx
+    recycled-water-custom.samples.onebp.tsv
+    recycled-water-custom.samples.onebp.txt
+    recycled-water-custom.edit-graph.xgmml
 
 Note here I have made the classifier method explicit with ``-m`` (or
 ``--method``), using the default of ``onebp``. With the narrower set of
@@ -57,12 +57,12 @@ more matches:
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
-      -r recycled-water-custom-blast -t metadata.tsv -c 1,2,3,4,5,6,7
+      -r recycled-water-custom -t metadata.tsv -c 1,2,3,4,5,6,7
     ...
     blast classifier assigned species/genus to 4281041 of 9956078 sequences from 384 files
     ...
-    Wrote summary/recycled-water-custom-blast.samples.*
-    Wrote summary/recycled-water-custom-blast.reads.*
+    Wrote summary/recycled-water-custom.samples.blast.*
+    Wrote summary/recycled-water-custom.reads.blast.*
     Loaded 3054 unique sequences from 384 FASTA files.
     Matched 81 unique sequences in database
     ...
@@ -84,8 +84,8 @@ Results
 We will focus on the same four low diversity samples for a brief comparison
 of the defaults, custom DB with ``onebp``, and custom DB with ``blast``.
 This information is extracted from the sample reports (new files
-``summary/recycled-water-custom-onebp.samples.txt`` and
-``summary/recycled-water-custom-blast.samples.txt``).
+``summary/recycled-water-custom.samples.onebp.txt`` and
+``summary/recycled-water-custom.samples.blast.txt``).
 
 ``SRR6303586`` aka ``OSU483``:
 
