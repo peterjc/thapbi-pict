@@ -5,11 +5,11 @@ import sys
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
-from thapbi_pict.db_orm import connect_to_db
-from thapbi_pict.db_orm import ITS1
-from thapbi_pict.db_orm import SequenceSource
-from thapbi_pict.db_orm import Taxonomy
-from thapbi_pict.utils import genus_species_name
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Taxonomy
+from .db_orm import connect_to_db
+from .utils import genus_species_name
 
 
 def main(db_url, output_filename, debug=False):
