@@ -16,3 +16,11 @@ extend-ignore =
 # =====================
 # This matches black's output:
 inline-quotes = double
+
+# =============================
+# flake8-import-order settings:
+# =============================
+# At the time of writing, matched 'pep8' (relaxed), and both the
+# 'smarkets' ('google' with plain imports before from) and 'edited'
+# styles (appears to differ only in treatment of local packages).
+import-order-style = pep8
