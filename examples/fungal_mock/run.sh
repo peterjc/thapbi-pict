@@ -15,7 +15,7 @@ function analyse {
     for METHOD in identity onebp blast; do
         thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
                     -i $LIBRARY/raw_data/ $LIBRARY/expected/ -m $METHOD \
-                    -s $LIBRARY/$NAME -o $LIBRARY/ -r $NAME.$METHOD -a 10 \
+                    -s $LIBRARY/$NAME -o $LIBRARY/ -r $NAME -a 10 \
                     -t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     echo "$NAME done"
