@@ -32,8 +32,8 @@ Or start it as a module::
 
 Either should find the installed copy of the Python code.
 """
-from __future__ import with_statement
 from __future__ import print_function
+from __future__ import with_statement
 
 import sys
 
