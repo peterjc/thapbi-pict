@@ -297,6 +297,8 @@ control files ``*.known.tsv`` as one of the pipeline inputs, it will call
 the classifier assessment (at sample level) after runing the classifier and
 producing the main reports:
 
+.. code:: console
+
     $ thapbi_pict pipeline -i raw_data/ positive_controls/ \
       -s intermediate/ -o summary/ \
       -n raw_data/NEGATIVE*.fastq.gz -r with-metadata \
