@@ -20,10 +20,10 @@ command as follows, and should get five output report files:
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/
     ...
     $ ls -1 summary/thapbi-pict.*
-    thapbi-pict.reads.tsv
-    thapbi-pict.reads.xlsx
-    thapbi-pict.samples.tsv
-    thapbi-pict.samples.txt
+    thapbi-pict.reads.onebp.tsv
+    thapbi-pict.reads.onebp.xlsx
+    thapbi-pict.samples.onebp.tsv
+    thapbi-pict.samples.onebp.txt
     thapbi-pict.edit-graph.xgmml
 
 As described for the :ref:`prepare-reads step <prepare_reads>` we should also
@@ -46,10 +46,10 @@ And, as described for the :ref:`sample-summary <sample_summary>` and
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
-    with-metadata.reads.tsv
-    with-metadata.reads.xlsx
-    with-metadata.samples.tsv
-    with-metadata.samples.txt
+    with-metadata.reads.onebp.tsv
+    with-metadata.reads.onebp.xlsx
+    with-metadata.samples.onebp.tsv
+    with-metadata.samples.onebp.txt
     with-metadata.edit-graph.xgmml
 
 Here we also used ``-r`` (or ``--report``) to specify a different stem

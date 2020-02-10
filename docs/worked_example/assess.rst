@@ -303,13 +303,13 @@ producing the main reports:
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
-    with-metadata.reads.tsv
-    with-metadata.reads.xlsx
-    with-metadata.samples.tsv
-    with-metadata.samples.txt
-    with-metadata.assess.confusion.tsv
-    with-metadata.assess.tally.tsv
-    with-metadata.assess.tsv
+    with-metadata.reads.onebp.tsv
+    with-metadata.reads.onebp.xlsx
+    with-metadata.samples.onebp.tsv
+    with-metadata.samples.onebp.txt
+    with-metadata.assess.confusion.onebp.tsv
+    with-metadata.assess.tally.onebp.tsv
+    with-metadata.assess.onebp.tsv
     with-metadata.edit-graph.xgmml
 
-The file ``summary/with-metadata.assess.tsv`` will match the output above.
+The file ``summary/with-metadata.assess.onebp.tsv`` will match the output above.

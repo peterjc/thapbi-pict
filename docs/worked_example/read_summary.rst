@@ -21,7 +21,8 @@ format table and ``-e`` or ``--excel`` for the Excel format table:
 .. code:: console
 
     $ thapbi_pict read-summary -i intermediate/ \
-      -o summary/thapbi-pict.reads.tsv -e summary/thapbi-pict.reads.xlxs
+      -o summary/thapbi-pict.reads.onebp.tsv \
+      -e summary/thapbi-pict.reads.onebp.xlxs
     ...
 
 The contents of the two files are the same - here we will focus on the Excel
@@ -33,7 +34,8 @@ used earlier:
 .. code:: console
 
     $ thapbi_pict read-summary -i intermediate/ \
-      -o summary/with-metadata.samples.tsv -e summary/with-metadata.samples.xlsx \
+      -o summary/with-metadata.samples.onebp.tsv \
+      -e summary/with-metadata.samples.onebp.xlsx \
       -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
     ...
 
@@ -61,7 +63,7 @@ assign repeated bands of background color to groups (pink, orange, yellow,
 green, blue). In this example, each sample site gets a new color:
 
 .. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
-   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.xlsx`` file.
+   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.onebp.xlsx`` file.
 
 Typical sample naming schemes will result in replicates as neighbouring
 columns - meaning you should see very similar patterns of red (non-zero).
