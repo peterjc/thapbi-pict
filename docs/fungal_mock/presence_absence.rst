@@ -23,7 +23,7 @@ minimum abundance threshold of 10 copies of each unique sequence (the
 default is a far more pesimitic 100).
 
 This is not a good idea in general, but for your negative controls it
-can be interesting to deliberatly set the no threshold, and accept any
+can be interesting to deliberately set no threshold, and accept any
 sequence even if only supported by one read.
 
 (Be sure to remove the intermediate FASTA files if you try this, as
