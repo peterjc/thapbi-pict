@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.6.7  2020-02-10 Include method name in ``pipeline`` report and assessment output filenames.
+v0.6.7  2020-02-10 Method in ``pipeline`` filenames; max sample abundance in ``edit-graph``.
 v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
 v0.6.5  2020-01-27 Do ``--flip`` in ``prepare-reads`` using cutadapt v2.8 or later.
 v0.6.4  2020-01-23 ``curated-import`` accepts primers. Reduced memory usage for ``onebp``.
