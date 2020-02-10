@@ -4,6 +4,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="6e847180a4da6eed316e1fb98b21218f"/>
     <att type="integer" name="Total-abundance" value="976"/>
+    <att type="integer" name="Max-sample-abundance" value="976"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora plurivora"/>
@@ -12,6 +13,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="d8613e80b8803b13f7ea5d097f8fe46f"/>
     <att type="integer" name="Total-abundance" value="812"/>
+    <att type="integer" name="Max-sample-abundance" value="812"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora rubi"/>
@@ -20,6 +22,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="af3282a9797a70b6922e29e68c0b2bdc"/>
     <att type="integer" name="Total-abundance" value="390"/>
+    <att type="integer" name="Max-sample-abundance" value="390"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora"/>
@@ -28,6 +31,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="29de890989becddc5e0b10ecbbc11b1a"/>
     <att type="integer" name="Total-abundance" value="298"/>
+    <att type="integer" name="Max-sample-abundance" value="298"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora agathidicida;Phytophthora castaneae"/>
@@ -36,6 +40,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="468dc60921568e6ca5c197d04032eb44"/>
     <att type="integer" name="Total-abundance" value="298"/>
+    <att type="integer" name="Max-sample-abundance" value="298"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora pseudocryptogea"/>
@@ -44,6 +49,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="c50b7fc6de0f1405b4388e95bdb01b4c"/>
     <att type="integer" name="Total-abundance" value="290"/>
+    <att type="integer" name="Max-sample-abundance" value="290"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora capsici;Phytophthora glovera"/>
@@ -52,6 +58,7 @@
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="7f3b213656cc5541bdcdf4692a3ed5bb"/>
     <att type="integer" name="Total-abundance" value="258"/>
+    <att type="integer" name="Max-sample-abundance" value="258"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora crassamura;Phytophthora megasperma"/>

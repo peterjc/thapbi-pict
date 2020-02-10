@@ -139,7 +139,11 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             handle.write(f'    <att type="string" name="MD5" value="{n}"/>\n')
             handle.write(
                 '    <att type="integer" name="Total-abundance" value="%i"/>\n'
-                % node.get("abundance", 0)
+                % node.get("total_abundance", 0)
+            )
+            handle.write(
+                '    <att type="integer" name="Max-sample-abundance" value="%i"/>\n'
+                % node.get("max_sample_abundance", 0)
             )
             handle.write(
                 '    <att type="integer" name="Sample-count" value="%i"/>\n'
@@ -210,6 +214,7 @@ def main(
     md5_abundance = Counter()
     md5_sample_count = Counter()
     abundance_by_samples = {}
+    max_sample_abundance = {}
     md5_to_seq = {}
     md5_species = {}
     md5_in_db = set()
@@ -244,6 +249,9 @@ def main(
                         continue
                     md5_in_fasta.add(md5)
                     abundance_by_samples[md5, sample] = abundance
+                    max_sample_abundance[md5] = max(
+                        abundance, max_sample_abundance.get(md5, 0)
+                    )
                     md5_abundance[md5] += abundance
                     md5_sample_count[md5] += 1
                     if md5 in md5_to_seq:
@@ -429,15 +437,15 @@ def main(
             # Genus only
             node_label = ""
         genus = ";".join(sorted({_.split(None, 1)[0] for _ in sp}))
-        # DB only entries get size one, FASTA entries can be up to 100.
-        abundance = md5_abundance.get(md5, 0)
+        # DB only entries get size zero, FASTA entries can be up to 100.
         node_size = max(1, SIZE * md5_sample_count.get(md5, 0))
         G.add_node(
             md5,
             color=node_color,
             size=node_size,
             label=node_label,
-            abundance=abundance,
+            total_abundance=md5_abundance.get(md5, 0),
+            max_sample_abundance=max_sample_abundance.get(md5, 0),
             sample_count=md5_sample_count.get(md5, 0),
             genus=genus,
             taxonomy=";".join(sorted(sp)),
