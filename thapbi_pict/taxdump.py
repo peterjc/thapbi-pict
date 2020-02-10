@@ -3,19 +3,17 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Code for THAPBI PICT to deal with NCBI taxonomy dumps.
 
 The code is needed initially for loading an NCBI taxdump folder (files
 ``names.dmp``, ``nodes.dmp`` etc) into an ITS1 database.
 """
-
 import os
 import sys
 
+from .db_orm import connect_to_db
 from .db_orm import Synonym
 from .db_orm import Taxonomy
-from .db_orm import connect_to_db
 
 
 def load_nodes(nodes_dmp):

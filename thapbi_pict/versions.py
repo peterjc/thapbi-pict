@@ -3,7 +3,6 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Helper code to get command line tool versions.
 
 Defines various functions to check a tool is on the $PATH and if so,
@@ -19,9 +18,7 @@ If we cannot parse the output, again the commands return None - which
 is likely an indication of a major version change, meaning the tool
 ought to be re-evaluated for use with THAPBI-PICT.
 """
-
 import sys
-
 from subprocess import getoutput
 
 

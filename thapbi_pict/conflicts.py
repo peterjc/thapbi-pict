@@ -1,14 +1,13 @@
 """Explore conflicts at species and genus level."""
-
 import sys
 
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
+from .db_orm import connect_to_db
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
-from .db_orm import connect_to_db
 from .utils import genus_species_name
 
 

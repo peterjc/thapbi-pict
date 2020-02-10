@@ -3,15 +3,12 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Summarise ITS1 classification results at folder (plate) level.
 
 This implements the ``thapbi_pict plate-summary ...`` command.
 """
-
 import os
 import sys
-
 from collections import Counter
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser

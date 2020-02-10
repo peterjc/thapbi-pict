@@ -3,14 +3,12 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Defines the ``thapbi_pict`` command line tool.
 
 This works via ``setup.py`` where under ``entry_points`` we define a
 ``console_scripts`` entry for ``thapbi_pict`` (executable name) pointing to
 the ``main()`` function define in this Python file.
 """
-
 import argparse
 import os
 import sys

@@ -3,29 +3,26 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Generate edit-distance network graph from FASTA files.
 
 This implements the ``thapbi_pict edit-graph ...`` command.
 """
-
 import os
 import sys
-
 from collections import Counter
 
-import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-
-from Levenshtein import distance as levenshtein
-
-from sqlalchemy.orm import aliased, contains_eager
-
+import numpy as np
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from Levenshtein import distance as levenshtein
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm import contains_eager
 
-from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
-
+from .db_orm import connect_to_db
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Taxonomy
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq

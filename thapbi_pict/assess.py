@@ -3,20 +3,17 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Assess classification of ITS1 reads at species level.
 
 This implements the ``thapbi_pict assess ...`` command.
 """
-
 import sys
-
 from collections import Counter
 
 from .utils import abundance_from_read_name
 from .utils import find_paired_files
-from .utils import parse_species_tsv
 from .utils import parse_species_list_from_tsv
+from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
 

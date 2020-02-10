@@ -3,15 +3,12 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Helper functions for THAPB-PICT code."""
-
-import os
 import hashlib
+import os
 import subprocess
 import sys
 import time
-
 from collections import Counter
 
 from Bio.Data.IUPACData import ambiguous_dna_values

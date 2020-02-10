@@ -3,16 +3,13 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Prepare a non-redundant FASTA file using MD5 naming.
 
 This implements the ``thapbi_pict fasta-nr ...`` command, and does part
 of the work of the ``thapbi_pict prepare-reads`` command.
 """
-
 import os
 import sys
-
 from collections import Counter
 
 from Bio.Seq import reverse_complement

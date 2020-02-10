@@ -3,18 +3,22 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Object Relational Mapping for ITS1 sequence database.
 
 Using SQLalchemy, the Python classes defined here give us a
 database schema and the code to import/export the data as
 Python objects.
 """
-
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy import create_engine, Index
+from sqlalchemy import Column
+from sqlalchemy import create_engine
+from sqlalchemy import DateTime
+from sqlalchemy import ForeignKey
+from sqlalchemy import Index
+from sqlalchemy import Integer
+from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker
 
 
 Base = declarative_base()

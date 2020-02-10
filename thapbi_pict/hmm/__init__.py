@@ -3,7 +3,6 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Extract HMM matches from sequences (using hmmer3).
 
 This is part of the THAPBI *Phytophthora* ITS1 Classifier Tool (PICT).
@@ -21,7 +20,6 @@ comparison.
 The code uses Biopython's SearchIO module to parse the output from the
 command line tool hmmscan from the hmmer3 suite.
 """
-
 import os
 import shutil
 import sys

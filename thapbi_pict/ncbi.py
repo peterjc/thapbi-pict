@@ -3,7 +3,6 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 r"""Code for THAPBI PICT to deal with importing NCBI FASTA files.
 
 For example, you might perform this search via the NCBI Entrez website,
@@ -22,7 +21,6 @@ Then, import this into our ITS DB using::
     $ thapbi_pict ncbi-import -d example.sqlite -i example.fasta
 
 """
-
 import sys
 
 from .db_import import import_fasta_file

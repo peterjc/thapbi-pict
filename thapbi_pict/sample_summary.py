@@ -3,22 +3,19 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Summarise ITS1 classification results at sample (multi-plate) level.
 
 This implements the ``thapbi_pict sample-summary ...`` command.
 """
-
 import os
 import sys
-
 from collections import Counter
 
+from .utils import abundance_from_read_name
 from .utils import color_bands
 from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
-from .utils import abundance_from_read_name
 from .utils import sample_sort
 
 

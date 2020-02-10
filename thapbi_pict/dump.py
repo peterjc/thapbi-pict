@@ -3,21 +3,21 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Dumping out ITS1 database to text files.
 
 This implements the ``thapbi_pict dump ...`` command.
 """
-
 import sys
 
-from sqlalchemy.orm import aliased, contains_eager
-
-from .db_orm import ITS1, SequenceSource, Taxonomy, connect_to_db
-
-from .utils import genus_species_name
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm import contains_eager
 
 from .classify import taxid_and_sp_lists
+from .db_orm import connect_to_db
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Taxonomy
+from .utils import genus_species_name
 
 
 def none_str(value, none_value=""):

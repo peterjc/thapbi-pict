@@ -3,33 +3,34 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Classifying prepared ITS1 sequences using an ITS1 database.
 
 This implements the ``thapbi_pict classify ...`` command.
 """
-
 import os
 import shutil
 import sys
 import tempfile
-
-from collections import Counter, OrderedDict
-
-from sqlalchemy.orm import aliased, contains_eager
+from collections import Counter
+from collections import OrderedDict
 
 from Bio import SeqIO
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
-from .db_orm import ITS1, SequenceSource, Taxonomy
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
-from .utils import cmd_as_string, run
+from .utils import cmd_as_string
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
 from .utils import md5seq_16b
 from .utils import onebp_variants
+from .utils import run
 from .utils import species_level
 from .versions import check_tools
 

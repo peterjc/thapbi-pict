@@ -3,7 +3,6 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Code for THAPBI PICT to deal with importing classified sequences.
 
 This could be used to import classified sequences using one DB into
@@ -21,7 +20,6 @@ single canonical ITS1 sequence typically available for each species.
 In order to guard against importing PCR artefacts or cross-sample
 contamination, you can set a minimum abundance for importing.
 """
-
 import sys
 
 from .db_import import import_fasta_file

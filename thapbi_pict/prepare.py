@@ -3,18 +3,15 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Prepare raw ITS1 sequencing reads (trimming, merging, etc).
 
 This implements the ``thapbi_pict prepare-reads ...`` command.
 """
-
 import os
-import subprocess
 import shutil
+import subprocess
 import sys
 import tempfile
-
 from collections import Counter
 
 from Bio.Seq import reverse_complement

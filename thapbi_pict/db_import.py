@@ -3,7 +3,6 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Shared code for THAPBI PICT to import FASTA into our database.
 
 This code is used both for importing NCBI formatted FASTA files, and also
@@ -11,7 +10,6 @@ importing our legacy ITS1 sequence FASTA file databases - see ``ncbi.py``
 and ``legacy.py`` which contain specific meta-data handling code for the
 different naming conventions.
 """
-
 import os
 import sys
 import tempfile
@@ -20,16 +18,16 @@ from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from . import __version__
+from .db_orm import connect_to_db
 from .db_orm import DataSource
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Synonym
 from .db_orm import Taxonomy
-from .db_orm import connect_to_db
 from .utils import genus_species_name
 from .utils import genus_species_split
-from .utils import md5seq
 from .utils import md5_hexdigest
+from .utils import md5seq
 from .utils import run
 from .versions import check_tools
 
