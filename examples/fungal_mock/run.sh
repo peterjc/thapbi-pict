@@ -34,6 +34,21 @@ RIGHT=GAGATCCRTTGYTRAAAGTT
 analyse # call function above
 
 echo ================================================
+echo Amplicon library two - ITS1 - BITS/B58S3 primers
+echo ================================================
+echo Note: This is a blinkered view of this dataset,
+echo really used ITS1f/ITS2 primers which amplify a
+echo a larger fragment (see below).
+
+MARKER=ITS1
+LIBRARY=amp_lib_two
+NAME=BITS_B58S3
+LEFT=ACCTGCGGARGGATC
+RIGHT=GAGATCCRTTGYTRAAAGTT
+
+analyse # call function above
+
+echo ================================================
 echo Amplicon library two - ITS1 - ITS1f/ITS2 primers
 echo ================================================
 
