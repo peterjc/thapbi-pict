@@ -18,6 +18,12 @@ function analyse {
                     -s $LIBRARY/$NAME/ -o $LIBRARY/ -r $LIBRARY.$NAME -a 10 \
                     -t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
+    # Now run an edit-graph at a higher abundance threshold
+    # (works as long as pipeline or prepare-reads was run with
+    # the same or lower threshold).
+    # Including all DB entries with -s / --showdb argument
+    thapbi_pict edit-graph -d ${NAME}.sqlite -i $LIBRARY/$NAME/ -s \
+		-o $LIBRARY/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
     echo "$NAME done"
 }
 
