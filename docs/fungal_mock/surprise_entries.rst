@@ -28,15 +28,18 @@ MD5 check sum                        Species                            Max
 ``702929cef71042156acb3a28270d8831`` *Candida tropicalis*                14
 ==================================== ================================== ===
 
-Here are a selection of unclassified reads from the mock communities:
+Here are a selection of unclassified reads from the mock communities, focusing
+on entries with a maximum sample abundance over 100:
 
 ==================================== ======================================== ====
 MD5 check sum                        Species                                   Max
 ------------------------------------ ---------------------------------------- ----
 ``ee5382b80607f0f052a3ad3c4e87d0ce`` *glomeromycetes*, perhaps *Rhizophagus*   575
 ``e055cb2efa2e1e0eb32d201e018b8609`` *glomeromycetes*, perhaps *Rhizophagus*    63
+``8e74f38b058222c58943fc6211d277fe`` *Fusarium*                                149
 ``85775735614d45d056ce5f1b67f8d2b2`` *Fusarium*                                109
 ``5ca0acd7dd9d76fdd32c61c13ca5c881`` *Epicoccum nigrum*; *Epicoccum layuense* 4562
+``880007c5a18be69c3f444efd144fc450`` *Ascochyta* or *Neoascochyta*?            236
 ==================================== ======================================== ====
 
 Listed first, ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant
@@ -44,10 +47,11 @@ sequence ``e055cb2efa2e1e0eb32d201e018b8609`` (a 3bp edit away) look like
 *glomeromycetes*, perhaps a *Rhizophagus* (from the mock community), but
 could be from a *Glomus* species.
 
-Or, ``85775735614d45d056ce5f1b67f8d2b2`` which has good BLAST matches to
-several different *Fusarium* species (could be from the mock community).
+``8e74f38b058222c58943fc6211d277fe`` and ``85775735614d45d056ce5f1b67f8d2b2``
+have good BLAST matches to several different *Fusarium* species, so could also
+be from the mock community.
 
-On the other hand,  ``5ca0acd7dd9d76fdd32c61c13ca5c881`` which perfectly matches
+On the other hand,  ``5ca0acd7dd9d76fdd32c61c13ca5c881`` perfectly matches
 fungus *Epicoccum nigrum* and *Epicoccum layuense*. Present at low levels in
 multiple samples, this was the dominant sequence in ``SRR5314339`` aka
 ``FMockE.HC1_S178``, which was a *high PCR cycle number* replicate of the even
@@ -56,13 +60,19 @@ amplified early in the PCR? This example was not highlighed in the original
 paper but is exactly the kind of thing you should worry about with a high PCR
 cycle number.
 
+Lastly, ``880007c5a18be69c3f444efd144fc450`` has perfect matches to lots of
+unclassified fungi and conflicting perfect matches including *Ascochyta* or
+*Neoascochyta*. This was seen only in the high PCR cycle number sample
+``SRR5314339`` as above.
+
 Amplicon library two - ITS1
 ---------------------------
 
-These primers amplified a larger fragment to that in the first amplicon library.
-Many of the unexpected sequences are therefore the same. For instance, here
-``57b06dff740b38bd6a0375abd9db3972`` and 3bp away ``05007e829ab71427b49743994a14105f``
-are *glomeromycetes* matches - perhaps *Rhizophagus* (from the mock community).
+These primers amplified a larger fragment to that in amplicon library one.
+Many of the unexpected sequences are therefore the same sequences just
+extended. For instance, here ``57b06dff740b38bd6a0375abd9db3972`` and 3bp away
+``05007e829ab71427b49743994a14105f`` are *glomeromycetes* matches - perhaps
+*Rhizophagus* (from the mock community).
 While ``7e31840276e0b10db32a26cef0abda33`` and 1bp different
 ``e6f59a48cd979a95dc672dd54c9fcf02`` are probably *Fusarium*. As is
 ``610caedb1a5699836310fce9dbb9c5fa``.
