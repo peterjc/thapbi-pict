@@ -28,6 +28,11 @@ Additionally, amplicon library two amplified ITS2 using the ITS3‐KYO2 and
 ITS4‐KYO3 primer pair (``GATGAAGAACGYAGYRAA`` and ``CTBTTVCCKCTTCACTCG``),
 with lower yields as per supplementary Table S5 vs S6.
 
+This means we need to run THAPBI PICT three times (for each primer pair used
+in each amplicon library). In fact the example runs it four times, as we can
+also try the BITS/B58S3 primers on the second amplicon library, because they
+amplify a subregion of what the ITS1f/ITS2 pair amplify. See the primer
+discussion on the similar Redekar *et al* (2019) worked example. 
 
 Provided files
 --------------
