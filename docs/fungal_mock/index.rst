@@ -15,5 +15,6 @@ times.
    :maxdepth: 1
 
    sample_data
+   edit_graph
    presence_absence
    surprise_entries
