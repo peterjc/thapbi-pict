@@ -61,11 +61,8 @@ reading the paper (for placing the negative controls). They each have a
 ``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
 can be used to validate the FASTQ files.
 
-Script ``setup.py`` will download the raw gzip compressed FASTQ files from
-the ENA (122 files, 61 pairs, under 400MB in total), and setup appropriate
-per-sample symlinks to the expected output in the ``expected/``
-sub-directories for use with classifier assessment.
-
+Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+discussed in the THAPBI PICT documentation.
 
 Setup
 -----
