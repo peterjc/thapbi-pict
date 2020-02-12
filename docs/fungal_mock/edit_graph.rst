@@ -6,11 +6,11 @@ the sequencer - although you may need to play with the thresholds to find a
 sweet spot for hiding the noise.
 
 My main conclusion from the figures below is that the THAPBI PICT default
-``onebp`` classifier is suitable for these fungal communities, although
-*Fusarium* needs closer examination, and there should be even more entries for
-*Rhizomucor irregularis*. You would of couse also need to expand the database
-beyound the 19 species in the mock community to use these ITS1 or ITS2 fungal
-markers more generally.
+``onebp`` classifier is reasonable for these fungal communities markers.
+However, for the ITS1 marker *Fusarium* needs closer examination, and there
+should be even more entries for *Rhizomucor irregularis*. You would of couse
+also need to expand the database beyound the 19 species in the mock community
+to use these ITS1 or ITS2 fungal markers more generally.
 
 Image generation
 ----------------
@@ -110,6 +110,25 @@ two images above:
 
 This is from file ``amp_lib_two.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
 ``run.sh``.
+
+The curious large grey node one edit away from *Fusarium oxysporum* has abbreviated
+MD5 checksum ``f1b689``, or in full ``f1b689ef7d0db7b0d303e9c9206ee5ad`` (given in
+the XGMML node attributes). Referring back to the intermediate FASTA files or the
+read report, this does indeed represent the extended version of
+``bb28f2b57f8fddefe6e7b5d01eca8aea`` with the first primer set::
+
+    >bb28f2b57f8fddefe6e7b5d01eca8aea
+    ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCAATTGTTGCCTCGGCGGATCAGCCCGCTCCCGGTAAAACG
+    GGACGGCCCGCCAGAGGACCCCTAAACTCTGTTTCTATATGTAACTTCTGAGTAAAACCATAAATAAATCAA
+
+    >f1b689ef7d0db7b0d303e9c9206ee5ad
+    AAGTCGTAACAAGGTCTCCGTTGGTGAACCAGCGGAGGGATCATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATA
+    CCAATTGTTGCCTCGGCGGATCAGCCCGCTCCCGGTAAAACGGGACGGCCCGCCAGAGGACCCCTAAACTCTGTTTCTAT
+    ATGTAACTTCTGAGTAAAACCATAAATAAATCAAAACTTTCAACAACGGATCTCTTGGTTCTG
+
+Using an NCBI BLAST search, this exact sequence has been published from over a
+dozen different *Fusarium* species incuding *Fusarium oxysporum*, but not at
+the time of writing from *Fusarium verticillioides*.
 
 Amplicon library two - ITS2
 ---------------------------
