@@ -84,7 +84,6 @@ Amplicon library two - ITS1
 First, analysed using the same BITS/B58S3 primers as for ITS1 as in amplicon
 library one - the unique sequence MD5 checksums overlap with those seen in
 amplicon one:
-Notice the presence/absense is different:
 
 .. image:: ../images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg?sanitize=true
