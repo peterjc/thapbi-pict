@@ -152,9 +152,10 @@ likely cross-contamination from the mock-community samples:
     the increase over expected relative abundance may have been related to
     cross‐sample contamination.
 
-If we set that aside as a one off event, then the next worst contamination at 32
-copies might be taken into consideration for a general minimum abundance. i.e. using
-10 is arguably too low, and perhaps our default of 100 is overly strict.
+If we set that aside as a one off event, then the next worst contamination at
+32 copies might be taken into consideration for a general minimum abundance
+for amplicon library one. i.e. using 10 is arguably too low, and perhaps our
+default of 100 is overly strict.
 
 Missing positive controls
 -------------------------
