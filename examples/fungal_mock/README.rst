@@ -107,6 +107,9 @@ a larger fragment of ITS1 and an ITS2 marker on ``amp_lib_two/``), it will make 
 simple database using the provided ``ITS1.fasta`` or ``ITS2.fasta`` file. It will
 then call the pipeline using the ``identity``, ``onebp`` and ``blast`` classifiers.
 
+Additionally for each primer set, it will generate an additional edit-graph at a
+higher minimum abundance threshold (to omit PCR noise etc).
+
 Metadata
 --------
 
