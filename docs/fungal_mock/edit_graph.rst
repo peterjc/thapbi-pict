@@ -1,24 +1,44 @@
-Edit Graphs
-===========
+Community Edit Graphs
+=====================
 
-The sequence edit-graph is very useful for understanding what came off the
-sequencer - although you may need to play with the thresholds to find a sweet
-spot for hiding the noise. If you have loaded the XGMML network file into
-Cytoscape you can do this interactively by selecting nodes based on the
-``Max-sample-abundance`` attribute and hiding or removing them. This will
-not update the ``Sample-count`` and node sizes. For that you can re-run
-``thapbi_pict edit-graph`` with the higher sample level minimum abundance
-setting (``-a`` or ``--abundance``). You do not need to regenerate the
-intermediate per-sample FASTA files unless you want to use a lower threshold.
+The sequence :ref:`edit_graph` is very useful for understanding what came off
+the sequencer - although you may need to play with the thresholds to find a
+sweet spot for hiding the noise.
+
+My main conclusion from the figures below is that the THAPBI PICT default
+``onebp`` classifier is suitable for these fungal communities, although
+*Fusarium* needs closer examination, and there should be even more entries for
+*Rhizomucor irregularis*. You would of couse also need to expand the database
+beyound the 19 species in the mock community to use these ITS1 or ITS2 fungal
+markers more generally.
+
+Image generation
+----------------
+
+If you have loaded an XGMML network file from THAPBI PICT into Cytoscape, you
+can interactively select nodes based on the ``Max-sample-abundance`` attribute
+and hide or remove them. This is helpful for exploring what minimum threshold
+to use for drawing a clear edit graph, but this does not update the
+``Sample-count`` and node sizes which are based on it.
+
+For that you can re-run ``thapbi_pict edit-graph`` with the higher sample
+level minimum abundance setting (``-a`` or ``--abundance``). You do not need
+to regenerate the intermediate per-sample FASTA files unless you want to use a
+lower threshold.
 
 The following figures are from the example script ``run.sh`` which called
 ``thapbi_pict edit-graph`` with ``-a 75``, meaning a unique sequence had to be
 in a sample from at least 75 reads to be considered. Using a lower value gives
-a much noiser picture (see the halo effect discussed earlier).
+a much noiser picture (see the :ref:`halo effect` discussed earlier).
 
 Additionally this used ``-s`` (or ``--showdb``) to force including all of the
 database sequences (dark red nodes), as some did not appear in the samples
 (shown as the smallest dark red dots, typically the bottom row of the image).
+
+The XGMML files were loaded, automatically laid out using the "Perfuse Force
+Directed Layout" menu, manually adjusted to give a reasonably consistent node
+placement for comparison between the figures, and then images exported in SVG
+format (other formats are also supported including PDF and PNG).
 
 Amplicon library one - ITS1
 ---------------------------
@@ -37,18 +57,18 @@ The dark red nodes represent sequences in the database - given how this
 database was constructed to match the mock community, we would hope to see all
 the database entries represented in the samples. Some are missing at this
 abundance threshold (four bottom row entries *Saccharomyces cerevisiae*,
-*Ustilago maydis*, *Rhizomucor miehei* and *Chytriomyces hyalinus*, plus one
-of the multiple *Rhizomucor irregularis* entries shown middle right).
+*Ustilago maydis*, *Rhizomucor miehei* and *Chytriomyces hyalinus*, plus the
+four *Rhizomucor irregularis* entries shown accross the middle.
 
 The large red nodes are the well represented community members, starting with
 *Naganishia albida* shown top left, which has four different 1bp variants some
-of which appear in many samples - you can see the sample counts in you load
-the XGMML file for this graph in CytoScape. These are common enough to suggest
-they could be alternative versions of the ITS1 region in the genomes of these
-community members?
+of which are large meaning they appear in many samples - you can see the
+sample counts in you load the XGMML file for this graph in Cytoscape. These
+are common enough to suggest they could be alternative versions of the ITS1
+region in the genomes of these community members?
 
-The large grey nodes not connected to a red node represent unwanted reads,
-likely contaminations discussed later.
+The (sometimes large) grey nodes not connected to a red node represent unwanted
+reads, likely contaminations discussed later.
 
 In general each species is reprented by a single connected component. The
 exceptions are *Rhizomucor irregularis* (multiple distantly related entries)
