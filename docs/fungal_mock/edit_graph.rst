@@ -68,7 +68,7 @@ Notice the presence/absense is different:
 
 .. image:: ../images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg?sanitize=true
-   :alt: Sequence edit-graph for amplicon library two using BITS/B58S3 primers for ITS1 (although actually amplified with ITS1f/ITS2 primers). Minimum abundance threshold 75.
+   :alt: Sequence edit-graph for amplicon library two using BITS/B58S3 primers for ITS1 (although actually amplified with ITS1f/ITS2 primers).
 
 This is from file ``amp_lib_two.BITS_B58S3.edit-graph.a75.xgmml`` created by
 ``run.sh``.
@@ -86,7 +86,7 @@ two images above:
 
 .. image:: ../images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg?sanitize=true
-   :alt: Sequence edit-graph for amplicon library two using ITS1f/ITS2 primers for ITS1. Minimum abundance threshold 75.
+   :alt: Sequence edit-graph for amplicon library two using ITS1f/ITS2 primers for ITS1.
 
 This is from file ``amp_lib_two.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
 ``run.sh``.
@@ -98,7 +98,7 @@ Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for ITS2.
 
 .. image:: ../images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg?sanitize=true
-   :alt: Sequence edit-graph for amplicon library two using ITS3-KYO and ITS4-KYO3 primers for ITS2. Minimum abundance threshold 75.
+   :alt: Sequence edit-graph for amplicon library two using ITS3-KYO and ITS4-KYO3 primers for ITS2.
 
 This is from file ``amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.xgmml``
 created by ``run.sh``.
