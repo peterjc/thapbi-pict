@@ -96,8 +96,7 @@ This is from file ``amp_lib_two.BITS_B58S3.edit-graph.a75.xgmml`` created by
 Broadly the same as from amplicon library one, but notice the
 presence/absense patterns are different. Also there are more variants of the
 ``bb28f2`` *Fusarium*, and a pair of unexpected grey nodes 3bp apart
-(``e055cb`` and ``ee5482``, which as discussed later match *glomeromycetes*,
-perhaps *Rhizophagus* which was in the mock community).
+(``e055cb`` and ``ee5482``, middle left, discussed below).
 
 Now, using the actual primer pair, ITS1f/ITS2, which give a longer ITS1
 fragment. Note that the sequences are extended so the checksums are different
@@ -129,6 +128,11 @@ read report, this does indeed represent the extended version of
 Using an NCBI BLAST search, this exact sequence has been published from over a
 dozen different *Fusarium* species incuding *Fusarium oxysporum*, but not at
 the time of writing from *Fusarium verticillioides*.
+
+The small pair of grey nodes 3bp apart (long diagonal line, middle left),
+``57b06d`` and ``05007e``, are the extended equivalents of ``e055cb`` and
+``ee5482`` shown in the same place in the previous image. They seem to match
+*glomeromycetes*, perhaps from the *Rhizophagus* in the mock community.
 
 Amplicon library two - ITS2
 ---------------------------
