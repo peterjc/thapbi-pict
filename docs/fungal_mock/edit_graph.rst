@@ -1,14 +1,18 @@
 Edit Graphs
 ===========
 
-The sequence edit-graph is very useful for understanding that came off the
+The sequence edit-graph is very useful for understanding what came off the
 sequencer - although you may need to play with the thresholds to find a sweet
-spot for hiding the noise. If you have run the pipeline (or at least the
-prepare-reads step), you can re-run ``thapbi_pict edit-graph`` with a higher
-sample level minimum abundance (``-a`` or ``--abundance``).
+spot for hiding the noise. If you have loaded the XGMML network file into
+Cytoscape you can do this interactively by selecting nodes based on the
+``Max-sample-abundance`` attribute and hiding or removing them. This will
+not update the ``Sample-count`` and node sizes. For that you can re-run
+``thapbi_pict edit-graph`` with the higher sample level minimum abundance
+setting (``-a`` or ``--abundance``). You do not need to regenerate the
+intermediate per-sample FASTA files unless you want to use a lower threshold.
 
 The following figures are from the example script ``run.sh`` which called
-``thapbi_pict edit-graph` with ``-a 75``, meaning a unique sequence had to be
+``thapbi_pict edit-graph`` with ``-a 75``, meaning a unique sequence had to be
 in a sample from at least 75 reads to be considered. Using a lower value gives
 a much noiser picture (see the halo effect discussed earlier).
 
@@ -19,11 +23,15 @@ database sequences (dark red nodes), as some did not appear in the samples
 Amplicon library one - ITS1
 ---------------------------
 
-Starting with amplicon library one, where the BITS/B58S3 primers we used for
-a short fragment of ITS1:
+Starting with amplicon library one, where the BITS/B58S3 primers were used for
+a short fragment of ITS1.
 
 .. image:: ../images/amp_lib_one.BITS_B58S3.edit-graph.a75.svg
-   :alt: Sequence edit-graph for amplicon library one using BITS/B58S3 primers for ITS1. Minimum abundance threshold 75.
+   :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_one.BITS_B58S3.edit-graph.a75.svg?sanitize=true
+   :alt: Sequence edit-graph for amplicon library one using BITS/B58S3 primers for ITS1.
+
+This is from file ``amp_lib_one.BITS_B58S3.edit-graph.a75.xgmml`` created by
+``run.sh``.
 
 The dark red nodes represent sequences in the database - given how this
 database was constructed to match the mock community, we would hope to see all
@@ -59,7 +67,11 @@ amplicon one:
 Notice the presence/absense is different:
 
 .. image:: ../images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg
+   :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using BITS/B58S3 primers for ITS1 (although actually amplified with ITS1f/ITS2 primers). Minimum abundance threshold 75.
+
+This is from file ``amp_lib_two.BITS_B58S3.edit-graph.a75.xgmml`` created by
+``run.sh``.
 
 Broadly the same as from amplicon library one, but notice the
 presence/absense patterns are different. Also there are more variants of the
@@ -73,7 +85,11 @@ to those in the preceeding images, but again broadly the same picture as the
 two images above:
 
 .. image:: ../images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg
+   :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using ITS1f/ITS2 primers for ITS1. Minimum abundance threshold 75.
+
+This is from file ``amp_lib_two.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
+``run.sh``.
 
 Amplicon library two - ITS2
 ---------------------------
@@ -81,7 +97,11 @@ Amplicon library two - ITS2
 Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for ITS2.
 
 .. image:: ../images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg
+   :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using ITS3-KYO and ITS4-KYO3 primers for ITS2. Minimum abundance threshold 75.
+
+This is from file ``amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.xgmml``
+created by ``run.sh``.
 
 Some more noteworthy changes to presence/absense, including much more
 *Saccharomyces cerevisiae* (still drawn bottom left). Also there are no
