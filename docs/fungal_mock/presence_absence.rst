@@ -32,46 +32,50 @@ otherwise THAPBI PICT would not replace the older higher threshold files).
 If you do this, just how bad are the contamination levels? These little
 tables were extracted manually from the sample level reports run with
 ``-a 1`` (accepting even sequences seen in only one read). The counts
-are the total number of reads.
+are the total number of reads in each sample, while max is the highest
+single sequence's abundance.
 
 Amplicon library one, ITS1 using the BITS/B58S3 primer pair, samples
 replicated in duplicate:
 
-==================================== ============ ========== =====
-Description                          MiSeq-name   Accession  Count
------------------------------------- ------------ ---------- -----
-negative control from DNA extraction NegDNAA_S163 SRR5314317    91
-negative control from DNA extraction NegDNAB_S175 SRR5314316   117
-negative control from PCR step       NegPCRA_S187 SRR5314315  1041
-negative control from PCR step       NegPCRB_S104 SRR5314314  3860
-==================================== ============ ========== =====
+==================================== ============ ========== ===== ====
+Description                          MiSeq-name   Accession  Count Max
+------------------------------------ ------------ ---------- ----- ----
+negative control from DNA extraction NegDNAA_S163 SRR5314317    91   48
+negative control from DNA extraction NegDNAB_S175 SRR5314316   117   90
+negative control from PCR step       NegPCRA_S187 SRR5314315  1041  994
+negative control from PCR step       NegPCRB_S104 SRR5314314  3860 3574
+==================================== ============ ========== ===== ====
 
 Amplicon library two, ITS1 using the ITS1f/ITS2 primer pair:
 
-============================= ============== ========== =====
-Descrption                    MiSeq-name     Accession  Count
------------------------------ -------------- ---------- -----
-negative control with GoTaq   NegCtlGoTq_S20 SRR5838526     2
-negative control with Phusion NegCtlPhGn_S30 SRR5838523     8
-negative control with reAmp   NegCtlPrmp_S10 SRR5838524     9
-============================= ============== ========== =====
+============================= ============== ========== ===== ===
+Descrption                    MiSeq-name     Accession  Count Max
+----------------------------- -------------- ---------- ----- ---
+negative control with GoTaq   NegCtlGoTq_S20 SRR5838526     2   1
+negative control with Phusion NegCtlPhGn_S30 SRR5838523     8   4
+negative control with reAmp   NegCtlPrmp_S10 SRR5838524     9   1
+============================= ============== ========== ===== ===
 
 Amplicon library two, ITS2 using the ITS3‐KYO2 and ITS4‐KYO3 primer pair:
 
-============================= ============== ========== =====
-Descrption                    MiSeq-name     Accession  Count
------------------------------ -------------- ---------- -----
-negative control with GoTaq   NegCtlGoTq_S20 SRR5838526    14
-negative control with Phusion NegCtlPhGn_S30 SRR5838523    17
-negative control with PreAmp  NegCtlPrmp_S10 SRR5838524     5
-============================= ============== ========== =====
+============================= ============== ========== ===== ===
+Descrption                    MiSeq-name     Accession  Count Max
+----------------------------- -------------- ---------- ----- ---
+negative control with GoTaq   NegCtlGoTq_S20 SRR5838526    14   2
+negative control with Phusion NegCtlPhGn_S30 SRR5838523    17   4
+negative control with PreAmp  NegCtlPrmp_S10 SRR5838524     5   1
+============================= ============== ========== ===== ===
 
-Looking at these numbers the levels in amplicon library two are not too bad,
-but amplicon library one has cause for concern.
+Looking at these numbers the levels in amplicon library two are commendably
+low, at most four copies of any unique sequence - suggesting using a minimum
+threshold of 10 here is quite reasonable.
 
 Hereafter we will assume the minimum abundance threshold of 10 was used, and
-you can look at the sample or read level reports.
+you are encouraged to look at the sample or read level reports (e.g. in Excel)
+while following along with this discussion.
 
+However, the levels in amplicon library one are cause for concern.
 Starting with the negative control from the DNA extraction (given a green
 background in the Excel reports), we see both replicates had two unwanted
 sequences. At the command line:
@@ -86,6 +90,9 @@ sequences. At the command line:
     ATTAGTGATTAATTATTGAGTGTAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCAAG
     CAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
 
+Using a minimum of 10 has excluded 11 singletons here (48 + 32 + 11 = 91,
+the read count given above with no threshold).
+
 .. code:: console
 
     $ cat BITS_B58S3/SRR5314316.fasta
@@ -95,6 +102,9 @@ sequences. At the command line:
     >e5b7a8b5dc0da33108cc8a881eb409f5_10
     ATTAGTGATTAATTATTGAGTGATAAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCA
     AGCAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
+
+Using a minimum of 10 has excluded a sequence with two reads, and 15
+singletons (90 + 10 + 2 + 15 = 117, the count given above with no threshold).
 
 As elsewhere in the documentation, the FASTA sequences have been line
 wrapped at 80bp for display.
@@ -117,6 +127,9 @@ a pale blue background in the Excel reports). Working at the terminal:
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
 
+The minimum abundance excuded lots of singletons, a few seen twice, and once
+read seen four times.
+
 .. code:: console
 
     $ cat amp_lib_one/BITS_B58S3/SRR5314314.fasta
@@ -134,14 +147,20 @@ a pale blue background in the Excel reports). Working at the terminal:
     ATTACTGATTTGCTTAATTGCACCACATGTGTTTTTTATTGAACAAATTTCTTTGGTGGCGGGAGCAATCCTACCGCCAG
     AGGTTATAACTAAACCAAACTTTTTATTTACAGTCAAACTTGATTTATTATTACAATAGTCAA
 
-Again, both have ``d51507f661ebee38a85bec35b70b7ee1`` as their main (or only)
-unwanted sequence, a perfect match to *Fusarium graminearum* in the mock community.
+The minimum abundance excluded lots of singletons, doubles, and a few more
+abundance reads up to 6 copies. The vast majority of these are slight variants
+of the dominant sequence (you can call ``thapbi_pict edit-graph`` on this
+single sample to visualise this), and can thus be explained as PCR noise.
+
+Again, both samples have ``d51507f661ebee38a85bec35b70b7ee1`` as their main
+(or only) unwanted sequence above the threshold, a perfect match to *Fusarium
+graminearum* in the mock community.
 Additionally ``716f6111ac2ee192c23282e07d23078a`` matched *Mortierella verticillata*
 from the mock community.
 
 Then ``5194a4ae3a27d987892a8fee7b1669b9`` gives perfect NCBI BLAST matches to
 fungus *Trichosporon asahii* and ``702929cef71042156acb3a28270d8831`` to fungus
-*Candida tropicalis*.
+*Candida tropicalis*, which are unexpected contamination.
 
 I concur with the author that the high levels of *Fusarium graminearum* are most
 likely cross-contamination from the mock-community samples:
@@ -152,10 +171,14 @@ likely cross-contamination from the mock-community samples:
     the increase over expected relative abundance may have been related to
     cross‐sample contamination.
 
-If we set that aside as a one off event, then the next worst contamination at
-32 copies might be taken into consideration for a general minimum abundance
-for amplicon library one. i.e. using 10 is arguably too low, and perhaps our
-default of 100 is overly strict.
+Looking at the DNA extraction control alone, the THAPBI PICT default threshold
+of 100 seems reasonable. However, if we set that aside the likely *Fusarium
+graminearum* contamination, then the next worst contamination in any of these
+four controls is at 32 copies, so you might argue 100 is a little harsh?
+
+Certainly I think for amplicon library one, a threshold of 10 is too low, but
+it could be defended for amplicon library two (where the controls had up to
+four copies of an unwanted sequence).
 
 Missing positive controls
 -------------------------
@@ -197,8 +220,8 @@ OVERALL                    345 5   168 71
 *Ustilago maydis*          0   0   27  4
 ========================== === === === ==
 
-Five expected species were never found (zero true positives) at this
-threshold: *Chytriomyces hyalinus*, *Fusarium verticillioides*,
+Five expected species were never found (zero true positives) at the 10 reads
+abundance threshold: *Chytriomyces hyalinus*, *Fusarium verticillioides*,
 *Rhizomucor miehei*, *Saccharomyces cerevisiae* and *Ustilago maydis*.
 
 The author wrote:
@@ -223,8 +246,8 @@ The author wrote:
     *U. maydis*, 2 and 1. Thus, selection against these taxa may have been
     due to primer annealing efficiency.
 
-That's pretty consistent (we'll come back to *Fusarium verticillioides*
-later), and suggests using a minimum abudance threshold of 10 in THAPBI
+That's pretty consistent (we've talked about *Fusarium verticillioides*
+earlier), and suggests using a minimum abudance threshold of 10 in THAPBI
 PICT is a little stricter that the author's pipeline.
 
 Moving on to the second amplicon library, the larger ITS1 marker using the
@@ -273,8 +296,8 @@ followed by *Saccharomyces cerevisiae*. The original author wrote:
     associated with amplicon length (Table 3) and low sequence quality
     (Table S3).
 
-The case of *Fusarium verticillioides* needs further discussion, but otherwise
-there is board agreement here too.
+Again, broad agreement here, with the problem of *Fusarium verticillioides*
+discussed earlier.
 
 And finally, amplicon library two for ITS2 using the ITS3-KYO2 and ITS4-KYO3
 primers:
@@ -329,3 +352,5 @@ This too is in board agreement with the original author, although
     to the reverse primer for this amplicon, was detected at substantially
     lower than expected frequencies (Figure 7; Figures S5, S6).
 
+So, using THAPBI PICT on these amplicon datasets with a minimum abundance
+threshold of 10 gives broad agreement with the original analysis.
