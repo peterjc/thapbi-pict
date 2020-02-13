@@ -237,7 +237,8 @@ def run_fastp(left_in, right_in, pair_out, adapters=None, debug=False, cpu=0):
         "-m",
         "--merged_out",
         pair_out,
-        "-A"
+        "--adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
+        "--adapter_sequence_r2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
     ]
     # Quoting FASTP documentation:
     #
