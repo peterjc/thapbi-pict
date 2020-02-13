@@ -11,8 +11,8 @@ Some unexpected sequences might reflect additional alternative copies of ITS1
 in the genomes. Others are likely external contamination - after all there are
 fungi practically everywhere.
 
-Amplicon library one - ITS1
----------------------------
+Amplicon library one - ITS1 (BITS/B58S3)
+----------------------------------------
 
 Specifically from the first amplicon library for ITS1 we saw the following -
 which appear to be unique to the negative controls (not in any mock community
@@ -29,50 +29,80 @@ MD5 check sum                        Species                            Max
 ==================================== ================================== ===
 
 Here are a selection of unclassified reads from the mock communities, focusing
-on entries with a maximum sample abundance over 100:
+on entries with a maximum sample abundance over 100. You can easily extract these
+from the bottom of the ``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
 
 ==================================== ======================================== ====
 MD5 check sum                        Species                                   Max
 ------------------------------------ ---------------------------------------- ----
+``5ca0acd7dd9d76fdd32c61c13ca5c881`` *Epicoccum nigrum*; *Epicoccum layuense* 4562
+``880007c5a18be69c3f444efd144fc450`` *Ascochyta* or *Neoascochyta*?            236
 ``ee5382b80607f0f052a3ad3c4e87d0ce`` *glomeromycetes*, perhaps *Rhizophagus*   575
 ``e055cb2efa2e1e0eb32d201e018b8609`` *glomeromycetes*, perhaps *Rhizophagus*    63
 ``8e74f38b058222c58943fc6211d277fe`` *Fusarium*                                149
 ``85775735614d45d056ce5f1b67f8d2b2`` *Fusarium*                                109
-``5ca0acd7dd9d76fdd32c61c13ca5c881`` *Epicoccum nigrum*; *Epicoccum layuense* 4562
-``880007c5a18be69c3f444efd144fc450`` *Ascochyta* or *Neoascochyta*?            236
+``09aaa9b0eedac20be6555bf484858efe`` *Fusarium*                                 53 
+``a5843001e29a7049980a79dddb4042b4`` *Fusarium*                                 52
 ==================================== ======================================== ====
 
-Listed first, ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant
-sequence ``e055cb2efa2e1e0eb32d201e018b8609`` (a 3bp edit away) look like
-*glomeromycetes*, perhaps a *Rhizophagus* (from the mock community), but
-could be from a *Glomus* species.
+The sequence with the top abundance, ``5ca0acd7dd9d76fdd32c61c13ca5c881``,
+perfectly matches fungus *Epicoccum nigrum* and *Epicoccum layuense*. Present
+at low levels in multiple samples, this was the dominant sequence in
+``SRR5314339`` aka ``FMockE.HC1_S178``, which was a *high PCR cycle number*
+replicate of the even mixture. Perhaps this was a stray fragment of
+*Epicoccum* which by chance was amplified early in the PCR? This example was
+not highlighed in the original paper but is exactly the kind of thing you
+should worry about with a high PCR cycle number.
 
-``8e74f38b058222c58943fc6211d277fe`` and ``85775735614d45d056ce5f1b67f8d2b2``
-have good BLAST matches to several different *Fusarium* species, so could also
-be from the mock community.
-
-On the other hand,  ``5ca0acd7dd9d76fdd32c61c13ca5c881`` perfectly matches
-fungus *Epicoccum nigrum* and *Epicoccum layuense*. Present at low levels in
-multiple samples, this was the dominant sequence in ``SRR5314339`` aka
-``FMockE.HC1_S178``, which was a *high PCR cycle number* replicate of the even
-mixture. Perhaps this was a stray fragment of *Epicoccum* which by chance was
-amplified early in the PCR? This example was not highlighed in the original
-paper but is exactly the kind of thing you should worry about with a high PCR
-cycle number.
-
-Lastly, ``880007c5a18be69c3f444efd144fc450`` has perfect matches to lots of
+Sequence ``880007c5a18be69c3f444efd144fc450`` has perfect matches to lots of
 unclassified fungi and conflicting perfect matches including *Ascochyta* or
 *Neoascochyta*. This was seen only in the high PCR cycle number sample
 ``SRR5314339`` as above.
 
-Amplicon library two - ITS1
----------------------------
+Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
+``e055cb2efa2e1e0eb32d201e018b8609`` (a 3bp edit away) look like
+*glomeromycetes*, perhaps a *Rhizophagus* (from the mock community), but could
+be from a *Glomus* species. Using the ``blast`` classifier and the minimal
+database matches this to *Rhizophagus irregularis* but the situation would be
+ambiguous in a more complete database.
+
+Last ``8e74f38b058222c58943fc6211d277fe``, ``85775735614d45d056ce5f1b67f8d2b2``
+and ``09aaa9b0eedac20be6555bf484858efe`` and have good BLAST matches to several
+different *Fusarium* species, so could also be from the mock community. Likewise
+``a5843001e29a7049980a79dddb4042b4`` but the possible species matches on the NCBI
+are mostly *Fusarium oxysporum* (which is in the mock community). With 
+
+
+Amplicon library two - ITS1 (ITS1f/ITS2)
+----------------------------------------
+
+Using our ``blast`` classifier with the 19 species database, everything was
+assigned a match. The default ``onebp`` classifier was stricter. For example
+while the very common ``f1b689ef7d0db7b0d303e9c9206ee5ad`` (which with the
+BITS/B58S3 primers gave ``bb28f2b57f8fddefe6e7b5d01eca8aea``) was matched to
+*Fusarium oxysporum*, all the variations of this were too far away from the
+database entries for a match.
 
 These primers amplified a larger fragment to that in amplicon library one.
-Many of the unexpected sequences are therefore the same sequences just
-extended. For instance, here ``57b06dff740b38bd6a0375abd9db3972`` and 3bp away
-``05007e829ab71427b49743994a14105f`` are *glomeromycetes* matches - perhaps
-*Rhizophagus* (from the mock community).
-While ``7e31840276e0b10db32a26cef0abda33`` and 1bp different
-``e6f59a48cd979a95dc672dd54c9fcf02`` are probably *Fusarium*. As is
-``610caedb1a5699836310fce9dbb9c5fa``.
+They can generally be matched to single short entry, but where end-trimming
+gives multiple answers in the following table I have picked the more common
+one (e.g. ``bb28f2b57f8fddefe6e7b5d01eca8aea`` with the final ``A`` ommitted
+as ``01de92e8d594fffdada971fe3ddbf18e`` was seen occasionally).
+
+Focusing on those with a sample-abundance over 75 (as in the edit-graphs):
+
+================================ === ================================ ===== =======================================
+Long sequence MD5 (ITS1f/ITS2)   Max Short sequence MD5 (BITS/B58S3)    Max Species
+-------------------------------- --- -------------------------------- ----- ---------------------------------------
+57b06dff740b38bd6a0375abd9db3972 640 ee5382b80607f0f052a3ad3c4e87d0ce   799 *glomeromycetes*, perhaps *Rhizophagus*
+eed6e5c3881a233cca219f7ffd886bbe 315 cae29429b90fc6539c440a140494aa25   375 *glomeromycetes*, perhaps *Rhizophagus*
+05007e829ab71427b49743994a14105f 154 e055cb2efa2e1e0eb32d201e018b8609   180 *glomeromycetes*, perhaps *Rhizophagus*
+93b2d56429637947243e1b5d54a065cf 132 1185446720294c60142f560688ebea21   159 *Fusarium*
+610caedb1a5699836310fce9dbb9c5fa  96 8e74f38b058222c58943fc6211d277fe    99 *Fusarium*
+54aecb27334809f56b7f940b9ca060a3  93 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
+bd30cf52b7031ddd96e3d7588c1f0e1c  90 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
+c40cad2530d633430c3805be3740c9a4  88 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
+d44cd471b11f15e2e42070806737e5d1  86 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
+831acf596cca4ef840c5543d82e23d16  82 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
+d4145ba9e3ed6c8c2138ed15b147152d  81 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
+================================ === ================================ ===== =======================================
