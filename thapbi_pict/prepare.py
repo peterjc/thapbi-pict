@@ -211,7 +211,7 @@ def run_cutadapt(
 
 
 def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
-    """Run pear on a pair of trimmed FASTQ files."""
+    """Run FLASH on a pair of trimmed FASTQ files to merge overlaping pairs."""
     # Note our reads tend to overlap a lot, thus increase max overlap with -M
     # Also, some of our samples are mostly 'outies' rather than 'innies', so -O
     cmd = ["flash", "-O", "-M", "300"]
