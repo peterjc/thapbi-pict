@@ -142,6 +142,7 @@ def main(
     else:
         handle = open(output, "w")
 
+    LEADING_COLS = 6
     if excel:
         import xlsxwriter
 
@@ -167,10 +168,10 @@ def main(
         # If there are lots of samples, set narrow column widths
         if len(samples) > 50:
             # Set column width to 2
-            worksheet.set_column(5, 5 + len(samples), 2)
+            worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 2)
         elif len(samples) > 20:
             # Set column width to 4
-            worksheet.set_column(5, 5 + len(samples), 4)
+            worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 4)
     else:
         workbook = None
         worksheet = None
@@ -183,28 +184,37 @@ def main(
         # Make a single metadata call for each sample
         meta = [metadata.get(sample, meta_default) for sample in samples]
         for i, name in enumerate(meta_names):
-            handle.write("#\t\t\t\t%s\t%s\n" % (name, "\t".join(_[i] for _ in meta)))
+            handle.write(
+                "#%s\t%s\t%s\n"
+                % ("\t" * LEADING_COLS, name, "\t".join(_[i] for _ in meta))
+            )
         if worksheet:
             sample_formats = color_bands(
                 [_[group_col] for _ in meta], sample_color_bands, debug=debug
             )
             for i, name in enumerate(meta_names):
-                worksheet.write_string(i, 4, name, cell_rightalign_format)
+                worksheet.write_string(i, LEADING_COLS, name, cell_rightalign_format)
                 for s, sample in enumerate(samples):
                     worksheet.write_string(
                         i,
-                        5 + s,
+                        LEADING_COLS + s,
                         metadata.get(sample, meta_default)[i],
                         sample_formats[s],
                     )
             current_row += len(meta_names)
     handle.write(
-        "#ITS1-MD5\t%s-predictions\tSequence\tSample-count\tTotal-abundance\t%s\n"
+        "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
+        "\tMax-sample-abundance\tTotal-abundance\t%s\n"
         % (",".join(methods), "\t".join(samples))
     )
     handle.write(
-        "TOTAL\t-\t-\t%i\t%i\t%s\n"
+        "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
+            max(
+                abundance_by_samples.get((md5, sample), 0)
+                for md5 in md5_to_seq
+                for sample in samples
+            ),
             sum(
                 1
                 for md5 in md5_to_seq
@@ -227,9 +237,12 @@ def main(
         worksheet.write_string(current_row, 1, ",".join(methods) + "-predictions")
         worksheet.write_string(current_row, 2, "Sequence")
         worksheet.write_string(current_row, 3, "Sample-count")
-        worksheet.write_string(current_row, 4, "Total-abundance")
+        worksheet.write_string(current_row, 4, "Max-sample-abundance")
+        worksheet.write_string(current_row, 5, "Total-abundance")
         for s, sample in enumerate(samples):
-            worksheet.write_string(current_row, 5 + s, sample, sample_formats[s])
+            worksheet.write_string(
+                current_row, LEADING_COLS + s, sample, sample_formats[s]
+            )
         current_row += 1
         first_data_row = current_row
         worksheet.write_string(current_row, 0, "TOTAL")
@@ -245,11 +258,20 @@ def main(
                 if (md5, sample) in abundance_by_samples
             ),
         )
-        worksheet.write_number(current_row, 4, sum(md5_abundance.values()))
+        worksheet.write_number(
+            current_row,
+            4,
+            max(
+                abundance_by_samples.get((md5, sample), 0)
+                for md5 in md5_to_seq
+                for sample in samples
+            ),
+        )
+        worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
         for s, sample in enumerate(samples):
             worksheet.write_number(
                 current_row,
-                5 + s,
+                LEADING_COLS + s,
                 sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
                 sample_formats[s],
             )
@@ -273,12 +295,13 @@ def main(
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
         sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in samples]
         handle.write(
-            "%s\t%s\t%s\t%i\t%i\t%s\n"
+            "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
                 md5,
                 sp,
                 seq,
                 md5_in_xxx_samples,
+                max(sample_counts),
                 total_abundance,
                 "\t".join(str(_) for _ in sample_counts),
             )
@@ -288,18 +311,21 @@ def main(
             worksheet.write_string(current_row, 1, sp)
             worksheet.write_string(current_row, 2, seq)
             worksheet.write_number(current_row, 3, md5_in_xxx_samples)
-            worksheet.write_number(current_row, 4, total_abundance)
+            worksheet.write_number(current_row, 4, max(sample_counts))
+            worksheet.write_number(current_row, 5, total_abundance)
             for s, count in enumerate(sample_counts):
-                worksheet.write_number(current_row, 5 + s, count, sample_formats[s])
+                worksheet.write_number(
+                    current_row, LEADING_COLS + s, count, sample_formats[s]
+                )
             current_row += 1
     del data
 
     if worksheet:
         worksheet.conditional_format(
             first_data_row,
-            5,
+            LEADING_COLS,
             current_row,
-            5 + len(samples),
+            LEADING_COLS + len(samples),
             {
                 "type": "cell",
                 "criteria": "greater than",
