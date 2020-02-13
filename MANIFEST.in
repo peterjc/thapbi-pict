@@ -34,6 +34,7 @@ prune tests/woody_hosts/intermediate/
 prune tests/recycled_water/cache/
 prune tests/recycled_water/taxdmp_2020-01-01/
 
+prune examples/
 include examples/fungal_mock/README.rst
 include examples/fungal_mock/PRJNA377530.txt
 include examples/fungal_mock/ITS1.fasta
