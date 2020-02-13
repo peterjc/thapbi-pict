@@ -237,9 +237,12 @@ def run_fastp(left_in, right_in, pair_out, adapters=None, debug=False, cpu=0):
         "-m",
         "--merged_out",
         pair_out,
-        "--detect_adapter_for_pe",
+        "-A"
     ]
     # Quoting FASTP documentation:
+    #
+    #     Adapter trimming is enabled by default, but you can disable
+    #     it by -A or --disable_adapter_trimming. <snip>
     #
     #     The most widely used adapter is the Illumina TruSeq adapters.
     #     If your data is from the TruSeq library, you can add
