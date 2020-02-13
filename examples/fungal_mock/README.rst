@@ -37,7 +37,7 @@ discussion on the similar Redekar *et al* (2019) worked example.
 Provided files
 --------------
 
-Either clone the THAPBI PICT source code repository, on decompress the
+Either clone the THAPBI PICT source code repository, or decompress the
 latest source code release (``.tar.gz`` file). You should find it contains
 a directory ``examples/fungal_mock/`` which is for this example.
 
