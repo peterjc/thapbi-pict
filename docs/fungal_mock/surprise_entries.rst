@@ -8,8 +8,11 @@ things which did not match the very narrow databases built from ``ITS1.fasta``
 or ``ITS2.fasta`` containing markers expected from the mock community *only*.
 
 Some unexpected sequences might reflect additional alternative copies of ITS1
-in the genomes. Others are likely external contamination - after all there are
-fungi practically everywhere.
+or ITS2 in the genomes. Others are likely external contamination - after all
+there are fungi practically everywhere. This seems to have happened on
+amplicon library one in the high PCR cycle negative control at least.
+Meanwhile, amplicon library two does not have any obvious external
+contamination.
 
 Amplicon library one - ITS1 (BITS/B58S3)
 ----------------------------------------
@@ -55,7 +58,7 @@ not highlighed in the original paper but is exactly the kind of thing you
 should worry about with a high PCR cycle number.
 
 Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
-``cae29429b90fc6539c440a140494aa25`` look like *glomeromycetes*, perhaps 
+``cae29429b90fc6539c440a140494aa25`` looks like *glomeromycetes*, perhaps
 *Rhizophagus* (from the mock community), but could be from a *Glomus* species.
 Using the ``blast`` classifier and the minimal curated reference set matches
 this to *Rhizophagus irregularis* but the situation would be ambiguous in a
@@ -73,6 +76,10 @@ from the mock community.
 You can find all six of these sequence on the edit-graph, most as isolated grey
 nodes along the bottom except ``cae29429b90fc6539c440a140494aa25`` which is 3bp
 away from *Rhizophagus irregularis* and linked to it with a dashed line.
+
+So some of the ITS1 sequences in amplicon library one are likely external
+contamination - particularly with the high PRC cycle negative control (which
+was likely included exactly because of this risk).
 
 Amplicon library two - ITS1 (ITS1f/ITS2)
 ----------------------------------------
@@ -115,6 +122,9 @@ likely *Fusarium* are a 1bp edit away from large grey node ``f1b689`` top left
 bottom middle). Those labelled *glomeromycetes* are in the middle near and in
 once case connected to a dark red *Rhizophagus irregularis* node.
 
+i.e. None of the ITS1 sequences in amplicon library two are clear cut external
+contaimination.
+
 Amplicon library two - ITS2
 ---------------------------
 
@@ -131,10 +141,14 @@ MD5 checksum                         Max Species
 ``8edbf2c168b11f910458b0e567ae5fc6``  78 *Aspergillus*
 ==================================== === =============
 
+These three all appears on the edit-graph separated from a red node (database entry)
+by a dashed or dotted line indicating a 2bp or 3bp edit away.
+
 Using an online NCBI BLAST search didn't pin any of these down to species level, but
 they do all seem to be fungi. Again, quite a few *Fusarium* matches which could be
 alternative ITS2 sequences in the genomes but not in the curated reference set.
-Likewise the *Aspergillus* like sequence.
+Likewise the *Aspergillus* like sequence could be from the *Aspergillus flavus* in
+the mock community.
 
-These three all appears on the edit-graph separated from a red node (database entry)
-by a dashed or dotted line indicating a 2bp or 3bp edit away.
+i.e. None of the ITS2 sequences in amplicon library two are clear cut external
+contaimination.
