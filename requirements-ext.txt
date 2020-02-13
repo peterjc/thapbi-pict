@@ -5,6 +5,7 @@
 
 blast
 cutadapt >= 2.8
+fastp >= 0.20.0
 flash
 graphviz
 hmmer
