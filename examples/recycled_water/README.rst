@@ -3,24 +3,22 @@
 Introduction
 ============
 
-Sample data
+Data source
 -----------
 
-This example is based on the following paper from another research group:
+This example is based on the ITS1 amplicon sequencing library from this paper:
 
-* Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
-  *Phytopythium* species in recycled irrigation water in a container nursery.
-  https://doi.org/10.1094/PBIOMES-10-18-0043-R
+    Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
+    *Phytopythium* species in recycled irrigation water in a container nursery.
+    https://doi.org/10.1094/PBIOMES-10-18-0043-R
+    https://www.ebi.ac.uk/ena/data/view/PRJNA417859
 
-The THAPBI PICT default primer values reflect the Phyto-Threats project's
-choice of primers where *Phytophthora* are the main target, but here the
-target is wider covering *Phytophthora*, *Pythium*, and *Phytopythium*.
-They therefore used a slightly different set of PCR primers:
+A region of ITS1 was amplified using the ITS6/ITS7 primer	pair
+(``GAAGGTGAAGTCGTAACAAGG`` and ``AGCGTTCTTCATCGATGTGC``) which bind the
+5.8S rDNA, described here:
 
-    *PCR was performed using the primers internal transcribed spacer
-    (ITS)6 (5′* ``GAAGGTGAAGTCGTAACAAGG`` *3′ *) that binds the small subunit
-    rDNA upstream of the ITS1 region and ITS7 (5′* ``AGCGTTCTTCATCGATGTGC`` *3′)
-    that binds within the 5.8S rDNA (Cooke et al. 2000)*
+    Cooke *et al.* (2000) A molecular phylogeny of Phytophthora and related
+    oomycetes. https://doi.org/10.1006/fgbi.2000.1202
 
 The left primer (ITS6) matches the THAPBI PICT default, but their right primer
 (ITS7) matches about 60bp further downstream in *Phytophthora*. This means we

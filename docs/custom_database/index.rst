@@ -10,8 +10,8 @@ of *Phytophthora* ITS1 data the tool provides.
 
 Here we re-analyse a published dataset from a different group, doing Illumina
 MiSeq ITS1 amplicon sequencing of irrigation water samples from Oregon. This
-covered more than just *Phytophthora*, used different PCR primers, and so
-requires a different database of markers.
+covered *Pythium* and *Phytopythium* as well as *Phytophthora*, and therefore
+used different PCR primers. That requires a different database of markers.
 
 .. toctree::
    :maxdepth: 1
