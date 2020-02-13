@@ -223,6 +223,38 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
     return run(cmd, debug=debug)
 
 
+def run_fastp(left_in, right_in, pair_out, adapters=None, debug=False, cpu=0):
+    """Run FASTP to do quality trimming and merge overlapping pairs.
+
+    The input FASTQ files may be gzipped.
+    """
+    cmd = [
+        "fastp",
+        "-i",
+        left_in,
+        "-I",
+        right_in,
+        "-m",
+        "--merged_out",
+        pair_out,
+        "--detect_adapter_for_pe",
+    ]
+    # Quoting FASTP documentation:
+    #
+    #     The most widely used adapter is the Illumina TruSeq adapters.
+    #     If your data is from the TruSeq library, you can add
+    #     --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+    #     --adapter_sequence_r2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+    #     to your command lines, or enable auto detection for PE data
+    #     by specifing detect_adapter_for_pe.
+    #
+    if cpu:
+        # -w, --thread
+        # worker thread number, default is 2 (int [=2])
+        cmd += ["-w", str(cpu)]
+    return run(cmd, debug=debug)
+
+
 def save_nr_fasta(counts, output_fasta, min_abundance=0):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -383,19 +415,27 @@ def prepare_sample(
     if debug:
         sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
 
-    # trimmomatic
-    trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
-    trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-    run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
-    for _ in (trim_R1, trim_R2):
-        if not os.path.isfile(_):
-            sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+    if True:
+        # fastp
+        merged_fastq = os.path.join(tmp, "fastp-merged.fastq")
+        run_fastp(raw_R1, raw_R2, merged_fastq, debug=debug, cpu=cpu)
+        if not os.path.isfile(merged_fastq):
+            sys.exit(f"ERROR: Expected file {merged_fastq!r} from flashp\n")
 
-    # flash
-    merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
-    run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
-    if not os.path.isfile(merged_fastq):
-        sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
+    else:
+        # trimmomatic
+        trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
+        trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
+        run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
+        for _ in (trim_R1, trim_R2):
+            if not os.path.isfile(_):
+                sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+
+        # flash
+        merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
+        run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
+        if not os.path.isfile(merged_fastq):
+            sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
@@ -510,7 +550,7 @@ def main(
     if negative_controls and not hmm_stem:
         sys.exit("ERROR: If using negative controls, must use --hmm too.")
 
-    check_tools(["trimmomatic", "flash", "cutadapt"], debug)
+    check_tools(["trimmomatic", "flash", "fastp", "cutadapt"], debug)
     if hmm_stem:
         check_tools(["hmmscan"], debug)
 

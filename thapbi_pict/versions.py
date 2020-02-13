@@ -35,6 +35,7 @@ def check_tools(names, debug):
     easy = {
         "blastn": version_blast,
         "cutadapt": version_cutadapt,
+        "fastp": version_fastp,
         "flash": version_flash,
         "hmmscan": version_hmmer,
         "makeblastdb": version_blast,
@@ -132,6 +133,27 @@ def version_hmmer(cmd="hmmscan"):
             if line.endswith("; http://hmmer.org/"):
                 line = line.rsplit(";", 1)[0]
             return line[7:].strip()
+
+
+def version_fastp(cmd="fastp"):
+    """Return the version of FASTP (as a short string).
+
+    Parses the output with ``-v``::
+
+        $ fastp -v
+        fastp 0.20.0
+
+    It would capture the version from the first line as follows:
+
+    >>> version_fastp()
+    '0.20.0'
+
+    If the command is not on the path, returns None.
+    """
+    text = getoutput(cmd + " -v")
+    ver = text.split("\n", 1)[0]
+    if ver.lower().startswith("fastp "):
+        return ver[6:].strip()
 
 
 def version_flash(cmd="flash"):
