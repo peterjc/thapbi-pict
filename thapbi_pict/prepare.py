@@ -239,6 +239,14 @@ def run_fastp(left_in, right_in, pair_out, adapters=None, debug=False, cpu=0):
         pair_out,
         "--adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
         "--adapter_sequence_r2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
+        # FASTP default minium overlap length is 30,
+        # Flash default is -m 10
+        "--overlap_len_require",
+        "10",
+        # FASTP default overlap diff percentation is 20,
+        # Flash default is -x 25
+        "--overlap_diff_percent_limit",
+        "25",
     ]
     # Quoting FASTP documentation:
     #
