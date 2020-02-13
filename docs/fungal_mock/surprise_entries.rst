@@ -19,31 +19,31 @@ which appear to be unique to the negative controls (not in any mock community
 samples) - shown here with their highest single sample abundance, which
 supports using a higher minimum abundance threshold:
 
-==================================== ================================== ===
-MD5 check sum                        Species                            Max
------------------------------------- ---------------------------------- ---
-``daadc4126b5747c43511bd3be0ea2438`` *Wallemia muriae*                   32
-``e5b7a8b5dc0da33108cc8a881eb409f5`` *Wallemia muriae*; *Wallemia sebi*  10
-``5194a4ae3a27d987892a8fee7b1669b9`` *Trichosporon asahii*               17
-``702929cef71042156acb3a28270d8831`` *Candida tropicalis*                14
-==================================== ================================== ===
+==================================== === ==================================
+MD5 checksum                         Max Species
+------------------------------------ --- ----------------------------------
+``daadc4126b5747c43511bd3be0ea2438``  32 *Wallemia muriae*
+``e5b7a8b5dc0da33108cc8a881eb409f5``  10 *Wallemia muriae*; *Wallemia sebi*
+``5194a4ae3a27d987892a8fee7b1669b9``  17 *Trichosporon asahii*
+``702929cef71042156acb3a28270d8831``  14 *Candida tropicalis*
+==================================== === ==================================
 
 Here are a selection of unclassified reads from the mock communities, focusing
 on entries with a maximum sample abundance over 100. You can easily extract these
 from the bottom of the ``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
 
-==================================== ======================================== ====
-MD5 check sum                        Species                                   Max
------------------------------------- ---------------------------------------- ----
-``5ca0acd7dd9d76fdd32c61c13ca5c881`` *Epicoccum nigrum*; *Epicoccum layuense* 4562
-``880007c5a18be69c3f444efd144fc450`` *Ascochyta* or *Neoascochyta*?            236
-``ee5382b80607f0f052a3ad3c4e87d0ce`` *glomeromycetes*, perhaps *Rhizophagus*   575
-``e055cb2efa2e1e0eb32d201e018b8609`` *glomeromycetes*, perhaps *Rhizophagus*    63
-``8e74f38b058222c58943fc6211d277fe`` *Fusarium*                                149
-``85775735614d45d056ce5f1b67f8d2b2`` *Fusarium*                                109
-``09aaa9b0eedac20be6555bf484858efe`` *Fusarium*                                 53 
-``a5843001e29a7049980a79dddb4042b4`` *Fusarium*                                 52
-==================================== ======================================== ====
+==================================== ==== ========================================
+MD5 checksum                         Max  Species
+------------------------------------ ---- ----------------------------------------
+``5ca0acd7dd9d76fdd32c61c13ca5c881`` 4562 *Epicoccum nigrum*; *Epicoccum layuense*
+``880007c5a18be69c3f444efd144fc450``  236 *Ascochyta* or *Neoascochyta*?
+``ee5382b80607f0f052a3ad3c4e87d0ce``  575 *glomeromycetes*, perhaps *Rhizophagus*
+``e055cb2efa2e1e0eb32d201e018b8609``   63 *glomeromycetes*, perhaps *Rhizophagus*
+``8e74f38b058222c58943fc6211d277fe``  149 *Fusarium*
+``85775735614d45d056ce5f1b67f8d2b2``  109 *Fusarium*
+``09aaa9b0eedac20be6555bf484858efe``   53 *Fusarium*
+``a5843001e29a7049980a79dddb4042b4``   52 *Fusarium*
+==================================== ==== ========================================
 
 The sequence with the top abundance, ``5ca0acd7dd9d76fdd32c61c13ca5c881``,
 perfectly matches fungus *Epicoccum nigrum* and *Epicoccum layuense*. Present
@@ -89,7 +89,8 @@ gives multiple answers in the following table I have picked the more common
 one (e.g. ``bb28f2b57f8fddefe6e7b5d01eca8aea`` with the final ``A`` ommitted
 as ``01de92e8d594fffdada971fe3ddbf18e`` was seen occasionally).
 
-Focusing on those with a sample-abundance over 75 (as in the edit-graphs):
+Focusing on those with a sample-abundance over 75 (as in the edit-graphs)
+which the ``onebp`` classifier did not match to the curated reference set:
 
 ================================ === ================================ ===== =======================================
 Long sequence MD5 (ITS1f/ITS2)   Max Short sequence MD5 (BITS/B58S3)    Max Species
@@ -106,3 +107,27 @@ d44cd471b11f15e2e42070806737e5d1  86 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fus
 831acf596cca4ef840c5543d82e23d16  82 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 d4145ba9e3ed6c8c2138ed15b147152d  81 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 ================================ === ================================ ===== =======================================
+
+Amplicon library two - ITS2
+---------------------------
+
+Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for ITS2.
+Again, the ``blast`` based classifier matched everything to an entry in the mock
+community database. The stricter ``onebp`` classifier assigned most reads. Here
+are those few it failed to match with a maximum read abundance over 75:
+
+==================================== === =============
+MD5 checksum                         Max Species
+------------------------------------ --- -------------
+``d1bb95fff4a7e9958fa3c7f13cc51343`` 211 *Fusarium*
+``2ef33e6acd8079d729b81d24b91fcf88`` 133 *Fusarium*
+``8edbf2c168b11f910458b0e567ae5fc6``  78 *Aspergillus*
+==================================== === =============
+
+Using an online NCBI BLAST search didn't pin any of these down to species level, but
+they do all seem to be fungi. Again, quite a few *Fusarium* matches which could be
+alternative ITS2 sequences in the genomes but not in the curated reference set.
+Likewise the *Aspergillus* like sequence.
+
+These three all appears on the edit-graph separated from a red node (database entry)
+by a dashed or dotted line indicating a 2bp or 3bp edit away.
