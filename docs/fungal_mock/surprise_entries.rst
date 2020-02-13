@@ -70,7 +70,7 @@ Last ``8e74f38b058222c58943fc6211d277fe``, ``85775735614d45d056ce5f1b67f8d2b2``
 and ``09aaa9b0eedac20be6555bf484858efe`` and have good BLAST matches to several
 different *Fusarium* species, so could also be from the mock community. Likewise
 ``a5843001e29a7049980a79dddb4042b4`` but the possible species matches on the NCBI
-are mostly *Fusarium oxysporum* (which is in the mock community). With 
+are mostly *Fusarium oxysporum* (which is in the mock community). 
 
 
 Amplicon library two - ITS1 (ITS1f/ITS2)
@@ -99,7 +99,7 @@ Long sequence MD5 (ITS1f/ITS2)   Max Short sequence MD5 (BITS/B58S3)    Max Spec
 eed6e5c3881a233cca219f7ffd886bbe 315 cae29429b90fc6539c440a140494aa25   375 *glomeromycetes*, perhaps *Rhizophagus*
 05007e829ab71427b49743994a14105f 154 e055cb2efa2e1e0eb32d201e018b8609   180 *glomeromycetes*, perhaps *Rhizophagus*
 93b2d56429637947243e1b5d54a065cf 132 1185446720294c60142f560688ebea21   159 *Fusarium*
-610caedb1a5699836310fce9dbb9c5fa  96 8e74f38b058222c58943fc6211d277fe    99 *Fusarium*
+610caedb1a5699836310fce9dbb9c5fa  96 8e74f38b058222c58943fc6211d277fe    99 *Fusarium* (isolated edit-graph node)
 54aecb27334809f56b7f940b9ca060a3  93 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
 bd30cf52b7031ddd96e3d7588c1f0e1c  90 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
 c40cad2530d633430c3805be3740c9a4  88 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium* 
