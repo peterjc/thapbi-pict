@@ -13,7 +13,7 @@ This example is based on the ITS1 amplicon sequencing library from this paper:
     https://doi.org/10.1094/PBIOMES-10-18-0043-R
     https://www.ebi.ac.uk/ena/data/view/PRJNA417859
 
-A region of ITS1 was amplified using the ITS6/ITS7 primer	pair
+A region of ITS1 was amplified using the ITS6/ITS7 primer pair
 (``GAAGGTGAAGTCGTAACAAGG`` and ``AGCGTTCTTCATCGATGTGC``) which bind the
 5.8S rDNA, described here:
 
@@ -73,20 +73,17 @@ for use with THAPBI PICT.
 Setup
 -----
 
-We assume you have your command line terminal open in a new empty folder
-dedicated to this analysis. Start by fetching files ``PRJNA417859.txt``
-(originally downloaded from the ENA), ``metadata.tsv`` (generated from it,
-ready for use in reporting), and ``Redekar_et_al_2019_sup_table_3.*``
-(based on the Excel format Supplementary Table 3 from the paper). These are
-included with the THAPBI PICT source code in folder ``tests/recycled_water/``
-but can be downloaded:
+We assume you have aquired the THAPBI PICT source code, and have your command
+line terminal open in the ``examples/recycled_water/`` folder.
 
-.. code:: console
+This should already contain several files including:
 
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/PRJNA417859.txt
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/metadata.tsv
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/Redekar_et_al_2019_sup_table_3.tsv
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/Redekar_et_al_2019_sup_table_3.fasta
+* ``PRJNA417859.txt`` originally downloaded from the ENA
+* ``metadata.tsv`` generated from it, ready for use in reporting
+* ``MD5SUM.txt`` for verifying the FASTQ files
+* ``Redekar_et_al_2019_sup_table_3.tsv`` based on the Excel format
+  Supplementary Table 3 from the paper
+* ``Redekar_et_al_2019_sup_table_3.fasta`` also based on Supplementary Table 3
 
 Next, we will download the gzip-compressed FASTQ files into a sub-directory
 named ``raw_data/``. You may find the ENA bulk download helper application

@@ -31,10 +31,16 @@ prune tests/woody_hosts/positive_controls/
 prune tests/woody_hosts/summary/
 prune tests/woody_hosts/intermediate/
 
-prune tests/recycled_water/cache/
-prune tests/recycled_water/taxdmp_2020-01-01/
-
 prune examples/
+
+include examples/recycled_water/README.rst
+include examples/recycled_water/PRJNA417859.txt
+include examples/recycled_water/Redekar_et_al_2019_sup_table_3.fasta
+include examples/recycled_water/Redekar_et_al_2019_sup_table_3.tsv
+include examples/recycled_water/make_meta.py
+include examples/recycled_water/metadata.tsv
+include examples/recycled_water/MD5SUM.txt
+
 include examples/fungal_mock/README.rst
 include examples/fungal_mock/PRJNA377530.txt
 include examples/fungal_mock/ITS1.fasta
