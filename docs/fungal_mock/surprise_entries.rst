@@ -28,21 +28,21 @@ MD5 checksum                         Max Species
 ``702929cef71042156acb3a28270d8831``  14 *Candida tropicalis*
 ==================================== === ==================================
 
-Here are a selection of unclassified reads from the mock communities, focusing
-on entries with a maximum sample abundance over 100. You can easily extract these
-from the bottom of the ``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
+Here are the the reads from entries with a maximum sample abundance over 75 which
+the ``onebp`` and in some cases ``blast`` based classifier failed to match, along
+with the most likely match from reviewing an online NCBI BLAST search. You can
+easily extract these entries (and their sequences) from the bottom of the
+``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
 
 ==================================== ==== ========================================
 MD5 checksum                         Max  Species
 ------------------------------------ ---- ----------------------------------------
 ``5ca0acd7dd9d76fdd32c61c13ca5c881`` 4562 *Epicoccum nigrum*; *Epicoccum layuense*
-``880007c5a18be69c3f444efd144fc450``  236 *Ascochyta* or *Neoascochyta*?
 ``ee5382b80607f0f052a3ad3c4e87d0ce``  575 *glomeromycetes*, perhaps *Rhizophagus*
-``e055cb2efa2e1e0eb32d201e018b8609``   63 *glomeromycetes*, perhaps *Rhizophagus*
+``880007c5a18be69c3f444efd144fc450``  236 *Ascochyta* or *Neoascochyta*?
 ``8e74f38b058222c58943fc6211d277fe``  149 *Fusarium*
+``cae29429b90fc6539c440a140494aa25``  114 *glomeromycetes*, perhaps *Rhizophagus*
 ``85775735614d45d056ce5f1b67f8d2b2``  109 *Fusarium*
-``09aaa9b0eedac20be6555bf484858efe``   53 *Fusarium*
-``a5843001e29a7049980a79dddb4042b4``   52 *Fusarium*
 ==================================== ==== ========================================
 
 The sequence with the top abundance, ``5ca0acd7dd9d76fdd32c61c13ca5c881``,
@@ -54,24 +54,25 @@ replicate of the even mixture. Perhaps this was a stray fragment of
 not highlighed in the original paper but is exactly the kind of thing you
 should worry about with a high PCR cycle number.
 
+Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
+``cae29429b90fc6539c440a140494aa25`` look like *glomeromycetes*, perhaps 
+*Rhizophagus* (from the mock community), but could be from a *Glomus* species.
+Using the ``blast`` classifier and the minimal curated reference set matches
+this to *Rhizophagus irregularis* but the situation would be ambiguous in a
+more complete database.
+
 Sequence ``880007c5a18be69c3f444efd144fc450`` has perfect matches to lots of
 unclassified fungi and conflicting perfect matches including *Ascochyta* or
 *Neoascochyta*. This was seen only in the high PCR cycle number sample
 ``SRR5314339`` as above.
 
-Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
-``e055cb2efa2e1e0eb32d201e018b8609`` (a 3bp edit away) look like
-*glomeromycetes*, perhaps a *Rhizophagus* (from the mock community), but could
-be from a *Glomus* species. Using the ``blast`` classifier and the minimal
-database matches this to *Rhizophagus irregularis* but the situation would be
-ambiguous in a more complete database.
+Next ``8e74f38b058222c58943fc6211d277fe`` and ``85775735614d45d056ce5f1b67f8d2b2``
+have good BLAST matches to several different *Fusarium* species, so could also be
+from the mock community.
 
-Last ``8e74f38b058222c58943fc6211d277fe``, ``85775735614d45d056ce5f1b67f8d2b2``
-and ``09aaa9b0eedac20be6555bf484858efe`` and have good BLAST matches to several
-different *Fusarium* species, so could also be from the mock community. Likewise
-``a5843001e29a7049980a79dddb4042b4`` but the possible species matches on the NCBI
-are mostly *Fusarium oxysporum* (which is in the mock community).
-
+You can find all six of these sequence on the edit-graph, most as isolated grey
+nodes along the bottom except ``cae29429b90fc6539c440a140494aa25`` which is 3bp
+away from *Rhizophagus irregularis* and linked to it with a dashed line.
 
 Amplicon library two - ITS1 (ITS1f/ITS2)
 ----------------------------------------
@@ -99,7 +100,7 @@ Long sequence MD5 (ITS1f/ITS2)   Max Short sequence MD5 (BITS/B58S3)    Max Spec
 eed6e5c3881a233cca219f7ffd886bbe 315 cae29429b90fc6539c440a140494aa25   375 *glomeromycetes*, perhaps *Rhizophagus*
 05007e829ab71427b49743994a14105f 154 e055cb2efa2e1e0eb32d201e018b8609   180 *glomeromycetes*, perhaps *Rhizophagus*
 93b2d56429637947243e1b5d54a065cf 132 1185446720294c60142f560688ebea21   159 *Fusarium*
-610caedb1a5699836310fce9dbb9c5fa  96 8e74f38b058222c58943fc6211d277fe    99 *Fusarium* (isolated edit-graph node)
+610caedb1a5699836310fce9dbb9c5fa  96 8e74f38b058222c58943fc6211d277fe    99 *Fusarium*
 54aecb27334809f56b7f940b9ca060a3  93 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 bd30cf52b7031ddd96e3d7588c1f0e1c  90 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 c40cad2530d633430c3805be3740c9a4  88 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
@@ -107,6 +108,12 @@ d44cd471b11f15e2e42070806737e5d1  86 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fus
 831acf596cca4ef840c5543d82e23d16  82 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 d4145ba9e3ed6c8c2138ed15b147152d  81 bb28f2b57f8fddefe6e7b5d01eca8aea 22862 *Fusarium*
 ================================ === ================================ ===== =======================================
+
+You can find all of these sequence on the edit-graph, most of those labelled as
+likely *Fusarium* are a 1bp edit away from large grey node ``f1b689`` top left
+(except ``610caedb1a5699836310fce9dbb9c5fa`` which is an isolated node placed
+bottom middle). Those labelled *glomeromycetes* are in the middle near and in
+once case connected to a dark red *Rhizophagus irregularis* node.
 
 Amplicon library two - ITS2
 ---------------------------
