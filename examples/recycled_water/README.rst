@@ -120,7 +120,7 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-The documentation will go through running each step of the analysis gradually,
+The documentation goes through running each step of the analysis gradually,
 including building a custom database, before finally calling pipeline command
 to do it all together. We provide script ``run.sh`` to do the final run-though
 automatically, but encourage you to follow along the individual steps first.
@@ -128,7 +128,7 @@ automatically, but encourage you to follow along the individual steps first.
 Metadata
 --------
 
-The provided file ``metadata.tsv`` have seven columns:
+The provided file ``metadata.tsv`` has seven columns:
 
 1. Source, "Reservoir", "River" or "Runoff"
 2. Site,  "A", "B", "C", ..., "M"
@@ -147,8 +147,7 @@ When calling THAPBI PICT, the meta data commands are given as follows:
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
 The ``-x 7`` argument indicates the filename stem can be found in column 7,
-Accession. We might have downloaded the files and used the author original
-names, in which case ``-x 6`` might work.
+Accession.
 
 Argument ``-c 1,2,3,4,5,6`` says which columns to display and sort by (do
 not include the indexed column again). If for example the accession was
