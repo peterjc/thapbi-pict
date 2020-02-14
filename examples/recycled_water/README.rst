@@ -52,6 +52,29 @@ conserved 32bp region as part of the left primer - requiring it be present
 (while allowing some ambiguity) and removing it - leaving a shorter fragment
 which can be matched to a database built of those 1454 accessions.
 
+Provided files
+--------------
+
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/recycled_water/`` which is for this example.
+
+File ``PRJNA417859.txt`` was download from the ENA and includes the FASTQ
+checksums, URLs, and sample metadata. With a little scripting to extract the
+relevant :ref:`sample metadata <metadata>` for use with THAPBI PICT this was
+reformatted as ``metadata.tsv`` (another plain text tab-separated table).
+
+The subdirectory ``raw_data/`` will hold the compressed FASTA files. This
+contains a file named ``MD5SUM.txt`` which can be used to validate the
+FASTQ files (using the checksums provided by the ENA).
+
+Files ``Redekar_et_al_2019_sup_table_3.tsv`` (plain text tab separated table)
+and ``Redekar_et_al_2019_sup_table_3.fasta`` (FASTA format) are based on the
+Excel format Supplementary Table 3 from the paper.
+
+Shell scripts ``setup.py`` and ``run.sh`` should reproduce the final analysis
+discussed in the THAPBI PICT documentation.
+
 Raw FASTQ data
 --------------
 
@@ -64,55 +87,31 @@ or equivalently from the European Nucleotide Archive under project
 Downloaded we have 768 gzip-compressed FASTQ files (384 pairs), taking about
 5GB on disk.
 
-The ENA makes it easy to download the project metadata as a table, a copy of
-which we provide as file ``PRJNA417859.txt``. With a little scripting this
-can be reformatted extracting the relevant :ref:`sample metadata <metadata>`
-for use with THAPBI PICT.
-
-
 Setup
 -----
 
 We assume you have aquired the THAPBI PICT source code, and have your command
-line terminal open in the ``examples/recycled_water/`` folder.
-
-This should already contain several files including:
-
-* ``PRJNA417859.txt`` originally downloaded from the ENA
-* ``metadata.tsv`` generated from it, ready for use in reporting
-* ``MD5SUM.txt`` for verifying the FASTQ files
-* ``Redekar_et_al_2019_sup_table_3.tsv`` based on the Excel format
-  Supplementary Table 3 from the paper
-* ``Redekar_et_al_2019_sup_table_3.fasta`` also based on Supplementary Table 3
-
-Next, we will download the gzip-compressed FASTQ files into a sub-directory
-named ``raw_data/``. You may find the ENA bulk download helper application
-easier, but the following should also work in principle:
+line terminal open in the ``examples/recycled_water/`` folder. First we run
+the ``setup.py`` script:
 
 .. code:: console
 
-    $ mkdir raw_data
-    $ cd raw_data/
-    $ for URL in `cut -f 6 PRJNA417859.txt | sed "s/;/ /g"`; do wget "ftp://$URL"; done
-    $ cd ..
+   $ ./setup.py
 
-If that worked you should have 768 files named ``SRR6303585_1.fastq.gz`` and
-``SRR6303585_2.fastq.gz`` (the pair for ``SRR6303585`` aka ``OSU484``) though
-to ``SRR6303968_1.fastq.gz`` and ``SRR6303968_2.fastq.gz`` (the pair for
-``SRR6303968`` aka ``OSU476``):
+This will download the raw gzip compressed FASTQ files from the ENA (768 files,
+384 pairs, about 5GB in total):
 
 .. code:: console
 
     $ ls -1 raw_data/SRR*.fastq.gz | wc -l
     768
 
-At this point it is worth checking there were no partial downloads or data
-corruption by validating the MD5 checksums given by the ENA:
+If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
+files downloaded correctly:
 
 .. code:: console
 
     $ cd raw_data/
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/recycled_water/MD5SUM.txt
     $ md5sum -c MD5SUM.txt
     $ cd ..
 
