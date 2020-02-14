@@ -128,14 +128,16 @@ When calling THAPBI PICT, the meta data commands are given as follows:
 
     $ thapbi_pict ... -t metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
 
-Argument ``-x 1`` indicates the filename stem can be found in column 1, Accession.
-We might have downloaded the files and used the author original names, in which
-case ``-x 2`` ought to work.
+Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
 Argument ``-c 5,6,7,3,4,2`` says which columns to display and sort by. This means
 Sample-type, Group, Protocol, Condition, Replicate, MiSeq Name. The purpose here
 is to group the samples logically (sorting on accession or MiSeq Name would not
 work), and suitable for group colouring.
+
+Argument ``-x 1`` (default, so not needed) indicates the filename stem can be
+found in column 1, Accession. We might have downloaded the files and used the
+author original names, in which case ``-x 2`` ought to work.
 
 Argument ``-g 6`` means assign colour bands using column 6, Group. This is used
 in the Excel reports.
