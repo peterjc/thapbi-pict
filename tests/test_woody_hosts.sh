@@ -25,7 +25,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/woody_
 # thapbi_pict pipeline -i sample_data/raw_data/ \
 #	    -s $TMP/woody_hosts/intermediate \
 #	    -o $TMP/woody_hosts/summary -r woody-hosts \
-#	    -t tests/woody_hosts/metadata.tsv \
+#	    -t examples/woody_hosts/metadata.tsv \
 #            -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 
 
@@ -77,7 +77,7 @@ time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
             -o $TMP/woody_hosts/summary/with-metadata.samples.tsv \
             -e $TMP/woody_hosts/summary/with-metadata.samples.xlsx \
             -r $TMP/woody_hosts/summary/with-metadata.samples.txt \
-            -t tests/woody_hosts/metadata.tsv \
+            -t examples/woody_hosts/metadata.tsv \
             -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.samples.*
 if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
@@ -100,7 +100,7 @@ if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.tsv` -ne 100 ];
 time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
 	    -o $TMP/woody_hosts/summary/with-metadata.reads.tsv \
 	    -e $TMP/woody_hosts/summary/with-metadata.reads.xlxs \
-	    -t tests/woody_hosts/metadata.tsv \
+	    -t examples/woody_hosts/metadata.tsv \
 	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.reads.*
 if [ `grep -c -v "^#" $TMP/woody_hosts/summary/with-metadata.reads.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
