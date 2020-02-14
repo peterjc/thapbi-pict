@@ -130,29 +130,32 @@ Metadata
 
 The provided file ``metadata.tsv`` have seven columns:
 
-1. Accession, assigned by the public archive, e.g. "SRR6303585"
-2. Sample, author's sample name, e.g. "OSU484"
-3. Source, "Reservoir", "River" or "Runoff"
-4. Site,  "A", "B", "C", ..., "M"
-5. Process, "Filtration" or "Leaf baiting"
-6. Period, "1" to "28"
-7. Year-Month, "2015-04" to "2016-05" (given as "YYYY-MM" for sorting)
+1. Source, "Reservoir", "River" or "Runoff"
+2. Site,  "A", "B", "C", ..., "M"
+3. Process, "Filtration" or "Leaf baiting"
+4. Period, "1" to "28"
+5. Year-Month, "2015-04" to "2016-05" (given as "YYYY-MM" for sorting)
+6. Sample, author's sample name, e.g. "OSU484"
+7. Accession, assigned by the public archive, e.g. "SRR6303585"
 
 When calling THAPBI PICT, the meta data commands are given as follows:
 
 .. code:: console
 
-    $ thapbi_pict ... -t metadata.tsv -c 1,2,3,4,5,6,7
+    $ thapbi_pict ... -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
-Argument ``-c 1,2,3,4,5,6,7`` says which columns to display and sort by. This
-means all seven columns in the natural order (the file was constructed this
-way on purpose).
+The ``-x 7`` argument indicates the filename stem can be found in column 7,
+Accession. We might have downloaded the files and used the author original
+names, in which case ``-x 6`` might work.
 
-The default ``-x 1`` argument (not needed) indicates the filename stem can be
-found in column 1, Accession. We might have downloaded the files and used the
-author original names, in which case ``-x 2`` might work.
+Argument ``-c 1,2,3,4,5,6`` says which columns to display and sort by (do
+not include the indexed column again). If for example the accession was
+listed first, it would be sorted on that, which is not helpful here. If you
+prefer to sort on site first, or by date before process, this should be
+straightforward.
 
 We have not given a ``-g`` argument to assign colour bands in the Excel
-reports.
+reports, so it will default to the first column in ``-c``, meaning we get
+three coloured bands for "Reservoir", "River" and "Runoff".

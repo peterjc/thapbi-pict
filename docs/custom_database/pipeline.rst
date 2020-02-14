@@ -16,7 +16,7 @@ our custom database built with matching primer trimmed entries:
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
-      -r recycled-water-custom -t metadata.tsv -c 1,2,3,4,5,6,7
+      -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 3577559 of 9956078 sequences from 384 files
     ...
@@ -36,11 +36,11 @@ our custom database built with matching primer trimmed entries:
     recycled-water-custom.samples.onebp.txt
     recycled-water-custom.edit-graph.xgmml
 
-Note here I have made the classifier method explicit with ``-m`` (or
-``--method``), using the default of ``onebp``. With the narrower set of
-*Phytophthora* sequences and comparatively well sampled database, that was a
-good default. Recall running with the *Phytophthora* defaults gave a taxonomic
-assignment for 1880182 of 2605870 reads - which was 72% of 2.6 million reads.
+Note the classifier method was set explicitly with ``-m`` (or ``--method``),
+using the default of ``onebp``. With the narrower set of *Phytophthora*
+sequences and comparatively well sampled database, that was a good default.
+Recall running with the *Phytophthora* defaults gave a taxonomic assignment
+for 1880182 of 2605870 reads - which was 72% of 2.6 million reads.
 
 Here with our relatively sparse database, the ``onebp`` method is perhaps
 overly strict - only 36% of the reads were matched (3577559 of 9956078).
@@ -57,7 +57,7 @@ more matches:
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
-      -r recycled-water-custom -t metadata.tsv -c 1,2,3,4,5,6,7
+      -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     blast classifier assigned species/genus to 4281041 of 9956078 sequences from 384 files
     ...

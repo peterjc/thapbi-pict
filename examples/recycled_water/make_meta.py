@@ -32,7 +32,7 @@ months = {
 with open("PRJNA417859.txt") as handle:
     with open("metadata.tsv", "w") as meta:
         # Write our header line
-        meta.write("Accession\tSample\tSource\tSite\tProcess\tPeriod\tYear-Month\n")
+        meta.write("Source\tSite\tProcess\tPeriod\tYear-Month\tSample\tAccession\n")
         for line in handle:
             if not line.strip() or line.startswith("#"):
                 continue
@@ -68,7 +68,7 @@ with open("PRJNA417859.txt") as handle:
                 raise
 
             meta.write(
-                f"{acc}\t{name}\t{source}\t{site}\t{processed}\t{period}\t{yyyy_mm}\n"
+                f"{source}\t{site}\t{processed}\t{period}\t{yyyy_mm}\t{name}\t{acc}\n"
             )
 
             R1 = f"raw_data/{acc}_1.fastq.gz"
