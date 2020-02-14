@@ -55,7 +55,8 @@ with open("PRJNA417859.txt") as handle:
             source, site = site.split("-", 1)
 
             assert period.startswith("Period: ")
-            period = period[8:]
+            # Add leading zero for sorting if treated as text
+            period = "%02i" % int(period[8:].strip())
 
             assert month_year.startswith("Month-Year: ")
             month_year = month_year[12:]
