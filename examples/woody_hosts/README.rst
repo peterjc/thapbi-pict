@@ -35,64 +35,52 @@ you can still follow the rest of a typical analysis.
 We also provide :ref:`metadata for the samples <metadata>` for use in the
 reports.
 
+Provided files
+--------------
+
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/woody_hosts/`` which is for this example.
+
+File ``metadata.tsv`` contains metadata about the sampling sites (see below).
+
+Compressed archive file ``intermediate.tar.bz2`` contains the results of
+the first step in the analysis, in case you have problems downloading the
+raw FASTQ files (see below).
+
+Subdirectory ``expected/`` contains four plain text tab-separated files,
+describing the expected species in some mock community positive controls:
+
+* ``DNA15MIX.known.tsv``
+* ``DNA10MIX_bycopynumber.known.tsv``
+* ``DNA10MIX_diluted25x.known.tsv``
+* ``DNA10MIX_undiluted.known.tsv``
+
+Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+discussed in the THAPBI PICT documentation.
+
 Setup
 -----
 
-We assume you have your command line terminal open in a new empty folder
-dedicated to this analysis. Start by making three sub-folders as follows:
+We assume you have aquired the THAPBI PICT source code, and have your command
+line terminal open in the ``examples/woody_hosts/`` folder. First we run the
+``setup.py`` script:
 
 .. code:: console
 
-   $ mkdir raw_data/ intermediate/ summary/ expected/
+   $ ./setup.py
 
-We will need file ``metadata.tsv`` (included with the THAPBI PICT source
-code as ``examples/woody_hosts/metadata.tsv``), containing :ref:`metadata
-about the sites <metadata>`. This file can be downloaded:
+This will download the raw gzip compressed FASTQ files from Zenodo (244 files,
+122 pairs, a little over 200MB in total) into the ``raw_data/`` subdirectory.
 
+If you skip the raw data, instead you must decompress the pre-prepared 122
+FASTA files into your ``intermediate/`` subdirectory:
 .. code:: console
 
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/metadata.tsv
-
-We will also need four files ``expected/*.known.tsv`` which describe
-the species expected in the positive control sequences. These are included
-with the source under ``tests/woody_hosts/``, or can be downloaded:
-
-.. code:: console
-
-    $ cd expected/
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/expected/DNA15MIX.known.tsv
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/expected/DNA10MIX_bycopynumber.known.tsv
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/expected/DNA10MIX_diluted25x.known.tsv
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/expected/DNA10MIX_undiluted.known.tsv
-    $ cd ..
-
-The FASTQ files are only needed for the very first step of the worked example,
-or for running the combined pipeline command. The download is about 215MB:
-
-.. code:: console
-
-    $ wget https://zenodo.org/record/3342957/files/raw_data.tar.gz
-    $ tar -zxvf raw_data.tar.gz
-    $ ls -1 raw_data/*.fastq.gz | wc -l
-    244
-
-Ideally confirm the MD5 checksum is ``3435aa5b567897ab23e6aac46fb822a9`` by
-running ``md5sum raw_data.tar.gz`` (on Linux) or ``md5 raw_data.tar.gz`` (on
-macOS). This is just to double check there were no problems with the download.
-
-If you skip the raw data, instead you must download the pre-prepared 122 FASTA
-files into your intermediate data sub-folder as ``intermediate/*.fasta``.
-These are provided as a small compressed file included in the THAPBI PICT
-source code ``examples/woody_hosts/intermediate.tar.bz2``, or can easily be
-downloaded:
-
-.. code:: console
-
-   $ wget https://github.com/peterjc/thapbi-pict/raw/master/examples/woody_hosts/intermediate.tar.bz2
    $ tar -jxvf intermediate.tar.bz2
    $ ls -1 intermediate/*.fasta | wc -l
    122
 
-Note that four of the FASTA files are empty, ``Site_13_sample_7.fasta`` and
+Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
 negative controls (good).
