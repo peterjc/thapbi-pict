@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eup pipeline
 
+echo NOTE: Expected first time run time is about 1 hour,
+echo repeat runs about 1 minute just to regenerate reports.
+echo
 echo =====================
 echo Recycled water - ITS1
 echo =====================

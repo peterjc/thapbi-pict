@@ -1,6 +1,10 @@
 #!/bin/bash
 set -eup pipeline
 
+echo NOTE: Expected first time run time is about 15 minutes,
+echo repeat runs about 1 minute just to regenerate reports.
+echo
+
 # Takes arguments via variable names
 function analyse {
     echo "Building $MARKER database for $NAME"
