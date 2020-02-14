@@ -199,7 +199,7 @@ followed by all the NCBI taxids and species names using semi-colon separators.
 Looking at the 15 species mixture, we want to assess the classification in the
 file ``intermediate/DNA15MIX.onebp.tsv`` so we will need a file named
 ``DNA15MIX.known.tsv``. This can be in any folder, but the convention we use
-is another folder ``positive_controls/`` for all the ``*.known.tsv`` files.
+is another folder ``expected/`` for all the ``*.known.tsv`` files.
 See :ref:`sample data setup <sample_data>` for where to get this file.
 
 The simplest way to run the assess command is to tell it two input filenames,
@@ -209,7 +209,7 @@ five columns:
 
 .. code:: console
 
-    $ thapbi_pict assess -i positive_controls/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv | cut -f 1-5
+    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv | cut -f 1-5
     Assessed onebp vs known in 1 files (161 species; 1 sample level predictions)
     #Species                  TP  FP  FN  TN
     OVERALL                    8   1   7 145
@@ -222,7 +222,7 @@ More usually, you would output to a named file, and look at that:
 
 .. code:: console
 
-    $ thapbi_pict assess -i positive_controls/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
+    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
     Assessed onebp vs known in 1 files (147 species; 1 sample level predictions)
 
 You should be able to open this ``DNA15MIX.assess.tsv`` file in R, Excel, etc.
@@ -263,7 +263,7 @@ by giving the input directory names (it will work out the common filenames):
 
 .. code:: console
 
-    $ thapbi_pict assess -i positive_controls/ intermediate/ -o thabpi-pict.assess.tsv
+    $ thapbi_pict assess -i expected/ intermediate/ -o thabpi-pict.assess.tsv
     Assessed onebp vs known in 4 files (161 species; 4 sample level predictions)
 
 The table this time is similar:
@@ -299,7 +299,7 @@ producing the main reports:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ positive_controls/ \
+    $ thapbi_pict pipeline -i raw_data/ expected/ \
       -s intermediate/ -o summary/ \
       -n raw_data/NEGATIVE*.fastq.gz -r with-metadata \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20

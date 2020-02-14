@@ -18,7 +18,7 @@ mkdir $TMP/woody_hosts
 mkdir $TMP/woody_hosts/intermediate
 mkdir $TMP/woody_hosts/summary
 mkdir $TMP/woody_hosts/positive_controls/
-for f in tests/woody_hosts/*.known.tsv; do ln -s $PWD/$f $TMP/woody_hosts/positive_controls/ ; done
+for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/woody_hosts/positive_controls/ ; done
 
 # Idea here is to mimic what "thapbi_pict pipeline" would do if we had
 # the FASTQ files here:
