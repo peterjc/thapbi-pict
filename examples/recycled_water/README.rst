@@ -98,8 +98,8 @@ the ``setup.py`` script:
 
    $ ./setup.py
 
-This will download the raw gzip compressed FASTQ files from the ENA (768 files,
-384 pairs, about 5GB in total):
+This will download the December 2019 NCBI taxonomy dump, and gzip compressed
+FASTQ files from the ENA (768 files, 384 pairs), just over 5GB in total:
 
 .. code:: console
 

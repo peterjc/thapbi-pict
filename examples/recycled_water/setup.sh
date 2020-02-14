@@ -1,6 +1,17 @@
 #!/bin/bash
 set -eup pipeline
 
+if [ -f taxdmp_2019-12-01/names.dmp ]; then
+    echo "Already have taxdmp_2019-12-01/"
+else
+    echo "Downloading NCBI taxonomy"
+    wget https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2019-12-01.zip
+    echo "Decompressing NCBI taxonomy"
+    # Only need names.dmp and nodes.dmp
+    unzip -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip names.dmp nodes.dmp
+fi
+
+
 if [ ! -f raw_data/MD5SUM.txt ]; then
     echo "ERROR: Missing raw_data/MD5SUM.txt"
     false
