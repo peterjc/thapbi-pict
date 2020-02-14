@@ -133,7 +133,7 @@ The provided file ``metadata.tsv`` has seven columns:
 1. Source, "Reservoir", "River" or "Runoff"
 2. Site,  "A", "B", "C", ..., "M"
 3. Process, "Filtration" or "Leaf baiting"
-4. Period, "1" to "28"
+4. Period, "01" to "28"
 5. Year-Month, "2015-04" to "2016-05" (given as "YYYY-MM" for sorting)
 6. Sample, author's sample name, e.g. "OSU484"
 7. Accession, assigned by the public archive, e.g. "SRR6303585"
