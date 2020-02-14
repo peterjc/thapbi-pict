@@ -116,3 +116,43 @@ files downloaded correctly:
     $ cd ..
 
 There is no need to decompress the files.
+
+Running the pipeline
+--------------------
+
+The documentation will go through running each step of the analysis gradually,
+including building a custom database, before finally calling pipeline command
+to do it all together. We provide script ``run.sh`` to do the final run-though
+automatically, but encourage you to follow along the individual steps first.
+
+Metadata
+--------
+
+The provided file ``metadata.tsv`` have seven columns:
+
+1. Accession, assigned by the public archive, e.g. "SRR6303585"
+2. Sample, author's sample name, e.g. "OSU484"
+3. Source, "Reservoir", "River" or "Runoff"
+4. Site,  "A", "B", "C", ..., "M"
+5. Process, "Filtration" or "Leaf baiting"
+6. Period, "1" to "28"
+7. Year-Month, "2015-04" to "2016-05" (given as "YYYY-MM" for sorting)
+
+When calling THAPBI PICT, the meta data commands are given as follows:
+
+.. code:: console
+
+    $ thapbi_pict ... -t metadata.tsv -c 1,2,3,4,5,6,7
+
+Argument ``-t metadata.tsv`` says to use this file for the metadata.
+
+Argument ``-c 1,2,3,4,5,6,7`` says which columns to display and sort by. This
+means all seven columns in the natural order (the file was constructed this
+way on purpose).
+
+The default ``-x 1`` argument (not needed) indicates the filename stem can be
+found in column 1, Accession. We might have downloaded the files and used the
+author original names, in which case ``-x 2`` might work.
+
+We have not given a ``-g`` argument to assign colour bands in the Excel
+reports.
