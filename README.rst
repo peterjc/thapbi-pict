@@ -35,9 +35,9 @@ short for Internal Transcribed Spacer one, which is a region of eukaryotes
 genomes between the 18S and 5.8S rRNA genes. This is commonly used for
 molecular barcoding, where sequencing this short region can identify species.
 
-With appropriate primer and HMM settings, and a custom database, THAPBI PICT
-can be applied to other organisms and/or barcode marker sequences - not just
-ITS1.
+With appropriate primer settings and a custom database, THAPBI PICT can be
+applied to other organisms and/or barcode marker sequences - not just ITS1.
+The worked examples include *Oomycetes* and *Fungi*, ITS1 and ITS2.
 
 Installation
 ------------
