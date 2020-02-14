@@ -32,7 +32,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/woody_
 echo "=================================="
 echo "Decompressing prepare-reads output"
 echo "=================================="
-time tar -jxvf tests/woody_hosts/intermediate.tar.bz2 -C $TMP/woody_hosts/ | wc -l
+time tar -jxvf examples/woody_hosts/intermediate.tar.bz2 -C $TMP/woody_hosts/ | wc -l
 
 if [ -d tests/woody_hosts/raw_data/ ]; then
    echo "================================="
