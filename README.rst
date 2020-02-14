@@ -86,6 +86,9 @@ The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is hosted by
 `Read The Docs <https://readthedocs.org/>`_, generated automatically from the
 ``docs/`` folder.
 
+The documentation includes more detailed discussion of the sample datasets
+in the ``examples/`` folder (which are based published datasets).
+
 Funding
 -------
 
