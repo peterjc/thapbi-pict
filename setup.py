@@ -1,4 +1,4 @@
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -10,16 +10,16 @@ packages (and is used internally by the tool pip). If you have downloaded and
 uncompressed the THAPBI PICT source code, or fetched it from git, for the
 simplest installation try one of these commands::
 
-    python3 setup.py install
+    pip install .
 
 Or::
 
-    pip3 install .
+    python setup.py install
 
-In future we intend to release this software on PyPI to allow you to install
-it with pip without having to download it first::
+Typically however, since we have released this software on PyPI, you don't
+need to download it first. Instead just run::
 
-    pip3 install thapbi_pict
+    pip install thapbi_pict
 
 Once installed, you should be able to run the tool using:
 
@@ -27,7 +27,7 @@ Once installed, you should be able to run the tool using:
 
 Or start it as a module::
 
-   python3 -m thapbi_pict
+   python -m thapbi_pict
 
 Either should find the installed copy of the Python code.
 """
@@ -103,6 +103,7 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    python_requires=">=3.6",
     entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
     packages=find_packages(),
     include_package_data=True,
@@ -115,5 +116,4 @@ setup(
         "sqlalchemy",
         "xlsxwriter",
     ],
-    python_requires=">=3.5",
 )
