@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.6.8  *Pending*  More complete worked examples. Metadata ``-x`` default now column 1.
 v0.6.7  2020-02-13 Method in ``pipeline`` filenames; max sample abundance in read reports.
 v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
 v0.6.5  2020-01-27 Do ``--flip`` in ``prepare-reads`` using cutadapt v2.8 or later.
