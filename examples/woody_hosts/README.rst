@@ -84,3 +84,15 @@ FASTA files into your ``intermediate/`` subdirectory:
 Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
 negative controls (good).
+
+Running the pipeline
+--------------------
+
+The documentation goes through running each step of the analysis gradually,
+before finally calling pipeline command to do it all together. We provide
+script ``run.sh`` to do the final run-though automatically (first without
+any metadata, then again with it), but encourage you to follow along the
+individual steps first.
+
+If you skip the raw FASTQ files, you won't be able to run the entire pipeline
+or the prepare-reads steps.
