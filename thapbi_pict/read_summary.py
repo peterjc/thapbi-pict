@@ -193,7 +193,9 @@ def main(
                 [_[group_col] for _ in meta], sample_color_bands, debug=debug
             )
             for i, name in enumerate(meta_names):
-                worksheet.write_string(i, LEADING_COLS, name, cell_rightalign_format)
+                worksheet.write_string(
+                    i, LEADING_COLS - 1, name, cell_rightalign_format
+                )
                 for s, sample in enumerate(samples):
                     worksheet.write_string(
                         i,
