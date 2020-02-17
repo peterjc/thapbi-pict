@@ -45,13 +45,13 @@ dedicated to this analysis. Start by making three sub-folders as follows:
 
    $ mkdir raw_data/ intermediate/ summary/ positive_controls/
 
-We will need file ``site_metadata.tsv`` (included with the THAPBI PICT source
-code as ``tests/woody_hosts/site_metadata.tsv``), containing :ref:`metadata
+We will need file ``metadata.tsv`` (included with the THAPBI PICT source
+code as ``tests/woody_hosts/metadata.tsv``), containing :ref:`metadata
 about the sites <metadata>`. This file can be downloaded:
 
 .. code:: console
 
-    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/site_metadata.tsv
+    $ wget https://github.com/peterjc/thapbi-pict/raw/master/tests/woody_hosts/metadata.tsv
 
 We will also need four files ``positive_controls/*.known.tsv`` which describe
 the species expected in the positive control sequences. These are included

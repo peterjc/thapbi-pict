@@ -11,7 +11,7 @@ sample metadata.
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
 
 In the following we will show the reports with and without metadata.
-File ``site_metadata.tsv`` is a table of metadata (based on table S1 in the
+File ``metadata.tsv`` is a table of metadata (based on table S1 in the
 paper), in plain text tab separated variable format (TSV). It has one row for
 each of the 14 samples plus controls, with a new column cross referencing the
 122 sequenced FASTQ filename stems.

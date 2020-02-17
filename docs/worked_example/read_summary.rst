@@ -36,7 +36,7 @@ used earlier:
     $ thapbi_pict read-summary -i intermediate/ \
       -o summary/with-metadata.samples.onebp.tsv \
       -e summary/with-metadata.samples.onebp.xlsx \
-      -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
 
 This will again affect the sort order of the sequences samples (here as
