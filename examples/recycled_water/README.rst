@@ -8,7 +8,7 @@ Data source
 
 This example is based on the ITS1 amplicon sequencing library from this paper:
 
-    Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
+    Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container nursery.
     https://doi.org/10.1094/PBIOMES-10-18-0043-R
     https://www.ebi.ac.uk/ena/data/view/PRJNA417859
@@ -27,7 +27,7 @@ can use THAPBI PICT default settings and get meaningful but blinkered results
 using a *Phytophthora* centric database).
 
 In order to classify beyound *Phytophthora*, we need to build a THABPI PICT
-database including *Pythium* and *Phytopythium*. Redekar *et al* (2019)
+database including *Pythium* and *Phytopythium*. Redekar *et al.* (2019)
 Supplementary Table 3 provides a list of 1454 unique accessions and the
 species they assigned to it (not always the same as that listed on the NCBI
 record, as those annotations can change). Looking at those sequences, bar
@@ -40,7 +40,7 @@ The ITS6 primer is situated within a highly conserved region, and the next
 Unfortunately, the majority of published *Oomycetes* ITS1 sequences omit
 this. For the curated *Phytophthora* in the THAPBI PICT default database,
 we have inserted the expected sequence - and have yet to find a counter
-example. However, Redekar *et al* took the other obvious choice, and
+example. However, Redekar *et al.* (2019) took the other obvious choice, and
 remove it from their reads:
 
     *trimming extra bases from read1: an additional 32 bases from the 5′ end

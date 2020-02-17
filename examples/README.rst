@@ -6,14 +6,14 @@ download and any other one-off setup) and ``run.sh`` (to run the example).
 1. ``woody_hosts/`` - simple example using the default primers and database,
    based on a paper from earlier in the THAPBI Phyto-Threats project:
 
-   * Riddell et al (2019) Metabarcoding reveals a high diversity of woody
+   * Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
      host-associated *Phytophthora* spp. in soils at public gardens and
      amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
 2. ``recycled_water/`` - example where defaults can be used but idealy
    requires different primers and a custom database, based on:
 
-   * Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
+   * Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
      *Phytopythium* species in recycled irrigation water in a container
      nursery. https://doi.org/10.1094/PBIOMES-10-18-0043-R
 

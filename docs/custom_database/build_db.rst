@@ -5,7 +5,7 @@ Building a custom database
 
 This example is based on the following paper from another research group:
 
-* Redekar *et al* (2019) Diversity of *Phytophthora*, *Pythium*, and
+* Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
   *Phytopythium* species in recycled irrigation water in a container nursery.
   https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
@@ -102,7 +102,7 @@ pre-trimmed inputs and handles determining the species differently.
 Determining the species
 -----------------------
 
-Consider ``FJ666127.1`` which Redekar *et al.* listed as *Phytophthora
+Consider ``FJ666127.1`` which Redekar *et al.* (2019) listed as *Phytophthora
 aquimorbida* - yet at the time of writing, the file downloaded from
 https://www.ebi.ac.uk/ena/browser/api/fasta/FJ666127.1 is as follows::
 
@@ -241,11 +241,11 @@ line is an identifier followed by the species name *only*.
 We have provided file ``Redekar_et_al_2019_sup_table_3.fasta`` which contains
 primer trimmed versions of the full sequences of each accession, plus the
 species name from ``Redekar_et_al_2019_sup_table_3.tsv`` which was based on
-those given in Redekar *et al.* 2019 Supplementary Table 3 but with some light
+those given in Redekar *et al.* (2019) Supplementary Table 3 but with some light
 curation to better match the NCBI usage.
 
 The sequencing trimming ought to be very close to that used in the Redekar
-*et al.* 2019 paper's database. This file was constructed with a short Python
+*et al.* (2019) paper's database. This file was constructed with a short Python
 script parsing the information in ``Redekar_et_al_2019_sup_table_3.tsv`` and
 the downloaded full sequences.
 Then ``cutadapt -g GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA ...``
