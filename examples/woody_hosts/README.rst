@@ -96,3 +96,44 @@ individual steps first.
 
 If you skip the raw FASTQ files, you won't be able to run the entire pipeline
 or the prepare-reads steps.
+
+Metadata
+--------
+
+The provided file ``metadata.tsv`` is an expanded version of Supplementary
+Table 1 from the original paper, adding a column for the Illumina MiSeq sample
+names, rows for the controls, and a comment block at the start.
+
+The 16 columns are as follows, where 4 to 15 are in pairs for tree/shrub broad
+taxonomic grouping and health status (H, healthy; D, symptoms/stump/dead):
+
+1. Anonymised site number with leading zero added ("01" to "14"), or control name
+2. Approximate altitude at centre
+3. Underlying soil type
+4. Healthy Cupressaceae
+5. Diseased Cupressaceae
+6. Healthy other conifers
+7. Diseased other conifers
+8. Healthy Ericaceae
+9. Diseased Ericaceae
+10. Healthy Fagaceae or Nothofagaceae
+11. Diseased Fagaceae or Nothofagaceae
+12. Healthy other angiosperms
+13. Diseased other angiosperms
+14. Healthy other
+15. Diseased other
+16. MiSeq Sample(s) (semi-colon separated list)
+
+Lines 1 to 19 are human readable header text, line 20 is the column headers.
+Lines 21 onwards are data for 14 field sites and 3 controls.
+
+When calling THAPBI PICT, the meta data commands are given as follows:
+
+.. code:: console
+
+    $ thapbi_pict ... -t metadata.tsv -x 16 -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -f 20
+
+These settings are described in detail later. This example is important in
+that column 16 contains multiple entries where a site had multiple sequenced
+samples (replicates). It is unusual in having comment lines before the column
+header line which must be specified.
