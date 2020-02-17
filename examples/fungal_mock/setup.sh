@@ -36,7 +36,7 @@ for LIBRARY in amp_lib_one amp_lib_two; do
 	    ln -s ../../negative_control.known.tsv $ACC.known.tsv
 	    cd ../..
         else
-            echo "Linking $FILE to positive control"
+            echo "Linking $FILE to mock community"
             cd $LIBRARY/expected/
             ln -s ../../mock_community.known.tsv $ACC.known.tsv
             cd ../..
