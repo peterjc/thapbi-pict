@@ -640,7 +640,7 @@ def main(
         else:
             sys.stderr.write(
                 os.path.relpath(pool_key)
-                + f" negative control abundance {pool_worst_control[pool_key]} (good)"
+                + f" negative control abundance {pool_worst_control[pool_key]} (good)\n"
             )
 
     if tmp_dir:
