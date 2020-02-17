@@ -745,13 +745,12 @@ ARG_METACOLS = dict(  # noqa: C408
 # "-x", "--metaindex",
 ARG_METAINDEX = dict(  # noqa: C408
     type=int,
-    default="0",
+    default="1",
     metavar="COL",
     help="If using metadata, which column contains the sequenced sample "
-    "names. Default is the first column requested as metadata output "
-    "with the -c / --metacols argument. This column can contain multiple "
-    "semi-colon separated names catering to the fact that a field sample "
-    "could be sequenced multiple times with technical replicates.",
+    "names. Default 1. Field can contain multiple semi-colon separated names "
+    "catering to the fact that a field sample could be sequenced multiple "
+    "times with technical replicates.",
 )
 
 # "-g", "--metagroups",
