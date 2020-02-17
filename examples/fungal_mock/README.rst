@@ -135,9 +135,9 @@ Sample-type, Group, Protocol, Condition, Replicate, MiSeq Name. The purpose here
 is to group the samples logically (sorting on accession or MiSeq Name would not
 work), and suitable for group colouring.
 
-Argument ``-x 1`` (default, so not needed) indicates the filename stem can be
-found in column 1, Accession. We might have downloaded the files and used the
-author original names, in which case ``-x 2`` ought to work.
+Argument ``-x 1`` indicates the filename stem can be found in column 1, Accession.
+We might have downloaded the files and used the author original names, in which
+case ``-x 2`` ought to work.
 
 Argument ``-g 6`` means assign colour bands using column 6, Group. This is used
 in the Excel reports.
