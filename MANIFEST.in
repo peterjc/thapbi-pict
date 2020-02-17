@@ -33,6 +33,13 @@ prune tests/woody_hosts/intermediate/
 
 prune examples/
 
+include examples/woody_hosts/README.rst
+include examples/woody_hosts/metadata.tsv
+include examples/woody_hosts/setup.sh
+include examples/woody_hosts/run.sh
+include examples/woody_hosts/intermediate.tar.bz2
+include examples/woody_hosts/expected/*.known.tsv
+
 include examples/recycled_water/README.rst
 include examples/recycled_water/PRJNA417859.txt
 include examples/recycled_water/setup.sh
