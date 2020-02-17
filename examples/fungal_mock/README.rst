@@ -8,7 +8,8 @@ Data source
 
 This example is based on the two amplicon sequencing libraries from this paper:
 
-    Bakker (2018) A fungal mock community control for amplicon sequencing experiments
+    Bakker (2018) A fungal mock community control for amplicon sequencing
+    experiments.
     https://doi.org/10.1111/1755-0998.12760
     https://www.ebi.ac.uk/ena/data/view/PRJNA377530
 
