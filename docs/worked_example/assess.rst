@@ -302,7 +302,7 @@ producing the main reports:
     $ thapbi_pict pipeline -i raw_data/ positive_controls/ \
       -s intermediate/ -o summary/ \
       -n raw_data/NEGATIVE*.fastq.gz -r with-metadata \
-      -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,15 -x 16 -f 20
+      -t site_metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
     with-metadata.reads.onebp.tsv
