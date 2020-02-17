@@ -28,9 +28,9 @@ Note that four of the FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
 negative controls (good).
 
-File ``site_metadata.tsv`` is a table of metadata (based on table S1 in the
-paper), with one row for each of the 14 samples plus controls, with a cross
-reference to the 122 sequenced FASTQ filename stems.
+File ``metadata.tsv`` is a table of metadata (based on table S1 in the paper),
+with one row for each of the 14 samples plus controls, with a cross reference
+to the 122 sequenced FASTQ filename stems.
 
 These files are used for the tutorial on https://thapbi-pict.readthedocs.io/
 and also for automated testing during the tool development.
