@@ -184,6 +184,12 @@ def run_cutadapt(
     The input and/or output files may be compressed as long as they
     have an appropriate suffix (e.g. gzipped with ``.gz`` suffix).
     """
+    if not left_primer and not right_primer:
+        # special case!
+        from Bio.SeqIO import convert
+
+        convert(long_in, "fastq", trimmed_out, "fasta")
+        return 0
     cmd = ["cutadapt"]
     if bad_out:
         cmd += ["--untrimmed-output", bad_out]
@@ -399,6 +405,7 @@ def prepare_sample(
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
+    trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
     if failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
@@ -520,6 +527,9 @@ def main(
         )
     else:
         control_file_pairs = []
+
+    if not left_primer and not right_primer:
+        sys.stderr.write("WARNING: Primer trimming disabled\n")
 
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
