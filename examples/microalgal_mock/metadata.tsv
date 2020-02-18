@@ -1,4 +1,4 @@
-#Environment	Sample ID Name	Description	Location
+#Environment	Samples	Description	Location
 Freshwater	4F	marsh	Bray's Bayou, TX
 Freshwater	5F	marsh	Bray's Bayou, TX
 Freshwater	6F	pond	Willow Water Hole, TX
@@ -14,25 +14,11 @@ Marine	1M	ocean	Revere Beach, Broadsound, MA
 Marine	2M	creek/ocean	San Juan Creek, Pacific
 Marine	4M	ocean	Dauphine Island, Lagoon
 Marine	5M	ocean	Dauphine Island, Bay
-Control	NEG		
-Mock Community	M11	mock community	Freshwater:Marine 100:0
-Mock Community	M12	mock community	100:0
-Mock Community	M13	mock community	100:0
-Mock Community	M21	mock community	100:1
-Mock Community	M22	mock community	100:1
-Mock Community	M23	mock community	100:1
-Mock Community	M31	mock community	100:10
-Mock Community	M32	mock community	100:10
-Mock Community	M33	mock community	100:10
-Mock Community	M41	mock community	1:1
-Mock Community	M42	mock community	1:1
-Mock Community	M43	mock community	1:1
-Mock Community	M51	mock community	10:100
-Mock Community	M52	mock community	10:100
-Mock Community	M53	mock community	10:100
-Mock Community	M61	mock community	1:100
-Mock Community	M62	mock community	1:100
-Mock Community	M63	mock community	1:100
-Mock Community	M71	mock community	0:100
-Mock Community	M72	mock community	0:100
-Mock Community	M73	mock community	0:100
+Control	NEG
+Mock Community	M1	mock community	Freshwater:Marine 100:0
+Mock Community	M2	mock community	100:1
+Mock Community	M3	mock community	100:10
+Mock Community	M4	mock community	1:1
+Mock Community	M5	mock community	10:100
+Mock Community	M6	mock community	1:100
+Mock Community	M7	mock community	0:100
