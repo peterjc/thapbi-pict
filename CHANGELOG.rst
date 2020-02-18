@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.6.9  *Pending*  Fixed sample report row coloring when missing samples.
+v0.6.9  *Pending*  Allow pre-primer-trimmed FASTQ. Fixed row coloring when missing samples.
 v0.6.8  2020-02-17 Metadata ``-x`` default now column 1. Fixed read report metadata captions.
 v0.6.7  2020-02-13 Method in ``pipeline`` filenames; max sample abundance in read reports.
 v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
