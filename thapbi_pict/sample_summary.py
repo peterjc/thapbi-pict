@@ -142,7 +142,14 @@ def main(
             ]
         ]
         sample_formats = color_bands(
-            [_[group_col] for _ in metadata_rows], sample_color_bands, debug=debug,
+            [
+                r[group_col]
+                for r, s in zip(metadata_rows, metadata_samples)
+                for _ in s
+                if _ in samples
+            ],
+            sample_color_bands,
+            debug=debug,
         )
     else:
         workbook = None
