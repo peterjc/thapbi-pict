@@ -33,6 +33,8 @@ prune tests/woody_hosts/intermediate/
 
 prune examples/
 
+include examples/README.rst
+
 include examples/woody_hosts/README.rst
 include examples/woody_hosts/metadata.tsv
 include examples/woody_hosts/setup.sh
@@ -62,3 +64,15 @@ include examples/fungal_mock/amp_lib_one/metadata.tsv
 include examples/fungal_mock/amp_lib_two/metadata.tsv
 include examples/fungal_mock/amp_lib_one/raw_data/MD5SUM.txt
 include examples/fungal_mock/amp_lib_two/raw_data/MD5SUM.txt
+
+include examples/microalgal_mock/README.rst
+include examples/microalgal_mock/PRJNA314977.txt
+include examples/microalgal_mock/mock_community.fasta
+include examples/microalgal_mock/mock_community.known.tsv
+include examples/microalgal_mock/mock_freshwater.known.tsv
+include examples/microalgal_mock/mock_marine.known.tsv
+include examples/microalgal_mock/setup.sh
+include examples/microalgal_mock/run.sh
+include examples/microalgal_mock/metadata.tsv
+include examples/microalgal_mock/V4/raw_data/MD5SUM.txt
+include examples/microalgal_mock/V8V9/raw_data/MD5SUM.txt
