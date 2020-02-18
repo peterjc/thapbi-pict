@@ -1,24 +1,24 @@
-#Environment	Samples	Description	Location
-Freshwater	4F	marsh	Bray's Bayou, TX
-Freshwater	5F	marsh	Bray's Bayou, TX
-Freshwater	6F	pond	Willow Water Hole, TX
-Wastewater	3W	primary effluent	Lawrence, KS WWTP
-Wastewater	4W	primary effluent	Algaewheel, Charleston IL WWTP
-Wastewater	5W	primary effluent	ISTC, IL
-Wastewater	6W	primary effluent	Algaewheel, UIUC
-Wastewater	7W	primary effluent	Raceway pond, UIUC
-Wastewater	8W	primary effluent	Urbana IL WWTP
-Wastewater	9W	secondary effluent	Urbana IL WWTP
-Wastewater	10W	secondary effluent	Urbana IL WWTP
-Marine	1M	ocean	Revere Beach, Broadsound, MA
-Marine	2M	creek/ocean	San Juan Creek, Pacific
-Marine	4M	ocean	Dauphine Island, Lagoon
-Marine	5M	ocean	Dauphine Island, Bay
-Control	NEG
-Mock Community	M1	mock community	Freshwater:Marine 100:0
-Mock Community	M2	mock community	100:1
-Mock Community	M3	mock community	100:10
-Mock Community	M4	mock community	1:1
-Mock Community	M5	mock community	10:100
-Mock Community	M6	mock community	1:100
-Mock Community	M7	mock community	0:100
+#Environment	Samples	Description	Location	Freshwater:Marine
+Freshwater	4F	marsh	Bray's Bayou, TX	-
+Freshwater	5F	marsh	Bray's Bayou, TX	-
+Freshwater	6F	pond	Willow Water Hole, TX	-
+Wastewater	3W	primary effluent	Lawrence, KS WWTP	-
+Wastewater	4W	primary effluent	Algaewheel, Charleston IL WWTP	-
+Wastewater	5W	primary effluent	ISTC, IL	-
+Wastewater	6W	primary effluent	Algaewheel, UIUC	-
+Wastewater	7W	primary effluent	Raceway pond, UIUC	-
+Wastewater	8W	primary effluent	Urbana IL WWTP	-
+Wastewater	9W	secondary effluent	Urbana IL WWTP	-
+Wastewater	10W	secondary effluent	Urbana IL WWTP	-
+Marine	1M	ocean	Revere Beach, Broadsound, MA	-
+Marine	2M	creek/ocean	San Juan Creek, Pacific	-
+Marine	4M	ocean	Dauphine Island, Lagoon	-
+Marine	5M	ocean	Dauphine Island, Bay	-
+Control	NEG	Negative control	-	-
+Mock Community	M1	mock community	-	100:0
+Mock Community	M2	mock community	-	100:1
+Mock Community	M3	mock community	-	100:10
+Mock Community	M4	mock community	-	1:1
+Mock Community	M5	mock community	-	10:100
+Mock Community	M6	mock community	-	1:100
+Mock Community	M7	mock community	-	0:100
