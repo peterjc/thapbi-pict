@@ -19,7 +19,7 @@ function analyse {
     thapbi_pict pipeline -d ${NAME}.sqlite --left "" --right "" \
                 -i $NAME/raw_data/ $NAME/expected/ \
                 -s $NAME/intermediate/ -o $NAME/ -r $NAME \
-                -t $NAME/metadata.tsv -c 3,4 -x 1
+                -t $NAME/metadata.tsv -c 1,2,3,4,5 -x $ID_COL
     echo "$NAME done"
 }
 
@@ -28,6 +28,7 @@ echo V4 - Reuk454FWD1/V4r primers
 echo ============================
 
 NAME=V4
+ID_COL=6
 LEFT=CCAGCASCYGCGGTAATTCC
 RIGHT=ACTTTCGTTCTTGAT
 
@@ -38,6 +39,7 @@ echo V8-V9 - V8f/1510r primers
 echo =========================
 
 NAME=V8V9
+ID_COL=7
 LEFT=ATAACAGGTCTGTGATGCCCT
 RIGHT=CCTTCYGCAGGTTCACCTAC
 

@@ -94,4 +94,47 @@ in ``mock_community.fasta`` file, and call the pipeline.
 Metadata
 --------
 
-TODO: Will use Supplementary Material Table S2 combined with ``PRJNA314977.txt``.
+The provided file ``metadata.tsv`` is based on Supplementary Material Table S2,
+although consistently using just one row per sample (representing three replicates),
+and with the location and mock community ratio split into separate columns. This
+has been combined with the MiSeq accessions from ``PRJNA314977.txt``.
+
+The amplicon specific files ``metadata.tsv`` have seven columns:
+
+1. Environment, "Freshwater", "Wastewater", "Marine", "Control" or "Mock community"
+2. Sample, e.g. "3F" or "MC4" with letters from environment, without replicate suffix
+3. Description, e.g. "marsh" or "ocean"
+4. Location, e.g. "Bray's Bayou, TX"
+5. Freshwater:Marine, ratio for mock communities, e.g. "1:100"
+6. V4 MiSeq, semi-colon separated list of three SRR accessions.
+7. V8V9 MiSeq, semi-colon separated list of three SRR accessions.
+
+Note that rather than providing separate files for the V4 and V8V9 sequencing,
+they have been given separate cross-reference columns. Where a replicate is
+missing, "Undetermined" is listed rather than an SRR accession.
+
+When calling THAPBI PICT, the meta data commands are given as follows for V4:
+
+.. code:: console
+
+    $ thapbi_pict ... -t metadata.tsv -c 1,2,3,4,5 -x 6
+
+And as follows for V8V9:
+
+.. code:: console
+
+    $ thapbi_pict ... -t metadata.tsv -c 1,2,3,4,5 -x 7
+
+Argument ``-t metadata.tsv`` says to use this file for the metadata.
+
+Argument ``-c 1,2,3,4,5`` says which columns to display and sort by. This means
+Environment, Sample, Description, Location, Freshwater:Marine. This sorting
+groups the samples logically (although it would be preferable to have the mock
+community listed first or last, and "10W" appears before "2W").
+
+Argument ``-x 6`` or ``-x 7`` indicates the V4 or V8V9 filename stems can be
+found in that column respectively.
+
+We have not given a ``-g`` argument to assign colour bands in the Excel
+reports, so it will default to the first column in ``-c``, meaning we get
+coloured bands for "Freshwater", "Wastewater", "Mock community" and "Marine".
