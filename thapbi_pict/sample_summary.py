@@ -105,6 +105,7 @@ def main(
         sequenced_samples=samples,
         metadata_sort=True,
         require_metadata=require_metadata,
+        ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
 

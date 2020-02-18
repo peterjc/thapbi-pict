@@ -87,6 +87,7 @@ def main(
         metadata_index,
         sequenced_samples=samples,
         metadata_sort=True,
+        ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
     # Turn row-centric metadata into a dictionary keyed on sequenced sample name

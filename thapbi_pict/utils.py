@@ -530,6 +530,7 @@ def load_metadata(
     sequenced_samples=None,
     metadata_sort=True,
     require_metadata=False,
+    ignore_prefixes=("Undetermined",),
     debug=False,
 ):
     """Load specified metadata as several lists.
@@ -683,6 +684,8 @@ def load_metadata(
     back = {}
     for i, samples in enumerate(index):
         for sample in samples:
+            if ignore_prefixes and sample.startswith(ignore_prefixes):
+                continue
             try:
                 back[sample].add(i)
             except KeyError:
@@ -697,6 +700,10 @@ def load_metadata(
     if sequenced_samples is not None and set(back) != set(sequenced_samples):
         # Using list comprehensions to preserve any meaningful order
         missing_files = [_ for _ in back if _ not in sequenced_samples]
+        if ignore_prefixes:
+            missing_files = [
+                _ for _ in missing_files if not _.startswith(ignore_prefixes)
+            ]
         if missing_files:
             sys.stderr.write(
                 f"WARNING: Missing {len(missing_files):d} sequenced samples"
