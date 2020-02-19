@@ -1,9 +1,9 @@
 .. _worked_example:
 
-Worked Example of Mock Community
-================================
+Example: Fungal Mock Community
+==============================
 
-Building on the :ref:`custom_database`, here we consider a mock community of
+Building on the :ref:`custom_database`, here we consider mock communities of
 19 fungal sequences (in both equal and staggered ratios), prepared with
 various protocols, and negative controls.
 
