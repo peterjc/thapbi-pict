@@ -154,5 +154,8 @@ into freshwater (six in pale blue) and marine (five in dark blue):
 .. image:: https://gist.githubusercontent.com/peterjc/3baeb3a648b8cdd7cfa970920eaf7f38/raw/4061bc7aafe7360e3c1b90ab82e92cffaaad02ff/V8V9.samples.onebp.svg?sanitize=true
    :alt: Excel screenshot from a cropped and sorted THAPBI PICT sample report
 
-Again, much the same picture *except* all the communities (allthough not all
-the replicates at the freshwater end) report unknown reads.
+Again, much the same picture *except* all the communities (although not all
+the replicates at the freshwater end) report unknown reads. If we switch from
+the default classifier method (``onebp``) to the more fuzzy BLAST based method
+(by adding ``-m blast`` to the pipeline command), these are all matched to the
+tiny database of 12 known species.
