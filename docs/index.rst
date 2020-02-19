@@ -19,9 +19,12 @@ is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
 This is commonly used for molecular barcoding, where sequencing this
 short region can identify species.
 
-With appropriate primer and HMM settings, and a custom database, THAPBI PICT
-can be applied to other organisms and/or barcode marker sequences - not just
-ITS1.
+With appropriate primer settings and a custom database, THAPBI PICT can be
+applied to other organisms and/or barcode marker sequences - not just
+*Phytophthora* ITS1.
+
+The worked examples include oomycetes, fungi, microalgae, and cover markers
+in ITS1, ITS2 and 18S rRNA.
 
 The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
 Biotechnology and Biological Sciences Research Council (`BBSRC
