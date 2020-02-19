@@ -6,9 +6,9 @@ know what the classifier ought ideally to report for every sample - and all
 their expected marker sequences are in the classification database.
 
 Of course, just as in the original author's analysis, not everything we think
-was present is detected, and *vice versa*, lots of unwanted things are
-detected. Negative controls would help, but nevertheless, this kind of data is
-important for discussing what to use as a minimum abundance threshold - how
+was present is detected. And *vice versa*, we see some things which are not
+classified. Negative controls would help, but nevertheless, this kind of data
+is important for discussing what to use as a minimum abundance threshold - how
 many reads do we need to declare a species as present in a sample?
 
 18S rRNA V4 marker
