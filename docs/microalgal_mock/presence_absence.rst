@@ -255,3 +255,6 @@ species assigned to the environmental samples was ``Tetradesmus obliquus`` in
 the freshwater marsh (samples 4F and 5F), and wastewater from Urbana IL WWTP
 (samples 8W, 9W and 10W). Likewise in ``V8V9.samples.onebp.xlsx``, but only in
 samples 4F and 10W.
+
+We refer you to the original paper for a much more detailed discussion of the
+relative merits of the two primer sets here.
