@@ -158,9 +158,9 @@ Again, much the same picture *except* all the communities (although not all
 the replicates at the freshwater end) report unknown reads.
 
 If you open ``V8V9.reads.onebp.xlsx`` you can see all the reads not assigned a
-species. If delete the other samples and re-sort, you should find this is the
-most abundance unassigned sequence (column 1 is the MD5 checksum, column 2 is
-blank for no classification, column 3 is the sequence)::
+species. If you delete the other samples and re-sort, you should find this is
+the most abundance unassigned sequence (column 1 is the MD5 checksum, column 2
+is blank for no classification, column 3 is the sequence)::
 
     >e586634fe2e532c7fd59b071493579c3
     TAGATGTCCTGGGCCGCACGCGCGCTACACTGATGCACTCAACGAGCATATAACCTTGGCCGAGAGGCCTGGGTAATCTT
