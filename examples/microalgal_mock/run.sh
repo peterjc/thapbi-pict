@@ -19,7 +19,7 @@ function analyse {
     thapbi_pict pipeline -d ${NAME}.sqlite --left "" --right "" \
                 -i $NAME/raw_data/ $NAME/expected/ \
                 -s $NAME/intermediate/ -o $NAME/ -r $NAME \
-                -t $NAME/metadata.tsv -c 1,2,3,4,5 -x $ID_COL
+                -t metadata.tsv -c 1,2,3,4,5 -x $ID_COL
     echo "$NAME done"
 }
 
