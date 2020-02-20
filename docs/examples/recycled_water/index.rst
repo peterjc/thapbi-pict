@@ -1,6 +1,6 @@
 .. _custom_database:
 
-Environmental oomycetes
+Environmental Oomycetes
 =======================
 
 The first :ref:`worked example <worked_example>` applied the default analysis
