@@ -7,7 +7,7 @@ The :ref:`quick_start` described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
 pipeline`` command, as a flowchart:
 
-.. image:: ../images/pipeline-meta.svg
+.. image:: ../../images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
 
 Here we will run over the same process using real *Phytophthora* ITS1 data,
