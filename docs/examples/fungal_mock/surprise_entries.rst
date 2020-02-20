@@ -17,10 +17,10 @@ contamination.
 Amplicon library one - ITS1 (BITS/B58S3)
 ----------------------------------------
 
-Specifically from the first amplicon library for ITS1 we saw the following -
-which appear to be unique to the negative controls (not in any mock community
-samples) - shown here with their highest single sample abundance, which
-supports using a higher minimum abundance threshold:
+From the first amplicon library for ITS1 we saw the following sequences in the
+negative controls (and by chance, not in any mock community samples) - shown
+here with their highest single sample abundance, which supports using a
+minimum abundance threshold higher than 10:
 
 ==================================== === ==================================
 MD5 checksum                         Max Species
@@ -54,18 +54,18 @@ at low levels in multiple samples, this was the dominant sequence in
 ``SRR5314339`` aka ``FMockE.HC1_S178``, which was a *high PCR cycle number*
 replicate of the even mixture. Perhaps this was a stray fragment of
 *Epicoccum* which by chance was amplified early in the PCR? This example was
-not highlighed in the original paper but is exactly the kind of thing you
+not highlighed in the original paper, but is exactly the kind of thing you
 should worry about with a high PCR cycle number.
 
 Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
 ``cae29429b90fc6539c440a140494aa25`` looks like *glomeromycetes*, perhaps
 *Rhizophagus* (from the mock community), but could be from a *Glomus* species.
 Using the ``blast`` classifier and the minimal curated reference set matches
-this to *Rhizophagus irregularis* but the situation would be ambiguous in a
+this to *Rhizophagus irregularis*, but the situation would be ambiguous in a
 more complete database.
 
 Sequence ``880007c5a18be69c3f444efd144fc450`` has perfect matches to lots of
-unclassified fungi and conflicting perfect matches including *Ascochyta* or
+unclassified fungi, and conflicting perfect matches including *Ascochyta* or
 *Neoascochyta*. This was seen only in the high PCR cycle number sample
 ``SRR5314339`` as above.
 
@@ -78,7 +78,7 @@ nodes along the bottom except ``cae29429b90fc6539c440a140494aa25`` which is 3bp
 away from *Rhizophagus irregularis* and linked to it with a dashed line.
 
 So some of the ITS1 sequences in amplicon library one are likely external
-contamination - particularly with the high PRC cycle negative control (which
+contamination - particularly with the high PCR cycle negative control (which
 was likely included exactly because of this risk).
 
 Amplicon library two - ITS1 (ITS1f/ITS2)
@@ -92,11 +92,6 @@ BITS/B58S3 primers gave ``bb28f2b57f8fddefe6e7b5d01eca8aea``) was matched to
 database entries for a match.
 
 These primers amplified a larger fragment to that in amplicon library one.
-They can generally be matched to single short entry, but where end-trimming
-gives multiple answers in the following table I have picked the more common
-one (e.g. ``bb28f2b57f8fddefe6e7b5d01eca8aea`` with the final ``A`` ommitted
-as ``01de92e8d594fffdada971fe3ddbf18e`` was seen occasionally).
-
 Focusing on those with a sample-abundance over 75 (as in the edit-graphs)
 which the ``onebp`` classifier did not match to the curated reference set:
 
@@ -119,8 +114,8 @@ d4145ba9e3ed6c8c2138ed15b147152d  81 *Fusarium*
 You can find all of these sequence on the edit-graph, most of those labelled as
 likely *Fusarium* are a 1bp edit away from large grey node ``f1b689`` top left
 (except ``610caedb1a5699836310fce9dbb9c5fa`` which is an isolated node placed
-bottom middle). Those labelled *glomeromycetes* are in the middle near and in
-once case connected to a dark red *Rhizophagus irregularis* node.
+bottom middle). Those labelled *glomeromycetes* are in the middle near, and in
+once case connected to, a dark red *Rhizophagus irregularis* node.
 
 i.e. None of the ITS1 sequences in amplicon library two are clear cut external
 contaimination.
@@ -151,4 +146,4 @@ Likewise the *Aspergillus* like sequence could be from the *Aspergillus flavus* 
 the mock community.
 
 i.e. None of the ITS2 sequences in amplicon library two are clear cut external
-contaimination.
+contamination.
