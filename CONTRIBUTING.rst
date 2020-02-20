@@ -140,6 +140,7 @@ If not, skip directly to:
 
 .. code:: bash
 
+   rm -rf build/
    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
    git tag vX.Y.Z
    git push origin master --tags
