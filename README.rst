@@ -119,7 +119,7 @@ THAPBI PICT continues earlier work including:
 Release History
 ---------------
 
-See the ``CHANGELOG.rst`` file (it was getting too long to include here).
+See the ``CHANGELOG.rst`` file.
 
 Development Notes
 -----------------
