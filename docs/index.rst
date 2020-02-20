@@ -48,10 +48,7 @@ Key links:
 
    installation
    quick_start
-   worked_example/index
-   custom_database/index
-   fungal_mock/index
-   microalgal_mock/index
+   examples/index
    commands
    api/index
    release_history
