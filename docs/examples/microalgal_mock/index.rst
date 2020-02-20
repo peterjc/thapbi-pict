@@ -10,6 +10,11 @@ Two different sets of primers where used targetting the V4 and V8V9 regions
 of 18S rRNA, which with the current THAPBI PICT design requires running the
 pipeline twice.
 
+The full dataset includes environmental samples too, but a meaningful
+examination of these would require building a realistic 18S rRNA database
+covering more than just the 12 reference species in the mock community.
+
+
 .. toctree::
    :maxdepth: 1
 

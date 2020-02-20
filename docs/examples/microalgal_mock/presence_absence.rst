@@ -155,12 +155,12 @@ into freshwater (six in pale blue) and marine (five in dark blue):
    :alt: Excel screenshot from a cropped and sorted THAPBI PICT sample report
 
 Again, much the same picture *except* all the communities (although not all
-the replicates at the freshwater end) report unknown reads.
+the replicates at the freshwater end) report unknown sequences.
 
-If you open ``V8V9.reads.onebp.xlsx`` you can see all the reads not assigned a
-species. If you delete the other samples and re-sort, you should find this is
-the most abundance unassigned sequence (column 1 is the MD5 checksum, column 2
-is blank for no classification, column 3 is the sequence)::
+If you open ``V8V9.reads.onebp.xlsx`` you can see all the sequences not
+assigned a species. If you delete the other samples and re-sort, you should
+find this is the most abundance unassigned sequence (column 1 is the MD5
+checksum, column 2 is blank for no classification, column 3 is the sequence)::
 
     >e586634fe2e532c7fd59b071493579c3
     TAGATGTCCTGGGCCGCACGCGCGCTACACTGATGCACTCAACGAGCATATAACCTTGGCCGAGAGGCCTGGGTAATCTT
@@ -245,7 +245,7 @@ Conclusion
 
 Based on this initial examination, and looking at the edit-graph structure,
 both markers should work with our default ``onebp`` classifier (looking for a
-perfect match or at most 1bp away). For the V8V9 marker, is appears the
+perfect match or at most 1bp away). For the V8V9 marker, it appears the
 database would benefit from including secondary sequences from the reference
 strains too.
 
@@ -257,4 +257,4 @@ the freshwater marsh (samples 4F and 5F), and wastewater from Urbana IL WWTP
 samples 4F and 10W.
 
 We refer you to the original paper for a much more detailed discussion of the
-relative merits of the two primer sets here.
+relative merits of these two primer sets for microalgae.
