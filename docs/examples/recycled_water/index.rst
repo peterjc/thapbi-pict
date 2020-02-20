@@ -1,7 +1,7 @@
 .. _custom_database:
 
-Environmental Oomycetes
-=======================
+Environmental Oomycetes ITS1
+============================
 
 The first :ref:`worked example <worked_example>` applied the default analysis
 pipeline to some real *Phytophthora* ITS1 data from woody-host trees, using the

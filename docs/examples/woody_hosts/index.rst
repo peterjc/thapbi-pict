@@ -1,7 +1,7 @@
 .. _worked_example:
 
-Environmental *Phytophthora*
-============================
+Environmental *Phytophthora* ITS1
+=================================
 
 The :ref:`quick_start` described a simplified use of the THAPBI PICT tool to
 assess a single Illumina MiSeq sequencing run using the ``thapbi_pict
