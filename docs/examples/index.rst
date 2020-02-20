@@ -10,9 +10,9 @@ oomycetes, fungi, microalgae, and cover markers in ITS1, ITS2 and 18S rRNA.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Documentation contents:
+   :caption: List of examples
 
-   woody_hosts
-   recycled_water
-   fungal_mock
-   microalgal_mock
+   woody_hosts/index
+   recycled_water/index
+   fungal_mock/index
+   microalgal_mock/index
