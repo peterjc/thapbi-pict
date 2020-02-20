@@ -30,7 +30,7 @@ of the instructions take the form ``thapbi_pict sub-command ...``, where the
 dots indicate some additional options.
 
 The main sub-commands are to do with classifying sequence files and reporting
-the results, and these are described in the :ref:`worked example
+the results, and these are described in the first :ref:`worked example
 <worked_example>`:
 
 * ``prepare`` - turn paired FASTQ input files for each sample, giving de-duplicated FASTA files
