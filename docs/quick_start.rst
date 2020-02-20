@@ -31,7 +31,7 @@ We assume you have a new folder dedicated to this analysis, with a sub folder
 named like ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz``
 as provided by your sequencing centre. The tool understands a few widely used
 naming patterns. We recommend that you *do* *not* decompress the FASTQ files
-(as ``<sample_name>_R1.fastq`` and ``<sample_name>_R2.fastq``, leaving them
+(as ``<sample_name>_R1.fastq`` and ``<sample_name>_R2.fastq``), leaving them
 gzip compressed is preferable for disk space.
 
 .. code:: console
@@ -46,8 +46,7 @@ for the folder level reports.
 
 .. code:: console
 
-    $ mkdir intermediate/
-    $ mkdir summary/
+    $ mkdir intermediate/ summary/
 
 Running
 -------
@@ -61,7 +60,6 @@ edit-graph can be most of this).
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/
     Starting to prepare sample intermediate/<sample_name>.fasta ...
     ...
-    Expanded 3645 ITS1 sequences from DB into cloud of 4144465 1bp different variants
     Running onebp classifer on intermediate/<sample_name>.fasta
     ...
     Wrote summary/thapbi-pict.samples.onebp.*
@@ -77,10 +75,10 @@ the edit-graph (which can be very slow):
 .. code:: console
 
     $ thapbi_pict pipeline  -i raw_data/ -s intermediate/ -o summary
-    WARNING: Skipping intermediate/<sample_name>.fasta as already exists
     ...
-    Running onebp classifer on intermediate/<sample_name>.fasta
-    WARNING: Skipping intermediate/<sample_name>.onebp.tsv as already exists
+    Skipped <count> previously prepared samples
+    ...
+    Skipped <count> previously classified samples
     ...
     Wrote summary/thapbi-pict.samples.onebp.*
     Wrote summary/thapbi-pict.reads.onebp.*
