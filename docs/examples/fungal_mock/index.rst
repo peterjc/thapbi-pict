@@ -1,7 +1,7 @@
 .. _worked_example:
 
-Example: Fungal Mock Community
-==============================
+Fungal Mock Community
+=====================
 
 Building on the :ref:`custom_database`, here we consider mock communities of
 19 fungal sequences (in both equal and staggered ratios), prepared with

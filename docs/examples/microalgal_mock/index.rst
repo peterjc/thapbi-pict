@@ -1,7 +1,7 @@
 .. _worked_example:
 
-Example: Microalgal Mock Community
-==================================
+Microalgal Mock Community
+=========================
 
 Building on the previous examples, here we consider seven mock communities of
 using six freshwater and six marine microalgae in a staggered gradient.
