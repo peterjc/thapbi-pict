@@ -24,6 +24,7 @@ Python API
    thapbi_pict.read_summary
    thapbi_pict.sample_summary
    thapbi_pict.seq_import
+   thapbi_pict.summary
    thapbi_pict.taxdump
    thapbi_pict.utils
    thapbi_pict.versions

@@ -95,8 +95,7 @@ def main(
         )
     samples = sample_sort(samples)
 
-    methods = method.split(",")
-    for method in methods:
+    if True:  # remove indentation later
         if debug:
             sys.stderr.write(f"Loading predictions for {method}\n")
         tsv_files = find_requested_files(
@@ -130,7 +129,6 @@ def main(
                 if min_abundance > 1 and abundance < min_abundance:
                     continue
                 assert abundance_by_samples[md5, sample] == abundance, name
-                # Combining over all methods!
                 if sp:
                     md5_species[md5].update(sp.split(";"))
 
@@ -206,8 +204,7 @@ def main(
             current_row += len(meta_names)
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
-        "\tMax-sample-abundance\tTotal-abundance\t%s\n"
-        % (",".join(methods), "\t".join(samples))
+        "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(samples))
     )
     handle.write(
         "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
@@ -239,7 +236,7 @@ def main(
     )
     if worksheet:
         worksheet.write_string(current_row, 0, "ITS1-MD5")
-        worksheet.write_string(current_row, 1, ",".join(methods) + "-predictions")
+        worksheet.write_string(current_row, 1, method + "-predictions")
         worksheet.write_string(current_row, 2, "Sequence")
         worksheet.write_string(current_row, 3, "Sample-count")
         worksheet.write_string(current_row, 4, "Max-sample-abundance")
