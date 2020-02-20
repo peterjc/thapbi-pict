@@ -29,3 +29,6 @@ download and any other one-off setup) and ``run.sh`` (to run the example).
    * Bradley *et al.* (2016) Design and Evaluation of Illumina MiSeq-Compatible,
      18S rRNA Gene-Specific Primers for Improved Characterization of Mixed
      Phototrophic Communities. https://doi.org/10.1128/AEM.01630-16
+
+See https://thapbi-pict.readthedocs.io/en/latest/examples/ for discussion of
+these examples.
