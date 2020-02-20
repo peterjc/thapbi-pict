@@ -639,7 +639,7 @@ def main(
 
     if skipped_samples:
         sys.stderr.write(
-            f"Skipped {len(skipped_samples)} previously prepared samples.\n"
+            f"Skipped {len(skipped_samples)} previously prepared samples\n"
         )
     for pool_key in sorted(pool_worst_control):
         if pool_worst_control[pool_key] > min_abundance:
