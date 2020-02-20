@@ -285,19 +285,11 @@ def assess_classification(args=None):
     )
 
 
-def read_summary(args=None):
-    """Subcommand to run per-output-folder summary at sequence level."""
-    from .read_summary import main
+def summary(args=None):
+    """Subcommand to run sample and read summary reports."""
+    from .summary import main
 
     check_output_directory(args.output)
-
-    method = args.method
-
-    if args.report:
-        stem = os.path.join(args.output, args.report)
-    else:
-        # Include version number here?
-        stem = os.path.join(args.output, "thapbi-pict")
 
     if args.metadata:
         check_input_file(args.metadata)
@@ -306,45 +298,8 @@ def read_summary(args=None):
 
     return main(
         inputs=args.input,
-        output=f"{stem}.reads.{method}.tsv",
-        excel=f"{stem}.reads.{method}.xlsx",
-        method=args.method,
-        min_abundance=args.abundance,
-        metadata_file=args.metadata,
-        metadata_cols=args.metacols,
-        metadata_groups=args.metagroups,
-        metadata_fieldnames=args.metafields,
-        metadata_index=args.metaindex,
-        require_metadata=args.requiremeta,
-        ignore_prefixes=tuple(args.ignore_prefixes),
-        debug=args.verbose,
-    )
-
-
-def sample_summary(args=None):
-    """Subcommand to run multiple-output-folder summary at sample level."""
-    from .sample_summary import main
-
-    check_output_directory(args.output)
-
-    method = args.method
-
-    if args.report:
-        stem = os.path.join(args.output, args.report)
-    else:
-        # Include version number here?
-        stem = os.path.join(args.output, "thapbi-pict")
-
-    if args.metadata:
-        check_input_file(args.metadata)
-        if not args.metacols:
-            sys.exit("ERROR: Must also supply -c / --metacols argument.")
-
-    return main(
-        inputs=args.input,
-        output=f"{stem}.samples.{method}.tsv",
-        excel=f"{stem}.samples.{method}.xlsx",
-        human_output=f"{stem}.samples.{method}.txt",
+        out_dir=args.output,
+        report=args.report,
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -386,8 +341,7 @@ def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
     from .classify import main as classify
-    from .sample_summary import main as sample_summary
-    from .read_summary import main as read_summary
+    from .summary import main as summary
     from .assess import main as assess
     from .edit_graph import main as edit_graph
 
@@ -462,31 +416,10 @@ def pipeline(args=None):
         # Include version number here?
         stem = os.path.join(args.output, "thapbi-pict")
 
-    return_code = sample_summary(
-        inputs=classified_files,
-        output=f"{stem}.samples.{method}.tsv",
-        excel=f"{stem}.samples.{method}.xlsx",
-        human_output=f"{stem}.samples.{method}.txt",
-        method=args.method,
-        min_abundance=args.abundance,
-        metadata_file=args.metadata,
-        metadata_cols=args.metacols,
-        metadata_groups=args.metagroups,
-        metadata_fieldnames=args.metafields,
-        metadata_index=args.metaindex,
-        require_metadata=args.requiremeta,
-        ignore_prefixes=tuple(args.ignore_prefixes),
-        debug=args.verbose,
-    )
-    if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during sample-summary\n")
-        sys.exit(return_code)
-    sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
-
-    return_code = read_summary(
+    return_code = summary(
         inputs=fasta_files + classified_files,
-        output=f"{stem}.reads.{method}.tsv",
-        excel=f"{stem}.reads.{method}.xlsx",
+        out_dir=args.output,
+        report=args.report,
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -499,9 +432,8 @@ def pipeline(args=None):
         debug=args.verbose,
     )
     if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during read-summary\n")
+        sys.stderr.write("ERROR: Pipeline aborted during summary\n")
         sys.exit(return_code)
-    sys.stderr.write(f"Wrote {stem}.reads.{method}.*\n")
 
     # TODO - Support known setting...
     known_files = find_requested_files(
@@ -1339,15 +1271,17 @@ def main(args=None):
     subcommand_parser.set_defaults(func=assess_classification)
     del subcommand_parser  # To prevent acidentally adding more
 
-    # read-summary
+    # summary
     subcommand_parser = subparsers.add_parser(
-        "read-summary",
-        description="Sequence-level summary report on classifier output.",
+        "summary",
+        description="Sample and sequence summary reports on classifier output.",
         epilog="Assumes you've run prepare-reads and classify, and have "
         "folders with XXX.fasta and XXX.method.tsv files from your plate(s). "
-        "The output is a table with one row per unique sequence (as trimmed "
-        "by the prepare-reads step, can be thousands of rows) and one column "
-        "per sample (typically 96 samples).",
+        "The output is two sets of tables. The read tables have one row per "
+        "unique sequence (as trimmed by the prepare-reads step, can be "
+        "thousands of rows) and one column per sample (typically 96 samples "
+        "per plate). The sample tables have one row per sample, and one "
+        "column per genus and species. Plus a plain text sample report.",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1403,66 +1337,7 @@ def main(args=None):
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=read_summary)
-    del subcommand_parser  # To prevent acidentally adding more
-
-    # sample-summary
-    subcommand_parser = subparsers.add_parser(
-        "sample-summary",
-        description="Sample-level summary report on classifier output.",
-        epilog="Assumes you've run prepare-reads and classify, and have "
-        "folders with XXX.method.tsv files from your samples. The output "
-        "is a table with rows for each sample (XXX), describing the species "
-        "predicted to be present, and the associated sequence count. "
-        "Intended to be used for samples over multiple sequencing plates.",
-    )
-    subcommand_parser.add_argument(
-        "-i",
-        "--input",
-        type=str,
-        required=True,
-        nargs="+",
-        help="One or more prediction files (*.method.tsv) or folder names. "
-        "The files should follow this naming convention, where the classifier "
-        "method appearing in the extension can be set via -m / --method.",
-    )
-    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        required=True,
-        metavar="DIRNAME",
-        help="Output directory. Required.",
-    )
-    subcommand_parser.add_argument(
-        "-r",
-        "--report",
-        type=str,
-        metavar="STEM",
-        help="Stem for generating report filenames.",
-    )
-    subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
-    subcommand_parser.add_argument(
-        "-a",
-        "--abundance",
-        type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance to require for the report. "
-        f"Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads. "
-        "Rather than re-running the prepare or classifier steps with a stricter "
-        "minimum abundance you can apply it here. Use zero or one to look at "
-        "everything (but beware that negative control samples will include low "
-        "abundance entries).",
-    )
-    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
-    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
-    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
-    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
-    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=sample_summary)
+    subcommand_parser.set_defaults(func=summary)
     del subcommand_parser  # To prevent acidentally adding more
 
     # edit-graph
