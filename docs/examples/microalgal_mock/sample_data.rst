@@ -1,1 +1,1 @@
-../../examples/microalgal_mock/README.rst
+../../../examples/microalgal_mock/README.rst

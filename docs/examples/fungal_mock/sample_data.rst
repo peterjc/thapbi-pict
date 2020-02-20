@@ -1,1 +1,1 @@
-../../examples/fungal_mock/README.rst
+../../../examples/fungal_mock/README.rst

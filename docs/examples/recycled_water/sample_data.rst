@@ -1,1 +1,1 @@
-../../examples/recycled_water/README.rst
+../../../examples/recycled_water/README.rst

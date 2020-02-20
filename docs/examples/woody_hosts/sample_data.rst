@@ -1,1 +1,1 @@
-../../examples/woody_hosts/README.rst
+../../../examples/woody_hosts/README.rst
