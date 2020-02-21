@@ -438,8 +438,14 @@ def make_nr_fasta(
     )
 
 
-def filter_fasta_for_its1(
-    input_fasta, output_fasta, stem, shared_tmp_dir, hmm_stem=None, debug=False
+def annotate_fasta_with_hmm_and_header(
+    input_fasta,
+    output_fasta,
+    stem,
+    shared_tmp_dir,
+    hmm_stem=None,
+    header_dict=None,
+    debug=False,
 ):
     """Filter for ITS1 regions.
 
@@ -456,6 +462,9 @@ def filter_fasta_for_its1(
     # >name;size=6; for VSEARCH.
     count = 0
     with open(output_fasta, "w") as out_handle:
+        if header_dict:
+            for key, value in header_dict.items():
+                out_handle.write(f"#{key}:{value}\n")
         for title, full_seq, hmm_name in filter_for_hmm(
             input_fasta, shared_tmp_dir, hmm=hmm_stem, debug=debug
         ):
@@ -657,8 +666,23 @@ def prepare_sample(
 
     # Determine if synthetic controls are present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
-    uniq_count, max_hmm_abundance = filter_fasta_for_its1(
-        merged_fasta, dedup, stem, shared_tmp, hmm_stem=hmm_stem, debug=debug
+    uniq_count, max_hmm_abundance = annotate_fasta_with_hmm_and_header(
+        merged_fasta,
+        dedup,
+        stem,
+        shared_tmp,
+        hmm_stem=hmm_stem,
+        header_dict={
+            "left_primer": left_primer,
+            "right_primer": right_primer,
+            "raw_fastq": count_raw,
+            "trimmomatic": count_trimmomatic,
+            "flash": count_flash,
+            "cutadapt": count_cutadapt,
+            "abundance": accepted_total,
+            "threshold": min_abundance,
+        },
+        debug=debug,
     )
 
     # File done
