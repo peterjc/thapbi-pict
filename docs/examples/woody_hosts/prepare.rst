@@ -77,9 +77,9 @@ used later in the pipeline, including in reports. The ``<abundance>`` is just
 an integer, the number of paired reads which after processing had this unique
 sequence.
 
-The description entry in the FASTA file is currently just the name of the HMM
-it matched, allowing us to distinguish the biological ITS1 sequences from the
-synthetic controls.
+The description entry in the FASTA file is currently just the name of any HMM
+it matched, allowing us to distinguish biological marker sequences (no match)
+from the synthetic controls (HMM match).
 
 Finally, the sequence in the FASTA file is written as a single line in upper
 case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
@@ -129,9 +129,9 @@ For example,
 Note that for this documentation, the grep output has had the sequences line
 wrapped at 80 characters.
 
-We see this sample had eight unique sequences accepted, all matched the ITS1
-HMM (happily none match the synthetic controls). The most common had MD5
-checksum ``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2271 reads.
+We see this sample had eight unique sequences accepted, happily none of which
+match the synthetic controls. The most common had MD5 checksum
+``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2271 reads.
 
 You could easily find out which other samples had this unique sequence using
 the command line search tool ``grep`` as follows:
@@ -142,7 +142,8 @@ the command line search tool ``grep`` as follows:
     ...
 
 Or, since we deliberately record the sequences without line wrapping, you
-could use ``grep`` with the actual sequence instead.
+could use ``grep`` with the actual sequence instead (which might spot some
+slightly longer entries as well).
 
 You can also answer this example question from the read report produced later.
 
