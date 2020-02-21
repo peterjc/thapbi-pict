@@ -482,7 +482,11 @@ def run_swarm(input_fasta, output_clusters, diff=1, debug=False, cpu=0):
     else:
         # Swarm defaults to stdin, so don't need this:
         # cmd += ["/dev/stdin"]
-        cmd = 'cat "%s" | %s' % ('" "'.join(input_fasta), cmd_as_string(cmd))
+        # Using grep to remove the header lines from 'FASTA' file:
+        cmd = 'cat "%s" | grep -v "^#" | %s' % (
+            '" "'.join(input_fasta),
+            cmd_as_string(cmd),
+        )
     return run(cmd, debug=debug)
 
 
