@@ -372,19 +372,21 @@ def split_read_name_abundance(text, debug=False):
 
 
 def abundance_values_in_fasta(fasta_file):
-    """Return unique count and maximum abundance per kind encoded in read names."""
+    """Return unique count, total abundance, and maximum abundance from read names."""
     unique = 0
+    total = 0
     max_a = Counter()
     with open(fasta_file) as handle:
         for title, _ in SimpleFastaParser(handle):
             unique += 1
             a = abundance_from_read_name(title.split(None, 1)[0])
+            total += a
             try:
                 hmm = title.split(None, 1)[1].strip()
             except IndexError:
                 hmm = ""  # prepared with no HMM
             max_a[hmm] = max(a, max_a[hmm])
-    return unique, max_a
+    return unique, total, max_a
 
 
 def find_requested_files(

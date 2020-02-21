@@ -250,14 +250,18 @@ def run_cutadapt(
     """
     if not left_primer and not right_primer:
         # special case!
+
         if long_in.endswith(".fasta.gz"):
             # Should the main intermediates be gzipped?
-            return run(f"cat {long_in} | gunzip > {trimmed_out}", debug=debug)
+            run(f"cat {long_in} | gunzip > {trimmed_out}", debug=debug)
+            _, total, _ = abundance_values_in_fasta(trimmed_out)
+            return total, total
         elif long_in.endswith(".fastq"):
             from Bio.SeqIO import convert
 
             convert(long_in, "fastq", trimmed_out, "fasta")
-            return 0
+            _, total, _ = abundance_values_in_fasta(trimmed_out)
+            return total, total
         else:
             sys.exit(f"ERROR: called on {long_in} with no primers")
     cmd = ["cutadapt"]
@@ -523,7 +527,7 @@ def prepare_sample(
         failed_primer_name is None or os.path.isfile(failed_primer_name)
     ):
         if control:
-            uniq_count, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
+            uniq_count, _, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
             return fasta_name, uniq_count, max_hmm_abundance
         else:
             return fasta_name, None, {}
