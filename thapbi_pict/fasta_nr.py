@@ -81,5 +81,7 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
-    accepted = save_nr_fasta(counts, output, min_abundance=min_abundance)
-    sys.stderr.write(f"Saved {accepted:d} unique sequences\n")
+    accepted_total, accepted_count = save_nr_fasta(
+        counts, output, min_abundance=min_abundance
+    )
+    sys.stderr.write(f"Saved {accepted_count} unique sequences\n")

@@ -142,6 +142,26 @@ def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
     sys.exit(f"ERROR: Could not find {fasta_name} installed with trimmomatic.")
 
 
+def parse_trimmomatic_stderr(stderr):
+    """Extract FASTQ pair count before and after trimmomatic.
+
+    >>> parse_trimmomatic_stderr(
+    ...     "Input Read Pairs: 6136 Both Surviving: 6105 (99.49%) ..."
+    ... )
+    ...
+    (6136, 6105)
+    """
+    for line in stderr.strip().split("\n"):
+        if line.startswith("Input Read Pairs: "):
+            words = line.split()
+            if words[4] == "Both" and words[5] == "Surviving:":
+                return int(words[3]), int(words[6])
+    sys.exit(
+        "ERROR: Could not extract trimmomatic before and after pair count:"
+        f"\n\n{stderr}\n"
+    )
+
+
 def run_trimmomatic(
     left_in, right_in, left_out, right_out, adapters=None, debug=False, cpu=0
 ):
@@ -151,6 +171,8 @@ def run_trimmomatic(
 
     If the FASTA adapters file is not specified, will try to use
     ``TruSeq3-PE.fa`` as bundled with a BioConda install of trimmomatic.
+
+    Returns two integers, FASTQ pair count for input and output files.
     """
     if not adapters:
         adapters = find_trimmomatic_adapters()
@@ -166,7 +188,45 @@ def run_trimmomatic(
     # We don't want the unpaired left and right output files, so /dev/null
     cmd += [left_in, right_in, left_out, os.devnull, right_out, os.devnull]
     cmd += [f"ILLUMINACLIP:{adapters}:2:30:10"]
-    return run(cmd, debug=debug)
+    return parse_trimmomatic_stderr(run(cmd, debug=debug).stderr)
+
+
+def parse_cutadapt_stdout(stdout):
+    r"""Extract FASTA count before and after cutadapt.
+
+    >>> parse_cutadapt_stdout("...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n...")
+    (5869, 5861)
+    """  # noqa: E501
+    before = None
+    after = None
+    for line in stdout.strip().split("\n"):
+        words = line.strip().split()
+        if words[:-1] == ["Total", "reads", "processed:"]:
+            before = int(words[3].replace(",", ""))
+        elif words[:4] == ["Reads", "written", "(passing", "filters):"]:
+            after = int(words[4].replace(",", ""))
+    if before is None or after is None:
+        sys.exit(
+            f"ERROR: Could not extract cutadapt before and after pair count:"
+            f"\n\n{stdout}\n"
+        )
+    return before, after
+
+
+assert (
+    parse_cutadapt_stdout(
+        """\
+=== Summary ===
+
+Total reads processed:                   5,869
+Reads with adapters:                     5,861 (99.9%)
+Reads that were too short:                   1 (0.0%)
+Reads that were too long:                    0 (0.0%)
+Reads written (passing filters):         5,861 (99.9%)
+"""
+    )
+    == (5869, 5861)
+)
 
 
 def run_cutadapt(
@@ -185,6 +245,8 @@ def run_cutadapt(
 
     The input and/or output files may be compressed as long as they
     have an appropriate suffix (e.g. gzipped with ``.gz`` suffix).
+
+    Returns FASTA count before and after cutadapt.
     """
     if not left_primer and not right_primer:
         # special case!
@@ -221,11 +283,49 @@ def run_cutadapt(
         trimmed_out,
         long_in,
     ]
-    return run(cmd, debug=debug)
+    return parse_cutadapt_stdout(run(cmd, debug=debug).stdout)
+
+
+def parse_flash_stdout(stdout):
+    r"""Extract FASTQ pair count before/after running flash.
+
+    >>> parse_flash_stdout("...\n[FLASH] Read combination statistics:[FLASH]     Total pairs:      6105\n[FLASH]     Combined pairs:   5869\n...")
+    (6105, 5869)
+    """  # noqa: E501
+    before = None
+    after = None
+    for line in stdout.strip().split("\n"):
+        words = line.strip().split()
+        if words[:-1] == ["[FLASH]", "Total", "pairs:"]:
+            before = int(words[-1])
+        elif words[:-1] == ["[FLASH]", "Combined", "pairs:"]:
+            after = int(words[-1])
+    if before is None or after is None:
+        sys.exit(
+            f"ERROR: Could not extract flash before and after pair count:\n\n{stdout}\n"
+        )
+    return before, after
+
+
+assert (
+    parse_flash_stdout(
+        """\
+...
+[FLASH] Read combination statistics:
+[FLASH]     Total pairs:      6105
+[FLASH]     Combined pairs:   5869
+...
+"""
+    )
+    == (6105, 5869)
+)
 
 
 def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
-    """Run FLASH on a pair of trimmed FASTQ files to merge overlaping pairs."""
+    """Run FLASH on a pair of trimmed FASTQ files to merge overlaping pairs.
+
+    Returns two integers, FASTQ pair count for input and output files.
+    """
     # Note our reads tend to overlap a lot, thus increase max overlap with -M
     # Also, some of our samples are mostly 'outies' rather than 'innies', so -O
     cmd = ["flash", "-O", "-M", "300"]
@@ -234,7 +334,7 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
     else:
         cmd += ["-t", "1"]  # Default is all CPUs
     cmd += ["-d", output_dir, "-o", output_prefix, trimmed_R1, trimmed_R2]
-    return run(cmd, debug=debug)
+    return parse_flash_stdout(run(cmd, debug=debug).stdout)
 
 
 def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
@@ -247,12 +347,13 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
     Results are sorted by decreasing abundance then alphabetically by
     sequence.
 
-    Returns the number of sequences accepted (above any minimum
-    abundance specified).
+    Returns the total and number of unique sequences accepted (above any
+    minimum abundance specified).
 
     Use output_fasta='-' for standard out.
     """
-    accepted = 0
+    accepted_total = 0
+    accepted_count = 0
     values = sorted((-count, seq) for seq, count in counts.items())
     if output_fasta == "-":
         if gzipped:
@@ -267,10 +368,11 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
             # Sorted, so everything hereafter is too rare
             break
         out_handle.write(f">{md5seq(seq)}_{-count:d}\n{seq}\n")
-        accepted += 1
+        accepted_total -= count
+        accepted_count += 1
     if output_fasta != "-":
         out_handle.close()
-    return accepted
+    return accepted_total, accepted_count
 
 
 def make_nr_fasta(
@@ -299,11 +401,11 @@ def make_nr_fasta(
     Makes a non-redundant FASTA file with the sequences named
     ``>MD5_abundance\n``.
 
-    Returns the number of accepted sequences before de-duplication
-    (integer), number of unique accepted sequences (integer), and
-    the number of those which passed the minimum abundance threshold,
-    and the maximum abundance of any one read (for use with controls
-    for setting the threshold).
+    Returns the total number of accepted reads before de-duplication
+    (integer), number of those unique (integer), and the total number
+    of those which passed the minimum abundance threshold (integer),
+    number of those unique (integer), and the maximum abundance of
+    any one read (for use with controls for setting the threshold).
     """
     counts = Counter()
     with open(input_fasta_or_fastq) as handle:
@@ -324,10 +426,14 @@ def make_nr_fasta(
             for _, seq in SimpleFastaParser(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 counts[seq.upper()] += 1
+    accepted_total, accepted_count = save_nr_fasta(
+        counts, output_fasta, min_abundance, gzipped=gzipped
+    )
     return (
         sum(counts.values()) if counts else 0,
         len(counts),
-        save_nr_fasta(counts, output_fasta, min_abundance, gzipped=gzipped),
+        accepted_total,
+        accepted_count,
         max(counts.values()) if counts else 0,
     )
 
@@ -441,16 +547,26 @@ def prepare_sample(
         # trimmomatic
         trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
         trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-        run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
+        count_raw, count_trimmomatic = run_trimmomatic(
+            raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu
+        )
         for _ in (trim_R1, trim_R2):
             if not os.path.isfile(_):
                 sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
 
         # flash
         merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
-        run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
+        count_tmp, count_flash = run_flash(
+            trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu
+        )
         if not os.path.isfile(merged_fastq):
             sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
+        if count_tmp != count_trimmomatic:
+            sys.exit(
+                f"ERROR: Trimmomatic says wrote {count_trimmomatic} pairs,"
+                f" but flash saw {count_tmp} pairs."
+            )
+        del count_tmp
 
         if merged_fasta_gz:
             if debug:
@@ -467,7 +583,7 @@ def prepare_sample(
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
         bad_primer_fasta = None
-    run_cutadapt(
+    count_tmp, count_cutadapt = run_cutadapt(
         merged_fastq or merged_fasta_gz,
         trimmed_fasta,
         bad_primer_fasta,
@@ -481,10 +597,21 @@ def prepare_sample(
     )
     if not os.path.isfile(trimmed_fasta):
         sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
+    if count_tmp != count_flash:
+        sys.exit(
+            f"ERROR: Flash says wrote {count_flash},"
+            f" but cutadapt saw {count_tmp} reads."
+        )
 
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
-    (count, uniq_count, acc_uniq_count, max_hmm_abundance) = make_nr_fasta(
+    (
+        count,
+        uniq_count,
+        accepted_total,
+        accepted_uniq_count,
+        max_hmm_abundance,
+    ) = make_nr_fasta(
         trimmed_fasta,
         merged_fasta,
         min_abundance=min_abundance,
@@ -494,15 +621,27 @@ def prepare_sample(
         gzipped=False,
         debug=debug,
     )
+    if count_cutadapt != count:
+        sys.exit(
+            f"ERROR: Cutadapt says wrote {count_cutadapt}, but we saw {count} reads."
+        )
     if debug:
         sys.stderr.write(
-            f"Merged {count:d} paired FASTQ reads"
-            f" into {uniq_count:d} unique sequences,"
-            f" {acc_uniq_count:d} above min abundance {min_abundance:d}"
+            f"DEBUG: FASTQ pairs {count_raw};"
+            f" trimmomatic -> {count_trimmomatic};"
+            f" flash -> {count_flash};"
+            f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
+            f" abundance -> {accepted_total} [{accepted_uniq_count} unique]"
+            f", or {accepted_total*100.0/count_raw:0.1f}%\n"
+        )
+        sys.stderr.write(
+            f"From {count_raw} paired FASTQ reads,"
+            f" found {uniq_count:d} unique sequences,"
+            f" {accepted_uniq_count:d} above min abundance {min_abundance:d}"
             f" (max abundance {max_hmm_abundance:d})\n"
         )
 
-    if not acc_uniq_count:
+    if not accepted_uniq_count:
         if debug:
             sys.stderr.write(
                 f"{stem} had {uniq_count:d} unique sequences,"
@@ -515,14 +654,6 @@ def prepare_sample(
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
         return fasta_name, 0, {}
-
-    if debug:
-        sys.stderr.write(
-            f"Merged {stem} {count:d} paired FASTQ reads"
-            f" into {uniq_count:d} unique sequences,"
-            f" {acc_uniq_count:d} above {'control' if control else 'sample'}"
-            f" min abundance {min_abundance:d} (max abundance {max_hmm_abundance:d})\n"
-        )
 
     # Determine if synthetic controls are present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
