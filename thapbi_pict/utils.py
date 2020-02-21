@@ -269,7 +269,10 @@ def cmd_as_string(cmd):
 
 
 def run(cmd, debug=False, attempts=1):
-    """Run a command via subprocess, abort if fails."""
+    """Run a command via subprocess, abort if fails.
+
+    Returns a subprocess.CompletedProcess object.
+    """
     for i in range(attempts):
         if debug:
             if attempts:
