@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.7.0  *Pending*  Read counts etc as a header in intermediate FASTA files; shown in reports.
 v0.6.15 2020-03-12 Fix regression in read report column sorting.
 v0.6.14 2020-03-12 Merge ``read-summary`` & ``sample-summary`` into new ``summary`` command.
 v0.6.13 2020-03-09 New classifier method ``substr`` for testing with poorly trimmed DB content.
