@@ -3,6 +3,11 @@ their own ``README.rst`` file for context (part of a larger set of worked
 example documentation), and typically scripts ``setup.sh`` (for data
 download and any other one-off setup) and ``run.sh`` (to run the example).
 
+You can use the ``setup_all.sh`` to download and setup all the raw data,
+and likewise ``run_all.sh`` to general all the intermediate files and the
+output reports.
+
+
 1. ``woody_hosts/`` - simple ITS1 example using default primers and database,
    based on a paper from earlier in the THAPBI Phyto-Threats project:
 
