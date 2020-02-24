@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.6.10 2020-02-24 Treat I (for inosine as in tRNA) in primers as N (IUPAC code for any base).
 v0.6.9  2020-02-20 Allow pre-primer-trimmed FASTQ. Fixed row coloring when missing samples.
 v0.6.8  2020-02-17 Metadata ``-x`` default now column 1. Fixed read report metadata captions.
 v0.6.7  2020-02-13 Method in ``pipeline`` filenames; max sample abundance in read reports.
