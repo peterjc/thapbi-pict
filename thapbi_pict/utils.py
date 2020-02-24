@@ -15,6 +15,20 @@ from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 
+def primer_clean(primer):
+    """Handle non-IUPAC entries in primers, maps I for inosine to N.
+
+    >>> primer_clean("I")
+    'N'
+
+    Inosine is found naturally at the wobble position of tRNA, and can match
+    any base. Structurally similar to guanine (G), it preferentially binds
+    cytosine (C). It sometimes used in primer design (Ben-Dov et al, 2006),
+    where degeneracy N would give similar results.
+    """
+    return primer.upper().replace("I", "N")
+
+
 def sample_sort(sample_names):
     """Sort sample names like a human.
 

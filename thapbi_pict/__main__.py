@@ -16,6 +16,7 @@ import sys
 from . import __version__
 from .classify import method_classify_file as method_classifier
 from .utils import find_requested_files
+from .utils import primer_clean
 
 
 # Common command line defaults
@@ -116,8 +117,8 @@ def ncbi_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
-        left_primer=args.left,
-        right_primer=args.right,
+        left_primer=primer_clean(args.left),
+        right_primer=primer_clean(args.right),
         sep=args.sep,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -155,8 +156,8 @@ def curated_import(args=None):
         name=args.name,
         validate_species=not args.lax,
         genus_only=args.genus,
-        left_primer=args.left,
-        right_primer=args.right,
+        left_primer=primer_clean(args.left),
+        right_primer=primer_clean(args.right),
         sep=args.sep,
         debug=args.verbose,
     )
@@ -202,8 +203,8 @@ def prepare_reads(args=None):
         out_dir=args.output,
         hmm_stem=expand_hmm_argument(args.hmm),
         primer_dir=args.primers,
-        left_primer=args.left,
-        right_primer=args.right,
+        left_primer=primer_clean(args.left),
+        right_primer=primer_clean(args.right),
         flip=args.flip,
         min_abundance=args.abundance,
         min_length=args.minlen,
@@ -386,8 +387,8 @@ def pipeline(args=None):
         out_dir=intermediate_dir,
         hmm_stem=hmm,
         primer_dir=None,
-        left_primer=args.left,
-        right_primer=args.right,
+        left_primer=primer_clean(args.left),
+        right_primer=primer_clean(args.right),
         flip=args.flip,
         min_abundance=args.abundance,
         min_length=args.minlen,
