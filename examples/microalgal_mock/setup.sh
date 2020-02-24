@@ -28,25 +28,25 @@ for LIBRARY in V4 V8V9 ; do
         done
         # echo "Setting up expected classification"
         FILE=$LIBRARY/expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
-        echo "Already have $FILE"
-    elif grep $ACC PRJNA314977.txt | grep --quiet "_MC1[1-3]"; then
-        # i.e. Samples MC11, MC12, MC13
-        echo "Linking $FILE to mock freshwater community control"
-        cd $LIBRARY/expected/
-        ln -s ../../mock_freshwater.known.tsv $ACC.known.tsv
-        cd ../..
-    elif grep $ACC PRJNA314977.txt | grep --quiet "_MC7[1-3]"; then
-        # i.e. Samples MC71, MC72, MC73
-        echo "Linking $FILE to mock marine community control"
-        cd $LIBRARY/expected/
-        ln -s ../../mock_marine.known.tsv $ACC.known.tsv
-        cd ../..
-    elif grep $ACC PRJNA314977.txt | grep --quiet "synthetic metagenome"; then
-        echo "Linking $FILE to mock community control"
-        cd $LIBRARY/expected/
-        ln -s ../../mock_community.known.tsv $ACC.known.tsv
-        cd ../..
-    fi
+        if [ -f $FILE ]; then
+            echo "Already have $FILE"
+        elif grep $ACC PRJNA314977.txt | grep --quiet "_MC1[1-3]"; then
+            # i.e. Samples MC11, MC12, MC13
+            echo "Linking $FILE to mock freshwater community control"
+            cd $LIBRARY/expected/
+            ln -s ../../mock_freshwater.known.tsv $ACC.known.tsv
+            cd ../..
+        elif grep $ACC PRJNA314977.txt | grep --quiet "_MC7[1-3]"; then
+            # i.e. Samples MC71, MC72, MC73
+            echo "Linking $FILE to mock marine community control"
+            cd $LIBRARY/expected/
+            ln -s ../../mock_marine.known.tsv $ACC.known.tsv
+            cd ../..
+        elif grep $ACC PRJNA314977.txt | grep --quiet "synthetic metagenome"; then
+            echo "Linking $FILE to mock community control"
+            cd $LIBRARY/expected/
+            ln -s ../../mock_community.known.tsv $ACC.known.tsv
+            cd ../..
+        fi
     done
 done
