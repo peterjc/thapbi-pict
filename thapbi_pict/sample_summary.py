@@ -245,7 +245,8 @@ def main(
         # Now do the samples in this batch
         for sample in sample_batch:
             if sample not in samples:
-                sys.stderr.write(f"WARNING: Missing {sample}\n")
+                if not sample.startswith(ignore_prefixes):
+                    sys.stderr.write(f"WARNING: Missing {sample}\n")
             else:
                 if handle:
                     try:
