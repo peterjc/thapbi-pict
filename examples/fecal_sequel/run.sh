@@ -1,0 +1,48 @@
+#!/bin/bash
+set -eup pipeline
+
+echo NOTE: Expected first time run time is about 5 minues,
+echo repeat runs take seconds just to regenerate reports.
+echo
+echo ==================
+echo Fecal sequel - COI
+echo ==================
+
+# Setup two database, FASTA files are both already primer trimmed
+rm -rf COI_430_bats.sqlite
+thapbi_pict curated-import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
+rm -rf COI_ext_bats.sqlite
+cp COI_430_bats.sqlite COI_ext_bats.sqlite
+thapbi_pict curated-import -d COI_ext_bats.sqlite -i observed_3_bats.fasta -x
+
+echo ---------------------------------------------------------------
+echo Fecal sequel - COI - Mock community using just 430 reference DB
+echo ---------------------------------------------------------------
+
+# Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
+mkdir -p intermediate_COI_430_bats/
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate_COI_430_bats/ -o . \
+	    -r mock-community.COI_430_bats \
+	    -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
+	    --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
+
+# Default edit-graph has very few DB nodes, so run another edit-graph
+# including all DB entries with -s / --showdb argument
+thapbi_pict edit-graph -d COI_430_bats.sqlite -i intermediate_COI_430_bats/*.fasta -s \
+            -o mock-community.COI_430_bats.edit-graph.inc-ref.xgmml
+
+echo --------------------------------------------------------------------
+echo Fecal sequel - COI	- Mock community using just extended reference DB
+echo --------------------------------------------------------------------
+
+# The FASTA intermediate files are the same, no point regenerating them...
+mkdir -p intermediate_COI_ext_bats/
+cd intermediate_COI_ext_bats/
+for FASTA in ../intermediate_COI_430_bats/*.fasta; do ln -f -s $FASTA; done
+cd ../
+
+# Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate_COI_ext_bats/ -o . \
+	    -r mock-community.COI_ext_bats \
+            -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
+            --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
