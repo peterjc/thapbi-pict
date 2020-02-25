@@ -53,7 +53,7 @@ discussed in the THAPBI PICT documentation.
 Setup
 -----
 
-We assume you have aquired the THAPBI PICT source code, and have your command
+We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/microalgal_mock/`` folder. First we run
 the ``setup.py`` script:
 
