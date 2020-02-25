@@ -11,3 +11,4 @@ with the default ``onebp`` classifier method.
    :maxdepth: 1
 
    sample_data
+   edit_graph
