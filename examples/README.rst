@@ -35,5 +35,12 @@ output reports.
      18S rRNA Gene-Specific Primers for Improved Characterization of Mixed
      Phototrophic Communities. https://doi.org/10.1128/AEM.01630-16
 
+5. ``fecal_sequel/`` - COI example in bats, showing importance of the database
+   content with the default classifier, based on:
+
+   * Walker *et al.* (2019) A fecal sequel: Testing the limits of a genetic
+     assay for bat species identification.
+     https://doi.org/10.1371/journal.pone.0224969
+
 See https://thapbi-pict.readthedocs.io/en/latest/examples/ for discussion of
 these examples.

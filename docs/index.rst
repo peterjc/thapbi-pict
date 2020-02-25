@@ -23,8 +23,8 @@ With appropriate primer settings and a custom database, THAPBI PICT can be
 applied to other organisms and/or barcode marker sequences - not just
 *Phytophthora* ITS1.
 
-The worked examples include oomycetes, fungi, microalgae, and cover markers
-in ITS1, ITS2 and 18S rRNA.
+The worked examples include oomycetes, fungi, microalgae, and bats, and cover
+markers in ITS1, ITS2, 18S rRNA and COI.
 
 The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
 Biotechnology and Biological Sciences Research Council (`BBSRC

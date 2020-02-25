@@ -6,7 +6,8 @@ appropriate primer settings and a custom database, it can be applied to other
 organisms and/or barcode marker sequences.
 
 These worked examples using public datasets from published papers include
-oomycetes, fungi, microalgae, and cover markers in ITS1, ITS2 and 18S rRNA.
+oomycetes, fungi, microalgae, and bats, and cover markers in ITS1, ITS2, 18S
+rRNA and COI.
 
 .. toctree::
    :maxdepth: 1
