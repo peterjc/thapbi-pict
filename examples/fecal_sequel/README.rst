@@ -75,6 +75,17 @@ FASTQ files from the ENA (120 files, 60 pairs, about 750MB in total), and
 setup per-sample symlinks to the expected output in the ``expected/``
 directory for use with classifier assessment.
 
+If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
+files downloaded correctly:
+
+.. code:: console
+
+    $ cd raw_data/
+    $ md5sum -c MD5SUM.txt
+    $ cd ..
+
+There is no need to decompress the files.
+
 Running the pipeline
 --------------------
 
