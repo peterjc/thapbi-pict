@@ -75,6 +75,7 @@ This will download the raw gzip compressed FASTQ files from Zenodo (244 files,
 
 If you skip the raw data, instead you must decompress the pre-prepared 122
 FASTA files into your ``intermediate/`` subdirectory:
+
 .. code:: console
 
    $ tar -jxvf intermediate.tar.bz2
