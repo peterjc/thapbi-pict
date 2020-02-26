@@ -76,7 +76,7 @@ line terminal open in the ``examples/fungal_mock/`` folder. First we run the
 
    $ ./setup.py
 
-This will download the raw gzip compressed FASTQ files from the ENA (124 files,
+This will download the raw gzip compressed FASTQ files from the ENA (122 files,
 61 pairs, under 400MB in total), and setup appropriate per-sample symlinks to
 the expected output in the ``expected/`` sub-directories for use with classifier
 assessment.
