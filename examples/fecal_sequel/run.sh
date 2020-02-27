@@ -20,16 +20,12 @@ echo Fecal sequel - COI - Mock community using just 430 reference DB
 echo ---------------------------------------------------------------
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
+# Default edit-graph has very few DB nodes, so using --showdb argument
 mkdir -p intermediate_COI_430_bats/
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate_COI_430_bats/ -o . \
-	    -r mock-community.COI_430_bats \
+	    -r mock-community.COI_430_bats --showdb \
 	    -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
 	    --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
-
-# Default edit-graph has very few DB nodes, so run another edit-graph
-# including all DB entries with -s / --showdb argument
-thapbi_pict edit-graph -d COI_430_bats.sqlite -i intermediate_COI_430_bats/*.fasta -s \
-            -o mock-community.COI_430_bats.edit-graph.inc-ref.xgmml
 
 echo --------------------------------------------------------------------
 echo Fecal sequel - COI	- Mock community using just extended reference DB
