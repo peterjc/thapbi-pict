@@ -510,7 +510,7 @@ def pipeline(args=None):
             inputs=fasta_files,
             min_abundance=args.abundance,
             # total_min_abundance=args.total,
-            # always_show_db=args.showdb,
+            always_show_db=args.showdb,
             # max_edit_dist=args.editdist,
             ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
@@ -860,6 +860,13 @@ def main(args=None):
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    # Can't use -s for --showdb as already used for sample intermediates
+    subcommand_parser.add_argument(
+        "--showdb",
+        action="store_true",
+        help="Show DB entries in edit-graph, regardless of their abundance "
+        "in samples. Very slow with large database.",
+    )
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
