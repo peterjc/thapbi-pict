@@ -125,7 +125,7 @@ def perfect_match_in_db(session, seq, debug=False):
     genus_species will be semi-colon separated strings.
     """
     assert seq == seq.upper(), seq
-    # Now, does this match any of the ITS1 seq in our DB?
+    # Now, does this equal any of the ITS1 seq in our DB?
     its1 = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
     if its1 is None:
         return 0, "", "No DB match"
@@ -142,6 +142,41 @@ def perfect_match_in_db(session, seq, debug=False):
             f" sequence={its1.sequence}\n"
         )
     return taxid_and_sp_lists(t)
+
+
+def perfect_substr_in_db(session, seq, debug=False):
+    """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
+
+    If the matches containing the sequence as a substring give multiple species,
+    then taxid and genus_species will be semi-colon separated strings.
+    """
+    assert seq == seq.upper(), seq
+    # Now, does this match any of the ITS1 seq in our DB (as a substring)
+    # This didn't work:
+    #
+    # its1 = session.query(ITS1).filter(ITS1.sequence.match(seq)).one_or_none()
+    #
+    # Gave:
+    #
+    #     sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to
+    #     use function MATCH in the requested context
+    #     [SQL: SELECT its1_sequence.id AS its1_sequence_id,
+    #     its1_sequence.md5 AS its1_sequence_md5,
+    #     its1_sequence.sequence AS its1_sequence_sequence
+    #     FROM its1_sequence
+    #     WHERE its1_sequence.sequence MATCH ?]
+    t = set()
+    for its1 in session.query(ITS1).filter(ITS1.sequence.like("%" + seq + "%")):
+        assert its1 is not None
+        assert seq in its1.sequence
+        t.update(
+            _.current_taxonomy
+            for _ in session.query(SequenceSource).filter_by(its1=its1)
+        )
+    if not t:
+        return 0, "", "No DB match"
+    else:
+        return taxid_and_sp_lists(t)
 
 
 def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=False):
@@ -185,6 +220,20 @@ def seq_method_identity(seq, session, debug=False):
         return 0, "", "No DB match"
     else:
         return perfect_match_in_db(session, seq)
+
+
+def method_substr(
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+):
+    """Classify using perfect identity including as a sub-string.
+
+    Like the 'identity' method, but allows for a database where the marker
+    has not been trimmed, or has been imperfectly trimmed (e.g. primer
+    mismatch).
+    """
+    return apply_method_to_file(
+        perfect_substr_in_db, fasta_file, session, read_report, debug=debug
+    )
 
 
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
@@ -594,6 +643,7 @@ method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
     "onebp": [],
+    "substr": [],
     "swarm": ["swarm"],
     "swarmid": ["swarm"],
 }
@@ -602,16 +652,17 @@ method_classify_file = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
+    "substr": method_substr,
     "swarm": method_swarm,
     "swarmid": method_swarmid,
 }
 
+# Not all methods define a setup function:
 method_setup = {
     "blast": setup_blast,
-    # "identify": setup_identify,
     "onebp": setup_onebp,
     "swarm": setup_swarm,
-    "swarmid": setup_swarm,  # can share the setup
+    "swarmid": setup_swarm,  # can share the setup with swarm
 }
 
 
