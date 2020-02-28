@@ -89,11 +89,9 @@ Notice we specified the left and right primers (as discussed in
 :ref:`primers <custom_database_primers>`).
 In this context THAPBI PICT will look for and discard the left and right
 primers in isolation - neither has to be present. This is to cope with
-pre-trimmed entries, or cases like the *Oomycetes* markers where the
-published sequence typically start immediately after our left "primer"
-(recall ``GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` is
-actually the PCR primer ``GAAGGTGAAGTCGTAACAAGG`` plus the conserved
-32bp fragment ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA``).
+pre-trimmed entries, or cases like the *Oomycetes* markers where some of the
+published sequences start immediately after our left primer (which is fine).
+Sadly often the start of our target region is missing.
 
 To disable this you can alternatively set the primers to empty strings,
 or use the similar ``thapbi_pict curated-import`` command which assumes
