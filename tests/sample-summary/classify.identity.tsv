@@ -1,4 +1,4 @@
-#Sequencing sample	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
-P-infestans-T30-4	63000	13000	0	50000	50000
-hmm_trim	71864	71864	0	0	0
-multiple_its1	27281	14936	12345	0	0
+#Sequencing sample	Seq-count	Unknown	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
+P-infestans-T30-4	63000	13000	50000	50000
+hmm_trim	71864	71864	0	0
+multiple_its1	27281	27281	0	0

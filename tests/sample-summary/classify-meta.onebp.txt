@@ -30,5 +30,4 @@ Sequencing sample: hmm_trim
 Sequencing sample: multiple_its1
 
  - Unknown
- - Peronospora
 
