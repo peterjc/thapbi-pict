@@ -18,7 +18,7 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
 fi
 for ACC in `grep ^SRR PRJNA574765.txt | cut -f 1`; do
     # echo "Downloading $ACC"
-    # Column 7 should have two URLs (R1 and R2), semi-colon separated:
+    # Column 5 should have two URLs (R1 and R2), semi-colon separated:
     for URL in `grep ^$ACC PRJNA574765.txt | cut -f 5 | sed "s/;/ /g"`; do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
