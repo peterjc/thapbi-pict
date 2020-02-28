@@ -1,4 +1,4 @@
-#TaxID	Species	Description	Date	Sequencing sample	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora ramorum
-4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	63000	500	0	62500	0	62500	0	0	0
-				hmm_trim	71864	69011	0	2853	409	0	296	518	1630
-				multiple_its1	27281	14813	12468	0	0	0	0	0	0
+#TaxID	Species	Description	Date	Sequencing sample	Seq-count	Unknown	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora ramorum
+4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	63000	500	62500	0	62500	0	0	0
+				hmm_trim	71864	69011	2853	409	0	296	518	1630
+				multiple_its1	27281	27281	0	0	0	0	0	0
