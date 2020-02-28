@@ -40,7 +40,7 @@ Note the classifier method was set explicitly with ``-m`` (or ``--method``),
 using the default of ``onebp``. With the narrower set of *Phytophthora*
 sequences and comparatively well sampled database, that was a good default.
 Recall running with the *Phytophthora* defaults gave a taxonomic assignment
-for 1880182 of 2605870 reads - which was 72% of 2.6 million reads.
+for 1880048 of 2605870 of 2605870 reads - which was 72% of 2.6 million reads.
 
 Here with our relatively sparse database, the ``onebp`` method is perhaps
 overly strict - only 36% of the reads were matched (3577559 of 9956078).
