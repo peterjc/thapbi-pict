@@ -14,7 +14,7 @@ default minimum abundance threshold.
 The key values which we will be changing later are the primers and database.
 
 Assuming you have the FASTQ files in ``raw_data/``, run the pipeline command
-as follows, and you should get five output report files:
+as follows, and you should get six output report files:
 
 .. code:: console
 
@@ -33,6 +33,7 @@ as follows, and you should get five output report files:
     recycled-water-defaults.reads.onebp.tsv
     recycled-water-defaults.reads.onebp.xlsx
     recycled-water-defaults.samples.onebp.tsv
+    recycled-water-defaults.samples.onebp.xlsx
     recycled-water-defaults.samples.onebp.txt
     recycled-water-defaults.edit-graph.xgmml
 
