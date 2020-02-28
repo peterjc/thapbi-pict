@@ -9,7 +9,7 @@ Running prepare-reads step
 We first ran the pipeline command with :ref:`default settings
 <custom_database_defaults>`, but now we will change the primer settings.
 Using the actual right primer will extend the *Phytophthora* FASTA sequences
-about 60bp (and accept many more non-*Phytophthora*), while including the
+about 60bp (and accept many more non-*Phytophthora*), while treating the
 conserved 32bp fragment ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` as if it were
 part of the left primer will trim the start of the sequenes.
 
