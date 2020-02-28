@@ -13,9 +13,15 @@ sets of sequences (subject to taxonomy filtering):
   has been assumed and added to the FASTA in lower case as needed - at the
   time of writing no exceptions are known.
 
-- NCBI *Peronosporales* (including *Phytophthora*) at genus level,
-  file ``database/2019-04-03-ITS_Peronosporales_16394.fasta`` with 16394
-  entries created with an NCBI Entrez search run on 2019-04-16::
+- NCBI *Peronosporales* (including *Phytophthora*) at genus level, 4841 entries
+  in file ``database/2020-02-28-ITS_Peronosporales_w32.fasta`` with expected
+  32bp leader filtered using::
+
+      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action none \
+      --discard-untrimmed -o 2020-02-28-ITS_Peronosporales_w32.fasta \
+      2020-02-28-ITS_Peronosporales_17507.fasta
+
+  Started from 17507 downloaded from an NCBI Entrez search on 2020-02-28::
 
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Peronosporales[organism]
