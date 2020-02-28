@@ -53,7 +53,7 @@ NCBI. At the time of writing while that helps, there are still gaps here. What
 the example in ``run.sh`` does is add all the sequences observed in at least
 10 samples to the database with the presumed species. This is similar to how
 the THAPBI PICT default database of *Phytophthora* ITS1 contains actually
-observed variants from single sample positive controls. It ceases to be an
+observed variants from single species positive controls. It ceases to be an
 entirely fair assessment, but comparing the Excel reports from the two
 database the improvement is quite dramatic.
 
