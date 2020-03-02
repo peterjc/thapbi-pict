@@ -68,7 +68,7 @@ If you installed via pip, this should work:
 
     $ pip install --upgrade thapbi-pict
 
-Eithe rway, you can check the installed tool version using:
+Either way, you can check the installed tool version using:
 
 .. code:: console
 
