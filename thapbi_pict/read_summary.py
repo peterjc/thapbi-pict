@@ -214,9 +214,12 @@ def main(
         "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             max(
-                abundance_by_samples.get((md5, sample), 0)
-                for md5 in md5_to_seq
-                for sample in samples
+                (
+                    abundance_by_samples.get((md5, sample), 0)
+                    for md5 in md5_to_seq
+                    for sample in samples
+                ),
+                default=0,
             ),
             sum(
                 1
@@ -265,9 +268,12 @@ def main(
             current_row,
             4,
             max(
-                abundance_by_samples.get((md5, sample), 0)
-                for md5 in md5_to_seq
-                for sample in samples
+                (
+                    abundance_by_samples.get((md5, sample), 0)
+                    for md5 in md5_to_seq
+                    for sample in samples
+                ),
+                default=0,
             ),
         )
         worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
