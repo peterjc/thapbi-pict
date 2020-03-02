@@ -52,3 +52,24 @@ Once installed, you should be able to run the tool using:
 
 This should automatically find the installed copy of the Python code. Use
 ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
+
+Updating
+========
+
+If you installed via conda, this should work:
+
+.. code:: console
+
+   $ conda update thapbi-pict
+
+If you installed via pip, this should work:
+
+.. code:: console
+
+    $ pip install --upgrade thapbi-pict
+
+Eithe rway, you can check the installed tool version using:
+
+.. code:: console
+
+    $ thapbi_pict -v
