@@ -418,9 +418,9 @@ def find_requested_files(
                         sys.stderr.write("DEBUG: Ignoring %s\n" % os.path.join(root, x))
                     continue
                 answer.append(x)
-            else:
-                sys.exit(
-                    f"ERROR: Specified filename {x!r} does not have"
+            elif debug:
+                sys.stderr.write(
+                    f"DEBUG: Ignoring {x!r} as does not have"
                     f" expected extension {ext!r}."
                 )
         else:
