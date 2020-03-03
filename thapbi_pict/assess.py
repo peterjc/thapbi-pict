@@ -25,9 +25,12 @@ def sp_in_tsv(classifier_file, min_abundance):
     """
     species = set()
     for line in open(classifier_file):
-        if line.startswith("#"):
+        if line.startswith("#") or not line.strip():
             continue
-        name, taxid, sp, etc = line.split("\t", 3)
+        try:
+            name, taxid, sp, etc = line.split("\t", 3)
+        except ValueError:
+            sys.exit(f"ERROR: Wrong field count in {classifier_file}\n")
         if not sp:
             continue
         # Using "*" as name (without abundance) as wildcard
