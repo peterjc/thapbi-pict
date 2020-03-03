@@ -7,7 +7,8 @@ organisms and/or barcode marker sequences.
 
 These worked examples using public datasets from published papers include
 oomycetes, fungi, microalgae, and bats, and cover markers in ITS1, ITS2, 18S
-rRNA and COI.
+rRNA, COI and more. The main criteria has been mock communities with known
+species composition.
 
 .. toctree::
    :maxdepth: 1
@@ -17,6 +18,7 @@ rRNA and COI.
    fungal_mock/index
    microalgal_mock/index
    fecal_sequel/index
+   endangered_species/index
 
 For each worked example there is a different sub-folder in the THAPBI PICT
 source code under ``examples/`` containing ``setup.sh`` to download the public

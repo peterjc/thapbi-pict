@@ -42,5 +42,13 @@ output reports.
      assay for bat species identification.
      https://doi.org/10.1371/journal.pone.0224969
 
+6. ``endangered_species/`` - A dozen markers in animals and plants, pushing
+   THAPBI PICT beyond its original design goals by pooling markers for
+   sample level analysis. Based on:
+
+   * Arulandhu *et al.* (2017) Development and validation of a multi-locus DNA
+    metabarcoding method to identify endangered species in complex samples.
+    https://doi.org/10.1093/gigascience/gix080
+
 See https://thapbi-pict.readthedocs.io/en/latest/examples/ for discussion of
 these examples.
