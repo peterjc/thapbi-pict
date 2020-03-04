@@ -68,4 +68,11 @@ Quite diverse, with over fifty unique sequences recovered:
     9
 
 Finds all the *Brassica* and *Echinocactus* sp., most of the *Euphorbia* sp.
-Unexpected matches to *Lactuca* sp.
+
+We do see unexpected matches to *Lactuca* sp. where *Lactuca sativa* was in
+the experimental mixture. The dominant sequence present is just one base pair
+away from a published sequence from that species (KM210323.1), but perfectly
+matches published sequences from *Lactuca altaica*, *L. serriola* and
+*L. virosa* - and that is what was in the sample database. If you open the
+associated edit-graph file (``ITS2.edit-graph.xgmml``) in Cytoscape, you can
+see this quite clearly.
