@@ -18,7 +18,8 @@ function analyse {
     thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all.fasta
     thapbi_pict classify -i summary/$NAME.all.fasta -o summary/ -d references/$NAME.sqlite
     for METHOD in identity onebp blast; do
-        thapbi_pict pipeline -d references/${NAME}.sqlite --left $LEFT --right $RIGHT \
+        thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
+		    --left $LEFT --right $RIGHT \
                     -i raw_data/ expected/ -m $METHOD \
                     -s intermediate/$NAME/ -o summary/ -r $NAME \
                     -t metadata.tsv -c 3,4,5 -x 2 -g 4
