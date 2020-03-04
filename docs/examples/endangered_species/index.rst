@@ -10,11 +10,11 @@ all be sequenced with about a dozen different primer pairs for multiple
 metabarcoding markers including 16S, COI, cyt-b, matK, rbcL, trnL and ITS2.
 
 This example pushes THAPBI PICT beyond its current design goals. It requires
-setting up multiple databases, and running the tool multiple times - and then
-any cross-barcode reporting or summation is left to the user. This includes
-the built in sample assessment, where applying the same expected species
-to all the barcodes is overly simplistic (e.g. the 16S markers should never
-report any plant species).
+setting up multiple databases (all of which ought to be properly curated),
+and running the tool multiple times (where potentially different thresholds
+might be needed). In order to provide cross-barcode reporting the ``run.sh``
+ends by pooling all the per-marker intermediates by sample, and generating
+combined reports.
 
 .. toctree::
    :maxdepth: 1
@@ -22,3 +22,4 @@ report any plant species).
    sample_data
    animals
    plants
+   pooled
