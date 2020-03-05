@@ -77,7 +77,7 @@ We have unexpected *Acipenser schrenckii*, which was also found in the paper and
 explained due to sample preparation.
 
 There are also plenty of unclassified sequences from the traditional medicine
-samples, which from an NCBI BLAST search many are likely from undescribed fungi.
+samples, based on an NCBI BLAST search many are likely from undescribed fungi.
 
 cyt-b - long marker
 -------------------
