@@ -1,12 +1,10 @@
 This folder contains multiple examples for use with THAPBI PICT, each with
 their own ``README.rst`` file for context (part of a larger set of worked
-example documentation), and typically scripts ``setup.sh`` (for data
-download and any other one-off setup) and ``run.sh`` (to run the example).
+example documentation).
 
 You can use the ``setup_all.sh`` to download and setup all the raw data,
 and likewise ``run_all.sh`` to general all the intermediate files and the
 output reports.
-
 
 1. ``woody_hosts/`` - simple ITS1 example using default primers and database,
    based on a paper from earlier in the THAPBI Phyto-Threats project:
@@ -47,8 +45,8 @@ output reports.
    sample level analysis. Based on:
 
    * Arulandhu *et al.* (2017) Development and validation of a multi-locus DNA
-    metabarcoding method to identify endangered species in complex samples.
-    https://doi.org/10.1093/gigascience/gix080
+     metabarcoding method to identify endangered species in complex samples.
+     https://doi.org/10.1093/gigascience/gix080
 
 See https://thapbi-pict.readthedocs.io/en/latest/examples/ for discussion of
 these examples.
