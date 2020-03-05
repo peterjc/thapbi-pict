@@ -17,19 +17,11 @@ function analyse {
     thapbi_pict prepare-reads -i raw_data/ -o intermediate/$NAME/ --left $LEFT --right $RIGHT
     thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all.fasta
     thapbi_pict classify -i summary/$NAME.all.fasta -o summary/ -d references/$NAME.sqlite
-    for METHOD in identity onebp blast; do
-        thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
-		    --left $LEFT --right $RIGHT \
-                    -i raw_data/ expected/ -m $METHOD \
-                    -s intermediate/$NAME/ -o summary/ -r $NAME \
-                    -t metadata.tsv -c 3,4,5 -x 2 -g 4
-    done
-    # Now run an edit-graph at a higher abundance threshold
-    # (works as long as pipeline or prepare-reads was run with
-    # the same or lower threshold).
-    # Including all DB entries with -s / --showdb argument
-    #thapbi_pict edit-graph -d ${NAME}.sqlite -i $NAME/ -s \
-    #		-o $NAME.edit-graph.a75.xgmml -a 75
+    thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
+		--left $LEFT --right $RIGHT \
+                -i raw_data/ expected/ \
+                -s intermediate/$NAME/ -o summary/ -r $NAME \
+                -t metadata.tsv -c 3,4,5 -x 2 -g 4
     echo "$NAME done"
 }
 
@@ -40,49 +32,46 @@ function pool {
     rm -rf intermediate_pool/*
     echo "Pooling intermediate FASTA files..."
     for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-	cat intermediate/16S/$S.fasta intermediate/Mini-16S/$S.fasta \
-	    intermediate/Mini-COI/$S.fasta intermediate/Mini-cyt-b/$S.fasta \
-	    intermediate/Mini-rbcL/$S.fasta intermediate/trnL-UAA/$S.fasta \
-	    intermediate/ITS2/$S.fasta > intermediate_pool/$S.fasta;
+	cat intermediate/*/$S.fasta > intermediate_pool/$S.fasta
     done
-    for M in identity onebp blast; do
-	echo "Computing species list for combined header..."
-	# Quick and dirty pooling by concatenating the intermediate
-	# classifier result files per sample is enough for sample-summary,
-	# but headers need reworking for the assess command to work...
-	#
-	# This is largely messing about to get tabs in the right places
-	echo "#sequence-name" > header.tmp
-	echo "taxid" >> header.tmp
-	echo -n "genus-species:" >> header.tmp
-	# Get all possible species classifications, one per line, sorted and unique, then semi-colon separate them
-	cat intermediate/*/*.$M.tsv | grep -v '^#' | cut -f 3 | tr ';' '\n' | sort | uniq | tr '\n' ';' >> header.tmp
-	echo "" >> header.tmp
-	tr '\n' '\t' < header.tmp > intermediate_pool/header.$M.txt
-	echo "note" >> intermediate_pool/header.$M.txt
-	rm header.tmp
 
-	echo "Pooling intermediate $M classifications..."
-	for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-	    cp intermediate_pool/header.$M.txt intermediate_pool/$S.$M.tsv
-	    cat intermediate/*/$S.$M.tsv | grep -v "^#" >> intermediate_pool/$S.$M.tsv
-	done;
+    echo "Computing species list for combined header..."
+    # Quick and dirty pooling by concatenating the intermediate
+    # classifier result files per sample is enough for sample-summary,
+    # but headers need reworking for the assess command to work...
+    #
+    # This is largely messing about to get tabs in the right places
+    echo "#sequence-name" > header.tmp
+    echo "taxid" >> header.tmp
+    echo -n "genus-species:" >> header.tmp
+    # Get all possible species classifications, one per line, sorted and unique, then semi-colon separate them
+    cat intermediate/*/*.onebp.tsv | grep -v '^#' | cut -f 3 | tr ';' '\n' | sort | uniq | tr '\n' ';' >> header.tmp
+    echo "" >> header.tmp
+    tr '\n' '\t' < header.tmp > intermediate_pool/header.onebp.txt
+    echo "note" >> intermediate_pool/header.onebp.txt
+    rm header.tmp
 
-	echo "Generating pooled reports for $M classifier."
-	# Now the reports:
-	thapbi_pict sample-summary -m $M -i intermediate_pool/ \
-		    -o summary/pooled.samples.$M.tsv \
-		    -r summary/pooled.samples.$M.txt \
-		    -e summary/pooled.samples.$M.xlsx \
-		    -t metadata.tsv -c 3,4,5 -x 2 -g 4
-	thapbi_pict read-summary -m $M -i intermediate_pool/ \
-                    -o summary/pooled.reads.$M.tsv \
-                    -e summary/pooled.reads.$M.xlsx \
-                    -t metadata.tsv -c 3,4,5 -x 2 -g 4
-	# And the assessment
-	thapbi_pict assess -i expected/ intermediate_pool/ -m $M \
-		    -o summary/pooled.assess.$M.tsv
-    done
+    echo "Pooling intermediate onebp classifications..."
+    for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
+	cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
+	cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
+    done;
+
+    echo "Generating pooled reports for onebp classifier."
+    # Now the reports:
+    thapbi_pict sample-summary -m onebp -i intermediate_pool/ \
+		-o summary/pooled.samples.onebp.tsv \
+		-r summary/pooled.samples.onebp.txt \
+		-e summary/pooled.samples.onebp.xlsx \
+		-t metadata.tsv -c 3,4,5 -x 2 -g 4
+    thapbi_pict read-summary -m onebp -i intermediate_pool/ \
+                -o summary/pooled.reads.onebp.tsv \
+                -e summary/pooled.reads.onebp.xlsx \
+                -t metadata.tsv -c 3,4,5 -x 2 -g 4
+    # And the assessment
+    thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
+		-o summary/pooled.assess.onebp.tsv
+
     echo "Pooled results done"
 }
 
