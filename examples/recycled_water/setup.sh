@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eup pipeline
 
+mkdir -p intermediate/ summary/
+
 if [ -f taxdmp_2019-12-01/names.dmp ]; then
     echo "Already have taxdmp_2019-12-01/"
 else

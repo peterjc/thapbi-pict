@@ -13,12 +13,11 @@ function analyse {
     thapbi_pict curated-import -i mock_community.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
 
     echo "Running analysis"
-    mkdir -p $NAME/intermediate/
-    # thapbi_pict prepare-reads -i $NAME/raw_data/ -o $NAME/intermediate/ --left "" --right ""
+    mkdir -p intermediate/$NAME/
     # Assume FASTQ already have primers removed!
     thapbi_pict pipeline -d ${NAME}.sqlite --left "" --right "" \
-                -i $NAME/raw_data/ $NAME/expected/ \
-                -s $NAME/intermediate/ -o $NAME/ -r $NAME \
+                -i raw_data/$NAME/ expected/$NAME/ \
+                -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -c 1,2,3,4,5 -x $ID_COL
     echo "$NAME done"
 }

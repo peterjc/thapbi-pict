@@ -16,19 +16,20 @@ function analyse {
     # Using minimum of 2 gives 75k unique, 5 gives 22k, and 10 gives 8.8k unique.
     # Using minimum of 100 (default) gives under 800 unique over samples.
     # [Counts were over both amplicons using the actual primer pairs, 3 runs]
-    mkdir -p $LIBRARY/$NAME
+    mkdir -p $LIBRARY/intermediate/$NAME
     for METHOD in identity onebp blast; do
         thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
                     -i $LIBRARY/raw_data/ $LIBRARY/expected/ -m $METHOD \
-                    -s $LIBRARY/$NAME/ -o $LIBRARY/ -r $LIBRARY.$NAME -a 10 \
+                    -s $LIBRARY/intermediate/$NAME/ -o $LIBRARY/summary/ \
+		    -r $LIBRARY.$NAME -a 10 \
                     --showdb -t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     # Now run an edit-graph at a higher abundance threshold
     # (works as long as pipeline or prepare-reads was run with
     # the same or lower threshold).
     # Including all DB entries with -s / --showdb argument
-    thapbi_pict edit-graph -d ${NAME}.sqlite -i $LIBRARY/$NAME/ --showdb \
-		-o $LIBRARY/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
+    thapbi_pict edit-graph -d ${NAME}.sqlite -i $LIBRARY/intermediate/$NAME/ --showdb \
+		-o $LIBRARY/summary/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
     echo "$NAME done"
 }
 

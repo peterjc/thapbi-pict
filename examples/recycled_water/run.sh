@@ -28,7 +28,6 @@ thapbi_pict edit-graph --showdb \
 	    -o Redekar_et_al_2019_sup_table_3.xgmml
 
 echo "Running analysis"
-mkdir -p intermediate/ summary/
 thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
 	    --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
 	    --right AGCGTTCTTCATCGATGTGC \

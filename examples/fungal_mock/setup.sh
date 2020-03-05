@@ -5,7 +5,7 @@ for LIBRARY in amp_lib_one amp_lib_two; do
     echo "==========="
     echo $LIBRARY
     echo "==========="
-    mkdir -p $LIBRARY/expected
+    mkdir -p $LIBRARY/expected/ $LIBRARY/intermediate/ $LIBRARY/summary/ 
     if [ ! -f $LIBRARY/raw_data/MD5SUM.txt ]; then
 	echo "ERROR: Missing $LIBRARY/raw_data/MD5SUM.txt"
 	false

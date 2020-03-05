@@ -21,24 +21,24 @@ echo ---------------------------------------------------------------
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
 # Default edit-graph has very few DB nodes, so using --showdb argument
-mkdir -p intermediate_COI_430_bats/
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate_COI_430_bats/ -o . \
-	    -r mock-community.COI_430_bats --showdb \
+mkdir -p intermediate/COI_430_bats/
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
+	    -o summary/ -r mock-community.COI_430_bats --showdb \
 	    -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
 	    --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
 
-echo --------------------------------------------------------------------
-echo Fecal sequel - COI	- Mock community using just extended reference DB
-echo --------------------------------------------------------------------
+echo ---------------------------------------------------------------
+echo Fecal sequel - COI	- Mock community using extended reference DB
+echo ---------------------------------------------------------------
 
 # The FASTA intermediate files are the same, no point regenerating them...
-mkdir -p intermediate_COI_ext_bats/
-cd intermediate_COI_ext_bats/
-for FASTA in ../intermediate_COI_430_bats/*.fasta; do ln -f -s $FASTA; done
-cd ../
+mkdir -p intermediate/COI_ext_bats/
+cd intermediate/COI_ext_bats/
+for FASTA in ../COI_430_bats/*.fasta; do ln -f -s $FASTA; done
+cd ../../
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate_COI_ext_bats/ -o . \
-	    -r mock-community.COI_ext_bats \
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_ext_bats/ \
+	    -o summary/ -r mock-community.COI_ext_bats \
             -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
             --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
