@@ -16,6 +16,7 @@ from collections import Counter
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 from .hmm import filter_for_hmm
 from .utils import abundance_from_read_name
@@ -262,16 +263,20 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
 
 
 def make_nr_fasta(
-    input_fasta,
+    input_fasta_or_fastq,
     output_fasta,
     min_abundance=0,
     min_len=0,
     max_len=sys.maxsize,
+    fastq=False,
     debug=False,
 ):
-    r"""Trim and make non-redundant FASTA file from FASTA input.
+    r"""Trim and make non-redundant FASTA/Q file from FASTA input.
 
-    The read names are ignored and treated as abundance one!
+    For FASTQ files all input reads are treated as abundance one.
+    If FASTA inputs follow ``>identifier_abundance\n`` naming then
+    the abundance is used, otherwise treated as abundance one.
+
     Makes a non-redundant FASTA file with the sequences named
     ``>MD5_abundance\n``.
 
@@ -282,10 +287,17 @@ def make_nr_fasta(
     for setting the threshold).
     """
     counts = Counter()
-    with open(input_fasta) as handle:
-        for _, seq in SimpleFastaParser(handle):
-            assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
-            counts[seq.upper()] += 1
+    with open(input_fasta_or_fastq) as handle:
+        if fastq:
+            for _, seq, _ in FastqGeneralIterator(handle):
+                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
+                counts[seq.upper()] += 1
+        else:
+            for title, seq in SimpleFastaParser(handle):
+                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
+                assert title.count(" ") == 0, title
+                assert title.count("_") == 1 and title[32] == "_", title
+                counts[seq.upper()] += abundance_from_read_name(title)
     return (
         sum(counts.values()) if counts else 0,
         len(counts),
@@ -345,6 +357,7 @@ def prepare_sample(
     hmm_stem,
     min_abundance,
     control,
+    merged_cache,
     shared_tmp,
     debug=False,
     cpu=0,
@@ -389,19 +402,37 @@ def prepare_sample(
     if debug:
         sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
 
-    # trimmomatic
-    trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
-    trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-    run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
-    for _ in (trim_R1, trim_R2):
-        if not os.path.isfile(_):
-            sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+    if merged_cache:
+        merged_fasta = os.path.join(merged_cache, f"{stem}.fasta")
+    else:
+        merged_fasta = None
 
-    # flash
-    merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
-    run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
-    if not os.path.isfile(merged_fastq):
-        sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
+    if os.path.isfile(merged_fasta):
+        if debug:
+            sys.stderr.write(f"DEBUG: Reusing {merged_fasta}\n")
+        merged_fastq = None
+    else:
+        # trimmomatic
+        trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
+        trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
+        run_trimmomatic(raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu)
+        for _ in (trim_R1, trim_R2):
+            if not os.path.isfile(_):
+                sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+
+        # flash
+        merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
+        run_flash(trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu)
+        if not os.path.isfile(merged_fastq):
+            sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
+
+        if merged_fasta:
+            if debug:
+                sys.stderr.write(f"DEBUG: Caching {merged_fasta}\n")
+            tmp_fasta = os.path.join(tmp, "flash.extendedFrags.fasta")
+            make_nr_fasta(merged_fastq, tmp_fasta, fastq=True)
+            shutil.move(tmp_fasta, merged_fasta)
+            merged_fastq = None
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
@@ -411,7 +442,7 @@ def prepare_sample(
     else:
         bad_primer_fasta = None
     run_cutadapt(
-        merged_fastq,
+        merged_fastq or merged_fasta,
         trimmed_fasta,
         bad_primer_fasta,
         left_primer,
@@ -515,6 +546,9 @@ def main(
     """
     assert isinstance(fastq, list)
 
+    if merged_cache and not os.path.isdir(merged_cache):
+        sys.exit(f"ERROR: {merged_cache} for merged cache is not a directory.")
+
     if negative_controls and not hmm_stem:
         sys.exit("ERROR: If using negative controls, must use --hmm too.")
 
@@ -596,6 +630,7 @@ def main(
             hmm_stem,
             min_a,
             control,
+            merged_cache,
             shared_tmp,
             debug=debug,
             cpu=cpu,
