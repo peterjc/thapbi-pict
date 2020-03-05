@@ -210,6 +210,7 @@ def prepare_reads(args=None):
         min_length=args.minlen,
         max_length=args.maxlen,
         ignore_prefixes=tuple(args.ignore_prefixes),
+        merged_cache=args.merged_cache,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -394,6 +395,7 @@ def pipeline(args=None):
         min_length=args.minlen,
         max_length=args.maxlen,
         ignore_prefixes=tuple(args.ignore_prefixes),
+        merged_cache=args.merged_cache,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -567,6 +569,16 @@ ARG_METHOD_INPUT = dict(  # noqa: C408
     default=DEFAULT_METHOD,
     choices=list(method_classifier),
     help=f"Classify method (to infer filenames), default '{DEFAULT_METHOD}'.",
+)
+
+# "--merged-cache",
+ARG_MERGED_CACHE = dict(  # noqa: C408
+    type=str,
+    required=False,
+    metavar="DIRNAME",
+    help="Advanced option. Cache directory for temporary sample FASTA files after "
+    "trimming and merging, but before primer trimming and abundance threshold. "
+    "Intended for multi-primer analyses from a pooled sequencing run.",
 )
 
 # "-t", "--temp",
@@ -867,6 +879,7 @@ def main(args=None):
         help="Show DB entries in edit-graph, regardless of their abundance "
         "in samples. Very slow with large database.",
     )
+    subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
@@ -1126,6 +1139,7 @@ def main(args=None):
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
     subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
+    subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)

@@ -500,6 +500,7 @@ def main(
     min_length=0,
     max_length=sys.maxsize,
     ignore_prefixes=None,
+    merged_cache=None,
     tmp_dir=None,
     debug=False,
     cpu=0,
