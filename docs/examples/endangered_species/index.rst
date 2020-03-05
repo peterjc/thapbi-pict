@@ -9,12 +9,12 @@ traditional medicine mixtures where the exact content is unknown), which have
 all be sequenced with about a dozen different primer pairs for multiple
 metabarcoding markers including 16S, COI, cyt-b, matK, rbcL, trnL and ITS2.
 
-This example pushes THAPBI PICT beyond its current design goals. It requires
+This example pushes THAPBI PICT beyond its original design goals. It requires
 setting up multiple databases (all of which ought to be properly curated),
 and running the tool multiple times (where potentially different thresholds
-might be needed). In order to provide cross-barcode reporting the ``run.sh``
-ends by pooling all the per-marker intermediates by sample, and generating
-combined reports.
+might be needed). In order to provide cross-barcode reporting, the ``run.sh``
+script ends by pooling all the per-marker intermediates by sample, and
+generating combined reports.
 
 .. toctree::
    :maxdepth: 1
