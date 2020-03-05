@@ -28,12 +28,12 @@ Provided files
 
 Either clone the THAPBI PICT source code repository, or decompress the
 latest source code release (``.tar.gz`` file). You should find it contains
-a directory ``examples/fungal_mock/`` which is for this example.
+a directory ``examples/endangered_species/`` which is for this example.
 
 File ``PRJEB18620.txt`` was download from the ENA and includes the raw data
 checksums, URLs, but lacks any sample metadata.
 
-Files ``references/\*.fasta`` were compiled by hand on an *ad hoc* basis to
+Files ``references/*.fasta`` were compiled by hand on an *ad hoc* basis to
 use for pre-trimmed reference databases. They *should not* be used as is in
 any serious analysis. In many cases ambiguous matches have been omitted in
 preference of just species expected in the control mixtures. For example, only
@@ -41,7 +41,7 @@ recording *Brassica napus* and *Brassica oleracea* despite some markers being
 shared by *Brassica juncea* or *Brassica nigra* etc. In more extreme cases,
 markers are clearly not even genus specific, but again only the control
 mixture representative appears - e.g. *Carica papaya*, *Glycine max*,
-*Gossypium hirsutum*, *Lactuca sativa*, *Solanum lycopersicum*). Deliberately
+*Gossypium hirsutum*, *Lactuca sativa*, *Solanum lycopersicum*. Deliberately
 reducing the false positives from these ambiguous marker sequences was done
 for illustrative purposes only.
 
@@ -50,8 +50,9 @@ from *Lactuca sativa* in the control mixture is just one base pair away from
 a published sequence from that species (KM210323.1), but perfectly matches
 published sequences from *Lactuca altaica*, *L. serriola* and *L. virosa*.
 
-Files ``expected/\*.known.tsv`` were compiled by hand from the species content
-of the experimental samples (see descriptions on NCBI and Table 7).
+Files ``expected/*.knonw.tsv`` were compiled by hand from the species content
+of the experimental samples (using the PRJEB18620 sample descriptions on the
+NCBI and Table 7).
 
 Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation. Note that the setup script first
