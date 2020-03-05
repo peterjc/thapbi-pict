@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eup pipeline
 
-echo NOTE: Expected first time run time is about XXX hours,
+echo NOTE: Expected first time run time is about 1.5 hours,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
@@ -14,10 +14,12 @@ function analyse {
 
     echo "Running analysis for $NAME"
     mkdir -p intermediate/$NAME/
-    thapbi_pict prepare-reads -i raw_data/ -o intermediate/$NAME/ --left $LEFT --right $RIGHT
+    thapbi_pict prepare-reads --left $LEFT --right $RIGHT \
+		-i raw_data/ --merged-cache tmp_merged/ -o intermediate/$NAME/
     thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all.fasta
     thapbi_pict classify -i summary/$NAME.all.fasta -o summary/ -d references/$NAME.sqlite
     thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
+		--merged-cache tmp_merged/ \
 		--left $LEFT --right $RIGHT \
                 -i raw_data/ expected/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
