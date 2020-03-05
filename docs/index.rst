@@ -24,7 +24,8 @@ applied to other organisms and/or barcode marker sequences - not just
 *Phytophthora* ITS1.
 
 The worked examples include oomycetes, fungi, microalgae, and bats, and cover
-markers in ITS1, ITS2, 18S rRNA and COI.
+markers in ITS1, ITS2, 18S rRNA and COI and more. The main criteria has been
+mock communities with known species composition.
 
 The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
 Biotechnology and Biological Sciences Research Council (`BBSRC
