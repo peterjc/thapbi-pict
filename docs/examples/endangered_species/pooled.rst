@@ -35,6 +35,6 @@ few percent dry weight, and are likely present below the default minimum
 abundance threshold. This explains the false negatives.
 
 It appears that the THAPBI PICT default minimum abundance threshold of 100
-reads to too stringent for detecting all the markers in a complex pool like
+reads is too stringent for detecting all the markers in a complex pool like
 this. Including negative sequencing controls would help set an objective
 lower bound.
