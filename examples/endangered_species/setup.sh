@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eup pipeline
 
-mkdir -p raw_data/ expected/ intermediate/ intermediate_pool/ summary/
+mkdir -p raw_data/ expected/ tmp_merged/ intermediate/ intermediate_pool/ summary/
 if [ ! -f raw_download/MD5SUM.txt ]; then
     echo "ERROR: Missing raw_download/MD5SUM.txt"
     false
