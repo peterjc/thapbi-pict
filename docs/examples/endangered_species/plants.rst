@@ -20,7 +20,15 @@ is one of the traditional medicine samples.
 rbcL - long target
 ------------------
 
-This gave no sequences at the default abundance threshold.
+This gave the following sequence (and a one SNP variant) at the default
+abundance threshold, all from ``S3``:
+
+    >3ec67342f519461a0ad40fef436b1b1d
+    GACTGCGGGGTTCAAAGCTGGTGTTAAAGATTATAGATTGACGTATTATACTCCTGAATTGGGGTTATCCGCTAAGAATT
+    ACGGTAGAGCAGTTTATGAATGTCTT
+
+The best NCBI BLAST matches are *Astragalus*, but with a break point. The
+authors of the original paper report finding *Astragalus danicus* in ``S3``.
 
 Mini-rbcL - short target
 ------------------------

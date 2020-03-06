@@ -151,9 +151,7 @@ NAME=rbcL
 LEFT=ATGTCACCACAAACAGAGACTAAAGC
 RIGHT=GTAAAATCAAGTCCACCRCG
 
-echo "Skipping, failed to amplify"
-echo "(at least at default threshold)"
-#analyse
+analyse
 
 echo ==========================================================
 echo Universal plant DNA barcodes and mini-barcodes - Mini-rbcL
