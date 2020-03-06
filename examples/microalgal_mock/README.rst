@@ -71,13 +71,13 @@ files downloaded correctly:
 
 .. code:: console
 
-   $ cd V4/raw_data/
+   $ cd raw_data/V4/
    $ md5sum -c MD5SUM.txt
    $ cd ../../
 
 .. code:: console
 
-   $ cd V8V9/raw_data/
+   $ cd raw_data/V8V9/
    $ md5sum -c MD5SUM.txt
    $ cd ../../
 
