@@ -82,7 +82,9 @@ samples, based on an NCBI BLAST search many are likely from undescribed fungi.
 cyt-b - long marker
 -------------------
 
-This gave no sequences at the default abundance threshold.
+This gave no sequences at the default abundance threshold, nor at 50. Dropping
+to 10 we get a modest number of hits - the only perfect match was unfortunately
+to plants in the Asteraceae family.
 
 Mini-cyt-b - short marker
 -------------------------

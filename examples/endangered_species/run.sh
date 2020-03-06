@@ -115,8 +115,9 @@ NAME=cyt-b
 LEFT=CCATCCAACATCTCAGCATGATGAAA
 RIGHT=GGCAAATAGGAARTATCATTC
 
-echo "Skipping, failed to amplify"
-echo "(at least at default threshold)"
+echo "Skipping, failed to amplify at default threhold or even 50."
+echo "Drop to -a 10 and you get a modest number of sequences."
+
 #analyse
 
 echo ============================================================
@@ -139,6 +140,7 @@ RIGHT=CGTACAGTACTTTTGTGTTTACGAG
 
 echo "Skipping, failed to amplify"
 echo "(at least at default threshold)"
+
 #analyse
 
 #Note authors excluded the other matK primers...
@@ -184,6 +186,7 @@ RIGHT=CCATTGAGTCTCTGCACCTATC
 echo "Skipping, failed to amplify - no trimmed sequence found"
 echo "more than once, only singletons which are as good as noise."
 echo "Need to set --min-len 10 to match the author's analysis."
+
 #analyse
 
 echo =====================================================
