@@ -50,15 +50,46 @@ from *Lactuca sativa* in the control mixture is just one base pair away from
 a published sequence from that species (KM210323.1), but perfectly matches
 published sequences from *Lactuca altaica*, *L. serriola* and *L. virosa*.
 
-Files ``expected/*.knonw.tsv`` were compiled by hand from the species content
+Files ``expected/*.known.tsv`` were compiled by hand from the species content
 of the experimental samples (using the PRJEB18620 sample descriptions on the
 NCBI and Table 7).
 
 Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
-discussed in the THAPBI PICT documentation. Note that the setup script first
-downloads files from the ENA under ``raw_downloads/`` (a mix of ``*.zip`` and
-``*.fastq.gz`` files), and then sets up consistently named and compressed
-entries under ``raw_data/*.fastq.gz`` instead.
+discussed in the THAPBI PICT documentation.
+
+
+Setup
+-----
+
+We assume you have aquired the THAPBI PICT source code, and have your command
+line terminal open in the ``examples/endangered_species/`` folder. First we run
+the ``setup.py`` script:
+
+.. code:: console
+
+   $ ./setup.py
+
+This first downloads files from the ENA under ``raw_downloads/`` (a mix of
+``*.zip`` and ``*.fastq.gz`` files), and then sets up consistently named and
+compressed entries under ``raw_data/*.fastq.gz`` instead.
+
+If you have the ``md5sum`` tool installed (standard on Linux), verify the files
+downloaded correctly:
+
+.. code:: console
+
+    $ cd raw_download/
+    $ md5sum -c MD5SUM.txt
+    $ cd ..
+
+There is no need to decompress the files.
+
+Running the pipeline
+--------------------
+
+Next, you can run the ``run.py`` script which will call THAPBI PICT multiple times.
+Under the ``intermediate/`` folder will be a subdirectory for each of the primer
+settings, and the primer name is used as a prefix for the reports in ``summary/``.
 
 Metadata
 --------
