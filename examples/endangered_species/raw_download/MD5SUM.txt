@@ -1,4 +1,3 @@
-submitted_md5  submitted_ftp
 5086149f279b7fd730876035fa26158d  EM_1_R1.fastq.zip
 b78aa773263763d1fbf1cae38a17114d  EM_1_R2.fastq.zip
 9db09a57a42fee76f77c5f86a37e5446  EM_2_R1.fastq.zip
