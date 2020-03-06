@@ -21,7 +21,7 @@ rbcL - long target
 ------------------
 
 This gave the following sequence (and a one SNP variant) at the default
-abundance threshold, all from ``S3``:
+abundance threshold, all from ``S3``::
 
     >3ec67342f519461a0ad40fef436b1b1d
     GACTGCGGGGTTCAAAGCTGGTGTTAAAGATTATAGATTGACGTATTATACTCCTGAATTGGGGTTATCCGCTAAGAATT
@@ -68,16 +68,16 @@ We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
 trnL-P6-loop
 ------------
 
-This gave no sequences at the default abundance threshold, and in disabling
+This gave no sequences at the default abundance threshold, and disabling
 the abundance threshold no unique trimmed sequence was seen more than once.
 This is strange, given the authors report finding *Lactuca sativa* and
 *Cycas revoluta* from this primer. It is however easily explained, quoting
 the paper:
 
-> We implemented a minimum DNA barcode length of 200 nt, except for DNA
-> barcodes with a basic length shorter than 200 nt, in which case the
-> minimum expected DNA barcode length is set to 100 nt for ITS2, 140 nt
-> for mini-rbcL, and 10 nt for the trnL (P6 loop) marker.
+   We implemented a minimum DNA barcode length of 200 nt, except for DNA
+   barcodes with a basic length shorter than 200 nt, in which case the
+   minimum expected DNA barcode length is set to 100 nt for ITS2, 140 nt
+   for mini-rbcL, and 10 nt for the trnL (P6 loop) marker.
 
 We should have changed the THAPBI PICT minimum length from 100 (our default)
 to 10 as well.
