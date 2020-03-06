@@ -1,4 +1,4 @@
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict prepare-reads ...`` command.
 """
+import gzip
 import os
 import shutil
 import subprocess
@@ -230,7 +231,7 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
     return run(cmd, debug=debug)
 
 
-def save_nr_fasta(counts, output_fasta, min_abundance=0):
+def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
     The output FASTA records are named ``>MD5_abundance\n``, which is the
@@ -248,7 +249,11 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0):
     accepted = 0
     values = sorted((-count, seq) for seq, count in counts.items())
     if output_fasta == "-":
+        if gzipped:
+            raise ValueError("Does not support gzipped output to stdout.")
         out_handle = sys.stdout
+    elif gzipped:
+        out_handle = gzip.open(output_fasta, "wt")
     else:
         out_handle = open(output_fasta, "w")
     for count, seq in values:
@@ -268,14 +273,22 @@ def make_nr_fasta(
     min_abundance=0,
     min_len=0,
     max_len=sys.maxsize,
+    weighted_input=False,
     fastq=False,
+    gzipped=False,
     debug=False,
 ):
     r"""Trim and make non-redundant FASTA/Q file from FASTA input.
 
-    For FASTQ files all input reads are treated as abundance one.
-    If FASTA inputs follow ``>identifier_abundance\n`` naming then
-    the abundance is used, otherwise treated as abundance one.
+    Makes a non-redundant FASTA file with the sequences named
+    ``>MD5_abundance\n``.
+
+    For FASTQ files all input reads are treated as abundance one
+    (using weighted_input=True gives an error).
+
+    If FASTA input and weighted_input=True, reads must follow
+    ``>identifier_abundance\n`` naming and the abundance is used.
+    Otherwise all treated as abundance one.
 
     Makes a non-redundant FASTA file with the sequences named
     ``>MD5_abundance\n``.
@@ -289,19 +302,24 @@ def make_nr_fasta(
     counts = Counter()
     with open(input_fasta_or_fastq) as handle:
         if fastq:
+            assert not weighted_input, "Not implemented for FASTQ"
             for _, seq, _ in FastqGeneralIterator(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 counts[seq.upper()] += 1
-        else:
+        elif weighted_input:
             for title, seq in SimpleFastaParser(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 assert title.count(" ") == 0, title
                 assert title.count("_") == 1 and title[32] == "_", title
                 counts[seq.upper()] += abundance_from_read_name(title)
+        else:
+            for _, seq in SimpleFastaParser(handle):
+                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
+                counts[seq.upper()] += 1
     return (
         sum(counts.values()) if counts else 0,
         len(counts),
-        save_nr_fasta(counts, output_fasta, min_abundance),
+        save_nr_fasta(counts, output_fasta, min_abundance, gzipped=gzipped),
         max(counts.values()) if counts else 0,
     )
 
@@ -403,13 +421,13 @@ def prepare_sample(
         sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
 
     if merged_cache:
-        merged_fasta = os.path.join(merged_cache, f"{stem}.fasta")
+        merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
     else:
-        merged_fasta = None
+        merged_fasta_gz = None
 
-    if os.path.isfile(merged_fasta):
+    if merged_fasta_gz and os.path.isfile(merged_fasta_gz):
         if debug:
-            sys.stderr.write(f"DEBUG: Reusing {merged_fasta}\n")
+            sys.stderr.write(f"DEBUG: Reusing {merged_fasta_gz}\n")
         merged_fastq = None
     else:
         # trimmomatic
@@ -426,12 +444,13 @@ def prepare_sample(
         if not os.path.isfile(merged_fastq):
             sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
 
-        if merged_fasta:
+        if merged_fasta_gz:
             if debug:
-                sys.stderr.write(f"DEBUG: Caching {merged_fasta}\n")
-            tmp_fasta = os.path.join(tmp, "flash.extendedFrags.fasta")
-            make_nr_fasta(merged_fastq, tmp_fasta, fastq=True)
-            shutil.move(tmp_fasta, merged_fasta)
+                sys.stderr.write(f"DEBUG: Caching {merged_fasta_gz}\n")
+            tmp_fasta_gz = os.path.join(tmp, "flash.extendedFrags.fasta")
+            make_nr_fasta(merged_fastq, tmp_fasta_gz, fastq=True, gzipped=True)
+            shutil.move(tmp_fasta_gz, merged_fasta_gz)
+            del tmp_fasta_gz
             merged_fastq = None
 
     # trim
@@ -442,7 +461,7 @@ def prepare_sample(
     else:
         bad_primer_fasta = None
     run_cutadapt(
-        merged_fastq or merged_fasta,
+        merged_fastq or merged_fasta_gz,
         trimmed_fasta,
         bad_primer_fasta,
         left_primer,
@@ -464,6 +483,8 @@ def prepare_sample(
         min_abundance=min_abundance,
         min_len=min_len,
         max_len=max_len,
+        weighted_input=bool(merged_fasta_gz),
+        gzipped=False,
         debug=debug,
     )
     if debug:
