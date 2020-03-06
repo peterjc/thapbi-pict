@@ -309,9 +309,11 @@ def make_nr_fasta(
         elif weighted_input:
             for title, seq in SimpleFastaParser(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
-                assert title.count(" ") == 0, title
+                assert title.count(" ") == 0 or (
+                    title.count(" ") == 1 and title.endswith(" rc")
+                ), title
                 assert title.count("_") == 1 and title[32] == "_", title
-                counts[seq.upper()] += abundance_from_read_name(title)
+                counts[seq.upper()] += abundance_from_read_name(title.split(None, 1)[0])
         else:
             for _, seq in SimpleFastaParser(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
