@@ -181,8 +181,9 @@ NAME=trnL-P6-loop
 LEFT=GGGCAATCCTGAGCCAA
 RIGHT=CCATTGAGTCTCTGCACCTATC
 
-echo "Skipping, failed to amplify"
-echo "(at least at default threshold)"
+echo "Skipping, failed to amplify - no trimmed sequence found"
+echo "more than once, only singletons which are as good as noise."
+echo "Need to set --min-len 10 to match the author's analysis."
 #analyse
 
 echo =====================================================
