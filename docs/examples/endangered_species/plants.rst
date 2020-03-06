@@ -10,7 +10,12 @@ matK
 
 The paper described two sets of primers for matK, although only one was used
 for the MiSeq sequencing. This gave no sequences at the default abundance
-threshold.
+threshold, dropping to 50 showed three uniques sequences in three files, and
+even dropping to 10 only gave results from ``EM_2``, ``EM_14`` and ``S8``.
+
+NCBI BLAST of these sequence gave no perfect matches, but suggested
+*Sanguisorba* sp. was present, noted in the original paper for ``S8`` which
+is one of the traditional medicine samples.
 
 rbcL - long target
 ------------------
