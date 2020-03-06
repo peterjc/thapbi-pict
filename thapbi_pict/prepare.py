@@ -188,10 +188,16 @@ def run_cutadapt(
     """
     if not left_primer and not right_primer:
         # special case!
-        from Bio.SeqIO import convert
+        if long_in.endswith(".fasta.gz"):
+            # Should the main intermediates be gzipped?
+            return run(f"cat {long_in} | gunzip > {trimmed_out}", debug=debug)
+        elif long_in.endswith(".fastq"):
+            from Bio.SeqIO import convert
 
-        convert(long_in, "fastq", trimmed_out, "fasta")
-        return 0
+            convert(long_in, "fastq", trimmed_out, "fasta")
+            return 0
+        else:
+            sys.exit(f"ERROR: called on {long_in} with no primers")
     cmd = ["cutadapt"]
     if bad_out:
         cmd += ["--untrimmed-output", bad_out]
