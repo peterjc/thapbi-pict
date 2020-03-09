@@ -55,7 +55,7 @@ if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
-for M in identity onebp blast swarm swarmid; do
+for M in identity onebp substr blast swarm swarmid; do
     echo "Checking single isolate control with $M"
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
