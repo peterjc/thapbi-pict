@@ -174,5 +174,9 @@ sequence count, unknowns, *Phytophthora*, and then all the unique species or
 ambiguous species combinations. In this case there are no non-*Phytophthora*
 predictions.
 
+The values are total read counts for that row/column, with conditional
+formatting applied so non-zero entries have a bright red background.
+
 For example, the final rows are the two DNA mixture controls (blue and pink)
-and the negative controls (orange).
+and the negative controls (orange). These have almost no metadata, and the
+negative controls read counts are all zero.
