@@ -44,4 +44,18 @@ diff $TMP/output/report.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.one
 diff $TMP/output/report.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 diff $TMP/output/report.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
 
+
+# Clear the intermediate, run again with --merged-cache
+rm -rf $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
+mkdir $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
+thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output -i tests/reads/
+for F in $TMP/intermediate_with_cache/*.fasta; do
+    diff $F $TMP/intermediate/${F##*/}
+done
+diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
+diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
+diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
+diff $TMP/output/thapbi-pict.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
+
 echo "$0 - test_pipeline.sh passed"
