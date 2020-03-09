@@ -8,7 +8,7 @@ abundance threshold. Now we discuss the pooled results produced by the
 by concatenating the intermediate files together).
 
 Please open the ``pooled.samples.onebp.xlsx`` sample report, zoomed out you
-should have something like this:
+should have something like this (with the genus level columns hidden):
 
 .. image:: https://user-images.githubusercontent.com/63959/76228065-23591800-6218-11ea-83fe-a1eff8e61dce.png
    :alt: Excel screenshot showing pooled.samples.onebp.xlsx
