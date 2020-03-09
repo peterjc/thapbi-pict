@@ -15,7 +15,7 @@ pairs?
 
 .. code:: console
 
-    $ summary/16S.all.fasta 
+    $ summary/16S.all.fasta
     >1f2b15d58f9f40b862486676809d4744_20058
     CACCTCCAGCATTCCCAGTATTGGAGGCATTGCCTGCCCAGTGACAACTGTTTAACGGCCGCGGTATCCTGACCGTGCAA
     AGGTAGCATAATCATTTGTTCTCTAAATAAGGACTTGTATGAATGGCCGCACGAGGGTTTTACTGTCTCTTACTTCCAAT
@@ -35,7 +35,7 @@ The output from the Mini-16S marker is far more diverse, with 25 unique sequence
 
 .. code:: console
 
-    $ grep -c ">" summary/Mini-16S.all.fasta 
+    $ grep -c ">" summary/Mini-16S.all.fasta
     25
 
 The most common is again a perfect match to *Bos taurus*, which this time has no

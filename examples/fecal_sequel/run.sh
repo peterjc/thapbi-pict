@@ -28,7 +28,7 @@ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
 	    --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
 
 echo ---------------------------------------------------------------
-echo Fecal sequel - COI	- Mock community using extended reference DB
+echo Fecal sequel - COI - Mock community using extended reference DB
 echo ---------------------------------------------------------------
 
 # The FASTA intermediate files are the same, no point regenerating them...
