@@ -157,3 +157,22 @@ too strict.
 If any of the requested metadata is missing (i.e. a blank entry in the table
 for a requested field), then it does not get shown. For example, this applies
 to the DNA mixes and the negative controls.
+
+The other files are a tabular view of this information, plain text and Excel
+format. Here is a screenshot of the ``with-metadata.samples.onebp.xlsx`` file
+opened in Excel (with the genus only columns hidden):
+
+.. image:: https://user-images.githubusercontent.com/63959/76231207-cf046700-621c-11ea-9f3a-cdb0cf539483.png
+   :alt: Excel screenshot showing with-metadata.samples.onebp.xlsx
+
+Each site has one or more rows in the same background colour (pink, orange,
+yellow, green, blue, repeated), with one row for each time it was sequenced
+(the per-site sampling).
+
+The metadata is in the first columns, then the sequence filename stem, total
+sequence count, unknowns, *Phytophthora*, and then all the unique species or
+ambiguous species combinations. In this case there are no non-*Phytophthora*
+predictions.
+
+For example, the final rows are the two DNA mixture controls (blue and pink)
+and the negative controls (orange).
