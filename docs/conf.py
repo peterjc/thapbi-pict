@@ -25,7 +25,7 @@ import thapbi_pict
 # -- Project information -----------------------------------------------------
 
 project = "THAPBI PICT"
-copyright = "2019, Peter Cock"
+copyright = "2020, Peter Cock, James Hutton Institute;"
 author = "Peter Cock"
 
 # The full version, including alpha/beta/rc tags
