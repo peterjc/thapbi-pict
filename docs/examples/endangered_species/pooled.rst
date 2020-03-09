@@ -7,9 +7,28 @@ abundance threshold. Now we discuss the pooled results produced by the
 ``run.sh`` shell script (which literally pooled the markers for each sample
 by concatenating the intermediate files together).
 
-Please open the ``pooled.samples.onebp.xlsx`` sample report, and to look at
-the unknown reads see ``pooled.reads.onebp.xlsx``. Overall the replicates
-are reassuringly consistent.
+Please open the ``pooled.samples.onebp.xlsx`` sample report, zoomed out you
+should have something like this:
+
+.. image:: https://user-images.githubusercontent.com/63959/76228065-23591800-6218-11ea-83fe-a1eff8e61dce.png
+   :alt: Excel screenshot showing pooled.samples.onebp.xlsx
+
+Column E (the first vertical red column) is the sequence count (non-zero for
+all the samples). Next in column F is the unknowns - and even at this zoom it
+is possible to see a solid red region for the two traditional medicine samples
+(wide green bands).
+
+To look at the unknown reads see ``pooled.reads.onebp.xlsx``, again zoomed out
+you should have something like this where the top half of the rows are those
+sequences with a species prediction in column B. It is clear that the majority
+of the unknown sequences are from the two traditional medicine samples (wide
+green bands):
+
+.. image:: https://user-images.githubusercontent.com/63959/76227914-e9881180-6217-11ea-8f21-0fcf3a43ae87.png
+   :alt: Excel screenshot showing pooled.reads.onebp.xlsx
+
+Overall the replicates are reassuringly consistent - look at neigbouring
+rows/columns within the colour bands in the two reports.
 
 The automated model assessment output in ``pooled.assess.onebp.tsv`` is
 also worth review. Note this only looks at the experimental mixtures where
