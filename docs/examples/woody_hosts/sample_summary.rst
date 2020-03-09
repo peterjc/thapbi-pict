@@ -23,7 +23,7 @@ Excel (``-e`` or ``--excel``), and human readable plain text TXT outputs
 
     $ thapbi_pict sample-summary -i intermediate/ \
       -o summary/thapbi-pict.samples.onebp.tsv \
-      -e summary/thapbi-pict.samples.onebp.xlxs \
+      -e summary/thapbi-pict.samples.onebp.xlsx \
       -r summary/thapbi-pict.samples.onebp.txt
     ...
 
@@ -160,19 +160,19 @@ to the DNA mixes and the negative controls.
 
 The other files are a tabular view of this information, plain text and Excel
 format. Here is a screenshot of the ``with-metadata.samples.onebp.xlsx`` file
-opened in Excel (with the genus only columns hidden):
+opened in Excel:
 
 .. image:: https://user-images.githubusercontent.com/63959/76231207-cf046700-621c-11ea-9f3a-cdb0cf539483.png
    :alt: Excel screenshot showing with-metadata.samples.onebp.xlsx
-
-Each site has one or more rows in the same background colour (pink, orange,
-yellow, green, blue, repeated), with one row for each time it was sequenced
-(the per-site sampling).
 
 The metadata is in the first columns, then the sequence filename stem, total
 sequence count, unknowns, *Phytophthora*, and then all the unique species or
 ambiguous species combinations. In this case there are no non-*Phytophthora*
 predictions.
+
+Using the metadata each site has one or more rows in the same background
+colour (pink, orange, yellow, green, blue, repeated), with one row for each
+time it was sequenced (the per-site sampling).
 
 The values are total read counts for that row/column, with conditional
 formatting applied so non-zero entries have a bright red background.
@@ -180,3 +180,8 @@ formatting applied so non-zero entries have a bright red background.
 For example, the final rows are the two DNA mixture controls (blue and pink)
 and the negative controls (orange). These have almost no metadata, and the
 negative controls read counts are all zero.
+
+The plain text table ``with-metadata.samples.onebp.xlsx`` is the same, but
+without the colours and formatting. The files generated without metadata
+(``thapbi-pict.samples.onebp.xlsx`` etc) lack the extra columns and the
+background colour bands.
