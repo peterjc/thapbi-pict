@@ -47,6 +47,7 @@ Key links:
    :maxdepth: 1
    :caption: Documentation contents:
 
+   introduction
    installation
    quick_start
    examples/index
