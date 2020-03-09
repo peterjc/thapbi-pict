@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.6.12 *Pending*  New advanced setting ``--merged-cache`` intended for multiple marker use.
+v0.6.12 2020-03-09 New advanced setting ``--merged-cache`` intended for multiple marker use.
 v0.6.11 2020-03-02 Updated genus-level only NCBI import, restrict to those with 32bp leader.
 v0.6.10 2020-02-24 Treat I (for inosine as in tRNA) in primers as N (IUPAC code for any base).
 v0.6.9  2020-02-20 Allow pre-primer-trimmed FASTQ. Fixed row coloring when missing samples.
