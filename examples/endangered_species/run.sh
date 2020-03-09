@@ -206,3 +206,9 @@ echo Pooling markers
 echo ===============
 
 pool # call function above
+
+echo ====
+echo Done
+echo ====
+
+echo "You may wish to delete ``tmp_merged/*.fasta.gz`` now (about 1GB)."
