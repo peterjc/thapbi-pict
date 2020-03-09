@@ -56,10 +56,4 @@ Key links:
    release_history
    development_notes
 
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-
 This documentation was generated for THAPBI PICT version |version|.
