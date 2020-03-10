@@ -4,6 +4,7 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 """Helper functions for THAPB-PICT code."""
+import gzip
 import hashlib
 import os
 import subprocess
@@ -371,12 +372,16 @@ def split_read_name_abundance(text, debug=False):
         return text, 1
 
 
-def abundance_values_in_fasta(fasta_file):
+def abundance_values_in_fasta(fasta_file, gzipped=False):
     """Return unique count, total abundance, and maximum abundance from read names."""
     unique = 0
     total = 0
     max_a = Counter()
-    with open(fasta_file) as handle:
+    if gzipped:
+        handle = gzip.open(fasta_file, "rt")
+    else:
+        handle = open(fasta_file)
+    with handle:
         for title, _ in SimpleFastaParser(handle):
             unique += 1
             a = abundance_from_read_name(title.split(None, 1)[0])
