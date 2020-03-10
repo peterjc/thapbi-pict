@@ -30,4 +30,9 @@ thapbi_pict read-summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta  $TMP/thap
 thapbi_pict read-summary --input tests/classify/P-infestans-T30-4.fasta tests/classify/P-infestans-T30-4.onebp.tsv -o $TMP/read-summary_onebp.tsv -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -e $TMP/read-summary_onebp.xlsx
 diff $TMP/read-summary_onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
 
+# Now require metadata, but give entire folder as input
+thapbi_pict read-summary --input tests/classify/ -o $TMP/read-summary_onebp.tsv -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -e $TMP/read-summary_onebp.xlsx -q
+diff $TMP/read-summary_onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
+
+
 echo "$0 - test_read-summary.sh passed"

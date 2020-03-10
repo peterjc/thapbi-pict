@@ -32,6 +32,7 @@ def main(
     metadata_groups=None,
     metadata_fieldnames=None,
     metadata_index=None,
+    require_metadata=False,
     ignore_prefixes=None,
     debug=False,
 ):
@@ -51,8 +52,20 @@ def main(
     md5_species = {}
     md5_to_seq = {}
 
+    (metadata, meta_names, group_col,) = load_metadata(
+        metadata_file,
+        metadata_cols,
+        metadata_groups,
+        metadata_fieldnames,
+        metadata_index,
+        metadata_sort=True,
+        ignore_prefixes=ignore_prefixes,
+        debug=debug,
+    )
+
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
+    samples = set()
     for fasta_file in find_requested_files(
         [_ for _ in inputs if not _.endswith(".tsv")],
         ".fasta",
@@ -60,6 +73,10 @@ def main(
         debug=debug,
     ):
         sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
+        if require_metadata and sample not in metadata:
+            if debug:
+                sys.stderr.write(f"DEBUG: Ignoring {fasta_file} as not in metadata\n")
+            continue
         samples.add(sample)
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -70,43 +87,13 @@ def main(
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
+    if len(samples) < len(metadata):
+        missing = set(metadata).difference(samples)
+        sys.stderr.write(
+            f"WARNING: {len(missing)} samples in metadata have not been sequenced,"
+            f" {sample_sort(missing)[0]} etc.\n"
+        )
     samples = sample_sort(samples)
-
-    (
-        metadata_rows,
-        metadata_samples,
-        meta_names,
-        meta_default,
-        missing_meta,
-        group_col,
-    ) = load_metadata(
-        metadata_file,
-        metadata_cols,
-        metadata_groups,
-        metadata_fieldnames,
-        metadata_index,
-        sequenced_samples=samples,
-        metadata_sort=True,
-        ignore_prefixes=ignore_prefixes,
-        debug=debug,
-    )
-    # Turn row-centric metadata into a dictionary keyed on sequenced sample name
-    metadata = {}
-    new = []
-    # Already sorted rows of the metadata values, discarded the order in the table
-    for row, r_samples in zip(metadata_rows, metadata_samples):
-        for sample in r_samples:
-            if sample in samples:
-                metadata[sample] = row
-                assert sample not in new, sample
-                new.append(sample)
-    for sample in sample_sort(missing_meta):
-        assert sample not in new, sample
-        new.append(sample)
-    assert set(samples) == set(new)
-    assert len(samples) == len(new)
-    samples = new  # take order from metadata
-    del metadata_rows, metadata_samples, new
 
     methods = method.split(",")
     for method in methods:
@@ -118,14 +105,25 @@ def main(
             ignore_prefixes,
             debug,
         )
-        if len(samples) != len(tsv_files):
+        if not require_metadata and len(samples) != len(tsv_files):
             sys.exit(
                 f"ERROR: Identified {len(samples):d} samples from FASTA files,"
                 f" but {len(tsv_files):d} TSV files for {method}"
             )
         for predicted_file in tsv_files:
             sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
-            assert sample in samples, predicted_file
+            if require_metadata and sample not in metadata:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
+                    )
+                continue
+            elif sample not in samples:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Ignoring {predicted_file} as not matched to FASTA\n"
+                    )
+                continue
             # TODO: Look at taxid here?
             for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
                 md5, abundance = split_read_name_abundance(name)
@@ -179,6 +177,7 @@ def main(
 
     current_row = 0
     first_data_row = 0
+    meta_default = [""] * len(meta_names)
     sample_formats = [None] * len(samples)
     if metadata:
         # Insert extra header rows at start for sample meta-data

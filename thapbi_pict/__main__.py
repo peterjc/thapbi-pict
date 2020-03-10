@@ -302,6 +302,7 @@ def read_summary(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        require_metadata=args.requiremeta,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
@@ -382,6 +383,8 @@ def pipeline(args=None):
 
     hmm = expand_hmm_argument(args.hmm)
 
+    # TODO - apply require_metadata=True to the prepare and classify steps?
+
     fasta_files = prepare(
         fastq=args.input,
         negative_controls=args.negctrls,
@@ -447,6 +450,7 @@ def pipeline(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        require_metadata=args.requiremeta,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
@@ -466,6 +470,7 @@ def pipeline(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        require_metadata=args.requiremeta,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
@@ -789,6 +794,10 @@ ARG_METAFIELDS = dict(  # noqa: C408
     "Use in conjunction with -m / --metadata argument.",
 )
 
+# "-q", "--requiremeta",
+ARG_REQUIREMETA = dict(  # noqa: C408
+    action="store_true", help="Ignore any input files without metadata for report.",
+)
 
 # Command line definition
 # =======================
@@ -880,6 +889,7 @@ def main(args=None):
         "in samples. Very slow with large database.",
     )
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
+    subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
@@ -1370,6 +1380,7 @@ def main(args=None):
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=read_summary)
     del subcommand_parser  # To prevent acidentally adding more
@@ -1439,12 +1450,7 @@ def main(args=None):
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    subcommand_parser.add_argument(
-        "-q",
-        "--requiremeta",
-        action="store_true",
-        help="Ignore any input files without metadata.",
-    )
+    subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=sample_summary)
     del subcommand_parser  # To prevent acidentally adding more

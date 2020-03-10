@@ -45,21 +45,42 @@ def main(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
+    (metadata, meta_names, group_col,) = load_metadata(
+        metadata_file,
+        metadata_cols,
+        metadata_groups,
+        metadata_fieldnames,
+        metadata_index,
+        metadata_sort=True,
+        ignore_prefixes=ignore_prefixes,
+        debug=debug,
+    )
+
     samples = set()
     tsv_files = find_requested_files(inputs, f".{method}.tsv", ignore_prefixes, debug)
     if debug:
         sys.stderr.write(
-            f"Loading {len(tsv_files):d} sample predictions using method {method}\n"
+            f"Found {len(tsv_files):d} sample predictions using method {method}\n"
         )
     if not tsv_files:
         sys.exit("ERROR: No input files found\n")
 
+    missing_meta = set()
     genus_predictions = set()
     sample_genus_counts = {}
     species_predictions = set()  # includes A;B;C ambiguous entries
     sample_species_counts = {}
     for predicted_file in tsv_files:
         sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
+        if sample not in metadata:
+            if require_metadata:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
+                    )
+                continue
+            else:
+                missing_meta.add(sample)
         if sample in samples:
             sys.exit(f"ERROR: Duplicate sample name: {sample}\n")
         samples.add(sample)
@@ -84,30 +105,11 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f" {len(samples):d} samples"
-            f" with predictions for {len(genus_predictions):d} genera\n"
+            f"DEBUG: {len(samples):d} samples with predictions for"
+            f" {len(genus_predictions):d} genera\n"
         )
 
     samples = sample_sort(samples)
-    (
-        metadata_rows,
-        metadata_samples,
-        meta_names,
-        meta_default,
-        missing_meta,
-        group_col,
-    ) = load_metadata(
-        metadata_file,
-        metadata_cols,
-        metadata_groups,
-        metadata_fieldnames,
-        metadata_index,
-        sequenced_samples=samples,
-        metadata_sort=True,
-        require_metadata=require_metadata,
-        ignore_prefixes=ignore_prefixes,
-        debug=debug,
-    )
 
     if output == "-":
         if debug:
@@ -143,14 +145,7 @@ def main(
             ]
         ]
         sample_formats = color_bands(
-            [
-                r[group_col]
-                for r, s in zip(metadata_rows, metadata_samples)
-                for _ in s
-                if _ in samples
-            ],
-            sample_color_bands,
-            debug=debug,
+            [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
         )
     else:
         workbook = None
@@ -221,10 +216,24 @@ def main(
         )
 
     # Note already sorted on metadata values, discarded the order in the table
-    batches = list(zip(metadata_rows, metadata_samples))
+    batches = []
+    current_batch = []
+    current_meta = None
+    for sample, meta in metadata.items():
+        if meta == current_meta:
+            current_batch.append(sample)
+            continue
+        if current_batch:
+            batches.append((current_meta, current_batch))
+        current_batch = [sample]
+        current_meta = meta
+    if current_batch:
+        batches.append((current_meta, current_batch))
+    del current_batch, current_meta
+
     if missing_meta:
-        assert not require_metadata
-        batches.append([meta_default, missing_meta])
+        batches.append(([""] * len(meta_names), sample_sort(missing_meta)))
+
     for metadata, sample_batch in batches:
         if human and meta_names:
             # Write the metadata header
