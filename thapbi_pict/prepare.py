@@ -341,7 +341,31 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
     return parse_flash_stdout(run(cmd, debug=debug).stdout)
 
 
-def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
+def load_fasta_header(fasta_file, gzipped=False):
+    """Parse our FASTA hash-comment line header as a dict."""
+    answer = {}
+    if gzipped:
+        handle = gzip.open(fasta_file, "rt")
+    else:
+        handle = open(fasta_file)
+    for line in handle:
+        if line.startswith("#") and ":" in line:
+            tag, value = line[1:].strip().split(":", 1)
+            try:
+                value = int(value)
+            except ValueError:
+                pass
+            answer[tag] = value
+        elif line.startswith(">"):
+            break
+        else:
+            sys.exit(f"ERROR: Unexpected line in headered FASTA file {fasta_file}")
+    return answer
+
+
+def save_nr_fasta(
+    counts, output_fasta, min_abundance=0, gzipped=False, header_dict=None
+):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
     The output FASTA records are named ``>MD5_abundance\n``, which is the
@@ -367,6 +391,9 @@ def save_nr_fasta(counts, output_fasta, min_abundance=0, gzipped=False):
         out_handle = gzip.open(output_fasta, "wt")
     else:
         out_handle = open(output_fasta, "w")
+    if header_dict:
+        for key, value in header_dict.items():
+            out_handle.write(f"#{key}:{value}\n")
     for count, seq in values:
         if -count < min_abundance:
             # Sorted, so everything hereafter is too rare
@@ -388,6 +415,7 @@ def make_nr_fasta(
     weighted_input=False,
     fastq=False,
     gzipped=False,
+    header_dict=None,
     debug=False,
 ):
     r"""Trim and make non-redundant FASTA/Q file from FASTA input.
@@ -431,7 +459,7 @@ def make_nr_fasta(
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 counts[seq.upper()] += 1
     accepted_total, accepted_count = save_nr_fasta(
-        counts, output_fasta, min_abundance, gzipped=gzipped
+        counts, output_fasta, min_abundance, gzipped=gzipped, header_dict=header_dict,
     )
     return (
         sum(counts.values()) if counts else 0,
@@ -556,6 +584,11 @@ def prepare_sample(
         if debug:
             sys.stderr.write(f"DEBUG: Reusing {merged_fasta_gz}\n")
         merged_fastq = None
+        _header = load_fasta_header(merged_fasta_gz, gzipped=True)
+        count_raw = _header["raw_fastq"]
+        count_trimmomatic = _header["trimmomatic"]
+        count_flash = _header["flash"]
+        del _header
     else:
         # trimmomatic
         trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
@@ -585,7 +618,22 @@ def prepare_sample(
             if debug:
                 sys.stderr.write(f"DEBUG: Caching {merged_fasta_gz}\n")
             tmp_fasta_gz = os.path.join(tmp, "flash.extendedFrags.fasta")
-            make_nr_fasta(merged_fastq, tmp_fasta_gz, fastq=True, gzipped=True)
+            make_nr_fasta(
+                merged_fastq,
+                tmp_fasta_gz,
+                fastq=True,
+                gzipped=True,
+                header_dict={
+                    # "left_primer": left_primer,
+                    # "right_primer": right_primer,
+                    "raw_fastq": count_raw,
+                    "trimmomatic": count_trimmomatic,
+                    "flash": count_flash,
+                    # "cutadapt": count_cutadapt,
+                    # "abundance": accepted_total,
+                    # "threshold": min_abundance,
+                },
+            )
             shutil.move(tmp_fasta_gz, merged_fasta_gz)
             del tmp_fasta_gz
             merged_fastq = None
@@ -596,6 +644,7 @@ def prepare_sample(
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
         bad_primer_fasta = None
+    # These counts will be of NR FASTA if using merged cache...
     count_tmp, count_cutadapt = run_cutadapt(
         merged_fastq or merged_fasta_gz,
         trimmed_fasta,
@@ -610,11 +659,30 @@ def prepare_sample(
     )
     if not os.path.isfile(trimmed_fasta):
         sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
-    if count_tmp != count_flash:
-        sys.exit(
-            f"ERROR: Flash says wrote {count_flash},"
-            f" but cutadapt saw {count_tmp} reads."
-        )
+    if merged_fasta_gz:
+        # cutadapt worked on the merged NR reads, so count_cutadapt
+        # is currently the unique read count.
+        _unique, _total, _max = abundance_values_in_fasta(merged_fasta_gz, gzipped=True)
+        if _unique != count_tmp:
+            sys.exit(
+                f"ERROR: Gave it {_unique} unique sequences, "
+                f"but cutadapt says saw {count_cutadapt} unique sequences."
+            )
+        _unique, _total, _max = abundance_values_in_fasta(trimmed_fasta)
+        if _unique != count_cutadapt:
+            sys.exit(
+                f"ERROR: Cutadapt says wrote {count_cutadapt} unique sequences, "
+                f"but we see {_unique} unique sequences."
+            )
+        count_cutadapt = _total
+        del _unique, _total, _max
+    else:
+        # cutadapt worked on redundant reads
+        if count_tmp != count_flash:
+            sys.exit(
+                f"ERROR: Flash says wrote {count_flash},"
+                f" but cutadapt saw {count_tmp} reads."
+            )
 
     # deduplicate and apply minimum abundance threshold
     merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
