@@ -24,13 +24,13 @@ run the prepare-reads step:
 
 .. code:: console
 
-    $ mkdir intermediate_primers/
+    $ mkdir intermediate/
     $ thapbi_pict prepare-reads \
-      -i raw_data/ -o intermediate_primers/ \
+      -i raw_data/ -o intermediate/ \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC
     ...
-    $ ls -1 intermediate_primers/SRR*.fasta | wc -l
+    $ ls -1 intermediate/SRR*.fasta | wc -l
     384
 
 Here we said the left primer is ``GAAGGTGAAGTCGTAACAAGG`` (same as the THAPBI
@@ -81,7 +81,7 @@ With the new primer setting, we again get four sequences passing the abundance t
 
 .. code:: console
 
-    $ cat intermediate_primers/SRR6303586.fasta
+    $ cat intermediate/SRR6303586.fasta
     >e804f4fa9e197115c1f72b943e443dc7_33489
     CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCC
     TGTAATGGGTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAACTAGTAGCTATC
@@ -145,7 +145,7 @@ is still present but only the second most abundant sequence:
 
 .. code:: console
 
-    $ cat intermediate_primers/SRR6303596.fasta
+    $ cat intermediate/SRR6303596.fasta
     >23710597e30e5d95f1d94d6fe8848fb7_40569
     CCACACCAAAAAAACTTTCCACGTGAACCGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGG
     GCTGCTTAATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAAACGAAAGTCTTT
@@ -197,7 +197,7 @@ the extended *Phytophthora ramorum* sequence drops to second most abundant:
 
 .. code:: console
 
-    $ cat intermediate_primers/SRR6303948.fasta
+    $ cat intermediate/SRR6303948.fasta
     >f2d4b17eb421d8c52320c2bd883e77eb_5322
     CCACACCAAAAAAACACCCCACGTGAATTGTACTGTATGAGCTATGTGCTGCGGATTTCTGCGGCTTAGCGAAGGTTTCG
     AAAGAGACCGATGTACTTTTAAACCCCTTTACATTACTGTCTGATAAATTACATTGCAAACATTTAAAGTGGTTGCTCTT
