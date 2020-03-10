@@ -544,9 +544,7 @@ def load_metadata(
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
-    sequenced_samples=None,
     metadata_sort=True,
-    require_metadata=False,
     ignore_prefixes=("Undetermined",),
     debug=False,
 ):
@@ -570,29 +568,16 @@ def load_metadata(
 
     Return values:
 
-    - list of field sample metadata values (each a list of N values)
-    - matching list of associated sequenced sample(s),
-    - list of the N field names,
-    - matching default value (list of N empty strings).
-    - samples without metadata
-
-    Without labeling one of the metadata values as a field-sample ID,
-    we cannot index the return values - instead expect caller to use
-    the row number.
-
-    Optional argument sequenced_samples should be a set or list of
-    sample names which will be cross-checked against the metadata_index
-    column. Samples not in the metadata file are one of the return values
-    and will generate warning message. The other way round gives a
-    missing file warning too (but they are left in the returned data).
-
+    - Ordered dict with samples as keys, lists of N metadata as values
+    - list of the N field names
+    - Grouping offset into the N values
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return [], [], [], [], sequenced_samples, 0
+        return {}, [], 0
 
     if metadata_groups and not metadata_cols:
         sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
@@ -603,10 +588,6 @@ def load_metadata(
             f" column specification {metadata_cols!r},"
             f" field names from row {metadata_name_row!r}\n"
         )
-        if sequenced_samples is not None:
-            sys.stderr.write(
-                f"DEBUG: Have {len(sequenced_samples)} sequenced samples\n"
-            )
 
     try:
         value_cols = [int(_) - 1 for _ in metadata_cols.split(",")]
@@ -650,7 +631,6 @@ def load_metadata(
 
     names = [""] * len(value_cols)  # default
     meta = {}
-    default = [""] * len(value_cols)
     try:
         # Try with default encoding first...
         with open(metadata_file) as handle:
@@ -698,56 +678,27 @@ def load_metadata(
     index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
     del meta_plus_idx
 
-    back = {}
-    for i, samples in enumerate(index):
+    bad = set()
+    metadata = {}
+    for samples, meta_values in zip(index, meta):
         for sample in samples:
             if ignore_prefixes and sample.startswith(ignore_prefixes):
                 continue
-            try:
-                back[sample].add(i)
-            except KeyError:
-                back[sample] = {i}
+            elif sample in metadata:
+                bad.add(sample)
+            else:
+                metadata[sample] = meta_values
+
     if debug:
         sys.stderr.write(
-            f"DEBUG: Loaded metadata for {len(meta):d} field samples,"
-            f" {len(back):d} sequenced samples\n"
+            f"DEBUG: Loaded metadata for {len(meta)} field samples,"
+            f" {len(metadata)} sequenced samples\n"
         )
-
-    missing_meta = []
-    if sequenced_samples is not None and set(back) != set(sequenced_samples):
-        # Using list comprehensions to preserve any meaningful order
-        missing_files = [_ for _ in back if _ not in sequenced_samples]
-        if ignore_prefixes:
-            missing_files = [
-                _ for _ in missing_files if not _.startswith(ignore_prefixes)
-            ]
-        if missing_files:
-            sys.stderr.write(
-                f"WARNING: Missing {len(missing_files):d} sequenced samples"
-                f" listed in metadata, {missing_files[0]} (etc)\n"
-            )
-        missing_meta = [_ for _ in sequenced_samples if _ not in back]
-        if missing_meta:
-            if require_metadata:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Ignoring {len(missing_meta)} sequenced samples"
-                        " without metadata\n"
-                    )
-                missing_meta = []
-            else:
-                sys.stderr.write(
-                    f"WARNING: {len(missing_meta)} sequenced samples without metadata,"
-                    f" {missing_meta[0]} (etc)\n"
-                )
-
-    bad = sample_sort(sample for sample in back if len(back[sample]) > 1)
     if bad:
         print(bad)
         sys.exit(f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)")
-    del back
 
-    return meta, index, names, default, missing_meta, group_col
+    return metadata, names, group_col
 
 
 def color_bands(meta_groups, sample_color_bands, debug=False):
