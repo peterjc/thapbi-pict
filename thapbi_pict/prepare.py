@@ -463,7 +463,6 @@ def prepare_sample(
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
-    trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
     if failed_primer_name:
         bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
     else:
