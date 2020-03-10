@@ -119,6 +119,13 @@ sequence and is used as a unique shorthand - a 32 character string of the
 digits ``0`` to ``9`` and lower cases letters ``a`` to ``f`` inclusive.
 These MD5 checksums are used later in the pipeline, including in reports.
 
+Unusually the intermediate FASTA files start with a header made of multiple
+lines starting with ``#``, which record information about the sample for use
+in reporting. This includes how many raw reads the FASTQ files had, how many
+were left after quality trimming, pair merging, primer trimming and finally
+the abundance threshold. Many tools will accept these files as FASTA without
+complaint, but some tools require the header be removed.
+
 Intermediate TSV files
 ----------------------
 
