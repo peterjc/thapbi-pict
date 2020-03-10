@@ -68,6 +68,12 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
    passed the thresholds. This can happen when a PCR failed, and is expected
    to happen on blank negative controls.
 
+.. WARNING::
+
+   The intermediate FASTA files start with an atypical header made up of
+   lines starting ``#``. Some tools need this to be removed, but others will
+   accept this as valid FASTA format.
+
 The sequence entries in the FASTA file are named ``<checksum>_<abundance>``.
 Here ``<checksum>`` is the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_
 of the sequence, and this is used as a unique shorthand. It is a 32 character
@@ -93,6 +99,14 @@ For example,
 .. code:: console
 
     $ cat intermediate/Site_1_sample_1.fasta
+    #left_primer:GAAGGTGAAGTCGTAACAAGG
+    #right_primer:GCARRGACTTTCGTCCCYRC
+    #raw_fastq:6136
+    #trimmomatic:6105
+    #flash:5869
+    #cutadapt:5861
+    #abundance:4179
+    #threshold:100
     >2e4f0ed53888ed39a2aee6d6d8e02206_2271
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
     GGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTG
@@ -129,8 +143,10 @@ For example,
 Note that for this documentation, the grep output has had the sequences line
 wrapped at 80 characters.
 
-We see this sample had eight unique sequences accepted, happily none of which
-match the synthetic controls. The most common had MD5 checksum
+The header tells us this sample started with 6136 reads in the paired FASTQ
+files, down to just 4179 after processing. The final output has just eight
+unique sequences accepted, happily none of which match the synthetic controls.
+The most common is listed first, and had MD5 checksum
 ``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2271 reads.
 
 You could easily find out which other samples had this unique sequence using

@@ -56,6 +56,14 @@ a reservoir. Here is with the default primer trimming:
 .. code:: console
 
     $ cat intermediate_defaults/SRR6303586.fasta
+    #left_primer:GAAGGTGAAGTCGTAACAAGG
+    #right_primer:GCARRGACTTTCGTCCCYRC
+    #raw_fastq:70396
+    #trimmomatic:70357
+    #flash:67831
+    #cutadapt:67111
+    #abundance:46137
+    #threshold:100
     >11b74237bf44899f24ace62be657172a_35127
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTTAAATT
     TGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAG
@@ -77,11 +85,20 @@ Four very similar sequences (differing in the length of the poly-A run, seven
 is more common than six, and a ``C/T`` SNP towards the end), all matched to
 *Phytophthora chlamydospora* with THAPBI PICT's default settings.
 
-With the new primer setting, we again get four sequences passing the abundance threshold:
+With the new primer setting, which you can see listed at the start of the
+header, we again get four sequences passing the abundance threshold:
 
 .. code:: console
 
     $ cat intermediate/SRR6303586.fasta
+    #left_primer:GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    #right_primer:AGCGTTCTTCATCGATGTGC
+    #raw_fastq:70396
+    #trimmomatic:70357
+    #flash:67831
+    #cutadapt:67341
+    #abundance:43923
+    #threshold:100
     >e804f4fa9e197115c1f72b943e443dc7_33489
     CCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTTAAATTTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCC
     TGTAATGGGTCGGCGTGCTGCTGCTGGGCAGGCTCTATCATGGGCGAGCGTTTGGGCTTCGGCTCGAACTAGTAGCTATC
@@ -128,12 +145,13 @@ default abundance threshold), dropping to four unique sequences.
 Finding *Pythium*
 -----------------
 
-Now for a more interesting example, ``SRR6303596`` aka ``OSU121``,
-another leaf baiting sample but from runoff water. With the defaults:
+Now for a more interesting example, ``SRR6303596`` aka ``OSU121``, another
+leaf baiting sample but from runoff water. With the defaults (using ``grep``
+to omit the header):
 
 .. code:: console
 
-    $ cat intermediate_defaults/SRR6303596.fasta
+    $ grep -v "^#" intermediate_defaults/SRR6303596.fasta
     >3dd3b5989ee07ed2d2b3fac826dbb94f_954
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAATCTTTCCACGTGAATTGTTTTGCTGTACCTTTGGG
     CTTCGCCGTTGTCTTGTTCTTTTGTAAGAGAAAGGGGGAGGCGCGGTTGGAGGCCATCAGGGGTGTGTTCGTCGCGGTTT
@@ -145,7 +163,7 @@ is still present but only the second most abundant sequence:
 
 .. code:: console
 
-    $ cat intermediate/SRR6303596.fasta
+    $ grep -v "^#" intermediate/SRR6303596.fasta
     >23710597e30e5d95f1d94d6fe8848fb7_40569
     CCACACCAAAAAAACTTTCCACGTGAACCGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGG
     GCTGCTTAATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAAACGAAAGTCTTT
@@ -186,7 +204,7 @@ a single unique sequence matching *Phytophthora ramorum*:
 
 .. code:: console
 
-    $ cat intermediate_defaults/SRR6303948.fasta
+    $ grep -v "^#" intermediate_defaults/SRR6303948.fasta
     >dcd6316eb77be50ee344fbeca6e005c7_1437
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTAGTTG
     GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
@@ -197,7 +215,7 @@ the extended *Phytophthora ramorum* sequence drops to second most abundant:
 
 .. code:: console
 
-    $ cat intermediate/SRR6303948.fasta
+    $ grep -v "^#" intermediate/SRR6303948.fasta
     >f2d4b17eb421d8c52320c2bd883e77eb_5322
     CCACACCAAAAAAACACCCCACGTGAATTGTACTGTATGAGCTATGTGCTGCGGATTTCTGCGGCTTAGCGAAGGTTTCG
     AAAGAGACCGATGTACTTTTAAACCCCTTTACATTACTGTCTGATAAATTACATTGCAAACATTTAAAGTGGTTGCTCTT

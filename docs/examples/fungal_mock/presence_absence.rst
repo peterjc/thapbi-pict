@@ -82,7 +82,15 @@ sequences. At the command line:
 
 .. code:: console
 
-    $ cat BITS_B58S3/SRR5314317.fasta
+    $ cat amp_lib_one/BITS_B58S3/SRR5314317.fasta
+    #left_primer:ACCTGCGGARGGATC
+    #right_primer:GAGATCCRTTGYTRAAAGTT
+    #raw_fastq:12564
+    #trimmomatic:12543
+    #flash:11620
+    #cutadapt:91
+    #abundance:80
+    #threshold:10
     >d51507f661ebee38a85bec35b70b7ee1_48
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
@@ -95,7 +103,15 @@ the read count given above with no threshold).
 
 .. code:: console
 
-    $ cat BITS_B58S3/SRR5314316.fasta
+    $ cat amp_lib_one/BITS_B58S3/SRR5314316.fasta
+    #left_primer:ACCTGCGGARGGATC
+    #right_primer:GAGATCCRTTGYTRAAAGTT
+    #raw_fastq:16297
+    #trimmomatic:16282
+    #flash:15814
+    #cutadapt:117
+    #abundance:100
+    #threshold:10
     >d51507f661ebee38a85bec35b70b7ee1_90
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
@@ -123,6 +139,14 @@ a pale blue background in the Excel reports). Working at the terminal:
 .. code:: console
 
     $ cat amp_lib_one/BITS_B58S3/SRR5314315.fasta
+    #left_primer:ACCTGCGGARGGATC
+    #right_primer:GAGATCCRTTGYTRAAAGTT
+    #raw_fastq:19406
+    #trimmomatic:19287
+    #flash:12021
+    #cutadapt:1041
+    #abundance:994
+    #threshold:10
     >d51507f661ebee38a85bec35b70b7ee1_994
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
@@ -133,6 +157,14 @@ read seen four times.
 .. code:: console
 
     $ cat amp_lib_one/BITS_B58S3/SRR5314314.fasta
+    #left_primer:ACCTGCGGARGGATC
+    #right_primer:GAGATCCRTTGYTRAAAGTT
+    #raw_fastq:7285
+    #trimmomatic:6798
+    #flash:5642
+    #cutadapt:3860
+    #abundance:3630
+    #threshold:10
     >d51507f661ebee38a85bec35b70b7ee1_3574
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
