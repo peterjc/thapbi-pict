@@ -100,12 +100,12 @@ def main(
                 metadata[sample] = row
                 assert sample not in new, sample
                 new.append(sample)
-    for sample in missing_meta:
+    for sample in sample_sort(missing_meta):
         assert sample not in new, sample
         new.append(sample)
     assert set(samples) == set(new)
     assert len(samples) == len(new)
-    samples = new
+    samples = new  # take order from metadata
     del metadata_rows, metadata_samples, new
 
     methods = method.split(",")
