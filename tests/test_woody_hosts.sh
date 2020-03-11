@@ -76,8 +76,8 @@ time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
             -t examples/woody_hosts/metadata.tsv \
             -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.samples.*
-if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
-if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.samples.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
+if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
+if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
 
 # Should be identical apart from row order if discard extra leading columns
 # Discarding the header row as only one will still have hash at start
@@ -89,7 +89,7 @@ echo "================================"
 time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
             -o $TMP/woody_hosts/summary/ -r no-metadata
 ls $TMP/woody_hosts/summary/no-metadata.reads.*
-if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
+if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
 time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
@@ -97,7 +97,7 @@ time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
 	    -t examples/woody_hosts/metadata.tsv \
 	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.reads.*
-if [ `grep -c -v "^#" $TMP/woody_hosts/summary/with-metadata.reads.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
+if [ `grep -c -v "^#" $TMP/woody_hosts/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
 echo "=============================="
