@@ -22,17 +22,29 @@ from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
+def file_to_sample_name(filename):
+    """Given filename (without and directory name), return sample name only.
+
+    i.e. XXX.fasta --> and XXX.method.tsv --> XXX
+    """
+    if filename.endswith(".fasta"):
+        return os.path.basename(filename).rsplit(".", 1)[0]
+    elif filename.endswith(".tsv"):
+        return os.path.basename(filename).rsplit(".", 2)[0]
+    else:
+        raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
+
+
 def sample_summary(
+    tsv_files,
     metadata,
     meta_names,
     group_col,
-    inputs,
     output,
     excel,
     human_output,
     method,
     min_abundance=1,
-    require_metadata=False,
     ignore_prefixes=None,
     debug=False,
 ):
@@ -41,38 +53,18 @@ def sample_summary(
     The expectation is that the inputs represent all the samples from
     a meaningful group, likely from multiple sequencing runs (plates).
     """
-    assert isinstance(inputs, list)
-
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
     samples = set()
-    tsv_files = find_requested_files(inputs, f".{method}.tsv", ignore_prefixes, debug)
-    if debug:
-        sys.stderr.write(
-            f"Found {len(tsv_files):d} sample predictions using method {method}\n"
-        )
-    if not tsv_files:
-        sys.exit("ERROR: No input files found\n")
-
     missing_meta = set()
     genus_predictions = set()
     sample_genus_counts = {}
     species_predictions = set()  # includes A;B;C ambiguous entries
     sample_species_counts = {}
-    for predicted_file in tsv_files:
-        sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
+    for sample, predicted_file in tsv_files.items():
         if sample not in metadata:
-            if require_metadata:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
-                    )
-                continue
-            else:
-                missing_meta.add(sample)
-        if sample in samples:
-            sys.exit(f"ERROR: Duplicate sample name: {sample}\n")
+            missing_meta.add(sample)
         samples.add(sample)
         sample_species_counts[sample] = Counter()
         sample_genus_counts[sample] = Counter()
@@ -236,7 +228,6 @@ def sample_summary(
                     human.write("\n")
                 else:
                     human.write("Missing metadata\n\n")
-                    assert not require_metadata
                 if not sample_batch:
                     human.write("Has not been sequenced.\n\n")
             except BrokenPipeError:
@@ -364,15 +355,15 @@ def sample_summary(
 
 
 def read_summary(
+    fasta_files,
+    tsv_files,
     metadata,
     meta_names,
     group_col,
-    inputs,
     output,
     method,
     min_abundance=1,
     excel=None,
-    require_metadata=False,
     ignore_prefixes=None,
     debug=False,
 ):
@@ -381,8 +372,6 @@ def read_summary(
     The expectation is that the inputs represent all the samples
     from one (96 well) plate, or some other meaningful batch.
     """
-    assert isinstance(inputs, list)
-
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
@@ -395,17 +384,7 @@ def read_summary(
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     samples = set()
-    for fasta_file in find_requested_files(
-        [_ for _ in inputs if not _.endswith(".tsv")],
-        ".fasta",
-        ignore_prefixes,
-        debug=debug,
-    ):
-        sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
-        if require_metadata and sample not in metadata:
-            if debug:
-                sys.stderr.write(f"DEBUG: Ignoring {fasta_file} as not in metadata\n")
-            continue
+    for sample, fasta_file in fasta_files.items():
         samples.add(sample)
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -426,31 +405,7 @@ def read_summary(
 
     if debug:
         sys.stderr.write(f"Loading predictions for {method}\n")
-    tsv_files = find_requested_files(
-        [_ for _ in inputs if not _.endswith(".fasta")],
-        f".{method}.tsv",
-        ignore_prefixes,
-        debug,
-    )
-    if not require_metadata and len(samples) != len(tsv_files):
-        sys.exit(
-            f"ERROR: Identified {len(samples):d} samples from FASTA files,"
-            f" but {len(tsv_files):d} TSV files for {method}"
-        )
-    for predicted_file in tsv_files:
-        sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
-        if require_metadata and sample not in metadata:
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
-                )
-            continue
-        elif sample not in samples:
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Ignoring {predicted_file} as not matched to FASTA\n"
-                )
-            continue
+    for sample, predicted_file in tsv_files.items():
         # TODO: Look at taxid here?
         for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
             md5, abundance = split_read_name_abundance(name)
@@ -718,6 +673,46 @@ def main(
         debug=debug,
     )
 
+    fasta_files = {}
+    for filename in find_requested_files(
+        [_ for _ in inputs if not _.endswith(".tsv")],
+        ".fasta",
+        ignore_prefixes,
+        debug=debug,
+    ):
+        sample = file_to_sample_name(filename)
+        if require_metadata and sample not in metadata:
+            continue
+        elif sample in fasta_files:
+            sys.exit(f"ERROR: Multiple FASTA files using {sample} naming")
+        fasta_files[sample] = filename
+
+    tsv_files = {}
+    for filename in find_requested_files(
+        [_ for _ in inputs if not _.endswith(".fasta")],
+        f".{method}.tsv",
+        ignore_prefixes,
+        debug,
+    ):
+        sample = file_to_sample_name(filename)
+        if require_metadata and sample not in metadata:
+            continue
+        elif sample in tsv_files:
+            sys.exit(f"ERROR: Multiple TSV files using {sample} naming")
+        elif sample not in fasta_files:
+            sys.exit(f"ERROR: {filename} without {sample} FASTA file")
+        tsv_files[sample] = filename
+
+    if debug:
+        sys.stderr.write(
+            f"Found {len(fasta_files)} FASTA files, and"
+            f" {len(tsv_files)} sample predictions using method {method}\n"
+        )
+    if set(fasta_files) != set(tsv_files):
+        sys.exit("ERROR: FASTA vs TSV sample name mismatch")
+    if not tsv_files:
+        sys.exit("ERROR: No input FASTA and TSV files found")
+
     if report:
         stem = os.path.join(out_dir, report)
     else:
@@ -725,16 +720,15 @@ def main(
         stem = os.path.join(out_dir, "thapbi-pict")
 
     return_code = sample_summary(
+        tsv_files,
         metadata,
         meta_names,
         group_col,
-        inputs=[_ for _ in inputs if not _.endswith(".fasta")],  # TSV only
         output=f"{stem}.samples.{method}.tsv",
         excel=f"{stem}.samples.{method}.xlsx",
         human_output=f"{stem}.samples.{method}.txt",
         method=method,
         min_abundance=min_abundance,
-        require_metadata=require_metadata,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
@@ -743,15 +737,15 @@ def main(
     sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
 
     return_code = read_summary(
+        fasta_files,
+        tsv_files,
         metadata,
         meta_names,
         group_col,
-        inputs=inputs,  # needs FASTA and TSV
         output=f"{stem}.reads.{method}.tsv",
         excel=f"{stem}.reads.{method}.xlsx",
         method=method,
         min_abundance=min_abundance,
-        require_metadata=require_metadata,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
