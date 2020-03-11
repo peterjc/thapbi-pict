@@ -11,6 +11,7 @@ import os
 import sys
 from collections import Counter
 
+import xlsxwriter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .utils import abundance_from_read_name
@@ -92,110 +93,99 @@ def sample_summary(
 
     samples = sample_sort(samples)
 
-    if output == "-":
-        if debug:
-            sys.stderr.write("DEBUG: Output to stdout...\n")
-        handle = sys.stdout
-    elif output:
-        handle = open(output, "w")
+    # Open files and write headers
+    # ============================
+
+    # TSV header
+    # ----------
+    handle = open(output, "w")
+    if meta_names:
+        handle.write(
+            "#%s\tSequencing sample\tSeq-count\t%s\t%s\n"
+            % (
+                "\t".join(meta_names),
+                "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
+                "\t".join(species_columns),
+            )
+        )
     else:
-        handle = None
-
-    if excel:
-        import xlsxwriter
-
-        workbook = xlsxwriter.Workbook(excel)
-        worksheet = workbook.add_worksheet("Sequence vs samples")
-        red_conditional_format = workbook.add_format(
-            # Maraschino red
-            {"bg_color": "#FF2600", "font_color": "#000000"}
+        handle.write(
+            "#Sequencing sample\tSeq-count\t%s\t%s\n"
+            % (
+                "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
+                "\t".join(species_columns),
+            )
         )
-        vertical_text_format = workbook.add_format(
-            # Vertical text, reading up the page
-            {"rotation": 90}
-        )
-        sample_color_bands = [
-            # Simple rolling rainbow pastel pallet
-            workbook.add_format({"bg_color": c, "font_color": "#000000"})
-            for c in [
-                "#FFCCDA",  # pink
-                "#F7D6B7",  # orange
-                "#FFFFCC",  # yellow
-                "#CCFFDD",  # green
-                "#CCF7FF",  # blue
-            ]
+
+    # Excel setup
+    # -----------
+    workbook = xlsxwriter.Workbook(excel)
+    worksheet = workbook.add_worksheet("Sequence vs samples")
+    red_conditional_format = workbook.add_format(
+        # Maraschino red
+        {"bg_color": "#FF2600", "font_color": "#000000"}
+    )
+    vertical_text_format = workbook.add_format(
+        # Vertical text, reading up the page
+        {"rotation": 90}
+    )
+    sample_color_bands = [
+        # Simple rolling rainbow pastel pallet
+        workbook.add_format({"bg_color": c, "font_color": "#000000"})
+        for c in [
+            "#FFCCDA",  # pink
+            "#F7D6B7",  # orange
+            "#FFFFCC",  # yellow
+            "#CCFFDD",  # green
+            "#CCF7FF",  # blue
         ]
-        sample_formats = color_bands(
-            [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
-        )
-    else:
-        workbook = None
-        worksheet = None
+    ]
+    sample_formats = color_bands(
+        [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
+    )
+
+    # Excel header
+    # ------------
     current_row = 0
-
-    if human_output == "-":
-        if debug:
-            sys.stderr.write("DEBUG: Output human report to stdout...\n")
-        human = sys.stdout
-    elif human_output:
-        human = open(human_output, "w")
-    else:
-        human = None
-
-    if handle:
-        if meta_names:
-            handle.write(
-                "#%s\tSequencing sample\tSeq-count\t%s\t%s\n"
-                % (
-                    "\t".join(meta_names),
-                    "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                    "\t".join(species_columns),
-                )
-            )
-        else:
-            handle.write(
-                "#Sequencing sample\tSeq-count\t%s\t%s\n"
-                % (
-                    "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                    "\t".join(species_columns),
-                )
-            )
-    if worksheet:
-        col_offset = len(meta_names)
-        # Set first row to be tall, with vertical text
-        worksheet.set_row(0, 150, vertical_text_format)
-        # If there are lots of species, set narrow column widths
-        cols = len(genus_predictions) + len(species_columns)
-        if cols > 50:
-            # Set column width to 2
-            worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 2)
-        elif cols > 20:
-            # Set column width to 4
-            worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 4)
-        del cols
-        for offset, name in enumerate(meta_names):
-            worksheet.write_string(current_row, offset, name)
-        col_offset = len(meta_names)
-        worksheet.write_string(current_row, col_offset, "Sequencing sample")
-        worksheet.write_string(current_row, col_offset + 1, "Seq-count")
-        for offset, genus in enumerate(genus_predictions):
-            worksheet.write_string(
-                current_row, col_offset + 2 + offset, genus if genus else "Unknown"
-            )
-        for offset, sp in enumerate(species_columns):
-            worksheet.write_string(
-                current_row, col_offset + 2 + len(genus_predictions) + offset, sp
-            )
-        worksheet.freeze_panes(current_row + 1, col_offset + 2)
-
-    if human:
-        human.write(
-            "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
-            "sequences matched multiple species equally well. For example, "
-            "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
-            "marker.\n\n"
+    col_offset = len(meta_names)
+    # Set first row to be tall, with vertical text
+    worksheet.set_row(0, 150, vertical_text_format)
+    # If there are lots of species, set narrow column widths
+    cols = len(genus_predictions) + len(species_columns)
+    if cols > 50:
+        # Set column width to 2
+        worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 2)
+    elif cols > 20:
+        # Set column width to 4
+        worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 4)
+    del cols
+    for offset, name in enumerate(meta_names):
+        worksheet.write_string(current_row, offset, name)
+    col_offset = len(meta_names)
+    worksheet.write_string(current_row, col_offset, "Sequencing sample")
+    worksheet.write_string(current_row, col_offset + 1, "Seq-count")
+    for offset, genus in enumerate(genus_predictions):
+        worksheet.write_string(
+            current_row, col_offset + 2 + offset, genus if genus else "Unknown"
         )
+    for offset, sp in enumerate(species_columns):
+        worksheet.write_string(
+            current_row, col_offset + 2 + len(genus_predictions) + offset, sp
+        )
+    worksheet.freeze_panes(current_row + 1, col_offset + 2)
 
+    # Human header
+    # -------------
+    human = open(human_output, "w")
+    human.write(
+        "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
+        "sequences matched multiple species equally well. For example, "
+        "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
+        "marker.\n\n"
+    )
+
+    # Main body
+    # =========
     # Note already sorted on metadata values, discarded the order in the table
     batches = []
     current_batch = []
@@ -216,140 +206,117 @@ def sample_summary(
         batches.append(([""] * len(meta_names), sample_sort(missing_meta)))
 
     for metadata, sample_batch in batches:
-        if human and meta_names:
-            # Write the metadata header
-            try:
-                human.write("-" * 60 + "\n\n")
-                if metadata:
-                    for name, value in zip(meta_names, metadata):
-                        if value:
-                            human.write(f"{name}: {value}\n")
-                    human.write("\n")
-                else:
-                    human.write("Missing metadata\n\n")
-                if not sample_batch:
-                    human.write("Has not been sequenced.\n\n")
-            except BrokenPipeError:
-                human = None
+        if meta_names:
+            # Write the human readable metadata header
+            human.write("-" * 60 + "\n\n")
+            if metadata:
+                for name, value in zip(meta_names, metadata):
+                    if value:
+                        human.write(f"{name}: {value}\n")
+                human.write("\n")
+            else:
+                human.write("Missing metadata\n\n")
+            if not sample_batch:
+                human.write("Has not been sequenced.\n\n")
         # Now do the samples in this batch
         for sample in sample_batch:
             if sample not in samples:
                 sys.stderr.write(f"WARNING: Missing {sample}\n")
             else:
-                if handle:
-                    try:
-                        if metadata:
-                            handle.write("\t".join(metadata) + "\t")
-                        handle.write(
-                            "%s\t%i\t%s\t%s\n"
-                            % (
-                                sample,
-                                sum(sample_species_counts[sample].values()),
-                                "\t".join(
-                                    str(sample_genus_counts[sample][genus])
-                                    for genus in genus_predictions
-                                ),
-                                "\t".join(
-                                    str(sample_species_counts[sample][sp])
-                                    for sp in species_predictions
-                                    if sp not in genus_predictions
-                                ),
-                            )
-                        )
-                    except BrokenPipeError:
-                        # Stop trying to write to stdout (eg piped to head)
-                        handle = None
-                if worksheet:
-                    try:
-                        cell_format = sample_formats[current_row]  # sample number
-                    except IndexError:
-                        cell_format = None
-                    current_row += 1
-                    assert len(meta_names) == len(metadata)
-                    for offset, value in enumerate(metadata):
-                        worksheet.write_string(current_row, offset, value, cell_format)
-                    assert col_offset == len(meta_names)
-                    worksheet.write_string(current_row, col_offset, sample, cell_format)
+                # TSV
+                # ---
+                if metadata:
+                    handle.write("\t".join(metadata) + "\t")
+                handle.write(
+                    "%s\t%i\t%s\t%s\n"
+                    % (
+                        sample,
+                        sum(sample_species_counts[sample].values()),
+                        "\t".join(
+                            str(sample_genus_counts[sample][genus])
+                            for genus in genus_predictions
+                        ),
+                        "\t".join(
+                            str(sample_species_counts[sample][sp])
+                            for sp in species_predictions
+                            if sp not in genus_predictions
+                        ),
+                    )
+                )
+
+                # Excel
+                # -----
+                try:
+                    cell_format = sample_formats[current_row]  # sample number
+                except IndexError:
+                    cell_format = None
+                current_row += 1
+                assert len(meta_names) == len(metadata)
+                for offset, value in enumerate(metadata):
+                    worksheet.write_string(current_row, offset, value, cell_format)
+                assert col_offset == len(meta_names)
+                worksheet.write_string(current_row, col_offset, sample, cell_format)
+                worksheet.write_number(
+                    current_row,
+                    col_offset + 1,
+                    sum(sample_species_counts[sample].values()),
+                    cell_format,
+                )
+                for offset, genus in enumerate(genus_predictions):
                     worksheet.write_number(
                         current_row,
-                        col_offset + 1,
-                        sum(sample_species_counts[sample].values()),
+                        col_offset + 2 + offset,
+                        sample_genus_counts[sample][genus],
                         cell_format,
                     )
-                    for offset, genus in enumerate(genus_predictions):
-                        worksheet.write_number(
-                            current_row,
-                            col_offset + 2 + offset,
-                            sample_genus_counts[sample][genus],
-                            cell_format,
-                        )
-                    for offset, sp in enumerate(species_columns):
-                        worksheet.write_number(
-                            current_row,
-                            col_offset + 2 + len(genus_predictions) + offset,
-                            sample_species_counts[sample][sp],
-                            cell_format,
-                        )
+                for offset, sp in enumerate(species_columns):
+                    worksheet.write_number(
+                        current_row,
+                        col_offset + 2 + len(genus_predictions) + offset,
+                        sample_species_counts[sample][sp],
+                        cell_format,
+                    )
 
-            if human:
-                all_sp = set()
-                unambig_sp = set()
-                if sample in sample_species_counts:
-                    for sp_list, count in sample_species_counts[sample].items():
-                        if count:
-                            sp_list = sp_list.split(";")
-                            all_sp.update(sp_list)
-                            if len(sp_list) == 1:
-                                unambig_sp.add(sp_list[0])
-                try:
-                    if meta_names:
-                        human.write(f"Sequencing sample: {sample}\n\n")
-                    else:
-                        human.write(f"{sample}\n\n")
-                    for sp in sorted(all_sp):
-                        if sp not in unambig_sp:
-                            sp = f"{sp} (uncertain/ambiguous)"
-                        if not sp:
-                            sp = "Unknown"
-                        human.write(f" - {sp}\n")
-                    if not all_sp:
-                        human.write(" - No data\n")
-                    human.write("\n")
-                except BrokenPipeError:
-                    # Stop trying to write to stdout (e.g. piped to head)
-                    human = None
+            # Human report (includes missing samples)
+            # ---------------------------------------
+            all_sp = set()
+            unambig_sp = set()
+            if sample in sample_species_counts:
+                for sp_list, count in sample_species_counts[sample].items():
+                    if count:
+                        sp_list = sp_list.split(";")
+                        all_sp.update(sp_list)
+                        if len(sp_list) == 1:
+                            unambig_sp.add(sp_list[0])
+            if meta_names:
+                human.write(f"Sequencing sample: {sample}\n\n")
+            else:
+                human.write(f"{sample}\n\n")
+            for sp in sorted(all_sp):
+                if sp not in unambig_sp:
+                    sp = f"{sp} (uncertain/ambiguous)"
+                if not sp:
+                    sp = "Unknown"
+                human.write(f" - {sp}\n")
+            if not all_sp:
+                human.write(" - No data\n")
+            human.write("\n")
 
-    if worksheet:
-        worksheet.conditional_format(
-            1,
-            col_offset + 1,
-            current_row,
-            col_offset + 1 + len(genus_predictions) + len(species_columns),
-            {
-                "type": "cell",
-                "criteria": "greater than",
-                "value": 0,
-                "format": red_conditional_format,
-            },
-        )
-    if workbook:
-        workbook.close()
-
-    if output != "-" and handle:
-        handle.close()
-    if human_output != "-" and human:
-        human.close()
-
-    try:
-        sys.stdout.flush()
-    except BrokenPipeError:
-        pass
-    try:
-        sys.stderr.flush()
-    except BrokenPipeError:
-        pass
-
-    return 0
+    worksheet.conditional_format(
+        1,
+        col_offset + 1,
+        current_row,
+        col_offset + 1 + len(genus_predictions) + len(species_columns),
+        {
+            "type": "cell",
+            "criteria": "greater than",
+            "value": 0,
+            "format": red_conditional_format,
+        },
+    )
+    workbook.close()
+    handle.close()
+    human.close()
 
 
 def read_summary(
@@ -412,47 +379,42 @@ def read_summary(
             if sp:
                 md5_species[md5].update(sp.split(";"))
 
-    if output == "-":
-        if debug:
-            sys.stderr.write("DEBUG: Output to stdout...\n")
-        handle = sys.stdout
-    else:
-        handle = open(output, "w")
-
+    # Excel setup
+    # -----------
     LEADING_COLS = 6
-    if excel:
-        import xlsxwriter
-
-        workbook = xlsxwriter.Workbook(excel)
-        worksheet = workbook.add_worksheet("Sequence vs samples")
-        cell_rightalign_format = workbook.add_format({"align": "right"})
-        red_conditional_format = workbook.add_format(
-            # Maraschino red
-            {"bg_color": "#FF2600", "font_color": "#000000"}
-        )
-        sample_color_bands = [
-            # Simple rolling rainbow pastel pallet
-            workbook.add_format({"bg_color": c, "font_color": "#000000"})
-            for c in [
-                "#FFCCDA",  # pink
-                "#F7D6B7",  # orange
-                "#FFFFCC",  # yellow
-                "#CCFFDD",  # green
-                "#CCF7FF",  # blue
-            ]
+    workbook = xlsxwriter.Workbook(excel)
+    worksheet = workbook.add_worksheet("Sequence vs samples")
+    cell_rightalign_format = workbook.add_format({"align": "right"})
+    red_conditional_format = workbook.add_format(
+        # Maraschino red
+        {"bg_color": "#FF2600", "font_color": "#000000"}
+    )
+    sample_color_bands = [
+        # Simple rolling rainbow pastel pallet
+        workbook.add_format({"bg_color": c, "font_color": "#000000"})
+        for c in [
+            "#FFCCDA",  # pink
+            "#F7D6B7",  # orange
+            "#FFFFCC",  # yellow
+            "#CCFFDD",  # green
+            "#CCF7FF",  # blue
         ]
+    ]
 
-        # If there are lots of samples, set narrow column widths
-        if len(samples) > 50:
-            # Set column width to 2
-            worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 2)
-        elif len(samples) > 20:
-            # Set column width to 4
-            worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 4)
-    else:
-        workbook = None
-        worksheet = None
+    # If there are lots of samples, set narrow column widths
+    if len(samples) > 50:
+        # Set column width to 2
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 2)
+    elif len(samples) > 20:
+        # Set column width to 4
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 4)
 
+    # TSV setup
+    # ---------
+    handle = open(output, "w")
+
+    # Metadata rows
+    # -------------
     current_row = 0
     first_data_row = 0
     meta_default = [""] * len(meta_names)
@@ -466,22 +428,22 @@ def read_summary(
                 "#%s%s\t%s\n"
                 % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
-        if worksheet:
-            sample_formats = color_bands(
-                [_[group_col] for _ in meta], sample_color_bands, debug=debug
-            )
-            for i, name in enumerate(meta_names):
+        sample_formats = color_bands(
+            [_[group_col] for _ in meta], sample_color_bands, debug=debug
+        )
+        for i, name in enumerate(meta_names):
+            worksheet.write_string(i, LEADING_COLS - 1, name, cell_rightalign_format)
+            for s, sample in enumerate(samples):
                 worksheet.write_string(
-                    i, LEADING_COLS - 1, name, cell_rightalign_format
+                    i,
+                    LEADING_COLS + s,
+                    metadata.get(sample, meta_default)[i],
+                    sample_formats[s],
                 )
-                for s, sample in enumerate(samples):
-                    worksheet.write_string(
-                        i,
-                        LEADING_COLS + s,
-                        metadata.get(sample, meta_default)[i],
-                        sample_formats[s],
-                    )
-            current_row += len(meta_names)
+        current_row += len(meta_names)
+
+    # TSV main header
+    # ---------------
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
         "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(samples))
@@ -514,55 +476,57 @@ def read_summary(
             ),
         )
     )
-    if worksheet:
-        worksheet.write_string(current_row, 0, "ITS1-MD5")
-        worksheet.write_string(current_row, 1, method + "-predictions")
-        worksheet.write_string(current_row, 2, "Sequence")
-        worksheet.write_string(current_row, 3, "Sample-count")
-        worksheet.write_string(current_row, 4, "Max-sample-abundance")
-        worksheet.write_string(current_row, 5, "Total-abundance")
-        for s, sample in enumerate(samples):
-            worksheet.write_string(
-                current_row, LEADING_COLS + s, sample, sample_formats[s]
-            )
-        current_row += 1
-        first_data_row = current_row
-        worksheet.write_string(current_row, 0, "TOTAL")
-        worksheet.write_string(current_row, 1, "-")
-        worksheet.write_string(current_row, 2, "-")
-        worksheet.write_number(
-            current_row,
-            3,
-            sum(
-                1
+
+    # Excel main header
+    # -----------------
+    worksheet.write_string(current_row, 0, "ITS1-MD5")
+    worksheet.write_string(current_row, 1, method + "-predictions")
+    worksheet.write_string(current_row, 2, "Sequence")
+    worksheet.write_string(current_row, 3, "Sample-count")
+    worksheet.write_string(current_row, 4, "Max-sample-abundance")
+    worksheet.write_string(current_row, 5, "Total-abundance")
+    for s, sample in enumerate(samples):
+        worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
+    current_row += 1
+    first_data_row = current_row
+    worksheet.write_string(current_row, 0, "TOTAL")
+    worksheet.write_string(current_row, 1, "-")
+    worksheet.write_string(current_row, 2, "-")
+    worksheet.write_number(
+        current_row,
+        3,
+        sum(
+            1
+            for md5 in md5_to_seq
+            for sample in samples
+            if (md5, sample) in abundance_by_samples
+        ),
+    )
+    worksheet.write_number(
+        current_row,
+        4,
+        max(
+            (
+                abundance_by_samples.get((md5, sample), 0)
                 for md5 in md5_to_seq
                 for sample in samples
-                if (md5, sample) in abundance_by_samples
             ),
-        )
+            default=0,
+        ),
+    )
+    worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
+    for s, sample in enumerate(samples):
         worksheet.write_number(
             current_row,
-            4,
-            max(
-                (
-                    abundance_by_samples.get((md5, sample), 0)
-                    for md5 in md5_to_seq
-                    for sample in samples
-                ),
-                default=0,
-            ),
+            LEADING_COLS + s,
+            sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
+            sample_formats[s],
         )
-        worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
-        for s, sample in enumerate(samples):
-            worksheet.write_number(
-                current_row,
-                LEADING_COLS + s,
-                sum(abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq),
-                sample_formats[s],
-            )
-        current_row += 1
-        worksheet.freeze_panes(current_row, 5)  # keep total line in view plus headers
+    current_row += 1
+    worksheet.freeze_panes(current_row, 5)  # keep total line in view plus headers
 
+    # Main body
+    # ---------
     # Build the first few columns as a list of lists, which we can sort
     data = [
         [
@@ -591,49 +555,34 @@ def read_summary(
                 "\t".join(str(_) for _ in sample_counts),
             )
         )
-        if worksheet:
-            worksheet.write_string(current_row, 0, md5)
-            worksheet.write_string(current_row, 1, sp)
-            worksheet.write_string(current_row, 2, seq)
-            worksheet.write_number(current_row, 3, md5_in_xxx_samples)
-            worksheet.write_number(current_row, 4, max(sample_counts))
-            worksheet.write_number(current_row, 5, total_abundance)
-            for s, count in enumerate(sample_counts):
-                worksheet.write_number(
-                    current_row, LEADING_COLS + s, count, sample_formats[s]
-                )
-            current_row += 1
+        worksheet.write_string(current_row, 0, md5)
+        worksheet.write_string(current_row, 1, sp)
+        worksheet.write_string(current_row, 2, seq)
+        worksheet.write_number(current_row, 3, md5_in_xxx_samples)
+        worksheet.write_number(current_row, 4, max(sample_counts))
+        worksheet.write_number(current_row, 5, total_abundance)
+        for s, count in enumerate(sample_counts):
+            worksheet.write_number(
+                current_row, LEADING_COLS + s, count, sample_formats[s]
+            )
+        current_row += 1
     del data
 
-    if worksheet:
-        worksheet.conditional_format(
-            first_data_row,
-            LEADING_COLS,
-            current_row,
-            LEADING_COLS + len(samples),
-            {
-                "type": "cell",
-                "criteria": "greater than",
-                "value": 0,
-                "format": red_conditional_format,
-            },
-        )
+    worksheet.conditional_format(
+        first_data_row,
+        LEADING_COLS,
+        current_row,
+        LEADING_COLS + len(samples),
+        {
+            "type": "cell",
+            "criteria": "greater than",
+            "value": 0,
+            "format": red_conditional_format,
+        },
+    )
 
-    if output != "-":
-        handle.close()
-    if workbook:
-        workbook.close()
-
-    try:
-        sys.stdout.flush()
-    except BrokenPipeError:
-        pass
-    try:
-        sys.stderr.flush()
-    except BrokenPipeError:
-        pass
-
-    return 0
+    handle.close()
+    workbook.close()
 
 
 def main(
@@ -716,7 +665,7 @@ def main(
         # Include version number here?
         stem = os.path.join(out_dir, "thapbi-pict")
 
-    return_code = sample_summary(
+    sample_summary(
         tsv_files,
         metadata,
         meta_names,
@@ -728,11 +677,9 @@ def main(
         min_abundance=min_abundance,
         debug=debug,
     )
-    if return_code:
-        return return_code
     sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
 
-    return_code = read_summary(
+    read_summary(
         fasta_files,
         tsv_files,
         metadata,
@@ -744,8 +691,6 @@ def main(
         min_abundance=min_abundance,
         debug=debug,
     )
-    if return_code:
-        return return_code
     sys.stderr.write(f"Wrote {stem}.reads.{method}.*\n")
 
-    return return_code
+    return 0
