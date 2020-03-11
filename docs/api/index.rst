@@ -21,8 +21,6 @@ Python API
    thapbi_pict.hmm
    thapbi_pict.ncbi
    thapbi_pict.prepare
-   thapbi_pict.read_summary
-   thapbi_pict.sample_summary
    thapbi_pict.seq_import
    thapbi_pict.summary
    thapbi_pict.taxdump
