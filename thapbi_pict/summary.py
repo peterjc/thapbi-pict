@@ -23,17 +23,15 @@ from .utils import split_read_name_abundance
 
 
 def sample_summary(
+    metadata,
+    meta_names,
+    group_col,
     inputs,
     output,
     excel,
     human_output,
     method,
     min_abundance=1,
-    metadata_file=None,
-    metadata_cols=None,
-    metadata_groups=None,
-    metadata_fieldnames=None,
-    metadata_index=None,
     require_metadata=False,
     ignore_prefixes=None,
     debug=False,
@@ -47,17 +45,6 @@ def sample_summary(
 
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
-
-    (metadata, meta_names, group_col,) = load_metadata(
-        metadata_file,
-        metadata_cols,
-        metadata_groups,
-        metadata_fieldnames,
-        metadata_index,
-        metadata_sort=True,
-        ignore_prefixes=ignore_prefixes,
-        debug=debug,
-    )
 
     samples = set()
     tsv_files = find_requested_files(inputs, f".{method}.tsv", ignore_prefixes, debug)
@@ -377,16 +364,14 @@ def sample_summary(
 
 
 def read_summary(
+    metadata,
+    meta_names,
+    group_col,
     inputs,
     output,
     method,
     min_abundance=1,
     excel=None,
-    metadata_file=None,
-    metadata_cols=None,
-    metadata_groups=None,
-    metadata_fieldnames=None,
-    metadata_index=None,
     require_metadata=False,
     ignore_prefixes=None,
     debug=False,
@@ -406,17 +391,6 @@ def read_summary(
     abundance_by_samples = {}
     md5_species = {}
     md5_to_seq = {}
-
-    (metadata, meta_names, group_col,) = load_metadata(
-        metadata_file,
-        metadata_cols,
-        metadata_groups,
-        metadata_fieldnames,
-        metadata_index,
-        metadata_sort=True,
-        ignore_prefixes=ignore_prefixes,
-        debug=debug,
-    )
 
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
@@ -733,6 +707,17 @@ def main(
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
 
+    (metadata, meta_names, group_col,) = load_metadata(
+        metadata_file,
+        metadata_cols,
+        metadata_groups,
+        metadata_fieldnames,
+        metadata_index,
+        metadata_sort=True,
+        ignore_prefixes=ignore_prefixes,
+        debug=debug,
+    )
+
     if report:
         stem = os.path.join(out_dir, report)
     else:
@@ -740,17 +725,15 @@ def main(
         stem = os.path.join(out_dir, "thapbi-pict")
 
     return_code = sample_summary(
+        metadata,
+        meta_names,
+        group_col,
         inputs=[_ for _ in inputs if not _.endswith(".fasta")],  # TSV only
         output=f"{stem}.samples.{method}.tsv",
         excel=f"{stem}.samples.{method}.xlsx",
         human_output=f"{stem}.samples.{method}.txt",
         method=method,
         min_abundance=min_abundance,
-        metadata_file=metadata_file,
-        metadata_cols=metadata_cols,
-        metadata_groups=metadata_groups,
-        metadata_fieldnames=metadata_fieldnames,
-        metadata_index=metadata_index,
         require_metadata=require_metadata,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
@@ -760,16 +743,14 @@ def main(
     sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
 
     return_code = read_summary(
+        metadata,
+        meta_names,
+        group_col,
         inputs=inputs,  # needs FASTA and TSV
         output=f"{stem}.reads.{method}.tsv",
         excel=f"{stem}.reads.{method}.xlsx",
         method=method,
         min_abundance=min_abundance,
-        metadata_file=metadata_file,
-        metadata_cols=metadata_cols,
-        metadata_groups=metadata_groups,
-        metadata_fieldnames=metadata_fieldnames,
-        metadata_index=metadata_index,
         require_metadata=require_metadata,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
