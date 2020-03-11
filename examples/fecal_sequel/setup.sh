@@ -10,8 +10,8 @@ if [ ! -f COI_430_bats.fasta ]; then
     rm COI_430_bats.fasta.tmp
 fi
 
-mkdir -p expected/
-mkdir -p intermediate/
+mkdir -p expected/ intermediate/ summary/
+
 if [ ! -f raw_data/MD5SUM.txt ]; then
     echo "ERROR: Missing raw_data/MD5SUM.txt"
     false
