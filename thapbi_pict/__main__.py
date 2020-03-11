@@ -40,7 +40,9 @@ def check_input_file(filename):
 
 def check_output_directory(out_dir, must_exist=True):
     """Command line validation of output directory value."""
-    if out_dir == "-" or os.path.isdir(out_dir):
+    if not out_dir:
+        sys.exit("ERROR: Output directory name blank\n")
+    elif out_dir == "-" or os.path.isdir(out_dir):
         return True
     elif os.path.isfile(out_dir):
         sys.exit(f"ERROR: Output directory name is a file: {out_dir}\n")

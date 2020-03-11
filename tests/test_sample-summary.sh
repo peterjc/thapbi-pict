@@ -17,7 +17,7 @@ echo "Checking sample-summary"
 echo "======================="
 set -x
 thapbi_pict sample-summary 2>&1 | grep "the following arguments are required"
-thapbi_pict sample-summary -o '' -i tests/classify 2>&1 | grep "Output directory does not exist"
+thapbi_pict sample-summary -o '' -i tests/classify 2>&1 | grep "Output directory name blank"
 set -o pipefail
 
 # Passing filename, default method, explicit min abundance

@@ -17,7 +17,7 @@ echo "Checking read-summary"
 echo "====================="
 set -x
 thapbi_pict read-summary 2>&1 | grep "the following arguments are required"
-thapbi_pict read-summary -o '' -i tests/classify 2>&1 | grep "Output directory does not exist"
+thapbi_pict read-summary -o '' -i tests/classify 2>&1 | grep "Output directory name blank"
 set -o pipefail
 
 # One method:
