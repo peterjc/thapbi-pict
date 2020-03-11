@@ -95,42 +95,41 @@ def main(
         )
     samples = sample_sort(samples)
 
-    if True:  # remove indentation later
-        if debug:
-            sys.stderr.write(f"Loading predictions for {method}\n")
-        tsv_files = find_requested_files(
-            [_ for _ in inputs if not _.endswith(".fasta")],
-            f".{method}.tsv",
-            ignore_prefixes,
-            debug,
+    if debug:
+        sys.stderr.write(f"Loading predictions for {method}\n")
+    tsv_files = find_requested_files(
+        [_ for _ in inputs if not _.endswith(".fasta")],
+        f".{method}.tsv",
+        ignore_prefixes,
+        debug,
+    )
+    if not require_metadata and len(samples) != len(tsv_files):
+        sys.exit(
+            f"ERROR: Identified {len(samples):d} samples from FASTA files,"
+            f" but {len(tsv_files):d} TSV files for {method}"
         )
-        if not require_metadata and len(samples) != len(tsv_files):
-            sys.exit(
-                f"ERROR: Identified {len(samples):d} samples from FASTA files,"
-                f" but {len(tsv_files):d} TSV files for {method}"
-            )
-        for predicted_file in tsv_files:
-            sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
-            if require_metadata and sample not in metadata:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
-                    )
+    for predicted_file in tsv_files:
+        sample = os.path.basename(predicted_file).rsplit(".", 2)[0]
+        if require_metadata and sample not in metadata:
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Ignoring {predicted_file} as not in metadata\n"
+                )
+            continue
+        elif sample not in samples:
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Ignoring {predicted_file} as not matched to FASTA\n"
+                )
+            continue
+        # TODO: Look at taxid here?
+        for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
+            md5, abundance = split_read_name_abundance(name)
+            if min_abundance > 1 and abundance < min_abundance:
                 continue
-            elif sample not in samples:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Ignoring {predicted_file} as not matched to FASTA\n"
-                    )
-                continue
-            # TODO: Look at taxid here?
-            for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
-                md5, abundance = split_read_name_abundance(name)
-                if min_abundance > 1 and abundance < min_abundance:
-                    continue
-                assert abundance_by_samples[md5, sample] == abundance, name
-                if sp:
-                    md5_species[md5].update(sp.split(";"))
+            assert abundance_by_samples[md5, sample] == abundance, name
+            if sp:
+                md5_species[md5].update(sp.split(";"))
 
     if output == "-":
         if debug:
