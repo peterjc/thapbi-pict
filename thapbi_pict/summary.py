@@ -45,7 +45,6 @@ def sample_summary(
     human_output,
     method,
     min_abundance=1,
-    ignore_prefixes=None,
     debug=False,
 ):
     """Implement the ``thapbi_pict sample-summary`` command.
@@ -235,8 +234,7 @@ def sample_summary(
         # Now do the samples in this batch
         for sample in sample_batch:
             if sample not in samples:
-                if not sample.startswith(ignore_prefixes):
-                    sys.stderr.write(f"WARNING: Missing {sample}\n")
+                sys.stderr.write(f"WARNING: Missing {sample}\n")
             else:
                 if handle:
                     try:
@@ -364,7 +362,6 @@ def read_summary(
     method,
     min_abundance=1,
     excel=None,
-    ignore_prefixes=None,
     debug=False,
 ):
     """Implement the ``thapbi_pict plate-summary`` command.
@@ -729,7 +726,6 @@ def main(
         human_output=f"{stem}.samples.{method}.txt",
         method=method,
         min_abundance=min_abundance,
-        ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
     if return_code:
@@ -746,7 +742,6 @@ def main(
         excel=f"{stem}.reads.{method}.xlsx",
         method=method,
         min_abundance=min_abundance,
-        ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
     if return_code:
