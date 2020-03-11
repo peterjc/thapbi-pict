@@ -64,18 +64,20 @@ echo "============================"
 # Default for -o should be the same next to the inputs, which is fine
 time thapbi_pict classify -i $TMP/woody_hosts/intermediate/
 
-echo "=================================="
-echo "Running woody hosts sample-summary"
-echo "=================================="
-time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
+echo "==========================="
+echo "Running woody hosts summary"
+echo "==========================="
+time thapbi_pict summary -i $TMP/woody_hosts/intermediate/ \
 	    -o $TMP/woody_hosts/summary/ -r no-metadata
-ls $TMP/woody_hosts/summary/no-metadata.samples.*
+ls $TMP/woody_hosts/summary/no-metadata.*
+if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
+# Expect 99 + total line
 
-time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
+time thapbi_pict summary -i $TMP/woody_hosts/intermediate/ \
             -o $TMP/woody_hosts/summary/ -r with-metadata \
             -t examples/woody_hosts/metadata.tsv \
             -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
-ls $TMP/woody_hosts/summary/with-metadata.samples.*
+ls $TMP/woody_hosts/summary/with-metadata.*
 if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
 if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
 
@@ -83,20 +85,6 @@ if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.sam
 # Discarding the header row as only one will still have hash at start
 diff <(grep -v "^#" $TMP/woody_hosts/summary/no-metadata.samples.tsv | sort) <(grep -v "^#" $TMP/woody_hosts/summary/with-metadata.samples.tsv | cut -f 16- | sort)
 
-echo "================================"
-echo "Running woody hosts read-summary"
-echo "================================"
-time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
-            -o $TMP/woody_hosts/summary/ -r no-metadata
-ls $TMP/woody_hosts/summary/no-metadata.reads.*
-if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
-# Expect 99 + total line
-
-time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
-	    -o $TMP/woody_hosts/summary/ -r with-metadata \
-	    -t examples/woody_hosts/metadata.tsv \
-	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
-ls $TMP/woody_hosts/summary/with-metadata.reads.*
 if [ `grep -c -v "^#" $TMP/woody_hosts/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
