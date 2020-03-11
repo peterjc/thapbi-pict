@@ -287,14 +287,25 @@ def read_summary(args=None):
     """Subcommand to run per-output-folder summary at sequence level."""
     from .read_summary import main
 
+    check_output_directory(args.output)
+
+    method = args.method
+
+    if args.report:
+        stem = os.path.join(args.output, args.report)
+    else:
+        # Include version number here?
+        stem = os.path.join(args.output, "thapbi-pict")
+
     if args.metadata:
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+
     return main(
         inputs=args.input,
-        output=args.output,
-        excel=args.excel,
+        output=f"{stem}.reads.{method}.tsv",
+        excel=f"{stem}.reads.{method}.xlsx",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -312,15 +323,26 @@ def sample_summary(args=None):
     """Subcommand to run multiple-output-folder summary at sample level."""
     from .sample_summary import main
 
+    check_output_directory(args.output)
+
+    method = args.method
+
+    if args.report:
+        stem = os.path.join(args.output, args.report)
+    else:
+        # Include version number here?
+        stem = os.path.join(args.output, "thapbi-pict")
+
     if args.metadata:
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+
     return main(
         inputs=args.input,
-        output=args.output,
-        excel=args.excel,
-        human_output=args.human,
+        output=f"{stem}.samples.{method}.tsv",
+        excel=f"{stem}.samples.{method}.xlsx",
+        human_output=f"{stem}.samples.{method}.txt",
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -1341,19 +1363,16 @@ def main(args=None):
         "-o",
         "--output",
         type=str,
-        default="-",
-        metavar="FILENAME",
-        help="File to write summary sequence vs samples TSV table to. "
-        "Default is '-' meaning to stdout.",
+        required=True,
+        metavar="DIRNAME",
+        help="Output directory. Required.",
     )
     subcommand_parser.add_argument(
-        "-e",
-        "--excel",
+        "-r",
+        "--report",
         type=str,
-        default="",
-        metavar="FILENAME",
-        help="File to write summary sequence vs samples Excel table to. "
-        "Default is '' meaning no output.",
+        metavar="STEM",
+        help="Stem for generating report filenames.",
     )
     subcommand_parser.add_argument(
         "-m",
@@ -1406,6 +1425,21 @@ def main(args=None):
         "method appearing in the extension can be set via -m / --method.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        required=True,
+        metavar="DIRNAME",
+        help="Output directory. Required.",
+    )
+    subcommand_parser.add_argument(
+        "-r",
+        "--report",
+        type=str,
+        metavar="STEM",
+        help="Stem for generating report filenames.",
+    )
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     subcommand_parser.add_argument(
         "-a",
@@ -1418,32 +1452,6 @@ def main(args=None):
         "minimum abundance you can apply it here. Use zero or one to look at "
         "everything (but beware that negative control samples will include low "
         "abundance entries).",
-    )
-    subcommand_parser.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        default="-",
-        metavar="FILENAME",
-        help="File to write sample species classification summary table to. "
-        "Default is '-' meaning to stdout.",
-    )
-    subcommand_parser.add_argument(
-        "-e",
-        "--excel",
-        type=str,
-        default="",
-        metavar="FILENAME",
-        help="File to write summary samples vs species Excel table to. "
-        "Default is '' meaning no output.",
-    )
-    subcommand_parser.add_argument(
-        "-r",
-        "--human",
-        type=str,
-        metavar="FILENAME",
-        help="File to write human readable smaple level species predictions to. "
-        "Can use '-' meaning to stdout. Default is not to write this file.",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)

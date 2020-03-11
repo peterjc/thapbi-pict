@@ -68,15 +68,11 @@ echo "=================================="
 echo "Running woody hosts sample-summary"
 echo "=================================="
 time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
-            -o $TMP/woody_hosts/summary/no-metadata.samples.tsv \
-            -e $TMP/woody_hosts/summary/no-metadata.samples.xlsx \
-            -r $TMP/woody_hosts/summary/no-metadata.samples.txt
+	    -o $TMP/woody_hosts/summary/ -r no-metadata
 ls $TMP/woody_hosts/summary/no-metadata.samples.*
 
 time thapbi_pict sample-summary -i $TMP/woody_hosts/intermediate/ \
-            -o $TMP/woody_hosts/summary/with-metadata.samples.tsv \
-            -e $TMP/woody_hosts/summary/with-metadata.samples.xlsx \
-            -r $TMP/woody_hosts/summary/with-metadata.samples.txt \
+            -o $TMP/woody_hosts/summary/ -r with-metadata \
             -t examples/woody_hosts/metadata.tsv \
             -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.samples.*
@@ -91,15 +87,13 @@ echo "================================"
 echo "Running woody hosts read-summary"
 echo "================================"
 time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
-            -o $TMP/woody_hosts/summary/no-metadata.reads.tsv \
-            -e $TMP/woody_hosts/summary/no-metadata.reads.xlxs
+            -o $TMP/woody_hosts/summary/ -r no-metadata
 ls $TMP/woody_hosts/summary/no-metadata.reads.*
 if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
 time thapbi_pict read-summary -i $TMP/woody_hosts/intermediate/ \
-	    -o $TMP/woody_hosts/summary/with-metadata.reads.tsv \
-	    -e $TMP/woody_hosts/summary/with-metadata.reads.xlxs \
+	    -o $TMP/woody_hosts/summary/ -r with-metadata \
 	    -t examples/woody_hosts/metadata.tsv \
 	    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.reads.*
