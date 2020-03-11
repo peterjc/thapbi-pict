@@ -14,23 +14,12 @@ The first output reports from the pipeline can be generated separately by the
     $ thapbi_pict sample-summary -h
     ...
 
-To mimic what the pipeline command would do, run the following, where we have
-to give names to the computer readable TSV (``-o`` or ``--output``), equivalent
-Excel (``-e`` or ``--excel``), and human readable plain text TXT outputs
-(``-r`` or ``--report``):
+To mimic what the pipeline command would do, run the following:
 
 .. code:: console
 
-    $ thapbi_pict sample-summary -i intermediate/ \
-      -o summary/thapbi-pict.samples.onebp.tsv \
-      -e summary/thapbi-pict.samples.onebp.xlsx \
-      -r summary/thapbi-pict.samples.onebp.txt
+    $ thapbi_pict sample-summary -i intermediate/ -o summary/
     ...
-
-Note the trailing slash ``\`` at the end of the first line indicates the
-command continues on the next line. You can actually type this at the standard
-Linux command prompt (or include it in a copy and paste), or just enter this
-as one very long command.
 
 We will look at the output in a moment, along side the equivalent reports
 generated with :ref:`metadata <metadata>` (see linked discussion about column
@@ -38,14 +27,15 @@ and row numbers):
 
 .. code:: console
 
-    $ time thapbi_pict sample-summary -i intermediate/ \
-      -o summary/with-metadata.samples.onebp.tsv \
-      -e summary/with-metadata.samples.onebp.xlsx \
-      -r summary/with-metadata.samples.onebp.txt \
+    $ time thapbi_pict sample-summary -i intermediate/ -o summary/ \
+      -r with-metadata \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
 
-This time the even longer command has been shown split over five lines.
+Note the trailing slash ``\`` at the end of the first line indicates the
+command continues on the next line. You can actually type this at the standard
+Linux command prompt (or include it in a copy and paste), or just enter this
+as one very long command.
 
 The computer readable TSV and equivalent Excel file will include the metadata
 as additional leading columns, and also differ in the line order.
