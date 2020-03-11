@@ -186,8 +186,8 @@ def main(
         meta = [metadata.get(sample, meta_default) for sample in samples]
         for i, name in enumerate(meta_names):
             handle.write(
-                "#%s\t%s\t%s\n"
-                % ("\t" * LEADING_COLS, name, "\t".join(_[i] for _ in meta))
+                "#%s%s\t%s\n"
+                % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
         if worksheet:
             sample_formats = color_bands(
