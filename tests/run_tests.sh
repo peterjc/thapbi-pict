@@ -13,6 +13,11 @@ python -c "import thapbi_pict; print('Direct import says version ' + thapbi_pict
 thapbi_pict -v
 python -m thapbi_pict -v
 
+if [ ! -f tests/run_tests.sh ]; then
+    echo "Please run tests/run_tests.sh from the top level directory"
+    false
+fi
+
 time tests/test_woody_hosts.sh
 
 time tests/test_dump.sh
