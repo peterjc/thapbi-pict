@@ -1,4 +1,4 @@
-#Sequencing sample	Seq-count	Unknown	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora ramorum
-P-infestans-T30-4	63000	500	62500	0	62500	0	0	0
-hmm_trim	71864	69011	2853	409	0	296	518	1630
-multiple_its1	27281	27281	0	0	0	0	0	0
+#Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Seq-count	Unknown	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora ramorum
+P-infestans-T30-4	Raw FASTQ	Trimmomatic	Flash	Cutadapt	63000	500	62500	0	62500	0	0	0
+hmm_trim	Raw FASTQ	Trimmomatic	Flash	Cutadapt	71864	69011	2853	409	0	296	518	1630
+multiple_its1	Raw FASTQ	Trimmomatic	Flash	Cutadapt	27281	27281	0	0	0	0	0	0
