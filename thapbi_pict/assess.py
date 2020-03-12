@@ -360,9 +360,6 @@ def main(
             sys.exit("ERROR: Inconsistent species lists in predicted file headers")
         if debug:
             assert db_sp_list is not None, db_sp_list
-            sys.stderr.write(
-                f"DEBUG: {predicted_file} says DB had {len(db_sp_list):d} species\n"
-            )
 
         file_count += 1
         if level == "sample":
@@ -444,10 +441,6 @@ def main(
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")
-    if debug and db_sp_list:
-        sys.stderr.write(
-            f"Classifier DB had {len(db_sp_list):d} species: {', '.join(db_sp_list)}\n"
-        )
     for sp in db_sp_list:
         assert species_level(sp), sp
     sp_list = class_list_from_tally_and_db_list(global_tally, db_sp_list)
