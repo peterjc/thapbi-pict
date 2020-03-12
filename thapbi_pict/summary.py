@@ -14,6 +14,7 @@ from collections import Counter
 import xlsxwriter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+from .prepare import load_fasta_header
 from .utils import abundance_from_read_name
 from .utils import color_bands
 from .utils import find_requested_files
@@ -36,11 +37,35 @@ def file_to_sample_name(filename):
         raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
 
 
+def load_fasta_headers(sample_to_filename, fields):
+    """Load requested fields from FASTA headers.
+
+    Argument sample_to_filename is a dict of sample names
+    as keys, filenames as paths. Arguments fields is a list
+    of field names.
+
+    Returns a dict with sample names as keys, and lists
+    of the requested fields as values.
+    """
+    answer = {}
+    for sample, filename in sample_to_filename.items():
+        headers = load_fasta_header(filename)
+        try:
+            answer[sample] = [headers[_] for _ in fields]
+        except KeyError:
+            sys.exit(
+                f"ERROR: {filename} does not have required fields: {', '.join(fields)}"
+            )
+    return answer
+
+
 def sample_summary(
     tsv_files,
     metadata,
     meta_names,
     group_col,
+    sample_stats,
+    stats_fields,
     output,
     excel,
     human_output,
@@ -318,6 +343,8 @@ def read_summary(
     metadata,
     meta_names,
     group_col,
+    sample_stats,
+    stats_fields,
     output,
     method,
     min_abundance=1,
@@ -660,11 +687,23 @@ def main(
         # Include version number here?
         stem = os.path.join(out_dir, "thapbi-pict")
 
+    stats_fields = (
+        "raw_fastq",
+        "trimmomatic",
+        "flash",
+        "cutadapt",
+        "abundance",
+        "threshold",
+    )
+    sample_stats = load_fasta_headers(fasta_files, stats_fields)
+
     sample_summary(
         tsv_files,
         metadata,
         meta_names,
         group_col,
+        sample_stats,
+        stats_fields,
         output=f"{stem}.samples.{method}.tsv",
         excel=f"{stem}.samples.{method}.xlsx",
         human_output=f"{stem}.samples.{method}.txt",
@@ -680,6 +719,8 @@ def main(
         metadata,
         meta_names,
         group_col,
+        sample_stats,
+        stats_fields,
         output=f"{stem}.reads.{method}.tsv",
         excel=f"{stem}.reads.{method}.xlsx",
         method=method,
