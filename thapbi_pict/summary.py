@@ -56,7 +56,6 @@ def sample_summary(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
-    samples = set()
     missing_meta = set()
     genus_predictions = set()
     sample_genus_counts = {}
@@ -65,7 +64,6 @@ def sample_summary(
     for sample, predicted_file in tsv_files.items():
         if sample not in metadata:
             missing_meta.add(sample)
-        samples.add(sample)
         sample_species_counts[sample] = Counter()
         sample_genus_counts[sample] = Counter()
         for name, _taxid_list, sp_list in parse_species_tsv(
@@ -87,11 +85,9 @@ def sample_summary(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: {len(samples):d} samples with predictions for"
+            f"DEBUG: {len(tsv_files)} samples with predictions for"
             f" {len(genus_predictions):d} genera\n"
         )
-
-    samples = sample_sort(samples)
 
     # Open files and write headers
     # ============================
@@ -220,65 +216,62 @@ def sample_summary(
                 human.write("Has not been sequenced.\n\n")
         # Now do the samples in this batch
         for sample in sample_batch:
-            if sample not in samples:
-                sys.stderr.write(f"WARNING: Missing {sample}\n")
-            else:
-                # TSV
-                # ---
-                if metadata:
-                    handle.write("\t".join(metadata) + "\t")
-                handle.write(
-                    "%s\t%i\t%s\t%s\n"
-                    % (
-                        sample,
-                        sum(sample_species_counts[sample].values()),
-                        "\t".join(
-                            str(sample_genus_counts[sample][genus])
-                            for genus in genus_predictions
-                        ),
-                        "\t".join(
-                            str(sample_species_counts[sample][sp])
-                            for sp in species_predictions
-                            if sp not in genus_predictions
-                        ),
-                    )
+            # TSV
+            # ---
+            if metadata:
+                handle.write("\t".join(metadata) + "\t")
+            handle.write(
+                "%s\t%i\t%s\t%s\n"
+                % (
+                    sample,
+                    sum(sample_species_counts[sample].values()),
+                    "\t".join(
+                        str(sample_genus_counts[sample][genus])
+                        for genus in genus_predictions
+                    ),
+                    "\t".join(
+                        str(sample_species_counts[sample][sp])
+                        for sp in species_predictions
+                        if sp not in genus_predictions
+                    ),
                 )
+            )
 
-                # Excel
-                # -----
-                try:
-                    cell_format = sample_formats[current_row]  # sample number
-                except IndexError:
-                    cell_format = None
-                current_row += 1
-                assert len(meta_names) == len(metadata)
-                for offset, value in enumerate(metadata):
-                    worksheet.write_string(current_row, offset, value, cell_format)
-                assert col_offset == len(meta_names)
-                worksheet.write_string(current_row, col_offset, sample, cell_format)
+            # Excel
+            # -----
+            try:
+                cell_format = sample_formats[current_row]  # sample number
+            except IndexError:
+                cell_format = None
+            current_row += 1
+            assert len(meta_names) == len(metadata)
+            for offset, value in enumerate(metadata):
+                worksheet.write_string(current_row, offset, value, cell_format)
+            assert col_offset == len(meta_names)
+            worksheet.write_string(current_row, col_offset, sample, cell_format)
+            worksheet.write_number(
+                current_row,
+                col_offset + 1,
+                sum(sample_species_counts[sample].values()),
+                cell_format,
+            )
+            for offset, genus in enumerate(genus_predictions):
                 worksheet.write_number(
                     current_row,
-                    col_offset + 1,
-                    sum(sample_species_counts[sample].values()),
+                    col_offset + 2 + offset,
+                    sample_genus_counts[sample][genus],
                     cell_format,
                 )
-                for offset, genus in enumerate(genus_predictions):
-                    worksheet.write_number(
-                        current_row,
-                        col_offset + 2 + offset,
-                        sample_genus_counts[sample][genus],
-                        cell_format,
-                    )
-                for offset, sp in enumerate(species_columns):
-                    worksheet.write_number(
-                        current_row,
-                        col_offset + 2 + len(genus_predictions) + offset,
-                        sample_species_counts[sample][sp],
-                        cell_format,
-                    )
+            for offset, sp in enumerate(species_columns):
+                worksheet.write_number(
+                    current_row,
+                    col_offset + 2 + len(genus_predictions) + offset,
+                    sample_species_counts[sample][sp],
+                    cell_format,
+                )
 
-            # Human report (includes missing samples)
-            # ---------------------------------------
+            # Human report
+            # ------------
             all_sp = set()
             unambig_sp = set()
             if sample in sample_species_counts:
@@ -339,7 +332,7 @@ def read_summary(
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
-    samples = set()
+    missing_meta = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
     md5_species = {}
@@ -347,9 +340,9 @@ def read_summary(
 
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
-    samples = set()
     for sample, fasta_file in fasta_files.items():
-        samples.add(sample)
+        if sample not in metadata:
+            missing_meta.add(sample)
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
                 md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
@@ -359,13 +352,6 @@ def read_summary(
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
-    if len(samples) < len(metadata):
-        missing = set(metadata).difference(samples)
-        sys.stderr.write(
-            f"WARNING: {len(missing)} samples in metadata have not been sequenced,"
-            f" {sample_sort(missing)[0]} etc.\n"
-        )
-    samples = sample_sort(samples)
 
     if debug:
         sys.stderr.write(f"Loading predictions for {method}\n")
@@ -378,6 +364,10 @@ def read_summary(
             assert abundance_by_samples[md5, sample] == abundance, name
             if sp:
                 md5_species[md5].update(sp.split(";"))
+
+    if missing_meta:
+        for sample in sample_sort(missing_meta):
+            metadata[sample] = [""] * len(meta_names)
 
     # Excel setup
     # -----------
@@ -402,38 +392,38 @@ def read_summary(
     ]
 
     # If there are lots of samples, set narrow column widths
-    if len(samples) > 50:
+    if len(metadata) > 50:
         # Set column width to 2
-        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 2)
-    elif len(samples) > 20:
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(metadata), 2)
+    elif len(metadata) > 20:
         # Set column width to 4
-        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(samples), 4)
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(metadata), 4)
 
     # TSV setup
     # ---------
     handle = open(output, "w")
 
-    # Metadata rows
+    # Metadata rows (one column per sample)
     # -------------
     current_row = 0
     first_data_row = 0
     meta_default = [""] * len(meta_names)
-    sample_formats = [None] * len(samples)
-    if metadata:
+    sample_formats = [None] * len(metadata)
+    if meta_names:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [metadata.get(sample, meta_default) for sample in samples]
+        meta = [metadata[sample] for sample in metadata]
         for i, name in enumerate(meta_names):
             handle.write(
                 "#%s%s\t%s\n"
                 % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
         sample_formats = color_bands(
-            [_[group_col] for _ in meta], sample_color_bands, debug=debug
+            [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
         )
         for i, name in enumerate(meta_names):
             worksheet.write_string(i, LEADING_COLS - 1, name, cell_rightalign_format)
-            for s, sample in enumerate(samples):
+            for s, sample in enumerate(metadata):
                 worksheet.write_string(
                     i,
                     LEADING_COLS + s,
@@ -446,7 +436,7 @@ def read_summary(
     # ---------------
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
-        "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(samples))
+        "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(metadata))
     )
     handle.write(
         "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
@@ -455,14 +445,14 @@ def read_summary(
                 (
                     abundance_by_samples.get((md5, sample), 0)
                     for md5 in md5_to_seq
-                    for sample in samples
+                    for sample in metadata
                 ),
                 default=0,
             ),
             sum(
                 1
                 for md5 in md5_to_seq
-                for sample in samples
+                for sample in metadata
                 if (md5, sample) in abundance_by_samples
             ),
             sum(md5_abundance.values()),
@@ -472,7 +462,7 @@ def read_summary(
                         abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq
                     )
                 )
-                for sample in samples
+                for sample in metadata
             ),
         )
     )
@@ -485,7 +475,7 @@ def read_summary(
     worksheet.write_string(current_row, 3, "Sample-count")
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")
-    for s, sample in enumerate(samples):
+    for s, sample in enumerate(metadata):
         worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
     current_row += 1
     first_data_row = current_row
@@ -498,7 +488,7 @@ def read_summary(
         sum(
             1
             for md5 in md5_to_seq
-            for sample in samples
+            for sample in metadata
             if (md5, sample) in abundance_by_samples
         ),
     )
@@ -509,13 +499,13 @@ def read_summary(
             (
                 abundance_by_samples.get((md5, sample), 0)
                 for md5 in md5_to_seq
-                for sample in samples
+                for sample in metadata
             ),
             default=0,
         ),
     )
     worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
-    for s, sample in enumerate(samples):
+    for s, sample in enumerate(metadata):
         worksheet.write_number(
             current_row,
             LEADING_COLS + s,
@@ -533,7 +523,7 @@ def read_summary(
             md5,
             ";".join(sorted(md5_species[md5])),
             md5_to_seq[md5],
-            sum(1 for _ in samples if (md5, _) in abundance_by_samples),
+            sum(1 for _ in metadata if (md5, _) in abundance_by_samples),
             total_abundance,
         ]
         for md5, total_abundance in md5_abundance.items()
@@ -542,7 +532,7 @@ def read_summary(
     # number of samples (decreasing), total abundance (decreasing), md5
     data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
-        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in samples]
+        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in metadata]
         handle.write(
             "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
@@ -572,7 +562,7 @@ def read_summary(
         first_data_row,
         LEADING_COLS,
         current_row,
-        LEADING_COLS + len(samples),
+        LEADING_COLS + len(metadata),
         {
             "type": "cell",
             "criteria": "greater than",
@@ -628,6 +618,8 @@ def main(
     ):
         sample = file_to_sample_name(filename)
         if require_metadata and sample not in metadata:
+            # if debug:
+            #     sys.stderr.write(f"DEBUG: Ignoring {sample} FASTA, no metadata\n")
             continue
         elif sample in fasta_files:
             sys.exit(f"ERROR: Multiple FASTA files using {sample} naming")
@@ -642,6 +634,8 @@ def main(
     ):
         sample = file_to_sample_name(filename)
         if require_metadata and sample not in metadata:
+            # if debug:
+            #     sys.stderr.write(f"DEBUG: Ignoring {sample} TSV, no metadata\n")
             continue
         elif sample in tsv_files:
             sys.exit(f"ERROR: Multiple TSV files using {sample} naming")
@@ -651,8 +645,9 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"Found {len(fasta_files)} FASTA files, and"
-            f" {len(tsv_files)} sample predictions using method {method}\n"
+            f"Have metadata for {len(metadata)} samples,"
+            f" found {len(fasta_files)} FASTA files,"
+            f" and {len(tsv_files)} TSV for method {method}\n"
         )
     if set(fasta_files) != set(tsv_files):
         sys.exit("ERROR: FASTA vs TSV sample name mismatch")
