@@ -35,8 +35,8 @@ the results, and these are described in the first :ref:`worked example
 
 * ``prepare`` - turn paired FASTQ input files for each sample, giving de-duplicated FASTA files
 * ``classify`` - produce genus/species level predictions as tab-separated-variable TSV files
-* ``sample-summary`` - summarise a set of predictions by sample (with human readable report)
-* ``read-summary`` - summarise a set of predictions by unique sequence and sample (with Excel report)
+* ``summary`` - summarise a set of predictions by sample (with human readable report), and by
+   unique sequence and sample (both with Excel reports)
 * ``edit-graph`` - draw the unique sequences as nodes on a graph, connected by edit-distance
 * ``pipeline`` - run all of the above in sequence
 * ``assess`` - compare classifier output to known positive controls
