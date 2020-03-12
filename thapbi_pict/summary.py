@@ -441,6 +441,12 @@ def read_summary(
     handle.write(
         "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
+            sum(
+                1
+                for md5 in md5_to_seq
+                for sample in metadata
+                if (md5, sample) in abundance_by_samples
+            ),
             max(
                 (
                     abundance_by_samples.get((md5, sample), 0)
@@ -448,12 +454,6 @@ def read_summary(
                     for sample in metadata
                 ),
                 default=0,
-            ),
-            sum(
-                1
-                for md5 in md5_to_seq
-                for sample in metadata
-                if (md5, sample) in abundance_by_samples
             ),
             sum(md5_abundance.values()),
             "\t".join(
