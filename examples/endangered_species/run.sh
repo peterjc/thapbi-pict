@@ -61,15 +61,9 @@ function pool {
 
     echo "Generating pooled reports for onebp classifier."
     # Now the reports:
-    thapbi_pict sample-summary -m onebp -i intermediate_pool/ \
-		-o summary/pooled.samples.onebp.tsv \
-		-r summary/pooled.samples.onebp.txt \
-		-e summary/pooled.samples.onebp.xlsx \
+    thapbi_pict summary -m onebp -i intermediate_pool/ \
+		-o summary/ -r pooled \
 		-t metadata.tsv -c 3,4,5 -x 2 -g 4
-    thapbi_pict read-summary -m onebp -i intermediate_pool/ \
-                -o summary/pooled.reads.onebp.tsv \
-                -e summary/pooled.reads.onebp.xlsx \
-                -t metadata.tsv -c 3,4,5 -x 2 -g 4
     # And the assessment
     thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
 		-o summary/pooled.assess.onebp.tsv
