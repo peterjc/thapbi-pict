@@ -34,7 +34,7 @@ plate, a set of 15 *Phytophthora* species (listed here alphabetically):
 - *Phytophthora ramorum*
 - *Phytophthora syringae*
 
-Quoting from the :ref:`sample summary report <sample_summary>`, using the
+Quoting from the :ref:`sample summary report <summary_reports>`, using the
 default settings for classification of ``DNA15MIX``, we got:
 
 - *Phytophthora aleatoria* (uncertain/ambiguous)

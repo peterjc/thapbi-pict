@@ -1,24 +1,24 @@
-.. _sample_summary:
+.. _summary_reports:
 
-Sample level report
-===================
+Summary reports
+===============
 
-Running thapbi_pict sample-summary
-----------------------------------
+Running thapbi_pict summary
+---------------------------
 
-The first output reports from the pipeline can be generated separately by the
-``thapbi_pict sample-summary`` command:
+The reports from the pipeline can be generated separately by the ``thapbi_pict
+summary`` command:
 
 .. code:: console
 
-    $ thapbi_pict sample-summary -h
+    $ thapbi_pict summary -h
     ...
 
 To mimic what the pipeline command would do, run the following:
 
 .. code:: console
 
-    $ thapbi_pict sample-summary -i intermediate/ -o summary/
+    $ thapbi_pict summary -i intermediate/ -o summary/
     ...
 
 We will look at the output in a moment, along side the equivalent reports
@@ -27,7 +27,7 @@ and row numbers):
 
 .. code:: console
 
-    $ time thapbi_pict sample-summary -i intermediate/ -o summary/ \
+    $ time thapbi_pict summary -i intermediate/ -o summary/ \
       -r with-metadata \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
@@ -40,13 +40,13 @@ as one very long command.
 The computer readable TSV and equivalent Excel file will include the metadata
 as additional leading columns, and also differ in the line order.
 
-We next focus on the changes in the human readable text file.
+We next focus on the sample report, and how including metadata changes it.
 
 Sample Report
 -------------
 
 Here we will discuss the high level human readable summary report from
-``thapbi_pict sample-summary``, produced as plain text.
+``thapbi_pict summary``, produced as plain text.
 
 Without :ref:`metadata <metadata>`, the samples are sorted by filename
 alphabetically. In this example that means we get DNA controls, negative
@@ -175,3 +175,38 @@ The plain text table ``with-metadata.samples.onebp.xlsx`` is the same, but
 without the colours and formatting. The files generated without metadata
 (``thapbi-pict.samples.onebp.xlsx`` etc) lack the extra columns and the
 background colour bands.
+
+Read Report
+-----------
+
+The heart of the read report is a large table, of unique sequences (rows)
+versus sequenced samples (columns), with read abundance counts. There are
+additional columns with sequence information, and when :ref:`metadata` is
+present, extra rows at the start with sample information.
+
+This read report has a row for each unique sequence. The first columns are
+the unique sequence MD5 checksum, any species prediction, the sequence itself,
+the number of samples it was detected in above the threshold, the maximum
+number of reads with this sequence in any one sample, and the total number of
+reads (from samples where it was above the threshold). Then the main columns
+(one per sample) list the abundance of each unique sequence in that sample (if
+above the threshold).
+
+In the Excel version, conditional formatting is used to highlight the non-zero
+counts with a red background. Furthermore, with metadata it will attempt to
+assign repeated bands of background color to groups (pink, orange, yellow,
+green, blue). In this example, each sample site gets a new color:
+
+.. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
+   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.onebp.xlsx`` file.
+
+Typical sample naming schemes will result in replicates as neighbouring
+columns - meaning you should see very similar patterns of red (non-zero).
+Certainly in this dataset scanning horizontally we do see some sequences
+clearly show presence/absence patterns consistent with the samples.
+
+The default row sorting will result in a dominant sequence being followed by
+any close variants assigned to the same species. Many of these rows will
+represent PCR artefacts found in just one or two samples. This contributes
+to the "halo" effect seen in the :ref:`edit_graph` representation, discussed
+next.

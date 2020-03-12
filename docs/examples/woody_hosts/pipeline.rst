@@ -36,8 +36,8 @@ increase the plate level minimum abundance threshold:
       -n raw_data/NEGATIVE*.fastq.gz
     ...
 
-And, as described for the :ref:`sample-summary <sample_summary>` and
-:ref:`read-summary <read_summary>` steps, we can provide metadata:
+And, as described for the :ref:`summary reports <summary_reports>`, we can
+provide metadata:
 
 .. code:: console
 

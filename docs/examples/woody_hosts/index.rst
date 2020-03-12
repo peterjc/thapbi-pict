@@ -24,8 +24,7 @@ assessing the classifier performance.
    prepare
    classify
    metadata
-   sample_summary
-   read_summary
+   summary
    edit_graph
    pipeline
    assess
