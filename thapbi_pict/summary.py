@@ -247,7 +247,7 @@ def sample_summary(
                 handle.write("\t".join(metadata) + "\t")
             handle.write(sample + "\t")
             if stats_fields:
-                handle.write("\t".join(stats_fields) + "\t")
+                handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
             handle.write(
                 "%i\t%s\t%s\n"
                 % (
@@ -443,7 +443,6 @@ def read_summary(
     # -------------
     current_row = 0
     first_data_row = 0
-    meta_default = [""] * len(meta_names)
     sample_formats = [None] * len(metadata)
     if meta_names:
         # Insert extra header rows at start for sample meta-data
@@ -458,15 +457,32 @@ def read_summary(
             [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
         )
         for i, name in enumerate(meta_names):
-            worksheet.write_string(i, LEADING_COLS - 1, name, cell_rightalign_format)
-            for s, sample in enumerate(metadata):
+            worksheet.write_string(
+                current_row + i, LEADING_COLS - 1, name, cell_rightalign_format
+            )
+            for s, value in enumerate(meta):
                 worksheet.write_string(
-                    i,
-                    LEADING_COLS + s,
-                    metadata.get(sample, meta_default)[i],
-                    sample_formats[s],
+                    current_row + i, LEADING_COLS + s, value[i], sample_formats[s],
                 )
         current_row += len(meta_names)
+    if stats_fields:
+        # Insert extra header rows at start for sample meta-data
+        # Make a single metadata call for each sample
+        meta = [sample_stats[sample] for sample in metadata]
+        for i, name in enumerate(stats_fields):
+            handle.write(
+                "#%s%s\t%s\n"
+                % ("\t" * (LEADING_COLS - 1), name, "\t".join(str(_[i]) for _ in meta))
+            )
+        for i, name in enumerate(stats_fields):
+            worksheet.write_string(
+                current_row + i, LEADING_COLS - 1, name, cell_rightalign_format
+            )
+            for s, value in enumerate(meta):
+                worksheet.write_number(
+                    current_row + i, LEADING_COLS + s, value[i], sample_formats[s],
+                )
+        current_row += len(stats_fields)
 
     # TSV main header
     # ---------------
