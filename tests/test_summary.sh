@@ -45,4 +45,4 @@ for M in identity onebp blast; do
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta-req.$M.tsv
 done
 
-echo "$0 - test_sample-summary.sh passed"
+echo "$0 - test_summary.sh passed"
