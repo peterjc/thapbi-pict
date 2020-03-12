@@ -6,6 +6,12 @@
 """Summarise classification results at sample and read level.
 
 This implements the ``thapbi_pict summary ...`` command.
+
+The code uses the term metadata to refer to the user-provided
+information about each sample (via a plain text TSV table),
+and statistics for the internally tracked information about
+each sample like the number of raw reads in the original FASTQ
+files (via header lines in the intermediate FASTA files).
 """
 import os
 import sys
@@ -52,10 +58,8 @@ def load_fasta_headers(sample_to_filename, fields):
         headers = load_fasta_header(filename)
         try:
             answer[sample] = [headers[_] for _ in fields]
-        except KeyError:
-            sys.exit(
-                f"ERROR: {filename} does not have required fields: {', '.join(fields)}"
-            )
+        except KeyError as err:
+            raise KeyError(f"{sample} {err}")
     return answer
 
 
@@ -120,23 +124,15 @@ def sample_summary(
     # TSV header
     # ----------
     handle = open(output, "w")
-    if meta_names:
-        handle.write(
-            "#%s\tSequencing sample\tSeq-count\t%s\t%s\n"
-            % (
-                "\t".join(meta_names),
-                "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                "\t".join(species_columns),
-            )
+    handle.write(
+        "#%sSequencing sample\t%sSeq-count\t%s\t%s\n"
+        % (
+            "\t".join(meta_names) + "\t" if meta_names else "",
+            "\t".join(stats_fields) + "\t" if stats_fields else "",
+            "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
+            "\t".join(species_columns),
         )
-    else:
-        handle.write(
-            "#Sequencing sample\tSeq-count\t%s\t%s\n"
-            % (
-                "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
-                "\t".join(species_columns),
-            )
-        )
+    )
 
     # Excel setup
     # -----------
@@ -168,32 +164,36 @@ def sample_summary(
     # Excel header
     # ------------
     current_row = 0
-    col_offset = len(meta_names)
+    col_offset = len(meta_names) + 1 + len(stats_fields)
     # Set first row to be tall, with vertical text
     worksheet.set_row(0, 150, vertical_text_format)
     # If there are lots of species, set narrow column widths
     cols = len(genus_predictions) + len(species_columns)
     if cols > 50:
         # Set column width to 2
-        worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 2)
+        worksheet.set_column(col_offset + 1, col_offset + cols, 2)
     elif cols > 20:
         # Set column width to 4
-        worksheet.set_column(col_offset + 1, col_offset + 1 + cols, 4)
+        worksheet.set_column(col_offset + 1, col_offset + cols, 4)
     del cols
     for offset, name in enumerate(meta_names):
         worksheet.write_string(current_row, offset, name)
     col_offset = len(meta_names)
     worksheet.write_string(current_row, col_offset, "Sequencing sample")
-    worksheet.write_string(current_row, col_offset + 1, "Seq-count")
+    col_offset += 1
+    for offset, name in enumerate(stats_fields):
+        worksheet.write_string(current_row, col_offset + offset, name)
+    col_offset += len(stats_fields)
+    worksheet.write_string(current_row, col_offset, "Seq-count")  # offset reference!
     for offset, genus in enumerate(genus_predictions):
         worksheet.write_string(
-            current_row, col_offset + 2 + offset, genus if genus else "Unknown"
+            current_row, col_offset + 1 + offset, genus if genus else "Unknown"
         )
     for offset, sp in enumerate(species_columns):
         worksheet.write_string(
-            current_row, col_offset + 2 + len(genus_predictions) + offset, sp
+            current_row, col_offset + 1 + len(genus_predictions) + offset, sp
         )
-    worksheet.freeze_panes(current_row + 1, col_offset + 2)
+    worksheet.freeze_panes(current_row + 1, col_offset + 1)
 
     # Human header
     # -------------
@@ -245,10 +245,12 @@ def sample_summary(
             # ---
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
+            handle.write(sample + "\t")
+            if stats_fields:
+                handle.write("\t".join(stats_fields) + "\t")
             handle.write(
-                "%s\t%i\t%s\t%s\n"
+                "%i\t%s\t%s\n"
                 % (
-                    sample,
                     sum(sample_species_counts[sample].values()),
                     "\t".join(
                         str(sample_genus_counts[sample][genus])
@@ -270,27 +272,34 @@ def sample_summary(
                 cell_format = None
             current_row += 1
             assert len(meta_names) == len(metadata)
+            assert col_offset == len(meta_names) + 1 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
-            assert col_offset == len(meta_names)
-            worksheet.write_string(current_row, col_offset, sample, cell_format)
+            worksheet.write_string(current_row, len(meta_names), sample, cell_format)
+            for offset, _ in enumerate(stats_fields):
+                worksheet.write_number(
+                    current_row,
+                    len(meta_names) + 1 + offset,
+                    sample_stats[sample][offset],
+                    cell_format,
+                )
             worksheet.write_number(
                 current_row,
-                col_offset + 1,
+                col_offset,
                 sum(sample_species_counts[sample].values()),
                 cell_format,
             )
             for offset, genus in enumerate(genus_predictions):
                 worksheet.write_number(
                     current_row,
-                    col_offset + 2 + offset,
+                    col_offset + 1 + offset,
                     sample_genus_counts[sample][genus],
                     cell_format,
                 )
             for offset, sp in enumerate(species_columns):
                 worksheet.write_number(
                     current_row,
-                    col_offset + 2 + len(genus_predictions) + offset,
+                    col_offset + 1 + len(genus_predictions) + offset,
                     sample_species_counts[sample][sp],
                     cell_format,
                 )
@@ -687,15 +696,20 @@ def main(
         # Include version number here?
         stem = os.path.join(out_dir, "thapbi-pict")
 
-    stats_fields = (
-        "raw_fastq",
-        "trimmomatic",
-        "flash",
-        "cutadapt",
-        "abundance",
-        "threshold",
-    )
-    sample_stats = load_fasta_headers(fasta_files, stats_fields)
+    # Not loading the post-abundance-threshold count, or the threshold.
+    # Count should match the Seq-count column, but will not if running
+    # report with higher abundance threshold - simpler to exclude them:
+    stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt")
+    try:
+        sample_stats = load_fasta_headers(
+            fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt")
+        )
+    except KeyError as err:
+        sys.stderr.write(
+            f"WARNING: Incomplete header information in FASTA files: {err}\n"
+        )
+        sample_stats = {}
+        stats_fields = []
 
     sample_summary(
         tsv_files,
