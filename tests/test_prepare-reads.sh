@@ -24,32 +24,32 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-	    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
 
 # In this case, --flip makes no difference
 # Using merged cache also should make no difference
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-	    --flip --merged-cache $TMP/merged_cache/ \
-	    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    --flip --merged-cache $TMP/merged_cache/ \
+    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 # Reusing the pre-primer time pre-abundance cache here:
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-	    --merged-cache $TMP/merged_cache/ \
-	    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    --merged-cache $TMP/merged_cache/ \
+    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-	    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm thapbi_pict/hmm/controls.hmm
+    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm thapbi_pict/hmm/controls.hmm
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-	    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm ''
+    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm ''
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "Generating mock control file"
@@ -88,7 +88,7 @@ diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_default.
 # Testing primers (actual)
 rm -rf $TMP/SRR6303948*.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2 \
-	    --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
+        --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
 diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_primers.fasta
 
 echo "Testing --flip works"
@@ -97,12 +97,12 @@ echo "Testing --flip works"
 
 rm -rf $TMP/sample.fasta
 thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
-            -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
+    -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
 
 rm -rf $TMP/sample.fasta
 thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
-	    -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
+    -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_flip_a10.fasta
 
 echo "$0 - test_prepare-reads.sh passed"

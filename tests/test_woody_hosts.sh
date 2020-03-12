@@ -23,10 +23,10 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/woody_
 # Idea here is to mimic what "thapbi_pict pipeline" would do if we had
 # the FASTQ files here:
 # thapbi_pict pipeline -i sample_data/raw_data/ \
-#	    -s $TMP/woody_hosts/intermediate \
-#	    -o $TMP/woody_hosts/summary -r woody-hosts \
-#	    -t examples/woody_hosts/metadata.tsv \
-#            -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+#     -s $TMP/woody_hosts/intermediate \
+#     -o $TMP/woody_hosts/summary -r woody-hosts \
+#     -t examples/woody_hosts/metadata.tsv \
+#     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 
 
 echo "=================================="
@@ -35,14 +35,14 @@ echo "=================================="
 time tar -jxvf examples/woody_hosts/intermediate.tar.bz2 -C $TMP/woody_hosts/ | wc -l
 
 if [ -d tests/woody_hosts/raw_data/ ]; then
-   echo "================================="
-   echo "Running woody hosts prepare-reads"
-   echo "================================="
-   mkdir $TMP/woody_hosts/intermediate_new
-   time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/woody_hosts/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
-   for f in $TMP/woody_hosts/intermediate/*.fasta; do
-       diff $f $TMP/woody_hosts/intermediate_new/${f##*/}
-   done
+    echo "================================="
+    echo "Running woody hosts prepare-reads"
+    echo "================================="
+    mkdir $TMP/woody_hosts/intermediate_new
+    time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/woody_hosts/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
+    for f in $TMP/woody_hosts/intermediate/*.fasta; do
+        diff $f $TMP/woody_hosts/intermediate_new/${f##*/}
+    done
 fi
 
 echo "======================================="
@@ -68,15 +68,15 @@ echo "==========================="
 echo "Running woody hosts summary"
 echo "==========================="
 time thapbi_pict summary -i $TMP/woody_hosts/intermediate/ \
-	    -o $TMP/woody_hosts/summary/ -r no-metadata
+    -o $TMP/woody_hosts/summary/ -r no-metadata
 ls $TMP/woody_hosts/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/woody_hosts/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
 time thapbi_pict summary -i $TMP/woody_hosts/intermediate/ \
-            -o $TMP/woody_hosts/summary/ -r with-metadata \
-            -t examples/woody_hosts/metadata.tsv \
-            -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+    -o $TMP/woody_hosts/summary/ -r with-metadata \
+    -t examples/woody_hosts/metadata.tsv \
+    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/woody_hosts/summary/with-metadata.*
 if [ `grep -c "^Site: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
 if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.samples.onebp.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
