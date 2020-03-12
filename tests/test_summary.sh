@@ -20,6 +20,19 @@ thapbi_pict summary 2>&1 | grep "the following arguments are required"
 thapbi_pict summary -o '' -i tests/classify 2>&1 | grep "Output directory name blank"
 set -o pipefail
 
+thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
+	    $TMP/DNAMIX_S95_L001.identity.tsv \
+	    -m identity -o $TMP/ -r summary
+
+# With metadata, using default method, -m onebp
+thapbi_pict summary --input tests/classify/P-infestans-T30-4.fasta tests/classify/P-infestans-T30-4.onebp.tsv -o $TMP/ -r summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
+diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
+
+# Now require metadata, but give entire folder as input
+thapbi_pict summary --input tests/classify/ -o $TMP/ -r summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -r summary -q
+diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
+
+
 # Passing filename, default method, explicit min abundance
 rm -rf $TMP/human.txt $TMP/test-case.tsv $TMP/test-case.xlsx
 thapbi_pict summary -m identity -a 99 -o $TMP/ -r test-case \

@@ -46,7 +46,6 @@ time tests/test_classify.sh
 time tests/test_seq-import.sh
 time tests/test_assess.sh
 time tests/test_summary.sh
-time tests/test_read-summary.sh
 time tests/test_edit-graph.sh
 
 echo "================="
