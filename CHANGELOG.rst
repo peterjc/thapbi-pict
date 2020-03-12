@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.6.14 2020-03-11 Merged ``read-summary`` & ``sample-summary`` into new ``summary`` command.
+v0.6.14 2020-03-12 Merged ``read-summary`` & ``sample-summary`` into new ``summary`` command.
 v0.6.13 2020-03-09 New classifier method ``substr`` for testing with poorly trimmed DB content.
 v0.6.12 2020-03-09 New advanced setting ``--merged-cache`` intended for multiple marker use.
 v0.6.11 2020-03-02 Updated genus-level only NCBI import, restrict to those with 32bp leader.
