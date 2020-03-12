@@ -358,6 +358,8 @@ def load_fasta_header(fasta_file, gzipped=False):
             answer[tag] = value
         elif line.startswith(">"):
             break
+        elif not line.strip():
+            pass
         else:
             sys.exit(f"ERROR: Unexpected line in headered FASTA file {fasta_file}")
     return answer
