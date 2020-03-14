@@ -259,8 +259,9 @@ def run_cutadapt(
         elif long_in.endswith(".fastq"):
             from Bio.SeqIO import convert
 
-            convert(long_in, "fastq", trimmed_out, "fasta")
-            _, total, _ = abundance_values_in_fasta(trimmed_out)
+            # don't need to parse the names as FASTQ files not using
+            # MD5_abundance yet
+            total = convert(long_in, "fastq", trimmed_out, "fasta")
             return total, total
         else:
             sys.exit(f"ERROR: called on {long_in} with no primers")
@@ -731,9 +732,21 @@ def prepare_sample(
                 f" but none above {'control' if control else 'sample'}"
                 f" minimum abundance threshold {min_abundance:d}\n"
             )
-        with open(fasta_name, "w"):
-            # Write empty file
-            pass
+        # Effectively empty FASTA file, just header
+        save_nr_fasta(
+            {},
+            fasta_name,
+            header_dict={
+                "left_primer": left_primer,
+                "right_primer": right_primer,
+                "raw_fastq": count_raw,
+                "trimmomatic": count_trimmomatic,
+                "flash": count_flash,
+                "cutadapt": count_cutadapt,
+                "abundance": accepted_total,
+                "threshold": min_abundance,
+            },
+        )
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
         return fasta_name, 0, {}
