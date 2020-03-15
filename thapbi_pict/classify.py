@@ -23,6 +23,7 @@ from .db_orm import connect_to_db
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
+from .prepare import load_fasta_header
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string
 from .utils import find_requested_files
@@ -820,13 +821,14 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         pred_handle.write(
             "#sequence-name\ttaxid\tgenus-species:%s\tnote\n" % ";".join(db_sp_list)
         )
-        if os.path.getsize(filename):
+        # Will get empty dict for empty file
+        headers = load_fasta_header(filename)
+        if not headers or headers["abundance"]:
             # There are sequences to classify
             tax_counts = classify_file_fn(
                 filename, session, pred_handle, tmp, shared_tmp, debug, cpu
             )
         else:
-            # No sequences, no taxonomy assignments
             sys.stderr.write(
                 f"WARNING: Skipping {method} classifier on {filename}"
                 " as zero sequences\n"
