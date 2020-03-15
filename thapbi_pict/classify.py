@@ -23,11 +23,11 @@ from .db_orm import connect_to_db
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
-from .prepare import load_fasta_header
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string
 from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import load_fasta_header
 from .utils import md5seq
 from .utils import md5seq_16b
 from .utils import onebp_variants

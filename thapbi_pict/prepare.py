@@ -22,6 +22,7 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from .hmm import filter_for_hmm
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
+from .utils import load_fasta_header
 from .utils import md5seq
 from .utils import run
 from .versions import check_tools
@@ -340,30 +341,6 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
         cmd += ["-t", "1"]  # Default is all CPUs
     cmd += ["-d", output_dir, "-o", output_prefix, trimmed_R1, trimmed_R2]
     return parse_flash_stdout(run(cmd, debug=debug).stdout)
-
-
-def load_fasta_header(fasta_file, gzipped=False):
-    """Parse our FASTA hash-comment line header as a dict."""
-    answer = {}
-    if gzipped:
-        handle = gzip.open(fasta_file, "rt")
-    else:
-        handle = open(fasta_file)
-    for line in handle:
-        if line.startswith("#") and ":" in line:
-            tag, value = line[1:].strip().split(":", 1)
-            try:
-                value = int(value)
-            except ValueError:
-                pass
-            answer[tag] = value
-        elif line.startswith(">"):
-            break
-        elif not line.strip():
-            pass
-        else:
-            sys.exit(f"ERROR: Unexpected line in headered FASTA file {fasta_file}")
-    return answer
 
 
 def save_nr_fasta(
