@@ -43,23 +43,26 @@ def file_to_sample_name(filename):
         raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
 
 
-def load_fasta_headers(sample_to_filename, fields):
+def load_fasta_headers(sample_to_filename, fields, default=""):
     """Load requested fields from FASTA headers.
 
     Argument sample_to_filename is a dict of sample names
     as keys, filenames as paths. Arguments fields is a list
-    of field names.
+    of field names. Default is a single value marker.
 
     Returns a dict with sample names as keys, and lists
     of the requested fields as values.
+
+    If all the values are missing and/or match the default,
+    raises a KeyError for that sample.
     """
     answer = {}
+    blanks = [default] * len(fields)
     for sample, filename in sample_to_filename.items():
         headers = load_fasta_header(filename)
-        try:
-            answer[sample] = [headers[_] for _ in fields]
-        except KeyError as err:
-            raise KeyError(f"{sample} {err}")
+        answer[sample] = [headers.get(_, default) for _ in fields]
+        if answer[sample] == blanks:
+            raise KeyError(sample)
     return answer
 
 
@@ -718,14 +721,29 @@ def main(
     stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt")
     try:
         sample_stats = load_fasta_headers(
-            fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt")
+            fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt"), -1
         )
     except KeyError as err:
         sys.stderr.write(
-            f"WARNING: Incomplete header information in FASTA files: {err}\n"
+            f"WARNING: Missing header information in FASTA file(s): {err}\n"
         )
         sample_stats = {}
         stats_fields = []
+
+    bad_fields = []
+    for i in range(len(stats_fields)):
+        if -1 in (_[i] for _ in sample_stats.values()):
+            bad_fields.append(i)
+    if bad_fields:
+        for sample, value in sample_stats.items():
+            sample_stats[sample] = [
+                _ for i, _ in enumerate(value) if i not in bad_fields
+            ]
+        stats_fields = [_ for i, _ in enumerate(stats_fields) if i not in bad_fields]
+        sys.stderr.write(
+            f"WARNING: Dropping {len(bad_fields)} missing stats column(s)\n"
+        )
+    del bad_fields
 
     sample_summary(
         tsv_files,
