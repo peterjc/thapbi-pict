@@ -696,7 +696,10 @@ def load_metadata(
         )
     if bad:
         print(bad)
-        sys.exit(f"ERROR: Duplicated metadata for {len(bad):d} samples, {bad[1]} (etc)")
+        sys.exit(
+            f"ERROR: Duplicated metadata for {len(bad)} samples,"
+            f" {sorted(bad)[0]} (etc)"
+        )
 
     return metadata, names, group_col
 
