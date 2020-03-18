@@ -674,8 +674,22 @@ def load_metadata(
         meta_plus_idx.sort()
 
     # Select desired columns,
+    def make_unique_but_keep_order(semi_colon_list):
+        answer = []
+        for value in semi_colon_list.split(";"):
+            value = value.strip()
+            if not value:
+                pass
+            elif value in answer:
+                sys.stderr.write(
+                    f"WARNING: Double entry for {value} in metadata line\n"
+                )
+            else:
+                answer.append(value)
+        return answer
+
     meta = [_[:-1] for _ in meta_plus_idx]
-    index = [[s.strip() for s in _[-1].split(";") if s.strip()] for _ in meta_plus_idx]
+    index = [make_unique_but_keep_order(_[-1]) for _ in meta_plus_idx]
     del meta_plus_idx
 
     bad = set()
