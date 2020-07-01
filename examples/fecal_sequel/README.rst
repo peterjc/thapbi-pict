@@ -99,7 +99,7 @@ The provided file ``metadata.tsv`` is based on ``PRJNA574765`` but breaks up
 the sample name into separate columns:
 
 1. Accession, assigned by the public archive, e.g. "SRR10198789"
-2. Rare, wich of the 3 species is at low abundance, "COTO", "EPFU" or "TABR".
+2. Rare, which of the 3 species is at low abundance, "COTO", "EPFU" or "TABR".
 3. Ratio, either "1:64" (rare) or "1:192" (very rare)
 4. Replicate, "01" to "10" (leading zero for alphabetical sorting)
 
