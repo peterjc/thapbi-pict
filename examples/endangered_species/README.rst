@@ -113,7 +113,7 @@ File ``PRJEB18620.txt`` with the descriptions on the NCBI SRA, supplemented by
 Table 7, was used to write ``metadata.tsv``, which has the following columns:
 
 1. run_accessions, e.g. "ERR1824060;ERR1824061;...;ERR1824075"
-2. run_names, e.g. "EM_1" or S1_Lab_1;S1_Lab_2;...;S1_Lab_16""
+2. run_names, e.g. "EM_1" or "S1_Lab_1;S1_Lab_2;...;S1_Lab_16"
 3. group, "Experimental mixture" or "Interlaboratory trial"
 4. sample, e.g. "EM_1" or "S1"
 5. description, e.g. "Experimental mixture containing 1% Zea mays, 1% Glycine
