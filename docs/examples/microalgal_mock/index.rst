@@ -6,7 +6,7 @@ Microalgal Mock Community 18S
 Building on the previous examples, here we consider seven mock communities of
 using six freshwater and six marine microalgae in a staggered gradient.
 
-Two different sets of primers where used targetting the V4 and V8V9 regions
+Two different sets of primers were used targeting the V4 and V8V9 regions
 of 18S rRNA (which were sequenced separately), which with the current THAPBI
 PICT design requires running the pipeline twice.
 
