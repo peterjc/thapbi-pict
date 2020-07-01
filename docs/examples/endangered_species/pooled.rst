@@ -57,3 +57,7 @@ It appears that the THAPBI PICT default minimum abundance threshold of 100
 reads is too stringent for detecting all the markers in a complex pool like
 this. Including negative sequencing controls would help set an objective
 lower bound.
+
+Also as noted earlier, any trnL-P6-loop matches were lost due to not changing
+the THAPBI PICT default minimum length of 100bp. The authors used a minimum of
+10bp for this marker.
