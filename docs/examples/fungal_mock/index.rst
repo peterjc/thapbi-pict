@@ -1,5 +1,3 @@
-.. _worked_example:
-
 Fungal Mock Community ITS1 & 2
 ==============================
 
