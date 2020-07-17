@@ -51,6 +51,7 @@ Key links:
    installation
    quick_start
    examples/index
+   database
    commands
    api/index
    release_history
