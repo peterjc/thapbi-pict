@@ -1,5 +1,3 @@
-.. _worked_example:
-
 Bat Mock Community COI
 ======================
 

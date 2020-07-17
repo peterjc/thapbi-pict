@@ -1,5 +1,3 @@
-.. _worked_example:
-
 Microalgal Mock Community 18S
 =============================
 

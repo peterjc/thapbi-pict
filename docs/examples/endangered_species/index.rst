@@ -1,5 +1,3 @@
-.. _worked_example:
-
 Endangered Species Mixes 16S etc
 ================================
 
