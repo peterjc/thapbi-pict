@@ -144,6 +144,8 @@ for number of base pairs difference between sequences) and matching
 ``Edit-distance-weight`` (values ``3``, ``2``, ``1`` used earlier for the
 layout where we prioritise the small edit distance edges).
 
+.. _halo_effect:
+
 Halo effect
 -----------
 
