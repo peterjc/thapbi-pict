@@ -115,5 +115,5 @@ formatted Excel spreadsheets).
   them for edit distance (solid black lines for 1bp, dashed grey for 2bp, and
   dotted grey for 3bp away). Any sequences also in the database are colored.
 
-These are discussed and excerpts shown in the worked examples later in the
-documentation.
+These are discussed and excerpts shown in the :ref:`worked examples
+<worked_examples>` later in the documentation.
