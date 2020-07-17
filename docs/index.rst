@@ -52,6 +52,7 @@ Key links:
    quick_start
    examples/index
    database
+   negatives
    commands
    api/index
    release_history
