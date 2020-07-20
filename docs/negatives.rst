@@ -1,6 +1,9 @@
 Negative Controls
 =================
 
+Any negative control sample not expected to contain any of the target
+sequences.
+
 On a typical 96-well plate of PCR products which will go on to be multiplexed
 for Illumina MiSeq sequencing, most of the samples are biological - but some
 should be negative controls (e.g. PCR blanks, or synthetic sequences).
