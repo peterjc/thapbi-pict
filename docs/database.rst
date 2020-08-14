@@ -58,7 +58,8 @@ Ideally all the reference sequences in your database will have unambiguous
 sequences (A, C, G and T only). However, some published species sequences will
 contain IUPAC ambiguity codes, especially if capillary sequenced. For example
 *Phytophthora condilina* accession ``KJ372262`` has a single ``W`` meaning
-``A`` or ``T``.
+``A`` or ``T``. In this case for *P. condilina* in our curated set, we could
+select the unambiguous accession ``MG707826`` instead.
 
 How this is handled will depend on the classifier algorithm used. With the
 strictest ``identity`` classifier, this will never match (since the Illumina
