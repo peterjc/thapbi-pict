@@ -4,7 +4,7 @@ Endangered Species Mixes 16S etc
 This is the most complicated of the examples considered, where most of the
 samples are "Experimental mixtures" of multiple plants and animals (plus two
 traditional medicine mixtures where the exact content is unknown), which have
-all be sequenced with about a dozen different primer pairs for multiple
+all been sequenced with about a dozen different primer pairs for multiple
 metabarcoding markers including 16S, COI, cyt-b, matK, rbcL, trnL and ITS2.
 
 This example pushes THAPBI PICT beyond its original design goals. It requires
