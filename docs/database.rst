@@ -39,7 +39,7 @@ The default database is compiled from the following sets of sequences:
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level, using
   the ``thapbi_pict ncbi-import`` command with ``-g`` or ``--genus``.
   i.e. We discard the author provided species information as we found too many
-  were misclassified, keeping only the status genus.
+  were misclassified, keeping only the stated genus.
 - Observed ITS1 sequences from single isolate positive controls run on a MiSeq
   plate, using the ``thapbi_pict seq-import`` command.
 - Four G-BLOCK synthetic controls in a FASTA file, imported using the
