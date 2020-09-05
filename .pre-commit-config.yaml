@@ -19,13 +19,7 @@ repos:
         description: Reject any files containing a tab
         entry: '\t'
         language: pygrep
-        files: \.(rst|tex|yml|yaml|py)$
-    -   id: leading-tabs
-        name: No leading tabs
-        description: Reject any lines starting with a tab
-        entry: '^\t'
-        language: pygrep
-        files: \.sh$
+        files: \.(py|sh|rst|yml|yaml)$
 -   repo: https://github.com/psf/black
     rev: 19.10b0
     hooks:
