@@ -33,11 +33,14 @@ The main sub-commands are to do with classifying sequence files and reporting
 the results, and these are described in the first :ref:`worked example
 <worked_example>`:
 
-* ``prepare`` - turn paired FASTQ input files for each sample, giving de-duplicated FASTA files
-* ``classify`` - produce genus/species level predictions as tab-separated-variable TSV files
-* ``summary`` - summarise a set of predictions by sample (with human readable report), and by
-  unique sequence and sample (both with Excel reports)
-* ``edit-graph`` - draw the unique sequences as nodes on a graph, connected by edit-distance
+* ``prepare`` - turn paired FASTQ input files for each sample, giving
+  de-duplicated FASTA files
+* ``classify`` - produce genus/species level predictions as
+  tab-separated-variable TSV files
+* ``summary`` - summarise a set of predictions by sample (with human readable
+  report), and by unique sequence and sample (both with Excel reports)
+* ``edit-graph`` - draw the unique sequences as nodes on a graph, connected by
+  edit-distance
 * ``pipeline`` - run all of the above in sequence
 * ``assess`` - compare classifier output to known positive controls
 
@@ -48,11 +51,14 @@ second :ref:`worked example, with a custom database <custom_database>`:
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy
 * ``ncbi-import`` - import a FASTA file using the NCBI style naming
-* ``curated-import`` - import a FASTA file where the descriptions are just the species names
-* ``import-seq`` - import prepared reads with known species assignment (single isolate positive controls)
+* ``curated-import`` - import a FASTA file where the descriptions are just the
+  species names
+* ``import-seq`` - import prepared reads with known species assignment (single
+  isolate positive controls)
 * ``conflicts`` - report on genus or species level conflicts in the database
 
-Start with reading the help for any command using ``-h`` or ``--help`` as follows:
+Start with reading the help for any command using ``-h`` or ``--help`` as
+follows:
 
 .. code:: console
 

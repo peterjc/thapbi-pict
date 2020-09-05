@@ -78,8 +78,8 @@ line terminal open in the ``examples/fungal_mock/`` folder. First we run the
 
 This will download the raw gzip compressed FASTQ files from the ENA (122 files,
 61 pairs, under 400MB in total), and setup appropriate per-sample symlinks to
-the expected output in the ``expected/`` sub-directories for use with classifier
-assessment.
+the expected output in the ``expected/`` sub-directories for use with
+classifier assessment.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
 files downloaded correctly:
@@ -101,14 +101,15 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT multiple times.
-For each of the primer settings (a small fragment of ITS1 on ``amp_lib_one/``,
-a larger fragment of ITS1 and an ITS2 marker on ``amp_lib_two/``), it will make a
-simple database using the provided ``ITS1.fasta`` or ``ITS2.fasta`` file. It will
-then call the pipeline using the ``identity``, ``onebp`` and ``blast`` classifiers.
+Next, you can run the ``run.py`` script which will call THAPBI PICT multiple
+times. For each of the two primer settings (a small fragment of ITS1 on
+``amp_lib_one/``, and a larger fragment of ITS1 and an ITS2 marker on
+``amp_lib_two/``), it will make a simple database using the provided
+``ITS1.fasta`` or ``ITS2.fasta`` file. It will then call the pipeline using
+the ``identity``, ``onebp`` and ``blast`` classifiers.
 
-Additionally for each primer set, it will generate an additional edit-graph at a
-higher minimum abundance threshold (to omit PCR noise etc).
+Additionally for each primer set, it will generate an additional edit-graph at
+a higher minimum abundance threshold (to omit PCR noise etc).
 
 Metadata
 --------
@@ -117,7 +118,7 @@ The amplicon specific files ``metadata.tsv`` have seven columns:
 
 1. Accession, assigned by the public archive, e.g. "SRR5314337"
 2. MiSeq-name, author's filename stem, e.g. "FMockE.HC_S190"
-3. Condition, based on author's naming without replicate suffix, e.g. "MockE_HC"
+3. Condition, based on original name without replicate suffix, e.g. "MockE_HC"
 4. Replicate, numeric, e.g. "1"
 5. Sample-type, either "fungal mock community" or "negative control"
 6. Group, e.g. "even" or "staggered A"
@@ -131,14 +132,14 @@ When calling THAPBI PICT, the meta data commands are given as follows:
 
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
-Argument ``-c 5,6,7,3,4,2`` says which columns to display and sort by. This means
-Sample-type, Group, Protocol, Condition, Replicate, MiSeq Name. The purpose here
-is to group the samples logically (sorting on accession or MiSeq Name would not
-work), and suitable for group colouring.
+Argument ``-c 5,6,7,3,4,2`` says which columns to display and sort by. This
+means Sample-type, Group, Protocol, Condition, Replicate, MiSeq Name. The
+purpose here is to group the samples logically (sorting on accession or MiSeq
+Name would not work), and suitable for group colouring.
 
 Argument ``-x 1`` (default, so not needed) indicates the filename stem can be
 found in column 1, Accession. We might have downloaded the files and used the
 author original names, in which case ``-x 2`` ought to work.
 
-Argument ``-g 6`` means assign colour bands using column 6, Group. This is used
-in the Excel reports.
+Argument ``-g 6`` means assign colour bands using column 6, Group. This is
+used in the Excel reports.

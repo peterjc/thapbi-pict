@@ -97,9 +97,9 @@ In this case, as you may recall from when we looked at the classifier output
 file ``intermediate/Site_1_sample_1.onebp.tsv``, one of the sequences matched
 both *Phytophthora cambivora* and *Phytophthora x cambivora*.
 
-In comparison, with metadata in file ``summary/with-metadata.samples.onebp.txt``,
-all the samples matched to a metadata row get grouped with a shared metadata
-header:
+In comparison, with the metadata provided in file
+``summary/with-metadata.samples.onebp.txt``, all the samples matched to a
+metadata row get grouped with a shared metadata header:
 
 .. code:: text
 

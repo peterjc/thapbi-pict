@@ -103,9 +103,9 @@ associated 12 species database we have one species per genus, and can ignore
 half the columns.
 
 It should be clear that some species abundance increases with the ratio, while
-others decrease. If we sort this into the six freshwater and four marine species
-(the missing two species were both marine), the pattern is even clearer as in
-this Excel screenshot (freshwater in pale blue, marine in dark blue):
+others decrease. If we sort this into the six freshwater and four marine
+species (the missing two species were both marine), the pattern is even clearer
+as in this Excel screenshot (freshwater in pale blue, marine in dark blue):
 
 .. image:: https://gist.githubusercontent.com/peterjc/3baeb3a648b8cdd7cfa970920eaf7f38/raw/4061bc7aafe7360e3c1b90ab82e92cffaaad02ff/V4.samples.onebp.svg?sanitize=true
    :alt: Excel screenshot from a cropped and sorted THAPBI PICT sample report
@@ -188,7 +188,8 @@ Unfortunately it seems to be incomplete, missing the last 22bp,
 ``GTGAAGTCGTAACAAGGTTTCC`` - as can be seen on the full length record (e.g.
 `KU900218.1 on NCBI <https://www.ncbi.nlm.nih.gov/nucleotide/KU900218.1>`_).
 
-The second and third most common unexpected sequence are both marine associated::
+The second and third most common unexpected sequence are both marine
+associated::
 
     >64f90363dd2c1f85645af55a92d4c376
     TAGATGTTCTGGGCTGCACGCGCGCTACACTGATGCGCTCAACGAGTTTATGACCTTGCCCGGAAGGGTTGGGTAATCTT
@@ -224,11 +225,11 @@ associated::
     TTGCTGGCGAGTTCTTCACGGTTCTCGCTGTGAGAAGTTGATTAAACCTTATCATTTAGAGGAAGGAGAAGTCGTAACAA
     GGTTTCC
 
-Running an NCBI BLAST search online gives KU900223.1 *Rhodomonas* sp. CCAP 995/5,
-and KU900222.1 *Cryptomonas pyrenoidifera* respectively amongst their top hits -
-again both accessions from the mock community - but at only 96% identify. Likewise
-the sixth most common unexpected sequence has a 97% identity match to KU900220.1
-*Chlorella vulgaris*::
+Running an NCBI BLAST search online gives KU900223.1 *Rhodomonas* sp. CCAP
+995/5, and KU900222.1 *Cryptomonas pyrenoidifera* respectively amongst their
+top hits - again both accessions from the mock community - but at only 96%
+identify. Likewise the sixth most common unexpected sequence has a 97% identity
+match to KU900220.1 *Chlorella vulgaris*::
 
     >1610815dfa2c7d4b602e84114d15cd51
     TAGATGTTCTGGGCCGCACGCGCGCTACACTGATGCATTCAACAAGCCTATCCTTGACCGAAGGGTCTGGGTAATCTTTG

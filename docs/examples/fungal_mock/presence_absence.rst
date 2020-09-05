@@ -187,21 +187,21 @@ single sample to visualise this), and can thus be explained as PCR noise.
 Again, both samples have ``d51507f661ebee38a85bec35b70b7ee1`` as their main
 (or only) unwanted sequence above the threshold, a perfect match to *Fusarium
 graminearum* in the mock community.
-Additionally ``716f6111ac2ee192c23282e07d23078a`` matched *Mortierella verticillata*
-from the mock community.
+Additionally ``716f6111ac2ee192c23282e07d23078a`` matched *Mortierella
+verticillata* from the mock community.
 
 Then ``5194a4ae3a27d987892a8fee7b1669b9`` gives perfect NCBI BLAST matches to
 fungus *Trichosporon asahii* and ``702929cef71042156acb3a28270d8831`` to fungus
 *Candida tropicalis*, which are unexpected contamination.
 
-I concur with the author that the high levels of *Fusarium graminearum* are most
-likely cross-contamination from the mock-community samples:
+I concur with the author that the high levels of *Fusarium graminearum* are
+most likely cross-contamination from the mock-community samples:
 
-    Negative control samples in this sequencing run displayed some contamination by
-    *F. graminearum*. This taxon was represented at slightly, but not dramatically,
-    higher than expected relative abundances in the mock community samples; some of
-    the increase over expected relative abundance may have been related to
-    cross‐sample contamination.
+    Negative control samples in this sequencing run displayed some
+    contamination by *F. graminearum*. This taxon was represented at slightly,
+    but not dramatically, higher than expected relative abundances in the mock
+    community samples; some of the increase over expected relative abundance
+    may have been related to cross‐sample contamination.
 
 Looking at the DNA extraction control alone, the THAPBI PICT default threshold
 of 100 seems reasonable. However, if we set that aside the likely *Fusarium
@@ -215,10 +215,10 @@ four copies of an unwanted sequence).
 Missing positive controls
 -------------------------
 
-We will look at the ratios later, but were all 19 species in the mock community found?
-Perhaps the quickest way to answer this is to look at the classification assessment
-output. At the command line, looking at the BLAST based classifier as the most fuzzy
-of the three:
+We will look at the ratios later, but were all 19 species in the mock community
+found? Perhaps the quickest way to answer this is to look at the classification
+assessment output. At the command line, looking at the BLAST based classifier
+as the most fuzzy of the three:
 
 .. code:: console
 

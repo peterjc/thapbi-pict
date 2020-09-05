@@ -31,15 +31,16 @@ samples expected - perhaps the default abundance threshold is too high?
 Mini-16S - short marker
 -----------------------
 
-The output from the Mini-16S marker is far more diverse, with 25 unique sequences:
+The output from the Mini-16S marker is far more diverse, with 25 unique
+sequences:
 
 .. code:: console
 
     $ grep -c ">" summary/Mini-16S.all.fasta
     25
 
-The most common is again a perfect match to *Bos taurus*, which this time has no
-false negatives (but two false positives?).
+The most common is again a perfect match to *Bos taurus*, which this time has
+no false negatives (but two false positives?).
 
 We have all the expected *Sus scrofa* matches, and some of *Gallus gallus* and
 *Anguilla anguilla* expected in six samples. *Crocodylus niloticus* is also
@@ -55,9 +56,9 @@ Overall, again perhaps the default abundance threshold is too high?
 COI - long marker
 -----------------
 
-Assuming I understood the paper correctly, this used a pool of four left primers
-and four right primers. That is not easily handled with THAPBI PICT at the time
-of writing.
+Assuming I understood the paper correctly, this used a pool of four left
+primers and four right primers. That is not easily handled with THAPBI PICT at
+the time of writing.
 
 Mini-COI - short marker
 -----------------------
@@ -73,8 +74,8 @@ The species matches are all reasonable, it detects all the *Pieris brassicae*,
 most of the *Bos taurus*, *Pleuronectes platessa*, *Sus scrofa*, many of the
 *Huso dauricus* and *Gallus gallus*.
 
-We have unexpected *Acipenser schrenckii*, which was also found in the paper and
-explained due to sample preparation.
+We have unexpected *Acipenser schrenckii*, which was also found in the paper
+and explained due to sample preparation.
 
 There are also plenty of unclassified sequences from the traditional medicine
 samples, based on an NCBI BLAST search many are likely from undescribed fungi.

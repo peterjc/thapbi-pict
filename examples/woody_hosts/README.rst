@@ -108,7 +108,7 @@ names, rows for the controls, and a comment block at the start.
 The 16 columns are as follows, where 4 to 15 are in pairs for tree/shrub broad
 taxonomic grouping and health status (H, healthy; D, symptoms/stump/dead):
 
-1. Anonymised site number with leading zero added ("01" to "14"), or control name
+1. Anonymised site number (with leading zero, "01" to "14"), or control name
 2. Approximate altitude at centre
 3. Underlying soil type
 4. Healthy Cupressaceae
