@@ -20,11 +20,7 @@ jobs:
             conda config --add channels conda-forge
             conda info -a
       - run:
-          name: Whitespace checks
-          command: |
-            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
-      - run:
-          name: Python and RST checks
+          name: Style checks
           command: |
             conda create -q -n linting python=3.7
             source activate linting
@@ -32,6 +28,7 @@ jobs:
             conda install pre-commit
             pre-commit install
             pre-commit run -a
+            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
       - run:
           name: Dependencies
           command: |
