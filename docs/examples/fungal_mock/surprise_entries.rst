@@ -31,11 +31,11 @@ MD5 checksum                         Max Species
 ``702929cef71042156acb3a28270d8831``  14 *Candida tropicalis*
 ==================================== === ==================================
 
-Here are the the reads from entries with a maximum sample abundance over 75 which
-the ``onebp`` and in some cases ``blast`` based classifier failed to match, along
-with the most likely match from reviewing an online NCBI BLAST search. You can
-easily extract these entries (and their sequences) from the bottom of the
-``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
+Here are the the reads from entries with a maximum sample abundance over 75
+which the ``onebp`` and in some cases ``blast`` based classifier failed to
+match, along with the most likely match from reviewing an online NCBI BLAST
+search. You can easily extract these entries (and their sequences) from the
+bottom of the ``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
 
 ==================================== ==== ========================================
 MD5 checksum                         Max  Species
@@ -69,9 +69,9 @@ unclassified fungi, and conflicting perfect matches including *Ascochyta* or
 *Neoascochyta*. This was seen only in the high PCR cycle number sample
 ``SRR5314339`` as above.
 
-Next ``8e74f38b058222c58943fc6211d277fe`` and ``85775735614d45d056ce5f1b67f8d2b2``
-have good BLAST matches to several different *Fusarium* species, so could also be
-from the mock community.
+Next ``8e74f38b058222c58943fc6211d277fe`` and
+``85775735614d45d056ce5f1b67f8d2b2`` have good BLAST matches to several
+different *Fusarium* species, so could also be from the mock community.
 
 You can find all six of these sequence on the edit-graph, most as isolated grey
 nodes along the bottom except ``cae29429b90fc6539c440a140494aa25`` which is 3bp
@@ -123,10 +123,11 @@ contaimination.
 Amplicon library two - ITS2
 ---------------------------
 
-Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for ITS2.
-Again, the ``blast`` based classifier matched everything to an entry in the mock
-community database. The stricter ``onebp`` classifier assigned most reads. Here
-are those few it failed to match with a maximum read abundance over 75:
+Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for
+ITS2. Again, the ``blast`` based classifier matched everything to an entry in
+the mock community database. The stricter ``onebp`` classifier assigned most
+reads. Here are those few it failed to match with a maximum read abundance
+over 75:
 
 ==================================== === =============
 MD5 checksum                         Max Species
@@ -136,14 +137,14 @@ MD5 checksum                         Max Species
 ``8edbf2c168b11f910458b0e567ae5fc6``  78 *Aspergillus*
 ==================================== === =============
 
-These three all appears on the edit-graph separated from a red node (database entry)
-by a dashed or dotted line indicating a 2bp or 3bp edit away.
+These three all appears on the edit-graph separated from a red node (database
+entry) by a dashed or dotted line indicating a 2bp or 3bp edit away.
 
-Using an online NCBI BLAST search didn't pin any of these down to species level, but
-they do all seem to be fungi. Again, quite a few *Fusarium* matches which could be
-alternative ITS2 sequences in the genomes but not in the curated reference set.
-Likewise the *Aspergillus* like sequence could be from the *Aspergillus flavus* in
-the mock community.
+Using an online NCBI BLAST search didn't pin any of these down to species
+level, but they do all seem to be fungi. Again, quite a few *Fusarium* matches
+which could be alternative ITS2 sequences in the genomes but not in the
+curated reference set. Likewise the *Aspergillus* like sequence could be from
+the *Aspergillus flavus* in the mock community.
 
 i.e. None of the ITS2 sequences in amplicon library two are clear cut external
 contamination.

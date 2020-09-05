@@ -109,11 +109,12 @@ two images above:
 This is from file ``amp_lib_two.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
 ``run.sh``.
 
-The curious large grey node one edit away from *Fusarium oxysporum* has abbreviated
-MD5 checksum ``f1b689``, or in full ``f1b689ef7d0db7b0d303e9c9206ee5ad`` (given in
-the XGMML node attributes). Referring back to the intermediate FASTA files or the
-read report, this does indeed represent the extended version of
-``bb28f2b57f8fddefe6e7b5d01eca8aea`` with the first primer set::
+The curious large grey node one edit away from *Fusarium oxysporum* has
+abbreviated MD5 checksum ``f1b689``, or in full
+``f1b689ef7d0db7b0d303e9c9206ee5ad`` (given in the XGMML node attributes).
+Referring back to the intermediate FASTA files or the read report, this does
+indeed represent the extended version of ``bb28f2b57f8fddefe6e7b5d01eca8aea``
+with the first primer set::
 
     >bb28f2b57f8fddefe6e7b5d01eca8aea
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCAATTGTTGCCTCGGCGGATCAGCCCGCTCCCGGTAAAACG
@@ -136,7 +137,8 @@ The small pair of grey nodes 3bp apart (long diagonal line, middle left),
 Amplicon library two - ITS2
 ---------------------------
 
-Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for ITS2.
+Finally, amplicon library two using the ITS3-KYO and ITS4-KYO3 primers for
+ITS2:
 
 .. image:: ../../images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg?sanitize=true

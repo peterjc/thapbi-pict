@@ -199,10 +199,10 @@ If you are working with different organisms you will also need to set the
     Of 1451 potential entries, 0 unparsable, 2 failed sp. validation, 1449 OK.
     Could not validate 2 different species names
 
-Notice this time we ran ``thapbi_pict ncbi-import`` without the ``-x`` (``--lax``)
-option, and it complained about two species names and two entries - but which?
-If you repeat this but add ``-v`` or ``--verbose`` to the import command you can
-see:
+Notice this time we ran ``thapbi_pict ncbi-import`` without the ``-x``
+(``--lax``) option, and it complained about two species names and two entries
+- but which? If you repeat this but add ``-v`` or ``--verbose`` to the import
+command you can see:
 
 - *Phytophthora lagoariana* from
   `EF590256.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EF590256.1>`_,
@@ -239,8 +239,8 @@ line is an identifier followed by the species name *only*.
 We have provided file ``Redekar_et_al_2019_sup_table_3.fasta`` which contains
 primer trimmed versions of the full sequences of each accession, plus the
 species name from ``Redekar_et_al_2019_sup_table_3.tsv`` which was based on
-those given in Redekar *et al.* (2019) Supplementary Table 3 but with some light
-curation to better match the NCBI usage.
+those given in Redekar *et al.* (2019) Supplementary Table 3 but with some
+light curation to better match the NCBI usage.
 
 The sequencing trimming ought to be very close to that used in the Redekar
 *et al.* (2019) paper's database. This file was constructed with a short Python
@@ -327,7 +327,8 @@ MD5                              Level   Conflicts
 ================================ ======= =====================================
 
 There are 77 species level conflicts, some of which might be subspecies etc.
-However, more concerning is three genus level conflicts - all involving *Pythium*.
+However, more concerning is three genus level conflicts - all involving
+*Pythium*.
 
 One way to see which accessions are a problem is filtering the dump command
 output (introduced properly in :ref:`custom_database_examine`), e.g.
@@ -402,9 +403,9 @@ as *Saprolegnia sp. CAL-2011 rodrigueziana*, but which the NCBI says is now
 part of *Achlya rodrigueziana*. Also, *Pythium ultimum* is now a basionym
 for *Globisporangium ultimum*.
 
-It might be better to update the *Pythium oedichilum* entries in the curated TSV
-and FASTA file to say *Phytopythium*? Or, depending on your motivation, just leave
-the species assignments as is.
+It might be better to update the *Pythium oedichilum* entries in the curated
+TSV and FASTA file to say *Phytopythium*? Or, depending on your motivation,
+just leave the species assignments as is.
 
-Taxonomy is fluid, so if using any single authority, make sure to document which
-version (e.g. month and year for the NCBI taxonomy).
+Taxonomy is fluid, so if using any single authority, make sure to document
+which version (e.g. month and year for the NCBI taxonomy).

@@ -87,14 +87,15 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT multiple times.
-Under the ``intermediate/`` folder will be a subdirectory for each of the primer
-settings, and the primer name is used as a prefix for the reports in ``summary/``.
+Next, you can run the ``run.py`` script which will call THAPBI PICT multiple
+times. Under the ``intermediate/`` folder will be a subdirectory for each of
+the primer settings, and the primer name is used as a prefix for the reports
+in ``summary/``.
 
-Compared to the other examples, there is an additional ``tmp_merged/`` subfolder
-which contains gzipped FASTA files after quality trimming and merging overlapping
-paired reads into single sequences - but prior to applying the various primers and
-abundance thresholds.
+Compared to the other examples, there is an additional ``tmp_merged/``
+subfolder which contains gzipped FASTA files after quality trimming and merging
+overlapping paired reads into single sequences - but prior to applying the
+various primers and abundance thresholds.
 
 Metadata
 --------

@@ -314,4 +314,5 @@ producing the main reports:
     with-metadata.assess.onebp.tsv
     with-metadata.edit-graph.xgmml
 
-The file ``summary/with-metadata.assess.onebp.tsv`` will match the output above.
+Output file ``summary/with-metadata.assess.onebp.tsv`` will match the output
+above.

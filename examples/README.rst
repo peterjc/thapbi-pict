@@ -29,9 +29,10 @@ output reports.
 4. ``microalgal_mock/`` - 18S rRNA example requiring multiple primers and
    databases, based on:
 
-   * Bradley *et al.* (2016) Design and Evaluation of Illumina MiSeq-Compatible,
-     18S rRNA Gene-Specific Primers for Improved Characterization of Mixed
-     Phototrophic Communities. https://doi.org/10.1128/AEM.01630-16
+   * Bradley *et al.* (2016) Design and Evaluation of Illumina
+     MiSeq-Compatible, 18S rRNA Gene-Specific Primers for Improved
+     Characterization of Mixed Phototrophic Communities.
+     https://doi.org/10.1128/AEM.01630-16
 
 5. ``fecal_sequel/`` - COI example in bats, showing importance of the database
    content with the default classifier, based on:

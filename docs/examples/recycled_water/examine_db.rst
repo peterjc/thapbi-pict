@@ -107,17 +107,17 @@ Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to::
     GGTAGGTTGAGACCCATCAAACGAAAACATCGGCTGAAAGGTCGGAGCCAGTAGTTACCTTTGTAAACCCTTTACTAAAT
     ACTGAAAAACTGTGGGGACGAAAGTCCTTGCTTTTACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
 
-This discards the original accessions and instead uses ``>``, MD5 checksum, space,
-semi-colon separated list of taxonomic assignments, new line, sequences, new line.
-Again, there is deliberatly no sequence line wrapping.
+This discards the original accessions and instead uses ``>``, MD5 checksum,
+space, semi-colon separated list of taxonomic assignments, new line, sequences,
+new line. Again, there is deliberatly no sequence line wrapping.
 
 Edit graph
 ----------
 
-In the worked example with the default database, we introduced the ``edit-graph``
-command for use with CytoScape to examine the sequence space of the samples. It
-can also be run on a database alone provided you include the ``-s`` or ``--showdb``
-switch:
+In the worked example with the default database, we introduced the
+``edit-graph`` command for use with CytoScape to examine the sequence space of
+the samples. It can also be run on a database alone provided you include the
+``-s`` or ``--showdb`` switch:
 
 .. code:: console
 
