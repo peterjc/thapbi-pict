@@ -1,5 +1,4 @@
 """Make FASTA files non-redundant using Ctrl+A separator."""
-
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
