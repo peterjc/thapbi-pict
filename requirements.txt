@@ -9,7 +9,7 @@
 
 biopython
 matplotlib
-networkx
+networkx >= 2.4
 pydot
 python-levenshtein
 sqlalchemy
