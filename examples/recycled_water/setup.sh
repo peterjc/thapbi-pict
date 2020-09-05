@@ -24,14 +24,14 @@ for ACC in `grep ^SRR PRJNA417859.txt| cut -f 1`; do
     for URL in `grep ^$ACC PRJNA417859.txt | cut -f 6 | sed "s/;/ /g"`; do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
-	# Avoiding leaving partial FASTQ if wget is interupted
-	rm -rf $FILE.tmp
+        # Avoiding leaving partial FASTQ if wget is interupted
+        rm -rf $FILE.tmp
         if [ -f $FILE ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
-	    wget -O "${FILE}.tmp" "$URL"
-	    mv "${FILE}.tmp" "${FILE}"
+            wget -O "${FILE}.tmp" "$URL"
+            mv "${FILE}.tmp" "${FILE}"
         fi
     done
 done
