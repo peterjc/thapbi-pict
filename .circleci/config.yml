@@ -22,10 +22,6 @@ jobs:
       - run:
           name: Whitespace checks
           command: |
-            if grep -n -P '\t' *.rst */*.rst */*/*.rst; then echo 'Tabs are bad, please use four spaces in RST files.'; false; fi
-            if grep -n -P '\t' .circleci/*.yml ; then echo 'Tabs are bad, please use four spaces in Yaml files.'; false; fi
-            if grep -n -P '\t' */*.py */*/*.py; then echo 'Tabs are bad, please use four spaces in Python files.'; false; fi
-            if grep -n -P '^\t' */*.sh ; then echo 'Tabs are bad, please use four spaces in Bash scripts.'; false; fi
             if grep -n -r '[[:blank:]]$' *.rst */*.rst */*/*.rst; then echo 'Please remove trailing whitespace in RST files.'; false; fi
             if grep -n -r '[[:blank:]]$' *.yml .circleci/*.yml ; then echo 'Please remove trailing whitespace in Yaml files.'; false; fi
             if grep -n -r '[[:blank:]]$' */*.py; then echo 'Please remove trailing whitespace in Python files.'; false; fi
