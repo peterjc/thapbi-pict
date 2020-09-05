@@ -65,8 +65,8 @@ cd expected/
 for SAMPLE in 1 2 4 5 6 7 9 10; do
     echo "Sample $SAMPLE"
     for LAB in {1..16}; do
-	FILE="S${SAMPLE}_Lab_${LAB}.known.tsv"
-	if [ ! -f "$FILE" ]; then
+        FILE="S${SAMPLE}_Lab_${LAB}.known.tsv"
+        if [ ! -f "$FILE" ]; then
             echo "Linking $FILE to mock community"
             ln -s "S${SAMPLE}.template.tsv" "$FILE"
         fi

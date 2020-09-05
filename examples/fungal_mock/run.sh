@@ -21,7 +21,7 @@ function analyse {
         thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
                     -i $LIBRARY/raw_data/ $LIBRARY/expected/ -m $METHOD \
                     -s $LIBRARY/intermediate/$NAME/ -o $LIBRARY/summary/ \
-		    -r $LIBRARY.$NAME -a 10 \
+                    -r $LIBRARY.$NAME -a 10 \
                     --showdb -t $LIBRARY/metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     # Now run an edit-graph at a higher abundance threshold
@@ -29,7 +29,7 @@ function analyse {
     # the same or lower threshold).
     # Including all DB entries with -s / --showdb argument
     thapbi_pict edit-graph -d ${NAME}.sqlite -i $LIBRARY/intermediate/$NAME/ --showdb \
-		-o $LIBRARY/summary/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
+                -o $LIBRARY/summary/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
     echo "$NAME done"
 }
 

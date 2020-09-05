@@ -23,9 +23,9 @@ echo ---------------------------------------------------------------
 # Default edit-graph has very few DB nodes, so using --showdb argument
 mkdir -p intermediate/COI_430_bats/
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
-	    -o summary/ -r mock-community.COI_430_bats --showdb \
-	    -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
-	    --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
+            -o summary/ -r mock-community.COI_430_bats --showdb \
+            -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
+            --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
 
 echo ---------------------------------------------------------------
 echo Fecal sequel - COI - Mock community using extended reference DB
@@ -39,6 +39,6 @@ cd ../../
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_ext_bats/ \
-	    -o summary/ -r mock-community.COI_ext_bats \
+            -o summary/ -r mock-community.COI_ext_bats \
             -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
             --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC

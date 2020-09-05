@@ -15,12 +15,12 @@ function analyse {
     echo "Running analysis for $NAME"
     mkdir -p intermediate/$NAME/
     thapbi_pict prepare-reads --left $LEFT --right $RIGHT \
-		-i raw_data/ --merged-cache tmp_merged/ -o intermediate/$NAME/
+        -i raw_data/ --merged-cache tmp_merged/ -o intermediate/$NAME/
     thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all.fasta
     thapbi_pict classify -i summary/$NAME.all.fasta -o summary/ -d references/$NAME.sqlite
     thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
-		--merged-cache tmp_merged/ \
-		--left $LEFT --right $RIGHT \
+        --merged-cache tmp_merged/ \
+        --left $LEFT --right $RIGHT \
                 -i raw_data/ expected/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -c 3,4,5 -x 2 -g 4
@@ -36,7 +36,7 @@ function pool {
     # Excluding primer specific header lines with grep,
     # duplicate lines for raw fastq count etc harmless.
     for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-	cat intermediate/*/$S.fasta \
+        cat intermediate/*/$S.fasta \
             | grep -v -E "(_primer|cutadapt|abundance)" \
             > intermediate_pool/$S.fasta
     done
@@ -59,18 +59,18 @@ function pool {
 
     echo "Pooling intermediate onebp classifications..."
     for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-	cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
-	cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
+    cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
+    cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
     done;
 
     echo "Generating pooled reports for onebp classifier."
     # Now the reports:
     thapbi_pict summary -m onebp -i intermediate_pool/ \
-		-o summary/ -r pooled \
-		-t metadata.tsv -c 3,4,5 -x 2 -g 4
+        -o summary/ -r pooled \
+        -t metadata.tsv -c 3,4,5 -x 2 -g 4
     # And the assessment
     thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
-		-o summary/pooled.assess.onebp.tsv
+        -o summary/pooled.assess.onebp.tsv
 
     echo "Pooled results done"
 }
