@@ -11,6 +11,7 @@ repos:
         files: \.py$
     -   id: mixed-line-ending
     -   id: trailing-whitespace
+        files: \.(py|sh|rst|yml|yaml)$
 -   repo: local
     hooks:
     -   id: no-tabs
