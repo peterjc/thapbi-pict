@@ -83,7 +83,7 @@ if [ `grep -c "^Sequencing sample: " "$TMP/woody_hosts/summary/with-metadata.sam
 
 # Should be identical apart from row order if discard extra leading columns
 # Discarding the header row as only one will still have hash at start
-diff <(grep -v "^#" $TMP/woody_hosts/summary/no-metadata.samples.tsv | sort) <(grep -v "^#" $TMP/woody_hosts/summary/with-metadata.samples.tsv | cut -f 16- | sort)
+diff <(grep -v "^#" $TMP/woody_hosts/summary/no-metadata.samples.onebp.tsv | sort) <(grep -v "^#" $TMP/woody_hosts/summary/with-metadata.samples.onebp.tsv | cut -f 16- | sort)
 
 if [ `grep -c -v "^#" $TMP/woody_hosts/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
