@@ -10,6 +10,7 @@ repos:
     -   id: end-of-file-fixer
         files: \.py$
     -   id: mixed-line-ending
+    -   id: trailing-whitespace
 -   repo: local
     hooks:
     -   id: no-tabs
