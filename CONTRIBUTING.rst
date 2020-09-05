@@ -4,54 +4,40 @@ Development Notes
 Python style conventions
 ------------------------
 
-The Python code follows
-`PEP8 <https://www.python.org/dev/peps/pep-0008/>`__ and `PEP257
-docstring <https://www.python.org/dev/peps/pep-0257/>`__ style, guided
-by the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
+The Python code follows `PEP8 <https://www.python.org/dev/peps/pep-0008/>`__
+and `PEP257 docstring <https://www.python.org/dev/peps/pep-0257/>`__ style,
+guided by the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
 
-Practically, coding style is enforced with the command line tools
-`black <https://github.com/python/black>`__ (which can automatically
-edit your code) and `flake8 <http://flake8.pycqa.org/>`__ (which in
-addition to its own style checking, has a range of plugins - including a
-plugin to call ``black`` from ``flake8``).
+Practically, coding style is enforced with several command line tools
+including `black <https://github.com/python/black>`__ and `flake8
+<http://flake8.pycqa.org/>`__ (with plugins) run via the tool `pre-commit
+<https://pre-commit.com/>`__.
 
 You can install these tools using:
 
 .. code:: console
 
-   $ pip install black flake8 flake8-black flake8-blind-except flake8-docstrings \
-   flake8-rst-docstrings flake8-bugbear flake8-pie flake8-comprehensions restructuredtext-lint
+   $ pip install pre-commit
+   $ pre-commit install  # within the thapbi_pict main directory
 
-You can run the checks using:
-
-.. code:: console
-
-   $ flake8 .
-
-You can ask black to edit your files with:
+The checks will then run automatically when you make a git commit. You can
+also run the checks directly using:
 
 .. code:: console
 
-   $ black .
+   $ pre-commit run -a
 
-We recommend enabling the flake8 git pre-commit hook as follows:
-
-.. code:: console
-
-   $ flake8 --install-hook git
-   $ git config --bool flake8.strict true
-
-If your editor can be configured to run flake8 and/or black
-automatically, even better. These checks are done as part of the
-continuous integration when changes are made on GitHub.
+If your editor can be configured to run flake8 and/or black automatically,
+even better. These checks are done as part of the continuous integration when
+changes are made on GitHub.
 
 
 Continuous Integration
 ----------------------
 
-Currently setup to do automated testing under Linux on two free
-continuous integration services, CircleCI (using Conda for dependencies)
-and TravisCI (using apt-packages and PyPI).
+Currently this is setup to do automated testing under Linux on two free
+continuous integration services, CircleCI (using Conda for dependencies) and
+TravisCI (using apt-packages and PyPI).
 
 * CircleCI: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
 

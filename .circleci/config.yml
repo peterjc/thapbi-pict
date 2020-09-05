@@ -37,13 +37,9 @@ jobs:
             conda create -q -n linting python=3.7
             source activate linting
             python --version
-            python -m pip install restructuredtext-lint pygments
-            restructuredtext-lint *.rst database/*.rst tests/*/*.rst
-            python -m pip install  black
-            black --check .
-            python -m pip install flake8 flake8-blind-except flake8-docstrings flake8-rst-docstrings flake8-bugbear flake8-sfs
-            flake8 .
-            echo "Python and RST checks passed."
+            conda install pre-commit
+            pre-commit install
+            pre-commit run -a
       - run:
           name: Dependencies
           command: |
