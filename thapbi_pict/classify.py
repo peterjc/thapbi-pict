@@ -3,7 +3,7 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-"""Classifying prepared ITS1 sequences using an ITS1 database.
+"""Classifying prepared marker sequences using a marker database.
 
 This implements the ``thapbi_pict classify ...`` command.
 """
@@ -42,9 +42,9 @@ fuzzy_matches = None  # global variable for onebp classifier
 
 
 def md5_to_taxon(md5_list, session):
-    """Return all the taxon entries linked to given ITS1 sequences.
+    """Return all the taxon entries linked to given marker sequences.
 
-    Each ITS1 sequence (matched by MD5 checksum) should be used
+    Each marker sequence (matched by MD5 checksum) should be used
     in one more more source table entries, each of which will have
     a current taxonomy entry.
     """
@@ -240,7 +240,7 @@ def method_substr(
 def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a dictionary of DB variants from the DB marker sequences.
 
-    Because MD5 checksums are shorter than the typical ITS1 markers,
+    Because MD5 checksums are shorter than the typical marker sequences,
     they are used as the dictionary keys to save memory. We assume there
     are no collisions.
     """
@@ -331,7 +331,7 @@ def onebp_match_in_db(session, seq, debug=False):
 
 
 def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare a BLAST DB from the ITS1 DB entries."""
+    """Prepare a BLAST DB from the marker sequence DB entries."""
     view = session.query(ITS1)
     db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
@@ -354,8 +354,8 @@ def method_blast(
 ):
     """Classify using BLAST.
 
-    Another simplistic classifier, run the ITS1 reads through blastn
-    against a BLAST database of our ITS1 database entries.
+    Another simplistic classifier, run the reads through blastn
+    against a BLAST database of our marker sequence database entries.
     """
     blast_out = os.path.join(shared_tmp_dir, "blast.tsv")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
@@ -726,10 +726,10 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(
-            f"ITS1 entries in DB linked to {len(db_sp_list)} distrinct species.\n"
+            f"Marker entries in DB linked to {len(db_sp_list)} distrinct species.\n"
         )
     if not db_sp_list:
-        sys.exit("ERROR: Have no ITS1 entries in DB with species information.\n")
+        sys.exit("ERROR: Have no marker sequences in DB with species information.\n")
 
     count = session.query(ITS1).count()
     if debug:
