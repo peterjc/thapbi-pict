@@ -30,7 +30,7 @@ THAPBI provides a default database which is used when the command line ``-d``
 or ``--database`` setting is omitted. This is intended for use with the
 *Phytophthora* ITS1 region targeted by the default left and right primers
 assumed during preparation of the paired FASTQ files. This is used in the
-first :ref:`worked example <worked_example>`.
+first :ref:`worked example <woody_hosts>`.
 
 The default database is compiled from the following sets of sequences:
 

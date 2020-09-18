@@ -209,5 +209,5 @@ it will re-use any already generated intermediate files.
 .. image:: images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
 
-The :ref:`first worked example <worked_example>` covers these issues, with
+The :ref:`first worked example <woody_hosts>` covers these issues, with
 excerpts of the expected output.
