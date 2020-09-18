@@ -14,7 +14,8 @@ This example is based on the two amplicon sequencing libraries from this paper:
     https://www.ebi.ac.uk/ena/data/view/PRJNA377530
 
 Both amplicon sequencing libraries were sequenced on an Illumina MiSeq
-(multiplexed with other unrelated samples), giving 61 FASTQ paired files.
+(multiplexed with other unrelated samples), giving 61 FASTQ pairs (i.e. 122
+files).
 
 Amplicon library one amplified a small region of ITS1 using the BITS/B58S3
 primer pair (``ACCTGCGGARGGATC`` and ``GAGATCCRTTGYTRAAAGTT``), as shown in
@@ -68,7 +69,7 @@ discussed in the THAPBI PICT documentation.
 Setup
 -----
 
-We assume you have aquired the THAPBI PICT source code, and have your command
+We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/fungal_mock/`` folder. First we run the
 ``setup.py`` script:
 
