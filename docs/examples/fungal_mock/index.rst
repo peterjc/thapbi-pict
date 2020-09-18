@@ -1,3 +1,5 @@
+.. _fungal_mock:
+
 Fungal Mock Community ITS1 & 2
 ==============================
 
