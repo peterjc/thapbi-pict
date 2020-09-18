@@ -31,7 +31,7 @@ dots indicate some additional options.
 
 The main sub-commands are to do with classifying sequence files and reporting
 the results, and these are described in the first :ref:`worked example
-<worked_example>`:
+<woody_hosts>`:
 
 * ``prepare`` - turn paired FASTQ input files for each sample, giving
   de-duplicated FASTA files
@@ -46,7 +46,7 @@ the results, and these are described in the first :ref:`worked example
 
 There are further sub-commands to do with making or inspecting an SQLite3
 format barcode marker sequence database, most of which are covered in the
-second :ref:`worked example, with a custom database <custom_database>`:
+second :ref:`worked example, with a custom database <recycled_water>`:
 
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy

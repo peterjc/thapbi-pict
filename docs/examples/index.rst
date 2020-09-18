@@ -22,14 +22,14 @@ been mock communities with known species composition.
    fecal_sequel/index
    endangered_species/index
 
-* :ref:`worked_example` - Simple ITS1 example using the default primers and
+* :ref:`woody_hosts` - Simple ITS1 example using the default primers and
   database. Based on a paper from earlier in the THAPBI Phyto-Threats project:
 
     Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
     host-associated *Phytophthora* spp. in soils at public gardens and
     amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
-* :ref:`custom_database` - ITS1 example where defaults can be used, but
+* :ref:`recycled_water` - ITS1 example where defaults can be used, but
   ideally requires different primers and a custom database. Based on:
 
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and

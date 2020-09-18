@@ -1,4 +1,4 @@
-.. _worked_example:
+.. _woody_hosts:
 
 Environmental *Phytophthora* ITS1
 =================================
