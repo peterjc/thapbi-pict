@@ -1,1 +1,0 @@
-../../../examples/endangered_species/README.rst

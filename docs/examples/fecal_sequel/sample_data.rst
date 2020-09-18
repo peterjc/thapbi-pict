@@ -1,1 +1,0 @@
-../../../examples/fecal_sequel/README.rst

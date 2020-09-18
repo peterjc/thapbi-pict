@@ -1,1 +1,0 @@
-../../../examples/fungal_mock/README.rst
