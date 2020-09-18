@@ -1,3 +1,5 @@
+.. _microalgal_mock:
+
 Microalgal Mock Community 18S
 =============================
 

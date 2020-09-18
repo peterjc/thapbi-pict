@@ -1,3 +1,5 @@
+.. _endangered_species:
+
 Endangered Species Mixes 16S etc
 ================================
 

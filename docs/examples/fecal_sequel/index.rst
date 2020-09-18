@@ -1,3 +1,5 @@
+.. _fecal_sequel:
+
 Bat Mock Community COI
 ======================
 
