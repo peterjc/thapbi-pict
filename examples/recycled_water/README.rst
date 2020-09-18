@@ -90,7 +90,7 @@ Downloaded we have 768 gzip-compressed FASTQ files (384 pairs), taking about
 Setup
 -----
 
-We assume you have aquired the THAPBI PICT source code, and have your command
+We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/recycled_water/`` folder. First we run
 the ``setup.py`` script:
 
