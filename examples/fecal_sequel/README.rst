@@ -56,7 +56,7 @@ and underscores replaced with spaces in the record names.
 File ``observed_3_bats.fasta`` contains alternative COI markers observed
 in at least 10 samples, and their assumed species source.
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation.
 
 Setup
@@ -64,7 +64,7 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/fecal_sequel/`` folder. First we run
-the ``setup.py`` script:
+the ``setup.sh`` script:
 
 .. code:: console
 
@@ -89,7 +89,7 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT to turn
+Next, you can run the ``run.sh`` script which will call THAPBI PICT to turn
 the FASTA file into a database, and then run the pipeline.
 
 Metadata

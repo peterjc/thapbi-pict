@@ -56,7 +56,7 @@ describing the expected species in some mock community positive controls:
 * ``DNA10MIX_diluted25x.known.tsv``
 * ``DNA10MIX_undiluted.known.tsv``
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation.
 
 Setup
@@ -64,11 +64,11 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/woody_hosts/`` folder. First we run the
-``setup.py`` script:
+``setup.sh`` script:
 
 .. code:: console
 
-   $ ./setup.py
+   $ ./setup.sh
 
 This will download the raw gzip compressed FASTQ files from Zenodo (244 files,
 122 pairs, a little over 200MB in total) into the ``raw_data/`` subdirectory.

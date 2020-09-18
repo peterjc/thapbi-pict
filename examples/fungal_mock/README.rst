@@ -63,7 +63,7 @@ reading the paper (for placing the negative controls). They each have a
 ``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
 can be used to validate the FASTQ files.
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation.
 
 Setup
@@ -71,11 +71,11 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/fungal_mock/`` folder. First we run the
-``setup.py`` script:
+``setup.sh`` script:
 
 .. code:: console
 
-   $ ./setup.py
+   $ ./setup.sh
 
 This will download the raw gzip compressed FASTQ files from the ENA (122 files,
 61 pairs, under 400MB in total), and setup appropriate per-sample symlinks to
@@ -102,7 +102,7 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT multiple
+Next, you can run the ``run.sh`` script which will call THAPBI PICT multiple
 times. For each of the two primer settings (a small fragment of ITS1 on
 ``amp_lib_one/``, and a larger fragment of ITS1 and an ITS2 marker on
 ``amp_lib_two/``), it will make a simple database using the provided

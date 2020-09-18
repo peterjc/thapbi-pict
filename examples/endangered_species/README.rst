@@ -54,7 +54,7 @@ Files ``expected/*.known.tsv`` were compiled by hand from the species content
 of the experimental samples (using the PRJEB18620 sample descriptions on the
 NCBI and Table 7).
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation.
 
 
@@ -63,11 +63,11 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/endangered_species/`` folder. First we run
-the ``setup.py`` script:
+the ``setup.sh`` script:
 
 .. code:: console
 
-   $ ./setup.py
+   $ ./setup.sh
 
 This first downloads files from the ENA under ``raw_downloads/`` (a mix of
 ``*.zip`` and ``*.fastq.gz`` files), and then sets up consistently named and
@@ -87,7 +87,7 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT multiple
+Next, you can run the ``run.sh`` script which will call THAPBI PICT multiple
 times. Under the ``intermediate/`` folder will be a subdirectory for each of
 the primer settings, and the primer name is used as a prefix for the reports
 in ``summary/``.

@@ -72,7 +72,7 @@ Files ``Redekar_et_al_2019_sup_table_3.tsv`` (plain text tab separated table)
 and ``Redekar_et_al_2019_sup_table_3.fasta`` (FASTA format) are based on the
 Excel format Supplementary Table 3 from the paper.
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the final analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the final analysis
 discussed in the THAPBI PICT documentation.
 
 Raw FASTQ data
@@ -92,11 +92,11 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/recycled_water/`` folder. First we run
-the ``setup.py`` script:
+the ``setup.sh`` script:
 
 .. code:: console
 
-   $ ./setup.py
+   $ ./setup.sh
 
 This will download the December 2019 NCBI taxonomy dump, and gzip compressed
 FASTQ files from the ENA (768 files, 384 pairs), just over 5GB in total:

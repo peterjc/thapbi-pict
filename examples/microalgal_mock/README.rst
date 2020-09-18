@@ -47,7 +47,7 @@ Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
 community (and six species mixes at the purely freshwater or purely marine
 extremes).
 
-Shell scripts ``setup.py`` and ``run.sh`` should reproduce the analysis
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
 discussed in the THAPBI PICT documentation.
 
 Setup
@@ -55,11 +55,11 @@ Setup
 
 We assume you have acquired the THAPBI PICT source code, and have your command
 line terminal open in the ``examples/microalgal_mock/`` folder. First we run
-the ``setup.py`` script:
+the ``setup.sh`` script:
 
 .. code:: console
 
-   $ ./setup.py
+   $ ./setup.sh
 
 This will download the raw gzip compressed FASTQ files from the ENA (248 files,
 124 pairs, about 1.4GB in total), and setup appropriate per-sample symlinks to
@@ -86,7 +86,7 @@ There is no need to decompress the files.
 Running the pipeline
 --------------------
 
-Next, you can run the ``run.py`` script which will call THAPBI PICT multiple times.
+Next, you can run the ``run.sh`` script which will call THAPBI PICT multiple times.
 There is a subdirectory for each of the primer settings, ``V4/`` and ``V8V9/``.
 For each it will make a simple database using the provided twelve 18S rRNA genes
 in ``mock_community.fasta`` file, and call the pipeline.
