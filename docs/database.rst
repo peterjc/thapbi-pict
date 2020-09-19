@@ -55,19 +55,20 @@ Ambiguous bases in database
 ---------------------------
 
 Ideally all the reference sequences in your database will have unambiguous
-sequences (A, C, G and T only). However, some published species sequences will
-contain IUPAC ambiguity codes, especially if capillary sequenced. For example
-*Phytophthora condilina* accession ``KJ372262`` has a single ``W`` meaning
-``A`` or ``T``. In this case for *P. condilina* in our curated set, we could
-select the unambiguous accession ``MG707826`` instead.
+sequences only (A, C, G and T). However, some published species sequences will
+contain IUPAC ambiguity codes, especially if capillary sequenced. How this is
+handled will depend on the classifier algorithm used. 
 
-How this is handled will depend on the classifier algorithm used. With the
-strictest ``identity`` classifier, this will never match (since the Illumina
-platform does not produce any ambiguous bases other than ``N``). With the
-default ``onebp`` classifier, this can match but the ``W`` would be the single
-allowed mismatch (and any database entry with more than one ambiguity would
-never be matched). The ``blast`` classifier uses NCBI BLAST+ internally, and
-would handle the base as expected.
+For example *Phytophthora condilina* accession ``KJ372262`` has a single ``W``
+meaning ``A`` or ``T``. In this case for *P. condilina* in our curated set, we
+could select the unambiguous accession ``MG707826`` instead.
+
+With the strictest ``identity`` classifier, the ``W`` will never be matched
+(since the Illumina platform does not produce any ambiguous bases other than
+``N``). With the default ``onebp`` classifier, this can match but the ``W``
+would be the single allowed mismatch (and any database entry with more than
+one ambiguity would never be matched). The ``blast`` classifier uses NCBI
+BLAST+ internally, and would handle the base as expected.
 
 Conflicting taxonomic assignments
 ---------------------------------
@@ -76,7 +77,7 @@ With any amplicon marker, it is possible that distinct species will share the
 exact same sequence. For example, this happens with our ITS1 marker for model
 organism *Phytophthora infestans* and sister species *P. andina* and
 *P. ipomoeae*. In cases like this where the classifier finds multiple equally
-valid taxonomic assignments in the database, they are _all_ reported. Should
+valid taxonomic assignments in the database, they are **all** reported. Should
 the user wish however, their database could record a single assignment like
 *Phytophthora infestans*-complex.
 
