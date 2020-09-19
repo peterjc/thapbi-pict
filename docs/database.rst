@@ -57,7 +57,7 @@ Ambiguous bases in database
 Ideally all the reference sequences in your database will have unambiguous
 sequences only (A, C, G and T). However, some published species sequences will
 contain IUPAC ambiguity codes, especially if capillary sequenced. How this is
-handled will depend on the classifier algorithm used. 
+handled will depend on the classifier algorithm used.
 
 For example *Phytophthora condilina* accession ``KJ372262`` has a single ``W``
 meaning ``A`` or ``T``. In this case for *P. condilina* in our curated set, we
