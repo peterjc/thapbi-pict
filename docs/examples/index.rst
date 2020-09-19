@@ -66,6 +66,7 @@ been mock communities with known species composition.
     https://doi.org/10.1093/gigascience/gix080
 
 For each worked example there is a different sub-folder in the THAPBI PICT
-source code under ``examples/`` containing ``setup.sh`` to download the public
-data, ``run.sh`` to execute the main analysis discussed, and assorted other
-files like ``metadata.tsv``.
+source code under ``examples/`` containing at least ``setup.sh`` to do one-off
+setup like downloading the public data, and ``run.sh`` to execute the main
+analysis discussed. There will usually be assorted other files like reference
+sequences or ``metadata.tsv``.
