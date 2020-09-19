@@ -3,6 +3,22 @@
 Marker data
 ===========
 
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/woody_hosts/`` which is for this example.
+
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
+discussed.
+
+The documentation goes through running each step of the analysis gradually,
+before finally calling pipeline command to do it all together. We provide
+script ``run.sh`` to do the final run-though automatically (first without
+any metadata, then again with it), but encourage you to follow along the
+individual steps first.
+
+If you skip the raw FASTQ files, you won't be able to run the entire pipeline
+or the prepare-reads steps.
+
 FASTQ data
 ----------
 
@@ -22,6 +38,19 @@ FASTQ files into much smaller FASTA files. We provide those FASTA files
 compressed with the THAPBI PICT source code, so if you skip the FASTQ files,
 you can still follow the rest of a typical analysis.
 
+If you skip the raw data, instead you must decompress the pre-prepared 122
+FASTA files into your ``intermediate/`` subdirectory:
+
+.. code:: console
+
+   $ tar -jxvf intermediate.tar.bz2
+   $ ls -1 intermediate/*.fasta | wc -l
+   122
+
+Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
+``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
+negative controls (good).
+
 We also provide :ref:`metadata for the samples <metadata>` for use in the
 reports.
 
@@ -31,12 +60,8 @@ Amplicon primers & reference sequences
 The ITS1 primers used here match the THAPBI PICT defaults, so the default
 database can also be used.
 
-Provided files
---------------
-
-Either clone the THAPBI PICT source code repository, or decompress the
-latest source code release (``.tar.gz`` file). You should find it contains
-a directory ``examples/woody_hosts/`` which is for this example.
+Other files
+-----------
 
 File ``metadata.tsv`` contains metadata about the sampling sites (see below).
 
@@ -51,48 +76,6 @@ describing the expected species in some mock community positive controls:
 * ``DNA10MIX_bycopynumber.known.tsv``
 * ``DNA10MIX_diluted25x.known.tsv``
 * ``DNA10MIX_undiluted.known.tsv``
-
-Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
-discussed in the THAPBI PICT documentation.
-
-Setup
------
-
-We assume you have acquired the THAPBI PICT source code, and have your command
-line terminal open in the ``examples/woody_hosts/`` folder. First we run the
-``setup.sh`` script:
-
-.. code:: console
-
-   $ ./setup.sh
-
-This will download the raw gzip compressed FASTQ files from Zenodo (244 files,
-122 pairs, a little over 200MB in total) into the ``raw_data/`` subdirectory.
-
-If you skip the raw data, instead you must decompress the pre-prepared 122
-FASTA files into your ``intermediate/`` subdirectory:
-
-.. code:: console
-
-   $ tar -jxvf intermediate.tar.bz2
-   $ ls -1 intermediate/*.fasta | wc -l
-   122
-
-Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
-``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
-negative controls (good).
-
-Running the pipeline
---------------------
-
-The documentation goes through running each step of the analysis gradually,
-before finally calling pipeline command to do it all together. We provide
-script ``run.sh`` to do the final run-though automatically (first without
-any metadata, then again with it), but encourage you to follow along the
-individual steps first.
-
-If you skip the raw FASTQ files, you won't be able to run the entire pipeline
-or the prepare-reads steps.
 
 Metadata
 --------

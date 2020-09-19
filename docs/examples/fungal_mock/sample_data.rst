@@ -3,13 +3,40 @@
 Marker data
 ===========
 
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/fungal_mock/`` which is for this example.
+
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
+discussed.
+
 FASTQ data
 ----------
+
+File ``PRJNA377530.txt`` was download from the ENA and includes the FASTQ
+checksums, URLs, and sample metadata.
 
 Script ``setup.sh`` will download the raw FASTQ files for Bakker (2018) from
 https://www.ebi.ac.uk/ena/data/view/PRJNA377530
 
 It will download 122 raw FASTQ files (61 pairs), taking 346MB on disk.
+
+If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
+files downloaded correctly:
+
+.. code:: console
+
+   $ cd amp_lib_one/raw_data/
+   $ md5sum -c MD5SUM.txt
+   $ cd ../../
+
+.. code:: console
+
+   $ cd amp_lib_two/raw_data/
+   $ md5sum -c MD5SUM.txt
+   $ cd ../../
+
+There is no need to decompress the files.
 
 Amplicon primers & reference sequences
 --------------------------------------
@@ -33,19 +60,12 @@ also try the BITS/B58S3 primers on the second amplicon library, because they
 amplify a subregion of what the ITS1f/ITS2 pair amplify. See the primer
 discussion on the similar Redekar *et al.* (2019) worked example.
 
-Provided files
---------------
-
-Either clone the THAPBI PICT source code repository, or decompress the
-latest source code release (``.tar.gz`` file). You should find it contains
-a directory ``examples/fungal_mock/`` which is for this example.
-
-File ``PRJNA377530.txt`` was download from the ENA and includes the FASTQ
-checksums, URLs, and sample metadata.
-
 Files ``ITS1.fasta`` and ``ITS2.fasta`` were extracted from supplementary
 materials appendix S2, with the species name alone added to the FASTA titles
 (for use with ``thapbi_pict curated-import``).
+
+Other files
+-----------
 
 The provided ``negative_control.known.tsv`` and ``mock_community.known.tsv``
 files lists the expected species in the negative controls (none) and the mock
@@ -59,55 +79,6 @@ supplementary Tables S4, S5 and S6 (for the mock community samples) and
 reading the paper (for placing the negative controls). They each have a
 ``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
 can be used to validate the FASTQ files.
-
-Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
-discussed in the THAPBI PICT documentation.
-
-Setup
------
-
-We assume you have acquired the THAPBI PICT source code, and have your command
-line terminal open in the ``examples/fungal_mock/`` folder. First we run the
-``setup.sh`` script:
-
-.. code:: console
-
-   $ ./setup.sh
-
-This will download the raw gzip compressed FASTQ files from the ENA (122 files,
-61 pairs, under 400MB in total), and setup appropriate per-sample symlinks to
-the expected output in the ``expected/`` sub-directories for use with
-classifier assessment.
-
-If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
-files downloaded correctly:
-
-.. code:: console
-
-   $ cd amp_lib_one/raw_data/
-   $ md5sum -c MD5SUM.txt
-   $ cd ../../
-
-.. code:: console
-
-   $ cd amp_lib_two/raw_data/
-   $ md5sum -c MD5SUM.txt
-   $ cd ../../
-
-There is no need to decompress the files.
-
-Running the pipeline
---------------------
-
-Next, you can run the ``run.sh`` script which will call THAPBI PICT multiple
-times. For each of the two primer settings (a small fragment of ITS1 on
-``amp_lib_one/``, and a larger fragment of ITS1 and an ITS2 marker on
-``amp_lib_two/``), it will make a simple database using the provided
-``ITS1.fasta`` or ``ITS2.fasta`` file. It will then call the pipeline using
-the ``identity``, ``onebp`` and ``blast`` classifiers.
-
-Additionally for each primer set, it will generate an additional edit-graph at
-a higher minimum abundance threshold (to omit PCR noise etc).
 
 Metadata
 --------

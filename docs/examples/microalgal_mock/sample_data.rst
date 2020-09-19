@@ -3,66 +3,28 @@
 Marker data
 ===========
 
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/microalgal_mock/`` which is for this example.
+
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
+discussed.
+
+Subdirectories ``V4/`` and ``V8V9/`` are used for the different amplicons
+(with different primer settings and reference databases).
+
 FASTQ data
 ----------
+
+File ``PRJNA314977.txt`` was download from the ENA and includes the FASTQ
+checksums, URLs, and sample metadata. File ``metadata.tsv`` contains metadata
+about the samples (see below).
 
 Script ``setup.sh`` will download the pre-trimmed FASTQ files for Bradley
 *et al.* (2016) from https://www.ebi.ac.uk/ena/data/view/PRJNA314977
 
 There are 124 sequenced samples, giving 248 paired FASTQ files, taking about
 1.4GB on disk.
-
-Amplicon primers & reference sequences
---------------------------------------
-
-Referring to Table 1 in the paper, for the V4 target region they used
-Reuk454FWD1/V4r primer pair (``CCAGCASCYGCGGTAATTCC`` and
-``ACTTTCGTTCTTGAT``), while for the V8-V9 target they used the V8f/1510r pair
-(``ATAACAGGTCTGTGATGCCCT`` and ``CCTTCYGCAGGTTCACCTAC``). However, the FASTQ
-files provided have already been primer trimmed.
-
-This means we need to run THAPBI PICT twice (once for each primer pair,
-against a different marker database each time).
-
-Provided files
---------------
-
-Either clone the THAPBI PICT source code repository, or decompress the
-latest source code release (``.tar.gz`` file). You should find it contains
-a directory ``examples/microalgal_mock/`` which is for this example.
-
-File ``PRJNA314977.txt`` was download from the ENA and includes the FASTQ
-checksums, URLs, and sample metadata.
-
-File ``metadata.tsv`` contains metadata about the samples (see below).
-
-File ``mock_community.fasta`` contains the sequences from accession numbers
-KU900218 to KU900229 (published with the paper), with the description line
-holding just the assigned species.
-
-Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
-``mock_marine.known.tsv`` describe the expected 12 species in the mock
-community (and six species mixes at the purely freshwater or purely marine
-extremes).
-
-Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
-discussed in the THAPBI PICT documentation.
-
-Setup
------
-
-We assume you have acquired the THAPBI PICT source code, and have your command
-line terminal open in the ``examples/microalgal_mock/`` folder. First we run
-the ``setup.sh`` script:
-
-.. code:: console
-
-   $ ./setup.sh
-
-This will download the raw gzip compressed FASTQ files from the ENA (248 files,
-124 pairs, about 1.4GB in total), and setup appropriate per-sample symlinks to
-the expected output in the ``expected/`` sub-directories for use with classifier
-assessment.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
 files downloaded correctly:
@@ -81,13 +43,29 @@ files downloaded correctly:
 
 There is no need to decompress the files.
 
-Running the pipeline
---------------------
+Amplicon primers & reference sequences
+--------------------------------------
 
-Next, you can run the ``run.sh`` script which will call THAPBI PICT multiple times.
-There is a subdirectory for each of the primer settings, ``V4/`` and ``V8V9/``.
-For each it will make a simple database using the provided twelve 18S rRNA genes
-in ``mock_community.fasta`` file, and call the pipeline.
+Referring to Table 1 in the paper, for the V4 target region they used
+Reuk454FWD1/V4r primer pair (``CCAGCASCYGCGGTAATTCC`` and
+``ACTTTCGTTCTTGAT``), while for the V8-V9 target they used the V8f/1510r pair
+(``ATAACAGGTCTGTGATGCCCT`` and ``CCTTCYGCAGGTTCACCTAC``). However, the FASTQ
+files provided have already been primer trimmed.
+
+This means we need to run THAPBI PICT twice (once for each primer pair,
+against a different marker database each time).
+
+Other files
+-----------
+
+File ``mock_community.fasta`` contains the sequences from accession numbers
+KU900218 to KU900229 (published with the paper), with the description line
+holding just the assigned species.
+
+Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
+``mock_marine.known.tsv`` describe the expected 12 species in the mock
+community (and six species mixes at the purely freshwater or purely marine
+extremes).
 
 Metadata
 --------

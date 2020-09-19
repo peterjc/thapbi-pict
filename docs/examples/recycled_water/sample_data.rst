@@ -3,13 +3,42 @@
 Marker data
 ===========
 
+Either clone the THAPBI PICT source code repository, or decompress the
+latest source code release (``.tar.gz`` file). You should find it contains
+a directory ``examples/recycled_water/`` which is for this example.
+
+Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the analysis
+discussed.
+
+The documentation goes through running each step of the analysis gradually,
+including building a custom database, before finally calling pipeline command
+to do it all together. We provide script ``run.sh`` to do the final run-though
+automatically, but encourage you to follow along the individual steps first.
+
 FASTQ data
 ----------
 
+File ``PRJNA417859.txt`` was download from the ENA and includes the FASTQ
+checksums, URLs, and sample metadata. With a little scripting to extract the
+relevant :ref:`sample metadata <metadata>` for use with THAPBI PICT this was
+reformatted as ``metadata.tsv`` (see below).
+
 Script ``setup.sh`` will download the raw FASTQ files for Redekar *et al.*
-(2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA417859
+(2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA417859 - you could also
+use https://www.ncbi.nlm.nih.gov/bioproject/PRJNA417859/
 
 It will download 768 raw FASTQ files (384 pairs), taking about 4.8GB on disk
+
+If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
+files downloaded correctly:
+
+.. code:: console
+
+    $ cd raw_data/
+    $ md5sum -c MD5SUM.txt
+    $ cd ..
+
+There is no need to decompress the files.
 
 Amplicon primers & reference sequences
 --------------------------------------
@@ -53,17 +82,8 @@ conserved 32bp region as part of the left primer - requiring it be present
 (while allowing some ambiguity) and removing it - leaving a shorter fragment
 which can be matched to a database built of those 1454 accessions.
 
-Provided files
---------------
-
-Either clone the THAPBI PICT source code repository, or decompress the
-latest source code release (``.tar.gz`` file). You should find it contains
-a directory ``examples/recycled_water/`` which is for this example.
-
-File ``PRJNA417859.txt`` was download from the ENA and includes the FASTQ
-checksums, URLs, and sample metadata. With a little scripting to extract the
-relevant :ref:`sample metadata <metadata>` for use with THAPBI PICT this was
-reformatted as ``metadata.tsv`` (another plain text tab-separated table).
+Other files
+-----------
 
 The subdirectory ``raw_data/`` will hold the compressed FASTA files. This
 contains a file named ``MD5SUM.txt`` which can be used to validate the
@@ -72,59 +92,6 @@ FASTQ files (using the checksums provided by the ENA).
 Files ``Redekar_et_al_2019_sup_table_3.tsv`` (plain text tab separated table)
 and ``Redekar_et_al_2019_sup_table_3.fasta`` (FASTA format) are based on the
 Excel format Supplementary Table 3 from the paper.
-
-Shell scripts ``setup.sh`` and ``run.sh`` should reproduce the final analysis
-discussed in the THAPBI PICT documentation.
-
-Raw FASTQ data
---------------
-
-The raw data is 384 paired FASTQ files (samples to ``SAMN08012674`` to
-``SAMN08013057``, runs ``SRR6303585`` to ``SRR6303968``),
-available from the NCBI Sequence Read Archive under bioproject
-`PRJNA417859 (NCBI) <https://www.ncbi.nlm.nih.gov/bioproject/PRJNA417859/>`_,
-or equivalently from the European Nucleotide Archive under project
-`PRJNA417859 (ENA) <https://www.ebi.ac.uk/ena/data/view/PRJNA417859>`_.
-Downloaded we have 768 gzip-compressed FASTQ files (384 pairs), taking about
-5GB on disk.
-
-Setup
------
-
-We assume you have acquired the THAPBI PICT source code, and have your command
-line terminal open in the ``examples/recycled_water/`` folder. First we run
-the ``setup.sh`` script:
-
-.. code:: console
-
-   $ ./setup.sh
-
-This will download the December 2019 NCBI taxonomy dump, and gzip compressed
-FASTQ files from the ENA (768 files, 384 pairs), just over 5GB in total:
-
-.. code:: console
-
-    $ ls -1 raw_data/SRR*.fastq.gz | wc -l
-    768
-
-If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
-files downloaded correctly:
-
-.. code:: console
-
-    $ cd raw_data/
-    $ md5sum -c MD5SUM.txt
-    $ cd ..
-
-There is no need to decompress the files.
-
-Running the pipeline
---------------------
-
-The documentation goes through running each step of the analysis gradually,
-including building a custom database, before finally calling pipeline command
-to do it all together. We provide script ``run.sh`` to do the final run-though
-automatically, but encourage you to follow along the individual steps first.
 
 Metadata
 --------
