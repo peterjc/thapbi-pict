@@ -1,5 +1,5 @@
-Endangered Species Mixes 16S, rbcL, etc
-=======================================
+Endangered Species Mixes 16S etc
+================================
 
 This is the most complicated of the examples considered, where most of the
 samples are "Experimental mixtures" of multiple plants and animals (plus two
