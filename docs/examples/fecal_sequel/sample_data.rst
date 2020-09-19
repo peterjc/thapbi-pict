@@ -6,14 +6,8 @@ Introduction
 Data source
 -----------
 
-This example is based on the one of the amplicon sequencing libraries from
-this paper, looking at the COI marker in bats:
-
-    Walker *et al.* (2019)
-    A fecal sequel: Testing the limits of a genetic assay for bat species
-    identification.
-    https://doi.org/10.1371/journal.pone.0224969
-    https://www.ebi.ac.uk/ena/data/view/PRJNA574765
+Script ``setup.sh`` will download the raw FASTQ files for Walker *et al.*
+(2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA574765
 
 We focus on bioproject PRJNA574765 which has 60 samples and covers the mock
 communities. Additionally the paper describes PRJNA525109 (41 samples

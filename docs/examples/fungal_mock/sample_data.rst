@@ -6,12 +6,8 @@ Introduction
 Data source
 -----------
 
-This example is based on the two amplicon sequencing libraries from this paper:
-
-    Bakker (2018) A fungal mock community control for amplicon sequencing
-    experiments.
-    https://doi.org/10.1111/1755-0998.12760
-    https://www.ebi.ac.uk/ena/data/view/PRJNA377530
+Script ``setup.sh`` will download the raw FASTQ files for Bakker (2018) from
+https://www.ebi.ac.uk/ena/data/view/PRJNA377530
 
 Both amplicon sequencing libraries were sequenced on an Illumina MiSeq
 (multiplexed with other unrelated samples), giving 61 FASTQ pairs (i.e. 122

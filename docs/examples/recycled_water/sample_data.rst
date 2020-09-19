@@ -6,12 +6,8 @@ Introduction
 Data source
 -----------
 
-This example is based on the ITS1 amplicon sequencing library from this paper:
-
-    Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
-    *Phytopythium* species in recycled irrigation water in a container nursery.
-    https://doi.org/10.1094/PBIOMES-10-18-0043-R
-    https://www.ebi.ac.uk/ena/data/view/PRJNA417859
+Script ``setup.sh`` will download the raw FASTQ files for Redekar *et al.*
+(2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA417859
 
 A region of ITS1 was amplified using the ITS6/ITS7 primer pair
 (``GAAGGTGAAGTCGTAACAAGG`` and ``AGCGTTCTTCATCGATGTGC``) which bind the

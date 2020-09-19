@@ -6,13 +6,8 @@ Introduction
 Data source
 -----------
 
-This example is based on the 18S rRNA amplicon library from this paper:
-
-    Bradley *et al.* (2016) Design and Evaluation of Illumina MiSeq-Compatible,
-    18S rRNA Gene-Specific Primers for Improved Characterization of Mixed
-    Phototrophic Communities.
-    https://doi.org/10.1128/AEM.01630-16
-    https://www.ebi.ac.uk/ena/data/view/PRJNA314977
+Script ``setup.sh`` will download the raw FASTQ files for Bradley *et al.*
+(2016) from https://www.ebi.ac.uk/ena/data/view/PRJNA314977
 
 There are 124 sequenced samples, giving 248 paired FASTQ files, taking about
 1.4GB on disk.
