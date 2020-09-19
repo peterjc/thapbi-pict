@@ -1,13 +1,18 @@
 .. _custom_database_sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Data source
------------
+FASTQ data
+----------
 
 Script ``setup.sh`` will download the raw FASTQ files for Redekar *et al.*
 (2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA417859
+
+It will download 768 raw FASTQ files (384 pairs), taking about 4.8GB on disk
+
+Amplicon primers & reference sequences
+--------------------------------------
 
 A region of ITS1 was amplified using the ITS6/ITS7 primer pair
 (``GAAGGTGAAGTCGTAACAAGG`` and ``AGCGTTCTTCATCGATGTGC``) which bind the

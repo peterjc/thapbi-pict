@@ -1,17 +1,18 @@
 .. _fungal_mock_sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Data source
------------
+FASTQ data
+----------
 
 Script ``setup.sh`` will download the raw FASTQ files for Bakker (2018) from
 https://www.ebi.ac.uk/ena/data/view/PRJNA377530
 
-Both amplicon sequencing libraries were sequenced on an Illumina MiSeq
-(multiplexed with other unrelated samples), giving 61 FASTQ pairs (i.e. 122
-files).
+It will download 122 raw FASTQ files (61 pairs), taking 346MB on disk.
+
+Amplicon primers & reference sequences
+--------------------------------------
 
 Amplicon library one amplified a small region of ITS1 using the BITS/B58S3
 primer pair (``ACCTGCGGARGGATC`` and ``GAGATCCRTTGYTRAAAGTT``), as shown in

@@ -1,16 +1,19 @@
 .. _microalgal_mock_sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Data source
------------
+FASTQ data
+----------
 
-Script ``setup.sh`` will download the raw FASTQ files for Bradley *et al.*
-(2016) from https://www.ebi.ac.uk/ena/data/view/PRJNA314977
+Script ``setup.sh`` will download the pre-trimmed FASTQ files for Bradley
+*et al.* (2016) from https://www.ebi.ac.uk/ena/data/view/PRJNA314977
 
 There are 124 sequenced samples, giving 248 paired FASTQ files, taking about
 1.4GB on disk.
+
+Amplicon primers & reference sequences
+--------------------------------------
 
 Referring to Table 1 in the paper, for the V4 target region they used
 Reuk454FWD1/V4r primer pair (``CCAGCASCYGCGGTAATTCC`` and

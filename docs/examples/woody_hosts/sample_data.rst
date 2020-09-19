@@ -1,20 +1,21 @@
 .. _sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Sample data
------------
+FASTQ data
+----------
 
 The raw data is from two Illumina MiSeq runs, a whole 96-well plate from 2016,
 and about half the samples from a second 96-well plate sequenced in 2017
 (where the rest of the plate was samples from a separate ITS1 study). There
 are multiple replicates from each of 14 sample sites, plus controls.
+The raw FASTQ files are too large to include with the THAPBI PICT source code.
 
-The raw FASTQ files are too large to include with the THAPBI PICT source code,
-so to follow the complete example you must download 244 ``*.fastq.gz`` files
-separately (122 pairs, 215MB compressed) from `DOI 10.5281/zenodo.3342957
-<https://doi.org/10.5281/zenodo.3342957>`_.
+Script ``setup.sh`` will download the raw FASTQ files for Riddell *et al.*
+(2019) from https://doi.org/10.5281/zenodo.3342957
+
+It will download 244 raw FASTQ files (122 pairs), about 215MB on disk
 
 The first step of a typical THAPBI PICT workflow is to transform the paired
 FASTQ files into much smaller FASTA files. We provide those FASTA files
@@ -23,6 +24,12 @@ you can still follow the rest of a typical analysis.
 
 We also provide :ref:`metadata for the samples <metadata>` for use in the
 reports.
+
+Amplicon primers & reference sequences
+--------------------------------------
+
+The ITS1 primers used here match the THAPBI PICT defaults, so the default
+database can also be used.
 
 Provided files
 --------------

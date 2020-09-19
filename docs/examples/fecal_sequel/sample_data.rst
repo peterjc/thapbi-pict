@@ -1,10 +1,10 @@
 .. _fecal_sequel_sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Data source
------------
+FASTQ data
+----------
 
 Script ``setup.sh`` will download the raw FASTQ files for Walker *et al.*
 (2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA574765
@@ -14,6 +14,12 @@ communities. Additionally the paper describes PRJNA525109 (41 samples
 comparing genetic efficacy vs traditional survey techniques), and PRJNA525407
 (9 samples looking at bat species assemblages in archaeological sites in
 Belize, with an expanded reference set).
+
+Amplicon primers & reference sequences
+--------------------------------------
+
+The primer pair is SFF_145f (``GTHACHGCYCAYGCHTTYGTAATAAT``) and SFF_351r
+(``CTCCWGCRTGDGCWAGRTTTCC``).
 
 The reference set of COI sequences is taken from Supplementary S2 in the
 preceding paper:

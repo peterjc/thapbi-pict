@@ -1,21 +1,26 @@
 .. _endangered_species_sample_data:
 
-Introduction
-============
+Marker data
+===========
 
-Data source
------------
+FASTQ data
+----------
 
 Script ``setup.sh`` will download the raw FASTQ files for Arulandhu *et al.*
 (2017) from https://www.ebi.ac.uk/ena/data/view/PRJEB18620
 
-There are 177 sequenced samples (6.5GB), made up of 17 experimental mixtures
-(including only two with replicates, 1.1GB) and 160 inter-laboratory trials
-(16 samples repeated in 10 laboratories, 5.4GB).
+It will download 354 raw FASTQ files (177 pairs), taking about 6.5GB on disk.
+The 177 sequenced samples are made up of 17 experimental mixtures (including
+only two with replicates, 1.1GB) and 160 inter-laboratory trials (16 samples
+repeated in 10 laboratories, 5.4GB).
+
+Amplicon primers & reference sequences
+--------------------------------------
 
 All the samples were all amplified with a dozen primers (see Table 1), meaning
 we need to run THAPBI PICT many times - which is not ideal. Also, to run this
-properly you would need a well curated database for each marker.
+properly you would need a well curated database for each marker - FASTA files
+are provided to build rudimentary databases.
 
 Provided files
 --------------
