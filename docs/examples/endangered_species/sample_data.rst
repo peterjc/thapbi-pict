@@ -122,7 +122,7 @@ Table 7, was used to write ``metadata.tsv``, which has the following columns:
    niloticus, 47% Brassica oleracea and 47% Bos taurus, in dry weight
    percentages."
 
-Note we have a single row for the replicates (two cases in the initial
+Note we have a single row for each set of replicates (two cases in the initial
 "Experimental mixture" set, and 16 laboratories for each of the 10
 "Interlaboratory trial" samples), cross referenced to the individual runs
 with semi-colon separated lists in columns 1 (accession) and 2 (filename).
