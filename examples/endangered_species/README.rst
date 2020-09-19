@@ -8,4 +8,4 @@ This example is based on:
     https://www.ebi.ac.uk/ena/data/view/PRJEB18620
     https://www.ncbi.nlm.nih.gov/bioproject/PRJEB18620/
 
-It will download 354 raw FASTQ files (177 pairs), taking 459MB on disk.
+It will download 354 raw FASTQ files (177 pairs), taking about 6.5GB on disk.
