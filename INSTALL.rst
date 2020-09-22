@@ -1,6 +1,9 @@
 Installation
 ============
 
+First time installation
+-----------------------
+
 We recommend installing this tool on Linux or macOS using the `Conda
 <https://conda.io/>`__ packaging system, via the `BioConda
 <https://bioconda.github.io/>`__ channel, which will handle
@@ -54,7 +57,7 @@ This should automatically find the installed copy of the Python code. Use
 ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
 
 Updating
-========
+--------
 
 If you installed via conda, this should work:
 
