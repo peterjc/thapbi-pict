@@ -153,7 +153,7 @@ This allows ``thapbi_pict ncbi-import`` to try as many words as possible
 from the FASTA description in looking for a match in the NCBI taxonomy,
 including synonyms. If that fails and lax mode is used (``-x`` or
 ``--lax``), it falls back on heuristics to identify which part of the
-description is the species. In the example above didn't preload a
+description is the species. The example above didn't preload a
 taxonomy. Second, ``thapbi_pict curated-import`` takes the *entire*
 FASTA description (after the identifier) as the species name.
 
