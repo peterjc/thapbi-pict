@@ -16,6 +16,7 @@ from collections import OrderedDict
 
 from Bio import SeqIO
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from Levenshtein import distance as levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
@@ -38,7 +39,10 @@ from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
+MAX_DIST_GENUS = 3
+
 fuzzy_matches = None  # global variable for onebp classifier
+db_seqs = None  # global variable for distance based classifiers
 
 
 def md5_to_taxon(md5_list, session):
@@ -328,6 +332,60 @@ def onebp_match_in_db(session, seq, debug=False):
     elif not genus_species:
         note = "No DB matches, even with 1bp diff"
     return taxid, genus_species, note
+
+
+def setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences."""
+    global db_seqs
+    db_seqs = set()
+    view = session.query(ITS1)
+    for its1 in view:
+        db_seqs.add(its1.sequence.upper())
+
+
+def dist_in_db(session, seq, debug=False):
+    """Perfect matches get species, up to max edit distance get genus."""
+    global db_seqs
+    if seq in db_seqs:
+        # Should match...
+        return perfect_match_in_db(session, seq)
+    min_dist = 0
+    best = {}
+    for db_seq in db_seqs:
+        dist = levenshtein(seq, db_seq)
+        if dist > MAX_DIST_GENUS:
+            pass
+        elif dist == min_dist:
+            # Best equal
+            assert dist > 0
+            best.add(db_seq)
+        elif dist < min_dist or min_dist == 0:
+            # New winner
+            min_dist = dist
+            best = {
+                db_seq,
+            }
+    note = f"{len(best)} matches at distance {min_dist}"
+    genus = set()
+    for db_seq in best:
+        its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
+        assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
+        genus.update(
+            _.current_taxonomy.genus
+            for _ in session.query(SequenceSource).filter_by(its1=its1)
+        )
+    note += f" giving {len(genus)} genus matches"
+    # TODO - look up genus taxid
+    return 0, ";".join(sorted(genus)), note
+
+
+def method_dist(
+    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+):
+    """Classify using edit distance."""
+    return apply_method_to_file(
+        dist_in_db, fasta_file, session, read_report, debug=debug
+    )
 
 
 def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
@@ -648,6 +706,7 @@ method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
     "onebp": [],
+    "dist": [],
     "substr": [],
     "swarm": ["swarm"],
     "swarmid": ["swarm"],
@@ -657,6 +716,7 @@ method_classify_file = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
+    "dist": method_dist,
     "substr": method_substr,
     "swarm": method_swarm,
     "swarmid": method_swarmid,
@@ -666,6 +726,7 @@ method_classify_file = {
 method_setup = {
     "blast": setup_blast,
     "onebp": setup_onebp,
+    "dist": setup_dist,
     "swarm": setup_swarm,
     "swarmid": setup_swarm,  # can share the setup with swarm
 }
