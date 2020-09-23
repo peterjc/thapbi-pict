@@ -49,3 +49,14 @@ LEFT=TAGGGGAAGGTATGAATGGTTTG
 RIGHT=ACATCGAGGTCGCAACC
 
 analyse # call function above
+
+echo ==============================
+echo Mixed primers for long product
+echo ==============================
+
+mkdir -p intermediate/large/
+
+thapbi_pict prepare-reads -a 10 \
+            --left TAGGGGAAGGTATGAATGGTTTG \
+            --right ARTCCAACATCGAGGT \
+            -i raw_data -o intermediate/large/
