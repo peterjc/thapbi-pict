@@ -118,7 +118,7 @@ def sample_summary(
     if debug:
         sys.stderr.write(
             f"DEBUG: {len(tsv_files)} samples with predictions for"
-            f" {len(genus_predictions):d} genera\n"
+            f" {len(genus_predictions)} genera\n"
         )
 
     # Open files and write headers

@@ -135,7 +135,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                     )
     if impossible:
         sys.stderr.write(
-            f"WARNING: {len(impossible):d} expected species were not a"
+            f"WARNING: {len(impossible)} expected species were not a"
             f" possible prediction: {';'.join(sorted(impossible))}\n"
         )
 
@@ -148,11 +148,11 @@ def save_mapping(tally, filename, level, debug=False):
     with open(filename, "w") as handle:
         handle.write(f"#{level}-count\tExpected\tPredicted\n")
         for expt, pred in sorted(tally):
-            handle.write(f"{tally[expt, pred]:d}\t{expt}\t{pred}\n")
+            handle.write(f"{tally[expt, pred]}\t{expt}\t{pred}\n")
     if debug:
         sys.stderr.write(
-            f"DEBUG: Wrote {len(tally):d} entry mapping table"
-            f" (total {sum(tally.values()):d}) to {filename}\n"
+            f"DEBUG: Wrote {len(tally)} entry mapping table"
+            f" (total {sum(tally.values())}) to {filename}\n"
         )
 
 
@@ -234,12 +234,12 @@ def save_confusion_matrix(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Wrote {len(rows):d} x {len(cols):d} confusion matrix"
-            f" (total {total:d}) to {filename}\n"
+            f"DEBUG: Wrote {len(rows)} x {len(cols)} confusion matrix"
+            f" (total {total}) to {filename}\n"
         )
     assert total >= sum(tally.values())
     if total != exp_total:
-        sys.exit(f"ERROR: Expected {exp_total:d} but confusion matrix total {total:d}")
+        sys.exit(f"ERROR: Expected {exp_total} but confusion matrix total {total}")
 
 
 def extract_binary_tally(class_name, tally):
@@ -415,7 +415,7 @@ def main(
                     md5_expt[md5] = expt
         assert sorted(md5_pred) == sorted(md5_expt), (
             "Unique sequence species assignements:"
-            f" {len(md5_expt):d} expected vs {len(md5_pred):d} predicted"
+            f" {len(md5_expt)} expected vs {len(md5_pred)} predicted"
         )
         if debug:
             sys.stderr.write(
@@ -435,7 +435,7 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Assessing {sum(global_tally.values()):d}"
+            f"DEBUG: Assessing {sum(global_tally.values())}"
             f" {level} level predictions\n"
         )
 
@@ -449,8 +449,8 @@ def main(
     assert sp_list
     if debug:
         sys.stderr.write(
-            f"Classifier DB had {len(db_sp_list):d} species,"
-            f" including expected values have {len(sp_list):d} species\n"
+            f"Classifier DB had {len(db_sp_list)} species,"
+            f" including expected values have {len(sp_list)} species\n"
         )
     for sp in sp_list:
         assert species_level(sp), sp
@@ -458,9 +458,9 @@ def main(
     number_of_classes_and_examples = len(sp_list) * sum(global_tally.values())
 
     sys.stderr.write(
-        f"Assessed {method} vs {known} in {file_count:d} files"
-        f" ({len(sp_list):d} species;"
-        f" {sum(global_tally.values()):d} {level} level predictions)\n"
+        f"Assessed {method} vs {known} in {file_count} files"
+        f" ({len(sp_list)} species;"
+        f" {sum(global_tally.values())} {level} level predictions)\n"
     )
 
     assert file_count == len(input_list)
@@ -556,13 +556,13 @@ def main(
 
     if multi_class_total1 != number_of_classes_and_examples:
         sys.exit(
-            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d},"
-            f" but species times samples = {number_of_classes_and_examples:d}\n"
+            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1},"
+            f" but species times samples = {number_of_classes_and_examples}\n"
         )
     if multi_class_total1 != multi_class_total2 and multi_class_total2:
         sys.exit(
-            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1:d},"
-            f" but sum for species was {multi_class_total2:d}\n"
+            f"ERROR: Overall TP+FP+FN+TP = {multi_class_total1},"
+            f" but sum for species was {multi_class_total2}\n"
         )
 
     if assess_output != "-":

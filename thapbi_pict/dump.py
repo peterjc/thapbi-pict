@@ -197,10 +197,10 @@ def main(
                 ), seq_source.current_taxonomy
 
     if output_filename == "-":
-        sys.stderr.write(f"Wrote {entry_count:d} {output_format} format entries\n")
+        sys.stderr.write(f"Wrote {entry_count} {output_format} format entries\n")
     else:
         out_handle.close()
         sys.stderr.write(
-            f"Wrote {entry_count:d} {output_format} format entries to"
+            f"Wrote {entry_count} {output_format} format entries to"
             f" {output_filename!r}\n"
         )

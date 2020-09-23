@@ -268,8 +268,8 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
                 fuzzy_matches[md5_16b] = [its1_seq]
 
     sys.stderr.write(
-        f"Expanded {count:d} ITS1 sequences from DB into cloud of"
-        f" {len(fuzzy_matches):d} 1bp different variants\n"
+        f"Expanded {count} ITS1 sequences from DB into cloud of"
+        f" {len(fuzzy_matches)} 1bp different variants\n"
     )
 
 
@@ -316,12 +316,12 @@ def onebp_match_in_db(session, seq, debug=False):
             )
         t = list(set(t))
         note = (
-            f"{len(fuzzy_matches[md5_16b]):d} ITS1 matches with up to 1bp diff,"
-            f" {len(t):d} taxonomy entries"
+            f"{len(fuzzy_matches[md5_16b])} ITS1 matches with up to 1bp diff,"
+            f" {len(t)} taxonomy entries"
         )
         if not t:
             sys.exit(
-                f"ERROR: onebp: {len(fuzzy_matches[md5_16b]):d} matches"
+                f"ERROR: onebp: {len(fuzzy_matches[md5_16b])} matches"
                 f" but no taxonomy entries for {seq}\n"
             )
         taxid, genus_species, _ = taxid_and_sp_lists(t)
@@ -343,7 +343,7 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
             handle.write(f">{md5}\n{its1_seq}\n")
             count += 1
     sys.stderr.write(
-        f"Wrote {count:d} unique sequences from DB to FASTA file for BLAST database.\n"
+        f"Wrote {count} unique sequences from DB to FASTA file for BLAST database.\n"
     )
     cmd = ["makeblastdb", "-dbtype", "nucl", "-in", db_fasta, "-out", blast_db]
     run(cmd, debug)
@@ -427,7 +427,7 @@ def method_blast(
             if not t:
                 sys.exit(f"ERROR: No taxon entry for {idn}")
             taxid, genus_species, note = taxid_and_sp_lists(t)
-            note = (f"{len(db_md5s):d} BLAST hits (bit score {score}). {note}").strip()
+            note = (f"{len(db_md5s)} BLAST hits (bit score {score}). {note}").strip()
         else:
             taxid = 0
             genus_species = ""
@@ -453,14 +453,14 @@ def make_swarm_db_fasta(db_fasta, session):
             # Using md5_ref_abundance to avoid duplicating any exact
             # sequence matching read which would be md5_abundance
             abundance = 1  # need to look at sequence_source join...
-            handle.write(f">{md5}_db_{abundance:d}\n{its1_seq}\n")
+            handle.write(f">{md5}_db_{abundance}\n{its1_seq}\n")
             count += 1
     sys.stderr.write(
-        f"Wrote {count:d} unique sequences from DB to FASTA file for SWARM.\n"
+        f"Wrote {count} unique sequences from DB to FASTA file for SWARM.\n"
     )
     if skip:
         sys.stderr.write(
-            f"WARNING: Skipped {skip:d} DB sequences due to ambiguous bases.\n"
+            f"WARNING: Skipped {skip} DB sequences due to ambiguous bases.\n"
         )
     return count
 
@@ -561,15 +561,15 @@ def method_swarm_core(
                 t = md5_to_taxon(db_md5s, session)
                 taxid, genus_species, note = taxid_and_sp_lists(t)
                 note = (
-                    f"Cluster #{cluster_count:d} - {len(read_idns):d} seqs"
-                    f" and {len(db_md5s):d} DB entries. {note}"
+                    f"Cluster #{cluster_count} - {len(read_idns)} seqs"
+                    f" and {len(db_md5s)} DB entries. {note}"
                 ).strip()
             else:
                 # Cannot classify, report
                 taxid = 0
                 genus_species = ""
                 note = (
-                    f"Cluster #{cluster_count:d} - {len(read_idns):d} seqs"
+                    f"Cluster #{cluster_count} - {len(read_idns)} seqs"
                     " but no DB entry"
                 )
             for idn in read_idns:
@@ -591,7 +591,7 @@ def method_swarm_core(
                         continue
                 read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
             tax_counts[genus_species] += abundance
-    sys.stderr.write(f"Swarm generated {cluster_count:d} clusters\n")
+    sys.stderr.write(f"Swarm generated {cluster_count} clusters\n")
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -701,7 +701,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     count = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
     if debug:
-        sys.stderr.write(f"Taxonomy table contains {count:d} distinct species.\n")
+        sys.stderr.write(f"Taxonomy table contains {count} distinct species.\n")
     if not count:
         sys.exit("ERROR: Taxonomy table empty, cannot classify anything.\n")
 
@@ -733,7 +733,7 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
 
     count = session.query(ITS1).count()
     if debug:
-        sys.stderr.write(f"ITS1 table contains {count:d} distinct sequences.\n")
+        sys.stderr.write(f"ITS1 table contains {count} distinct sequences.\n")
     if not count:
         sys.exit("ERROR: ITS1 table empty, cannot classify anything.\n")
 
@@ -859,8 +859,8 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         tmp_obj.cleanup()
 
     sys.stderr.write(
-        f"{method} classifier assigned species/genus to {match_count:d}"
-        f" of {seq_count:d} sequences from {len(fasta_files):d} files\n"
+        f"{method} classifier assigned species/genus to {match_count}"
+        f" of {seq_count} sequences from {len(fasta_files)} files\n"
     )
 
     sys.stdout.flush()

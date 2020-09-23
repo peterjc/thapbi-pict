@@ -378,7 +378,7 @@ def save_nr_fasta(
         if -count < min_abundance:
             # Sorted, so everything hereafter is too rare
             break
-        out_handle.write(f">{md5seq(seq)}_{-count:d}\n{seq}\n")
+        out_handle.write(f">{md5seq(seq)}_{-count}\n{seq}\n")
         accepted_total -= count
         accepted_count += 1
     if output_fasta != "-":
@@ -543,7 +543,7 @@ def prepare_sample(
     if debug:
         sys.stderr.write(
             f"DEBUG: Starting to prepare {'control' if control else 'sample'}"
-            f" {fasta_name} (min abundance set to {min_abundance:d})\n"
+            f" {fasta_name} (min abundance set to {min_abundance})\n"
         )
 
     tmp = os.path.join(shared_tmp, stem)
@@ -697,17 +697,17 @@ def prepare_sample(
         )
         sys.stderr.write(
             f"From {count_raw} paired FASTQ reads,"
-            f" found {uniq_count:d} unique sequences,"
-            f" {accepted_uniq_count:d} above min abundance {min_abundance:d}"
-            f" (max abundance {max_hmm_abundance:d})\n"
+            f" found {uniq_count} unique sequences,"
+            f" {accepted_uniq_count} above min abundance {min_abundance}"
+            f" (max abundance {max_hmm_abundance})\n"
         )
 
     if not accepted_uniq_count:
         if debug:
             sys.stderr.write(
-                f"{stem} had {uniq_count:d} unique sequences,"
+                f"{stem} had {uniq_count} unique sequences,"
                 f" but none above {'control' if control else 'sample'}"
-                f" minimum abundance threshold {min_abundance:d}\n"
+                f" minimum abundance threshold {min_abundance}\n"
             )
         # Effectively empty FASTA file, just header
         save_nr_fasta(
@@ -756,10 +756,10 @@ def prepare_sample(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Filtered {stem} down to {uniq_count:d} unique sequences"
+            f"DEBUG: Filtered {stem} down to {uniq_count} unique sequences"
             f" above {'control' if control else 'sample'}"
-            f" min abundance threshold {min_abundance:d}"
-            f" (max abundance {max(max_hmm_abundance.values(), default=0):d})\n"
+            f" min abundance threshold {min_abundance}"
+            f" (max abundance {max(max_hmm_abundance.values(), default=0)})\n"
         )
 
     return fasta_name, uniq_count, max_hmm_abundance
@@ -825,8 +825,8 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"Preparing {len(fastq_file_pairs):d} data FASTQ pairs,"
-            f" and {len(control_file_pairs):d} control FASTQ pairs\n"
+            f"Preparing {len(fastq_file_pairs)} data FASTQ pairs,"
+            f" and {len(control_file_pairs)} control FASTQ pairs\n"
         )
     if control_file_pairs and not fastq_file_pairs:
         sys.stderr.write(
@@ -892,9 +892,9 @@ def main(
         if control:
             if debug or max_its1_abundance > min_abundance:
                 sys.stderr.write(
-                    f"Control {stem} has max marker abundance {max_its1_abundance:d}"
-                    f" ({uniq_count:d} unique sequences over default threshold"
-                    f" {min_abundance:d})\n"
+                    f"Control {stem} has max marker abundance {max_its1_abundance}"
+                    f" ({uniq_count} unique sequences over default threshold"
+                    f" {min_abundance})\n"
                 )
             if max_its1_abundance > pool_worst_control.get(pool_key, -1):
                 # Record even if zero, nice to have for summary later
@@ -915,9 +915,9 @@ def main(
                 sys.stderr.write(f"Skipping {fasta_file} as already done\n")
         else:
             sys.stderr.write(
-                f"Sample {stem} has {uniq_count:d} unique sequences over"
-                f" abundance threshold {min_a:d}"
-                f" (max marker abundance {max_its1_abundance:d})\n"
+                f"Sample {stem} has {uniq_count} unique sequences over"
+                f" abundance threshold {min_a}"
+                f" (max marker abundance {max_its1_abundance})\n"
             )
 
     if skipped_samples:

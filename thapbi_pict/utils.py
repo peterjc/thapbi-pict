@@ -629,7 +629,7 @@ def load_metadata(
             )
         if group_col not in value_cols:
             sys.exit(
-                f"ERROR: Metadata group column {metadata_groups:d}"
+                f"ERROR: Metadata group column {metadata_groups}"
                 " not included in reported metadata.\n"
             )
         group_col = value_cols.index(group_col)  # i.e. which of requested columns
@@ -656,7 +656,7 @@ def load_metadata(
         names = [parts[_].strip() for _ in value_cols]
         if debug:
             sys.stderr.write(
-                f"DEBUG: Row {metadata_name_row:d} gave metadata field names:"
+                f"DEBUG: Row {metadata_name_row} gave metadata field names:"
                 f" {names!r}\n"
             )
             sys.stderr.write(

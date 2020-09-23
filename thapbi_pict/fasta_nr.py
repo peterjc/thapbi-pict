@@ -75,8 +75,8 @@ def main(
 
     if counts:
         sys.stderr.write(
-            f"Loaded {len(counts):d} unique sequences from {sum(counts.values()):d}"
-            f" in total within length range, max abundance {max(counts.values()):d}\n"
+            f"Loaded {len(counts)} unique sequences from {sum(counts.values())}"
+            f" in total within length range, max abundance {max(counts.values())}\n"
         )
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")

@@ -115,7 +115,7 @@ def top_level_species(children, ranks, names, genus_list):
         assert ranks[genus_taxid] in ("genus", "subgenus")
         if genus_taxid not in children:
             sys.stderr.write(
-                f"WARNING: Genus {names[genus_taxid]} ({genus_taxid:d})"
+                f"WARNING: Genus {names[genus_taxid]} ({genus_taxid})"
                 " has no children\n"
             )
             continue
@@ -143,7 +143,7 @@ def top_level_species(children, ranks, names, genus_list):
                     continue
                 # e.g. Hyaloperonospora parasitica species group
                 sys.stderr.write(
-                    f"WARNING: Treating {ranks[taxid]} '{name}' (txid{taxid:d})"
+                    f"WARNING: Treating {ranks[taxid]} '{name}' (txid{taxid})"
                     " as a species.\n"
                 )
                 yield taxid, names[genus_taxid], name
@@ -195,7 +195,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
     if debug:
         sys.stderr.write(
-            f"Identified {len(genus_list):d} genera under specified ancestor node:"
+            f"Identified {len(genus_list)} genera under specified ancestor node:"
             f" {', '.join(sorted(names[_] for _ in genus_list))}\n"
         )
 
@@ -237,7 +237,7 @@ def main(tax, db_url, ancestors, debug=True):
                 if debug or taxonomy.ncbi_taxid != 0:
                     sys.stderr.write(
                         f"WARNING: {genus} {''},"
-                        f" updating NCBI taxid {taxonomy.ncbi_taxid:d} -> {taxid:d}\n"
+                        f" updating NCBI taxid {taxonomy.ncbi_taxid} -> {taxid}\n"
                     )
                 taxonomy.ncbi_taxid = taxid
                 session.add(taxonomy)
@@ -282,7 +282,7 @@ def main(tax, db_url, ancestors, debug=True):
             if debug or taxonomy.ncbi_taxid != 0:
                 sys.stderr.write(
                     f"WARNING: {genus} {species},"
-                    f" updating NCBI taxid {taxonomy.ncbi_taxid:d} -> {taxid:d}\n"
+                    f" updating NCBI taxid {taxonomy.ncbi_taxid} -> {taxid}\n"
                 )
             taxonomy.ncbi_taxid = taxid
             session.add(taxonomy)
@@ -337,9 +337,9 @@ def main(tax, db_url, ancestors, debug=True):
     session.commit()
 
     sys.stderr.write(
-        f"Loaded {g_new:d} new genera, and {new:d} new species entries"
-        f" with {s_new:d} synonyms into DB"
-        f" ({g_old:d}, {old:d} and {s_old:d} already there)\n"
+        f"Loaded {g_new} new genera, and {new} new species entries"
+        f" with {s_new} synonyms into DB"
+        f" ({g_old}, {old} and {s_old} already there)\n"
     )
 
     return 0

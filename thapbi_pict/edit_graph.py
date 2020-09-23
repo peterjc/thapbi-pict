@@ -261,8 +261,8 @@ def main(
                         " not using MD5_abundance naming\n"
                     )
         sys.stderr.write(
-            f"Loaded {len(md5_in_fasta):d} unique sequences"
-            f" from {len(samples):d} FASTA files.\n"
+            f"Loaded {len(md5_in_fasta)} unique sequences"
+            f" from {len(samples)} FASTA files.\n"
         )
         # Drop low total abundance FASTA sequences now (before compute distances)
         if total_min_abundance:
@@ -272,8 +272,8 @@ def main(
                     md5_in_fasta.remove(md5)
                     del md5_to_seq[md5]
             sys.stderr.write(
-                f"Minimum total abundance threshold {total_min_abundance:d}"
-                " left {len(md5_in_fasta):d} sequences from FASTA files.\n"
+                f"Minimum total abundance threshold {total_min_abundance}"
+                " left {len(md5_in_fasta)} sequences from FASTA files.\n"
             )
         if len(md5_to_seq) > 5000:
             sys.stderr.write(
@@ -333,14 +333,14 @@ def main(
 
     if db_url and inputs and always_show_db:
         sys.stderr.write(
-            f"DB had {len(md5_in_db):d} sequences"
-            f" ({len(md5_in_db.difference(md5_in_fasta)):d} not in FASTA),"
-            f" FASTA had {len(md5_in_fasta):d} sequences"
-            f" ({len(md5_in_fasta.difference(md5_in_db)):d} not in DB).\n"
+            f"DB had {len(md5_in_db)} sequences"
+            f" ({len(md5_in_db.difference(md5_in_fasta))} not in FASTA),"
+            f" FASTA had {len(md5_in_fasta)} sequences"
+            f" ({len(md5_in_fasta.difference(md5_in_db))} not in DB).\n"
         )
         sys.stderr.write(
-            f"DB and FASTA had {len(md5_in_db.intersection(md5_in_fasta)):d} sequences"
-            f" in common; {len(md5_in_db.union(md5_in_fasta)):d} combined.\n"
+            f"DB and FASTA had {len(md5_in_db.intersection(md5_in_fasta))} sequences"
+            f" in common; {len(md5_in_db.union(md5_in_fasta))} combined.\n"
         )
 
     if not md5_to_seq:
@@ -372,7 +372,7 @@ def main(
                     wanted.add(check2)
     assert done == todo, f"{done!r} vs {todo}"
     sys.stderr.write(
-        f"Computed {done:d} Levenshtein edit distances between {n:d} sequences.\n"
+        f"Computed {done} Levenshtein edit distances between {n} sequences.\n"
     )
     sys.stderr.write(
         f"Will draw {len(wanted)} nodes with at least one edge"
@@ -519,17 +519,15 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: {edge_count:d} edges up to maximum edit distance"
-            f" {max_edit_dist:d}\n"
+            f"DEBUG: {edge_count} edges up to maximum edit distance"
+            f" {max_edit_dist}\n"
         )
         sys.stderr.write(
-            f"DEBUG: {edge_count1:d} one-bp edges; {edge_count2:d} two-bp edges;"
-            " {edge_count3:d} three-bp edges.\n"
+            f"DEBUG: {edge_count1} one-bp edges; {edge_count2} two-bp edges;"
+            " {edge_count3} three-bp edges.\n"
         )
         assert edge_count == edge_count1 + edge_count2 + edge_count3
-        sys.stderr.write(
-            f"DEBUG: Dropped {redundant:d} redundant 2-bp or 3-bp edges.\n"
-        )
+        sys.stderr.write(f"DEBUG: Dropped {redundant} redundant 2-bp or 3-bp edges.\n")
 
     render = {
         "gexf": nx.write_gexf,

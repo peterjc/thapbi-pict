@@ -404,8 +404,8 @@ def pipeline(args=None):
             sys.exit(return_code)
     if len(fasta_files) != len(classified_files):
         sys.exit(
-            f"ERROR: {len(fasta_files):d} FASTA files "
-            f"but {len(classified_files):d} classified"
+            f"ERROR: {len(fasta_files)} FASTA files "
+            f"but {len(classified_files)} classified"
         )
 
     method = args.method
@@ -689,7 +689,7 @@ ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     type=int,
     default=str(DEFAULT_MIN_ABUNDANCE),
     help="Mininum abundance applied to unique marker sequences in each sample"
-    f" (i.e. each FASTQ pair), default {DEFAULT_MIN_ABUNDANCE:d}."
+    f" (i.e. each FASTQ pair), default {DEFAULT_MIN_ABUNDANCE}."
     " May be increased based on negative controls.",
 )
 
@@ -1324,7 +1324,7 @@ def main(args=None):
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance to require for the report. "
-        f"Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads. "
+        f"Default {DEFAULT_MIN_ABUNDANCE} reflects default in prepare-reads. "
         "Rather than re-running the prepare or classifier steps with a stricter "
         "minimum abundance you can apply it here. Use zero or one to look at "
         "everything (but beware that negative control samples will include low "
@@ -1368,7 +1368,7 @@ def main(args=None):
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
         help="Mininum sample level abundance for FASTA sequences. "
-        f"Default {DEFAULT_MIN_ABUNDANCE:d} reflects default in prepare-reads.",
+        f"Default {DEFAULT_MIN_ABUNDANCE} reflects default in prepare-reads.",
     )
     subcommand_parser.add_argument(
         "-t",

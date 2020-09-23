@@ -54,7 +54,7 @@ def main(
         )
 
     sys.stderr.write(
-        f"Importing {len(input_list):d} FASTA files with {method} classifications\n"
+        f"Importing {len(input_list)} FASTA files with {method} classifications\n"
     )
 
     for fasta_file, tsv_file in input_list:

@@ -75,6 +75,6 @@ def main(db_url, output_filename, debug=False):
         out_handle.close()
 
     if debug:
-        sys.stderr.write(f"{genus_conflicts:d} genus level conflicts\n")
+        sys.stderr.write(f"{genus_conflicts} genus level conflicts\n")
 
     return genus_conflicts

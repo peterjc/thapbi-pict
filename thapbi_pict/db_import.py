@@ -361,21 +361,21 @@ def import_fasta_file(
 
     session.commit()
     sys.stderr.write(
-        f"File {fasta_file} had {seq_count:d} sequences, "
-        f"of which {good_seq_count:d} accepted.\n"
+        f"File {fasta_file} had {seq_count} sequences, "
+        f"of which {good_seq_count} accepted.\n"
     )
     assert bad_entries <= entry_count, (bad_entries, entry_count)
     assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
-            f"Of {entry_count:d} potential entries, {bad_entries:d} unparsable,"
-            f" {bad_sp_entries:d} failed sp. validation, {good_entries:d} OK.\n"
+            f"Of {entry_count} potential entries, {bad_entries} unparsable,"
+            f" {bad_sp_entries} failed sp. validation, {good_entries} OK.\n"
         )
         assert entry_count == good_entries + bad_entries + bad_sp_entries
     else:
         sys.stderr.write(
-            f"Of {entry_count:d} potential entries, loaded {good_entries:d} entries,"
-            f" {bad_entries:d} failed parsing.\n"
+            f"Of {entry_count} potential entries, loaded {good_entries} entries,"
+            f" {bad_entries} failed parsing.\n"
         )
         assert bad_sp_entries == 0, bad_sp_entries
         assert entry_count == good_entries + bad_entries
