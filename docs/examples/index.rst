@@ -22,36 +22,36 @@ been mock communities with known species composition.
    fecal_sequel/index
    endangered_species/index
 
-* :ref:`woody_hosts` - Simple ITS1 example using the default primers and
-  database. Based on a paper from earlier in the THAPBI Phyto-Threats project:
+* :ref:`woody_hosts` - Simple example using the default primers and database.
+  Based on a paper from earlier in the THAPBI Phyto-Threats project:
 
     Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
     host-associated *Phytophthora* spp. in soils at public gardens and
     amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
-* :ref:`recycled_water` - ITS1 example where defaults can be used, but
+* :ref:`recycled_water` - An example where the defaults can be used, but
   ideally requires different primers and a custom database. Based on:
 
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container
     nursery. https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
-* :ref:`fungal_mock` - ITS1 and ITS2 example requiring multiple primers and
-  databases, based on:
+* :ref:`fungal_mock` - An example with two markers requiring separate primers
+  settings and databases, based on:
 
     Bakker (2018) A fungal mock community control for amplicon sequencing
     experiments. https://doi.org/10.1111/1755-0998.12760
 
-* :ref:`microalgal_mock` - 18S rRNA example requiring multiple primers and
-  databases, based on:
+* :ref:`microalgal_mock` - An example with two markers requiring separate
+  primers settings and databases, based on:
 
     Bradley *et al.* (2016) Design and Evaluation of Illumina
     MiSeq-Compatible, 18S rRNA Gene-Specific Primers for Improved
     Characterization of Mixed Phototrophic Communities.
     https://doi.org/10.1128/AEM.01630-16
 
-* :ref:`fecal_sequel` - COI example in bats, showing importance of the
-  database content with the default classifier. Based on:
+* :ref:`fecal_sequel` - A single marker example in bats, showing importance of
+  the database content with the default classifier. Based on:
 
     Walker *et al.* (2019) A fecal sequel: Testing the limits of a genetic
     assay for bat species identification.
@@ -69,4 +69,4 @@ For each worked example there is a different sub-folder in the THAPBI PICT
 source code under ``examples/`` containing at least ``setup.sh`` to do one-off
 setup like downloading the public data, and ``run.sh`` to execute the main
 analysis discussed. There will usually be assorted other files like reference
-sequences or ``metadata.tsv``.
+sequences, or ``metadata.tsv``.
