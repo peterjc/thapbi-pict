@@ -39,10 +39,10 @@ from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
-MAX_DIST_GENUS = 3
+MAX_DIST_GENUS = 3  # 1s3g = up to 1bp for species (see "onebp"); up to 3bp for genus
 
 fuzzy_matches = None  # global variable for onebp classifier
-db_seqs = None  # global variable for distance based classifiers
+db_seqs = None  # global variable for 1s3g classifier
 
 
 def md5_to_taxon(md5_list, session):
@@ -351,13 +351,16 @@ def setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
 def dist_in_db(session, seq, debug=False):
     """Species up to 1bp, genus up to 3bp away."""
     global db_seqs
-    if seq in db_seqs:
-        # Should match... but might be genus only and
-        # we'd prefer a species level match 1bp away
-        # TODO: Implement here to avoid startup overhead?
+    global fuzzy_matches
+    assert seq and db_seqs and fuzzy_matches
+    # If seq in db_seqs might be genus only, and
+    # we'd prefer a species level match 1bp away:
+    if (seq in db_seqs) or (md5seq_16b(seq) in fuzzy_matches):
         return onebp_match_in_db(session, seq)
     min_dist = 0
     best = {}
+    # Any matches are at least 2bp away, will take genus only.
+    # Fall back on brute force! But only on a minority of cases
     for db_seq in db_seqs:
         dist = levenshtein(seq, db_seq)
         if dist > MAX_DIST_GENUS:
@@ -375,24 +378,19 @@ def dist_in_db(session, seq, debug=False):
     if not min_dist:
         return 0, "", f"No matches up to distance {MAX_DIST_GENUS}"
     note = f"{len(best)} matches at distance {min_dist}"
+    assert min_dist > 1  # Should have caught via fuzzy list!
 
-    t = set()
+    genus = set()
     for db_seq in best:
         its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
-        t.update(
-            _.current_taxonomy
+        genus.update(
+            _.current_taxonomy.genus
             for _ in session.query(SequenceSource).filter_by(its1=its1)
         )
-    assert t
-    if min_dist == 1:
-        # Take at species level
-        taxid, genus_species, _ = taxid_and_sp_lists(t)
-    else:
-        # Take genus only
-        genus_species = ";".join(sorted({_.genus for _ in t}))
-        taxid = 0  # TODO - look up genus taxid
-    return taxid, genus_species, note
+    assert genus
+    # TODO - look up genus taxid
+    return 0, ";".join(sorted(genus)), note
 
 
 def method_dist(
@@ -722,7 +720,7 @@ method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
     "onebp": [],
-    "dist": [],
+    "1s3g": [],
     "substr": [],
     "swarm": ["swarm"],
     "swarmid": ["swarm"],
@@ -732,7 +730,7 @@ method_classify_file = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
-    "dist": method_dist,
+    "1s3g": method_dist,
     "substr": method_substr,
     "swarm": method_swarm,
     "swarmid": method_swarmid,
@@ -742,7 +740,7 @@ method_classify_file = {
 method_setup = {
     "blast": setup_blast,
     "onebp": setup_onebp,
-    "dist": setup_dist,
+    "1s3g": setup_dist,
     "swarm": setup_swarm,
     "swarmid": setup_swarm,  # can share the setup with swarm
 }
