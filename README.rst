@@ -93,7 +93,7 @@ The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is hosted by
 ``docs/`` folder.
 
 The documentation includes more detailed discussion of the sample datasets
-in the ``examples/`` folder (which are based published datasets).
+in the ``examples/`` folder (which are based on published datasets).
 
 Funding
 -------
