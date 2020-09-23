@@ -1,3 +1,5 @@
+.. _negative_controls:
+
 Negative Controls
 =================
 
