@@ -19,6 +19,7 @@ been mock communities with known species composition.
    recycled_water/index
    fungal_mock/index
    microalgal_mock/index
+   great_lakes/index
    fecal_sequel/index
    endangered_species/index
 
@@ -49,6 +50,13 @@ been mock communities with known species composition.
     MiSeq-Compatible, 18S rRNA Gene-Specific Primers for Improved
     Characterization of Mixed Phototrophic Communities.
     https://doi.org/10.1128/AEM.01630-16
+
+* :ref:`great_lakes` - An example with two mitochondrial markers, with mock
+  communities, where we focus on the minimum abundance threshold. Based on:
+
+    Klymus *et al.* (2017) Environmental DNA (eDNA) metabarcoding assays to
+    detect invasive invertebrate species in the Great Lakes.
+    https://doi.org/10.1371/journal.pone.0177643
 
 * :ref:`fecal_sequel` - A single marker example in bats, showing importance of
   the database content with the default classifier. Based on:
