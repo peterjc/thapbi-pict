@@ -292,6 +292,9 @@ def onebp_match_in_db(session, seq, debug=False):
 
     Returns taxid (integer or string), genus-species (string), note (string).
     If there are multiple matches, semi-colon separated strings are returned.
+
+    If there is a perfect genus only match, but a species level match one
+    base pair away, takes that instead.
     """
     global fuzzy_matches
     taxid, genus_species, note = perfect_match_in_db(session, seq)
