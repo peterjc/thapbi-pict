@@ -520,7 +520,7 @@ ARG_IGNORE_PREFIXES = dict(  # noqa: C408
 ARG_METHOD_OUTPUT = dict(  # noqa: C408
     type=str,
     default=DEFAULT_METHOD,
-    choices=list(method_classifier),
+    choices=sorted(method_classifier),
     help=f"Classify method to run, default is '{DEFAULT_METHOD}'.",
 )
 
@@ -528,7 +528,7 @@ ARG_METHOD_OUTPUT = dict(  # noqa: C408
 ARG_METHOD_INPUT = dict(  # noqa: C408
     type=str,
     default=DEFAULT_METHOD,
-    choices=list(method_classifier),
+    choices=sorted(method_classifier),
     help=f"Classify method (to infer filenames), default '{DEFAULT_METHOD}'.",
 )
 
