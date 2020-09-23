@@ -365,18 +365,27 @@ def dist_in_db(session, seq, debug=False):
             best = {
                 db_seq,
             }
+    if not min_dist:
+        return 0, "", f"No matches up to distance {MAX_DIST_GENUS}"
     note = f"{len(best)} matches at distance {min_dist}"
-    genus = set()
+
+    t = set()
     for db_seq in best:
         its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
-        genus.update(
-            _.current_taxonomy.genus
+        t.update(
+            _.current_taxonomy
             for _ in session.query(SequenceSource).filter_by(its1=its1)
         )
-    note += f" giving {len(genus)} genus matches"
-    # TODO - look up genus taxid
-    return 0, ";".join(sorted(genus)), note
+    assert t
+    if min_dist == 1:
+        # Take at species level
+        taxid, genus_species, _ = taxid_and_sp_lists(t)
+    else:
+        # Take genus only
+        genus_species = ";".join(sorted({_.genus for _ in t}))
+        taxid = 0  # TODO - look up genus taxid
+    return taxid, genus_species, note
 
 
 def method_dist(
