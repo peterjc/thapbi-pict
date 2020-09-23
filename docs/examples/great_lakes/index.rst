@@ -27,3 +27,4 @@ public sequence databases lack many of the sequences detected.
    :maxdepth: 1
 
    sample_data
+   abundance
