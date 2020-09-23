@@ -305,7 +305,7 @@ def onebp_match_in_db(session, seq, debug=False):
     # No species level exact matches, so do we have 1bp off match(es)?
     md5_16b = md5seq_16b(seq)
     if md5_16b in fuzzy_matches:
-        t = []
+        t = set()
         # TODO - Refactor this 2-query-per-loop into one lookup?
         # Including [seq] here in order to retain any perfect genus match.
         # If there are any *different* genus matches 1bp away, they'll be
@@ -313,11 +313,10 @@ def onebp_match_in_db(session, seq, debug=False):
         for db_seq in [seq] + fuzzy_matches[md5_16b]:
             its1 = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
-            t.extend(
+            t.update(
                 _.current_taxonomy
                 for _ in session.query(SequenceSource).filter_by(its1=its1)
             )
-        t = list(set(t))
         note = (
             f"{len(fuzzy_matches[md5_16b])} ITS1 matches with up to 1bp diff,"
             f" {len(t)} taxonomy entries"
@@ -327,7 +326,7 @@ def onebp_match_in_db(session, seq, debug=False):
                 f"ERROR: onebp: {len(fuzzy_matches[md5_16b])} matches"
                 f" but no taxonomy entries for {seq}\n"
             )
-        taxid, genus_species, _ = taxid_and_sp_lists(t)
+        taxid, genus_species, _ = taxid_and_sp_lists(list(t))
     elif not genus_species:
         note = "No DB matches, even with 1bp diff"
     return taxid, genus_species, note
