@@ -296,6 +296,9 @@ def onebp_match_in_db(session, seq, debug=False):
 
     Returns taxid (integer or string), genus-species (string), note (string).
     If there are multiple matches, semi-colon separated strings are returned.
+
+    If there is a perfect genus only match, but a species level match one
+    base pair away, takes that instead.
     """
     global fuzzy_matches
     taxid, genus_species, note = perfect_match_in_db(session, seq)
@@ -341,14 +344,18 @@ def setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
     view = session.query(ITS1)
     for its1 in view:
         db_seqs.add(its1.sequence.upper())
+    # Now set fuzzy_matches too...
+    setup_onebp(session, shared_tmp_dir, debug, cpu)
 
 
 def dist_in_db(session, seq, debug=False):
-    """Perfect matches get species, up to max edit distance get genus."""
+    """Species up to 1bp, genus up to 3bp away."""
     global db_seqs
     if seq in db_seqs:
-        # Should match...
-        return perfect_match_in_db(session, seq)
+        # Should match... but might be genus only and
+        # we'd prefer a species level match 1bp away
+        # TODO: Implement here to avoid startup overhead?
+        return onebp_match_in_db(session, seq)
     min_dist = 0
     best = {}
     for db_seq in db_seqs:
