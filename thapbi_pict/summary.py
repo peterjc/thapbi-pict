@@ -23,24 +23,12 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from .prepare import load_fasta_header
 from .utils import abundance_from_read_name
 from .utils import color_bands
+from .utils import file_to_sample_name
 from .utils import find_paired_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import sample_sort
 from .utils import split_read_name_abundance
-
-
-def file_to_sample_name(filename):
-    """Given filename (without and directory name), return sample name only.
-
-    i.e. XXX.fasta --> and XXX.method.tsv --> XXX
-    """
-    if filename.endswith(".fasta"):
-        return os.path.basename(filename).rsplit(".", 1)[0]
-    elif filename.endswith(".tsv"):
-        return os.path.basename(filename).rsplit(".", 2)[0]
-    else:
-        raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
 
 
 def load_fasta_headers(sample_to_filename, fields, default=""):

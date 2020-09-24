@@ -394,6 +394,19 @@ def abundance_values_in_fasta(fasta_file, gzipped=False):
     return unique, total, max_a
 
 
+def file_to_sample_name(filename):
+    """Given filename (with or without a directory name), return sample name only.
+
+    i.e. XXX.fasta --> and XXX.method.tsv --> XXX
+    """
+    if filename.endswith(".fasta"):
+        return os.path.basename(filename).rsplit(".", 1)[0]
+    elif filename.endswith(".tsv"):
+        return os.path.basename(filename).rsplit(".", 2)[0]
+    else:
+        raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
+
+
 def find_requested_files(
     filenames_or_folders, ext=".fasta", ignore_prefixes=None, debug=False
 ):
