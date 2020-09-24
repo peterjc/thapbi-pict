@@ -480,7 +480,7 @@ def find_paired_files(
         if stem in ext2_dict:
             input_list.append((ext1_dict[stem], ext2_dict[stem]))
         elif strict:
-            sys.exit("ERROR: {ext1_dict[stem]} without {stem}{ext2}")
+            sys.exit(f"ERROR: {ext1_dict[stem]} without {stem}{ext2}")
         elif debug:
             # Acceptable in motivating use case where on a given plate
             # only some of the samples would be known positive controls:
