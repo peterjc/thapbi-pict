@@ -148,6 +148,10 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
                 '    <att type="integer" name="Sample-count" value="%i"/>\n'
                 % node.get("sample_count", 0)
             )
+            handle.write(
+                '    <att type="integer" name="in-db" value="%i"/>\n'
+                % (1 if node.get("in_db", False) else 0)
+            )
             if node["genus"]:
                 handle.write(
                     '    <att type="string" name="Genus" value="%s"/>\n' % node["genus"]
