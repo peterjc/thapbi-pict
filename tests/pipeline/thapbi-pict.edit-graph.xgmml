@@ -18,14 +18,14 @@
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora rubi"/>
   </node>
-  <node id="af3282a9797a70b6922e29e68c0b2bdc" label="{af3282}">
+  <node id="af3282a9797a70b6922e29e68c0b2bdc" label="P. cryptogea;P. pseudocryptogea">
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="af3282a9797a70b6922e29e68c0b2bdc"/>
     <att type="integer" name="Total-abundance" value="390"/>
     <att type="integer" name="Max-sample-abundance" value="390"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
-    <att type="string" name="Taxonomy" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora cryptogea;Phytophthora pseudocryptogea"/>
   </node>
   <node id="29de890989becddc5e0b10ecbbc11b1a" label="P. agathidicida;P. castaneae">
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
