@@ -6,6 +6,7 @@
     <att type="integer" name="Total-abundance" value="976"/>
     <att type="integer" name="Max-sample-abundance" value="976"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora plurivora"/>
   </node>
@@ -15,6 +16,7 @@
     <att type="integer" name="Total-abundance" value="812"/>
     <att type="integer" name="Max-sample-abundance" value="812"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora rubi"/>
   </node>
@@ -24,6 +26,7 @@
     <att type="integer" name="Total-abundance" value="390"/>
     <att type="integer" name="Max-sample-abundance" value="390"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora cryptogea;Phytophthora pseudocryptogea"/>
   </node>
@@ -33,6 +36,7 @@
     <att type="integer" name="Total-abundance" value="298"/>
     <att type="integer" name="Max-sample-abundance" value="298"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora agathidicida;Phytophthora castaneae"/>
   </node>
@@ -42,6 +46,7 @@
     <att type="integer" name="Total-abundance" value="298"/>
     <att type="integer" name="Max-sample-abundance" value="298"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora pseudocryptogea"/>
   </node>
@@ -51,6 +56,7 @@
     <att type="integer" name="Total-abundance" value="290"/>
     <att type="integer" name="Max-sample-abundance" value="290"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora capsici;Phytophthora glovera"/>
   </node>
@@ -60,6 +66,7 @@
     <att type="integer" name="Total-abundance" value="258"/>
     <att type="integer" name="Max-sample-abundance" value="258"/>
     <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora crassamura;Phytophthora megasperma"/>
   </node>
