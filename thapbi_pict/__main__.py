@@ -328,6 +328,7 @@ def edit_graph(args=None):
         graph_format=args.format,
         db_url=db,
         inputs=args.input,
+        method=args.method,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
         always_show_db=args.showdb,
@@ -470,7 +471,8 @@ def pipeline(args=None):
             graph_output=edit_graph_filename,
             graph_format="xgmml",
             db_url=db,
-            inputs=fasta_files,
+            inputs=fasta_files + classified_files,
+            method=args.method,
             min_abundance=args.abundance,
             # total_min_abundance=args.total,
             always_show_db=args.showdb,
@@ -1357,10 +1359,18 @@ def main(args=None):
     arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for labels and colors. Use '' to mean no DB."
     del arg
-    # Currently ARG_INPUT_FASTA uses required=True, but we need to change thant:
+    # Currently ARG_INPUT_FASTA uses required=True, but we need to change that:
     arg = subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     arg.required = False
     del arg
+    subcommand_parser.add_argument(
+        "-m",
+        "--method",
+        type=str,
+        default=None,
+        choices=sorted(method_classifier),
+        help="Optional classifier method to annotate sequences sequences with.",
+    )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-a",

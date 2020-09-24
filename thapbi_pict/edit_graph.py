@@ -7,7 +7,6 @@
 
 This implements the ``thapbi_pict edit-graph ...`` command.
 """
-import os
 import sys
 from collections import Counter
 
@@ -23,9 +22,12 @@ from .db_orm import connect_to_db
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
+from .utils import file_to_sample_name
+from .utils import find_paired_files
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
+from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
 
@@ -129,8 +131,8 @@ def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
             # Rescale to use range 5 to 50.
             size = (node["size"] * 0.45) + 5.0
             handle.write(
-                '    <graphics type="CIRCLE" fill="%s" outline="#000000" '
-                'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
+                f'    <graphics type="CIRCLE" fill="{color}" outline="#000000" '
+                'h="%0.2f" w="%0.2f"/>\n' % (size, size)
             )
             # Cytoscape hides the node ID (presumably assumes not usually user facing):
             handle.write(f'    <att type="string" name="MD5" value="{n}"/>\n')
@@ -187,6 +189,7 @@ def main(
     graph_format,
     db_url,
     inputs,
+    method=None,
     min_abundance=100,
     always_show_db=False,
     total_min_abundance=0,
@@ -226,13 +229,22 @@ def main(
     if inputs:
         if debug:
             sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
-        for fasta_file in find_requested_files(
-            inputs, ".fasta", ignore_prefixes, debug=debug
-        ):
-            # TODO: Refactor this shared code with sample-summary?
-            sample = os.path.basename(fasta_file).rsplit(".", 1)[0]
-            if sample in samples:
-                sys.exit(f"Duplicate sample name {sample}")
+        fasta_files = {}
+        tsv_files = {}
+        if method:
+            for fasta_file, tsv_file in find_paired_files(
+                inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
+            ):
+                sample = file_to_sample_name(fasta_file)
+                fasta_files[sample] = fasta_file
+                tsv_files[sample] = tsv_file
+        else:
+            for fasta_file in find_requested_files(
+                inputs, ".fasta", ignore_prefixes, debug=debug
+            ):
+                sample = file_to_sample_name(fasta_file)
+                fasta_files[sample] = fasta_file
+        for sample, fasta_file in fasta_files.items():
             samples.add(sample)
             with open(fasta_file) as handle:
                 md5_warn = False
@@ -260,6 +272,17 @@ def main(
                         f"WARNING: Sequence(s) in {fasta_file}"
                         " not using MD5_abundance naming\n"
                     )
+                # Record any assigned species
+                if sample in tsv_files:
+                    for name, _, sp in parse_species_tsv(
+                        tsv_files[sample], min_abundance
+                    ):
+                        if sp:
+                            md5, abundance = split_read_name_abundance(name)
+                            try:
+                                md5_species[md5].update(sp.split(";"))
+                            except KeyError:
+                                md5_species[md5] = set(sp.split(";"))
         sys.stderr.write(
             f"Loaded {len(md5_in_fasta)} unique sequences"
             f" from {len(samples)} FASTA files.\n"
@@ -308,6 +331,7 @@ def main(
             if not always_show_db and md5 not in md5_in_fasta:
                 # Low abundance or absenst from FASTA files, ignore it
                 continue
+            md5_in_db.add(md5)
             md5_to_seq[md5] = seq_source.its1.sequence
             genus_species = genus_species_name(
                 seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
@@ -323,7 +347,6 @@ def main(
                 if genus in md5_species[md5]:
                     # If have species level, discard genus level only
                     md5_species[md5].remove(genus)
-        md5_in_db = set(md5_species)
         if always_show_db:
             sys.stderr.write(
                 f"Loaded {len(md5_in_db)} unique sequences from database\n"
@@ -420,7 +443,7 @@ def main(
             continue
         sp = md5_species.get(md5, [])
         genus = sorted({_.split(None, 1)[0] for _ in sp})
-        if not genus:
+        if md5 not in md5_in_db or not genus:
             node_color = "#808080"  # grey
         elif len(genus) > 1:
             node_color = "#FF8C00"  # dark orange
@@ -446,6 +469,7 @@ def main(
             sample_count=md5_sample_count.get(md5, 0),
             genus=genus,
             taxonomy=";".join(sorted(sp)),
+            in_db=md5 in md5_in_db,
         )
 
     edge_count = 0
