@@ -23,7 +23,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from .prepare import load_fasta_header
 from .utils import abundance_from_read_name
 from .utils import color_bands
-from .utils import find_requested_files
+from .utils import find_paired_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import sample_sort
@@ -665,38 +665,15 @@ def main(
     )
 
     fasta_files = {}
-    for filename in find_requested_files(
-        [_ for _ in inputs if not _.endswith(".tsv")],
-        ".fasta",
-        ignore_prefixes,
-        debug=debug,
-    ):
-        sample = file_to_sample_name(filename)
-        if require_metadata and sample not in metadata:
-            # if debug:
-            #     sys.stderr.write(f"DEBUG: Ignoring {sample} FASTA, no metadata\n")
-            continue
-        elif sample in fasta_files:
-            sys.exit(f"ERROR: Multiple FASTA files using {sample} naming")
-        fasta_files[sample] = filename
-
     tsv_files = {}
-    for filename in find_requested_files(
-        [_ for _ in inputs if not _.endswith(".fasta")],
-        f".{method}.tsv",
-        ignore_prefixes,
-        debug,
+    for fasta_file, tsv_file in find_paired_files(
+        inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
     ):
-        sample = file_to_sample_name(filename)
+        sample = file_to_sample_name(fasta_file)
         if require_metadata and sample not in metadata:
-            # if debug:
-            #     sys.stderr.write(f"DEBUG: Ignoring {sample} TSV, no metadata\n")
             continue
-        elif sample in tsv_files:
-            sys.exit(f"ERROR: Multiple TSV files using {sample} naming")
-        elif sample not in fasta_files:
-            sys.exit(f"ERROR: {filename} without {sample} FASTA file")
-        tsv_files[sample] = filename
+        fasta_files[sample] = fasta_file
+        tsv_files[sample] = tsv_file
 
     if debug:
         sys.stderr.write(
@@ -704,8 +681,6 @@ def main(
             f" found {len(fasta_files)} FASTA files,"
             f" and {len(tsv_files)} TSV for method {method}\n"
         )
-    if set(fasta_files) != set(tsv_files):
-        sys.exit("ERROR: FASTA vs TSV sample name mismatch")
     if not tsv_files:
         sys.exit("ERROR: No input FASTA and TSV files found")
 

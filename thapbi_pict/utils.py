@@ -437,7 +437,7 @@ def find_requested_files(
 
 
 def find_paired_files(
-    filenames_or_folders, ext1, ext2, ignore_prefixes=None, debug=False
+    filenames_or_folders, ext1, ext2, ignore_prefixes=None, debug=False, strict=False,
 ):
     """Interpret a list of filenames and/or foldernames to find pairs.
 
@@ -445,9 +445,10 @@ def find_paired_files(
     in different directories - duplicated filenames (in different
     directories) are considered to be an error.
 
-    Having XXX.ext1 without XXX.ext2 is treated as a warning.
+    Having XXX.ext1 without XXX.ext2 is an error in strict mode, or a warning
+    in debug mode, otherwise silently ignored.
 
-    Having XXX.ext2 without XXX.ext1 is ignored without warning.
+    Having XXX.ext2 without XXX.ext1 is silently ignored.
 
     The arguments ext1 and ext2 should include the leading dot.
     """
@@ -478,6 +479,8 @@ def find_paired_files(
     for stem in ext1_dict:
         if stem in ext2_dict:
             input_list.append((ext1_dict[stem], ext2_dict[stem]))
+        elif strict:
+            sys.exit("ERROR: {ext1_dict[stem]} without {stem}{ext2}")
         elif debug:
             # Acceptable in motivating use case where on a given plate
             # only some of the samples would be known positive controls:

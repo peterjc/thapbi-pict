@@ -340,7 +340,7 @@ def main(
     assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
-        inputs, f".{method}.tsv", f".{known}.tsv", ignore_prefixes, debug=False
+        inputs, f".{method}.tsv", f".{known}.tsv", ignore_prefixes, debug, strict=False
     )
 
     if not input_list:

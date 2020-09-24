@@ -45,7 +45,7 @@ def main(
     assert isinstance(inputs, list)
 
     input_list = find_paired_files(
-        inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug=debug
+        inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=False
     )
 
     if not input_list:
