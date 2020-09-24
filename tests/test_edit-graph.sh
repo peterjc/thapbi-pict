@@ -21,7 +21,7 @@ thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --
 set -o pipefail
 
 # No database, small FASTA file, have to use explicit total abundance threshold
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 # Loaded 7 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 200 left 7 sequences from FASTA files.
 # Computed 42 Levenshtein edit distances between 7 sequences.
@@ -30,16 +30,16 @@ if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta 
 # 1
 
 # Same example as above with default xgmml output, but here different output formats:
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f graphml | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f gexf | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f graphml | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f gexf | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 # gml fails, https://github.com/networkx/networkx/issues/3471
 
 # Same example, but PDF output (more dependencies):
-thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -f pdf | grep "%PDF-1.4"
+thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f pdf | grep "%PDF-1.4"
 
 
 # No database, generic FASTA file, have to use explicit abundance thresholds of 1:
-if [ `thapbi_pict edit-graph -d '' -i database/Phytophthora_ITS1_curated.fasta -a 1 -t 1 | grep -c "<node "` -ne 188 ]; then echo "Wrong node count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i database/Phytophthora_ITS1_curated.fasta -a 1 -t 1 -m - | grep -c "<node "` -ne 188 ]; then echo "Wrong node count"; false; fi
 # WARNING: Sequence(s) in database/Phytophthora_ITS1_curated.fasta not using MD5_abundance naming
 # Loaded 167 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 1 left 167 sequences from FASTA files.
