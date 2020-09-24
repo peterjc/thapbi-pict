@@ -1317,7 +1317,7 @@ def main(args=None):
         "--method",
         type=str,
         default=DEFAULT_METHOD,
-        help="Classifier method(s) to report, comma separaed list "
+        help="Classifier method(s) to report, comma separated list "
         f"(used to infer filenames), default is '{DEFAULT_METHOD}' (only).",
     )
     subcommand_parser.add_argument(
@@ -1367,9 +1367,10 @@ def main(args=None):
         "-m",
         "--method",
         type=str,
-        default=None,
-        choices=sorted(method_classifier),
-        help="Optional classifier method to annotate sequences sequences with.",
+        default=DEFAULT_METHOD,
+        choices=sorted(method_classifier) + ["-"],
+        help="Optional classifier method to annotate sequences sequences with. "
+        f"Default is {DEFAULT_METHOD}, use '-' for none.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(

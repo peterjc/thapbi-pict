@@ -193,7 +193,7 @@ def main(
     graph_format,
     db_url,
     inputs,
-    method=None,
+    method="-",
     min_abundance=100,
     always_show_db=False,
     total_min_abundance=0,
@@ -231,11 +231,11 @@ def main(
         sys.exit("If not using -i / --input argument, require -s / --showdb.")
 
     if inputs:
-        if debug:
-            sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
         fasta_files = {}
         tsv_files = {}
-        if method:
+        if method and method != "-":
+            if debug:
+                sys.stderr.write(f"DEBUG: Loading FASTA and {method} TSV files\n")
             for fasta_file, tsv_file in find_paired_files(
                 inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
             ):
@@ -243,6 +243,8 @@ def main(
                 fasta_files[sample] = fasta_file
                 tsv_files[sample] = tsv_file
         else:
+            if debug:
+                sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
             for fasta_file in find_requested_files(
                 inputs, ".fasta", ignore_prefixes, debug=debug
             ):
