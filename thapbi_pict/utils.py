@@ -482,7 +482,7 @@ def find_paired_files(
             # Acceptable in motivating use case where on a given plate
             # only some of the samples would be known positive controls:
             sys.stderr.write(
-                f"WARNING: Have {ext1_dict[stem]} but missing {stem}{ext2}\n"
+                f"WARNING: Ignoring {ext1_dict[stem]} as missing {stem}{ext2}\n"
             )
     # TODO: Check for XXX.ext2 without XXX.ext1 here?
     del ext1_dict, ext2_dict
