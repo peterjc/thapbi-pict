@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.7.1  *Pending*  Minor changes to currated *Phytophthora* DB. Documentation improvements.
+v0.7.1  *Pending*  Currated *Phytophthora* DB minor updates. Classifier output in edit-graph.
 v0.7.0  2020-04-02 Read counts etc as a header in intermediate FASTA files; shown in reports.
 v0.6.15 2020-03-12 Fix regression in read report column sorting.
 v0.6.14 2020-03-12 Merge ``read-summary`` & ``sample-summary`` into new ``summary`` command.
