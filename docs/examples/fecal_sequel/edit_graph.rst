@@ -19,23 +19,19 @@ primers, this COI database, and the metadata as described earlier. This will
 make an edit-graph named ``mock-community.COI_430_bats.edit-graph.xgmml``
 which you can open in Cytoscape. This contains three main connected components
 for the three expected species, and a smattering of singletons and other tiny
-clusters.
+clusters. The ``--showdb`` option was used to  force inclusion of the database
+entries (even if not seen in the samples).
 
 Importantly, only the *Eptesicus fuscus* cluster includes a red node from the
-database. i.e. None of the sequence data from *Corynorhinus townsendii* or
-*Tadarida brasiliensis* perfectly matches the given reference species
-sequence.
-
-Next, ``run.sh`` re-draws the edit-graph with the ``-s`` / ``--showdb`` option
-to force inclusion of the database entries (even if not seen in the samples),
-giving ``mock-community.COI_430_bats.edit-graph.inc-ref.xgmml``. The three
-main clusters are shown below:
+database which is also in the samples. i.e. None of the sequence data from
+*Corynorhinus townsendii* or *Tadarida brasiliensis* perfectly matches the
+given reference species sequence. The three main clusters are shown below:
 
 .. image:: ../../images/bats_a100_430db.svg
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/bats_a100_430db.svg?sanitize=true
    :alt: Sequence edit-graph for 3 bats mock community using, only given 430 reference sequences.
 
-This time all three clusters are labelled. Starting on the left, we have
+All three clusters have species labelled nodes. Starting on the left, we have
 *Tadarida brasiliensis* where the reference is a one base pair edit away from
 the dominant variant (seen in 27 samples). In the middle we have *Eptesicus
 fuscus* where while the reference sequence was seen, once again it is not a
