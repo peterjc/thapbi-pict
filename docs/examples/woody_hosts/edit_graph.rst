@@ -95,7 +95,7 @@ You should be able to open the PDF file easily, and get something like this -
 lots of red circles for *Phytophthora*, some grey circles for sequences not
 in the database, and plenty of grey straight line edges between them.
 
-.. image:: https://user-images.githubusercontent.com/63959/60818082-d7d80100-a194-11e9-8002-7d855c0c0bd1.png
+.. image:: https://user-images.githubusercontent.com/63959/94339236-3551ab00-fff0-11ea-96cf-d30ef04fbaf3.png
 
 In the PDF (and XGMML) output, nodes are coloured by genus (red for
 *Phytophthora*), but only labelled if in the database at species level.
