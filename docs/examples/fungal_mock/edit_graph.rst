@@ -34,6 +34,8 @@ a much noiser picture (see the :ref:`halo_effect` discussed earlier).
 Additionally this used ``-s`` (or ``--showdb``) to force including all of the
 database sequences (dark red nodes), as some did not appear in the samples
 (shown as the smallest dark red dots, typically the bottom row of the image).
+And, it used ``-m -`` (or ``--method -``) to deliberatly not label the nodes
+with the classifier output - only the data entries get a species label.
 
 The XGMML files were loaded, automatically laid out using the "Perfuse Force
 Directed Layout" menu, manually adjusted to give a reasonably consistent node
