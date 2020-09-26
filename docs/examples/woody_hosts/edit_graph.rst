@@ -97,8 +97,8 @@ in the database, and plenty of grey straight line edges between them.
 
 .. image:: https://user-images.githubusercontent.com/63959/60818082-d7d80100-a194-11e9-8002-7d855c0c0bd1.png
 
-In the PDF output, nodes are coloured by genus (red for *Phytophthora*), but
-only labelled if in the database at species level.
+In the PDF (and XGMML) output, nodes are coloured by genus (red for
+*Phytophthora*), but only labelled if in the database at species level.
 
 The edges are solid for a one base pair edit distance, dashed for a two base
 pair edit distance, and dotted for a three base pair edit distance. All grey.
