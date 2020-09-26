@@ -118,13 +118,13 @@ Open Cytoscape, and from the top level menu select ``File``, ``Import``,
 You should get something like this, where initially all the nodes are drawn
 on top of each other:
 
-.. image:: https://user-images.githubusercontent.com/63959/60818958-8af52a00-a196-11e9-9d89-27f5d027f1e7.png
+.. image:: https://user-images.githubusercontent.com/63959/94338640-d2f6ab80-ffeb-11ea-9256-760b6f0dfe19.png
 
 From the top level menu select "Layout", "Perfuse Force Directed Layout",
 "Edit-distance-weight", and you should then see something prettier - if
 you zoom in you should see something like this:
 
-.. image:: https://user-images.githubusercontent.com/63959/60818965-8d578400-a196-11e9-87ff-467da6fa0353.png
+.. image:: https://user-images.githubusercontent.com/63959/94338441-1819de00-ffea-11ea-82b8-ef1b83dd03d9.png
 
 This time you can interact with the graph, moving nodes about with the mouse,
 try different layouts, view and search the attributes of the nodes and edges.
@@ -153,7 +153,7 @@ In this final screenshot we have zoomed in and selected all 11 nodes in the
 connected component centered on *P. pseudosyringae* (Cytoscape highlights
 selected nodes in yellow):
 
-.. image:: https://user-images.githubusercontent.com/63959/60819693-f4296d00-a197-11e9-9605-9eb573666f37.png
+.. image:: https://user-images.githubusercontent.com/63959/94338444-1b14ce80-ffea-11ea-8cde-cc4971ba5853.png
 
 The node table view is automatically filtered to show just these nodes, and we
 can see that all the grey nodes appeared in only one sample each - with the
