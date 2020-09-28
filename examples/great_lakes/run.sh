@@ -27,6 +27,12 @@ function analyse {
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.txt -x 1 -c 4,8
+
+    # Run an edit graph at the default -a 100 setting
+    thapbi_pict edit-graph -d ${NAME}.sqlite --showdb \
+                -i intermediate/$NAME/ -a 100 \
+                -o summary/$NAME.edit-graph.a100.xgmml
+
     echo "$NAME done"
 }
 
