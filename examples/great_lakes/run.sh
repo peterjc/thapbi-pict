@@ -28,8 +28,9 @@ function analyse {
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.txt -x 1 -c 4,8
 
-    # Run an edit graph at the default -a 100 setting
-    thapbi_pict edit-graph -d ${NAME}.sqlite --showdb \
+    # Run an edit graph at the default -a 100 setting, without
+    # the --showdb setting (most of the DB content )
+    thapbi_pict edit-graph -d ${NAME}.sqlite \
                 -i intermediate/$NAME/ -a 100 \
                 -o summary/$NAME.edit-graph.a100.xgmml
 
@@ -46,6 +47,17 @@ RIGHT=ARTCCAACATCGAGGT
 
 analyse # call function above
 
+#Edit graph of just the mock community samples:
+thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
+            -i intermediate/MOL16S/SRR5534972.* \
+               intermediate/MOL16S/SRR5534973.* \
+               intermediate/MOL16S/SRR5534974.* \
+               intermediate/MOL16S/SRR5534975.* \
+               intermediate/MOL16S/SRR5534976.* \
+               intermediate/MOL16S/SRR5534977.* \
+               intermediate/MOL16S/SRR5534979.* \
+            -o summary/$NAME.edit-graph.a100.mock.xgmml
+
 echo ======================
 echo SPH16S primers, 299 bp
 echo ======================
@@ -55,6 +67,13 @@ LEFT=TAGGGGAAGGTATGAATGGTTTG
 RIGHT=ACATCGAGGTCGCAACC
 
 analyse # call function above
+
+# Edit graph of just the mock community samples:
+thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
+                -i intermediate/SPH16S/SRR5534978.* \
+                   intermediate/SPH16S/SRR5534980.* \
+                   intermediate/SPH16S/SRR5534981.* \
+                -o summary/$NAME.edit-graph.a100.mock.xgmml
 
 echo ==============================
 echo Mixed primers for long product
