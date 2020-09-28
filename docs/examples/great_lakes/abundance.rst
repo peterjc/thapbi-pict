@@ -66,7 +66,8 @@ Things to note:
   but still have low levels of sequences matching the SPH16S primers (bad).
 * The "Seq-count" column is after applying the minimum abundance threshold
   (here 10). Two negative controls still have reads, lifting the threshold
-  to 20 or more would fix this.
+  to 20 or more would fix this. These are *Sphaerium simile* in mock community
+  ``NFSC3PRO3``, and an unknown in river sample ``BIM4M``.
 
 So, using the MOL16S samples as negative controls suggests that for the SPH16S
 the default minimum abundance threshold is perhaps overly harsh - but using
@@ -200,9 +201,9 @@ to look like either a SPH16S product *or* a MOL16S product.
 This longer sequence (shown here with line wrapping at 80 characters) again
 matches *Pisidium compressum* (ignoring the last 12 bases).
 
-Running THAPBI PICT with this primer pair reveals that the only other sample
-with this kind of primer mixing is SRR5534978, with an unwanted long sequence
-seen 10 times.
+Running THAPBI PICT with this primer pair (as done in the ``run.sh`` script)
+reveals that the only other sample with this kind of primer mixing is
+SRR5534978 aka SPSC3PRO1, with an unwanted long sequence seen 10 times.
 
 .. code:: console
 
@@ -228,6 +229,5 @@ Minimum threshold
 
 Clearly using a minimum abundance threshold of 10 is too low, and it should be
 increased to at least 20 based on this. However, we have the two exceptional
-sequences present at over 500 and over 400 copies. Setting the minimum that
-high seems excessive - but perhaps the THAPBI PICT default of 100 is more
-reasonable?
+sequences present at over 500 copies. Setting the minimum that high seems
+excessive - but perhaps the THAPBI PICT default of 100 is more reasonable?
