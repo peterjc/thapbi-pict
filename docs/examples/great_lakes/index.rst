@@ -28,3 +28,4 @@ public sequence databases lack many of the sequences detected.
 
    sample_data
    abundance
+   presence_absence
