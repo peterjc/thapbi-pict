@@ -28,8 +28,10 @@ function analyse {
     # (works as long as pipeline or prepare-reads was run with
     # the same or lower threshold).
     # Including all DB entries with -s / --showdb argument
-    thapbi_pict edit-graph -d ${NAME}.sqlite -i $LIBRARY/intermediate/$NAME/ --showdb \
-                -o $LIBRARY/summary/$LIBRARY.$NAME.edit-graph.a75.xgmml -a 75
+    thapbi_pict edit-graph -d ${NAME}.sqlite --showdb \
+                -i $LIBRARY/intermediate/$NAME/ \
+                -o $LIBRARY/summary/$LIBRARY.$NAME.edit-graph.a75.xgmml \
+                -a 75 -m "-"
     echo "$NAME done"
 }
 
