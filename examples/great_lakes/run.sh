@@ -1,9 +1,9 @@
 #!/bin/bash
 set -eup pipeline
 
-echo NOTE: Expected first time run time is about 30 minutes,
-echo repeat runs about 1 minute just to regenerate reports.
-echo
+echo "NOTE: Expected first time run time is about 40 minutes,"
+echo "repeat runs under 5 minutes (most of which is rebuilding"
+echo "the edit-graphs)."
 
 mkdir -p intermediate/ summary/
 
