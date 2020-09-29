@@ -7,9 +7,16 @@ their expected marker sequences are in the classification database.
 
 Of course, just as in the original author's analysis, not everything we think
 was present is detected. And *vice versa*, we see some things which are not
-classified. Negative controls would help, but nevertheless, this kind of data
-is important for discussing what to use as a minimum abundance threshold - how
-many reads do we need to declare a species as present in a sample?
+classified.
+
+The experiement had a negative PCR control, but it was not sequenced. The two
+different amplicons were sequenced separately, but since the FASTQ files are
+provided pre-trimmed, we can't try using the other primer pair on each sample
+as a negative control.
+
+Nevertheless, this kind of data is important for discussing what to use as a
+minimum abundance threshold - how many reads do we need to declare a species
+as present in a sample?
 
 18S rRNA V4 marker
 ------------------
