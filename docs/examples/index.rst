@@ -31,28 +31,30 @@ been mock communities with known species composition.
     amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
 * :ref:`recycled_water` - An example where the defaults can be used, but
-  ideally requires different primers and a custom database. Based on:
+  ideally requires different primer pair and a custom database. Based on:
 
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container
     nursery. https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
-* :ref:`fungal_mock` - An example with two markers requiring separate primers
-  settings and databases, based on:
+* :ref:`fungal_mock` - An example with multiple markers (including two
+  sequenced together) requiring separate primers settings and databases, based
+  on:
 
     Bakker (2018) A fungal mock community control for amplicon sequencing
     experiments. https://doi.org/10.1111/1755-0998.12760
 
-* :ref:`microalgal_mock` - An example with two markers requiring separate
-  primers settings and databases, based on:
+* :ref:`microalgal_mock` - An example with two markers (sequenced separately)
+  requiring separate primers settings and databases, based on:
 
     Bradley *et al.* (2016) Design and Evaluation of Illumina
     MiSeq-Compatible, 18S rRNA Gene-Specific Primers for Improved
     Characterization of Mixed Phototrophic Communities.
     https://doi.org/10.1128/AEM.01630-16
 
-* :ref:`great_lakes` - An example with two mitochondrial markers, with mock
-  communities, where we focus on the minimum abundance threshold. Based on:
+* :ref:`great_lakes` - An example with two mitochondrial markers (sequenced
+  separately), with mock communities, where we focus on the minimum abundance
+  threshold. Based on:
 
     Klymus *et al.* (2017) Environmental DNA (eDNA) metabarcoding assays to
     detect invasive invertebrate species in the Great Lakes.
@@ -65,9 +67,9 @@ been mock communities with known species composition.
     assay for bat species identification.
     https://doi.org/10.1371/journal.pone.0224969
 
-* :ref:`endangered_species` - A dozen markers in animals and plants, pushing
-  THAPBI PICT beyond its original design goals by pooling markers for
-  sample level analysis. Based on:
+* :ref:`endangered_species` - A dozen markers in animals and plants (sequenced
+  together), pushing THAPBI PICT beyond its original design goals by pooling
+  markers for sample level analysis. Based on:
 
     Arulandhu *et al.* (2017) Development and validation of a multi-locus DNA
     metabarcoding method to identify endangered species in complex samples.
