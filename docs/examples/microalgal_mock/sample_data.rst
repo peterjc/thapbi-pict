@@ -73,9 +73,8 @@ Metadata
 The provided file ``metadata.tsv`` is based on Supplementary Material Table S2,
 although consistently using just one row per sample (representing three replicates),
 and with the location and mock community ratio split into separate columns. This
-has been combined with the MiSeq accessions from ``PRJNA314977.txt``.
-
-The amplicon specific files ``metadata.tsv`` have seven columns:
+has been combined with the MiSeq accessions from ``PRJNA314977.txt``. It has seven
+columns:
 
 1. Environment, "Freshwater", "Wastewater", "Marine", "Control" or "Mock community"
 2. Sample, e.g. "3F" or "MC4" with letters from environment, without replicate suffix
