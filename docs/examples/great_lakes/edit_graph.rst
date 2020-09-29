@@ -18,9 +18,10 @@ will be enough published markers to assign species to all the unknowns here?
 SPH16S
 ------
 
-First, this is just the three samples for the mock communities - expected to
-have three species *Sphaerium simile*, *Sphaerium corneum* and *Pisidium
-compressum* only. We get three nice clear graph components:
+First SPH16S, where there are just the three samples for the mock communities.
+Each is expected to have three species *Sphaerium simile*, *Sphaerium corneum*
+and *Pisidium compressum* only. With a minimum abundance threshold of 100, we
+get three nice clear graph components, and a few single nodes:
 
 .. image:: ../../images/great_lakes.mock.SPH16S.png
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/great_lakes.mock.SPH16S.svg?sanitize=true
@@ -32,8 +33,8 @@ Next, using all the samples but again a sample level minimum abundance 100:
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/great_lakes.SPH16S.svg?sanitize=true
    :alt: SPH16S sequence edit-graph, with minimum abundance 100.
 
-Very little change except the fourth cluster, some base pairs away from the
-*Sphaerium simile* component and centred on this sequence::
+Very little change except the addition of a fourth cluster, some base pairs
+away from the *Sphaerium simile* component and centred on this sequence::
 
     >79b63a2ef96b839ae3263369f8d390b9
     ACGTGGAAAAAACTGTCTCTTTTGTATAAAAAGAAGTTTATTTTTAAGTGAAAAAGCTTAAATGTTTATAAAAGACGAGA
@@ -54,15 +55,16 @@ reference database file ``SPH16S.fasta``::
 MOL16S
 ------
 
-Again, starting with an edit graph of just the seven MOL16S samples, and a
-minimum abundance threshold of 100, we see:
+For MOL16S, starting with an edit graph of just the seven MOL16S samples, and
+a minimum abundance threshold of 100, we see:
 
 .. image:: ../../images/great_lakes.mock.MOL16S.png
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/great_lakes.mock.MOL16S.svg?sanitize=true
    :alt: Sequence edit-graph for seven MOL16S mock community samples, with minimum abundance 100.
 
 Four large components representing species with lots of variants, with red
-central nodes in our database. There are a selection of isolated unknowns.
+central nodes in our database. Other less diverse graph components for the
+remaining species, and a selection of isolated unknowns.
 
 Next, using all the samples but again a sample level minimum abundance 100:
 
