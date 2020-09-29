@@ -88,7 +88,7 @@ intended to be present at only 18 copies per sample, this is easily lost with
 a minimum abundance threshold designed to screen out noise.
 
 Also, three of the seven samples are missing *Sander vitreus*. Two of these
-are from Community 3 where this intended to be at only 14 copies, the third
+are from Community 3 where this is intended to be at only 14 copies, the third
 was ``SC3PRO2`` aka ``SRR5534972`` for Mock Community 2 MOL16S with Fish Block
 Primer, with a target abundance of 72 copies. Here the fish block worked.
 
