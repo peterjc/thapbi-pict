@@ -74,8 +74,8 @@ include examples/microalgal_mock/mock_marine.known.tsv
 include examples/microalgal_mock/setup.sh
 include examples/microalgal_mock/run.sh
 include examples/microalgal_mock/metadata.tsv
-include examples/microalgal_mock/V4/raw_data/MD5SUM.txt
-include examples/microalgal_mock/V8V9/raw_data/MD5SUM.txt
+include examples/microalgal_mock/raw_data/V4/MD5SUM.txt
+include examples/microalgal_mock/raw_data/V8V9/MD5SUM.txt
 
 include examples/great_lakes/README.rst
 include examples/great_lakes/PRJNA379165.txt
