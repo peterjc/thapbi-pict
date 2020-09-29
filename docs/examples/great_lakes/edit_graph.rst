@@ -74,3 +74,17 @@ Next, using all the samples but again a sample level minimum abundance 100:
 
 Suddenly we see dozens of new components, most of which have no references
 (coloured nodes) representing likely unknown species.
+
+Conclusion
+----------
+
+I will close by quoting the end of Klymus *et al.* (2017):
+
+    The present study further demonstrates that metabarcoding data are only as
+    good as the sequence and taxonomic information provided on genetic
+    databases. Increased collaboration among taxonomists and molecular
+    systematists is required in order to gain maximum benefits of this
+    developing tool.
+
+I agree - these markers seem to work, but there are still too many unknown
+sequences.
