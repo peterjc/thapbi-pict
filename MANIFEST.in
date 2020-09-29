@@ -76,3 +76,35 @@ include examples/microalgal_mock/run.sh
 include examples/microalgal_mock/metadata.tsv
 include examples/microalgal_mock/V4/raw_data/MD5SUM.txt
 include examples/microalgal_mock/V8V9/raw_data/MD5SUM.txt
+
+include examples/great_lakes/README.rst
+include examples/great_lakes/PRJNA379165.txt
+include examples/great_lakes/setup.sh
+include examples/great_lakes/run.sh
+include examples/great_lakes/metadata.tsv
+include examples/great_lakes/MOL16S.fasta
+include examples/great_lakes/SPH16S.fasta
+include examples/great_lakes/raw_data/MD5SUM.txt
+include examples/great_lakes/expected/mock_community.MOL16S.known.tsv
+include examples/great_lakes/expected/mock_community.SPH16S.known.tsv
+include examples/great_lakes/expected/negative_control.known.tsv
+
+include examples/fecal_sequel/README.rst
+include examples/fecal_sequel/PRJNA574765.txt
+include examples/fecal_sequel/setup.sh
+include examples/fecal_sequel/run.sh
+include examples/fecal_sequel/metadata.tsv
+include examples/fecal_sequel/curated_bats.fasta
+include examples/fecal_sequel/observed_3_bats.fasta
+include examples/fecal_sequel/mock_community.known.tsv
+include examples/fecal_sequel/raw_data/MD5SUM.txt
+
+include examples/endangered_species/README.rst
+include examples/endangered_species/PRJEB18620.txt
+include examples/endangered_species/setup.sh
+include examples/endangered_species/run.sh
+include examples/endangered_species/metadata.tsv
+include examples/endangered_species/raw_download/MD5SUM.txt
+include examples/endangered_species/expected/EM_*.known.tsv
+include examples/endangered_species/expected/S*.template.tsv
+include examples/endangered_species/references/*.fasta
