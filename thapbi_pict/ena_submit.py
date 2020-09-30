@@ -139,14 +139,34 @@ def write_expr(handle, pairs):
     handle.write(XML_EXPR_SET_FOOTER)
 
 
+def load_md5(file_list):
+    """Return a dict mapping given filenames to MD5 digests."""
+    answer = {}
+    for cache in {os.path.join(os.path.split(_)[0], "MD5SUM.txt") for _ in file_list}:
+        if os.path.isfile(cache):
+            with open(cache) as handle:
+                for line in handle:
+                    md5, filename = line.strip().split()
+                    filename = os.path.join(os.path.split(cache)[0], filename)
+                    if filename in file_list:
+                        answer[filename] = md5
+    for f in file_list:
+        if f not in answer:
+            # TODO - do this at run time? Too slow?
+            sys.exit(f"ERROR: Need MD5 for {f} and not in MD5SUM.txt")
+    return answer
+
+
 def write_run(handle, pairs):
     """Write run.xml to handle."""
+    file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
+    md5_dict = load_md5(file_list)
     handle.write(XML_RUN_SET_HEADER)
     for stem, raw_R1, raw_R2 in pairs:
         sample = os.path.split(stem)[1]
-        md5_R1 = md5_R2 = ""  # TODO
         handle.write(
-            XML_RUN_TEMPLATE % (sample, sample, raw_R1, md5_R1, raw_R2, md5_R2)
+            XML_RUN_TEMPLATE
+            % (sample, sample, raw_R1, md5_dict[raw_R1], raw_R2, md5_dict[raw_R2])
         )
     handle.write(XML_RUN_SET_FOOTER)
 
