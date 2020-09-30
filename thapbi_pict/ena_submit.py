@@ -3,19 +3,17 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-
 """Code for sample submission to ENA/SRA.
 
 This implements the ``thapbi_pict ena-submit ...`` command.
 """
-
 import os
 import shutil
 import sys
 import tempfile
 
 from .prepare import find_fastq_pairs
-from .utils import load_metadata_dict
+from .utils import load_metadata
 from .utils import sample_sort
 
 # Using https://www.ebi.ac.uk/ena/submit/drop-box/submit/
@@ -167,6 +165,7 @@ def main(
     metadata_index=None,
     metadata_ncbi_taxid=None,
     default_ncbi_taxid=None,
+    ignore_prefixes=None,
     tmp_dir=None,
     debug=False,
 ):
@@ -236,16 +235,18 @@ def main(
         os.path.basename(stem) for stem, _raw_R1, _raw_R2 in fastq_file_pairs
     )
 
-    (metadata, meta_names, meta_default, missing_meta) = load_metadata_dict(
-        samples,
+    # (metadata, meta_names, meta_default, missing_meta) = load_metadata_dict(...)
+    (metadata, meta_names, group_col,) = load_metadata(
         metadata_file,
         metadata_cols,
+        None,  # i.e. metadata_groups=None,
         metadata_fieldnames,
         metadata_index,
-        sequenced_samples=samples,
         metadata_sort=True,
+        ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
+    missing_meta = set(samples).difference(metadata)
     if debug:
         sys.stderr.write(
             "Loaded %i samples, %i missing metadata\n"
@@ -254,7 +255,7 @@ def main(
 
     for stem, _raw_R1, _raw_R2 in fastq_file_pairs:
         sample = os.path.split(stem)[1]
-        meta = list(zip(meta_names, metadata.get(sample, meta_default)))
+        meta = metadata[sample]
         if metadata_ncbi_taxid:
             taxid = meta[taxid_offset][1]
             if taxid:
@@ -280,7 +281,7 @@ def main(
             sample_xml_handle.write(XML_ATTRS_HEADER)
             if shared:
                 sample_xml_handle.write(shared_attr)
-            for key, value in meta:
+            for key, value in zip(meta_names, meta):
                 if value:
                     # TODO: Apply mapping
                     sample_xml_handle.write(XML_ATTR % (key, value))

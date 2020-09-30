@@ -514,6 +514,7 @@ def ena_submit(args=None):
         metadata_index=args.metaindex,
         metadata_ncbi_taxid=args.metancbitaxid,
         default_ncbi_taxid=args.defaultncbitaxid,
+        ignore_prefixes=args.ignore_prefixes,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1454,7 +1455,7 @@ def main(args=None):
     del subcommand_parser  # To prevent accidentally adding more
 
     # submit samples to ENA
-    parser_submit = subparsers.add_parser(
+    subcommand_parser = subparsers.add_parser(
         "ena-submit",
         description="Prepare paired FASTQ files for upload to ENA/SRA.",
         epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA "
@@ -1464,8 +1465,9 @@ def main(args=None):
         "field 'environment (material)', and map the value 'root-wash' to "
         "'root matter' or 'ENVO_01000349').",
     )
-    parser_submit.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
-    parser_submit.add_argument(
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
         "-o",
         "--output",
         type=str,
@@ -1474,21 +1476,21 @@ def main(args=None):
         help="Output directory for XML files (sample.xml, experiment.xml, run.xml). "
         "Default '.' for current directory. Use '-' for stdout.",
     )
-    arg = parser_submit.add_argument("-t", "--metadata", **ARG_METADATA)
+    arg = subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     arg.required = True
     arg.help = arg.help.replace("Optional", "Required")
     del arg
-    arg = parser_submit.add_argument("-c", "--metacols", **ARG_METACOLS)
+    arg = subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     arg.required = True
     arg.help = (
         "Comma separated list (e.g. 2,3,5) of columns whose sample attributes "
         "should be included in the XML output (e.g. geographic location, environment)."
     )
     del arg
-    arg = parser_submit.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    arg = subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     arg.help = arg.help.replace("If using metadata, which", "Which")
     del arg
-    parser_submit.add_argument(
+    subcommand_parser.add_argument(
         "-n",
         "--metancbitaxid",
         type=str,
@@ -1497,12 +1499,12 @@ def main(args=None):
         help="Column containing NCBI taxid, likely an environment metagenome "
         "taxid like 939928, rhizosphere metagenome.",
     )
-    arg = parser_submit.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    arg = subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     arg.help = (
         "If using metadata, which row should be used as the field names? Default 1."
     )
     del arg
-    parser_submit.add_argument(
+    subcommand_parser.add_argument(
         "--defaultncbitaxid",
         type=int,
         default="0",  # We will reject this, would be rejected by ENA anyway
@@ -1510,7 +1512,7 @@ def main(args=None):
         help="Default NCBI taxid, probably an environment metagenome taxid like "
         "939928, rhizosphere metagenome. Required if -n / --metancbitaxid ommitted.",
     )
-    parser_submit.add_argument(
+    subcommand_parser.add_argument(
         "-m",
         "--mapping",
         type=str,
@@ -1521,7 +1523,7 @@ def main(args=None):
         "location (latitude)' and 'geographic location (longitude)' to match Genomic "
         "Standards Consortium (GSC) Minimum Information about any Sequence (MIxS).",
     )
-    parser_submit.add_argument(
+    subcommand_parser.add_argument(
         "-s",
         "--shared",
         type=str,
@@ -1533,10 +1535,10 @@ def main(args=None):
         "checklists) and 'Phyto-Threats'.",
     )
     # Can't use -t for --temp as already using for --metadata:
-    parser_submit.add_argument("--temp", **ARG_TEMPDIR)
-    parser_submit.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    parser_submit.set_defaults(func=ena_submit)
-    del parser_submit
+    subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=ena_submit)
+    del subcommand_parser
 
     # What have we been asked to do?
     options = parser.parse_args(args)
