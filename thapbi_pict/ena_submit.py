@@ -73,13 +73,13 @@ XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="%s">
            <SAMPLE_DESCRIPTOR accession="%s"/>
            <LIBRARY_DESCRIPTOR>
                <LIBRARY_NAME/>
-               <LIBRARY_STRATEGY>RNA-Seq</LIBRARY_STRATEGY>
-               <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
-               <LIBRARY_SELECTION>DNA</LIBRARY_SELECTION>
+               <LIBRARY_STRATEGY>AMPLICON</LIBRARY_STRATEGY>
+               <LIBRARY_SOURCE>METAGENOMIC</LIBRARY_SOURCE>
+               <LIBRARY_SELECTION>PCR</LIBRARY_SELECTION>
                <LIBRARY_LAYOUT>
                    <PAIRED NOMINAL_LENGTH="250" NOMINAL_SDEV="30"/>
                </LIBRARY_LAYOUT>
-               <LIBRARY_CONSTRUCTION_PROTOCOL>Nested PCR with Phytophthora ITS1 primers. Product amplified and indexed on 96-well plates before library preparation.</LIBRARY_CONSTRUCTION_PROTOCOL>
+               <LIBRARY_CONSTRUCTION_PROTOCOL>Nested PCR with amplicon specific primers.</LIBRARY_CONSTRUCTION_PROTOCOL>
            </LIBRARY_DESCRIPTOR>
        </DESIGN>
        <PLATFORM>
