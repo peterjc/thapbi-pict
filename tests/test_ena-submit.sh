@@ -17,6 +17,6 @@ thapbi_pict ena-submit 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # TODO
-# thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 2,3,4 -x 1 -m tests/reads/ena_mapping.tsv
+# thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 2,3,4 -x 1 -m tests/reads/ena_mapping.tsv --defaultncbitaxid 939928
 
 echo "$0 - test_ena-submit.sh passed"
