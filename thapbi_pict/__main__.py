@@ -1510,7 +1510,8 @@ def main(args=None):
         default="0",  # We will reject this, would be rejected by ENA anyway
         metavar="TAXID",
         help="Default NCBI taxid, probably an environment metagenome taxid like "
-        "939928, rhizosphere metagenome. Required if -n / --metancbitaxid ommitted.",
+        "939928 (rhizosphere metagenome), or 410658 (soil metagenome). Required "
+        "if -n / --metancbitaxid ommitted.",
     )
     subcommand_parser.add_argument(
         "-m",
