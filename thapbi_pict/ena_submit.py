@@ -77,7 +77,7 @@ XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="exp_%s">
                <LIBRARY_SOURCE>METAGENOMIC</LIBRARY_SOURCE>
                <LIBRARY_SELECTION>PCR</LIBRARY_SELECTION>
                <LIBRARY_LAYOUT>
-                   <PAIRED NOMINAL_LENGTH="250" NOMINAL_SDEV="30"/>
+                   <PAIRED NOMINAL_LENGTH="250" />
                </LIBRARY_LAYOUT>
                <LIBRARY_CONSTRUCTION_PROTOCOL>Nested PCR with amplicon specific primers.</LIBRARY_CONSTRUCTION_PROTOCOL>
            </LIBRARY_DESCRIPTOR>
