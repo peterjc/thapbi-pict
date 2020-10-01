@@ -70,7 +70,7 @@ XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="exp_%s">
        <STUDY_REF accession="%s"/>
        <DESIGN>
            <DESIGN_DESCRIPTION/>
-           <SAMPLE_DESCRIPTOR accession="%s"/>
+           <SAMPLE_DESCRIPTOR refname="%s"/>
            <LIBRARY_DESCRIPTOR>
                <LIBRARY_NAME/>
                <LIBRARY_STRATEGY>AMPLICON</LIBRARY_STRATEGY>
@@ -130,11 +130,9 @@ def write_expr(handle, pairs):
         sample = os.path.split(stem)[1]
         title = ""
         study_accession = ""
-        sample_accession = ""
         seq_date = ""  # get from directory name?
         handle.write(
-            XML_EXPR_TEMPLATE
-            % (sample, title, study_accession, sample_accession, seq_date)
+            XML_EXPR_TEMPLATE % (sample, title, study_accession, sample, seq_date)
         )
     handle.write(XML_EXPR_SET_FOOTER)
 
