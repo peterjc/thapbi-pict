@@ -65,7 +65,7 @@ XML_SAMPLE_SET_FOOTER = """</SAMPLE_SET>
 XML_EXPR_SET_HEADER = """<EXPERIMENT_SET>
 """
 
-XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="%s">
+XML_EXPR_TEMPLATE = """   <EXPERIMENT alias="exp_%s">
        <TITLE>%s</TITLE>
        <STUDY_REF accession="%s"/>
        <DESIGN>
@@ -105,7 +105,7 @@ XML_RUN_SET_HEADER = """<RUN_SET>
 """
 
 XML_RUN_TEMPLATE = """    <RUN alias="run_%s" center_name="">
-        <EXPERIMENT_REF refname="exp_run_%s"/>
+        <EXPERIMENT_REF refname="exp_%s"/>
         <DATA_BLOCK>
             <FILES>
                 <FILE filename="%s" filetype="fastq"
