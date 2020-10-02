@@ -68,7 +68,7 @@ def write_table(handle, pairs, instrument="Illumina MiSeq"):
 
 def main(
     fastq,
-    output=None,
+    output,
     metadata_file=None,
     metadata_cols=None,
     metadata_fieldnames=None,
@@ -94,14 +94,14 @@ def main(
     if debug:
         sys.stderr.write("DEBUG: Temp folder %s\n" % shared_tmp)
 
+    tmp_output = None
     if output == "-":
         table_handle = sys.stdout
     elif os.path.isdir(output):
-        table_handle = open(
-            os.path.join(shared_tmp, "experiment_paired_fastq_spreadsheet.tsv"), "w"
-        )
+        sys.exit(f"ERROR: Output filename {output} is a directory")
     else:
-        sys.exit("ERROR: Output directory does not exist: %s\n" % output)
+        tmp_output = os.path.join(shared_tmp, "experiment_paired_fastq_spreadsheet.tsv")
+        table_handle = open(tmp_output, "w")
 
     samples = sample_sort(
         os.path.basename(stem) for stem, _raw_R1, _raw_R2 in fastq_file_pairs
@@ -129,7 +129,4 @@ def main(
 
     if output != "-":
         table_handle.close()
-        shutil.move(
-            os.path.join(shared_tmp, "experiment_paired_fastq_spreadsheet.tsv"),
-            os.path.join(output, "experiment_paired_fastq_spreadsheet.tsv"),
-        )
+        shutil.move(tmp_output, output)

@@ -1449,7 +1449,7 @@ def main(args=None):
     # submit samples to ENA
     subcommand_parser = subparsers.add_parser(
         "ena-submit",
-        description="Prepare paired FASTQ table for upload to ENA (and thus SRA).",
+        description="Write paired FASTQ table for upload to ENA (and thus SRA).",
         epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA. "
         "If your ENA sample names match your FASTQ prefixes, no metadata is needed "
         "here. However, you can provide a metadata table to map the FASTQ stem to "
@@ -1461,10 +1461,8 @@ def main(args=None):
         "-o",
         "--output",
         type=str,
-        default=".",
-        metavar="PATH",
-        help="Output directory for TSV file. "
-        "Default '.' for current directory. Use '-' for stdout.",
+        default="-",
+        help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
