@@ -45,17 +45,18 @@ def load_md5(file_list):
     return answer
 
 
-def write_table(handle, pairs, instrument="Illumina MiSeq"):
+def write_table(handle, pairs, meta=None, instrument="Illumina MiSeq"):
     """Write read file table for ENA upload."""
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
     handle.write(TABLE_HEADER)
     for stem, raw_R1, raw_R2 in pairs:
         sample = os.path.split(stem)[1]
+        sample_refname = meta[sample] if meta else sample
         handle.write(
             TABLE_TEMPLATE
             % (
-                sample,
+                sample_refname,
                 instrument,
                 sample,
                 os.path.split(raw_R1)[1],
@@ -118,14 +119,24 @@ def main(
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
+    if metadata_file and len(meta_names) != 1:
+        sys.exit(
+            "Need one and only one column for the -c argument, "
+            "giving the ENA sample accession or refname."
+        )
     missing_meta = set(samples).difference(metadata)
-    if debug:
-        sys.stderr.write(
+    if metadata_file and missing_meta:
+        sys.exit(
             "Loaded %i samples, %i missing metadata\n"
             % (len(samples), len(missing_meta))
         )
+    if metadata_file:
+        # Just one column, don't need values as list:
+        meta = {k: v[0] for k, v in metadata.items()}
+    else:
+        meta = None
 
-    write_table(table_handle, fastq_file_pairs)
+    write_table(table_handle, fastq_file_pairs, meta)
 
     if output != "-":
         table_handle.close()
