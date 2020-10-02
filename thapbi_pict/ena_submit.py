@@ -24,7 +24,7 @@ TABLE_HEADER = (
     "forward_file_name\tforward_file_md5\t"
     "reverse_file_name\treverse_file_md5\n"
 )
-TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t\t\t\t250\t%s\t%s\t%s\t%s\n"
+TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t%s\t%s\t%i\t%s\t%s\t%s\t%s\n"
 
 
 def load_md5(file_list):
@@ -45,7 +45,15 @@ def load_md5(file_list):
     return answer
 
 
-def write_table(handle, pairs, meta=None, instrument="Illumina MiSeq"):
+def write_table(
+    handle,
+    pairs,
+    meta,
+    instrument_model,
+    design_description,
+    library_construction_protocol,
+    insert_size,
+):
     """Write read file table for ENA upload."""
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
@@ -57,8 +65,11 @@ def write_table(handle, pairs, meta=None, instrument="Illumina MiSeq"):
             TABLE_TEMPLATE
             % (
                 sample_refname,
-                instrument,
+                instrument_model,
                 sample,
+                design_description,
+                library_construction_protocol,
+                insert_size,
                 os.path.split(raw_R1)[1],
                 md5_dict[raw_R1],
                 os.path.split(raw_R2)[1],
@@ -75,6 +86,10 @@ def main(
     metadata_fieldnames=None,
     metadata_index=None,
     ignore_prefixes=None,
+    instrument_model="Illumina MiSeq",
+    design_description="",
+    library_construction_protocol="",
+    insert_size=250,
     tmp_dir=None,
     debug=False,
 ):
@@ -136,7 +151,15 @@ def main(
     else:
         meta = None
 
-    write_table(table_handle, fastq_file_pairs, meta)
+    write_table(
+        table_handle,
+        fastq_file_pairs,
+        meta,
+        instrument_model,
+        design_description,
+        library_construction_protocol,
+        insert_size,
+    )
 
     if output != "-":
         table_handle.close()

@@ -499,6 +499,12 @@ def ena_submit(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    if "\t" in args.instrument:
+        sys.exit("ERROR: Can't use tabs in --instrument argument")
+    if "\t" in args.design:
+        sys.exit("ERROR: Can't use tabs in --design argument")
+    if "\t" in args.protocol:
+        sys.exit("ERROR: Can't use tabs in --protocol argument")
     return main(
         fastq=args.input,
         output=args.output,
@@ -507,6 +513,10 @@ def ena_submit(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         ignore_prefixes=args.ignore_prefixes,
+        instrument_model=args.instrument,
+        design_description=args.design,
+        library_construction_protocol=args.protocol,
+        insert_size=args.insert,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1468,6 +1478,30 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument(
+        "--instrument",
+        type=str,
+        default="Illumina MiSeq",
+        help="Value for instrument_model field, default 'Illumina MiSeq'.",
+    )
+    subcommand_parser.add_argument(
+        "--protocol",
+        type=str,
+        default="",
+        help="Value for optional library_construction_protocol field, default blank.",
+    )
+    subcommand_parser.add_argument(
+        "--design",
+        type=str,
+        default="",
+        help="Value for optional design_description field, default blank.",
+    )
+    subcommand_parser.add_argument(
+        "--insert",
+        type=int,
+        default=250,
+        help="Value for nominal/average insert_size, default 250.",
+    )
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
