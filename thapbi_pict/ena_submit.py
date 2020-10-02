@@ -120,6 +120,15 @@ XML_RUN_TEMPLATE = """    <RUN alias="run_%s" center_name="">
 XML_RUN_SET_FOOTER = """</RUN_SET>
 """
 
+TABLE_HEADER = (
+    "sample_alias\tinstrument_model\tlibrary_name\tlibrary_source\t"
+    "library_selection\tlibrary_strategy\tdesign_description\t"
+    "library_construction_protocol\tinsert_size\t"
+    "forward_file_name\tforward_file_md5\t"
+    "reverse_file_name\treverse_file_md5\n"
+)
+TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t\t\t\t250\t%s\t%s\t%s\t%s\n"
+
 ######################
 
 
@@ -164,9 +173,37 @@ def write_run(handle, pairs):
         sample = os.path.split(stem)[1]
         handle.write(
             XML_RUN_TEMPLATE
-            % (sample, sample, raw_R1, md5_dict[raw_R1], raw_R2, md5_dict[raw_R2])
+            % (
+                sample,
+                sample,
+                os.path.split(raw_R1)[1],
+                md5_dict[raw_R1],
+                os.path.split(raw_R2)[1],
+                md5_dict[raw_R2],
+            )
         )
     handle.write(XML_RUN_SET_FOOTER)
+
+
+def write_table(handle, pairs, instrument="Illumina MiSeq"):
+    """Write read file table for ENA upload."""
+    file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
+    md5_dict = load_md5(file_list)
+    handle.write(TABLE_HEADER)
+    for stem, raw_R1, raw_R2 in pairs:
+        sample = os.path.split(stem)[1]
+        handle.write(
+            TABLE_TEMPLATE
+            % (
+                sample,
+                instrument,
+                sample,
+                os.path.split(raw_R1)[1],
+                md5_dict[raw_R1],
+                os.path.split(raw_R2)[1],
+                md5_dict[raw_R2],
+            )
+        )
 
 
 ######################
@@ -227,10 +264,14 @@ def main(
         sample_xml_handle = sys.stdout
         expr_xml_handle = sys.stdout
         run_xml_handle = sys.stdout
+        table_handle = sys.stdout
     elif os.path.isdir(output):
         sample_xml_handle = open(os.path.join(shared_tmp, "sample.xml"), "w")
         expr_xml_handle = open(os.path.join(shared_tmp, "experiment.xml"), "w")
         run_xml_handle = open(os.path.join(shared_tmp, "run.xml"), "w")
+        table_handle = open(
+            os.path.join(shared_tmp, "experiment_paired_fastq_spreadsheet.tsv"), "w"
+        )
     else:
         sys.exit("ERROR: Output directory does not exist: %s\n" % output)
 
@@ -312,9 +353,17 @@ def main(
 
     write_run(run_xml_handle, fastq_file_pairs)
 
+    write_table(table_handle, fastq_file_pairs)
+
     if output != "-":
         sample_xml_handle.close()
         expr_xml_handle.close()
         run_xml_handle.close()
-        for name in ("sample.xml", "experiment.xml", "run.xml"):
+        table_handle.close()
+        for name in (
+            "sample.xml",
+            "experiment.xml",
+            "run.xml",
+            "experiment_paired_fastq_spreadsheet.tsv",
+        ):
             shutil.move(os.path.join(shared_tmp, name), os.path.join(output, name))
