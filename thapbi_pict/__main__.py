@@ -499,21 +499,13 @@ def ena_submit(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
-    if not args.metancbitaxid and not args.defaultncbitaxid:
-        sys.exit(
-            "ERROR: Need -n / --metancbitaxid and/or --defaultncbitaxid arguments."
-        )
     return main(
         fastq=args.input,
         output=args.output,
-        shared=args.shared,
-        mapping=args.mapping,
         metadata_file=args.metadata,
         metadata_cols=args.metacols,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
-        metadata_ncbi_taxid=args.metancbitaxid,
-        default_ncbi_taxid=args.defaultncbitaxid,
         ignore_prefixes=args.ignore_prefixes,
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -1457,13 +1449,11 @@ def main(args=None):
     # submit samples to ENA
     subcommand_parser = subparsers.add_parser(
         "ena-submit",
-        description="Prepare paired FASTQ files for upload to ENA/SRA.",
-        epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA "
-        "with basic metadata. Assumes you have relevant information in a TSV metadata "
-        "table. Supports simple mapping between your terms and those in any associated "
-        "ontology. For example you might map field 'Sample source' to the GSC MIxS "
-        "field 'environment (material)', and map the value 'root-wash' to "
-        "'root matter' or 'ENVO_01000349').",
+        description="Prepare paired FASTQ table for upload to ENA (and thus SRA).",
+        epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA. "
+        "If your ENA sample names match your FASTQ prefixes, no metadata is needed "
+        "here. However, you can provide a metadata table to map the FASTQ stem to "
+        "your sample aliases or ENA sample accessions.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
@@ -1473,68 +1463,13 @@ def main(args=None):
         type=str,
         default=".",
         metavar="PATH",
-        help="Output directory for XML files (sample.xml, experiment.xml, run.xml). "
+        help="Output directory for TSV file. "
         "Default '.' for current directory. Use '-' for stdout.",
     )
-    arg = subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
-    arg.required = True
-    arg.help = arg.help.replace("Optional", "Required")
-    del arg
-    arg = subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
-    arg.required = True
-    arg.help = (
-        "Comma separated list (e.g. 2,3,5) of columns whose sample attributes "
-        "should be included in the XML output (e.g. geographic location, environment)."
-    )
-    del arg
-    arg = subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    arg.help = arg.help.replace("If using metadata, which", "Which")
-    del arg
-    subcommand_parser.add_argument(
-        "-n",
-        "--metancbitaxid",
-        type=str,
-        default="",
-        metavar="COL",
-        help="Column containing NCBI taxid, likely an environment metagenome "
-        "taxid like 939928, rhizosphere metagenome.",
-    )
-    arg = subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    arg.help = (
-        "If using metadata, which row should be used as the field names? Default 1."
-    )
-    del arg
-    subcommand_parser.add_argument(
-        "--defaultncbitaxid",
-        type=int,
-        default="0",  # We will reject this, would be rejected by ENA anyway
-        metavar="TAXID",
-        help="Default NCBI taxid, probably an environment metagenome taxid like "
-        "939928 (rhizosphere metagenome), or 410658 (soil metagenome). Required "
-        "if -n / --metancbitaxid ommitted.",
-    )
-    subcommand_parser.add_argument(
-        "-m",
-        "--mapping",
-        type=str,
-        metavar="FILENAME",
-        help="Tabular file with two columns, mapping field names and/or values in "
-        "column one to the text to use in the XML in column two. For example, you "
-        "could map columns with field names 'Latitude' and 'Longitude' to 'geographic "
-        "location (latitude)' and 'geographic location (longitude)' to match Genomic "
-        "Standards Consortium (GSC) Minimum Information about any Sequence (MIxS).",
-    )
-    subcommand_parser.add_argument(
-        "-s",
-        "--shared",
-        type=str,
-        metavar="FILENAME",
-        help="Tabular file with two columns, containing additional field names and "
-        "values to be included in the XML for each sample. For example, "
-        "'ENA-CHECKLIST' and 'ERC000025' (GSC MIxS miscellaneous natural or "
-        "artificial environment), or 'project name' (mandatory on GSC MIxS "
-        "checklists) and 'Phyto-Threats'.",
-    )
+    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
+    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
