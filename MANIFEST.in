@@ -24,6 +24,7 @@ include database/Phytophthora_ITS1_curated.fasta
 recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
 
 include tests/reads/SRR6303948_sample_?.fastq
+include tests/reads/*.md5
 include tests/woody_hosts/intermediate.tar.bz2
 
 prune tests/woody_hosts/raw_data/
