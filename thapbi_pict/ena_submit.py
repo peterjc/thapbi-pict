@@ -31,7 +31,11 @@ assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 def load_md5(file_list):
     """Return a dict mapping given filenames to MD5 digests."""
     answer = {}
-    for cache in {os.path.join(os.path.split(_)[0], "MD5SUM.txt") for _ in file_list}:
+    checksum_files = {_ + ".md5" for _ in file_list}
+    checksum_files.update(
+        os.path.join(os.path.split(_)[0], "MD5SUM.txt") for _ in file_list
+    )
+    for cache in checksum_files:
         if os.path.isfile(cache):
             with open(cache) as handle:
                 for line in handle:
@@ -42,7 +46,7 @@ def load_md5(file_list):
     for f in file_list:
         if f not in answer:
             # TODO - do this at run time? Too slow?
-            sys.exit(f"ERROR: Need MD5 for {f} and not in MD5SUM.txt")
+            sys.exit(f"ERROR: Need MD5 for {f} and not in {f}.md5 or MD5SUM.txt")
     return answer
 
 
