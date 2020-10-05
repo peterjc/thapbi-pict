@@ -23,8 +23,7 @@ report-ready metadata about the samples (see below).
 Script ``setup.sh`` will download the raw FASTQ files for Klymus *et al.*
 (2017) from https://www.ebi.ac.uk/ena/data/view/PRJNA379165
 
-There are 18 sequenced samples, giving 36 paired FASTQ files, taking about
-1.8GB on disk.
+It will download 36 raw FASTQ files (18 pairs), taking 1.8GB on disk.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
 files downloaded correctly:
