@@ -10,5 +10,5 @@ based on the following paper:
 
 The raw FASTQ files are too large to include with the THAPBI PICT source code,
 and thus be used in continuous integration testing. However, we provide file
-``intermediate.tar.bz2`` which is a compressed archive of all 122 intermediate
-FASTA files, which is useful for testing.
+``examples/woody_hosts/intermediate.tar.bz2`` which is a compressed archive of
+all 122 intermediate FASTA files, which is useful for testing.
