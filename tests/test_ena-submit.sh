@@ -7,10 +7,15 @@
 # file that should have been included as part of this package.
 
 IFS=$'\n\t'
-set -eux
+set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp}
+
+echo "==================="
+echo "Checking ena-submit"
+echo "==================="
+set -x
 
 echo "Checking ena-submit"
 thapbi_pict ena-submit 2>&1 | grep "the following arguments are required"
