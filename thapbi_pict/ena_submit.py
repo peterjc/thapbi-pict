@@ -144,8 +144,8 @@ def main(
     missing_meta = set(samples).difference(metadata)
     if metadata_file and missing_meta:
         sys.exit(
-            "Loaded %i samples, %i missing metadata\n"
-            % (len(samples), len(missing_meta))
+            "ERROR: Loaded %i samples, %i missing metadata, e.g. %s\n"
+            % (len(samples), len(missing_meta), sorted(missing_meta)[0])
         )
     if metadata_file:
         # Just one column, don't need values as list:
