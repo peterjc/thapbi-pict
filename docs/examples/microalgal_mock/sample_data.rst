@@ -23,8 +23,7 @@ about the samples (see below).
 Script ``setup.sh`` will download the pre-trimmed FASTQ files for Bradley
 *et al.* (2016) from https://www.ebi.ac.uk/ena/data/view/PRJNA314977
 
-There are 124 sequenced samples, giving 248 paired FASTQ files, taking about
-1.4GB on disk.
+It will download 248 raw FASTQ files (124 pairs), taking 1.4GB on disk.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
 files downloaded correctly:
