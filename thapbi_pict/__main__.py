@@ -491,6 +491,40 @@ def pipeline(args=None):
     sys.stderr.write("All done!\n")
 
 
+def ena_submit(args=None):
+    """Subcommand to run multiple-output-folder summary at sample level."""
+    from .ena_submit import main
+
+    if args.metadata:
+        check_input_file(args.metadata)
+        if not args.metacols:
+            sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    if "\t" in args.library:
+        sys.exit("ERROR: Can't use tabs in --library argument")
+    if "\t" in args.instrument:
+        sys.exit("ERROR: Can't use tabs in --instrument argument")
+    if "\t" in args.design:
+        sys.exit("ERROR: Can't use tabs in --design argument")
+    if "\t" in args.protocol:
+        sys.exit("ERROR: Can't use tabs in --protocol argument")
+    return main(
+        fastq=args.input,
+        output=args.output,
+        metadata_file=args.metadata,
+        metadata_cols=args.metacols,
+        metadata_fieldnames=args.metafields,
+        metadata_index=args.metaindex,
+        ignore_prefixes=args.ignore_prefixes,
+        library_name=args.library,
+        instrument_model=args.instrument,
+        design_description=args.design,
+        library_construction_protocol=args.protocol,
+        insert_size=args.insert,
+        tmp_dir=args.temp,
+        debug=args.verbose,
+    )
+
+
 # Common arguments
 # ================
 
@@ -1424,6 +1458,68 @@ def main(args=None):
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=edit_graph)
     del subcommand_parser  # To prevent accidentally adding more
+
+    # submit samples to ENA
+    subcommand_parser = subparsers.add_parser(
+        "ena-submit",
+        description="Write paired FASTQ table for upload to ENA (and thus SRA).",
+        epilog="Facilitate interactive upload of paired FASTQ files to the ENA/SRA. "
+        "First upload the raw FASTQ files, and interactively define your samples. "
+        "Then use the output of this command to match the FASTQ files to the samples. "
+        "If your ENA sample names match your FASTQ prefixes, no metadata file is "
+        "needed here. However, you can provide a metadata table to map the FASTQ "
+        "stem to your sample aliases or ENA sample accessions.",
+    )
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        help="File to write to (default '-' meaning stdout)",
+    )
+    subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
+    subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
+    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument(
+        "--library",
+        type=str,
+        default="-",
+        help="Value for library_name field, default is '-' meaning take the "
+        "FASTQ file's parent folder name, which is intended to support "
+        "configurations like using multiple 96-well plates.",
+    )
+    subcommand_parser.add_argument(
+        "--instrument",
+        type=str,
+        default="Illumina MiSeq",
+        help="Value for instrument_model field, default 'Illumina MiSeq'.",
+    )
+    subcommand_parser.add_argument(
+        "--protocol",
+        type=str,
+        default="",
+        help="Value for optional library_construction_protocol field, default blank.",
+    )
+    subcommand_parser.add_argument(
+        "--design",
+        type=str,
+        default="",
+        help="Value for optional design_description field, default blank.",
+    )
+    subcommand_parser.add_argument(
+        "--insert",
+        type=int,
+        default=250,
+        help="Value for nominal/average insert_size, default 250.",
+    )
+    # Can't use -t for --temp as already using for --metadata:
+    subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=ena_submit)
+    del subcommand_parser
 
     # What have we been asked to do?
     options = parser.parse_args(args)

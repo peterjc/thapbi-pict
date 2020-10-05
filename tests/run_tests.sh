@@ -20,6 +20,7 @@ fi
 
 time tests/test_woody_hosts.sh
 
+time tests/test_ena-submit.sh
 time tests/test_dump.sh
 time tests/test_load-tax.sh
 time tests/test_curated-import.sh
