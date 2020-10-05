@@ -30,6 +30,7 @@ assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 
 def load_md5(file_list):
     """Return a dict mapping given filenames to MD5 digests."""
+    assert file_list, "Nothing to do here."
     answer = {}
     base_names = {os.path.split(_)[1] for _ in file_list}
     if len(base_names) < len(file_list):
@@ -49,10 +50,10 @@ def load_md5(file_list):
                     filename = os.path.join(os.path.split(cache)[0], filename)
                     if filename in file_list:
                         answer[filename] = md5
+    if not answer:
+        sys.exit("ERROR: Need to provide MD5SUM.txt or example.fastq.gz.md5 files")
     for f in file_list:
         if f not in answer:
-            # TODO - do this at run time? Too slow?
-            sys.stderr.write(f"{answer}\n")
             sys.exit(f"ERROR: Need MD5 for {f} and not in {f}.md5 or MD5SUM.txt")
     return answer
 
@@ -110,6 +111,8 @@ def main(
     """Implement the ``thapbi_pict ena-submit`` command."""
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
 
+    if not fastq_file_pairs:
+        sys.exit("ERROR: No FASTQ pairs found")
     if debug:
         sys.stderr.write("Preparing %i FASTQ pairs\n" % len(fastq_file_pairs))
 
