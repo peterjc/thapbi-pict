@@ -31,6 +31,10 @@ assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 def load_md5(file_list):
     """Return a dict mapping given filenames to MD5 digests."""
     answer = {}
+    base_names = {os.path.split(_)[1] for _ in file_list}
+    if len(base_names) < len(file_list):
+        # This isn't a problem locally, but will be on upload to ENA
+        sys.exit("ERROR: Duplicate FASTQ names once folder dropped")
     checksum_files = {_ + ".md5" for _ in file_list}
     checksum_files.update(
         os.path.join(os.path.split(_)[0], "MD5SUM.txt") for _ in file_list
@@ -40,12 +44,15 @@ def load_md5(file_list):
             with open(cache) as handle:
                 for line in handle:
                     md5, filename = line.strip().split()
+                    # If MD5 file contains relative path, interpret it
+                    assert "/" not in filename, filename
                     filename = os.path.join(os.path.split(cache)[0], filename)
                     if filename in file_list:
                         answer[filename] = md5
     for f in file_list:
         if f not in answer:
             # TODO - do this at run time? Too slow?
+            sys.stderr.write(f"{answer}\n")
             sys.exit(f"ERROR: Need MD5 for {f} and not in {f}.md5 or MD5SUM.txt")
     return answer
 
