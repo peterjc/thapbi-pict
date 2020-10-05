@@ -20,6 +20,8 @@ contains report-ready metadata about the samples (see below).
 Script ``setup.sh`` will download the raw FASTQ files for Walker *et al.*
 (2019) from https://www.ebi.ac.uk/ena/data/view/PRJNA574765
 
+It will download 120 raw FASTQ files (60 pairs), taking about 641MB on disk
+
 If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
 files downloaded correctly:
 
