@@ -1485,7 +1485,8 @@ def main(args=None):
         "--library",
         type=str,
         default="-",
-        help="Value for library_name field, default is FASTQ filename stem.",
+        help="Value for library_name field, default is FASTQ filename stem. "
+        "If using multiple 96-well plates, this could be the plate name.",
     )
     subcommand_parser.add_argument(
         "--instrument",
