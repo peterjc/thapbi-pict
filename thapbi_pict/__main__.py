@@ -1463,10 +1463,12 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "ena-submit",
         description="Write paired FASTQ table for upload to ENA (and thus SRA).",
-        epilog="Facilitate automated upload of paired FASTQ files to the ENA/SRA. "
-        "If your ENA sample names match your FASTQ prefixes, no metadata is needed "
-        "here. However, you can provide a metadata table to map the FASTQ stem to "
-        "your sample aliases or ENA sample accessions.",
+        epilog="Facilitate interactive upload of paired FASTQ files to the ENA/SRA. "
+        "First upload the raw FASTQ files, and interactively define your samples. "
+        "Then use the output of this command to match the FASTQ files to the samples. "
+        "If your ENA sample names match your FASTQ prefixes, no metadata file is "
+        "needed here. However, you can provide a metadata table to map the FASTQ "
+        "stem to your sample aliases or ENA sample accessions.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
