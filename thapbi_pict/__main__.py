@@ -499,6 +499,8 @@ def ena_submit(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
+    if "\t" in args.library:
+        sys.exit("ERROR: Can't use tabs in --library argument")
     if "\t" in args.instrument:
         sys.exit("ERROR: Can't use tabs in --instrument argument")
     if "\t" in args.design:
@@ -513,6 +515,7 @@ def ena_submit(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         ignore_prefixes=args.ignore_prefixes,
+        library_name=args.library,
         instrument_model=args.instrument,
         design_description=args.design,
         library_construction_protocol=args.protocol,
@@ -1478,6 +1481,12 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument(
+        "--library",
+        type=str,
+        default="-",
+        help="Value for library_name field, default is FASTQ filename stem.",
+    )
     subcommand_parser.add_argument(
         "--instrument",
         type=str,

@@ -25,6 +25,7 @@ TABLE_HEADER = (
     "reverse_file_name\treverse_file_md5\n"
 )
 TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t%s\t%s\t%i\t%s\t%s\t%s\t%s\n"
+assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 
 
 def load_md5(file_list):
@@ -49,6 +50,7 @@ def write_table(
     handle,
     pairs,
     meta,
+    library_name,
     instrument_model,
     design_description,
     library_construction_protocol,
@@ -60,13 +62,12 @@ def write_table(
     handle.write(TABLE_HEADER)
     for stem, raw_R1, raw_R2 in pairs:
         sample = os.path.split(stem)[1]
-        sample_refname = meta[sample] if meta else sample
         handle.write(
             TABLE_TEMPLATE
             % (
-                sample_refname,
+                meta[sample] if meta else sample,
                 instrument_model,
-                sample,
+                sample if library_name == "-" else library_name,
                 design_description,
                 library_construction_protocol,
                 insert_size,
@@ -86,6 +87,7 @@ def main(
     metadata_fieldnames=None,
     metadata_index=None,
     ignore_prefixes=None,
+    library_name="-",
     instrument_model="Illumina MiSeq",
     design_description="",
     library_construction_protocol="",
@@ -155,6 +157,7 @@ def main(
         table_handle,
         fastq_file_pairs,
         meta,
+        library_name,
         instrument_model,
         design_description,
         library_construction_protocol,
