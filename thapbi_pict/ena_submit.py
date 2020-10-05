@@ -62,12 +62,13 @@ def write_table(
     handle.write(TABLE_HEADER)
     for stem, raw_R1, raw_R2 in pairs:
         sample = os.path.split(stem)[1]
+        folder = os.path.split(os.path.split(raw_R1)[0])[1]
         handle.write(
             TABLE_TEMPLATE
             % (
                 meta[sample] if meta else sample,
                 instrument_model,
-                sample if library_name == "-" else library_name,
+                folder if library_name == "-" else library_name,
                 design_description,
                 library_construction_protocol,
                 insert_size,
