@@ -71,11 +71,11 @@ def write_table(
     """Write read file table for ENA upload."""
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
-    handle.write(TABLE_HEADER)
+    lines = []
     for stem, raw_R1, raw_R2 in pairs:
         sample = os.path.split(stem)[1]
         folder = os.path.split(os.path.split(raw_R1)[0])[1]
-        handle.write(
+        lines.append(
             TABLE_TEMPLATE
             % (
                 meta[sample] if meta else sample,
@@ -90,6 +90,9 @@ def write_table(
                 md5_dict[raw_R2],
             )
         )
+    handle.write(TABLE_HEADER)
+    for line in sorted(lines):
+        handle.write(line)
 
 
 def main(
