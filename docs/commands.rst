@@ -57,6 +57,11 @@ second :ref:`worked example, with a custom database <recycled_water>`:
   isolate positive controls)
 * ``conflicts`` - report on genus or species level conflicts in the database
 
+And some other miscellaneous commands:
+
+* ``ena-submit`` - write a TSV table of your paired FASTQ files for use with
+  the ENA interactive submission system.
+
 Start with reading the help for any command using ``-h`` or ``--help`` as
 follows:
 
