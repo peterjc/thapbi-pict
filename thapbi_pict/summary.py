@@ -149,7 +149,9 @@ def sample_summary(
         ]
     ]
     sample_formats = color_bands(
-        [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
+        [metadata[_][group_col] for _ in metadata],
+        sample_color_bands,
+        debug=debug,
     )
 
     # Excel header
@@ -445,7 +447,9 @@ def read_summary(
                 % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
         sample_formats = color_bands(
-            [metadata[_][group_col] for _ in metadata], sample_color_bands, debug=debug,
+            [metadata[_][group_col] for _ in metadata],
+            sample_color_bands,
+            debug=debug,
         )
         for i, name in enumerate(meta_names):
             worksheet.write_string(
@@ -453,7 +457,10 @@ def read_summary(
             )
             for s, value in enumerate(meta):
                 worksheet.write_string(
-                    current_row + i, LEADING_COLS + s, value[i], sample_formats[s],
+                    current_row + i,
+                    LEADING_COLS + s,
+                    value[i],
+                    sample_formats[s],
                 )
         current_row += len(meta_names)
     if stats_fields:
@@ -471,7 +478,10 @@ def read_summary(
             )
             for s, value in enumerate(meta):
                 worksheet.write_number(
-                    current_row + i, LEADING_COLS + s, value[i], sample_formats[s],
+                    current_row + i,
+                    LEADING_COLS + s,
+                    value[i],
+                    sample_formats[s],
                 )
         current_row += len(stats_fields)
 

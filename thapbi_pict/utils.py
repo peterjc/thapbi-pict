@@ -450,7 +450,12 @@ def find_requested_files(
 
 
 def find_paired_files(
-    filenames_or_folders, ext1, ext2, ignore_prefixes=None, debug=False, strict=False,
+    filenames_or_folders,
+    ext1,
+    ext2,
+    ignore_prefixes=None,
+    debug=False,
+    strict=False,
 ):
     """Interpret a list of filenames and/or foldernames to find pairs.
 

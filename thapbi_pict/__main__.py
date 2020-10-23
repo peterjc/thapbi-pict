@@ -788,7 +788,8 @@ ARG_METAFIELDS = dict(  # noqa: C408
 
 # "-q", "--requiremeta",
 ARG_REQUIREMETA = dict(  # noqa: C408
-    action="store_true", help="Ignore any input files without metadata for report.",
+    action="store_true",
+    help="Ignore any input files without metadata for report.",
 )
 
 # Command line definition
