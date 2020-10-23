@@ -202,7 +202,9 @@ def parse_cutadapt_stdout(stdout):
     after = None
     for line in stdout.strip().split("\n"):
         words = line.strip().split()
-        if words[:-1] == ["Total", "reads", "processed:"]:
+        if words == ["No", "reads", "processed!"]:
+            before = after = 0
+        elif words[:-1] == ["Total", "reads", "processed:"]:
             before = int(words[3].replace(",", ""))
         elif words[:4] == ["Reads", "written", "(passing", "filters):"]:
             after = int(words[4].replace(",", ""))
@@ -439,7 +441,7 @@ def make_nr_fasta(
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 counts[seq.upper()] += 1
     accepted_total, accepted_count = save_nr_fasta(
-        counts, output_fasta, min_abundance, gzipped=gzipped, header_dict=header_dict,
+        counts, output_fasta, min_abundance, gzipped=gzipped, header_dict=header_dict
     )
     return (
         sum(counts.values()) if counts else 0,
