@@ -59,8 +59,8 @@ function pool {
 
     echo "Pooling intermediate onebp classifications..."
     for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-    cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
-    cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
+        cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
+        cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
     done;
 
     echo "Generating pooled reports for onebp classifier."
