@@ -34,11 +34,10 @@ function pool {
     rm -rf intermediate_pool/*
     echo "Pooling intermediate FASTA files..."
     # Excluding primer specific header lines with grep,
-    # duplicate lines for raw fastq count etc harmless.
+    # only want a single header
     for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
-        cat intermediate/*/$S.fasta \
-            | grep -v -E "(_primer|cutadapt|abundance)" \
-            > intermediate_pool/$S.fasta
+        grep "^#" intermediate/16S/$S.fasta | grep -v -E "(_primer|cutadapt|abundance)" > intermediate_pool/$S.fasta
+        cat intermediate/*/$S.fasta | grep -v "^#" >> intermediate_pool/$S.fasta
     done
 
     echo "Computing species list for combined header..."
