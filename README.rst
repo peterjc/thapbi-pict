@@ -4,9 +4,6 @@
 .. image:: https://img.shields.io/conda/vn/bioconda/thapbi-pict.svg
    :alt: THAPBI PICT on BioConda
    :target: https://anaconda.org/bioconda/thapbi-pict
-.. image:: https://img.shields.io/travis/peterjc/thapbi-pict/master.svg?label=master&logo=travis
-   :alt: THAPBI PICT TravisCI build status
-   :target: https://travis-ci.org/peterjc/thapbi-pict/branches
 .. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=master&logo=CircleCI
    :alt: THAPBI PICT CircleCI build status
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master

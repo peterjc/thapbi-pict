@@ -36,12 +36,9 @@ Continuous Integration
 ----------------------
 
 Currently this is setup to do automated testing under Linux on two free
-continuous integration services, CircleCI (using Conda for dependencies) and
-TravisCI (using apt-packages and PyPI).
+continuous integration services, CircleCI (using Conda for dependencies):
 
 * CircleCI: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
-
-* TravisCI: https://travis-ci.org/peterjc/thapbi-pict/branches
 
 
 Dependencies
