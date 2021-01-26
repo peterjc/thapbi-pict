@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -268,7 +268,7 @@ def run_cutadapt(
             return total, total
         else:
             sys.exit(f"ERROR: called on {long_in} with no primers")
-    cmd = ["cutadapt"]
+    cmd = ["cutadapt", "--fasta"]
     if bad_out:
         cmd += ["--untrimmed-output", bad_out]
     else:
