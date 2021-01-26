@@ -268,7 +268,7 @@ def run_cutadapt(
             return total, total
         else:
             sys.exit(f"ERROR: called on {long_in} with no primers")
-    cmd = ["cutadapt"]
+    cmd = ["cutadapt", "--fasta"]
     if bad_out:
         cmd += ["--untrimmed-output", bad_out]
     else:
