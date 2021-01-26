@@ -29,6 +29,12 @@ sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phy
 # Should now be able to import data using either name.
 # Will use 'Phytophthora austrocedri' in clasffier/assess
 
+if [ ! -d thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/ ]; then
+    mkdir thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
+    echo "Preparing reads from control plate..."
+    thapbi_pict prepare-reads -i thapbi20180709p1_MetaControls/raw_data -o thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
+fi
+
 # The known value files are now using Phytophthora austrocedri, not P. austrocedrae
 thapbi_pict seq-import -d "$DB.sqlite" -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
 
