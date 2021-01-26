@@ -4,7 +4,7 @@
 #
 
 blast
-cutadapt >= 2.8
+cutadapt >= 3.0
 flash
 graphviz
 hmmer
