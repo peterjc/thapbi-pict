@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.7.3  *Pending*  Suggest at least cutadapt v3.0.
+v0.7.3  *Pending*  New ``1s3g`` classifier. Suggest at least cutadapt v3.0. Curated DB tweak.
 v0.7.2  2020-10-06 Added ``ena-submit`` command for use with interactive ENA read submission.
 v0.7.1  2020-09-29 Currated *Phytophthora* DB minor updates. Classifier output in edit-graph.
 v0.7.0  2020-04-02 Read counts etc as a header in intermediate FASTA files; shown in reports.
