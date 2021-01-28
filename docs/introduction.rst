@@ -46,6 +46,9 @@ The second stage of the pipeline offers a choice of classifier algorithms:
 - Up to one base pair away (``onebp``, the *default*). Like the identity
   classifier, but allows a single base pair edit (a substitution, deletion,
   or insertion).
+- Up to one base pair away for a species level match (like the default
+  ``onebp`` method), but falling back on up to 3bp away for a genus level
+  match (``1s3g``).
 - Perfect substring (``substr``). Like the identity classifier, but also
   allows for the query sequence to be a perfect substring of a database entry.
   Useful if the database entries have not all been trimmed exactly.
