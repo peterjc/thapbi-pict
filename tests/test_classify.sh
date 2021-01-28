@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2018-2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -34,9 +34,11 @@ rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
 rm -rf $TMP/thapbi_swarm
 rm -rf $TMP/thapbi_blast
+rm -rf $TMP/thapbi_1s3g
 mkdir -p $TMP/thapbi_onebp
 mkdir -p $TMP/thapbi_swarm
 mkdir -p $TMP/thapbi_blast
+mkdir -p $TMP/thapbi_1s3g
 
 # Explicitly setting output directory, would be here anyway:
 thapbi_pict classify -m identity -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
@@ -44,6 +46,7 @@ thapbi_pict classify -m onebp -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fast
 thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
 thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
 thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta
+thapbi_pict classify -m 1s3g -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/1s3g
 
 # Passing one directory name (should get all 2 FASTA files):
 rm -rf $TMP/duo
@@ -55,7 +58,7 @@ if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
-for M in identity onebp substr blast swarm swarmid; do
+for M in identity onebp substr blast swarm swarmid 1s3g; do
     echo "Checking single isolate control with $M"
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
@@ -63,7 +66,7 @@ done
 
 rm -rf $TMP/multiple_its1.*.tsv
 # Have not handled this in swarm classifier....
-for M in identity onebp blast; do
+for M in identity onebp blast 1s3g; do
     echo "Checking multiple HMM containing sequences with $M"
     thapbi_pict classify -i tests/classify/multiple_its1.fasta -o $TMP/ -m $M
     diff $TMP/multiple_its1.$M.tsv tests/classify/multiple_its1.$M.tsv
@@ -71,7 +74,7 @@ done
 
 rm -rf $TMP/hmm_trim.*.tsv
 # Swarm classifier can't cope with multiple HMM hits...
-for M in identity onebp blast; do
+for M in identity onebp blast 1s3g; do
     echo "Checking HMM trim corner cases with $M"
     thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M
     diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
