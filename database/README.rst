@@ -19,9 +19,6 @@ sets of sequences (subject to taxonomy filtering):
   do anyway - but this gives a smaller more useful intermediate file), using::
 
       $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action none \
-      --discard-untrimmed -o 2021-01-28-ITS_Peronosporales_w32.fasta \
-      2021-01-28-ITS_Peronosporales_18535.fasta
-      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action none \
       --discard-untrimmed 2021-01-28-ITS_Peronosporales_18535.fasta \
       | cutadapt -g GAAGGTGAAGTCGTAACAAGG --fasta /dev/stdin \
       | cutadapt -a GYRGGGACGAAAGTCYYTGC --fasta /dev/stdin \
