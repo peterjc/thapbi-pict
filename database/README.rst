@@ -15,11 +15,17 @@ sets of sequences (subject to taxonomy filtering):
 
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level, 5386 entries
   in file ``database/2021-01-28-ITS_Peronosporales_w32.fasta`` with expected
-  32bp leader filtered using::
+  32bp leader filtered, and any obvious primers removed (which the import would
+  do anyway - but this gives a smaller more useful intermediate file), using::
 
       $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action none \
       --discard-untrimmed -o 2021-01-28-ITS_Peronosporales_w32.fasta \
       2021-01-28-ITS_Peronosporales_18535.fasta
+      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action none \
+      --discard-untrimmed 2021-01-28-ITS_Peronosporales_18535.fasta \
+      | cutadapt -g GAAGGTGAAGTCGTAACAAGG --fasta /dev/stdin \
+      | cutadapt -a GYRGGGACGAAAGTCYYTGC --fasta /dev/stdin \
+      -o 2021-01-28-ITS_Peronosporales_w32.fasta
 
   Started from 18535 downloaded from an NCBI Entrez search on 2021-01-28::
 
