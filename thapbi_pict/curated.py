@@ -50,7 +50,7 @@ def main(
     sep=";",
     debug=True,
 ):
-    """Implement the ``thapbi_pict legacy-import`` command."""
+    """Implement the ``thapbi_pict curated-import`` command."""
     return import_fasta_file(
         fasta_file,
         db_url,

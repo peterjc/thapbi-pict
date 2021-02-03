@@ -6,8 +6,8 @@
 """Shared code for THAPBI PICT to import FASTA into our database.
 
 This code is used both for importing NCBI formatted FASTA files, and also
-importing our legacy ITS1 sequence FASTA file databases - see ``ncbi.py``
-and ``legacy.py`` which contain specific meta-data handling code for the
+importing our curated ITS1 sequence FASTA file databases - see ``ncbi.py``
+and ``curated.py`` which contain specific meta-data handling code for the
 different naming conventions.
 """
 import os
@@ -113,7 +113,7 @@ def import_fasta_file(
 ):
     """Import a FASTA file into the database.
 
-    For ``thapbi_pict legacy-import`` some FASTA sequences are
+    For ``thapbi_pict curated-import`` some FASTA sequences are
     treated as multiple entries sharing that same sequence. For
     ``thapbi_pict ncbi-import``, each FASTA sequence is treated
     as a single entry. For ``thapbi_pict seq-import`` again each
@@ -131,13 +131,13 @@ def import_fasta_file(
     return the associated taxonomy information. This can be done
     by parsing the string, or looking it up in another source.
 
-    In ``thapbi_pict legacy-import`` and ``thapbi_pict ncbi-import``
+    In ``thapbi_pict curated-import`` and ``thapbi_pict ncbi-import``
     the species metadata is recorded directly in the FASTA title
     lines. However, the metadata for ``thapbi_pict seq-import``
     comes from a sister TSV file, and is cross-referenced by the
     FASTA sequence identifier.
 
-    For ``thapbi_pict legacy-import`` we expect pre-trimmed curated
+    For ``thapbi_pict curated-import`` we expect pre-trimmed curated
     marker sequences. For ``thapbi_pict seq-import`` the reads have
     been primer-trimed by ``thapbi_pict prepare-reads``. However,
     for ``thapbi_pict ncbi-import`` many of the sequences will be
@@ -217,7 +217,7 @@ def import_fasta_file(
         name=name,
         uri=fasta_file,
         md5=md5,
-        notes=f"Imported with thapbi_pict legacy_import v{__version__}",
+        notes=f"Imported with thapbi_pict v{__version__}",
     )
     session.add(db_source)
 
