@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.7.4  *Pending*  Added some uncultured sequences to the default DB at genus level.
+v0.7.4  *Pending*  Curated DB minor updates. New ``1s2g``, ``1s4g``, and ``1s5g`` classifiers.
 v0.7.3  2021-01-29 Updated NCBI import & taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
 v0.7.2  2020-10-06 Added ``ena-submit`` command for use with interactive ENA read submission.
 v0.7.1  2020-09-29 Currated *Phytophthora* DB minor updates. Classifier output in edit-graph.
