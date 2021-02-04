@@ -29,6 +29,11 @@ sets of sequences (subject to taxonomy filtering):
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Peronosporales[organism]
 
+- Curated *Peronosporales* ITS1 sequences (at genus level) from file
+  ``database/Peronosporales_ITS1_curated.fasta``. These examples are primarily
+  from uncultured samples, and/or where the in-silico primer trimming of the
+  above NCBI import failed (typically non-*Phytophthora*).
+
 - Observed ITS1 sequences from single isolate positive controls run on a MiSeq
   plate via ``thapbi_pict prepare-reads`` with default settings (plate level
   minimum abundance was 545, but in anycase import minimum default is 1000).

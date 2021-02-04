@@ -2,13 +2,13 @@
 VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-CURATED=Phytophthora_ITS1_curated.fasta
+CURATED_SPECIES=Phytophthora_ITS1_curated.fasta
 TAX=new_taxdump_2021-01-01
 DB=CURATED
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED" -v
+thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED_SPECIES" -v
 
 # Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
 # At the 7th Meeting of the International Union of Forest Research Organisations

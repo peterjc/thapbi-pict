@@ -2,14 +2,16 @@
 VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-CURATED=Phytophthora_ITS1_curated.fasta
+CURATED_SPECIES=Phytophthora_ITS1_curated.fasta
+CURATED_GENUS=Peronosporales_ITS1_curated.fasta
 TAX=new_taxdump_2021-01-01
 DB=CURATED+NCBI
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX"
-thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED"
+thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED_SPECIES"
 thapbi_pict ncbi-import -d "$DB.sqlite" -i 2021-01-28-ITS_Peronosporales_w32.fasta -g --minlen 150 --maxlen 750
+thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED_GENUS" -g
 
 # Add hoc fix for two accessions potentially having wrong genus
 sqlite3 "$DB.sqlite" "DELETE FROM its1_sequence WHERE id IN (SELECT its1_sequence.id FROM its1_sequence JOIN its1_source ON its1_sequence.id = its1_source.its1_id WHERE source_accession IN ('AY742739.1', 'JX122744.1'));"
