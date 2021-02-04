@@ -39,10 +39,9 @@ from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
-MAX_DIST_GENUS = 3  # 1s3g = up to 1bp for species (see "onebp"); up to 3bp for genus
-
 fuzzy_matches = None  # global variable for onebp classifier
 db_seqs = None  # global variable for 1s3g classifier
+max_dist_genus = None  # global variable for 1s?g distance classifier
 
 
 def md5_to_taxon(md5_list, session):
@@ -336,7 +335,7 @@ def onebp_match_in_db(session, seq, debug=False):
     return taxid, genus_species, note
 
 
-def setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
+def _setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
     db_seqs = set()
@@ -345,6 +344,34 @@ def setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
         db_seqs.add(its1.sequence.upper())
     # Now set fuzzy_matches too...
     setup_onebp(session, shared_tmp_dir, debug, cpu)
+
+
+def setup_dist2(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 2."""
+    global max_dist_genus
+    max_dist_genus = 2
+    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+
+
+def setup_dist3(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 3."""
+    global max_dist_genus
+    max_dist_genus = 3
+    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+
+
+def setup_dist4(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 4."""
+    global max_dist_genus
+    max_dist_genus = 4
+    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+
+
+def setup_dist5(session, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 5."""
+    global max_dist_genus
+    max_dist_genus = 5
+    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
 
 
 def dist_in_db(session, seq, debug=False):
@@ -362,7 +389,7 @@ def dist_in_db(session, seq, debug=False):
     # Fall back on brute force! But only on a minority of cases
     for db_seq in db_seqs:
         dist = levenshtein(seq, db_seq)
-        if dist > MAX_DIST_GENUS:
+        if dist > max_dist_genus:
             pass
         elif dist == min_dist:
             # Best equal
@@ -375,7 +402,7 @@ def dist_in_db(session, seq, debug=False):
                 db_seq,
             }
     if not min_dist:
-        return 0, "", f"No matches up to distance {MAX_DIST_GENUS}"
+        return 0, "", f"No matches up to distance {max_dist_genus}"
     note = f"{len(best)} matches at distance {min_dist}"
     assert min_dist > 1  # Should have caught via fuzzy list!
 
@@ -719,7 +746,10 @@ method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
     "onebp": [],
+    "1s2g": [],
     "1s3g": [],
+    "1s4g": [],
+    "1s5g": [],
     "substr": [],
     "swarm": ["swarm"],
     "swarmid": ["swarm"],
@@ -729,7 +759,10 @@ method_classify_file = {
     "blast": method_blast,
     "identity": method_identity,
     "onebp": method_onebp,
+    "1s2g": method_dist,
     "1s3g": method_dist,
+    "1s4g": method_dist,
+    "1s5g": method_dist,
     "substr": method_substr,
     "swarm": method_swarm,
     "swarmid": method_swarmid,
@@ -739,7 +772,10 @@ method_classify_file = {
 method_setup = {
     "blast": setup_blast,
     "onebp": setup_onebp,
-    "1s3g": setup_dist,
+    "1s2g": setup_dist2,
+    "1s3g": setup_dist3,
+    "1s4g": setup_dist4,
+    "1s5g": setup_dist5,
     "swarm": setup_swarm,
     "swarmid": setup_swarm,  # can share the setup with swarm
 }
