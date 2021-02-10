@@ -13,6 +13,9 @@
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :alt: Code style: black
    :target: https://github.com/python/black
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4529395.svg
+   :alt: Zenodo DOI
+   :target: https://doi.org/10.5281/zenodo.4529395
 
 THAPBI *Phytophthora* ITS1 Classifier Tool (PICT)
 =================================================
