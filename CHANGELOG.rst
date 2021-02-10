@@ -6,7 +6,7 @@ Version Date       Notes
 ======= ========== ============================================================================
 v0.7.3  2021-01-29 Updated NCBI import & taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
 v0.7.2  2020-10-06 Added ``ena-submit`` command for use with interactive ENA read submission.
-v0.7.1  2020-09-29 Currated *Phytophthora* DB minor updates. Classifier output in edit-graph.
+v0.7.1  2020-09-29 Curated *Phytophthora* DB minor updates. Classifier output in edit-graph.
 v0.7.0  2020-04-02 Read counts etc as a header in intermediate FASTA files; shown in reports.
 v0.6.15 2020-03-12 Fix regression in read report column sorting.
 v0.6.14 2020-03-12 Merge ``read-summary`` & ``sample-summary`` into new ``summary`` command.
