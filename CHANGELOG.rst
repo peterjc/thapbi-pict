@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.7.5  *Pending*  Refined default DB by adjusting how genus-level NCBI import was trimmed.
 v0.7.4  2021-02-15 Edit-graph genus-only labels. New ``1s2g``, ``1s4g`` & ``1s5g`` classifiers.
 v0.7.3  2021-01-29 Updated NCBI import & taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
 v0.7.2  2020-10-06 Added ``ena-submit`` command for use with interactive ENA read submission.
