@@ -457,10 +457,11 @@ def main(
             node_color = genus_color[genus[0]]
         else:
             node_color = "#8B0000"  # dark red
-        if any(species_level(_) for _ in sp):
+        if sp:
+            # TODO - Remove this Phytophthora specific hack, or automate it?
             node_label = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
         else:
-            # Genus only
+            # No species, not even genus only - fall back on MD5 as node ID
             node_label = ""
         genus = ";".join(sorted({_.split(None, 1)[0] for _ in sp}))
         # DB only entries get size zero, FASTA entries can be up to 100.
