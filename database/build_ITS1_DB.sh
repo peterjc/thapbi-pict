@@ -36,7 +36,11 @@ if [ ! -d thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/ ]; then
 fi
 
 # The known value files are now using Phytophthora austrocedri, not P. austrocedrae
-thapbi_pict curated-seq -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv -o single_isolates/
+
+# This is how the single isolate control FASTA files were prepared,
+# now under version control:
+#
+# thapbi_pict curated-seq -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv -o single_isolates/
 
 thapbi_pict curated-import -d "$DB.sqlite" -i single_isolates/*.fasta
 
