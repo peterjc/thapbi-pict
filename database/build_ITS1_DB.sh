@@ -36,7 +36,9 @@ if [ ! -d thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/ ]; then
 fi
 
 # The known value files are now using Phytophthora austrocedri, not P. austrocedrae
-thapbi_pict seq-import -d "$DB.sqlite" -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv
+thapbi_pict curated-seq -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv -o positive_controls/
+
+for f in positive_controls/*.fasta; do thapbi_pict curated-import -i "$f" -d "$DB.sqlite"; done
 
 # Add the G-BLOCK synthetic controls
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C1');"

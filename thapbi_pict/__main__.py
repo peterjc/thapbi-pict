@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -127,21 +127,19 @@ def ncbi_import(args=None):
     )
 
 
-def seq_import(args=None):
-    """Subcommand to import prepared and classified sequences into a basebase."""
+def curated_seq(args=None):
+    """Subcommand to prepare classified sequences for later curated import."""
     from .seq_import import main
 
+    if args.output:
+        check_output_directory(args.output, must_exist=False)
     return main(
         inputs=args.input,
+        out_dir=args.output,
         method=args.method,
-        db_url=expand_database_argument(args.database),
         min_abundance=args.abundance,
-        min_length=args.minlen,
-        max_length=args.maxlen,
-        name=args.name,
-        validate_species=not args.lax,
-        genus_only=args.genus,
         ignore_prefixes=tuple(args.ignore_prefixes),
+        tmp_dir=args.temp,
         debug=args.verbose,
     )
 
@@ -950,15 +948,12 @@ def main(args=None):
     subcommand_parser.set_defaults(func=ncbi_import)
     del subcommand_parser  # To prevent acidentally adding more
 
-    # seq-import
+    # curated-seq
     subcommand_parser = subparsers.add_parser(
-        "seq-import",
-        description="Load classified sequences from one or more processed "
-        "FASTA files into an ITS1 database. e.g. Using 'known' classifier "
-        "results from single species culture samples, files which can also "
-        "be used for running classifier assessment. "
-        "By default verifies species names against a pre-loaded taxonomy, "
-        "non-matching entries are rejected.",
+        "curated-seq",
+        description="Prepare FASTA files with curated species name (for "
+        "later import to a database with 'thapbi_pict curated-import) "
+        "from prepared single isolate controls (FASTA and TSV files).",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -971,6 +966,15 @@ def main(args=None):
         "method is set via the -m / --method argument).",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="DIRNAME",
+        help="Directory for FASTA files with species names in records. "
+        "Default '-' for stdout.",
+    )
     subcommand_parser.add_argument(
         "-m",
         "--method",
@@ -994,15 +998,9 @@ def main(args=None):
             "be cautious what goes in your ITS1 database)."
         ),
     )
-    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    # min/max length redundant if using prepare-reads?:
-    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
-    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
-    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
-    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
+    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=seq_import)
+    subcommand_parser.set_defaults(func=curated_seq)
     del subcommand_parser  # To prevent acidentally adding more
 
     # curated-import
