@@ -7,6 +7,7 @@
 import sys
 
 from .db_import import import_fasta_file
+from .utils import find_requested_files
 
 
 def parse_fasta_entry(text, known_species=None):
@@ -38,7 +39,7 @@ assert parse_fasta_entry("P13660 Phytophthora aff infestans") == (
 
 
 def main(
-    fasta_file,
+    fasta,
     db_url,
     min_length=0,
     max_length=sys.maxsize,
@@ -48,20 +49,26 @@ def main(
     left_primer=None,
     right_primer=None,
     sep=";",
+    ignore_prefixes=None,
     debug=True,
 ):
     """Implement the ``thapbi_pict curated-import`` command."""
-    return import_fasta_file(
-        fasta_file,
-        db_url,
-        min_length=min_length,
-        max_length=max_length,
-        name=name,
-        debug=debug,
-        fasta_entry_fn=lambda descr: [_.strip() for _ in descr.split(sep)],
-        entry_taxonomy_fn=parse_fasta_entry,
-        validate_species=validate_species,
-        genus_only=genus_only,
-        left_primer=left_primer,
-        right_primer=right_primer,
-    )
+    fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
+    if debug:
+        sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
+
+    for fasta_file in fasta_files:
+        import_fasta_file(
+            fasta_file,
+            db_url,
+            min_length=min_length,
+            max_length=max_length,
+            name=name,
+            debug=debug,
+            fasta_entry_fn=lambda descr: [_.strip() for _ in descr.split(sep)],
+            entry_taxonomy_fn=parse_fasta_entry,
+            validate_species=validate_species,
+            genus_only=genus_only,
+            left_primer=left_primer,
+            right_primer=right_primer,
+        )

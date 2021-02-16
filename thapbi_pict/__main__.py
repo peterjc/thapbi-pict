@@ -151,7 +151,7 @@ def curated_import(args=None):
     from .curated import main
 
     return main(
-        fasta_file=args.input,
+        fasta=args.input,
         db_url=expand_database_argument(args.database),
         min_length=args.minlen,
         max_length=args.maxlen,
@@ -161,6 +161,7 @@ def curated_import(args=None):
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
         sep=args.sep,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -1007,7 +1008,7 @@ def main(args=None):
     # curated-import
     subcommand_parser = subparsers.add_parser(
         "curated-import",
-        description="Load a curated marker FASTA file into a database. "
+        description="Load curated marker FASTA file(s) into a database. "
         "Treats the FASTA title lines as identitier, space, species. "
         "Also supports multiple entries in a single record using a FASTA "
         "title line of identifier1, space, species1, separator, identifier2, "
@@ -1015,9 +1016,7 @@ def main(args=None):
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected.",
     )
-    subcommand_parser.add_argument(
-        "-i", "--input", type=str, required=True, help="One FASTA marker filename."
-    )
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
@@ -1027,6 +1026,7 @@ def main(args=None):
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT_BLANK)
     subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT_BLANK)
     subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=curated_import)
     del subcommand_parser  # To prevent acidentally adding more
