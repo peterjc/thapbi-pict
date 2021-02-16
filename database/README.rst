@@ -2,7 +2,7 @@ Default ITS1 database
 =====================
 
 We include a default ITS1 database with THAPBI PICT using the following three
-sets of sequences (subject to taxonomy filtering):
+sets of biological sequences (subject to taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (at species level) from file
   ``database/Phytophthora_ITS1_curated.fasta``. This is sorted by sequence.
@@ -32,9 +32,11 @@ sets of sequences (subject to taxonomy filtering):
   plate via ``thapbi_pict prepare-reads`` with default settings (plate level
   minimum abundance was 545, but in anycase import minimum default is 1000).
 
+Additionally:
+
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2019-11-01, which means we rejected some
+- This used the NCBI taxonomy as of 2021-01-28, which means we rejected some
   of the curated FASTA file entries or just used them at genus level.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
