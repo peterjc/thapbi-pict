@@ -53,7 +53,7 @@ second :ref:`worked example, with a custom database <recycled_water>`:
 * ``ncbi-import`` - import a FASTA file using the NCBI style naming
 * ``curated-import`` - import a FASTA file where the descriptions are just the
   species names
-* ``import-seq`` - import prepared reads with known species assignment (single
+* ``curated-seq`` - label prepared reads with known species assignment (single
   isolate positive controls)
 * ``conflicts`` - report on genus or species level conflicts in the database
 
