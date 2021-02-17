@@ -44,7 +44,7 @@ fi
 
 time tests/test_fasta-nr.sh
 time tests/test_classify.sh
-time tests/test_seq-import.sh
+time tests/test_curated-seq.sh
 time tests/test_assess.sh
 time tests/test_summary.sh
 time tests/test_edit-graph.sh
