@@ -27,18 +27,14 @@ sqlite3 ITS1_DB.sqlite "UPDATE synonym SET name='Phytophthora austrocedrae' WHER
 # Change 'Phytophthora austrocedrae' main entry to 'Phytophthora austrocedri'
 sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phytophthora' AND species='austrocedrae'"
 # Should now be able to import data using either name.
-# Will use 'Phytophthora austrocedri' in clasffier/assess
-
-if [ ! -d thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/ ]; then
-    mkdir thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
-    echo "Preparing reads from control plate..."
-    thapbi_pict prepare-reads -i thapbi20180709p1_MetaControls/raw_data -o thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
-fi
-
-# The known value files are now using Phytophthora austrocedri, not P. austrocedrae
+# The known value files are using Phytophthora austrocedri, not P. austrocedrae
 
 # This is how the single isolate control FASTA files were prepared,
 # now under version control:
+#
+# mkdir thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
+#
+# thapbi_pict prepare-reads -i thapbi20180709p1_MetaControls/raw_data -o thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/
 #
 # thapbi_pict curated-seq -i thapbi20180709p1_MetaControls/prepared_reads_${VERSION}/*.fasta thapbi20180709p1_MetaControls/positive_controls/*.known.tsv -o single_isolates/
 
