@@ -18,6 +18,8 @@ if [ ! -f tests/run_tests.sh ]; then
     false
 fi
 
+time tests/test_build_db.sh
+
 time tests/test_woody_hosts.sh
 
 time tests/test_ena-submit.sh
