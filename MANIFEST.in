@@ -19,6 +19,7 @@ include database/ITS1_DB.sql
 include database/build_ITS1_DB.sh
 include database/controls.fasta
 include database/Phytophthora_ITS1_curated.fasta
+include database/Nothophytophthora_ITS1_curated.fasta
 include database/2021-01-28-ITS_Peronosporales_w32.fasta
 include database/single_isolates/*.fasta
 

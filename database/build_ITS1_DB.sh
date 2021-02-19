@@ -2,7 +2,6 @@
 VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-CURATED=Phytophthora_ITS1_curated.fasta
 TAX=taxdmp_2021-01-01
 DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
@@ -48,7 +47,7 @@ sqlite3 "$DB.sqlite" "DELETE FROM its1_source WHERE source_accession IN ('AY7427
 # =================
 # Curated sequences
 # =================
-thapbi_pict curated-import -d "$DB.sqlite" -i "$CURATED"
+thapbi_pict curated-import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
