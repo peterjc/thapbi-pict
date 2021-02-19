@@ -39,7 +39,7 @@ thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200
 
 
 # No database, generic FASTA file, have to use explicit abundance thresholds of 1:
-if [ `thapbi_pict edit-graph -d '' -i database/Phytophthora_ITS1_curated.fasta -a 1 -t 1 -m - | grep -c "<node "` -ne 188 ]; then echo "Wrong node count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i database/Phytophthora_ITS1_curated.fasta -a 1 -t 1 -m - | grep -c "<node "` -ne 205 ]; then echo "Wrong node count"; false; fi
 # WARNING: Sequence(s) in database/Phytophthora_ITS1_curated.fasta not using MD5_abundance naming
 # Loaded 167 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 1 left 167 sequences from FASTA files.
