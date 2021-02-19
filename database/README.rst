@@ -13,6 +13,10 @@ sets of biological sequences (subject to taxonomy filtering):
   has been assumed and added to the FASTA in lower case as needed - at the
   time of writing no exceptions are known.
 
+- Curated *Nothophytophthora* ITS1 sequences (mostly at species level) from
+  file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been extended
+  with the assumed 32bp leader.
+
 - NCBI *Peronosporales* (including *Phytophthora*) at genus level, 5386 entries
   in file ``database/2021-01-28-ITS_Peronosporales_w32.fasta`` trimmed to start
   at the expected 32bp leader, and any obvious right removed (which the import
