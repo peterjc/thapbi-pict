@@ -1,5 +1,14 @@
 #Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
-OVERALL	32	7	13	608	0.71	0.99	0.82	0.76	0.0303	0.385
+OVERALL	32	7	13	644	0.71	0.99	0.82	0.76	0.0287	0.385
+Bremia lactucae	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Hyaloperonospora parasitica species group	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora amphigynosa	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora caduca	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora chlamydospora	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora intricata	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora valdiviana	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Nothophytophthora vietnamensis	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
+Peronospora destructor	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora acerina	0	0	0	4	0.00	1.00	0.00	0.00	0.0000	0.000
 Phytophthora agathidicida	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora aleatoria	0	1	0	3	0.00	0.75	0.00	0.00	0.2500	1.000
