@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.7.7  2021-02-19 Expanded default ITS1 DB with additional curated & single isolate sequences.
 v0.7.6  2021-02-17 Replaced ``seq-import`` with ``curated-seq``, used when building default DB.
 v0.7.5  2021-02-16 Refined default DB by adjusting how genus-level NCBI import was trimmed.
 v0.7.4  2021-02-15 Edit-graph genus-only labels. New ``1s2g``, ``1s4g`` & ``1s5g`` classifiers.
