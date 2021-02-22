@@ -32,15 +32,15 @@ sets of biological sequences (subject to taxonomy filtering):
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Peronosporales[organism]
 
-- Observed ITS1 sequences from single isolate positive controls run on a MiSeq
-  plate via ``thapbi_pict prepare-reads`` with default settings (plate level
-  minimum abundance was 545, but in anycase import minimum default is 1000).
+- Observed ITS1 sequences from single isolate positive controls run on MiSeq
+  plates via ``thapbi_pict prepare-reads`` with default settings (minimum
+  minimum abundance 1000 was well above the plate level minimum abundance).
 
 Additionally:
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2021-01-28, which means we rejected some
+- This used the NCBI taxonomy as of 2021-01-01, which means we rejected some
   of the curated FASTA file entries or just used them at genus level.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
