@@ -21,5 +21,4 @@ hmm_trim
 multiple_its1
 
  - Unknown
- - Peronospora
 
