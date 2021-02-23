@@ -40,9 +40,6 @@ thapbi_pict curated-import -d "$DB.sqlite" -i controls.fasta
 # NCBI at genus level
 # ===================
 # thapbi_pict ncbi-import -d "$DB.sqlite" -i 2021-01-28-ITS_Peronosporales_w32.fasta -g --minlen 150 --maxlen 750
-# Add hoc fix for two accessions potentially having wrong genus
-# sqlite3 "$DB.sqlite" "DELETE FROM its1_sequence WHERE id IN (SELECT its1_sequence.id FROM its1_sequence JOIN its1_source ON its1_sequence.id = its1_source.its1_id WHERE source_accession IN ('AY742739.1', 'JX122744.1'));"
-# sqlite3 "$DB.sqlite" "DELETE FROM its1_source WHERE source_accession IN ('AY742739.1', 'JX122744.1');"
 
 # =================
 # Curated sequences
