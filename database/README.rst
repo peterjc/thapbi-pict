@@ -1,7 +1,7 @@
 Default ITS1 database
 =====================
 
-We include a default ITS1 database with THAPBI PICT using the following three
+We include a default ITS1 database with THAPBI PICT using the following four
 sets of biological sequences (subject to taxonomy filtering):
 
 - Curated *Phytophthora* ITS1 sequences (mostly at species level) from file
