@@ -12,7 +12,7 @@ recursive-include thapbi_pict *.py
 recursive-include thapbi_pict/hmm controls.hmm*
 include thapbi_pict/ITS1_DB.sqlite
 
-# Deliberately not risking everying in database/ via wildcards.
+# Deliberately not risking everything in database/ via wildcards.
 # e.g. NCBI taxonomy or symlinks to control plate positive controls.
 include database/README.rst
 include database/ITS1_DB.sql
