@@ -1,4 +1,4 @@
-#TaxID	Species	Description	Date	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Seq-count	Unknown	Peronospora	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora ramorum
-4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	70000	69000	68000	65000	63000	0	0	63000	0	63000	0	0	0	0
-				hmm_trim	76000	75000	74000	73000	71864	68851	0	3013	409	0	296	518	160	1630
-				multiple_its1	31000	30000	29000	28000	27281	13702	13579	0	0	0	0	0	0	0
+#TaxID	Species	Description	Date	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Seq-count	Unknown	Phytophthora	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora ramorum
+4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	70000	69000	68000	65000	63000	0	63000	0	63000	0	0	0	0
+				hmm_trim	76000	75000	74000	73000	71864	68851	3013	409	0	296	518	160	1630
+				multiple_its1	31000	30000	29000	28000	27281	27281	0	0	0	0	0	0	0
