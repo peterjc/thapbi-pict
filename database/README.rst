@@ -17,12 +17,12 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been extended
   with the assumed 32bp leader.
 
-- NCBI *Peronosporales* (including *Phytophthora*) at genus level, 5386 entries
+- NCBI *Peronosporales* (including *Phytophthora*) at genus level, 2971 entries
   in file ``database/2021-01-28-ITS_Peronosporales_w32.fasta`` trimmed to start
   at the expected 32bp leader, and any obvious right removed (which the import
   would do anyway - but this gives a smaller more useful intermediate file), using::
 
-      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA --action retain \
+      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
       --discard-untrimmed 2021-01-28-ITS_Peronosporales_18535.fasta \
       | cutadapt -a GYRGGGACGAAAGTCYYTGC --fasta /dev/stdin \
       -o 2021-01-28-ITS_Peronosporales_w32.fasta
