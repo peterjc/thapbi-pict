@@ -306,6 +306,7 @@ def summary(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        metadata_pooling=args.metapooling,
         require_metadata=args.requiremeta,
         show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -428,6 +429,7 @@ def pipeline(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        metadata_pooling=args.metapooling,
         require_metadata=args.requiremeta,
         show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -777,6 +779,14 @@ ARG_METAGROUPS = dict(  # noqa: C408
     "will be together).",
 )
 
+# "-p", "--metapooling",
+ARG_METAPOOLING = dict(  # noqa: C408
+    action="store_true",
+    help="If using metadata, should all rows with the same selected column "
+    "values be pooled? Looks at the -c / --metacols entries except sample "
+    "filename stems in the -x / --metaindex column. Default no pooling.",
+)
+
 # "-f", "--metafields",
 ARG_METAFIELDS = dict(  # noqa: C408
     type=int,
@@ -879,6 +889,7 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
+    subcommand_parser.add_argument("-p", "--metapooling", **ARG_METAPOOLING)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     # Can't use -s for --showdb as already used for sample intermediates
     subcommand_parser.add_argument(
@@ -1377,6 +1388,7 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
+    subcommand_parser.add_argument("-p", "--metapooling", **ARG_METAPOOLING)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)

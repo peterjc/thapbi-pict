@@ -602,6 +602,7 @@ def load_metadata(
         )
     if min(value_cols) < 0:
         sys.exit("ERROR: Invalid metadata output column, should all be positive.")
+
     if metadata_index:
         sample_col = int(metadata_index) - 1
         if sample_col < 0:
