@@ -828,8 +828,8 @@ def main(args=None):
         "pipeline",
         description="Run default classification pipeline on paired FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
-        "classify, sample-summary, read-summary, edit-graph) with their defaults, "
-        "with only a minority of settings available here.",
+        "classify, summary, edit-graph) with their defaults, with only a minority of "
+        "settings available here.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
