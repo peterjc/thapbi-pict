@@ -709,7 +709,7 @@ def load_metadata(
     # Select desired columns,
     def make_unique_but_keep_order(semi_colon_list):
         answer = []
-        for value in semi_colon_list.split(";"):
+        for value in semi_colon_list.split(metadata_index_sep):
             value = value.strip()
             if not value:
                 pass
