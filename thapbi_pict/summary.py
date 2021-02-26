@@ -107,10 +107,11 @@ def sample_summary(
     # ----------
     handle = open(output, "w")
     handle.write(
-        "#%sSequencing sample\t%sSeq-count\t%s\t%s\n"
+        "#%sSequencing sample\t%s%s\t%s\t%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
+            "Sequenced-samples" if pooling else "Read-count",
             "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
             "\t".join(species_columns),
         )
@@ -171,7 +172,10 @@ def sample_summary(
     for offset, name in enumerate(stats_fields):
         worksheet.write_string(current_row, col_offset + offset, name)
     col_offset += len(stats_fields)
-    worksheet.write_string(current_row, col_offset, "Seq-count")  # offset reference!
+    # This is what our offset references:
+    worksheet.write_string(
+        current_row, col_offset, "Sequenced-samples" if pooling else "Read-count"
+    )
     for offset, genus in enumerate(genus_predictions):
         worksheet.write_string(
             current_row, col_offset + 1 + offset, genus if genus else "Unknown"
@@ -450,7 +454,7 @@ def read_summary(
     # TSV main header
     # ---------------
     handle.write(
-        "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
+        "#ITS1-MD5\t%s-predictions\tSequence\tSequenced-samples"
         "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(metadata))
     )
     handle.write(
@@ -485,7 +489,7 @@ def read_summary(
     worksheet.write_string(current_row, 0, "ITS1-MD5")
     worksheet.write_string(current_row, 1, method + "-predictions")
     worksheet.write_string(current_row, 2, "Sequence")
-    worksheet.write_string(current_row, 3, "Sample-count")
+    worksheet.write_string(current_row, 3, "Sequenced-samples")
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")
     for s, sample in enumerate(metadata):
