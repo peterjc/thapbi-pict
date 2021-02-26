@@ -543,12 +543,15 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
         for line in handle:
             if line.startswith("#"):
                 continue
-            if line.count("\t") != 3:
+            if line.count("\t") == 2:
+                name, taxid, genus_species = line.split("\t", 3)
+            elif line.count("\t") == 3:
+                name, taxid, genus_species, _ = line.split("\t", 3)
+            else:
                 sys.exit(
-                    f"ERROR: {tabular_file} is not 4 column TSV"
-                    f" (name, taxid, genus-species, note):\n{line}"
+                    f"ERROR: {tabular_file} is not 3 or 4 column TSV"
+                    f" (name, taxid, genus-species, optional note):\n{line}"
                 )
-            name, taxid, genus_species, _ = line.split("\t", 3)
             if name == "*":
                 raise ValueError("Wildcard species name found")
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
