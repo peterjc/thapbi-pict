@@ -574,6 +574,7 @@ def load_metadata(
     metadata_groups=None,
     metadata_name_row=1,
     metadata_index=0,
+    metadata_pooling=0,
     metadata_index_sep=";",
     metadata_sort=True,
     ignore_prefixes=("Undetermined",),
@@ -594,6 +595,11 @@ def load_metadata(
     be sequenced more than once (e.g. technical replicates). These sample
     names are matched against the file name stems, see function find_metadata.
 
+    The optional pooling column will merge all rows with the same value in
+    that column - for example merging all samples by location, or merging all
+    technical replicates by original sample name. This will combine all the
+    index column entries, but all other requested metadata must be consistent.
+
     if metadata_sort=True, then the table rows are sorted based on the
     requested metadata - otherwise the table row order is preserved.
 
@@ -601,14 +607,15 @@ def load_metadata(
 
     - Ordered dict with samples as keys, lists of N metadata as values
     - list of the N field names
-    - Grouping offset into the N values
+    - Grouping offset into the N values (integer)
+    - Pooling active (boolean)
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, [], 0
+        return {}, [], 0, False
 
     if metadata_groups and not metadata_cols:
         sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
@@ -629,6 +636,7 @@ def load_metadata(
         )
     if min(value_cols) < 0:
         sys.exit("ERROR: Invalid metadata output column, should all be positive.")
+
     if metadata_index:
         sample_col = int(metadata_index) - 1
         if sample_col < 0:
@@ -642,6 +650,27 @@ def load_metadata(
         sys.stderr.write(
             f"DEBUG: Matching sample names to metadata column {sample_col + 1}\n"
         )
+
+    if metadata_pooling:
+        pool_col = int(metadata_pooling) - 1
+        if pool_col < 0:
+            sys.exit(
+                "ERROR: Invalid metadata pooling column, should be positive,"
+                f" not {metadata_pooling!r}."
+            )
+        if pool_col not in value_cols:
+            sys.exit("ERROR: Pooling column (-p) must be one of those requested (-c)")
+        if pool_col == sample_col:
+            sys.exit("ERROR: Pooling column (-p) must differ from indexing column (-x)")
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: Sample pooling on metadata column {pool_col + 1}\n"
+            )
+        pooling = True
+    else:
+        pool_col = None
+        pooling = False
+        sys.stderr.write("DEBUG: Sample pooling inactive\n")
 
     if metadata_groups:
         try:
@@ -702,6 +731,35 @@ def load_metadata(
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
     del lines
 
+    # Apply pooling
+    if pooling:
+        # Ordered dict, key on pool value
+        pooled_meta = {}  # ordered dict, key on pool column value
+        pooled_samples = {}  # key on pool column, values are sample list
+        for values in meta_plus_idx:
+            key = values[pool_col]
+            if key not in pooled_meta:
+                pooled_meta[key] = values[:-1]  # exclude sample
+                pooled_samples[key] = values[-1]
+            else:
+                pooled_samples[key] = (
+                    pooled_samples[key] + metadata_index_sep + values[-1]
+                )
+                if pooled_meta[key] != values[:-1]:
+                    sys.exit(
+                        "ERROR: Inconsistent metadata for pool key "
+                        f"{key!r}:\n{pooled_meta[key]}\n{values[:-1]}"
+                    )
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: {len(meta_plus_idx)} metadata rows reduced to "
+                f"{len(pooled_samples)} by pooling\n"
+            )
+        # Rebuild meta_plus_idx
+        meta_plus_idx = [
+            pooled_meta[key] + [pooled_samples[key]] for key in pooled_meta
+        ]
+
     # Sort on metadata if requested
     if metadata_sort:
         meta_plus_idx.sort()
@@ -748,7 +806,7 @@ def load_metadata(
             f" {sorted(bad)[0]} (etc)"
         )
 
-    return metadata, names, group_col
+    return metadata, names, group_col, pooling
 
 
 def color_bands(meta_groups, sample_color_bands, debug=False):

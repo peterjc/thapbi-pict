@@ -61,6 +61,7 @@ def sample_summary(
     metadata,
     meta_names,
     group_col,
+    pooling,
     sample_stats,
     stats_fields,
     output,
@@ -342,6 +343,7 @@ def read_summary(
     metadata,
     meta_names,
     group_col,
+    pooling,
     sample_stats,
     stats_fields,
     output,
@@ -596,6 +598,7 @@ def main(
     metadata_groups=None,
     metadata_fieldnames=None,
     metadata_index=None,
+    metadata_pooling=None,
     require_metadata=False,
     ignore_prefixes=None,
     debug=False,
@@ -608,12 +611,13 @@ def main(
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
 
-    (metadata, meta_names, group_col,) = load_metadata(
+    (metadata, meta_names, group_col, pooling,) = load_metadata(
         metadata_file,
         metadata_cols,
         metadata_groups,
         metadata_fieldnames,
         metadata_index,
+        metadata_pooling,
         metadata_sort=True,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
@@ -645,35 +649,42 @@ def main(
         # Include version number here?
         stem = os.path.join(out_dir, "thapbi-pict")
 
-    # Not loading the post-abundance-threshold count, or the threshold.
-    # Count should match the Seq-count column, but will not if running
-    # report with higher abundance threshold - simpler to exclude them:
-    stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt")
-    try:
-        sample_stats = load_fasta_headers(
-            fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt"), -1
-        )
-    except KeyError as err:
-        sys.stderr.write(
-            f"WARNING: Missing header information in FASTA file(s): {err}\n"
-        )
+    if pooling:
+        # Raw stats about individual FASTQ files not appropriate
         sample_stats = {}
         stats_fields = []
+    else:
+        # Not loading the post-abundance-threshold count, or the threshold.
+        # Count should match the Seq-count column, but will not if running
+        # report with higher abundance threshold - simpler to exclude them:
+        stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt")
+        try:
+            sample_stats = load_fasta_headers(
+                fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt"), -1
+            )
+        except KeyError as err:
+            sys.stderr.write(
+                f"WARNING: Missing header information in FASTA file(s): {err}\n"
+            )
+            sample_stats = {}
+            stats_fields = []
 
-    bad_fields = []
-    for i in range(len(stats_fields)):
-        if -1 in (_[i] for _ in sample_stats.values()):
-            bad_fields.append(i)
-    if bad_fields:
-        for sample, value in sample_stats.items():
-            sample_stats[sample] = [
-                _ for i, _ in enumerate(value) if i not in bad_fields
+        bad_fields = []
+        for i in range(len(stats_fields)):
+            if -1 in (_[i] for _ in sample_stats.values()):
+                bad_fields.append(i)
+        if bad_fields:
+            for sample, value in sample_stats.items():
+                sample_stats[sample] = [
+                    _ for i, _ in enumerate(value) if i not in bad_fields
+                ]
+            stats_fields = [
+                _ for i, _ in enumerate(stats_fields) if i not in bad_fields
             ]
-        stats_fields = [_ for i, _ in enumerate(stats_fields) if i not in bad_fields]
-        sys.stderr.write(
-            f"WARNING: Dropping {len(bad_fields)} missing stats column(s)\n"
-        )
-    del bad_fields
+            sys.stderr.write(
+                f"WARNING: Dropping {len(bad_fields)} missing stats column(s)\n"
+            )
+        del bad_fields
 
     missing_meta = set()
     md5_abundance = Counter()
@@ -719,6 +730,7 @@ def main(
         metadata,
         meta_names,
         group_col,
+        pooling,
         sample_stats,
         stats_fields,
         output=f"{stem}.samples.{method}.tsv",
@@ -743,6 +755,7 @@ def main(
         metadata,
         meta_names,
         group_col,
+        pooling,
         sample_stats,
         stats_fields,
         output=f"{stem}.reads.{method}.tsv",
