@@ -55,7 +55,9 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
 
 
 def sample_summary(
-    tsv_files,
+    missing_meta,
+    sample_species_counts,
+    # tsv_files,
     metadata,
     meta_names,
     group_col,
@@ -76,38 +78,26 @@ def sample_summary(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
-    missing_meta = set()
     genus_predictions = set()
     sample_genus_counts = {}
     species_predictions = set()  # includes A;B;C ambiguous entries
-    sample_species_counts = {}
-    for sample, predicted_file in tsv_files.items():
-        if sample not in metadata:
-            missing_meta.add(sample)
-        sample_species_counts[sample] = Counter()
+    sample_genus_counts = {}
+    for sample in sample_species_counts:
         sample_genus_counts[sample] = Counter()
-        for name, _taxid_list, sp_list in parse_species_tsv(
-            predicted_file, min_abundance
-        ):
+        for sp_list, abundance in sample_species_counts[sample].items():
             species_predictions.add(sp_list)  # as string with any ; included
-            sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
-            genus_list = {sp.split(" ", 1)[0] for sp in sp_list.split(";")}
-            genus_predictions.update(genus_list)
+            genus_list = {sp_list.split(" ", 1)[0] for sp in sp_list.split(";")}
             if len(genus_list) > 1:
                 sys.stderr.write(
-                    f"WARNING: Conflicting genus for {name} from {sample}\n"
+                    f"WARNING: Conflicting genus from {sample}: {genus_list}\n"
                 )
+            genus_predictions.update(genus_list)
             for genus in genus_list:
-                sample_genus_counts[sample][genus] += abundance_from_read_name(name)
+                sample_genus_counts[sample][genus] += abundance
+
     species_predictions = sorted(species_predictions)  # turn into a list
     genus_predictions = sorted(genus_predictions)  # turn into a list
     species_columns = [_ for _ in species_predictions if _ not in genus_predictions]
-
-    if debug:
-        sys.stderr.write(
-            f"DEBUG: {len(tsv_files)} samples with predictions for"
-            f" {len(genus_predictions)} genera\n"
-        )
 
     # Open files and write headers
     # ============================
@@ -148,11 +138,14 @@ def sample_summary(
             "#CCF7FF",  # blue
         ]
     ]
-    sample_formats = color_bands(
-        [metadata[_][group_col] for _ in metadata],
-        sample_color_bands,
-        debug=debug,
-    )
+    if meta_names:
+        sample_formats = color_bands(
+            [metadata[_][group_col] for _ in metadata],
+            sample_color_bands,
+            debug=debug,
+        )
+    else:
+        sample_formats = []
 
     # Excel header
     # ------------
@@ -340,8 +333,12 @@ def sample_summary(
 
 
 def read_summary(
-    fasta_files,
-    tsv_files,
+    md5_to_seq,
+    md5_species,
+    md5_abundance,
+    abundance_by_samples,
+    # fasta_files,
+    # tsv_files,
     metadata,
     meta_names,
     group_col,
@@ -360,43 +357,6 @@ def read_summary(
     """
     if not output:
         sys.exit("ERROR: No output file specified.\n")
-
-    missing_meta = set()
-    md5_abundance = Counter()
-    abundance_by_samples = {}
-    md5_species = {}
-    md5_to_seq = {}
-
-    if debug:
-        sys.stderr.write("Loading FASTA sequences and abundances\n")
-    for sample, fasta_file in fasta_files.items():
-        if sample not in metadata:
-            missing_meta.add(sample)
-        with open(fasta_file) as handle:
-            for title, seq in SimpleFastaParser(handle):
-                md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
-                if min_abundance > 1 and abundance < min_abundance:
-                    continue
-                abundance_by_samples[md5, sample] = abundance
-                md5_abundance[md5] += abundance
-                md5_to_seq[md5] = seq
-                md5_species[md5] = set()
-
-    if debug:
-        sys.stderr.write(f"Loading predictions for {method}\n")
-    for sample, predicted_file in tsv_files.items():
-        # TODO: Look at taxid here?
-        for name, _, sp in parse_species_tsv(predicted_file, min_abundance):
-            md5, abundance = split_read_name_abundance(name)
-            if min_abundance > 1 and abundance < min_abundance:
-                continue
-            assert abundance_by_samples[md5, sample] == abundance, name
-            if sp:
-                md5_species[md5].update(sp.split(";"))
-
-    if missing_meta:
-        for sample in sample_sort(missing_meta):
-            metadata[sample] = [""] * len(meta_names)
 
     # Excel setup
     # -----------
@@ -586,6 +546,7 @@ def read_summary(
     data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
         sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in metadata]
+        assert sample_counts, f"{md5} sample counts: {sample_counts!r}"
         handle.write(
             "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
@@ -718,8 +679,47 @@ def main(
         )
     del bad_fields
 
+    missing_meta = set()
+    md5_abundance = Counter()
+    abundance_by_samples = {}
+    md5_species = {}  # sp values are sets (e.g. ambiguous matches)
+    md5_to_seq = {}
+    sample_species_counts = {}  # 2nd key is sp list with semi-colons
+
+    if debug:
+        sys.stderr.write("Loading FASTA sequences and abundances\n")
+    for sample, fasta_file in fasta_files.items():
+        if sample not in metadata:
+            missing_meta.add(sample)
+        with open(fasta_file) as handle:
+            for title, seq in SimpleFastaParser(handle):
+                md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
+                if min_abundance > 1 and abundance < min_abundance:
+                    continue
+                abundance_by_samples[md5, sample] = abundance
+                md5_abundance[md5] += abundance
+                md5_to_seq[md5] = seq
+                md5_species[md5] = set()
+    if debug:
+        sys.stderr.write(f"Loading predictions for {method}\n")
+    for sample, predicted_file in tsv_files.items():
+        sample_species_counts[sample] = Counter()
+        if sample not in metadata:
+            assert sample in missing_meta, sample
+        # TODO: Look at taxid here?
+        for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
+            md5, abundance = split_read_name_abundance(name)
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
+            assert abundance_by_samples[md5, sample] == abundance, name
+            if sp_list:
+                md5_species[md5].update(sp_list.split(";"))
+
+            sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
+
     sample_summary(
-        tsv_files,
+        missing_meta,
+        sample_species_counts,
         metadata,
         meta_names,
         group_col,
@@ -734,9 +734,16 @@ def main(
     )
     sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
 
+    if missing_meta:
+        for sample in sample_sort(missing_meta):
+            assert sample not in metadata, sample
+            metadata[sample] = [""] * len(meta_names)
+
     read_summary(
-        fasta_files,
-        tsv_files,
+        md5_to_seq,
+        md5_species,
+        md5_abundance,
+        abundance_by_samples,
         metadata,
         meta_names,
         group_col,
