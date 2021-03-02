@@ -62,6 +62,7 @@ def sample_summary(
     meta_names,
     group_col,
     pooling,
+    pooled_samples,
     sample_stats,
     stats_fields,
     output,
@@ -107,11 +108,12 @@ def sample_summary(
     # ----------
     handle = open(output, "w")
     handle.write(
-        "#%sSequencing sample\t%s%s\t%s\t%s\n"
+        "#%s%s\t%s%s\t%s\t%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
+            "Sequenced-samples" if pooling else "Sequenced-sample",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
-            "Sequenced-samples" if pooling else "Read-count",
+            "Read-count",
             "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
             "\t".join(species_columns),
         )
@@ -167,15 +169,15 @@ def sample_summary(
     for offset, name in enumerate(meta_names):
         worksheet.write_string(current_row, offset, name)
     col_offset = len(meta_names)
-    worksheet.write_string(current_row, col_offset, "Sequencing sample")
+    worksheet.write_string(
+        current_row, col_offset, "Sequenced-samples" if pooling else "Sequenced-sample"
+    )
     col_offset += 1
     for offset, name in enumerate(stats_fields):
         worksheet.write_string(current_row, col_offset + offset, name)
     col_offset += len(stats_fields)
     # This is what our offset references:
-    worksheet.write_string(
-        current_row, col_offset, "Sequenced-samples" if pooling else "Read-count"
-    )
+    worksheet.write_string(current_row, col_offset, "Read-count")
     for offset, genus in enumerate(genus_predictions):
         worksheet.write_string(
             current_row, col_offset + 1 + offset, genus if genus else "Unknown"
@@ -236,7 +238,7 @@ def sample_summary(
             # ---
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
-            handle.write(sample + "\t")
+            handle.write(pooled_samples.get(sample, sample) + "\t")
             if stats_fields:
                 handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
             handle.write(
@@ -266,7 +268,12 @@ def sample_summary(
             assert col_offset == len(meta_names) + 1 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
-            worksheet.write_string(current_row, len(meta_names), sample, cell_format)
+            worksheet.write_string(
+                current_row,
+                len(meta_names),
+                pooled_samples.get(sample, sample),
+                cell_format,
+            )
             for offset, _ in enumerate(stats_fields):
                 worksheet.write_number(
                     current_row,
@@ -348,6 +355,7 @@ def read_summary(
     meta_names,
     group_col,
     pooling,
+    pooled_samples,
     sample_stats,
     stats_fields,
     output,
@@ -493,7 +501,12 @@ def read_summary(
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")
     for s, sample in enumerate(metadata):
-        worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
+        worksheet.write_string(
+            current_row,
+            LEADING_COLS + s,
+            pooled_samples.get(sample, sample),
+            sample_formats[s],
+        )
     current_row += 1
     first_data_row = current_row
     worksheet.write_string(current_row, 0, "TOTAL or MAX")
@@ -615,7 +628,7 @@ def main(
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
 
-    (metadata, meta_names, group_col, pooling,) = load_metadata(
+    (metadata, meta_names, group_col, pooling, pooled_samples,) = load_metadata(
         metadata_file,
         metadata_cols,
         metadata_groups,
@@ -692,7 +705,7 @@ def main(
 
     missing_meta = set()
     md5_abundance = Counter()
-    abundance_by_samples = {}
+    abundance_by_samples = Counter()
     md5_species = {}  # sp values are sets (e.g. ambiguous matches)
     md5_to_seq = {}
     sample_species_counts = {}  # 2nd key is sp list with semi-colons
@@ -700,33 +713,38 @@ def main(
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for sample, fasta_file in fasta_files.items():
-        if sample not in metadata:
+        key = pooling.get(sample, sample)  # fall back on sample
+        if key not in metadata:
+            assert key not in pooling, key
+            assert sample not in metadata, f"{sample} in pool {key}?"
             missing_meta.add(sample)
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
                 md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                 if min_abundance > 1 and abundance < min_abundance:
                     continue
-                abundance_by_samples[md5, sample] = abundance
+                abundance_by_samples[md5, key] += abundance
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
     if debug:
         sys.stderr.write(f"Loading predictions for {method}\n")
     for sample, predicted_file in tsv_files.items():
-        sample_species_counts[sample] = Counter()
-        if sample not in metadata:
-            assert sample in missing_meta, sample
+        key = pooling.get(sample, sample)  # fall back on sample
+        if key not in sample_species_counts:
+            sample_species_counts[key] = Counter()
+        if key not in metadata:
+            assert key in missing_meta, f"{key} not in {missing_meta}"
         # TODO: Look at taxid here?
         for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
             md5, abundance = split_read_name_abundance(name)
             if min_abundance > 1 and abundance < min_abundance:
                 continue
-            assert abundance_by_samples[md5, sample] == abundance, name
+            assert abundance_by_samples[md5, key] >= abundance  # pool can be more
             if sp_list:
                 md5_species[md5].update(sp_list.split(";"))
 
-            sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
+            sample_species_counts[key][sp_list] += abundance_from_read_name(name)
 
     sample_summary(
         missing_meta,
@@ -735,6 +753,7 @@ def main(
         meta_names,
         group_col,
         pooling,
+        pooled_samples,
         sample_stats,
         stats_fields,
         output=f"{stem}.samples.{method}.tsv",
@@ -760,6 +779,7 @@ def main(
         meta_names,
         group_col,
         pooling,
+        pooled_samples,
         sample_stats,
         stats_fields,
         output=f"{stem}.reads.{method}.tsv",

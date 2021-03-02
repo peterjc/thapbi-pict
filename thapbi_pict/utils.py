@@ -605,17 +605,18 @@ def load_metadata(
 
     Return values:
 
-    - Ordered dict with samples as keys, lists of N metadata as values
+    - Ordered dict with samples/pools as keys, lists of N metadata as values
     - list of the N field names
     - Grouping offset into the N values (integer)
-    - Pooling active (boolean)
+    - Pooling mapping filename stems to samples/pools (or empty dict)
+    - Pooling mapping samples/pools to filename stems (or empty dict)
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, [], 0, False
+        return {}, [], 0, {}, {}
 
     if metadata_groups and not metadata_cols:
         sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
@@ -651,6 +652,8 @@ def load_metadata(
             f"DEBUG: Matching sample names to metadata column {sample_col + 1}\n"
         )
 
+    pooling = {}
+    pooled_samples = {}
     if metadata_pooling:
         pool_col = int(metadata_pooling) - 1
         if pool_col < 0:
@@ -666,10 +669,8 @@ def load_metadata(
             sys.stderr.write(
                 f"DEBUG: Sample pooling on metadata column {pool_col + 1}\n"
             )
-        pooling = True
     else:
         pool_col = None
-        pooling = False
         sys.stderr.write("DEBUG: Sample pooling inactive\n")
 
     if metadata_groups:
@@ -732,15 +733,17 @@ def load_metadata(
     del lines
 
     # Apply pooling
-    if pooling:
+    if pool_col:
         # Ordered dict, key on pool value
         pooled_meta = {}  # ordered dict, key on pool column value
         pooled_samples = {}  # key on pool column, values are sample list
         for values in meta_plus_idx:
+            sample_stem = values[-1]
             key = values[pool_col]
+            pooling[sample_stem] = values[pool_col]
             if key not in pooled_meta:
                 pooled_meta[key] = values[:-1]  # exclude sample
-                pooled_samples[key] = values[-1]
+                pooled_samples[key] = sample_stem
             else:
                 pooled_samples[key] = (
                     pooled_samples[key] + metadata_index_sep + values[-1]
@@ -791,6 +794,8 @@ def load_metadata(
                 continue
             elif sample in metadata:
                 bad.add(sample)
+            elif pool_col:
+                metadata[pooling[sample]] = meta_values
             else:
                 metadata[sample] = meta_values
 
@@ -806,7 +811,7 @@ def load_metadata(
             f" {sorted(bad)[0]} (etc)"
         )
 
-    return metadata, names, group_col, pooling
+    return metadata, names, group_col, pooling, pooled_samples
 
 
 def color_bands(meta_groups, sample_color_bands, debug=False):
