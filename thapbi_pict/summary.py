@@ -452,7 +452,7 @@ def read_summary(
         "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(metadata))
     )
     handle.write(
-        "TOTAL\t-\t-\t%i\t%i\t%i\t%s\n"
+        "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             sum(
                 1
@@ -492,7 +492,7 @@ def read_summary(
         worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
     current_row += 1
     first_data_row = current_row
-    worksheet.write_string(current_row, 0, "TOTAL")
+    worksheet.write_string(current_row, 0, "TOTAL or MAX")
     worksheet.write_string(current_row, 1, "-")
     worksheet.write_string(current_row, 2, "-")
     worksheet.write_number(
