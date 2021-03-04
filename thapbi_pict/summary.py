@@ -454,11 +454,9 @@ def read_summary(
     handle.write(
         "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
-            sum(
-                1
+            max(
+                sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
                 for md5 in md5_to_seq
-                for sample in metadata
-                if (md5, sample) in abundance_by_samples
             ),
             max(
                 (
@@ -498,11 +496,9 @@ def read_summary(
     worksheet.write_number(
         current_row,
         3,
-        sum(
-            1
+        max(
+            sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
             for md5 in md5_to_seq
-            for sample in metadata
-            if (md5, sample) in abundance_by_samples
         ),
     )
     worksheet.write_number(
