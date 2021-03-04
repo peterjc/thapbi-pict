@@ -111,7 +111,9 @@ def sample_summary(
         "#%s%s\t%s%s\t%s\t%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
-            "Sequenced-samples" if pooling else "Sequenced-sample",
+            "Sequenced-sample-count\tSequenced-samples"
+            if pooling
+            else "Sequenced-sample",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
             "Read-count",
             "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
@@ -169,6 +171,9 @@ def sample_summary(
     for offset, name in enumerate(meta_names):
         worksheet.write_string(current_row, offset, name)
     col_offset = len(meta_names)
+    if pooling:
+        worksheet.write_string(current_row, col_offset, "Sequenced-sample-count")
+        col_offset += 1
     worksheet.write_string(
         current_row, col_offset, "Sequenced-samples" if pooling else "Sequenced-sample"
     )
@@ -238,7 +243,12 @@ def sample_summary(
             # ---
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
-            handle.write(pooled_samples.get(sample, sample) + "\t")
+            if pooling:
+                samples = pooled_samples.get(sample, sample)
+                handle.write(f"{len(samples.split(';'))}\t{samples}")
+                del samples
+            else:
+                handle.write(sample + "\t")
             if stats_fields:
                 handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
             handle.write(
@@ -265,22 +275,41 @@ def sample_summary(
                 cell_format = None
             current_row += 1
             assert len(meta_names) == len(metadata)
-            assert col_offset == len(meta_names) + 1 + len(stats_fields)
+            if pooling:
+                assert col_offset == len(meta_names) + 2
+            else:
+                assert col_offset == len(meta_names) + 1 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
-            worksheet.write_string(
-                current_row,
-                len(meta_names),
-                pooled_samples.get(sample, sample),
-                cell_format,
-            )
-            for offset, _ in enumerate(stats_fields):
+            if pooling:
+                samples = pooled_samples.get(sample, sample)
                 worksheet.write_number(
                     current_row,
-                    len(meta_names) + 1 + offset,
-                    sample_stats[sample][offset],
+                    len(meta_names),
+                    len(samples.split(";")),
                     cell_format,
                 )
+                worksheet.write_string(
+                    current_row,
+                    len(meta_names) + 1,
+                    samples,
+                    cell_format,
+                )
+                del samples
+            else:
+                worksheet.write_string(
+                    current_row,
+                    len(meta_names),
+                    pooled_samples.get(sample, sample),
+                    cell_format,
+                )
+                for offset, _ in enumerate(stats_fields):
+                    worksheet.write_number(
+                        current_row,
+                        len(meta_names) + 1 + offset,
+                        sample_stats[sample][offset],
+                        cell_format,
+                    )
             worksheet.write_number(
                 current_row,
                 col_offset,
@@ -348,6 +377,8 @@ def read_summary(
     md5_to_seq,
     md5_species,
     md5_abundance,
+    md5_max_abundance,
+    md5_found_in,
     abundance_by_samples,
     # fasta_files,
     # tsv_files,
@@ -468,18 +499,8 @@ def read_summary(
     handle.write(
         "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
-            max(
-                sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
-                for md5 in md5_to_seq
-            ),
-            max(
-                (
-                    abundance_by_samples.get((md5, sample), 0)
-                    for md5 in md5_to_seq
-                    for sample in metadata
-                ),
-                default=0,
-            ),
+            max(md5_found_in.values()),
+            max(md5_max_abundance.values()),
             sum(md5_abundance.values()),
             "\t".join(
                 str(
@@ -515,22 +536,12 @@ def read_summary(
     worksheet.write_number(
         current_row,
         3,
-        max(
-            sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
-            for md5 in md5_to_seq
-        ),
+        max(md5_found_in.values()),
     )
     worksheet.write_number(
         current_row,
         4,
-        max(
-            (
-                abundance_by_samples.get((md5, sample), 0)
-                for md5 in md5_to_seq
-                for sample in metadata
-            ),
-            default=0,
-        ),
+        max(md5_max_abundance.values()),
     )
     worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
     for s, sample in enumerate(metadata):
@@ -551,7 +562,7 @@ def read_summary(
             md5,
             ";".join(sorted(md5_species[md5])),
             md5_to_seq[md5],
-            sum(1 for _ in metadata if (md5, _) in abundance_by_samples),
+            md5_found_in[md5],
             total_abundance,
         ]
         for md5, total_abundance in md5_abundance.items()
@@ -569,7 +580,7 @@ def read_summary(
                 sp,
                 seq,
                 md5_in_xxx_samples,
-                max(sample_counts),
+                md5_max_abundance[md5],
                 total_abundance,
                 "\t".join(str(_) for _ in sample_counts),
             )
@@ -578,7 +589,7 @@ def read_summary(
         worksheet.write_string(current_row, 1, sp)
         worksheet.write_string(current_row, 2, seq)
         worksheet.write_number(current_row, 3, md5_in_xxx_samples)
-        worksheet.write_number(current_row, 4, max(sample_counts))
+        worksheet.write_number(current_row, 4, md5_max_abundance[md5])
         worksheet.write_number(current_row, 5, total_abundance)
         for s, count in enumerate(sample_counts):
             worksheet.write_number(
@@ -705,6 +716,8 @@ def main(
 
     missing_meta = set()
     md5_abundance = Counter()
+    md5_max_abundance = {}  # max per FASTQ sample
+    md5_found_in = Counter()  # count of FASTQ samples
     abundance_by_samples = Counter()
     md5_species = {}  # sp values are sets (e.g. ambiguous matches)
     md5_to_seq = {}
@@ -725,6 +738,8 @@ def main(
                     continue
                 abundance_by_samples[md5, key] += abundance
                 md5_abundance[md5] += abundance
+                md5_max_abundance[md5] = max(abundance, md5_max_abundance.get(md5, 0))
+                md5_found_in[md5] += 1
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
     if debug:
@@ -774,6 +789,8 @@ def main(
         md5_to_seq,
         md5_species,
         md5_abundance,
+        md5_max_abundance,
+        md5_found_in,
         abundance_by_samples,
         metadata,
         meta_names,
