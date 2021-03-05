@@ -672,7 +672,8 @@ def load_metadata(
         pool_col = value_cols.index(pool_col)  # i.e. which of requested columns
     else:
         pool_col = None
-        sys.stderr.write("DEBUG: Sample pooling inactive\n")
+        if debug:
+            sys.stderr.write("DEBUG: Sample pooling inactive\n")
 
     if metadata_groups:
         try:
