@@ -1,4 +1,4 @@
-# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -244,8 +244,8 @@ def sample_summary(
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
             if pooling:
-                samples = pooled_samples.get(sample, sample)
-                handle.write(f"{len(samples.split(';'))}\t{samples}")
+                samples = pooled_samples.get(sample, [sample])
+                handle.write(f"{len(samples)}\t{';'.join(samples)}")
                 del samples
             else:
                 handle.write(sample + "\t")
@@ -286,13 +286,13 @@ def sample_summary(
                 worksheet.write_number(
                     current_row,
                     len(meta_names),
-                    len(samples.split(";")),
+                    len(samples),
                     cell_format,
                 )
                 worksheet.write_string(
                     current_row,
                     len(meta_names) + 1,
-                    samples,
+                    ";".join(samples),
                     cell_format,
                 )
                 del samples
@@ -525,7 +525,7 @@ def read_summary(
         worksheet.write_string(
             current_row,
             LEADING_COLS + s,
-            pooled_samples.get(sample, sample),
+            ";".join(pooled_samples.get(sample, [sample])),
             sample_formats[s],
         )
     current_row += 1

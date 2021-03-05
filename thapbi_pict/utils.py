@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -739,21 +739,26 @@ def load_metadata(
         pooled_meta = {}  # ordered dict, key on pool column value
         pooled_samples = {}  # key on pool column, values are sample list
         for values in meta_plus_idx:
-            sample_stem = values[-1]
+            sample_stems = [
+                _ for _ in values[-1].strip().split(metadata_index_sep) if _
+            ]
+            assert "" not in sample_stems, values
             key = values[pool_col]
-            pooling[sample_stem] = values[pool_col]
+            for sample_stem in sample_stems:
+                pooling[sample_stem] = values[pool_col]
             if key not in pooled_meta:
                 pooled_meta[key] = values[:-1]  # exclude sample
-                pooled_samples[key] = sample_stem
+                assert key not in pooled_samples, key
+                pooled_samples[key] = sample_stems  # as list
             else:
-                pooled_samples[key] = (
-                    pooled_samples[key] + metadata_index_sep + values[-1]
-                )
+                assert key in pooled_samples, key
                 if pooled_meta[key] != values[:-1]:
                     sys.exit(
                         "ERROR: Inconsistent metadata for pool key "
                         f"{key!r}:\n{pooled_meta[key]}\n{values[:-1]}"
                     )
+                assert key in pooled_samples, key
+                pooled_samples[key] += sample_stems  # list append
         if debug:
             sys.stderr.write(
                 f"DEBUG: {len(meta_plus_idx)} metadata rows reduced to "
@@ -761,7 +766,7 @@ def load_metadata(
             )
         # Rebuild meta_plus_idx
         meta_plus_idx = [
-            pooled_meta[key] + [pooled_samples[key]] for key in pooled_meta
+            pooled_meta[key] + [";".join(pooled_samples[key])] for key in pooled_meta
         ]
 
     # Sort on metadata if requested
