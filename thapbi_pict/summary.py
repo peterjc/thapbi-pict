@@ -657,7 +657,7 @@ def main(
         inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
     ):
         sample = file_to_sample_name(fasta_file)
-        if require_metadata and sample not in metadata:
+        if require_metadata and sample not in metadata and sample not in pooling:
             continue
         fasta_files[sample] = fasta_file
         tsv_files[sample] = tsv_file
