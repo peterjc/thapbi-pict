@@ -27,10 +27,22 @@ diff $TMP/summary.samples.1s3g.tsv tests/summary_meta/summary.samples.1s3g.tsv
 diff $TMP/summary.samples.1s3g.txt tests/summary_meta/summary.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -u -r summary-u
+diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv  # no change
+diff $TMP/summary-u.samples.1s3g.tsv tests/summary_meta/summary-u.samples.1s3g.tsv
+diff $TMP/summary-u.samples.1s3g.txt tests/summary_meta/summary-u.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -r summary-q
 diff $TMP/summary-q.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv
 diff $TMP/summary-q.samples.1s3g.tsv tests/summary_meta/summary-q.samples.1s3g.tsv
 diff $TMP/summary-q.samples.1s3g.txt tests/summary_meta/summary-q.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -u -r summary-qu
+diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # no change
+diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
+diff $TMP/summary-qu.samples.1s3g.txt tests/summary_meta/summary-qu.samples.1s3g.txt
 
 
 thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \

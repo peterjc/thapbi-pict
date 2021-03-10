@@ -1,4 +1,4 @@
-# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -55,12 +55,13 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
 
 def sample_summary(
     sample_species_counts,
-    # tsv_files,
+    meta_to_stem,
     stem_to_meta,
     meta_names,
     group_col,
     sample_stats,
     stats_fields,
+    show_unsequenced,
     output,
     excel,
     human_output,
@@ -137,11 +138,18 @@ def sample_summary(
         ]
     ]
     if meta_names:
+        group_value = []
+        for metadata, sample_batch in meta_to_stem.items():
+            if sample_batch:
+                group_value += [metadata[group_col]] * len(sample_batch)
+            elif show_unsequenced:
+                group_value += [metadata[group_col]]
         sample_formats = color_bands(
-            [stem_to_meta[_][group_col] for _ in stem_to_meta],
+            group_value,
             sample_color_bands,
             debug=debug,
         )
+        del group_value
     else:
         sample_formats = []
 
@@ -192,34 +200,43 @@ def sample_summary(
     # Main body
     # =========
     # Note already sorted on metadata values, discarded the order in the table
-    batches = []
-    current_batch = []
-    current_meta = None
-    for sample, meta in stem_to_meta.items():
-        if meta == current_meta:
-            current_batch.append(sample)
-            continue
-        if current_batch:
-            batches.append((current_meta, current_batch))
-        current_batch = [sample]
-        current_meta = meta
-    if current_batch:
-        batches.append((current_meta, current_batch))
-    del current_batch, current_meta
-
-    for metadata, sample_batch in batches:
-        if meta_names:
+    for metadata, sample_batch in meta_to_stem.items():
+        if sample_batch or show_unsequenced:
             # Write the human readable metadata header
-            human.write("-" * 60 + "\n\n")
-            if metadata:
+            if meta_names:
+                human.write("-" * 60 + "\n\n")
                 for name, value in zip(meta_names, metadata):
                     if value:
                         human.write(f"{name}: {value}\n")
                 human.write("\n")
-            else:
-                human.write("Missing metadata\n\n")
-            if not sample_batch:
+            if not sample_batch and show_unsequenced:
                 human.write("Has not been sequenced.\n\n")
+                # Missing data in TSV:
+                blanks = (
+                    len(stats_fields)
+                    + 2
+                    + len(genus_predictions)
+                    + len(species_columns)
+                )
+                # Using "-" for missing data, could use "NA" or "?"
+                handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
+                # Missing data in Excel:
+                try:
+                    cell_format = sample_formats[current_row]  # sample number
+                except IndexError:
+                    cell_format = None
+                current_row += 1
+                assert len(meta_names) == len(metadata)
+                assert col_offset == len(meta_names) + 1 + len(stats_fields)
+                for offset, value in enumerate(metadata):
+                    worksheet.write_string(current_row, offset, value, cell_format)
+                for offset in range(blanks):
+                    # Using formula for NA as works nicely with our existing
+                    # conditional formatting color rule
+                    worksheet.write_formula(
+                        current_row, len(meta_names) + offset, "=NA()", cell_format
+                    )
+
         # Now do the samples in this batch
         for sample in sample_batch:
             # TSV
@@ -332,8 +349,6 @@ def read_summary(
     md5_species,
     md5_abundance,
     abundance_by_samples,
-    # fasta_files,
-    # tsv_files,
     stem_to_meta,
     meta_names,
     group_col,
@@ -597,6 +612,7 @@ def main(
     metadata_fieldnames=None,
     metadata_index=None,
     require_metadata=False,
+    show_unsequenced=True,
     ignore_prefixes=None,
     debug=False,
 ):
@@ -618,7 +634,7 @@ def main(
         debug=debug,
     )
 
-    meta_default = [""] * len(meta_names)
+    meta_default = tuple([""] * len(meta_names))
     fasta_files = {}
     tsv_files = {}
     for fasta_file, tsv_file in find_paired_files(
@@ -630,6 +646,10 @@ def main(
                 continue
             else:
                 stem_to_meta[sample] = meta_default
+                if meta_default in meta_to_stem:
+                    meta_to_stem[meta_default].append(sample)
+                else:
+                    meta_to_stem[meta_default] = [sample]
                 if debug:
                     sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
         fasta_files[sample] = fasta_file
@@ -720,11 +740,13 @@ def main(
 
     sample_summary(
         sample_species_counts,
+        meta_to_stem,
         stem_to_meta,
         meta_names,
         group_col,
         sample_stats,
         stats_fields,
+        show_unsequenced=show_unsequenced,
         output=f"{stem}.samples.{method}.tsv",
         excel=f"{stem}.samples.{method}.xlsx",
         human_output=f"{stem}.samples.{method}.txt",
