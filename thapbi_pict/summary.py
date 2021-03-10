@@ -614,7 +614,6 @@ def main(
         metadata_groups,
         metadata_fieldnames,
         metadata_index,
-        metadata_sort=True,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
