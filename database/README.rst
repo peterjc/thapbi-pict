@@ -32,9 +32,11 @@ sets of biological sequences (subject to taxonomy filtering):
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Oomycota[organism]
 
-- Observed ITS1 sequences from single isolate positive controls run on MiSeq
-  plates via ``thapbi_pict prepare-reads`` with default settings (minimum
-  minimum abundance 1000 was well above the plate level minimum abundance).
+- Observed ITS1 sequence files ``single_isolates/*.fasta`` from single isolate
+  positive controls run on MiSeq plates. Created using
+  ``thapbi_pict prepare-reads`` and ``thapbi_pict curated-seq`` with default
+  settings (default minimum abundance 1000 was well above the plate level
+  minimum abundance set via negative controls).
 
 Additionally:
 
