@@ -27,7 +27,6 @@ from .utils import file_to_sample_name
 from .utils import find_paired_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
-from .utils import sample_sort
 from .utils import split_read_name_abundance
 
 
@@ -55,7 +54,6 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
 
 
 def sample_summary(
-    missing_meta,
     sample_species_counts,
     # tsv_files,
     metadata,
@@ -208,9 +206,6 @@ def sample_summary(
     if current_batch:
         batches.append((current_meta, current_batch))
     del current_batch, current_meta
-
-    if missing_meta:
-        batches.append(([""] * len(meta_names), sample_sort(missing_meta)))
 
     for metadata, sample_batch in batches:
         if meta_names:
@@ -618,20 +613,29 @@ def main(
         debug=debug,
     )
 
+    meta_default = [""] * len(meta_names)
     fasta_files = {}
     tsv_files = {}
     for fasta_file, tsv_file in find_paired_files(
         inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
     ):
         sample = file_to_sample_name(fasta_file)
-        if require_metadata and sample not in stem_to_meta:
-            continue
+        if sample not in stem_to_meta:
+            if require_metadata:
+                continue
+            else:
+                stem_to_meta[sample] = meta_default
+                if debug:
+                    sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
         fasta_files[sample] = fasta_file
         tsv_files[sample] = tsv_file
+    assert (
+        len(fasta_files) == len(tsv_files) == len(stem_to_meta)
+    ), f"{len(fasta_files)} FASTA, {len(tsv_files)} TSV, {len(stem_to_meta)} meta"
 
     if debug:
         sys.stderr.write(
-            f"Have metadata for {len(stem_to_meta)} samples,"
+            f"DEBUG: Have metadata for {len(stem_to_meta)} samples,"
             f" found {len(fasta_files)} FASTA files,"
             f" and {len(tsv_files)} TSV for method {method}\n"
         )
@@ -674,7 +678,6 @@ def main(
         )
     del bad_fields
 
-    missing_meta = set()
     md5_abundance = Counter()
     abundance_by_samples = {}
     md5_species = {}  # sp values are sets (e.g. ambiguous matches)
@@ -684,8 +687,7 @@ def main(
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for sample, fasta_file in fasta_files.items():
-        if sample not in stem_to_meta:
-            missing_meta.add(sample)
+        assert sample in stem_to_meta, sample
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
                 md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
@@ -699,8 +701,7 @@ def main(
         sys.stderr.write(f"Loading predictions for {method}\n")
     for sample, predicted_file in tsv_files.items():
         sample_species_counts[sample] = Counter()
-        if sample not in stem_to_meta:
-            assert sample in missing_meta, sample
+        assert sample in stem_to_meta, sample
         # TODO: Look at taxid here?
         for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
             md5, abundance = split_read_name_abundance(name)
@@ -713,7 +714,6 @@ def main(
             sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
 
     sample_summary(
-        missing_meta,
         sample_species_counts,
         stem_to_meta,
         meta_names,
@@ -728,11 +728,6 @@ def main(
         debug=debug,
     )
     sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
-
-    if missing_meta:
-        for sample in sample_sort(missing_meta):
-            assert sample not in stem_to_meta, sample
-            stem_to_meta[sample] = [""] * len(meta_names)
 
     read_summary(
         md5_to_seq,
