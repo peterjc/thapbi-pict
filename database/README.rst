@@ -32,6 +32,8 @@ sets of biological sequences (subject to taxonomy filtering):
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Oomycota[organism]
 
+  Note the NCBI import discards uncultured entries.
+
 - Observed ITS1 sequence files ``single_isolates/*.fasta`` from single isolate
   positive controls run on MiSeq plates. Created using
   ``thapbi_pict prepare-reads`` and ``thapbi_pict curated-seq`` with default
