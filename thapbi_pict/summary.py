@@ -56,7 +56,7 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
 def sample_summary(
     sample_species_counts,
     # tsv_files,
-    metadata,
+    stem_to_meta,
     meta_names,
     group_col,
     sample_stats,
@@ -138,7 +138,7 @@ def sample_summary(
     ]
     if meta_names:
         sample_formats = color_bands(
-            [metadata[_][group_col] for _ in metadata],
+            [stem_to_meta[_][group_col] for _ in stem_to_meta],
             sample_color_bands,
             debug=debug,
         )
@@ -195,7 +195,7 @@ def sample_summary(
     batches = []
     current_batch = []
     current_meta = None
-    for sample, meta in metadata.items():
+    for sample, meta in stem_to_meta.items():
         if meta == current_meta:
             current_batch.append(sample)
             continue
