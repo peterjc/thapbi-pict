@@ -608,7 +608,7 @@ def main(
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
 
-    (metadata, meta_names, group_col,) = load_metadata(
+    (stem_to_meta, meta_to_stem, meta_names, group_col,) = load_metadata(
         metadata_file,
         metadata_cols,
         metadata_groups,
@@ -624,14 +624,14 @@ def main(
         inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
     ):
         sample = file_to_sample_name(fasta_file)
-        if require_metadata and sample not in metadata:
+        if require_metadata and sample not in stem_to_meta:
             continue
         fasta_files[sample] = fasta_file
         tsv_files[sample] = tsv_file
 
     if debug:
         sys.stderr.write(
-            f"Have metadata for {len(metadata)} samples,"
+            f"Have metadata for {len(stem_to_meta)} samples,"
             f" found {len(fasta_files)} FASTA files,"
             f" and {len(tsv_files)} TSV for method {method}\n"
         )
@@ -684,7 +684,7 @@ def main(
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for sample, fasta_file in fasta_files.items():
-        if sample not in metadata:
+        if sample not in stem_to_meta:
             missing_meta.add(sample)
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
@@ -699,7 +699,7 @@ def main(
         sys.stderr.write(f"Loading predictions for {method}\n")
     for sample, predicted_file in tsv_files.items():
         sample_species_counts[sample] = Counter()
-        if sample not in metadata:
+        if sample not in stem_to_meta:
             assert sample in missing_meta, sample
         # TODO: Look at taxid here?
         for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
@@ -715,7 +715,7 @@ def main(
     sample_summary(
         missing_meta,
         sample_species_counts,
-        metadata,
+        stem_to_meta,
         meta_names,
         group_col,
         sample_stats,
@@ -731,15 +731,15 @@ def main(
 
     if missing_meta:
         for sample in sample_sort(missing_meta):
-            assert sample not in metadata, sample
-            metadata[sample] = [""] * len(meta_names)
+            assert sample not in stem_to_meta, sample
+            stem_to_meta[sample] = [""] * len(meta_names)
 
     read_summary(
         md5_to_seq,
         md5_species,
         md5_abundance,
         abundance_by_samples,
-        metadata,
+        stem_to_meta,
         meta_names,
         group_col,
         sample_stats,
