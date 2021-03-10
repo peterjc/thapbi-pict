@@ -334,7 +334,7 @@ def read_summary(
     abundance_by_samples,
     # fasta_files,
     # tsv_files,
-    metadata,
+    stem_to_meta,
     meta_names,
     group_col,
     sample_stats,
@@ -376,12 +376,12 @@ def read_summary(
     ]
 
     # If there are lots of samples, set narrow column widths
-    if len(metadata) > 50:
+    if len(stem_to_meta) > 50:
         # Set column width to 2
-        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(metadata), 2)
-    elif len(metadata) > 20:
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(stem_to_meta), 2)
+    elif len(stem_to_meta) > 20:
         # Set column width to 4
-        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(metadata), 4)
+        worksheet.set_column(LEADING_COLS, LEADING_COLS + len(stem_to_meta), 4)
 
     # TSV setup
     # ---------
@@ -391,18 +391,18 @@ def read_summary(
     # -------------
     current_row = 0
     first_data_row = 0
-    sample_formats = [None] * len(metadata)
+    sample_formats = [None] * len(stem_to_meta)
     if meta_names:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [metadata[sample] for sample in metadata]
+        meta = [stem_to_meta[sample] for sample in stem_to_meta]
         for i, name in enumerate(meta_names):
             handle.write(
                 "#%s%s\t%s\n"
                 % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
         sample_formats = color_bands(
-            [metadata[_][group_col] for _ in metadata],
+            [stem_to_meta[_][group_col] for _ in stem_to_meta],
             sample_color_bands,
             debug=debug,
         )
@@ -421,7 +421,7 @@ def read_summary(
     if stats_fields:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [sample_stats[sample] for sample in metadata]
+        meta = [sample_stats[sample] for sample in stem_to_meta]
         for i, name in enumerate(stats_fields):
             handle.write(
                 "#%s%s\t%s\n"
@@ -444,20 +444,25 @@ def read_summary(
     # ---------------
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
-        "\tMax-sample-abundance\tTotal-abundance\t%s\n" % (method, "\t".join(metadata))
+        "\tMax-sample-abundance\tTotal-abundance\t%s\n"
+        % (method, "\t".join(stem_to_meta))
     )
     handle.write(
         "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             max(
-                sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
+                sum(
+                    1
+                    for sample in stem_to_meta
+                    if (md5, sample) in abundance_by_samples
+                )
                 for md5 in md5_to_seq
             ),
             max(
                 (
                     abundance_by_samples.get((md5, sample), 0)
                     for md5 in md5_to_seq
-                    for sample in metadata
+                    for sample in stem_to_meta
                 ),
                 default=0,
             ),
@@ -468,7 +473,7 @@ def read_summary(
                         abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq
                     )
                 )
-                for sample in metadata
+                for sample in stem_to_meta
             ),
         )
     )
@@ -481,7 +486,7 @@ def read_summary(
     worksheet.write_string(current_row, 3, "Sample-count")
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")
-    for s, sample in enumerate(metadata):
+    for s, sample in enumerate(stem_to_meta):
         worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
     current_row += 1
     first_data_row = current_row
@@ -492,7 +497,7 @@ def read_summary(
         current_row,
         3,
         max(
-            sum(1 for sample in metadata if (md5, sample) in abundance_by_samples)
+            sum(1 for sample in stem_to_meta if (md5, sample) in abundance_by_samples)
             for md5 in md5_to_seq
         ),
     )
@@ -503,13 +508,13 @@ def read_summary(
             (
                 abundance_by_samples.get((md5, sample), 0)
                 for md5 in md5_to_seq
-                for sample in metadata
+                for sample in stem_to_meta
             ),
             default=0,
         ),
     )
     worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
-    for s, sample in enumerate(metadata):
+    for s, sample in enumerate(stem_to_meta):
         worksheet.write_number(
             current_row,
             LEADING_COLS + s,
@@ -527,7 +532,7 @@ def read_summary(
             md5,
             ";".join(sorted(md5_species[md5])),
             md5_to_seq[md5],
-            sum(1 for _ in metadata if (md5, _) in abundance_by_samples),
+            sum(1 for _ in stem_to_meta if (md5, _) in abundance_by_samples),
             total_abundance,
         ]
         for md5, total_abundance in md5_abundance.items()
@@ -536,7 +541,7 @@ def read_summary(
     # number of samples (decreasing), total abundance (decreasing), md5
     data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
-        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in metadata]
+        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in stem_to_meta]
         assert sample_counts, f"{md5} sample counts: {sample_counts!r}"
         handle.write(
             "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
@@ -567,7 +572,7 @@ def read_summary(
         first_data_row,
         LEADING_COLS,
         current_row,
-        LEADING_COLS + len(metadata),
+        LEADING_COLS + len(stem_to_meta),
         {
             "type": "cell",
             "criteria": "greater than",
