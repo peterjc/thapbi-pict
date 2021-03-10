@@ -575,7 +575,6 @@ def load_metadata(
     metadata_name_row=1,
     metadata_index=0,
     metadata_index_sep=";",
-    metadata_sort=True,
     ignore_prefixes=("Undetermined",),
     debug=False,
 ):
@@ -594,8 +593,7 @@ def load_metadata(
     be sequenced more than once (e.g. technical replicates). These sample
     names are matched against the file name stems, see function find_metadata.
 
-    if metadata_sort=True, then the table rows are sorted based on the
-    requested metadata - otherwise the table row order is preserved.
+    The metadata table rows are sorted based on the requested colunms.
 
     Return values:
 
@@ -702,9 +700,8 @@ def load_metadata(
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
     del lines
 
-    # Sort on metadata if requested
-    if metadata_sort:
-        meta_plus_idx.sort()
+    # Sort on metadata
+    meta_plus_idx.sort()
 
     # Select desired columns,
     def make_unique_but_keep_order(semi_colon_list):

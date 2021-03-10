@@ -150,7 +150,6 @@ def main(
         None,  # i.e. metadata_groups=None,
         metadata_fieldnames,
         metadata_index,
-        metadata_sort=True,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
