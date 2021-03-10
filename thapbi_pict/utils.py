@@ -597,16 +597,17 @@ def load_metadata(
 
     Return values:
 
-    - Ordered dict with samples as keys, lists of N metadata as values
+    - Dict mapping FASTQ stems to metadata tuples
+    - Ordered dict mapping metadata tuples to lists of FASTQ stems
     - list of the N field names
-    - Grouping offset into the N values
+    - Color grouping offset into the N values
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, [], 0
+        return {}, {}, [], 0
 
     if metadata_groups and not metadata_cols:
         sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
@@ -703,49 +704,37 @@ def load_metadata(
     # Sort on metadata
     meta_plus_idx.sort()
 
-    # Select desired columns,
-    def make_unique_but_keep_order(semi_colon_list):
-        answer = []
-        for value in semi_colon_list.split(metadata_index_sep):
-            value = value.strip()
-            if not value:
-                pass
-            elif value in answer:
-                sys.stderr.write(
-                    f"WARNING: Double entry for {value} in metadata line\n"
-                )
-            else:
-                answer.append(value)
-        return answer
-
-    meta = [_[:-1] for _ in meta_plus_idx]
-    index = [make_unique_but_keep_order(_[-1]) for _ in meta_plus_idx]
-    del meta_plus_idx
-
     bad = set()
-    metadata = {}
-    for samples, meta_values in zip(index, meta):
-        for sample in samples:
-            if ignore_prefixes and sample.startswith(ignore_prefixes):
-                continue
-            elif sample in metadata:
-                bad.add(sample)
-            else:
-                metadata[sample] = meta_values
+    meta_to_stem = {}
+    stem_to_meta = {}
+    for meta_and_index in meta_plus_idx:
+        meta = tuple(meta_and_index[:-1])
+        stems = [_.strip() for _ in meta_and_index[-1].split(metadata_index_sep)]
+        stems = [_ for _ in stems if _]  # drop any blanks
+        if ignore_prefixes:
+            stems = [_ for _ in stems if not _.startswith(ignore_prefixes)]
+        for stem in stems:
+            if stem in stem_to_meta:
+                bad.add(stem)
+            stem_to_meta[stem] = meta
+        if meta in meta_to_stem:
+            # combine this row with previous lines with same metadata columns
+            meta_to_stem[meta].extend(stems)
+        else:
+            meta_to_stem[meta] = stems
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Loaded metadata for {len(meta)} field samples,"
-            f" {len(metadata)} sequenced samples\n"
+            f"DEBUG: Loaded {len(meta_to_stem)} metadata entries, and "
+            f" {len(stem_to_meta)} sequenced samples\n"
         )
     if bad:
-        print(bad)
         sys.exit(
             f"ERROR: Duplicated metadata for {len(bad)} samples,"
             f" {sorted(bad)[0]} (etc)"
         )
 
-    return metadata, names, group_col
+    return stem_to_meta, meta_to_stem, names, group_col
 
 
 def color_bands(meta_groups, sample_color_bands, debug=False):
