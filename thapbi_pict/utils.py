@@ -30,32 +30,6 @@ def primer_clean(primer):
     return primer.upper().replace("I", "N")
 
 
-def sample_sort(sample_names):
-    """Sort sample names like a human.
-
-    Our samples have occasionally used underscores and minus signs inconsistently
-    in sample names as field separators or space substitutions. Therefore simple
-    ASCII sorting can give surprises such as not grouping by prefix (since the
-    underscore is sorted after the digits and letter):
-
-        >>> sorted(["N01-a", "N01_b", "N01 c", "N011-a"])
-        ['N01 c', 'N01-a', 'N011-a', 'N01_b']
-
-    We specifically want "_" (ASCII , after the letters) to sort like " "
-    or "-" (ASCII 32 or 45, both before the digits and letters). In case
-    any samples are using plus/minus, will map underscore and space to
-    the minus sign for sorting.
-
-        >>> sample_sort(["N01-a", "N01_b", "N01 c", "N011-d"])
-        ['N01-a', 'N01_b', 'N01 c', 'N011-a']
-
-    """
-    # TODO: Clever sorting of e.g. A1, A2, ..., A10, A11, A99 or
-    # e.g. "Sample 1", "Sample 2", ... "Sample 10", "Sample 11", ...
-    # Just sort on the munged sample name
-    return sorted(sample_names, key=lambda _: _.replace("_", "-").replace(" ", "-"))
-
-
 def genus_species_name(genus, species):
     """Return name, genus with species if present.
 
