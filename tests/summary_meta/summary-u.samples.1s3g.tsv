@@ -1,0 +1,10 @@
+#Group	Name	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Seq-count	Phytophthora	Phytophthora agathidicida;Phytophthora castaneae	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora capsici;Phytophthora glovera	Phytophthora plurivora	Phytophthora pseudocryptogea	Phytophthora rubi
+A	Alpha	A1	70000	69000	68000	65000	63000	63000	0	62500	0	0	0	0
+A	Alpha	A2	60000	59000	58000	55000	50000	50000	0	50000	0	0	0	0
+B	Beta	B1	5159	4744	4547	4544	1789	1789	0	0	0	976	0	813
+B	Beta	B1r	5193	4821	4781	4642	1803	1803	0	0	0	1013	0	790
+C	Gamma	C1	3289	3754	3547	3584	597	597	298	0	0	0	299	0
+D	Delta	-	-	-	-	-	-	-	-	-	-	-	-	-
+E	Epsilon	-	-	-	-	-	-	-	-	-	-	-	-	-
+		X1	3159	3744	3547	3544	597	597	298	0	0	0	299	0
+		Y1	2159	2744	2547	2544	290	290	0	0	290	0	0	0

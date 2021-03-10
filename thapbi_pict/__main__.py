@@ -307,6 +307,7 @@ def summary(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         require_metadata=args.requiremeta,
+        show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
@@ -428,6 +429,7 @@ def pipeline(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         require_metadata=args.requiremeta,
+        show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
@@ -791,6 +793,11 @@ ARG_REQUIREMETA = dict(  # noqa: C408
     help="Ignore any input files without metadata for report.",
 )
 
+# "-u", "--unsequenced",
+ARG_UNSEQUENCED = dict(  # noqa: C408
+    action="store_true",
+    help="Show any unsequenced entries from the metadata in the reports.",
+)
 # Command line definition
 # =======================
 
@@ -882,6 +889,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
+    subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
@@ -1371,6 +1379,7 @@ def main(args=None):
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
+    subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=summary)
     del subcommand_parser  # To prevent acidentally adding more
