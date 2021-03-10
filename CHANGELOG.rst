@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.7.8  *Pending*  Accept only IUPAC DNA characters for DB import.
 v0.7.7  2021-02-24 Revised default ITS1 DB: NCBI Oomycetes, more curation & single isolates.
 v0.7.6  2021-02-17 Replaced ``seq-import`` with ``curated-seq``, used when building default DB.
 v0.7.5  2021-02-16 Refined default DB by adjusting how genus-level NCBI import was trimmed.

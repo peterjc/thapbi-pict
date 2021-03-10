@@ -232,8 +232,18 @@ def import_fasta_file(
     good_entries = 0
     idn_set = set()
 
+    valid_letters = set("GATCRYWSMKHBVDN")
+
     with open(trimmed_fasta) as handle:
         for title, seq in SimpleFastaParser(handle):
+            if "-" in seq:
+                sys.exit(f"ERROR: Gap in sequence for {title}")
+            if set(seq.upper()).difference(valid_letters):
+                bad = ", ".join(sorted(set(seq.upper()).difference(valid_letters)))
+                sys.exit(
+                    f"ERROR: Non-IUPAC DNA character(s) {bad} in sequence for {title}"
+                )
+
             seq_count += 1
             idn = title.split(None, 1)[0]
 
