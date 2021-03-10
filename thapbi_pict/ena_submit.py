@@ -14,7 +14,6 @@ import tempfile
 
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
-from .utils import sample_sort
 
 
 TABLE_HEADER = (
@@ -139,7 +138,7 @@ def main(
         tmp_output = os.path.join(shared_tmp, "experiment_paired_fastq_spreadsheet.tsv")
         table_handle = open(tmp_output, "w")
 
-    samples = sample_sort(
+    samples = sorted(
         os.path.basename(stem) for stem, _raw_R1, _raw_R2 in fastq_file_pairs
     )
 
