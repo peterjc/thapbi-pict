@@ -20,6 +20,19 @@ thapbi_pict summary 2>&1 | grep "the following arguments are required"
 thapbi_pict summary -o '' -i tests/classify 2>&1 | grep "Output directory name blank"
 set -o pipefail
 
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -r summary-defaults
+diff $TMP/summary-defaults.reads.1s3g.tsv tests/summary_meta/summary-defaults.reads.1s3g.tsv
+diff $TMP/summary-defaults.samples.1s3g.tsv tests/summary_meta/summary-defaults.samples.1s3g.tsv
+diff $TMP/summary-defaults.samples.1s3g.txt tests/summary_meta/summary-defaults.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -r summary-req-meta
+diff $TMP/summary-req-meta.reads.1s3g.tsv tests/summary_meta/summary-req-meta.reads.1s3g.tsv
+diff $TMP/summary-req-meta.samples.1s3g.tsv tests/summary_meta/summary-req-meta.samples.1s3g.tsv
+diff $TMP/summary-req-meta.samples.1s3g.txt tests/summary_meta/summary-req-meta.samples.1s3g.txt
+
+
 thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
     $TMP/DNAMIX_S95_L001.identity.tsv \
     -m identity -o $TMP/ -r summary
