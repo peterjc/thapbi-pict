@@ -28,7 +28,7 @@ diff $TMP/summary.samples.1s3g.txt tests/summary_meta/summary.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -u -r summary-u
-diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv  # no change
+diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv  # -u no effect
 diff $TMP/summary-u.samples.1s3g.tsv tests/summary_meta/summary-u.samples.1s3g.tsv
 diff $TMP/summary-u.samples.1s3g.txt tests/summary_meta/summary-u.samples.1s3g.txt
 
@@ -40,10 +40,33 @@ diff $TMP/summary-q.samples.1s3g.txt tests/summary_meta/summary-q.samples.1s3g.t
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -u -r summary-qu
-diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # no change
+diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # -u no effect
 diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
 diff $TMP/summary-qu.samples.1s3g.txt tests/summary_meta/summary-qu.samples.1s3g.txt
 
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -p -r summary-p
+diff $TMP/summary-p.reads.1s3g.tsv tests/summary_meta/summary-p.reads.1s3g.tsv
+diff $TMP/summary-p.samples.1s3g.tsv tests/summary_meta/summary-p.samples.1s3g.tsv
+diff $TMP/summary-p.samples.1s3g.txt tests/summary_meta/summary-p.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -p -q -r summary-pq
+diff $TMP/summary-pq.reads.1s3g.tsv tests/summary_meta/summary-pq.reads.1s3g.tsv
+diff $TMP/summary-pq.samples.1s3g.tsv tests/summary_meta/summary-pq.samples.1s3g.tsv
+diff $TMP/summary-pq.samples.1s3g.txt tests/summary_meta/summary-pq.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -p -q -u -r summary-pqu
+diff $TMP/summary-pqu.reads.1s3g.tsv tests/summary_meta/summary-pq.reads.1s3g.tsv  # -u no effect
+diff $TMP/summary-pqu.samples.1s3g.tsv tests/summary_meta/summary-pqu.samples.1s3g.tsv
+diff $TMP/summary-pqu.samples.1s3g.txt tests/summary_meta/summary-pqu.samples.1s3g.txt
+
+thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -p -u -r summary-pu
+diff $TMP/summary-pu.reads.1s3g.tsv tests/summary_meta/summary-p.reads.1s3g.tsv  # -u no effect
+diff $TMP/summary-pu.samples.1s3g.tsv tests/summary_meta/summary-pu.samples.1s3g.tsv
+diff $TMP/summary-pu.samples.1s3g.txt tests/summary_meta/summary-pu.samples.1s3g.txt
 
 thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
     $TMP/DNAMIX_S95_L001.identity.tsv \

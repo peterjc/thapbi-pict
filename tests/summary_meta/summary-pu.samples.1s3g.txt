@@ -1,0 +1,73 @@
+NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+
+------------------------------------------------------------
+
+Group: A
+Name: Alpha
+
+Sequencing sample: A1
+
+ - Phytophthora
+ - Phytophthora andina (uncertain/ambiguous)
+ - Phytophthora infestans (uncertain/ambiguous)
+ - Phytophthora ipomoeae (uncertain/ambiguous)
+
+Sequencing sample: A2
+
+ - Phytophthora andina (uncertain/ambiguous)
+ - Phytophthora infestans (uncertain/ambiguous)
+ - Phytophthora ipomoeae (uncertain/ambiguous)
+
+------------------------------------------------------------
+
+Group: B
+Name: Beta
+
+Sequencing sample: B1
+
+ - Phytophthora plurivora
+ - Phytophthora rubi
+
+Sequencing sample: B1r
+
+ - Phytophthora plurivora
+ - Phytophthora rubi
+
+------------------------------------------------------------
+
+Group: C
+Name: Gamma
+
+Sequencing sample: C1
+
+ - Phytophthora agathidicida (uncertain/ambiguous)
+ - Phytophthora castaneae (uncertain/ambiguous)
+ - Phytophthora pseudocryptogea
+
+------------------------------------------------------------
+
+Group: D
+Name: Delta
+
+Has not been sequenced.
+
+------------------------------------------------------------
+
+Group: E
+Name: Epsilon
+
+Has not been sequenced.
+
+------------------------------------------------------------
+
+Sequencing sample: X1
+
+ - Phytophthora agathidicida (uncertain/ambiguous)
+ - Phytophthora castaneae (uncertain/ambiguous)
+ - Phytophthora pseudocryptogea
+
+Sequencing sample: Y1
+
+ - Phytophthora capsici (uncertain/ambiguous)
+ - Phytophthora glovera (uncertain/ambiguous)
+
