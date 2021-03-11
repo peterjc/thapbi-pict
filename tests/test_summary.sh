@@ -27,10 +27,10 @@ diff $TMP/summary-defaults.samples.1s3g.tsv tests/summary_meta/summary-defaults.
 diff $TMP/summary-defaults.samples.1s3g.txt tests/summary_meta/summary-defaults.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/ \
-    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -r summary-req-meta
-diff $TMP/summary-req-meta.reads.1s3g.tsv tests/summary_meta/summary-req-meta.reads.1s3g.tsv
-diff $TMP/summary-req-meta.samples.1s3g.tsv tests/summary_meta/summary-req-meta.samples.1s3g.tsv
-diff $TMP/summary-req-meta.samples.1s3g.txt tests/summary_meta/summary-req-meta.samples.1s3g.txt
+    -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -r summary-q
+diff $TMP/summary-q.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv
+diff $TMP/summary-q.samples.1s3g.tsv tests/summary_meta/summary-q.samples.1s3g.tsv
+diff $TMP/summary-q.samples.1s3g.txt tests/summary_meta/summary-q.samples.1s3g.txt
 
 
 thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
