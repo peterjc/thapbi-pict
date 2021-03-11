@@ -544,7 +544,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
             if line.startswith("#"):
                 continue
             if line.count("\t") == 2:
-                name, taxid, genus_species = line.split("\t", 3)
+                name, taxid, genus_species = line.rstrip("\n").split("\t", 3)
             elif line.count("\t") == 3:
                 name, taxid, genus_species, _ = line.split("\t", 3)
             else:
