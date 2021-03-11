@@ -131,3 +131,7 @@ The PyPI upload should trigger an automated pull request updating the
 `THAPBI PICT BioConda recipe
 <https://github.com/bioconda/bioconda-recipes/blob/master/recipes/thapbi-pict/meta.yaml>`__
 which will need reviewing (e.g. new dependencies) before it is merged.
+
+Must also turn the git tag into a "release" on GitHub, and attach the
+wheel to it. This will generate a version specific DOI on Zenodo.
+https://github.com/peterjc/thapbi-pict/releases
