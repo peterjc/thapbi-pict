@@ -302,7 +302,7 @@ def main(
                     del md5_to_seq[md5]
             sys.stderr.write(
                 f"Minimum total abundance threshold {total_min_abundance}"
-                " left {len(md5_in_fasta)} sequences from FASTA files.\n"
+                f" left {len(md5_in_fasta)} sequences from FASTA files.\n"
             )
         if len(md5_to_seq) > 5000:
             sys.stderr.write(
