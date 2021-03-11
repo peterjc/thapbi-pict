@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.7.10 *Pending*  Option to pool samples in summary reports (``-p``).
 v0.7.9  2021-03-15 Option to show unsequenced entries in summary sample report (``-u``).
 v0.7.8  2021-03-11 Only import IUPAC DNA characters to DB. Fixed *N. valdiviana* in default DB.
 v0.7.7  2021-02-24 Revised default ITS1 DB: NCBI Oomycetes, more curation & single isolates.
