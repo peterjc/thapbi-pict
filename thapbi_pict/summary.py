@@ -144,7 +144,9 @@ def sample_summary(
     if meta_names:
         group_value = []
         for metadata, sample_batch in meta_to_stem.items():
-            if sample_batch:
+            if pooling:
+                group_value += [metadata[group_col]]
+            elif sample_batch:
                 group_value += [metadata[group_col]] * len(sample_batch)
             elif show_unsequenced:
                 group_value += [metadata[group_col]]
@@ -216,10 +218,10 @@ def sample_summary(
                     if value:
                         human.write(f"{name}: {value}\n")
                 human.write("\n")
-            else:
-                # Could report, but redundant with "Sequencing sample: ..."
-                # human.write("Missing metadata\n\n")
-                pass
+            elif pooling:
+                # Could report this even if not pooling, but a bit redundant
+                # as will get the "Sequencing sample: ..." lines
+                human.write("Missing metadata\n\n")
         if not sample_batch and show_unsequenced:
             human.write("Has not been sequenced.\n\n")
             # Missing data in TSV:
@@ -244,18 +246,28 @@ def sample_summary(
                 worksheet.write_string(
                     current_row, len(meta_names) + offset, "-", cell_format
                 )
+            continue
 
         # Now do the samples in this batch
+        if pooling and sample_batch:
+            assert metadata in meta_to_stem, metadata
+            sample_batch = [metadata]  # row itself is the key now!
         for sample in sample_batch:
             # TSV
             # ---
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
-            handle.write(sample + "\t")
+            if pooling:
+                handle.write(";".join(meta_to_stem[metadata]))
+            else:
+                handle.write(sample)
             if stats_fields:
-                handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
+                if sample == "-":
+                    handle.write("\t-" * len(stats_fields))
+                else:
+                    handle.write("\t" + "\t".join(str(_) for _ in sample_stats[sample]))
             handle.write(
-                "%i\t%s\t%s\n"
+                "\t%i\t%s\t%s\n"
                 % (
                     sum(sample_species_counts[sample].values()),
                     "\t".join(
@@ -281,14 +293,27 @@ def sample_summary(
             assert col_offset == len(meta_names) + 1 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
-            worksheet.write_string(current_row, len(meta_names), sample, cell_format)
+            worksheet.write_string(
+                current_row,
+                len(meta_names),
+                ";".join(meta_to_stem[metadata]) if pooling else sample,
+                cell_format,
+            )
             for offset, _ in enumerate(stats_fields):
-                worksheet.write_number(
-                    current_row,
-                    len(meta_names) + 1 + offset,
-                    sample_stats[sample][offset],
-                    cell_format,
-                )
+                if sample == "-":
+                    worksheet.write_string(
+                        current_row,
+                        len(meta_names) + 1 + offset,
+                        "-",
+                        cell_format,
+                    )
+                else:
+                    worksheet.write_number(
+                        current_row,
+                        len(meta_names) + 1 + offset,
+                        sample_stats[sample][offset],
+                        cell_format,
+                    )
             worksheet.write_number(
                 current_row,
                 col_offset,
@@ -321,19 +346,24 @@ def sample_summary(
                         all_sp.update(sp_list)
                         if len(sp_list) == 1:
                             unambig_sp.add(sp_list[0])
-            if meta_names:
+            if pooling or sample == "-":
+                pass
+            elif meta_names:
                 human.write(f"Sequencing sample: {sample}\n\n")
             else:
                 human.write(f"{sample}\n\n")
-            for sp in sorted(all_sp):
-                if sp not in unambig_sp:
-                    sp = f"{sp} (uncertain/ambiguous)"
-                if not sp:
-                    sp = "Unknown"
-                human.write(f" - {sp}\n")
-            if not all_sp:
-                human.write(" - No data\n")
-            human.write("\n")
+            if sample in sample_species_counts:
+                for sp in sorted(all_sp):
+                    if sp not in unambig_sp:
+                        sp = f"{sp} (uncertain/ambiguous)"
+                    if not sp:
+                        sp = "Unknown"
+                    human.write(f" - {sp}\n")
+                if not all_sp:
+                    human.write(" - No data\n")
+                human.write("\n")
+            else:
+                human.write("Has not been sequenced.\n\n")
 
     # Defined first, but takes priority over later conditional rules:
     worksheet.conditional_format(
@@ -370,6 +400,7 @@ def read_summary(
     md5_species,
     md5_abundance,
     abundance_by_samples,
+    meta_to_stem,
     stem_to_meta,
     meta_names,
     group_col,
@@ -426,20 +457,25 @@ def read_summary(
 
     # Metadata rows (one column per sample)
     # -------------
+    if pooling:
+        # Use meta rows, ignore unsequenced ones (ignore -u setting)
+        samples = meta = [k for k, v in meta_to_stem.items() if v and v != "-"]
+    else:
+        # Use stems
+        samples = list(stem_to_meta)
+        meta = list(stem_to_meta.values())
     current_row = 0
     first_data_row = 0
-    sample_formats = [None] * len(stem_to_meta)
+    sample_formats = [None] * len(samples)
     if meta_names:
         # Insert extra header rows at start for sample meta-data
-        # Make a single metadata call for each sample
-        meta = [stem_to_meta[sample] for sample in stem_to_meta]
         for i, name in enumerate(meta_names):
             handle.write(
                 "#%s%s\t%s\n"
                 % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
             )
         sample_formats = color_bands(
-            [stem_to_meta[_][group_col] for _ in stem_to_meta],
+            [_[group_col] for _ in meta],
             sample_color_bands,
             debug=debug,
         )
@@ -458,7 +494,7 @@ def read_summary(
     if stats_fields:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [sample_stats[sample] for sample in stem_to_meta]
+        meta = [sample_stats[sample] for sample in samples]
         for i, name in enumerate(stats_fields):
             handle.write(
                 "#%s%s\t%s\n"
@@ -482,24 +518,23 @@ def read_summary(
     handle.write(
         "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
         "\tMax-sample-abundance\tTotal-abundance\t%s\n"
-        % (method, "\t".join(stem_to_meta))
+        % (
+            method,
+            "\t".join(";".join(meta_to_stem[_]) if pooling else _ for _ in samples),
+        )
     )
     handle.write(
         "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             max(
-                sum(
-                    1
-                    for sample in stem_to_meta
-                    if (md5, sample) in abundance_by_samples
-                )
+                sum(1 for sample in samples if (md5, sample) in abundance_by_samples)
                 for md5 in md5_to_seq
             ),
             max(
                 (
                     abundance_by_samples.get((md5, sample), 0)
                     for md5 in md5_to_seq
-                    for sample in stem_to_meta
+                    for sample in samples
                 ),
                 default=0,
             ),
@@ -510,7 +545,7 @@ def read_summary(
                         abundance_by_samples.get((md5, sample), 0) for md5 in md5_to_seq
                     )
                 )
-                for sample in stem_to_meta
+                for sample in samples
             ),
         )
     )
@@ -523,8 +558,13 @@ def read_summary(
     worksheet.write_string(current_row, 3, "Sample-count")
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")
-    for s, sample in enumerate(stem_to_meta):
-        worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
+    for s, sample in enumerate(samples):
+        worksheet.write_string(
+            current_row,
+            LEADING_COLS + s,
+            ";".join(meta_to_stem[sample]) if pooling else sample,
+            sample_formats[s],
+        )
     current_row += 1
     first_data_row = current_row
     worksheet.write_string(current_row, 0, "TOTAL or MAX")
@@ -534,7 +574,7 @@ def read_summary(
         current_row,
         3,
         max(
-            sum(1 for sample in stem_to_meta if (md5, sample) in abundance_by_samples)
+            sum(1 for sample in samples if (md5, sample) in abundance_by_samples)
             for md5 in md5_to_seq
         ),
     )
@@ -545,13 +585,13 @@ def read_summary(
             (
                 abundance_by_samples.get((md5, sample), 0)
                 for md5 in md5_to_seq
-                for sample in stem_to_meta
+                for sample in samples
             ),
             default=0,
         ),
     )
     worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
-    for s, sample in enumerate(stem_to_meta):
+    for s, sample in enumerate(samples):
         worksheet.write_number(
             current_row,
             LEADING_COLS + s,
@@ -569,7 +609,7 @@ def read_summary(
             md5,
             ";".join(sorted(md5_species[md5])),
             md5_to_seq[md5],
-            sum(1 for _ in stem_to_meta if (md5, _) in abundance_by_samples),
+            sum(1 for _ in samples if (md5, _) in abundance_by_samples),
             total_abundance,
         ]
         for md5, total_abundance in md5_abundance.items()
@@ -578,7 +618,7 @@ def read_summary(
     # number of samples (decreasing), total abundance (decreasing), md5
     data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
-        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in stem_to_meta]
+        sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in samples]
         assert sample_counts, f"{md5} sample counts: {sample_counts!r}"
         handle.write(
             "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
@@ -609,7 +649,7 @@ def read_summary(
         first_data_row,
         LEADING_COLS,
         current_row,
-        LEADING_COLS + len(stem_to_meta),
+        LEADING_COLS + len(samples),
         {
             "type": "cell",
             "criteria": "greater than",
@@ -646,6 +686,9 @@ def main(
     """
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
+
+    if metadata_pooling and not metadata_file:
+        sys.exit("ERROR: Pooling (-p) requires metadata (-t)")
 
     (stem_to_meta, meta_to_stem, meta_names, group_col,) = load_metadata(
         metadata_file,
@@ -734,35 +777,45 @@ def main(
         del bad_fields
 
     md5_abundance = Counter()
-    abundance_by_samples = {}
+    abundance_by_samples = Counter()  # will be pooled if active!
     md5_species = {}  # sp values are sets (e.g. ambiguous matches)
     md5_to_seq = {}
     sample_species_counts = {}  # 2nd key is sp list with semi-colons
 
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
-    for sample, fasta_file in fasta_files.items():
-        assert sample in stem_to_meta, sample
+    for sample_stem, fasta_file in fasta_files.items():
+        assert sample_stem in stem_to_meta, sample_stem
+        if metadata_pooling:
+            sample = stem_to_meta[sample_stem]
+        else:
+            sample = sample_stem
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
                 md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                 if min_abundance > 1 and abundance < min_abundance:
                     continue
-                abundance_by_samples[md5, sample] = abundance
+                abundance_by_samples[md5, sample] += abundance
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
                 md5_species[md5] = set()
     if debug:
         sys.stderr.write(f"Loading predictions for {method}\n")
-    for sample, predicted_file in tsv_files.items():
-        sample_species_counts[sample] = Counter()
-        assert sample in stem_to_meta, sample
+    for sample_stem, predicted_file in tsv_files.items():
+        assert sample_stem in stem_to_meta, sample_stem
+        if metadata_pooling:
+            sample = stem_to_meta[sample_stem]
+        else:
+            sample = sample_stem
+        if sample not in sample_species_counts:
+            sample_species_counts[sample] = Counter()
         # TODO: Look at taxid here?
         for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
             md5, abundance = split_read_name_abundance(name)
             if min_abundance > 1 and abundance < min_abundance:
                 continue
-            assert abundance_by_samples[md5, sample] == abundance, name
+            if not metadata_pooling:
+                assert abundance_by_samples[md5, sample] == abundance, name
             if sp_list:
                 md5_species[md5].update(sp_list.split(";"))
 
@@ -792,6 +845,7 @@ def main(
         md5_species,
         md5_abundance,
         abundance_by_samples,
+        meta_to_stem,
         stem_to_meta,
         meta_names,
         group_col,
