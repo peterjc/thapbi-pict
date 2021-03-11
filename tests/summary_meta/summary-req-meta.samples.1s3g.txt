@@ -8,18 +8,15 @@ Name: Alpha
 Sequencing sample: A1
 
  - Phytophthora
-
  - Phytophthora andina (uncertain/ambiguous)
  - Phytophthora infestans (uncertain/ambiguous)
- - Phytophthora ipomoeae
- (uncertain/ambiguous)
+ - Phytophthora ipomoeae (uncertain/ambiguous)
 
 Sequencing sample: A2
 
  - Phytophthora andina (uncertain/ambiguous)
  - Phytophthora infestans (uncertain/ambiguous)
- - Phytophthora ipomoeae
- (uncertain/ambiguous)
+ - Phytophthora ipomoeae (uncertain/ambiguous)
 
 ------------------------------------------------------------
 
