@@ -714,9 +714,9 @@ ARG_CONTROLS = dict(  # noqa: C408
     nargs="+",
     # Does accept folder names, but kind of pointless...
     help="One or more negative control paired FASTQ filenames "
-    "(which may also appear in the inputs). High marker levels "
+    "(may also appear in the inputs). High marker levels "
     "will increase the minimum abundance threshold of other "
-    "FASTQ files in the same folder.",
+    "FASTQ files in the same folder. Can use '-' for none.",
 )
 
 # "-a", "--abundance",

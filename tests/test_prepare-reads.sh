@@ -27,18 +27,18 @@ thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
 
-# In this case, --flip makes no difference
+# In this case, --flip makes no difference, as does -n ""
 # Using merged cache also should make no difference
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    --flip --merged-cache $TMP/merged_cache/ \
+    --flip -n "" --merged-cache $TMP/merged_cache/ \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 # Reusing the pre-primer time pre-abundance cache here:
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    --merged-cache $TMP/merged_cache/ \
+    -n "-" --merged-cache $TMP/merged_cache/ \
     -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
 

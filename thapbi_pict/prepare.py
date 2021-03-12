@@ -798,6 +798,11 @@ def main(
     if merged_cache and not os.path.isdir(merged_cache):
         sys.exit(f"ERROR: {merged_cache} for merged cache is not a directory.")
 
+    if negative_controls:
+        # Possible in a pipeline setting may need to pass a null value,
+        # e.g. -n "" or -n "-"
+        negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
+
     if negative_controls and not hmm_stem:
         sys.exit("ERROR: If using negative controls, must use --hmm too.")
 
