@@ -16,7 +16,6 @@ Sequencing sample: P-infestans-T30-4
 
 ------------------------------------------------------------
 
-
 Sequencing sample: hmm_trim
 
  - Unknown
