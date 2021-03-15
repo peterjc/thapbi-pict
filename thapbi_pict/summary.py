@@ -204,41 +204,45 @@ def sample_summary(
     # =========
     # Note already sorted on metadata values, discarded the order in the table
     for metadata, sample_batch in meta_to_stem.items():
-        if sample_batch or show_unsequenced:
-            # Write the human readable metadata header
-            if meta_names:
-                human.write("-" * 60 + "\n\n")
+        if not sample_batch and not show_unsequenced:
+            # Nothing sequenced for this metadata entry,don't report it
+            continue
+        # Write the human readable metadata header
+        if meta_names:
+            human.write("-" * 60 + "\n\n")
+            if any(metadata):
                 for name, value in zip(meta_names, metadata):
                     if value:
                         human.write(f"{name}: {value}\n")
                 human.write("\n")
-            if not sample_batch and show_unsequenced:
-                human.write("Has not been sequenced.\n\n")
-                # Missing data in TSV:
-                blanks = (
-                    len(stats_fields)
-                    + 2
-                    + len(genus_predictions)
-                    + len(species_columns)
+            else:
+                # Could report, but redundant with "Sequencing sample: ..."
+                # human.write("Missing metadata\n\n")
+                pass
+        if not sample_batch and show_unsequenced:
+            human.write("Has not been sequenced.\n\n")
+            # Missing data in TSV:
+            blanks = (
+                len(stats_fields) + 2 + len(genus_predictions) + len(species_columns)
+            )
+            # Using "-" for missing data, could use "NA" or "?"
+            handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
+            # Missing data in Excel:
+            try:
+                cell_format = sample_formats[current_row]  # sample number
+            except IndexError:
+                cell_format = None
+            current_row += 1
+            assert len(meta_names) == len(metadata)
+            assert col_offset == len(meta_names) + 1 + len(stats_fields)
+            for offset, value in enumerate(metadata):
+                worksheet.write_string(current_row, offset, value, cell_format)
+            for offset in range(blanks):
+                # Using formula "=NA()" or value "#N/A" work with our
+                # original simpler conditional formatting color rule
+                worksheet.write_string(
+                    current_row, len(meta_names) + offset, "-", cell_format
                 )
-                # Using "-" for missing data, could use "NA" or "?"
-                handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
-                # Missing data in Excel:
-                try:
-                    cell_format = sample_formats[current_row]  # sample number
-                except IndexError:
-                    cell_format = None
-                current_row += 1
-                assert len(meta_names) == len(metadata)
-                assert col_offset == len(meta_names) + 1 + len(stats_fields)
-                for offset, value in enumerate(metadata):
-                    worksheet.write_string(current_row, offset, value, cell_format)
-                for offset in range(blanks):
-                    # Using formula "=NA()" or value "#N/A" work with our
-                    # original simpler conditional formatting color rule
-                    worksheet.write_string(
-                        current_row, len(meta_names) + offset, "-", cell_format
-                    )
 
         # Now do the samples in this batch
         for sample in sample_batch:

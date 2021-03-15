@@ -46,7 +46,6 @@ Sequencing sample: C1
 
 ------------------------------------------------------------
 
-
 Sequencing sample: X1
 
  - Phytophthora agathidicida (uncertain/ambiguous)

@@ -60,7 +60,6 @@ Has not been sequenced.
 
 ------------------------------------------------------------
 
-
 Sequencing sample: X1
 
  - Phytophthora agathidicida (uncertain/ambiguous)
