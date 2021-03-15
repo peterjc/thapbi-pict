@@ -122,6 +122,9 @@ def sample_summary(
         # Maraschino red
         {"bg_color": "#FF2600", "font_color": "#000000"}
     )
+    grey_conditional_format = workbook.add_format(
+        {"bg_color": "#D3D3D3", "font_color": "#000000"}
+    )
     vertical_text_format = workbook.add_format(
         # Vertical text, reading up the page
         {"rotation": 90}
@@ -231,10 +234,10 @@ def sample_summary(
                 for offset, value in enumerate(metadata):
                     worksheet.write_string(current_row, offset, value, cell_format)
                 for offset in range(blanks):
-                    # Using formula for NA as works nicely with our existing
-                    # conditional formatting color rule
-                    worksheet.write_formula(
-                        current_row, len(meta_names) + offset, "=NA()", cell_format
+                    # Using formula "=NA()" or value "#N/A" work with our
+                    # original simpler conditional formatting color rule
+                    worksheet.write_string(
+                        current_row, len(meta_names) + offset, "-", cell_format
                     )
 
         # Now do the samples in this batch
@@ -327,6 +330,19 @@ def sample_summary(
                 human.write(" - No data\n")
             human.write("\n")
 
+    # Defined first, but takes priority over later conditional rules:
+    worksheet.conditional_format(
+        1,
+        col_offset - 2 - len(stats_fields),  # go back to sample filename stem
+        current_row,
+        col_offset + 1 + len(genus_predictions) + len(species_columns),
+        {
+            "type": "cell",
+            "criteria": "equal to",
+            "value": '"-"',
+            "format": grey_conditional_format,
+        },
+    )
     worksheet.conditional_format(
         1,
         col_offset + 1,
