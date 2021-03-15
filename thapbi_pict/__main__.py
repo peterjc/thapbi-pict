@@ -796,7 +796,7 @@ ARG_REQUIREMETA = dict(  # noqa: C408
 # "-u", "--unsequenced",
 ARG_UNSEQUENCED = dict(  # noqa: C408
     action="store_true",
-    help="Show any unsequenced entries from the metadata in the reports.",
+    help="Show unsequenced metadata entries in sample report.",
 )
 # Command line definition
 # =======================
