@@ -61,6 +61,13 @@ parser.add_option(
     help="Replace read counts with boolean (Y and N entries).",
 )
 parser.add_option(
+    "-z",
+    "--hide-zeros",
+    default=False,
+    action="store_true",
+    help="Hide zero count columns (e.g. from using filtered input data).",
+)
+parser.add_option(
     "-o",
     "--output",
     dest="output",
@@ -74,7 +81,9 @@ if args:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
 
 
-def pool(input_filename, output_stem, columns_str, column_pending, show_boolean):
+def pool(
+    input_filename, output_stem, columns_str, column_pending, show_boolean, hide_zeros
+):
     """Pool samples to make a more consise report."""
     try:
         value_cols = [int(_) - 1 for _ in columns_str.split(",")]
@@ -144,6 +153,16 @@ def pool(input_filename, output_stem, columns_str, column_pending, show_boolean)
                 meta_samples[meta] = set(samples)
                 meta_species[meta] = sp_counts
 
+    total_counts = sum(meta_species.values())
+    assert len(total_counts) == len(sp_headers), total_counts.shape
+    if hide_zeros:
+        sp_headers = [v for v, t in zip(sp_headers, total_counts) if t]
+        for meta in meta_species:
+            meta_species[meta] = [
+                v for v, t in zip(meta_species[meta], total_counts) if t
+            ]
+        total_counts = [t for t in total_counts if t]
+
     with open(output_stem + ".tsv", "w") as handle:
         handle.write(
             "\t".join(meta_headers)
@@ -183,4 +202,11 @@ def pool(input_filename, output_stem, columns_str, column_pending, show_boolean)
                 )
 
 
-pool(options.input, options.output, options.columns, options.pending, options.boolean)
+pool(
+    options.input,
+    options.output,
+    options.columns,
+    options.pending,
+    options.boolean,
+    options.hide_zeros,
+)
