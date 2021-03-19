@@ -1,4 +1,4 @@
-#Classification summary	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Read count	Unknown	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
-Unknown, Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*)	P-infestans-T30-4	70000	69000	68000	65000	63000	13000	50000	50000
-Unknown	hmm_trim	76000	75000	74000	73000	71864	71864	0	0
-Unknown	multiple_its1	31000	30000	29000	28000	27281	27281	0	0
+#Classification summary	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Read count	Unknown	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
+Unknown, Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*)	P-infestans-T30-4	70000	69000	68000	65000	63000	13000	50000
+Unknown	hmm_trim	76000	75000	74000	73000	71864	71864	0
+Unknown	multiple_its1	31000	30000	29000	28000	27281	27281	0
