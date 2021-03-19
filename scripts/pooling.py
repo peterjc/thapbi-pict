@@ -54,6 +54,13 @@ parser.add_option(
     "(in addition to a row of values if any were non-zero).",
 )
 parser.add_option(
+    "-b",
+    "--boolean",
+    default=False,
+    action="store_true",
+    help="Replace read counts with boolean (Y and N entries).",
+)
+parser.add_option(
     "-o",
     "--output",
     dest="output",
@@ -67,7 +74,7 @@ if args:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
 
 
-def pool(input_filename, output_stem, columns_str, column_pending):
+def pool(input_filename, output_stem, columns_str, column_pending, show_boolean):
     """Pool samples to make a more consise report."""
     try:
         value_cols = [int(_) - 1 for _ in columns_str.split(",")]
@@ -144,6 +151,16 @@ def pool(input_filename, output_stem, columns_str, column_pending):
             + "\t".join(sp_headers)
             + "\n"
         )
+
+        if show_boolean:
+            # Convert counts to Y/N
+            def display(count):
+                return "Y" if count else "N"
+
+        else:
+            # Use counts
+            display = str
+
         for meta, sp_counts in meta_species.items():
             if any(sp_counts) or not meta_pending[meta]:
                 # If all zero AND pending, don't print this line - do ??? only
@@ -152,7 +169,7 @@ def pool(input_filename, output_stem, columns_str, column_pending):
                     + "\t"
                     + str(len(meta_samples[meta]))
                     + "\t"
-                    + "\t".join(str(_) for _ in sp_counts)
+                    + "\t".join(display(_) for _ in sp_counts)
                     + "\n"
                 )
             if meta_pending[meta]:
@@ -166,4 +183,4 @@ def pool(input_filename, output_stem, columns_str, column_pending):
                 )
 
 
-pool(options.input, options.output, options.columns, options.pending)
+pool(options.input, options.output, options.columns, options.pending, options.boolean)
