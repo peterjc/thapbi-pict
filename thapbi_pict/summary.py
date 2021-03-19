@@ -77,26 +77,21 @@ def sample_summary(
     if not (output or human_output):
         sys.exit("ERROR: No output file specified.\n")
 
-    genus_predictions = set()
-    sample_genus_counts = {}
     species_predictions = set()  # includes A;B;C ambiguous entries
-    sample_genus_counts = {}
     for sample in sample_species_counts:
-        sample_genus_counts[sample] = Counter()
-        for sp_list, abundance in sample_species_counts[sample].items():
+        for sp_list, _ in sample_species_counts[sample].items():
             species_predictions.add(sp_list)  # as string with any ; included
             genus_list = {sp_list.split(" ", 1)[0] for sp in sp_list.split(";")}
             if len(genus_list) > 1:
                 sys.stderr.write(
                     f"WARNING: Conflicting genus from {sample}: {genus_list}\n"
                 )
-            genus_predictions.update(genus_list)
-            for genus in genus_list:
-                sample_genus_counts[sample][genus] += abundance
 
     species_predictions = sorted(species_predictions)  # turn into a list
-    genus_predictions = sorted(genus_predictions)  # turn into a list
-    species_columns = [_ for _ in species_predictions if _ not in genus_predictions]
+    species_columns = [
+        (_ if " " in _ else _ + " (unknown species)") if _ else "Unknown"
+        for _ in species_predictions
+    ]
 
     # Open files and write headers
     # ============================
@@ -105,11 +100,10 @@ def sample_summary(
     # ----------
     handle = open(output, "w")
     handle.write(
-        "#%sClassification summary\tSequencing sample\t%sRead count\t%s\t%s\n"
+        "#%sClassification summary\tSequencing sample\t%sRead count\t%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
-            "\t".join(_ if _ else "Unknown" for _ in genus_predictions),
             "\t".join(species_columns),
         )
     )
@@ -163,7 +157,7 @@ def sample_summary(
     # Set first row to be tall, with vertical text
     worksheet.set_row(0, 150, vertical_text_format)
     # If there are lots of species, set narrow column widths
-    cols = len(genus_predictions) + len(species_columns)
+    cols = len(species_columns)
     if cols > 50:
         # Set column width to 2
         worksheet.set_column(col_offset + 1, col_offset + cols, 2)
@@ -182,14 +176,8 @@ def sample_summary(
         worksheet.write_string(current_row, col_offset + offset, name)
     col_offset += len(stats_fields)
     worksheet.write_string(current_row, col_offset, "Read count")  # offset reference!
-    for offset, genus in enumerate(genus_predictions):
-        worksheet.write_string(
-            current_row, col_offset + 1 + offset, genus if genus else "Unknown"
-        )
     for offset, sp in enumerate(species_columns):
-        worksheet.write_string(
-            current_row, col_offset + 1 + len(genus_predictions) + offset, sp
-        )
+        worksheet.write_string(current_row, col_offset + 1 + offset, sp)
     worksheet.freeze_panes(current_row + 1, col_offset + 1)
 
     # Human header
@@ -223,9 +211,7 @@ def sample_summary(
         if not sample_batch and show_unsequenced:
             human.write("Has not been sequenced.\n\n")
             # Missing data in TSV:
-            blanks = (
-                len(stats_fields) + 3 + len(genus_predictions) + len(species_columns)
-            )
+            blanks = len(stats_fields) + 3 + len(species_columns)
             # Using "-" for missing data, could use "NA" or "?"
             handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
             # Missing data in Excel:
@@ -282,17 +268,12 @@ def sample_summary(
             if stats_fields:
                 handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
             handle.write(
-                "%i\t%s\t%s\n"
+                "%i\t%s\n"
                 % (
                     sum(sample_species_counts[sample].values()),
                     "\t".join(
-                        str(sample_genus_counts[sample][genus])
-                        for genus in genus_predictions
-                    ),
-                    "\t".join(
                         str(sample_species_counts[sample][sp])
                         for sp in species_predictions
-                        if sp not in genus_predictions
                     ),
                 )
             )
@@ -327,17 +308,10 @@ def sample_summary(
                 sum(sample_species_counts[sample].values()),
                 cell_format,
             )
-            for offset, genus in enumerate(genus_predictions):
+            for offset, sp in enumerate(species_predictions):
                 worksheet.write_number(
                     current_row,
                     col_offset + 1 + offset,
-                    sample_genus_counts[sample][genus],
-                    cell_format,
-                )
-            for offset, sp in enumerate(species_columns):
-                worksheet.write_number(
-                    current_row,
-                    col_offset + 1 + len(genus_predictions) + offset,
                     sample_species_counts[sample][sp],
                     cell_format,
                 )
@@ -347,7 +321,7 @@ def sample_summary(
         1,
         col_offset - 2 - len(stats_fields),  # go back to classification summary
         current_row,
-        col_offset + 1 + len(genus_predictions) + len(species_columns),
+        col_offset + 1 + len(species_columns),
         {
             "type": "cell",
             "criteria": "equal to",
@@ -359,7 +333,7 @@ def sample_summary(
         1,
         col_offset + 1,
         current_row,
-        col_offset + 1 + len(genus_predictions) + len(species_columns),
+        col_offset + 1 + len(species_columns),
         {
             "type": "cell",
             "criteria": "greater than",
