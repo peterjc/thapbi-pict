@@ -44,6 +44,16 @@ parser.add_option(
     "used for pooling.",
 )
 parser.add_option(
+    "-p",
+    "--pending",
+    type=str,
+    default="0",
+    metavar="COLUMN",
+    help="Columns from the input table containing Y, Yes, True (in any case) "
+    "where further sequencing is pending. Such entries will get a row of ??? "
+    "(in addition to a row of values if any were non-zero).",
+)
+parser.add_option(
     "-o",
     "--output",
     dest="output",
@@ -57,7 +67,7 @@ if args:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
 
 
-def pool(input_filename, output_stem, columns_str):
+def pool(input_filename, output_stem, columns_str, column_pending):
     """Pool samples to make a more consise report."""
     try:
         value_cols = [int(_) - 1 for _ in columns_str.split(",")]
@@ -68,9 +78,18 @@ def pool(input_filename, output_stem, columns_str):
         )
     if min(value_cols) < 0:
         sys.exit("ERROR: Invalid column, should all be positive.")
+    try:
+        column_pending = int(column_pending) - 1
+    except ValueError:
+        sys.exit(
+            "ERROR: Pending column should be a positive integer (or zero for none)."
+        )
+    if column_pending < 0:
+        column_pending = None
 
     meta_samples = {}
     meta_species = {}
+    meta_pending = {}
 
     with open(input_filename) as handle:
         line = handle.readline().rstrip("\n")
@@ -87,6 +106,10 @@ def pool(input_filename, output_stem, columns_str):
             sys.exit(
                 f"ERROR: Requested column {max(value_cols)+1} not in metadata range."
             )
+        if column_pending is not None and column_pending >= min(
+            sample_col, count_col, unk_col
+        ):
+            sys.exit("ERROR: Pending column not in metadata range.")
         sp_headers = header[unk_col:]
         meta_headers = [header[_] for _ in value_cols]
 
@@ -95,7 +118,14 @@ def pool(input_filename, output_stem, columns_str):
             if len(parts) != len(header):
                 sys.exit("ERROR: Inconsistent field counts")
             meta = tuple(parts[_] for _ in value_cols)
-
+            if column_pending is None:
+                meta_pending[meta] = False
+            else:
+                meta_pending[meta] = parts[column_pending].upper().strip() in (
+                    "Y",
+                    "YES",
+                    "TRUE",
+                )
             samples = [_ for _ in parts[sample_col].split(";") if _ != "-"]
             sp_counts = parts[unk_col:]
             # If this has not been sequenced, treat as zero for summation
@@ -115,14 +145,25 @@ def pool(input_filename, output_stem, columns_str):
             + "\n"
         )
         for meta, sp_counts in meta_species.items():
-            handle.write(
-                "\t".join(meta)
-                + "\t"
-                + str(len(meta_samples[meta]))
-                + "\t"
-                + "\t".join(str(_) for _ in sp_counts)
-                + "\n"
-            )
+            if any(sp_counts) or not meta_pending[meta]:
+                # If all zero AND pending, don't print this line - do ??? only
+                handle.write(
+                    "\t".join(meta)
+                    + "\t"
+                    + str(len(meta_samples[meta]))
+                    + "\t"
+                    + "\t".join(str(_) for _ in sp_counts)
+                    + "\n"
+                )
+            if meta_pending[meta]:
+                handle.write(
+                    "\t".join(meta)
+                    + "\t"
+                    + str(len(meta_samples[meta]))
+                    + "\t"
+                    + "\t".join("?" for _ in sp_counts)
+                    + "\n"
+                )
 
 
-pool(options.input, options.output, options.columns)
+pool(options.input, options.output, options.columns, options.pending)
