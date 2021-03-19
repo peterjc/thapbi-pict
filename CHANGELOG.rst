@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.8.0  *Pending*  Drop sample report genus sub-totals, show "Genus (unknown species)" instead.
 v0.7.11 2021-03-30 ``assess`` now only at sample level. Abundance threshold in ``classify``.
 v0.7.10 2021-03-24 Pipeline includes ``fasta-nr`` command making non-redundant FASTA file.
 v0.7.9  2021-03-15 Option to show unsequenced entries in summary sample report (``-u``).
