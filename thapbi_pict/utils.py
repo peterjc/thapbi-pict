@@ -36,9 +36,9 @@ def genus_species_name(genus, species):
     Copes with species being None (or empty string).
     """
     # This is a simple function, centralising it for consistency
-    assert genus and genus == genus.strip()
+    assert genus and genus == genus.strip(), repr(genus)
     if species:
-        assert species == species.strip()
+        assert species == species.strip(), repr(species)
         return f"{genus} {species}"
     else:
         return genus

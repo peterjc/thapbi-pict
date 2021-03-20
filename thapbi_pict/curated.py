@@ -25,7 +25,9 @@ def parse_fasta_entry(text, known_species=None):
     taxid = 0
     # if sp not in known_species:
     #     sys.stderr.write(f"WARNING: Unexpected species name {sp}\n")
-    return taxid, sp
+    while "  " in sp:
+        sp = sp.replace("  ", " ")
+    return taxid, sp.strip()
 
 
 assert parse_fasta_entry("HQ013219 Phytophthora arenaria") == (
