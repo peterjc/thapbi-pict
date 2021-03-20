@@ -337,7 +337,7 @@ def sample_summary(
     # Defined first, but takes priority over later conditional rules:
     worksheet.conditional_format(
         1,
-        col_offset - 2 - len(stats_fields),  # go back to sample filename stem
+        col_offset - 1 - len(stats_fields),  # go back to sample filename stem
         current_row,
         col_offset + 1 + len(genus_predictions) + len(species_columns),
         {
