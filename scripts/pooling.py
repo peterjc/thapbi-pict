@@ -54,6 +54,15 @@ parser.add_option(
     "(in addition to a row of values if any were non-zero).",
 )
 parser.add_option(
+    "-g",
+    "--genus",
+    type=str,
+    default="",
+    metavar="GENUS-LIST",
+    help="Optional semi-colon separated list of genera to list first "
+    "(overriding existing column order). e.g. Phytophthora;Unknown",
+)
+parser.add_option(
     "-b",
     "--boolean",
     default=False,
@@ -82,7 +91,13 @@ if args:
 
 
 def pool(
-    input_filename, output_stem, columns_str, column_pending, show_boolean, hide_zeros
+    input_filename,
+    output_stem,
+    columns_str,
+    column_pending,
+    show_boolean,
+    hide_zeros,
+    first_genus,
 ):
     """Pool samples to make a more consise report."""
     try:
@@ -179,6 +194,20 @@ def pool(
                 ]
         total_counts = [t for t in total_counts if t]
 
+    if first_genus:
+        # Need to resort output columns: sp_headers, meta_species, total_counts
+        first_genus = first_genus.split(";")
+        a = [i for i, v in enumerate(sp_headers) if v.split(" ")[0] in first_genus]
+        b = [i for i, v in enumerate(sp_headers) if not v.split(" ")[0] in first_genus]
+        new_order = a + b
+        del a, b
+        sp_headers = [sp_headers[i] for i in new_order]
+        total_counts = [total_counts[i] for i in new_order]
+        for meta, old_counts in list(meta_species.items()):
+            if old_counts is not None:
+                meta_species[meta] = [old_counts[i] for i in new_order]
+        del old_counts, new_order
+
     with open(output_stem + ".tsv", "w") as handle:
         handle.write(
             "\t".join(meta_headers)
@@ -235,4 +264,5 @@ pool(
     options.pending,
     options.boolean,
     options.hide_zeros,
+    options.genus,
 )
