@@ -127,6 +127,7 @@ def pool(
         ):
             sys.exit("ERROR: Pending column not in metadata range.")
         sp_headers = header[unk_col:]
+        sp_null = ["-"] * len(sp_headers)
         meta_headers = [header[_] for _ in value_cols]
 
         for line in handle:
@@ -143,24 +144,39 @@ def pool(
                     "TRUE",
                 )
             samples = [_ for _ in parts[sample_col].split(";") if _ != "-"]
-            sp_counts = parts[unk_col:]
-            # If this has not been sequenced, treat as zero for summation
-            sp_counts = np.array([0 if _ == "-" else int(_) for _ in sp_counts], np.int)
-            if meta in meta_samples:
-                meta_samples[meta].update(samples)
-                meta_species[meta] += sp_counts
-            else:
-                meta_samples[meta] = set(samples)
-                meta_species[meta] = sp_counts
 
-    total_counts = sum(meta_species.values())
+            sp_counts = parts[unk_col:]
+            if sp_counts == sp_null:
+                # Was not sequenced
+                if meta in meta_samples:
+                    meta_samples[meta].update(samples)
+                    # Don't record replace with a None value
+                else:
+                    meta_samples[meta] = set(samples)
+                    meta_species[meta] = None
+            else:
+                assert "-" not in sp_counts, sp_counts
+                sp_counts = np.array([int(_) for _ in sp_counts], np.int)
+                if meta in meta_samples:
+                    meta_samples[meta].update(samples)
+                    if meta_species[meta] is None:
+                        # Replace the None value
+                        meta_species[meta] = sp_counts
+                    else:
+                        meta_species[meta] += sp_counts
+                else:
+                    meta_samples[meta] = set(samples)
+                    meta_species[meta] = sp_counts
+
+    total_counts = sum(v for v in meta_species.values() if v is not None)
     assert len(total_counts) == len(sp_headers), total_counts.shape
     if hide_zeros:
         sp_headers = [v for v, t in zip(sp_headers, total_counts) if t]
         for meta in meta_species:
-            meta_species[meta] = [
-                v for v, t in zip(meta_species[meta], total_counts) if t
-            ]
+            if meta_species[meta] is not None:
+                meta_species[meta] = [
+                    v for v, t in zip(meta_species[meta], total_counts) if t
+                ]
         total_counts = [t for t in total_counts if t]
 
     with open(output_stem + ".tsv", "w") as handle:
@@ -181,8 +197,11 @@ def pool(
             display = str
 
         for meta, sp_counts in meta_species.items():
-            if any(sp_counts) or not meta_pending[meta]:
-                # If all zero AND pending, don't print this line - do ??? only
+            # Cases: pending (True/False), data (positive, zero, missing)
+            # If pending and missing, one line of output only!
+            #
+            if sp_counts is not None:
+                # Might have "???" pending line as well!
                 handle.write(
                     "\t".join(meta)
                     + "\t"
@@ -196,8 +215,15 @@ def pool(
                     "\t".join(meta)
                     + "\t"
                     + str(len(meta_samples[meta]))
+                    + "\t?" * len(sp_headers)
+                    + "\n"
+                )
+            elif sp_counts is None:
+                handle.write(
+                    "\t".join(meta)
                     + "\t"
-                    + "\t".join("?" for _ in sp_counts)
+                    + str(len(meta_samples[meta]))
+                    + "\t-" * len(sp_headers)
                     + "\n"
                 )
 
