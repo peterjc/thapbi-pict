@@ -77,6 +77,13 @@ parser.add_option(
     help="Hide zero count columns (e.g. from using filtered input data).",
 )
 parser.add_option(
+    "--pcr",
+    default=False,
+    action="store_true",
+    help="Replace sequence sample count with PCR status, recommend using "
+    "with the -p / --pending setting.",
+)
+parser.add_option(
     "-o",
     "--output",
     dest="output",
@@ -98,6 +105,7 @@ def pool(
     show_boolean,
     hide_zeros,
     first_genus,
+    pcr_status,
 ):
     """Pool samples to make a more consise report."""
     try:
@@ -211,7 +219,7 @@ def pool(
     with open(output_stem + ".tsv", "w") as handle:
         handle.write(
             "\t".join(meta_headers)
-            + "\tSamples-sequenced\t"
+            + ("\tPCR status\t" if pcr_status else "\tSamples-sequenced\t")
             + "\t".join(sp_headers)
             + "\n"
         )
@@ -228,13 +236,23 @@ def pool(
         for meta, sp_counts in meta_species.items():
             # Cases: pending (True/False), data (positive, zero, missing)
             # If pending and missing, one line of output only!
-            #
+
+            # Some 'magic' for human readable summary
+            if not pcr_status:
+                sample_status = str(len(meta_samples[meta]))
+            elif meta_pending[meta]:
+                sample_status = "To be sequenced"
+            elif sp_counts is None:
+                sample_status = "Negative"
+            else:
+                sample_status = "Positive"
+
             if sp_counts is not None:
                 # Might have "???" pending line as well!
                 handle.write(
                     "\t".join(meta)
                     + "\t"
-                    + str(len(meta_samples[meta]))
+                    + sample_status
                     + "\t"
                     + "\t".join(display(_) for _ in sp_counts)
                     + "\n"
@@ -243,7 +261,7 @@ def pool(
                 handle.write(
                     "\t".join(meta)
                     + "\t"
-                    + str(len(meta_samples[meta]))
+                    + sample_status
                     + "\t?" * len(sp_headers)
                     + "\n"
                 )
@@ -251,7 +269,7 @@ def pool(
                 handle.write(
                     "\t".join(meta)
                     + "\t"
-                    + str(len(meta_samples[meta]))
+                    + sample_status
                     + "\t-" * len(sp_headers)
                     + "\n"
                 )
@@ -265,4 +283,5 @@ pool(
     options.boolean,
     options.hide_zeros,
     options.genus,
+    options.pcr,
 )
