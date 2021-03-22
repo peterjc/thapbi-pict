@@ -1,0 +1,26 @@
+{
+    "license": "MIT",
+    "upload_type": "software",
+    "creators": [
+        {
+            "orcid": "0000-0001-9513-9993",
+            "affiliation": "The James Hutton Institute",
+            "name": "Peter Cock"
+        },
+        {
+            "orcid": "0000-0002-8392-2822",
+            "affiliation": "University of Strathclyde",
+            "name": "Leighton Pritchard"
+        },
+        {
+            "orcid": "0000-0001-8572-4654",
+            "affiliation": "University of St Andrews",
+            "name": "Peter Thorpe"
+        },
+        {
+            "orcid": "0000-0002-9154-7954",
+            "affiliation": "The James Hutton Institute",
+            "name": "David Cooke"
+        }
+    ],
+}
