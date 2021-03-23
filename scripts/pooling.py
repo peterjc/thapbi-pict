@@ -6,6 +6,7 @@ import sys
 from optparse import OptionParser
 
 import numpy as np
+import xlsxwriter
 
 # from collections import Counter
 
@@ -230,6 +231,32 @@ def pool(
                 meta_species[meta] = [old_counts[i] for i in new_order]
         del old_counts, new_order
 
+    if show_boolean:
+        # Convert counts to Y/N
+        def display(count):
+            return "Y" if count else "N"
+
+    else:
+        # Use counts
+        display = str
+
+    # Excel setup
+    # -----------
+    workbook = xlsxwriter.Workbook(output_stem + ".xlsx")
+    worksheet = workbook.add_worksheet("Samples vs species")
+    red_conditional_format = workbook.add_format(
+        # Maraschino red
+        {"bg_color": "#FF2600", "font_color": "#000000"}
+    )
+    grey_conditional_format = workbook.add_format(
+        {"bg_color": "#D3D3D3", "font_color": "#000000"}
+    )
+    vertical_text_format = workbook.add_format(
+        # Vertical text, reading up the page
+        {"rotation": 90}
+    )
+    central_text_format = workbook.add_format({"align": "center"})
+
     with open(output_stem + ".tsv", "w") as handle:
         handle.write(
             "\t".join(meta_headers)
@@ -238,14 +265,18 @@ def pool(
             + "\n"
         )
 
-        if show_boolean:
-            # Convert counts to Y/N
-            def display(count):
-                return "Y" if count else "N"
-
-        else:
-            # Use counts
-            display = str
+        # Set first row to be tall, with vertical text
+        current_row = 0
+        worksheet.set_row(0, 150, vertical_text_format)
+        for offset, name in enumerate(meta_headers):
+            worksheet.write_string(current_row, offset, name)
+        col_offset = len(meta_headers)
+        worksheet.write_string(
+            current_row, col_offset, "PCR status" if pcr_status else "Samples-sequenced"
+        )
+        for offset, name in enumerate(sp_headers):
+            worksheet.write_string(current_row, col_offset + 1 + offset, name)
+        worksheet.freeze_panes(current_row + 1, col_offset + 1)
 
         for meta, sp_counts in meta_species.items():
             # Cases: pending (True/False), data (positive, zero, missing)
@@ -262,6 +293,7 @@ def pool(
                 sample_status = "Positive"
 
             if sp_counts is not None:
+                # Line of values for unsequenced data
                 # Might have "???" pending line as well!
                 handle.write(
                     "\t".join(meta)
@@ -271,7 +303,32 @@ def pool(
                     + "\t".join(display(_) for _ in sp_counts)
                     + "\n"
                 )
+                current_row += 1
+                for offset, value in enumerate(meta):
+                    worksheet.write_string(current_row, offset, value)
+                if pcr_status:
+                    worksheet.write_string(current_row, col_offset, sample_status)
+                else:
+                    # Special cased to write a number not a string:
+                    assert sample_status == str(len(meta_samples[meta]))
+                    worksheet.write_number(
+                        current_row, col_offset, len(meta_samples[meta])
+                    )
+                if show_boolean:
+                    for offset, value in enumerate(sp_counts):
+                        worksheet.write_string(
+                            current_row,
+                            col_offset + 1 + offset,
+                            display(value),
+                            central_text_format,
+                        )
+                else:
+                    for offset, value in enumerate(sp_counts):
+                        worksheet.write_number(
+                            current_row, col_offset + 1 + offset, value
+                        )
             if meta_pending[meta]:
+                # Line of "?" for unsequenced but pending data
                 handle.write(
                     "\t".join(meta)
                     + "\t"
@@ -279,7 +336,21 @@ def pool(
                     + "\t?" * len(sp_headers)
                     + "\n"
                 )
+                current_row += 1
+                for offset, value in enumerate(meta):
+                    worksheet.write_string(current_row, offset, value)
+                if pcr_status:
+                    worksheet.write_string(current_row, col_offset, sample_status)
+                else:
+                    # Special cased to write a number not a string:
+                    assert sample_status == "0"
+                    worksheet.write_number(current_row, col_offset, 0)
+                for offset in range(len(sp_headers)):
+                    worksheet.write_string(
+                        current_row, col_offset + 1 + offset, "?", central_text_format
+                    )
             elif sp_counts is None:
+                # Line of "-" for unsequenced data
                 handle.write(
                     "\t".join(meta)
                     + "\t"
@@ -287,6 +358,65 @@ def pool(
                     + "\t-" * len(sp_headers)
                     + "\n"
                 )
+                current_row += 1
+                for offset, value in enumerate(meta):
+                    worksheet.write_string(current_row, offset, value)
+                if pcr_status:
+                    worksheet.write_string(current_row, col_offset, sample_status)
+                else:
+                    # Special cased to write a number not a string:
+                    assert sample_status == "0"
+                    worksheet.write_number(current_row, col_offset, 0)
+                for offset in range(len(sp_headers)):
+                    worksheet.write_string(
+                        current_row, col_offset + 1 + offset, "-", central_text_format
+                    )
+
+    if pcr_status:
+        # Can set this just right
+        worksheet.set_column(col_offset, col_offset, 9.7)
+    # Defined first, but takes priority over later conditional rules:
+    worksheet.conditional_format(
+        1,
+        col_offset + 1,
+        current_row,
+        col_offset + 1 + len(sp_headers),
+        {
+            "type": "cell",
+            "criteria": "equal to",
+            "value": '"-"',
+            "format": grey_conditional_format,
+        },
+    )
+    if show_boolean:
+        # With just single characters only need narrow columns:
+        worksheet.set_column(col_offset + 1, col_offset + 1 + len(sp_headers), 2.7)
+        worksheet.conditional_format(
+            1,
+            col_offset + 1,
+            current_row,
+            col_offset + 1 + len(sp_headers),
+            {
+                "type": "cell",
+                "criteria": "equal to",
+                "value": '"Y"',
+                "format": red_conditional_format,
+            },
+        )
+    else:
+        worksheet.conditional_format(
+            1,
+            col_offset + 1,
+            current_row,
+            col_offset + 1 + len(sp_headers),
+            {
+                "type": "cell",
+                "criteria": "greater than",
+                "value": 0,
+                "format": red_conditional_format,
+            },
+        )
+    workbook.close()
 
 
 pool(
