@@ -148,18 +148,15 @@ def pool(
         try:
             sample_col = header.index("Sequencing sample")
             count_col = header.index("Seq-count")
-            unk_col = header.index("Unknown")
         except IndexError:
             sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
-        if max(value_cols) >= min(sample_col, count_col, unk_col):
+        if max(value_cols) >= min(sample_col, count_col):
             sys.exit(
                 f"ERROR: Requested column {max(value_cols)+1} not in metadata range."
             )
-        if column_pending is not None and column_pending >= min(
-            sample_col, count_col, unk_col
-        ):
+        if column_pending is not None and column_pending >= min(sample_col, count_col):
             sys.exit("ERROR: Pending column not in metadata range.")
-        sp_headers = header[unk_col:]
+        sp_headers = header[count_col + 1 :]
         sp_null = ["-"] * len(sp_headers)
         meta_headers = [header[_] for _ in value_cols]
 
@@ -178,7 +175,7 @@ def pool(
                 )
             samples = [_ for _ in parts[sample_col].split(";") if _ != "-"]
 
-            sp_counts = parts[unk_col:]
+            sp_counts = parts[count_col + 1 :]
             if sp_counts == sp_null:
                 # Was not sequenced
                 if meta in meta_samples:
