@@ -258,7 +258,7 @@ def pool(
             if not pcr_status:
                 sample_status = str(len(meta_samples[meta]))
             elif meta_pending[meta]:
-                sample_status = "To be sequenced"
+                sample_status = "Positive (NS)"  # Not Sequenced (yet)
             elif sp_counts is None:
                 sample_status = "Negative"
             else:
