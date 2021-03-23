@@ -117,7 +117,7 @@ def sample_summary(
     # Excel setup
     # -----------
     workbook = xlsxwriter.Workbook(excel)
-    worksheet = workbook.add_worksheet("Sequence vs samples")
+    worksheet = workbook.add_worksheet("Samples vs species")
     red_conditional_format = workbook.add_format(
         # Maraschino red
         {"bg_color": "#FF2600", "font_color": "#000000"}
