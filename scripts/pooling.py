@@ -55,12 +55,21 @@ parser.add_option(
 )
 parser.add_option(
     "-g",
-    "--genus",
+    "--first-genus",
     type=str,
     default="",
     metavar="GENUS-LIST",
     help="Optional semi-colon separated list of genera to list first "
-    "(overriding existing column order). e.g. Phytophthora;Unknown",
+    "(overriding existing column order). e.g. Unknown;Phytophthora",
+)
+parser.add_option(
+    "-G",
+    "--last-genus",
+    type=str,
+    default="",
+    metavar="GENUS-LIST",
+    help="Optional semi-colon separated list of genera to list last "
+    "(overriding existing column order). e.g. Synthetic;Unknown",
 )
 parser.add_option(
     "-b",
@@ -105,6 +114,7 @@ def pool(
     show_boolean,
     hide_zeros,
     first_genus,
+    last_genus,
     pcr_status,
 ):
     """Pool samples to make a more consise report."""
@@ -204,11 +214,18 @@ def pool(
 
     if first_genus:
         # Need to resort output columns: sp_headers, meta_species, total_counts
-        first_genus = first_genus.split(";")
-        a = [i for i, v in enumerate(sp_headers) if v.split(" ")[0] in first_genus]
-        b = [i for i, v in enumerate(sp_headers) if not v.split(" ")[0] in first_genus]
-        new_order = a + b
-        del a, b
+        first_genus = [_.strip() for _ in first_genus.replace(",", ";").split(";")]
+        last_genus = [
+            _.strip()
+            for _ in last_genus.replace(",", ";").split(";")
+            if _ not in first_genus
+        ]
+        g = [_.split(" ")[0] for _ in sp_headers]
+        a = [i for i, v in enumerate(g) if v in first_genus]
+        b = [i for i, v in enumerate(g) if v not in (first_genus + last_genus)]
+        c = [i for i, v in enumerate(g) if v in last_genus]
+        new_order = a + b + c
+        del a, b, c, g
         sp_headers = [sp_headers[i] for i in new_order]
         total_counts = [total_counts[i] for i in new_order]
         for meta, old_counts in list(meta_species.items()):
@@ -282,6 +299,7 @@ pool(
     options.pending,
     options.boolean,
     options.hide_zeros,
-    options.genus,
+    options.first_genus,
+    options.last_genus,
     options.pcr,
 )
