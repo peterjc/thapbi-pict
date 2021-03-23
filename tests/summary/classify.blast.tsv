@@ -1,4 +1,4 @@
-#Classification summary	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Read count	Unknown	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora ramorum
-Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*)	P-infestans-T30-4	70000	69000	68000	65000	63000	0	0	63000	0	0	0	0
-Unknown, Phytophthora aleatoria(*), Phytophthora cactorum(*), Phytophthora cambivora(*), Phytophthora cinnamomi, Phytophthora cryptogea(*), Phytophthora pseudocryptogea(*), Phytophthora ramorum, Phytophthora x cambivora(*)	hmm_trim	76000	75000	74000	73000	71864	68851	409	0	296	518	160	1630
-Unknown	multiple_its1	31000	30000	29000	28000	27281	27281	0	0	0	0	0	0
+#Classification summary	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Read count	Phytophthora aleatoria;Phytophthora cactorum	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Phytophthora cambivora;Phytophthora x cambivora	Phytophthora cinnamomi	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora ramorum	Unknown
+Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*)	P-infestans-T30-4	70000	69000	68000	65000	63000	0	63000	0	0	0	0	0
+Unknown, Phytophthora aleatoria(*), Phytophthora cactorum(*), Phytophthora cambivora(*), Phytophthora cinnamomi, Phytophthora cryptogea(*), Phytophthora pseudocryptogea(*), Phytophthora ramorum, Phytophthora x cambivora(*)	hmm_trim	76000	75000	74000	73000	71864	409	0	296	518	160	1630	68851
+Unknown	multiple_its1	31000	30000	29000	28000	27281	0	0	0	0	0	0	27281
