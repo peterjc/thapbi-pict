@@ -87,11 +87,27 @@ def sample_summary(
                     f"WARNING: Conflicting genus from {sample}: {genus_list}\n"
                 )
 
-    species_predictions = sorted(species_predictions)  # turn into a list
-    species_columns = [
-        (_ if " " in _ else _ + " (unknown species)") if _ else "Unknown"
+    # Want this order:
+    # * Genus1 species1
+    # * Genus1 species2
+    # * Genus1 (unknown species) -- aka "Genus1"
+    # * Genus2 species1
+    # * ...
+    # * GenusN species1
+    # * ...
+    # * GenusN (unknown species) -- aka "GenusN"
+    # * Unknown - aka ""
+    sp_triplets = sorted(
+        (
+            (_ if " " in _ else _ + " {unknown species}") if _ else "{Unknown}",
+            (_ if " " in _ else _ + " (unknown species)") if _ else "Unknown",
+            _,
+        )
         for _ in species_predictions
-    ]
+    )
+    species_columns = [_[1] for _ in sp_triplets]
+    species_predictions = [_[2] for _ in sp_triplets]
+    del sp_triplets
 
     # Open files and write headers
     # ============================
