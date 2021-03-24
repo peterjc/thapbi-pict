@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -23,6 +23,7 @@ rm -rf $TMP/intermediate $TMP/output
 mkdir $TMP/intermediate $TMP/output
 thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output -i tests/reads/
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+diff $TMP/output/thapbi-pict.all_reads.fasta tests/pipeline/thapbi-pict.all_reads.fasta
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv

@@ -341,6 +341,7 @@ def edit_graph(args=None):
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
+    from .fasta_nr import main as fasta_nr
     from .classify import main as classify
     from .summary import main as summary
     from .assess import main as assess
@@ -361,6 +362,12 @@ def pipeline(args=None):
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
 
     hmm = expand_hmm_argument(args.hmm)
+
+    if args.report:
+        stem = os.path.join(args.output, args.report)
+    else:
+        # Include version number here?
+        stem = os.path.join(args.output, "thapbi-pict")
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
@@ -388,6 +395,17 @@ def pipeline(args=None):
             sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
             sys.exit(return_code)
 
+    all_fasta = stem + ".all_reads.fasta"
+    fasta_nr(
+        inputs=fasta_files,
+        revcomp=None,
+        output=all_fasta,
+        min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
+        debug=args.verbose,
+    )
+
     classified_files = classify(
         fasta=fasta_files,
         db_url=db,
@@ -410,12 +428,6 @@ def pipeline(args=None):
         )
 
     method = args.method
-
-    if args.report:
-        stem = os.path.join(args.output, args.report)
-    else:
-        # Include version number here?
-        stem = os.path.join(args.output, "thapbi-pict")
 
     return_code = summary(
         inputs=fasta_files + classified_files,
