@@ -289,7 +289,7 @@ def import_fasta_file(
                     continue
 
                 if not taxid and not name:
-                    bad_entries += 1
+                    bad_sp_entries += 1
                     sys.stderr.write(f"WARNING: No species information: {idn!r}\n")
                     continue
 
@@ -374,7 +374,11 @@ def import_fasta_file(
         f"File {fasta_file} had {seq_count} sequences, "
         f"of which {good_seq_count} accepted.\n"
     )
-    assert bad_entries <= entry_count, (bad_entries, entry_count)
+    assert bad_entries + bad_sp_entries <= entry_count, (
+        bad_entries,
+        bad_sp_entries,
+        entry_count,
+    )
     assert good_entries <= entry_count, (good_entries, entry_count)
     if validate_species:
         sys.stderr.write(
@@ -387,8 +391,9 @@ def import_fasta_file(
             f"Of {entry_count} potential entries, loaded {good_entries} entries,"
             f" {bad_entries} failed parsing.\n"
         )
-        assert bad_sp_entries == 0, bad_sp_entries
-        assert entry_count == good_entries + bad_entries
+        assert (
+            entry_count == good_entries + bad_entries + bad_sp_entries
+        ), f"{entry_count} != {good_entries} + {bad_entries} + {bad_sp_entries}"
 
     if bad_species and (validate_species or debug):
         sys.stderr.write(
