@@ -474,7 +474,7 @@ def pipeline(args=None):
             sys.exit(return_code)
         sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
 
-    edit_graph_filename = stem + ".edit-graph.xgmml"  # independent of method
+    edit_graph_filename = f"{stem}.edit-graph.{method}.xgmml"
     if os.path.isfile(edit_graph_filename):
         # This is slow to compute on complex sample sets
         sys.stderr.write(f"WARNING: Skipping {edit_graph_filename} as already exists\n")

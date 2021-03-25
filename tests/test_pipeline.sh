@@ -27,7 +27,7 @@ diff $TMP/output/thapbi-pict.all_reads.fasta tests/pipeline/thapbi-pict.all_read
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
-diff $TMP/output/thapbi-pict.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
+diff $TMP/output/thapbi-pict.edit-graph.onebp.xgmml tests/pipeline/thapbi-pict.edit-graph.onebp.xgmml
 
 # Leaving the intermediate files in place... plus some stray files:
 touch $TMP/intermediate/unwanted.fasta
@@ -43,7 +43,7 @@ diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001
 diff $TMP/output/report.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/report.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/report.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
-diff $TMP/output/report.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
+diff $TMP/output/report.edit-graph.onebp.xgmml tests/pipeline/thapbi-pict.edit-graph.onebp.xgmml
 
 
 # Clear the intermediate, run again with --merged-cache
@@ -57,6 +57,6 @@ diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
-diff $TMP/output/thapbi-pict.edit-graph.xgmml tests/pipeline/thapbi-pict.edit-graph.xgmml
+diff $TMP/output/thapbi-pict.edit-graph.onebp.xgmml tests/pipeline/thapbi-pict.edit-graph.onebp.xgmml
 
 echo "$0 - test_pipeline.sh passed"
