@@ -13,7 +13,7 @@ for LIBRARY in amp_lib_one amp_lib_two; do
     for ACC in `grep ^SRR $LIBRARY/metadata.tsv | cut -f 1`; do
         # echo "Downloading $ACC"
         # Column 6 should have two URLs (R1 and R2), semi-colon separated:
-        for URL in `grep ^$ACC PRJNA377530.txt | cut -f 6 | sed "s/;/ /g"`; do
+        for URL in `grep ^$ACC PRJNA377530.tsv | cut -f 6 | sed "s/;/ /g"`; do
             NAME=${URL##*/}
             FILE=$LIBRARY/raw_data/$NAME
             # Avoiding leaving partial FASTQ if wget is interupted

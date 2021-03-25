@@ -16,10 +16,10 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
     echo "ERROR: Missing raw_data/MD5SUM.txt"
     false
 fi
-for ACC in `grep ^SRR PRJNA574765.txt | cut -f 1`; do
+for ACC in `grep ^SRR PRJNA574765.tsv | cut -f 1`; do
     # echo "Downloading $ACC"
     # Column 5 should have two URLs (R1 and R2), semi-colon separated:
-    for URL in `grep ^$ACC PRJNA574765.txt | cut -f 5 | sed "s/;/ /g"`; do
+    for URL in `grep ^$ACC PRJNA574765.tsv | cut -f 5 | sed "s/;/ /g"`; do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interupted

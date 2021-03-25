@@ -16,7 +16,7 @@ amplicons (with different primer settings and reference databases).
 FASTQ data
 ----------
 
-File ``PRJNA379165.txt`` was download from the ENA and includes the FASTQ
+File ``PRJNA379165.tsv`` was download from the ENA and includes the FASTQ
 checksums, URLs, and sample metadata. Derived file ``metadata.tsv`` contains
 report-ready metadata about the samples (see below).
 

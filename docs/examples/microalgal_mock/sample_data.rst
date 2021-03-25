@@ -16,7 +16,7 @@ Subdirectories ``V4/`` and ``V8V9/`` are used for the different amplicons
 FASTQ data
 ----------
 
-File ``PRJNA314977.txt`` was download from the ENA and includes the FASTQ
+File ``PRJNA314977.tsv`` was download from the ENA and includes the FASTQ
 checksums, URLs, and sample metadata. File ``metadata.tsv`` contains metadata
 about the samples (see below).
 
@@ -72,7 +72,7 @@ Metadata
 The provided file ``metadata.tsv`` is based on Supplementary Material Table S2,
 although consistently using just one row per sample (representing three replicates),
 and with the location and mock community ratio split into separate columns. This
-has been combined with the MiSeq accessions from ``PRJNA314977.txt``. It has seven
+has been combined with the MiSeq accessions from ``PRJNA314977.tsv``. It has seven
 columns:
 
 1. Environment, "Freshwater", "Wastewater", "Marine", "Control" or "Mock community"

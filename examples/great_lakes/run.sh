@@ -26,7 +26,7 @@ function analyse {
                 -i raw_data/ expected/$NAME/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -x 1 -c 4,5,3,2
-    #           -t PRJNA379165.txt -x 1 -c 4,8
+    #           -t PRJNA379165.tsv -x 1 -c 4,8
 
     # Run an edit graph at the default -a 100 setting, without
     # the --showdb setting (most of the DB content )

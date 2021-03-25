@@ -18,7 +18,7 @@ automatically, but encourage you to follow along the individual steps first.
 FASTQ data
 ----------
 
-File ``PRJNA417859.txt`` was download from the ENA and includes the FASTQ
+File ``PRJNA417859.tsv`` was download from the ENA and includes the FASTQ
 checksums, URLs, and sample metadata. With a little scripting to extract the
 relevant :ref:`sample metadata <metadata>` for use with THAPBI PICT this was
 reformatted as ``metadata.tsv`` (see below).

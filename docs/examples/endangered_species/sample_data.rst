@@ -22,7 +22,7 @@ various primers and abundance thresholds.
 FASTQ data
 ----------
 
-File ``PRJEB18620.txt`` was download from the ENA and includes the raw data
+File ``PRJEB18620.tsv`` was download from the ENA and includes the raw data
 checksums, URLs, but lacks any sample metadata.
 
 Script ``setup.sh`` will download the raw FASTQ files for Arulandhu *et al.*
@@ -93,7 +93,7 @@ mixture containing 1% Zea mays, 1% Glycine max, 1% Aloe variegata, 1%
 Dendrobium sp., 1% Huso Dauricus, 1% Crocodylus niloticus, 47% Brassica
 oleracea and 47% Bos taurus, in dry weight percentages".
 
-File ``PRJEB18620.txt`` with the descriptions on the NCBI SRA, supplemented by
+File ``PRJEB18620.tsv`` with the descriptions on the NCBI SRA, supplemented by
 Table 7, was used to write ``metadata.tsv``, which has the following columns:
 
 1. run_accessions, e.g. "ERR1824060;ERR1824061;...;ERR1824075"

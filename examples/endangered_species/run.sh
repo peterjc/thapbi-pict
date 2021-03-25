@@ -35,7 +35,7 @@ function pool {
     echo "Pooling intermediate FASTA files..."
     # Excluding primer specific header lines with grep,
     # only want a single header
-    for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
+    for S in `cut -f 4 PRJEB18620.tsv | grep -v "sample_alias"`; do
         grep "^#" intermediate/16S/$S.fasta | grep -v -E "(_primer|cutadapt|abundance)" > intermediate_pool/$S.fasta
         cat intermediate/*/$S.fasta | grep -v "^#" >> intermediate_pool/$S.fasta
     done
@@ -57,7 +57,7 @@ function pool {
     rm header.tmp
 
     echo "Pooling intermediate onebp classifications..."
-    for S in `cut -f 4 PRJEB18620.txt | grep -v "sample_alias"`; do
+    for S in `cut -f 4 PRJEB18620.tsv | grep -v "sample_alias"`; do
         cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
         cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
     done;

@@ -10,11 +10,11 @@ fi
 echo "=========================="
 echo "Downloading reads from ENA"
 echo "=========================="
-for ACC in `grep ERR PRJEB18620.txt | cut -f 1`; do
+for ACC in `grep ERR PRJEB18620.tsv | cut -f 1`; do
     # echo "Downloading $ACC"
-    SAMPLE=`grep ^$ACC PRJEB18620.txt | cut -f 4`
+    SAMPLE=`grep ^$ACC PRJEB18620.tsv | cut -f 4`
     # Column 3 should have two URLs (R1 and R2), semi-colon separated:
-    for URL in `grep ^$ACC PRJEB18620.txt | cut -f 3 | sed "s/;/ /g"`; do
+    for URL in `grep ^$ACC PRJEB18620.tsv | cut -f 3 | sed "s/;/ /g"`; do
         NAME=${URL##*/}
         FILE=raw_download/$NAME
         if [ "EM_" == ${NAME:0:3} ]; then

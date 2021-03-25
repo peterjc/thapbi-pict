@@ -13,7 +13,7 @@ discussed.
 FASTQ data
 ----------
 
-File ``PRJNA377530.txt`` was download from the ENA and includes the FASTQ
+File ``PRJNA377530.tsv`` was download from the ENA and includes the FASTQ
 checksums, URLs, and sample metadata.
 
 Script ``setup.sh`` will download the raw FASTQ files for Bakker (2018) from
