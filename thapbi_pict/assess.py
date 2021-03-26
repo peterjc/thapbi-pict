@@ -358,6 +358,7 @@ def main(
         expt = sp_in_tsv(expected_file, min_abundance)
         pred = sp_in_tsv(predicted_file, min_abundance)
         global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
+    assert len(input_list) == sum(global_tally.values())
 
     if debug:
         sys.stderr.write(f"DEBUG: Assessing {sum(global_tally.values())} predictions\n")
@@ -382,8 +383,7 @@ def main(
 
     sys.stderr.write(
         f"Assessed {method} vs {known} in {file_count} files"
-        f" ({len(sp_list)} species;"
-        f" {sum(global_tally.values())} predictions)\n"
+        f" ({len(sp_list)} species)\n"
     )
 
     assert file_count == len(input_list)
