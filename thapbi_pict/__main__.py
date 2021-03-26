@@ -272,7 +272,6 @@ def assess_classification(args=None):
 
     return main(
         inputs=args.input,
-        level=args.level,
         known=args.known,
         method=args.method,
         min_abundance=args.abundance,
@@ -459,7 +458,6 @@ def pipeline(args=None):
     if known_files:
         return_code = assess(
             inputs=known_files + classified_files,
-            level="sample",  # =args.level,
             known="known",  # =args.known,
             method=args.method,
             min_abundance=args.abundance,
@@ -1254,7 +1252,9 @@ def main(args=None):
         "classifier performance metrics (to stdout by default). "
         "You can deliberately compare two prediction methods to "
         "each other using this, but a known set of positive controls "
-        "is the expected benchmark.",
+        "is the expected benchmark. The assessment is at sample level "
+        "(taking the union of species predicted by all sequences from "
+        "each sample).",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1268,16 +1268,6 @@ def main(args=None):
         "-m / --method and -k / --known arguments. ",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument(
-        "-l",
-        "--level",
-        type=str,
-        default="sample",
-        choices=["sample", "sseq", "useq"],
-        help="Assess at sample level (taking union of species predicted "
-        "by sequences from each sample), sequence level within samples, "
-        "or at unique sequence level (over all samples).",
-    )
     subcommand_parser.add_argument(
         "-k",
         "--known",

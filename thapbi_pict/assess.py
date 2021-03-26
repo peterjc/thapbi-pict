@@ -143,10 +143,10 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     return sorted(classes)
 
 
-def save_mapping(tally, filename, level, debug=False):
+def save_mapping(tally, filename, debug=False):
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
-        handle.write(f"#{level}-count\tExpected\tPredicted\n")
+        handle.write("#sample-count\tExpected\tPredicted\n")
         for expt, pred in sorted(tally):
             handle.write(f"{tally[expt, pred]}\t{expt}\t{pred}\n")
     if debug:
@@ -156,9 +156,7 @@ def save_mapping(tally, filename, level, debug=False):
         )
 
 
-def save_confusion_matrix(
-    tally, db_sp_list, sp_list, filename, exp_total, level, debug=False
-):
+def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug=False):
     """Output a multi-class confusion matrix as a tab-separated table."""
     total = 0
 
@@ -213,9 +211,7 @@ def save_confusion_matrix(
     total = sum(values.values())
 
     with open(filename, "w") as handle:
-        handle.write(
-            "#Expected vs predicted\t%s count\t%s\n" % (level, "\t".join(cols))
-        )
+        handle.write("#Expected vs predicted\tsample count\t%s\n" % "\t".join(cols))
         for expt in rows:
             if expt == "(None)":
                 level_count = sum(count for ((e, _), count) in tally.items() if not e)
@@ -325,7 +321,6 @@ assert extract_global_tally({("A;B", "A;C"): 1}, ["A", "B", "C", "D"]) == (1, 1,
 
 def main(
     inputs,
-    level,
     known,
     method,
     min_abundance,
@@ -335,9 +330,8 @@ def main(
     ignore_prefixes=None,
     debug=False,
 ):
-    """Implement the (species level) ``thapbi_pict assess`` command."""
+    """Implement the (sample/species level) ``thapbi_pict assess`` command."""
     assert isinstance(inputs, list), inputs
-    assert level in ["sample", "sseq", "useq"], level
 
     input_list = find_paired_files(
         inputs, f".{method}.tsv", f".{known}.tsv", ignore_prefixes, debug, strict=False
@@ -362,82 +356,12 @@ def main(
             assert db_sp_list is not None, db_sp_list
 
         file_count += 1
-        if level == "sample":
-            expt = sp_in_tsv(expected_file, min_abundance)
-            pred = sp_in_tsv(predicted_file, min_abundance)
-            global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
-        elif level == "sseq":
-            for (expt, pred), values in tally_files(
-                expected_file, predicted_file, min_abundance
-            ).items():
-                # Values is set of MD5s, but only want count
-                global_tally[expt, pred] = global_tally.get((expt, pred), 0) + len(
-                    values
-                )
-        elif level == "useq":
-            for (expt, pred), values in tally_files(
-                expected_file, predicted_file, min_abundance
-            ).items():
-                # Values is set of MD5s, add to set
-                try:
-                    global_tally[expt, pred].update(values)
-                except KeyError:
-                    global_tally[expt, pred] = values
-        else:
-            sys.exit(f"ERROR: Invalid level value {level!r}")
-
-    # Consistency check - we know swarm classifier breaks this, important at useq level
-    if level in ["useq"]:
-        md5_pred = {}
-        md5_expt = {}
-        for (expt, pred), values in global_tally.items():
-            assert isinstance(values, set), values
-            for md5 in values:
-                if md5 in md5_pred:
-                    if pred != md5_pred[md5]:
-                        sys.stderr.write(
-                            f"WARNING: Conflicting predictions for {md5},"
-                            f" {pred} vs {md5_pred[md5]}"
-                            "\nCannot do unique sequence classifier assessment.\n"
-                        )
-                        sys.exit(0)  # Deliberately not an error
-                else:
-                    md5_pred[md5] = pred
-                if md5 in md5_expt:
-                    if expt != md5_expt[md5]:
-                        sys.stderr.write(
-                            f"WARNING: Conflicting expectations for {md5},"
-                            f" {expt} vs {md5_expt[md5]}"
-                            "\nCannot do unique sequence classifier assessment.\n"
-                        )
-                        sys.exit(0)  # Deliberately not an error
-                else:
-                    md5_expt[md5] = expt
-        assert sorted(md5_pred) == sorted(md5_expt), (
-            "Unique sequence species assignements:"
-            f" {len(md5_expt)} expected vs {len(md5_pred)} predicted"
-        )
-        if debug:
-            sys.stderr.write(
-                f"DEBUG: {len(md5_pred)} unique seqs with predictions/expectations\n"
-            )
-        del md5_pred
-        # Convert from sets of values to integer counts
-        tmp_list = []
-        for _ in global_tally.values():
-            tmp_list += list(_)
-        tmp_list.sort()
-        assert len(tmp_list) == len(set(tmp_list))
-        del tmp_list
-        # Convert from sets of values to integer counts
-        for expt, pred in global_tally:
-            global_tally[expt, pred] = len(global_tally[expt, pred])
+        expt = sp_in_tsv(expected_file, min_abundance)
+        pred = sp_in_tsv(predicted_file, min_abundance)
+        global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
 
     if debug:
-        sys.stderr.write(
-            f"DEBUG: Assessing {sum(global_tally.values())}"
-            f" {level} level predictions\n"
-        )
+        sys.stderr.write(f"DEBUG: Assessing {sum(global_tally.values())} predictions\n")
 
     if db_sp_list is None:
         sys.exit("ERROR: Failed to load DB species list from headers")
@@ -460,7 +384,7 @@ def main(
     sys.stderr.write(
         f"Assessed {method} vs {known} in {file_count} files"
         f" ({len(sp_list)} species;"
-        f" {sum(global_tally.values())} {level} level predictions)\n"
+        f" {sum(global_tally.values())} predictions)\n"
     )
 
     assert file_count == len(input_list)
@@ -469,9 +393,9 @@ def main(
         sys.exit("ERROR: Could not find files to assess\n")
 
     if map_output == "-":
-        save_mapping(global_tally, "/dev/stdout", level, debug=debug)
+        save_mapping(global_tally, "/dev/stdout", debug=debug)
     elif map_output:
-        save_mapping(global_tally, map_output, level, debug=debug)
+        save_mapping(global_tally, map_output, debug=debug)
 
     if confusion_output == "-":
         save_confusion_matrix(
@@ -480,7 +404,6 @@ def main(
             sp_list,
             "/dev/stdout",
             number_of_classes_and_examples,
-            level,
             debug=debug,
         )
     elif confusion_output:
@@ -490,7 +413,6 @@ def main(
             sp_list,
             confusion_output,
             number_of_classes_and_examples,
-            level,
             debug=debug,
         )
 
