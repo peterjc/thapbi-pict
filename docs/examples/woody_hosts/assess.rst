@@ -293,9 +293,9 @@ Running assessment as part of pipeline
 --------------------------------------
 
 Provided they follow the expected naming convention, if you include your
-control files ``*.known.tsv`` as one of the pipeline inputs, it will call
-the classifier assessment (at sample level) after runing the classifier and
-producing the main reports:
+control files ``*.known.tsv`` as one of the pipeline inputs, it will call the
+classifier assessment after runing the classifier and producing the main
+reports:
 
 .. code:: console
 

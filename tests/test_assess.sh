@@ -20,29 +20,21 @@ thapbi_pict assess 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # Simple examples with expected output to compare against
-# Because these are single samples, sseq and useq should agree
-for LEVEL in sseq useq; do
-    diff tests/assess/ex1.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/ex1.known.tsv tests/assess/ex1.identity.tsv -c /dev/null)
-    diff tests/assess/ex2.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/ex2.known.tsv tests/assess/ex2.identity.tsv -c /dev/null)
-    diff tests/assess/ex3.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/ex3.known.tsv tests/assess/ex3.identity.tsv -c /dev/null)
-    diff tests/assess/ex4.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/ex4.known.tsv tests/assess/ex4.identity.tsv -c /dev/null)
-    diff tests/assess/unclassified.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/unclassified.known.tsv tests/assess/unclassified.identity.tsv -c /dev/null)
-    diff tests/assess/fp.assess.tsv <(thapbi_pict assess -m identity -l $LEVEL -i tests/assess/fp.known.tsv tests/assess/fp.identity.tsv -c /dev/null)
+for SAMPLE in ex1 ex2 ex3 ex4 unclassified fp; do
+    thapbi_pict assess -m identity -i tests/assess/$SAMPLE.known.tsv tests/assess/$SAMPLE.identity.tsv -o $TMP/$SAMPLE.assess.tsv
+    diff $TMP/$SAMPLE.assess.tsv tests/assess/$SAMPLE.assess.tsv
 done
 
-echo "Checking classifier assessment at different levels"
-for LEVEL in sample sseq useq; do
-    thapbi_pict assess -i tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -l $LEVEL -m identity
-    diff $TMP/tally.tsv tests/assess/tally_$LEVEL.tsv
-    diff $TMP/assess.tsv tests/assess/assess_$LEVEL.tsv
-    diff $TMP/confusion.tsv tests/assess/confusion_$LEVEL.tsv
-done
+echo "Checking all classifier assessment outputs"
+thapbi_pict assess -i tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -m identity
+diff $TMP/tally.tsv tests/assess/tally_sample.tsv
+diff $TMP/assess.tsv tests/assess/assess_sample.tsv
+diff $TMP/confusion.tsv tests/assess/confusion_sample.tsv
 
 echo "Checking warning for unexpected species"
 set +o pipefail
 thapbi_pict assess -m identity --input tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "WARNING: 1 expected species were not a possible prediction: Phytophthora fallax"
 set -o pipefail
-
 
 if [ ! -f $TMP/thapbi_swarm/DNAMIX_S95_L001.swarm.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
 if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
