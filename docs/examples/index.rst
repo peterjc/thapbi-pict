@@ -23,8 +23,8 @@ been mock communities with known species composition.
    fecal_sequel/index
    endangered_species/index
 
-* :ref:`woody_hosts` - Simple example using the default primers and database.
-  Based on a paper from earlier in the THAPBI Phyto-Threats project:
+* :ref:`woody_hosts` - A simple example using the default primers and
+  database. Based on a paper from earlier in the THAPBI Phyto-Threats project:
 
     Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
     host-associated *Phytophthora* spp. in soils at public gardens and
@@ -80,3 +80,9 @@ source code under ``examples/`` containing at least ``setup.sh`` to do one-off
 setup like downloading the public data, and ``run.sh`` to execute the main
 analysis discussed. There will usually be assorted other files like reference
 sequences, or ``metadata.tsv``.
+
+Running the examples will create or use subdirectories ``raw_data/`` for the
+downloaded FASTQ files, ``intermediate/`` for per-sample working files, and
+``summary/`` for the final output reports. Where the example includes positive
+controls like mock communities, the expected species content is recorded under
+``expected/`` in per-sample files.
