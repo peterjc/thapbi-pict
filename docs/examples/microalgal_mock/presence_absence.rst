@@ -30,7 +30,7 @@ is useful - this shows the expected 12 species:
 
 .. code:: console
 
-    $ cut -f 1-5 V4/V4.assess.onebp.tsv
+    $ cut -f 1-5 summary/V4.assess.onebp.tsv
     ...
 
 Or, open the file ``V4.assess.onebp.tsv`` in Excel. You should see:
@@ -73,7 +73,7 @@ in a spreadsheet, or if you prefer the command line:
 
 .. code:: console
 
-    $ grep  -E "^(#|Mock)" V4/V4.samples.onebp.tsv | cut -f 2,5,7-18
+    $ grep  -E "^(#|Mock)" summary/V4.samples.onebp.tsv | cut -f 2,5,11-22
     ...
 
 With light editing for display you should get:
@@ -127,7 +127,7 @@ Proceeding along the same basis:
 
 .. code:: console
 
-    $ cut -f 1-5 V8V9/V8V9.assess.onebp.tsv
+    $ cut -f 1-5 summary/V8V9.assess.onebp.tsv
     ...
 
 Or, open the file ``V8V9.assess.onebp.tsv`` in Excel. You should see:
@@ -150,9 +150,9 @@ Thalassiosira pseudonana strain CCAP 1085/12      0    0   18  3
 Trebouxia sp. CCAP 213/3                          14   0   4   3
 ================================================= ==== === === ==
 
-Very similar, but this time *Thalassiosira pseudonana* is missing with the
-default strict ``onebp`` classifier - and the authors did not report its
-absense. The reason for this is discussed shortly.
+Very similar, but time *Thalassiosira pseudonana* is missing with the default
+strict ``onebp`` classifier - and the authors did not report its absence. The
+reason for this is discussed shortly.
 
 Open ``V8V9.samples.onebp.xlsx`` and focus on the mock community rows (yellow
 background). Again, in the following screen shot we have sorted the columns
