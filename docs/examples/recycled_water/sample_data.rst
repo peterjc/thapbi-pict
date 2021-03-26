@@ -82,17 +82,6 @@ conserved 32bp region as part of the left primer - requiring it be present
 (while allowing some ambiguity) and removing it - leaving a shorter fragment
 which can be matched to a database built of those 1454 accessions.
 
-Other files
------------
-
-The subdirectory ``raw_data/`` will hold the compressed FASTA files. This
-contains a file named ``MD5SUM.txt`` which can be used to validate the
-FASTQ files (using the checksums provided by the ENA).
-
-Files ``Redekar_et_al_2019_sup_table_3.tsv`` (plain text tab separated table)
-and ``Redekar_et_al_2019_sup_table_3.fasta`` (FASTA format) are based on the
-Excel format Supplementary Table 3 from the paper.
-
 Metadata
 --------
 
@@ -126,3 +115,10 @@ straightforward.
 We have not given a ``-g`` argument to assign colour bands in the Excel
 reports, so it will default to the first column in ``-c``, meaning we get
 three coloured bands for "Reservoir", "River" and "Runoff".
+
+Other files
+-----------
+
+Files ``Redekar_et_al_2019_sup_table_3.tsv`` (plain text tab separated table)
+and ``Redekar_et_al_2019_sup_table_3.fasta`` (FASTA format) are based on the
+Excel format Supplementary Table 3 from the paper.

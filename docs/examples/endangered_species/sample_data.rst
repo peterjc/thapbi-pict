@@ -73,13 +73,6 @@ from *Lactuca sativa* in the control mixture is just one base pair away from
 a published sequence from that species (KM210323.1), but perfectly matches
 published sequences from *Lactuca altaica*, *L. serriola* and *L. virosa*.
 
-Other files
------------
-
-Files ``expected/*.known.tsv`` were compiled by hand from the species content
-of the experimental samples (using the PRJEB18620 sample descriptions on the
-NCBI and Table 7).
-
 Metadata
 --------
 
@@ -127,3 +120,10 @@ Argument ``-g 4`` means assign colour bands using sample. This gives 15 thin
 bands for the "Experimental mixture" set, and then 10 wide bands for the
 "Interlaboratory trial" samples. By chance the two traditional medicine
 samples both get wide green bands in the Excel reports.
+
+Other files
+-----------
+
+Files ``expected/*.known.tsv`` were compiled by hand from the species content
+of the experimental samples (using the PRJEB18620 sample descriptions on the
+NCBI and Table 7).

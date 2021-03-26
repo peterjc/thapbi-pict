@@ -60,23 +60,6 @@ Amplicon primers & reference sequences
 The ITS1 primers used here match the THAPBI PICT defaults, so the default
 database can also be used.
 
-Other files
------------
-
-File ``metadata.tsv`` contains metadata about the sampling sites (see below).
-
-Compressed archive file ``intermediate.tar.bz2`` contains the results of
-the first step in the analysis, in case you have problems downloading the
-raw FASTQ files (see below).
-
-Subdirectory ``expected/`` contains four plain text tab-separated files,
-describing the expected species in some mock community positive controls:
-
-* ``DNA15MIX.known.tsv``
-* ``DNA10MIX_bycopynumber.known.tsv``
-* ``DNA10MIX_diluted25x.known.tsv``
-* ``DNA10MIX_undiluted.known.tsv``
-
 Metadata
 --------
 
@@ -117,3 +100,18 @@ These settings are described in detail later. This example is important in
 that column 16 contains multiple entries where a site had multiple sequenced
 samples (replicates). It is unusual in having comment lines before the column
 header line which must be specified.
+
+Other files
+-----------
+
+Compressed archive file ``intermediate.tar.bz2`` contains the results of
+the first step in the analysis, in case you have problems downloading the
+raw FASTQ files (see below).
+
+Subdirectory ``expected/`` contains four plain text tab-separated files,
+describing the expected species in some mock community positive controls:
+
+* ``DNA15MIX.known.tsv``
+* ``DNA10MIX_bycopynumber.known.tsv``
+* ``DNA10MIX_diluted25x.known.tsv``
+* ``DNA10MIX_undiluted.known.tsv``

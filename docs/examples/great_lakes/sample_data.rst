@@ -51,17 +51,6 @@ non-degenerate primers SPH16S_F/SPH16S_R (``TAGGGGAAGGTATGAATGGTTTG`` and
 This means we need to run THAPBI PICT twice (once for each primer pair,
 against a different marker database each time).
 
-Other files
------------
-
-Files ``MOL16S.fasta`` and ``SPH16S.fasta`` are for building reference
-databases. These were constructed from the accessions in the paper listed in
-Table 1, Table 8, Supplementary Table 1, Supplementary Table 3, and some
-additional accessions for the mock community. The sequences were primer
-trimmed using ``cutadapt`` (requiring both the left and right primer to be
-present), and the description given cut to just species level (discarding
-strain or isolate information).
-
 Metadata
 --------
 
@@ -87,3 +76,14 @@ Marker, Group, Sample Title, Library name. This splits up the samples first by
 the expected marker, and then the group.
 
 Argument ``-x 1`` the filename stems can be found in that column one.
+
+Other files
+-----------
+
+Files ``MOL16S.fasta`` and ``SPH16S.fasta`` are for building reference
+databases. These were constructed from the accessions in the paper listed in
+Table 1, Table 8, Supplementary Table 1, Supplementary Table 3, and some
+additional accessions for the mock community. The sequences were primer
+trimmed using ``cutadapt`` (requiring both the left and right primer to be
+present), and the description given cut to just species level (discarding
+strain or isolate information).

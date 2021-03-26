@@ -64,22 +64,6 @@ Files ``ITS1.fasta`` and ``ITS2.fasta`` were extracted from supplementary
 materials appendix S2, with the species name alone added to the FASTA titles
 (for use with ``thapbi_pict curated-import``).
 
-Other files
------------
-
-The provided ``negative_control.known.tsv`` and ``mock_community.known.tsv``
-files lists the expected species in the negative controls (none) and the mock
-community samples (the same 19 species, although not always in equal ratios).
-
-The two folders ``amp_lib_one/`` and ``amp_lib_two/`` will be used for the
-two separate amplicon libraries discussed in the paper. Each comes with a
-``metadata.tsv`` file based on the metadata downloaded from the ENA, with
-some reformatting. The split into amplicon one and two was based on
-supplementary Tables S4, S5 and S6 (for the mock community samples) and
-reading the paper (for placing the negative controls). They each have a
-``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
-can be used to validate the FASTQ files.
-
 Metadata
 --------
 
@@ -112,3 +96,19 @@ author original names, in which case ``-x 2`` ought to work.
 
 Argument ``-g 6`` means assign colour bands using column 6, Group. This is
 used in the Excel reports.
+
+Other files
+-----------
+
+The provided ``negative_control.known.tsv`` and ``mock_community.known.tsv``
+files lists the expected species in the negative controls (none) and the mock
+community samples (the same 19 species, although not always in equal ratios).
+
+The two folders ``amp_lib_one/`` and ``amp_lib_two/`` will be used for the
+two separate amplicon libraries discussed in the paper. Each comes with a
+``metadata.tsv`` file based on the metadata downloaded from the ENA, with
+some reformatting. The split into amplicon one and two was based on
+supplementary Tables S4, S5 and S6 (for the mock community samples) and
+reading the paper (for placing the negative controls). They each have a
+``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
+can be used to validate the FASTQ files.

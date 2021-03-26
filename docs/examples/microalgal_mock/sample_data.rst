@@ -54,18 +54,6 @@ files provided have already been primer trimmed.
 This means we need to run THAPBI PICT twice (once for each primer pair,
 against a different marker database each time).
 
-Other files
------------
-
-File ``mock_community.fasta`` contains the sequences from accession numbers
-KU900218 to KU900229 (published with the paper), with the description line
-holding just the assigned species.
-
-Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
-``mock_marine.known.tsv`` describe the expected 12 species in the mock
-community (and six species mixes at the purely freshwater or purely marine
-extremes).
-
 Metadata
 --------
 
@@ -112,3 +100,15 @@ found in that column respectively.
 We have not given a ``-g`` argument to assign colour bands in the Excel
 reports, so it will default to the first column in ``-c``, meaning we get
 coloured bands for "Freshwater", "Wastewater", "Mock community" and "Marine".
+
+Other files
+-----------
+
+File ``mock_community.fasta`` contains the sequences from accession numbers
+KU900218 to KU900229 (published with the paper), with the description line
+holding just the assigned species.
+
+Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
+``mock_marine.known.tsv`` describe the expected 12 species in the mock
+community (and six species mixes at the purely freshwater or purely marine
+extremes).

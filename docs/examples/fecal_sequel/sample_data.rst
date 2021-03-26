@@ -61,16 +61,6 @@ Provided file ``observed_3_bats.fasta`` contains alternative COI markers
 observed in at least 10 samples, and their assumed species source. This is
 for discussing the effect of the database.
 
-Other files
------------
-
-The subdirectory ``raw_data/`` will hold the compressed FASTA files. This
-contains a file named ``MD5SUM.txt`` which can be used to validate the
-FASTQ files (using the checksums provided by the ENA).
-
-File ``mock_community.known.tsv`` describes the three species of bats expected
-in the mock communities (which use different ratios).
-
 Metadata
 --------
 
@@ -102,3 +92,9 @@ include the indexed column again). i.e. Rare species, ratio, replicate.
 We have not given a ``-g`` argument to assign colour bands in the Excel
 reports, so it will default to the first column in ``-c``, meaning we get
 three coloured bands for "COTO", "EPFU" and "TABR".
+
+Other files
+-----------
+
+File ``mock_community.known.tsv`` describes the three species of bats expected
+in the mock communities (which use different ratios).
