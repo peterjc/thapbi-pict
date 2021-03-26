@@ -167,8 +167,7 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
     for sp in sp_list:
         assert species_level(sp), sp
 
-    # leaving out empty cols where can't predict expt (thus dp_sp_list over sp_list)
-    # leaving out possible predictions where column would be all zeros
+    # Prediction lines will cover TP and FP
     predicted = set()
     for _, pred in tally:
         if pred:
@@ -429,16 +428,30 @@ def main(
         "Hamming-loss\tAd-hoc-loss\n"
     )
     multi_class_total1 = multi_class_total2 = 0
-    for sp in [None] + sp_list:
-        if sp is None:
-            # Special case flag to report global values at end
+    boring_species_count = 0
+    boring_species_tn = 0
+    for sp in [""] + sp_list + [None]:
+        if sp == "":
+            # Special case flag to report global values at top
             tp, fp, fn, tn = extract_global_tally(global_tally, sp_list)
             sp = "OVERALL"
             multi_class_total1 = tp + fp + fn + tn
+        elif sp is None:
+            # Special case flag to report boring sp summary at end
+            sp = f"OTHER {boring_species_count} SPECIES IN DB"
+            tp = fp = fn = 0
+            tn = boring_species_tn
+            if not boring_species_count:
+                continue
         else:
             assert species_level(sp)
             tp, fp, fn, tn = extract_binary_tally(sp, global_tally)
             multi_class_total2 += tp + fp + fn + tn
+            if tp == fp == fn:
+                # Boring output line, just DB padding
+                boring_species_tn += tn
+                boring_species_count += 1
+                continue
         # sensitivity, recall, hit rate, or true positive rate (TPR):
         sensitivity = float(tp) / (tp + fn) if tp else 0.0
         # specificity, selectivity or true negative rate (TNR)
