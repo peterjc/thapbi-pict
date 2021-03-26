@@ -27,9 +27,9 @@ done
 
 echo "Checking all classifier assessment outputs"
 thapbi_pict assess -i tests/assess/ -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -m identity
-diff $TMP/tally.tsv tests/assess/tally_sample.tsv
-diff $TMP/assess.tsv tests/assess/assess_sample.tsv
-diff $TMP/confusion.tsv tests/assess/confusion_sample.tsv
+diff $TMP/tally.tsv tests/assess/samples.tally.tsv
+diff $TMP/assess.tsv tests/assess/samples.assess.tsv
+diff $TMP/confusion.tsv tests/assess/samples.confusion.tsv
 
 echo "Checking warning for unexpected species"
 set +o pipefail
