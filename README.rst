@@ -35,11 +35,11 @@ short for Internal Transcribed Spacer one, which is a region of eukaryotes
 genomes between the 18S and 5.8S rRNA genes. This is commonly used for
 molecular barcoding, where sequencing this short region can identify species.
 
-With appropriate primer settings and a custom database, THAPBI PICT can be
-applied to other organisms and/or barcode marker sequences - not just
-*Phytophthora* ITS1. It requires overlapping paired-end Illumina reads which
-can be merged to cover the *full* amplicon marker. Longer markers or
-fragmented amplicons are not supported.
+With appropriate primer settings and a custom database of full length markers,
+THAPBI PICT can be applied to other organisms and/or barcode marker sequences
+- not just *Phytophthora* ITS1. It requires overlapping paired-end Illumina
+reads which can be merged to cover the *full* amplicon marker. Longer markers
+or fragmented amplicons are not supported.
 
 The worked examples include oomycetes, fungi, microalgae, and bats, and cover
 markers in ITS1, ITS2, 18S rRNA and COI and more. The main criteria has been
