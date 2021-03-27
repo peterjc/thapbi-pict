@@ -13,18 +13,20 @@ to the top level ``thapbi_pict pipeline`` command:
     ...
 
 Assuming you have the FASTQ files in ``raw_data/``, we could run the pipeline
-command as follows, and should get five output report files:
+command as follows, and should get multiple output report files:
 
 .. code:: console
 
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/
     ...
     $ ls -1 summary/thapbi-pict.*
-    thapbi-pict.reads.onebp.tsv
-    thapbi-pict.reads.onebp.xlsx
-    thapbi-pict.samples.onebp.tsv
-    thapbi-pict.samples.onebp.txt
-    thapbi-pict.edit-graph.xgmml
+    summary/thapbi-pict.all_reads.fasta
+    summary/thapbi-pict.edit-graph.onebp.xgmml
+    summary/thapbi-pict.reads.onebp.tsv
+    summary/thapbi-pict.reads.onebp.xlsx
+    summary/thapbi-pict.samples.onebp.tsv
+    summary/thapbi-pict.samples.onebp.txt
+    summary/thapbi-pict.samples.onebp.xlsx
 
 As described for the :ref:`prepare-reads step <prepare_reads>` we should also
 specify which of the samples are negative controls, which may be used to
@@ -46,11 +48,13 @@ provide metadata:
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
-    with-metadata.reads.onebp.tsv
-    with-metadata.reads.onebp.xlsx
-    with-metadata.samples.onebp.tsv
-    with-metadata.samples.onebp.txt
-    with-metadata.edit-graph.xgmml
+    summary/with-metadata.all_reads.fasta
+    summary/with-metadata.edit-graph.onebp.xgmml
+    summary/with-metadata.reads.onebp.tsv
+    summary/with-metadata.reads.onebp.xlsx
+    summary/with-metadata.samples.onebp.tsv
+    summary/with-metadata.samples.onebp.txt
+    summary/with-metadata.samples.onebp.xlsx
 
 Here we also used ``-r`` (or ``--report``) to specify a different stem
 for the report filenames.
@@ -59,7 +63,7 @@ Conclusions
 -----------
 
 For the THAPBI Phyto-Threats project our datasets span multiple plates, but we
-want to set plate-specific minimum abundance threholds. That is taken care of
+want to set plate-specific minimum abundance thresholds. That is taken care of
 as long as each plate is in its own directory. For example, you might have
 ``raw_data/plate_NNN/*.fastq.gz`` and run the pipeline with ``-i raw_data/``).
 

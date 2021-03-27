@@ -22,7 +22,7 @@ with ``-o`` or ``--output``:
 
 .. code:: console
 
-    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.xgmml
+    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.onebp.xgmml
     ...
 
 This will generate an XGMML (eXtensible Graph Markup and Modeling Language)
@@ -31,7 +31,7 @@ file by default, but you can also request other formats including PDF
 
 .. code:: console
 
-    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.pdf -f pdf
+    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.onebp.pdf -f pdf
     ...
 
 .. WARNING:
@@ -54,7 +54,7 @@ optionally all the unique sequences in the database. It then computes the
 edit distance between them all (this can get slow).
 
 We build the network graph by adding edges for edits of up to three base pairs
-(by default). This gives small connected compoenents or sub-graphs which are
+(by default). This gives small connected components or sub-graphs which are
 roughly at the species level.
 
 Redundant edges are dropped, for example if *A* is one edit away from *B*,
@@ -112,8 +112,8 @@ You will need to install the free open source tool  `Cytoscape
 <https://cytoscape.org/>`_ to use this.
 
 Open Cytoscape, and from the top level menu select ``File``, ``Import``,
-``Network from file...``, then select ``summary/thapbi-pict.edit-graph.xgmml``
-(the XGMML file created above).
+``Network from file...``, then select
+``summary/thapbi-pict.edit-graph.onebp.xgmml`` (the XGMML file created above).
 
 You should get something like this, where initially all the nodes are drawn
 on top of each other:
@@ -130,7 +130,7 @@ This time you can interact with the graph, moving nodes about with the mouse,
 try different layouts, view and search the attributes of the nodes and edges.
 
 Here the nodes are labelled with the species if they were in the database
-at species level, or otherwise as the start of the MD5 checkum in curly
+at species level, or otherwise as the start of the MD5 checksum in curly
 brackets (so that they sort nicely). The default node colors are as in the
 PDF output, likewise the grey edge styles.
 
@@ -161,6 +161,6 @@ can see that all the grey nodes appeared in only one sample each - with the
 away *P. ilics* sequence was in 6 samples.
 
 This kind of grey-node halo around highly abundance sequences is more common
-when plotting larger datasets. It is consistent with PCR artefacts occuring in
-just one (or two) samples giving rise to (almost) unique sequences based on
+when plotting larger datasets. It is consistent with PCR artefacts occurring
+in just one (or two) samples giving rise to (almost) unique sequences based on
 the template sequence.
