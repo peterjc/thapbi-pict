@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.7.11 2021-03-26 Simplified the ``assess`` command to only work at species/sample level.
+v0.7.11 *Pending*  Simplified the ``assess`` command to only work at species/sample level.
 v0.7.10 2021-03-24 Pipeline includes ``fasta-nr`` command making non-redundant FASTA file.
 v0.7.9  2021-03-15 Option to show unsequenced entries in summary sample report (``-u``).
 v0.7.8  2021-03-11 Only import IUPAC DNA characters to DB. Fixed *N. valdiviana* in default DB.
