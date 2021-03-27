@@ -16,14 +16,15 @@ function analyse {
     mkdir -p intermediate/$NAME/
     thapbi_pict prepare-reads --left $LEFT --right $RIGHT \
         -i raw_data/ --merged-cache tmp_merged/ -o intermediate/$NAME/
-    thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all.fasta
-    thapbi_pict classify -i summary/$NAME.all.fasta -o summary/ -d references/$NAME.sqlite
     thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
         --merged-cache tmp_merged/ \
         --left $LEFT --right $RIGHT \
                 -i raw_data/ expected/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -c 3,4,5 -x 2 -g 4
+    # Pipeline now includes the fasta-nr step:
+    # thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all_reads.fasta
+    thapbi_pict classify -i summary/$NAME.all_reads.fasta -o summary/ -d references/$NAME.sqlite
     echo "$NAME done"
 }
 

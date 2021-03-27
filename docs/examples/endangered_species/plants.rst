@@ -38,7 +38,7 @@ recovered:
 
 .. code:: console
 
-    $ grep -c ">" summary/Mini-rbcL.all.fasta
+    $ grep -c ">" summary/Mini-rbcL.all_reads.fasta
     215
 
 We see expected plant species like *Lactuca sativa*, *Brassica oleracea*,
@@ -59,7 +59,7 @@ Not very diverse, only nine unique sequences recovered:
 
 .. code:: console
 
-    $ grep -c ">" summary/trnl-UAA.all.fasta
+    $ grep -c ">" summary/trnl-UAA.all_reads.fasta
     9
 
 We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
@@ -89,7 +89,7 @@ Quite diverse, with over fifty unique sequences recovered:
 
 .. code:: console
 
-    $ grep -c ">" summary/ITS2.all.fasta
+    $ grep -c ">" summary/ITS2.all_reads.fasta
     9
 
 Finds all the *Brassica* and *Echinocactus* sp., most of the *Euphorbia* sp.

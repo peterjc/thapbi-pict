@@ -15,7 +15,7 @@ pairs?
 
 .. code:: console
 
-    $ summary/16S.all.fasta
+    $ summary/16S.all_reads.fasta
     >1f2b15d58f9f40b862486676809d4744_20058
     CACCTCCAGCATTCCCAGTATTGGAGGCATTGCCTGCCCAGTGACAACTGTTTAACGGCCGCGGTATCCTGACCGTGCAA
     AGGTAGCATAATCATTTGTTCTCTAAATAAGGACTTGTATGAATGGCCGCACGAGGGTTTTACTGTCTCTTACTTCCAAT
@@ -36,7 +36,7 @@ sequences:
 
 .. code:: console
 
-    $ grep -c ">" summary/Mini-16S.all.fasta
+    $ grep -c ">" summary/Mini-16S.all_reads.fasta
     25
 
 The most common is again a perfect match to *Bos taurus*, which this time has
@@ -67,7 +67,7 @@ The output from the Mini-COI marker is quite diverse, with 22 unique sequences:
 
 .. code:: console
 
-    $ grep -c ">" summary/Mini-COI.all.fasta
+    $ grep -c ">" summary/Mini-COI.all_reads.fasta
     22
 
 The species matches are all reasonable, it detects all the *Pieris brassicae*,
@@ -94,7 +94,7 @@ The output from the Mini-COI marker had only 19 unique sequences:
 
 .. code:: console
 
-    $ grep -c ">" summary/Mini-cyt-b.all.fasta
+    $ grep -c ">" summary/Mini-cyt-b.all_reads.fasta
     19
 
 This found all the expected *Sus scrofa* and *Meleagris gallopavo*, and most
