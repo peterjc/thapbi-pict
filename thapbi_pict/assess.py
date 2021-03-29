@@ -288,7 +288,7 @@ def extract_global_tally(tally, sp_list):
         if pred:
             all_sp.update(pred.split(";"))
     assert "" not in all_sp
-    for sp in sp_list:
+    for sp in all_sp:
         assert sp in sp_list, sp
 
     x = Counter()
