@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -24,6 +24,7 @@ from .db_orm import connect_to_db
 from .db_orm import ITS1
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
+from .utils import abundance_filter_fasta
 from .utils import abundance_from_read_name
 from .utils import cmd_as_string
 from .utils import find_requested_files
@@ -183,7 +184,9 @@ def perfect_substr_in_db(session, seq, debug=False):
         return taxid_and_sp_lists(t)
 
 
-def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=False):
+def apply_method_to_file(
+    method_fn, fasta_file, session, read_report, min_abundance=0, debug=False
+):
     """Call given method on each sequence in the FASTA file."""
     count = 0
     tax_counts = Counter()
@@ -192,6 +195,8 @@ def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=Fals
         for title, seq in SimpleFastaParser(handle):
             idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
+            if min_abundance and abundance < min_abundance:
+                continue
             count += abundance
             taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
             tax_counts[genus_species] += abundance
@@ -201,7 +206,14 @@ def apply_method_to_file(method_fn, fasta_file, session, read_report, debug=Fals
 
 
 def method_identity(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """Classify using perfect identity.
 
@@ -209,7 +221,12 @@ def method_identity(
     purposes. It looks for a perfect identical entry in the database.
     """
     return apply_method_to_file(
-        perfect_match_in_db, fasta_file, session, read_report, debug=debug
+        perfect_match_in_db,
+        fasta_file,
+        session,
+        read_report,
+        min_abundance=min_abundance,
+        debug=debug,
     )
 
 
@@ -227,7 +244,14 @@ def seq_method_identity(seq, session, debug=False):
 
 
 def method_substr(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """Classify using perfect identity including as a sub-string.
 
@@ -236,7 +260,12 @@ def method_substr(
     mismatch).
     """
     return apply_method_to_file(
-        perfect_substr_in_db, fasta_file, session, read_report, debug=debug
+        perfect_substr_in_db,
+        fasta_file,
+        session,
+        read_report,
+        min_abundance=min_abundance,
+        debug=debug,
     )
 
 
@@ -277,7 +306,14 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_onebp(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """Classify using identity or 1bp difference.
 
@@ -286,7 +322,12 @@ def method_onebp(
     of all the database entries and their 1bp variants.
     """
     return apply_method_to_file(
-        onebp_match_in_db, fasta_file, session, read_report, debug=debug
+        onebp_match_in_db,
+        fasta_file,
+        session,
+        read_report,
+        min_abundance=min_abundance,
+        debug=debug,
     )
 
 
@@ -420,11 +461,23 @@ def dist_in_db(session, seq, debug=False):
 
 
 def method_dist(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """Classify using edit distance."""
     return apply_method_to_file(
-        dist_in_db, fasta_file, session, read_report, debug=debug
+        dist_in_db,
+        fasta_file,
+        session,
+        read_report,
+        min_abundance=min_abundance,
+        debug=debug,
     )
 
 
@@ -448,13 +501,23 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """Classify using BLAST.
 
     Another simplistic classifier, run the reads through blastn
     against a BLAST database of our marker sequence database entries.
     """
+    assert os.path.isdir(tmp_dir)
+    assert os.path.isdir(shared_tmp_dir)
+
     blast_out = os.path.join(shared_tmp_dir, "blast.tsv")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     if not (
@@ -463,6 +526,16 @@ def method_blast(
         and os.path.isfile(blast_db + ".nsq")
     ):
         sys.exit(f"ERROR: Missing generated BLAST database {blast_db}.n*\n")
+    if min_abundance:
+        old = fasta_file
+        fasta_file = os.path.join(tmp_dir, os.path.basename(old))
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: Applying minimum abundance filter to {old}, "
+                f"making {fasta_file}\n"
+            )
+        abundance_filter_fasta(old, fasta_file, min_abundance)
+        del old
     cmd = [
         "blastn",
         "-db",
@@ -518,6 +591,8 @@ def method_blast(
     tax_counts = Counter()
     for idn in query_length:
         abundance = abundance_from_read_name(idn)
+        if min_abundance:
+            assert min_abundance <= abundance, idn
         if idn in blast_hits:
             db_md5s = blast_hits[idn]
             score = blast_score[idn]
@@ -606,6 +681,7 @@ def method_swarm_core(
     read_report,
     tmp_dir,
     shared_tmp_dir,
+    min_abundance=0,
     identity=False,
     debug=False,
     cpu=0,
@@ -628,6 +704,16 @@ def method_swarm_core(
     db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
     if not os.path.isfile(db_fasta):
         sys.exit(f"ERROR: Missing generated file {db_fasta}\n")
+
+    if min_abundance:
+        old = fasta_file
+        fasta_file = os.path.join(tmp_dir, os.path.basename(old))
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Applying minimum abundance filter, making {fasta_file}\n"
+            )
+        abundance_filter_fasta(old, fasta_file, min_abundance)
+        del old
 
     if identity:
         seq_dict = SeqIO.index(fasta_file, "fasta")
@@ -695,7 +781,14 @@ def method_swarm_core(
 
 
 def method_swarm(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """SWARM classifier.
 
@@ -713,13 +806,21 @@ def method_swarm(
         tmp_dir,
         shared_tmp_dir,
         identity=False,
+        min_abundance=min_abundance,
         debug=debug,
         cpu=cpu,
     )
 
 
 def method_swarmid(
-    fasta_file, session, read_report, tmp_dir, shared_tmp_dir, debug=False, cpu=0
+    fasta_file,
+    session,
+    read_report,
+    tmp_dir,
+    shared_tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
 ):
     """SWARM classifier with 100% identity special case.
 
@@ -737,6 +838,7 @@ def method_swarmid(
         tmp_dir,
         shared_tmp_dir,
         identity=True,
+        min_abundance=min_abundance,
         debug=debug,
         cpu=cpu,
     )
@@ -781,11 +883,25 @@ method_setup = {
 }
 
 
-def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, cpu=0):
+def main(
+    fasta,
+    db_url,
+    method,
+    out_dir,
+    ignore_prefixes,
+    tmp_dir,
+    min_abundance=0,
+    debug=False,
+    cpu=0,
+):
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
     classifier output.
+
+    The FASTA files should have been prepared with the same or a lower minimum
+    abundance - this acts as an additional filter useful if exploring the best
+    threshold.
     """
     assert isinstance(fasta, list)
 
@@ -901,6 +1017,9 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
                     parts = line.rstrip("\n").split("\t")
                     # MD5_abundance, taxids, species, notes
                     a = abundance_from_read_name(parts[0])
+                    if min_abundance and a < min_abundance:
+                        del a
+                        continue
                     seq_count += a
                     if parts[2].strip():
                         match_count += a
@@ -935,8 +1054,16 @@ def main(fasta, db_url, method, out_dir, ignore_prefixes, tmp_dir, debug=False, 
         headers = load_fasta_header(filename)
         if not headers or headers["abundance"]:
             # There are sequences to classify
+            assert os.path.isdir(tmp), tmp
             tax_counts = classify_file_fn(
-                filename, session, pred_handle, tmp, shared_tmp, debug, cpu
+                filename,
+                session,
+                pred_handle,
+                tmp,
+                shared_tmp,
+                min_abundance=min_abundance,
+                debug=debug,
+                cpu=cpu,
             )
         else:
             sys.stderr.write(
