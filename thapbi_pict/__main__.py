@@ -255,6 +255,7 @@ def classify(args=None):
         method=args.method,
         out_dir=args.output,
         ignore_prefixes=tuple(args.ignore_prefixes),
+        min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -411,6 +412,7 @@ def pipeline(args=None):
         method=args.method,
         out_dir=intermediate_dir,
         ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
+        min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
         cpu=args.cpu,
@@ -1224,6 +1226,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument(

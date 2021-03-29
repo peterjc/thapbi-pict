@@ -27,7 +27,7 @@ if [ ! -f $DB ]; then echo "Run test_curated-import.sh to setup test DB"; false;
 rm -rf $TMP/classify/
 mkdir -p $TMP/classify/
 cp database/Phytophthora_ITS1_curated.fasta $TMP/classify/
-thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta
+thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta -a 0
 if [ "`grep -c -v '^#' $TMP/classify/Phytophthora_ITS1_curated.identity.tsv`" -ne "`grep -c '^>' $TMP/classify/Phytophthora_ITS1_curated.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
@@ -76,7 +76,7 @@ rm -rf $TMP/hmm_trim.*.tsv
 # Swarm classifier can't cope with multiple HMM hits...
 for M in identity onebp blast 1s3g; do
     echo "Checking HMM trim corner cases with $M"
-    thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M
+    thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M -a 50
     diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
 done
 

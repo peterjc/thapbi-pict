@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -366,6 +366,17 @@ def abundance_values_in_fasta(fasta_file, gzipped=False):
                 hmm = ""  # prepared with no HMM
             max_a[hmm] = max(a, max_a[hmm])
     return unique, total, max_a
+
+
+def abundance_filter_fasta(input_fasta, output_fasta, min_abundance):
+    """Apply a minimum abundance filter to a FASTA file."""
+    with open(input_fasta) as in_handle:
+        with open(output_fasta, "w") as out_handle:
+            for title, seq in SimpleFastaParser(in_handle):
+                a = abundance_from_read_name(title.split(None, 1)[0])
+                if a < min_abundance:
+                    continue
+                out_handle.write(f">{title}\n{seq}\n")
 
 
 def file_to_sample_name(filename):
