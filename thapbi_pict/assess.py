@@ -442,6 +442,8 @@ def main(
             tp = fp = fn = 0
             tn = boring_species_tn
             if not boring_species_count:
+                assert boring_species_tn == 0
+                # No point printing this line
                 continue
         else:
             assert species_level(sp)
