@@ -1,2 +1,2 @@
-#TaxID	Species	Description	Date	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Seq-count	Unknown	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
-4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	70000	69000	68000	65000	63000	13000	50000	50000
+#TaxID	Species	Description	Date	Classification summary	Sequencing sample	Raw FASTQ	Trimmomatic	Flash	Cutadapt	Read count	Unknown	Phytophthora	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae
+4787	Phytophthora infestans	Single isolate positive control	2018	Unknown, Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*)	P-infestans-T30-4	70000	69000	68000	65000	63000	13000	50000	50000
