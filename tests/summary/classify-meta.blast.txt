@@ -17,7 +17,6 @@ Sequencing sample: P-infestans-T30-4
 
 Sequencing sample: hmm_trim
 
- - Unknown
  - Phytophthora aleatoria(*)
  - Phytophthora cactorum(*)
  - Phytophthora cambivora(*)
@@ -26,6 +25,7 @@ Sequencing sample: hmm_trim
  - Phytophthora pseudocryptogea(*)
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Unknown
 
 Sequencing sample: multiple_its1
 

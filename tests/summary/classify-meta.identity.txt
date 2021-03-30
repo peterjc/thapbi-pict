@@ -9,10 +9,10 @@ Date: 2018
 
 Sequencing sample: P-infestans-T30-4
 
- - Unknown
  - Phytophthora andina(*)
  - Phytophthora infestans(*)
  - Phytophthora ipomoeae(*)
+ - Unknown
 
 ------------------------------------------------------------
 

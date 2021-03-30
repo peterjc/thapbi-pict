@@ -53,6 +53,17 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
     return answer
 
 
+def _sp_sort_key(species):
+    """Sort unknowns after knowns."""
+    assert species != "Unknown" and "(" not in species, species
+    if " " in species:
+        return species
+    elif species:
+        return species + " {unknown species}"
+    else:
+        return "{Unknown}"
+
+
 def sample_summary(
     sample_species_counts,
     meta_to_stem,
@@ -264,9 +275,16 @@ def sample_summary(
                 human.write(f"Sequencing sample: {sample}\n\n")
             else:
                 human.write(f"{sample}\n\n")
+            # TODO - Avoid duplicating the naming magic for columns...
             human_sp_list = [
-                (sp if sp in unambig_sp else sp + "(*)") if sp else "Unknown"
-                for sp in sorted(all_sp)
+                (
+                    (sp if " " in sp else sp + " (unknown species)")
+                    if sp in unambig_sp
+                    else sp + "(*)"
+                )
+                if sp
+                else "Unknown"
+                for sp in sorted(all_sp, key=_sp_sort_key)
             ]
             for sp in human_sp_list:
                 human.write(f" - {sp}\n")
