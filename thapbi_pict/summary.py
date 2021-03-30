@@ -194,10 +194,9 @@ def sample_summary(
     # -------------
     human = open(human_output, "w")
     human.write(
-        "NOTE: Species listed with (uncertain/ambiguous) in brackets are where "
-        "sequences matched multiple species equally well. For example, "
-        "Phytophthora andina, P. infestans, and P. ipomoeae, share an identical "
-        "marker.\n\n"
+        "NOTE: Species listed with (*) are where sequences matched multiple "
+        "species equally well. For example, Phytophthora andina, P. infestans, "
+        "and P. ipomoeae, share an identical ITS1 marker.\n\n"
     )
 
     # Main body
@@ -246,6 +245,32 @@ def sample_summary(
 
         # Now do the samples in this batch
         for sample in sample_batch:
+            # Human report
+            # ------------
+            all_sp = set()
+            unambig_sp = set()
+            if sample in sample_species_counts:
+                for sp_list, count in sample_species_counts[sample].items():
+                    if count:
+                        sp_list = sp_list.split(";")
+                        all_sp.update(sp_list)
+                        if len(sp_list) == 1:
+                            unambig_sp.add(sp_list[0])
+            if meta_names:
+                human.write(f"Sequencing sample: {sample}\n\n")
+            else:
+                human.write(f"{sample}\n\n")
+            human_sp_list = [
+                (sp if sp in unambig_sp else sp + "(*)") if sp else "Unknown"
+                for sp in sorted(all_sp)
+            ]
+            if not all_sp:
+                human_sp_list = ["No data"]
+            for sp in human_sp_list:
+                human.write(f" - {sp}\n")
+            human.write("\n")
+            del all_sp, unambig_sp
+
             # TSV
             # ---
             if metadata:
@@ -308,31 +333,6 @@ def sample_summary(
                     sample_species_counts[sample][sp],
                     cell_format,
                 )
-
-            # Human report
-            # ------------
-            all_sp = set()
-            unambig_sp = set()
-            if sample in sample_species_counts:
-                for sp_list, count in sample_species_counts[sample].items():
-                    if count:
-                        sp_list = sp_list.split(";")
-                        all_sp.update(sp_list)
-                        if len(sp_list) == 1:
-                            unambig_sp.add(sp_list[0])
-            if meta_names:
-                human.write(f"Sequencing sample: {sample}\n\n")
-            else:
-                human.write(f"{sample}\n\n")
-            for sp in sorted(all_sp):
-                if sp not in unambig_sp:
-                    sp = f"{sp} (uncertain/ambiguous)"
-                if not sp:
-                    sp = "Unknown"
-                human.write(f" - {sp}\n")
-            if not all_sp:
-                human.write(" - No data\n")
-            human.write("\n")
 
     # Defined first, but takes priority over later conditional rules:
     worksheet.conditional_format(

@@ -1,4 +1,4 @@
-NOTE: Species listed with (uncertain/ambiguous) in brackets are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical marker.
+NOTE: Species listed with (*) are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical ITS1 marker.
 
 ------------------------------------------------------------
 
@@ -9,23 +9,23 @@ Date: 2018
 
 Sequencing sample: P-infestans-T30-4
 
- - Phytophthora andina (uncertain/ambiguous)
- - Phytophthora infestans (uncertain/ambiguous)
- - Phytophthora ipomoeae (uncertain/ambiguous)
+ - Phytophthora andina(*)
+ - Phytophthora infestans(*)
+ - Phytophthora ipomoeae(*)
 
 ------------------------------------------------------------
 
 Sequencing sample: hmm_trim
 
  - Unknown
- - Phytophthora aleatoria (uncertain/ambiguous)
- - Phytophthora cactorum (uncertain/ambiguous)
- - Phytophthora cambivora (uncertain/ambiguous)
+ - Phytophthora aleatoria(*)
+ - Phytophthora cactorum(*)
+ - Phytophthora cambivora(*)
  - Phytophthora cinnamomi
- - Phytophthora cryptogea (uncertain/ambiguous)
- - Phytophthora pseudocryptogea (uncertain/ambiguous)
+ - Phytophthora cryptogea(*)
+ - Phytophthora pseudocryptogea(*)
  - Phytophthora ramorum
- - Phytophthora x cambivora (uncertain/ambiguous)
+ - Phytophthora x cambivora(*)
 
 Sequencing sample: multiple_its1
 

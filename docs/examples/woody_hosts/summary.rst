@@ -70,11 +70,11 @@ Pulling out the ``Site_1_sample_1`` example, without metadata in file
     Site_1_sample_1
 
      - Phytophthora austrocedri
-     - Phytophthora cambivora (uncertain/ambiguous)
+     - Phytophthora cambivora(*)
      - Phytophthora gonapodyides
      - Phytophthora pseudosyringae
      - Phytophthora ramorum
-     - Phytophthora x cambivora (uncertain/ambiguous)
+     - Phytophthora x cambivora(*)
 
     Site_1_sample_10
 
@@ -88,10 +88,9 @@ cases with a caveat. The file starts with a tiny explanation:
 
 .. code:: text
 
-    NOTE: Species listed with (uncertain/ambiguous) in brackets are where
-    sequences matched multiple species equally well. For example,
-    *Phytophthora andina*, *P. infestans*, and *P. ipomoeae*, share an
-    identical marker.
+    NOTE: Species listed with (*) are where sequences matched multiple species
+    equally well. For example, Phytophthora andina, P. infestans, and
+    P. ipomoeae, share an identical ITS1 marker.
 
 In this case, as you may recall from when we looked at the classifier output
 file ``intermediate/Site_1_sample_1.onebp.tsv``, one of the sequences matched
@@ -121,21 +120,21 @@ metadata row get grouped with a shared metadata header:
     Sequencing sample: Site_1_sample_1
 
      - Phytophthora austrocedri
-     - Phytophthora cambivora (uncertain/ambiguous)
+     - Phytophthora cambivora(*)
      - Phytophthora gonapodyides
      - Phytophthora pseudosyringae
      - Phytophthora ramorum
-     - Phytophthora x cambivora (uncertain/ambiguous)
+     - Phytophthora x cambivora(*)
 
     Sequencing sample: Site_1_sample_2
 
      - Unknown
      - Phytophthora austrocedri
-     - Phytophthora cambivora (uncertain/ambiguous)
+     - Phytophthora cambivora(*)
      - Phytophthora gonapodyides
      - Phytophthora pseudosyringae
      - Phytophthora ramorum
-     - Phytophthora x cambivora (uncertain/ambiguous)
+     - Phytophthora x cambivora(*)
 
     ...
 
