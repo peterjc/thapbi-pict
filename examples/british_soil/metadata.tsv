@@ -131,8 +131,8 @@ US5 (Undisturbed site 5)	US5-7	Pinus contorta	Declining	P. capsici, P. foliorum,
 US5 (Undisturbed site 5)	US5-8	Decayed Betula	Dead	P. capsici, P. foliorum, P. plurivora/citricola, Clade 2 Phytophthora sp. uncultured 17a	-	-	SRR13393834
 US5 (Undisturbed site 5)	US5-9	Fagus sylvatica	Healthy	-	-	-	Undetermined
 US5 (Undisturbed site 5)	US5-10	Abies procera	Healthy	-	-	-	Undetermined
-CP (Control Phytophthora)	CP1	-	-	-	-	-	SRR13393837
-CP (Control Phytophthora)	CP2	-	-	-	-	-	SRR13393813
-CP (Control Phytophthora)	CP3	-	-	-	-	-	SRR13393802
+CP (Control Phytophthora)	CP1	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393837
+CP (Control Phytophthora)	CP2	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393813
+CP (Control Phytophthora)	CP3	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393802
 CN (Control Negative)	CN1	-	-	-	-	-	SRR13393836
 CN (Control Negative)	CN2	-	-	-	-	-	SRR13393824
