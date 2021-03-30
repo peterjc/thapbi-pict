@@ -1226,7 +1226,14 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default=0,
+        help="Mininum abundance applied to unique marker sequences in each "
+        "FASTA sample file, default 0 (classify all).",
+    )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument(

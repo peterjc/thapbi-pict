@@ -27,7 +27,7 @@ if [ ! -f $DB ]; then echo "Run test_curated-import.sh to setup test DB"; false;
 rm -rf $TMP/classify/
 mkdir -p $TMP/classify/
 cp database/Phytophthora_ITS1_curated.fasta $TMP/classify/
-thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta -a 0
+thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta
 if [ "`grep -c -v '^#' $TMP/classify/Phytophthora_ITS1_curated.identity.tsv`" -ne "`grep -c '^>' $TMP/classify/Phytophthora_ITS1_curated.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
