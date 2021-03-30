@@ -8,7 +8,6 @@ P-infestans-T30-4
 
 hmm_trim
 
- - Unknown
  - Phytophthora aleatoria(*)
  - Phytophthora cactorum(*)
  - Phytophthora cambivora(*)
@@ -17,6 +16,7 @@ hmm_trim
  - Phytophthora pseudocryptogea(*)
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Unknown
 
 multiple_its1
 

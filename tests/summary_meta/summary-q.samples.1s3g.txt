@@ -7,10 +7,10 @@ Name: Alpha
 
 Sequencing sample: A1
 
- - Phytophthora
  - Phytophthora andina(*)
  - Phytophthora infestans(*)
  - Phytophthora ipomoeae(*)
+ - Phytophthora (unknown species)
 
 Sequencing sample: A2
 

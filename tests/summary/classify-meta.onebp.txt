@@ -9,22 +9,22 @@ Date: 2018
 
 Sequencing sample: P-infestans-T30-4
 
- - Unknown
  - Phytophthora andina(*)
  - Phytophthora infestans(*)
  - Phytophthora ipomoeae(*)
+ - Unknown
 
 ------------------------------------------------------------
 
 Sequencing sample: hmm_trim
 
- - Unknown
  - Phytophthora aleatoria(*)
  - Phytophthora cactorum(*)
  - Phytophthora cambivora(*)
  - Phytophthora cinnamomi
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Unknown
 
 Sequencing sample: multiple_its1
 

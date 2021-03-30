@@ -2,20 +2,20 @@ NOTE: Species listed with (*) are where sequences matched multiple species equal
 
 P-infestans-T30-4
 
- - Unknown
  - Phytophthora andina(*)
  - Phytophthora infestans(*)
  - Phytophthora ipomoeae(*)
+ - Unknown
 
 hmm_trim
 
- - Unknown
  - Phytophthora aleatoria(*)
  - Phytophthora cactorum(*)
  - Phytophthora cambivora(*)
  - Phytophthora cinnamomi
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Unknown
 
 multiple_its1
 
