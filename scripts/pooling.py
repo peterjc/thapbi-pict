@@ -148,7 +148,7 @@ def pool(
         header = line.split("\t")
         try:
             sample_col = header.index("Sequencing sample")
-            count_col = header.index("Seq-count")
+            count_col = header.index("Read count")
         except IndexError:
             sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
         if max(value_cols) >= min(sample_col, count_col):
