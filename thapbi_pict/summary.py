@@ -53,9 +53,34 @@ def load_fasta_headers(sample_to_filename, fields, default=""):
     return answer
 
 
+def _sp_display(species):
+    """Format species classification for reports, see also _sp_sort_key."""
+    if " " in species:
+        return species
+    elif species:
+        return species + " (unknown species)"
+    else:
+        return "Unknown"
+
+
 def _sp_sort_key(species):
-    """Sort unknowns after knowns."""
-    assert species != "Unknown" and "(" not in species, species
+    """Sort unknowns after knowns, see also _sp_display.
+
+    Want this order:
+
+      * Genus1 species1
+      * Genus1 species2
+      * Genus1 (unknown species) -- aka "Genus1"
+      * Genus2 species1
+      * ...
+      * GenusN species1
+      * ...
+      * GenusN (unknown species) -- aka "GenusN"
+      * Unknown - aka ""
+
+    See also function _sp_display which handles the genus only and unknown.
+    """
+    assert species != "Unknown" and not species.endswith(" (unknown species)"), species
     if " " in species:
         return species
     elif species:
@@ -98,27 +123,8 @@ def sample_summary(
                     f"WARNING: Conflicting genus from {sample}: {genus_list}\n"
                 )
 
-    # Want this order:
-    # * Genus1 species1
-    # * Genus1 species2
-    # * Genus1 (unknown species) -- aka "Genus1"
-    # * Genus2 species1
-    # * ...
-    # * GenusN species1
-    # * ...
-    # * GenusN (unknown species) -- aka "GenusN"
-    # * Unknown - aka ""
-    sp_triplets = sorted(
-        (
-            (_ if " " in _ else _ + " {unknown species}") if _ else "{Unknown}",
-            (_ if " " in _ else _ + " (unknown species)") if _ else "Unknown",
-            _,
-        )
-        for _ in species_predictions
-    )
-    species_columns = [_[1] for _ in sp_triplets]
-    species_predictions = [_[2] for _ in sp_triplets]
-    del sp_triplets
+    species_predictions = sorted(species_predictions, key=_sp_sort_key)
+    species_columns = [_sp_display(_) for _ in species_predictions]
 
     # Open files and write headers
     # ============================
@@ -275,15 +281,8 @@ def sample_summary(
                 human.write(f"Sequencing sample: {sample}\n\n")
             else:
                 human.write(f"{sample}\n\n")
-            # TODO - Avoid duplicating the naming magic for columns...
             human_sp_list = [
-                (
-                    (sp if " " in sp else sp + " (unknown species)")
-                    if sp in unambig_sp
-                    else sp + "(*)"
-                )
-                if sp
-                else "Unknown"
+                _sp_display(sp) if sp in unambig_sp else sp + "(*)"
                 for sp in sorted(all_sp, key=_sp_sort_key)
             ]
             for sp in human_sp_list:
