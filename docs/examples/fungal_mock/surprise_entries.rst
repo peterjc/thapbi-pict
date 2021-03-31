@@ -95,21 +95,21 @@ These primers amplified a larger fragment to that in amplicon library one.
 Focusing on those with a sample-abundance over 75 (as in the edit-graphs)
 which the ``onebp`` classifier did not match to the curated reference set:
 
-================================ === =======================================
+==================================== === =======================================
 Long sequence MD5 (ITS1f/ITS2)   Max Species
--------------------------------- --- ---------------------------------------
-57b06dff740b38bd6a0375abd9db3972 640 *glomeromycetes*, perhaps *Rhizophagus*
-eed6e5c3881a233cca219f7ffd886bbe 315 *glomeromycetes*, perhaps *Rhizophagus*
-05007e829ab71427b49743994a14105f 154 *glomeromycetes*, perhaps *Rhizophagus*
-93b2d56429637947243e1b5d54a065cf 132 *Fusarium*
-610caedb1a5699836310fce9dbb9c5fa  96 *Fusarium*
-54aecb27334809f56b7f940b9ca060a3  93 *Fusarium*
-bd30cf52b7031ddd96e3d7588c1f0e1c  90 *Fusarium*
-c40cad2530d633430c3805be3740c9a4  88 *Fusarium*
-d44cd471b11f15e2e42070806737e5d1  86 *Fusarium*
-831acf596cca4ef840c5543d82e23d16  82 *Fusarium*
-d4145ba9e3ed6c8c2138ed15b147152d  81 *Fusarium*
-================================ === =======================================
+------------------------------------ --- ---------------------------------------
+``57b06dff740b38bd6a0375abd9db3972`` 640 *glomeromycetes*, perhaps *Rhizophagus*
+``eed6e5c3881a233cca219f7ffd886bbe`` 315 *glomeromycetes*, perhaps *Rhizophagus*
+``05007e829ab71427b49743994a14105f`` 154 *glomeromycetes*, perhaps *Rhizophagus*
+``93b2d56429637947243e1b5d54a065cf`` 132 *Fusarium*
+``610caedb1a5699836310fce9dbb9c5fa``  96 *Fusarium*
+``54aecb27334809f56b7f940b9ca060a3``  93 *Fusarium*
+``bd30cf52b7031ddd96e3d7588c1f0e1c``  90 *Fusarium*
+``c40cad2530d633430c3805be3740c9a4``  88 *Fusarium*
+``d44cd471b11f15e2e42070806737e5d1``  86 *Fusarium*
+``831acf596cca4ef840c5543d82e23d16``  82 *Fusarium*
+``d4145ba9e3ed6c8c2138ed15b147152d``  81 *Fusarium*
+==================================== === =======================================
 
 You can find all of these sequence on the edit-graph, most of those labelled as
 likely *Fusarium* are a 1bp edit away from large grey node ``f1b689`` top left
