@@ -28,15 +28,15 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,6,9-10 SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,10-11 summary/SPH16S.samples.onebp.tsv
     ...
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
-======== =============== ============= ========== ========= =========
-Marker   Group           library_name  Raw FASTQ  Cutadapt  Seq-count
--------- --------------- ------------- ---------- --------- ---------
+======== =============== ============= ========== ========= ==========
+Marker   Group           library_name  Raw FASTQ  Cutadapt  Read count
+-------- --------------- ------------- ---------- --------- ----------
 MOL16S   Aquarium        BIR2M         306311     8         0
 MOL16S   Aquarium        BIR6M         291954     24        0
 MOL16S   Control         BIM8M         2433       0         0
@@ -55,7 +55,7 @@ SPH16S   Aquarium        BIR6S         240360     226083    191393
 SPH16S   Mock Community  SPSC3PRO1     425271     318149    224510
 SPH16S   Mock Community  SPSC3PRO2     341476     282623    204137
 SPH16S   Mock Community  SPSC3PRO4     410780     304178    197340
-======== =============== ============= ========== ========= =========
+======== =============== ============= ========== ========= ==========
 
 Things to note:
 
@@ -80,15 +80,15 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,6,9-10 MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,10-11 summary/MOL16S.samples.onebp.tsv
     ...
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
-======== =============== ============= ========== ========= =========
-Marker   Group           library_name  Raw FASTQ  Cutadapt  Seq-count
--------- --------------- ------------- ---------- --------- ---------
+======== =============== ============= ========== ========= ==========
+Marker   Group           library_name  Raw FASTQ  Cutadapt  Read count
+-------- --------------- ------------- ---------- --------- ----------
 MOL16S   Aquarium        BIR2M         306311     279297    240659
 MOL16S   Aquarium        BIR6M         291954     265476    238141
 MOL16S   Control         BIM8M         2433       928       513
@@ -107,7 +107,7 @@ SPH16S   Aquarium        BIR6S         240360     30        0
 SPH16S   Mock Community  SPSC3PRO1     425271     40        14
 SPH16S   Mock Community  SPSC3PRO2     341476     2184      805
 SPH16S   Mock Community  SPSC3PRO4     410780     102       16
-======== =============== ============= ========== ========= =========
+======== =============== ============= ========== ========= ==========
 
 Looking at the same points, we see two problems:
 
