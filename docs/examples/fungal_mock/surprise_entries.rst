@@ -96,7 +96,7 @@ Focusing on those with a sample-abundance over 75 (as in the edit-graphs)
 which the ``onebp`` classifier did not match to the curated reference set:
 
 ==================================== === =======================================
-Long sequence MD5 (ITS1f/ITS2)   Max Species
+Long sequence MD5 (ITS1f/ITS2).      Max Species
 ------------------------------------ --- ---------------------------------------
 ``57b06dff740b38bd6a0375abd9db3972`` 640 *glomeromycetes*, perhaps *Rhizophagus*
 ``eed6e5c3881a233cca219f7ffd886bbe`` 315 *glomeromycetes*, perhaps *Rhizophagus*
