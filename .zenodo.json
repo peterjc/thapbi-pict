@@ -1,4 +1,5 @@
 {
+    "language": "eng",
     "license": "MIT",
     "upload_type": "software",
     "creators": [
@@ -22,5 +23,12 @@
             "affiliation": "The James Hutton Institute",
             "name": "David Cooke"
         }
+    ],
+    "keywords": [
+        "python",
+        "amplicon sequencing",
+        "metabarcoding",
+        "DNA barcoding",
+        "environmental DNA"
     ]
 }
