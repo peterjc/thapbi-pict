@@ -124,7 +124,6 @@ def sample_summary(
                 )
 
     species_predictions = sorted(species_predictions, key=_sp_sort_key)
-    species_columns = [_sp_display(_) for _ in species_predictions]
 
     # Open files and write headers
     # ============================
@@ -137,7 +136,7 @@ def sample_summary(
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
-            "\t".join(species_columns),
+            "\t".join(_sp_display(_) for _ in species_predictions),
         )
     )
 
@@ -190,7 +189,7 @@ def sample_summary(
     # Set first row to be tall, with vertical text
     worksheet.set_row(0, 150, vertical_text_format)
     # If there are lots of species, set narrow column widths
-    cols = len(species_columns)
+    cols = len(species_predictions)
     if cols > 50:
         # Set column width to 2
         worksheet.set_column(col_offset + 1, col_offset + cols, 2)
@@ -209,8 +208,8 @@ def sample_summary(
         worksheet.write_string(current_row, col_offset + offset, name)
     col_offset += len(stats_fields)
     worksheet.write_string(current_row, col_offset, "Read count")  # offset reference!
-    for offset, sp in enumerate(species_columns):
-        worksheet.write_string(current_row, col_offset + 1 + offset, sp)
+    for offset, sp in enumerate(species_predictions):
+        worksheet.write_string(current_row, col_offset + 1 + offset, _sp_display(sp))
     worksheet.freeze_panes(current_row + 1, col_offset + 1)
 
     # Human header
@@ -244,7 +243,7 @@ def sample_summary(
         if not sample_batch and show_unsequenced:
             human.write("Has not been sequenced.\n\n")
             # Missing data in TSV:
-            blanks = len(stats_fields) + 3 + len(species_columns)
+            blanks = len(stats_fields) + 3 + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
             handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
             # Missing data in Excel:
@@ -354,7 +353,7 @@ def sample_summary(
         1,
         col_offset - 2 - len(stats_fields),  # go back to classification summary
         current_row,
-        col_offset + 1 + len(species_columns),
+        col_offset + 1 + len(species_predictions),
         {
             "type": "cell",
             "criteria": "equal to",
@@ -366,7 +365,7 @@ def sample_summary(
         1,
         col_offset + 1,
         current_row,
-        col_offset + 1 + len(species_columns),
+        col_offset + 1 + len(species_predictions),
         {
             "type": "cell",
             "criteria": "greater than",
