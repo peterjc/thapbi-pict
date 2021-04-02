@@ -6,6 +6,7 @@ include MANIFEST.in
 include *.rst
 
 recursive-include thapbi_pict *.py
+recursive-include scripts *.py
 
 # Placing the HMM and DB binary files within the Python tree as
 # the simplest way to get them included in a wheel for install:
