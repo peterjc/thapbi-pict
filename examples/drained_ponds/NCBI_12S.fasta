@@ -92,13 +92,13 @@ ACTATGCCTGGCCCTAAATCTTGATGCTCTCCTTTACCTGAGCGTCCGCCCGAGAACTACGAGCACAAACGCTTAAAACT
 ACTATGCCTGGCCGTAAATCTTGATGCTCGATATTACCTGAGCATCCGCCCGAGAACTACGAGCACAAACGCTTAAAACTCTAAGGACTTGGCGGTGCTCCAAACCCAC
 >AP011393.1 Squalidus gracilis gracilis
 ACTATGCTCAGCCATAAACCCAGACGTCCAACTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
->AY897013.1 Ctenopharyngodon idella;EU391390.1 Ctenopharyngodon idella;HQ891005.1 Ctenopharyngodon idella;JQ231114.1 Hypophthalmichthys molitrix;JQ231115.1 Ctenopharyngodon idella;JX119017.1 Ctenopharyngodon idella x Megalobrama amblycephala;KC346973.1 Ctenopharyngodon idella x Squaliobarbus curriculus;KM401549.1 Ctenopharyngodon idellus x Elopichthys bambusa;KT894100.1 Ctenopharyngodon idella;MG570437.1 Ctenopharyngodon idella;MG827396.1 Ctenopharyngodon idella;MT954923.1 Ctenopharyngodon idella
+>AY897013.1-etc Ctenopharyngodon idella
 ACTATGCTCAGCCATAAACCTAGACATCCAACTACAATTAAACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
->EU315941.1 Hypophthalmichthys molitrix;KC351186.1 Squaliobarbus curriculus x Ctenopharyngodon idella;KF246550.1 Metzia formosae;KJ671449.1 Hypophthalmichthys molitrix;KJ671450.1 Hypophthalmichthys molitrix;KJ679503.1 Hypophthalmichthys molitrix;KJ729076.1 Hypophthalmichthys molitrix;KJ729092.1 Hypophthalmichthys molitrix;KJ729093.1 Hypophthalmichthys molitrix;KJ729094.1 Hypophthalmichthys molitrix;KJ746938.1 Hypophthalmichthys molitrix;KJ746939.1 Hypophthalmichthys molitrix;KJ746940.1 Hypophthalmichthys molitrix;KJ746943.1 Hypophthalmichthys molitrix;KJ746944.1 Hypophthalmichthys molitrix;KJ746946.1 Hypophthalmichthys molitrix;KJ746947.1 Hypophthalmichthys molitrix;KJ746949.1 Hypophthalmichthys molitrix;KJ746951.1 Hypophthalmichthys molitrix;KJ746952.1 Hypophthalmichthys molitrix;KJ746954.1 Hypophthalmichthys molitrix;KJ746955.1 Hypophthalmichthys molitrix;KJ746957.1 Hypophthalmichthys molitrix;KJ746960.1 Hypophthalmichthys molitrix;KJ746961.1 Hypophthalmichthys molitrix;KJ746964.1 Hypophthalmichthys molitrix;KJ746965.1 Hypophthalmichthys molitrix;KJ888855.1 Squalidus sp. SX-0527;KM196112.1 Elopichthys bambusa;KP013119.1 Hypophthalmichthys molitrix;KU681007.1 Hypophthalmichthys molitrix;KY126320.1 Hypophthalmichthys nobilis x Hypophthalmichthys molitrix;LC606643.1 Squalidus japonicus japonicus;MF180230.1 Hypophthalmichthys molitrix;MF180231.1 Hypophthalmichthys molitrix;MF180232.1 Hypophthalmichthys molitrix;MK840863.1 Squalidus chankaensis tsuchigae
+>EU315941.1-etc Hypophthalmichthys molitrix
 ACTATGCTCAGCCATAAACCTAGACATCCAACTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
 >AB218686.1 Tinca tinca;KY798486.1 Tinca tinca;MH918114.1 Tinca tinca;MH918115.1 Tinca tinca;MT667243.1 Tinca tinca
 ACTATGCTCAGCCATAAACCTAGACATCCACCTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
->JF802126.1 Pseudorasbora parva;KU821712.1 Pseudorasbora parva;LC601874.2 Pseudorasbora parva;LC601876.2 Pseudorasbora parva;LC601877.2 Pseudorasbora parva;MH918118.1 Pseudorasbora parva;MH918119.1 Pseudorasbora parva;MN175390.1 Pseudorasbora interrupta
+>JF802126.1 Pseudorasbora parva;KU821712.1 Pseudorasbora parva;LC601874.2 Pseudorasbora parva;LC601876.2 Pseudorasbora parva;LC601877.2 Pseudorasbora parva;MH918118.1 Pseudorasbora parva;MH918119.1 Pseudorasbora parva
 ACTATGCTCAGCCATAAACCTAGACGCCCTAGTACAATAGGCGTCCGCCAGGGTACTACGAGCATCAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
 >LC601875.2 Pseudorasbora parva
 ACTATGCTCAGCCATAAACCTAGACGCCCTAGTACAATAGGCGTCCGCCAGGGTACTACGAGCATCAGCTTGAAACCCAAAGGACCTGGACGGTGCCTTAGACCCCC
@@ -110,7 +110,7 @@ ACTATGCTCAGCCCTAAACTTCAACAGTTAAATCAACAAAACTGCTCGCCAGAACACTAGGAGCAACAGCTTAAAACTCA
 ACTATGCTCAGCCCTAATCTTCAACAGTTAAATCAACAAAACTGCTCGCCAGAACACTAGGAGCAACAGCTTAAAACTCAAAGGACCTGGCGGTGCTTCACATCCCT
 >AF038468.1 Blicca bjoerkna;AP009304.1 Blicca bjoerkna;AP011210.1 Blicca bjoerkna;AP011212.1 Vimba melanops;MN153557.1 Ballerus ballerus;MT410960.1 Blicca bjoerkna
 ACTATGCTCAGCCGTAAACCCAGACATCCAACTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
->AP009305.1 Abramis brama;AP018425.1 Abramis brama;KC894466.1 Abramis brama orientalis;MH918129.1 Abramis brama;MH918130.1 Abramis brama;MT410936.1 Abramis brama
+>AP009305.1 Abramis brama;AP018425.1 Abramis brama;MH918129.1 Abramis brama;MH918130.1 Abramis brama;MT410936.1 Abramis brama
 ACTATGCTCAGCCGTAAACCCAGACGTCCAACTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
 >AB127393.1 Notemigonus crysoleucas;AF023194.1 Notemigonus crysoleucas;KP013116.1 Notemigonus crysoleucas;MG570412.1 Notemigonus crysoleucas;MG570425.1 Notemigonus crysoleucas;MG570428.1 Notemigonus crysoleucas;MG570438.1 Notemigonus crysoleucas
 ACTATGCTCAGCCGTAAACCCAGACGTCCAGCTACAATTAGACGTCCGCCCGGGTACTACGAGCATTAGCTTGAAACCCAAAGGACCTGACGGTGCCTTAGACCCCC
