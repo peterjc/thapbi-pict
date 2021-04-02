@@ -132,7 +132,7 @@ def sample_summary(
     # ----------
     handle = open(output, "w")
     handle.write(
-        "#%sClassification summary\tSequencing sample\t%sRead count\t%s\n"
+        "#%sSequencing sample\tClassification summary\t%sRead count\t%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
@@ -200,9 +200,9 @@ def sample_summary(
     for offset, name in enumerate(meta_names):
         worksheet.write_string(current_row, offset, name)
     col_offset = len(meta_names)
-    worksheet.write_string(current_row, col_offset, "Classification summary")
-    col_offset += 1
     worksheet.write_string(current_row, col_offset, "Sequencing sample")
+    col_offset += 1
+    worksheet.write_string(current_row, col_offset, "Classification summary")
     col_offset += 1
     for offset, name in enumerate(stats_fields):
         worksheet.write_string(current_row, col_offset + offset, name)
@@ -296,7 +296,7 @@ def sample_summary(
             # ---
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
-            handle.write(", ".join(human_sp_list) + "\t" + sample + "\t")
+            handle.write(sample + "\t" + ", ".join(human_sp_list) + "\t")
             if stats_fields:
                 handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
             handle.write(
@@ -321,11 +321,9 @@ def sample_summary(
             assert col_offset == len(meta_names) + 2 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
+            worksheet.write_string(current_row, len(meta_names), sample, cell_format)
             worksheet.write_string(
-                current_row, len(meta_names), ", ".join(human_sp_list), cell_format
-            )
-            worksheet.write_string(
-                current_row, len(meta_names) + 1, sample, cell_format
+                current_row, len(meta_names) + 1, ", ".join(human_sp_list), cell_format
             )
             for offset, _ in enumerate(stats_fields):
                 worksheet.write_number(
@@ -351,7 +349,7 @@ def sample_summary(
     # Defined first, but takes priority over later conditional rules:
     worksheet.conditional_format(
         1,
-        col_offset - 2 - len(stats_fields),  # go back to classification summary
+        col_offset - 2 - len(stats_fields),  # go back to sample name
         current_row,
         col_offset + 1 + len(species_predictions),
         {
