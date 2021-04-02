@@ -30,6 +30,6 @@ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
             -o summary/ -r drained_ponds \
             --minlen 80 --maxlen 130 -a 50 -d NCBI_12S.sqlite --showdb \
             --left ACTGGGATTAGATACCCC --right TAGAACAGGCTCCTCTAG \
-            -t PRJNA638011.tsv -x 1 -c 4,5
+            -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,3
 
 echo "Done"

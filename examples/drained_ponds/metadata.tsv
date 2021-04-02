@@ -1,0 +1,100 @@
+run_accession	sample_alias	sample_title	samples	lake	filter	treatment	extracted	control	date
+SRR11949879	Lib3-M3-1F1	MCE-Sample 1 filter 1	M3-1F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949877	Lib3-M3-2F1	MCE-Sample 2 filter 1	M3-2F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949874	Lib3-M3-3F1	MCE-Sample 3 filter 1	M3-3F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949872	Lib3-M3-4F1	MCE-Sample 4 filter 1	M3-4F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949870	Lib3-M3-5F1	MCE-Sample 5 filter 1	M3-5F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949868	Lib3-M3-6F1	MCE-Sample 6 filter 1	M3-6F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949866	Lib3-M3-7F1	MCE-Sample 7 filter 1	M3-7F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949863	Lib3-M3-8F1	MCE-Sample 8 filter 1	M3-8F1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949860	Lib3-M3-MF1	MCE-Sample mix filter 1	M3-MF1	Middle_lake	MCE	F1	Filter		17.02.2017
+SRR11949878	Lib3-M3-1F2	MCE-Sample 1 filter 2	M3-1F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949875	Lib3-M3-2F2	MCE-Sample 2 filter 2	M3-2F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949873	Lib3-M3-3F2	MCE-Sample 3 filter 2	M3-3F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949871	Lib3-M3-4F2	MCE-Sample 4 filter 2	M3-4F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949869	Lib3-M3-5F2	MCE-Sample 5 filter 2	M3-5F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949867	Lib3-M3-6F2	MCE-Sample 6 filter 2	M3-6F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949864	Lib3-M3-7F2	MCE-Sample 7 filter 2	M3-7F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949862	Lib3-M3-8F2	MCE-Sample 8 filter 2	M3-8F2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949859	Lib3-M3-MF2	MCE-Sample mix filter 2	M3-MF2	Middle_lake	MCE	F2	Filter		17.02.2017
+SRR11949861	Lib3-M3-B	MCE-Middle lake blank	M3-B	Middle_lake	MCE	Frozen	Filter	blank	17.02.2017
+SRR11949885	Lib3-BETB	STX-Ethanol buffer blank	BETB	Middle_lake	Sterivex	Ethanol	Buffer	blank	16.02.2017
+SRR11949833	Lib2-1ETB	STX-Ethanol buffer 1	1ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949876	Lib2-2ETB	STX-Ethanol buffer 2	2ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949928	Lib2-3ETB	STX-Ethanol buffer 3	3ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949922	Lib2-4ETB	STX-Ethanol buffer 4	4ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949915	Lib2-5ETB	STX-Ethanol buffer 5	5ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949905	Lib3-6ETB	STX-Ethanol buffer 6	6ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949899	Lib3-7ETB	STX-Ethanol buffer 7	7ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949892	Lib3-8ETB	STX-Ethanol buffer 8	8ETB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949858	Lib3-METB	STX-Ethanol buffer mix	METB	Middle_lake	Sterivex	Ethanol	Buffer		16.02.2017
+SRR11949884	Lib3-BETF	STX-Ethanol filter blank	BETF	Middle_lake	Sterivex	Ethanol	Filter	blank	16.02.2017
+SRR11949832	Lib2-1ETF	STX-Ethanol filter 1	1ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949865	Lib2-2ETF	STX-Ethanol filter 2	2ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949927	Lib2-3ETF	STX-Ethanol filter 3	3ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949921	Lib2-4ETF	STX-Ethanol filter 4	4ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949914	Lib2-5ETF	STX-Ethanol filter 5	5ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949904	Lib3-6ETF	STX-Ethanol filter 6	6ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949897	Lib3-7ETF	STX-Ethanol filter 7	7ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949891	Lib3-8ETF	STX-Ethanol filter 8	8ETF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949857	Lib3-METF	STX-Ethanol filter mix	METF	Middle_lake	Sterivex	Ethanol	Filter		16.02.2017
+SRR11949883	Lib3-BLMB	STX-Longmire buffer blank	BLMB	Middle_lake	Sterivex	Longmire	Buffer	blank	16.02.2017
+SRR11949920	Lib2-1LMB	STX-Longmire buffer 1	1LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949854	Lib2-2LMB	STX-Longmire buffer 2	2LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949926	Lib2-3LMB	STX-Longmire buffer 3	3LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949919	Lib2-4LMB	STX-Longmire buffer 4	4LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949913	Lib2-5LMB	STX-Longmire buffer 5	5LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949903	Lib3-6LMB	STX-Longmire buffer 6	6LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949896	Lib3-7LMB	STX-Longmire buffer 7	7LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949890	Lib3-8LMB	STX-Longmire buffer 8	8LMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949856	Lib3-MLMB	STX-Longmire buffer mix	MLMB	Middle_lake	Sterivex	Longmire	Buffer		16.02.2017
+SRR11949882	Lib3-BLMF	STX-Longmire filter blank	BLMF	Middle_lake	Sterivex	Longmire	Filter	blank	16.02.2017
+SRR11949909	Lib2-1LMF	STX-Longmire filter 1	1LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949843	Lib2-2LMF	STX-Longmire filter 2	2LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949925	Lib2-3LMF	STX-Longmire filter 3	3LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949918	Lib2-4LMF	STX-Longmire filter 4	4LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949912	Lib2-5LMF	STX-Longmire filter 5	5LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949902	Lib3-6LMF	STX-Longmire filter 6	6LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949895	Lib3-7LMF	STX-Longmire filter 7	7LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949889	Lib3-8LMF	STX-Longmire filter 8	8LMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949855	Lib3-MLMF	STX-Longmire filter mix	MLMF	Middle_lake	Sterivex	Longmire	Filter		16.02.2017
+SRR11949881	Lib3-BRNB	STX-RNAlater buffer blank	BRNB	Middle_lake	Sterivex	RNAlater	Buffer	blank	16.02.2017
+SRR11949898	Lib2-1RNB	STX-RNAlater buffer 1	1RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949831	Lib2-2RNB	STX-RNAlater buffer 2	2RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949924	Lib2-3RNB	STX-RNAlater buffer 3	3RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949917	Lib2-4RNB	STX-RNAlater buffer 4	4RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949911	Lib2-5RNB	STX-RNAlater buffer 5	5RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949901	Lib3-6RNB	STX-RNAlater buffer 6	6RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949894	Lib3-7RNB	STX-RNAlater buffer 7	7RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949888	Lib3-8RNB	STX-RNAlater buffer 8	8RNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949853	Lib3-MRNB	STX-RNAlater buffer mix	MRNB	Middle_lake	Sterivex	RNAlater	Buffer		16.02.2017
+SRR11949880	Lib3-BRNF	STX-RNAlater filter blank	BRNF	Middle_lake	Sterivex	RNAlater	Filter	blank	16.02.2017
+SRR11949887	Lib2-1RNF	STX-RNAlater filter 1	1RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949830	Lib2-2RNF	STX-RNAlater filter 2	2RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949923	Lib2-3RNF	STX-RNAlater filter 3	3RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949916	Lib2-4RNF	STX-RNAlater filter 4	4RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949910	Lib2-5RNF	STX-RNAlater filter 5	5RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949900	Lib3-6RNF	STX-RNAlater filter 6	6RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949893	Lib3-7RNF	STX-RNAlater filter 7	7RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949886	Lib3-8RNF	STX-RNAlater filter 8	8RNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949852	Lib3-MRNF	STX-RNAlater filter mix	MRNF	Middle_lake	Sterivex	RNAlater	Filter		16.02.2017
+SRR11949834	Lib1-NLB	New lake blank	NLB	NA	NA	NA	NA	blank	16.01.2017
+SRR11949908	Lib2-N02	STX-Library negative 2	N02	NA	NA	NA	NA	negative	NA
+SRR11949907	Lib2-N03	STX-Library negative 3	N03	NA	NA	NA	NA	negative	NA
+SRR11949851	Lib3-N04	Library negative 4	N04	NA	NA	NA	NA	negative	NA
+SRR11949850	Lib3-N05	Library negative 5	N05	NA	NA	NA	NA	negative	NA
+SRR11949838	NLNeg03	New Lake library negative 3	NLNeg03	NA	NA	NA	NA	negative	NA
+SRR11949837	NLNeg04	New Lake library negative 4	NLNeg04	NA	NA	NA	NA	negative	NA
+SRR11949836	NLPos03	New Lake library positive 3	NLPos03	NA	NA	NA	NA	positive	NA
+SRR11949835	NLPos04	New Lake library positive 4	NLPos04	NA	NA	NA	NA	positive	NA
+SRR11949906	Lib2-P02	STX-Library positive 2	P02	NA	NA	NA	NA	positive	NA
+SRR11949849	Lib3-P03	Library positive 3	P03	NA	NA	NA	NA	positive	NA
+SRR11949848	NL01_4	New Lake 1	NL01_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949847	NL02_4	New Lake 2	NL02_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949846	NL03_4	New Lake 3	NL03_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949845	NL04_4	New Lake 4	NL04_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949844	NL05_4	New Lake 5	NL05_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949842	NL06_4	New Lake 6	NL06_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949841	NL07_4	New Lake 7	NL07_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949840	NL08_4	New Lake 8	NL08_4	New_lake	MCE	Frozen	Filter		16.01.2017
+SRR11949839	NLM_4	New Lake mix	NLM_4	New_lake	MCE	Frozen	Filter		16.01.2017
