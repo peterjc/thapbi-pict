@@ -10,7 +10,6 @@ This implements the ``thapbi_pict prepare-reads ...`` command.
 import gzip
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 from collections import Counter
@@ -127,69 +126,6 @@ def find_fastq_pairs(
         pairs.append((stem, left, right))
 
     return pairs
-
-
-def find_trimmomatic_adapters(fasta_name="TruSeq3-PE.fa"):
-    """Locate Illumina adapter FASTA file bundled with trimmomatic."""
-    # This works on a bioconda installed trimmomatic,
-    # which gives .../conda/bin/trimmomatic and we want
-    # .../conda/share/trimmomatic/adapters/TruSeq3-PE.fa
-    bin_path = os.path.split(subprocess.getoutput("which trimmomatic"))[0]
-    filename = os.path.join(
-        bin_path, "..", "share", "trimmomatic", "adapters", fasta_name
-    )
-    if os.path.isfile(filename):
-        return filename
-    sys.exit(f"ERROR: Could not find {fasta_name} installed with trimmomatic.")
-
-
-def parse_trimmomatic_stderr(stderr):
-    """Extract FASTQ pair count before and after trimmomatic.
-
-    >>> parse_trimmomatic_stderr(
-    ...     "Input Read Pairs: 6136 Both Surviving: 6105 (99.49%) ..."
-    ... )
-    ...
-    (6136, 6105)
-    """
-    for line in stderr.strip().split("\n"):
-        if line.startswith("Input Read Pairs: "):
-            words = line.split()
-            if words[4] == "Both" and words[5] == "Surviving:":
-                return int(words[3]), int(words[6])
-    sys.exit(
-        "ERROR: Could not extract trimmomatic before and after pair count:"
-        f"\n\n{stderr}\n"
-    )
-
-
-def run_trimmomatic(
-    left_in, right_in, left_out, right_out, adapters=None, debug=False, cpu=0
-):
-    """Run trimmomatic on a pair of FASTQ files.
-
-    The input files may be gzipped.
-
-    If the FASTA adapters file is not specified, will try to use
-    ``TruSeq3-PE.fa`` as bundled with a BioConda install of trimmomatic.
-
-    Returns two integers, FASTQ pair count for input and output files.
-    """
-    if not adapters:
-        adapters = find_trimmomatic_adapters()
-    if not os.path.isfile(adapters):
-        sys.exit(f"ERROR: Missing Illumina adapters file for trimmomatic: {adapters}\n")
-    if " " in adapters:
-        # Can we do this with slash escaping? Clever quoting?
-        sys.exit(f"ERROR: Spaces in the adapter filename are a bad idea: {adapters}\n")
-    cmd = ["trimmomatic", "PE"]
-    if cpu:
-        cmd += ["-threads", str(cpu)]
-    cmd += ["-phred33"]
-    # We don't want the unpaired left and right output files, so /dev/null
-    cmd += [left_in, right_in, left_out, os.devnull, right_out, os.devnull]
-    cmd += [f"ILLUMINACLIP:{adapters}:2:30:10"]
-    return parse_trimmomatic_stderr(run(cmd, debug=debug).stderr)
 
 
 def parse_cutadapt_stdout(stdout, bad_primers=False):
@@ -545,7 +481,7 @@ def prepare_sample(
 ):
     """Create FASTA file for sample from paired FASTQ.
 
-    Runs trimmomatic, flash, does primer filtering, does HMM filtering.
+    Runs flash, does primer filtering, does HMM filtering.
 
     Returns fasta filename, unique sequence count, and max abundance
     (dict keyed by HMM name).
@@ -594,41 +530,16 @@ def prepare_sample(
         merged_fastq = None
         _header = load_fasta_header(merged_fasta_gz, gzipped=True)
         count_raw = _header["raw_fastq"]
-        count_trimmomatic = _header["trimmomatic"]
         count_flash = _header["flash"]
         del _header
     else:
-        if False:
-            # trimmomatic
-            trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
-            trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-            count_raw, count_trimmomatic = run_trimmomatic(
-                raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu
-            )
-            for _ in (trim_R1, trim_R2):
-                if not os.path.isfile(_):
-                    sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
-        else:
-            # skim trim
-            trim_R1 = raw_R1
-            trim_R2 = raw_R2
-            count_raw = count_trimmomatic = None  # lazy!
-
         # flash
         merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
-        count_tmp, count_flash = run_flash(
-            trim_R1, trim_R2, tmp, "flash", debug=debug, cpu=cpu
+        count_raw, count_flash = run_flash(
+            raw_R1, raw_R2, tmp, "flash", debug=debug, cpu=cpu
         )
         if not os.path.isfile(merged_fastq):
             sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
-        if count_trimmomatic is None:
-            count_raw = count_trimmomatic = count_tmp  # hackery!
-        if count_tmp != count_trimmomatic:
-            sys.exit(
-                f"ERROR: Trimmomatic says wrote {count_trimmomatic} pairs,"
-                f" but flash saw {count_tmp} pairs."
-            )
-        del count_tmp
 
         if merged_fasta_gz:
             if debug:
@@ -643,7 +554,6 @@ def prepare_sample(
                     # "left_primer": left_primer,
                     # "right_primer": right_primer,
                     "raw_fastq": count_raw,
-                    "trimmomatic": count_trimmomatic,
                     "flash": count_flash,
                     # "cutadapt": count_cutadapt,
                     # "abundance": accepted_total,
@@ -725,7 +635,6 @@ def prepare_sample(
     if debug:
         sys.stderr.write(
             f"DEBUG: FASTQ pairs {count_raw};"
-            f" trimmomatic -> {count_trimmomatic};"
             f" flash -> {count_flash};"
             f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
             f" abundance -> {accepted_total} [{accepted_uniq_count} unique]"
@@ -753,7 +662,6 @@ def prepare_sample(
                 "left_primer": left_primer,
                 "right_primer": right_primer,
                 "raw_fastq": count_raw,
-                "trimmomatic": count_trimmomatic,
                 "flash": count_flash,
                 "cutadapt": count_cutadapt,
                 "abundance": accepted_total,
@@ -776,7 +684,6 @@ def prepare_sample(
             "left_primer": left_primer,
             "right_primer": right_primer,
             "raw_fastq": count_raw,
-            "trimmomatic": count_trimmomatic,
             "flash": count_flash,
             "cutadapt": count_cutadapt,
             "abundance": accepted_total,
@@ -840,7 +747,7 @@ def main(
     if negative_controls and not hmm_stem:
         sys.exit("ERROR: If using negative controls, must use --hmm too.")
 
-    check_tools(["trimmomatic", "flash", "cutadapt"], debug)
+    check_tools(["flash", "cutadapt"], debug)
     if hmm_stem:
         check_tools(["hmmscan"], debug)
 

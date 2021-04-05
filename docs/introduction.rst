@@ -25,16 +25,13 @@ The first stage of the pipeline goes from a set of paired FASTQ files to a
 set of non-redundant primer trimmed FASTA files. This currently runs as
 follows:
 
-1. Quality trim and remove any TruSeq adapters, using
-   `Trimmomatic <http://www.usadellab.org/cms/index.php?page=trimmomatic>`_
-   (`Bolger et al. 2014 <https://dx.doi.org/10.1093/bioinformatics/btu170>`_).
-2. Merge overlappping reads into single sequences, using
+1. Merge overlappping reads into single sequences, using
    `Flash <https://ccb.jhu.edu/software/FLASH/>`_
    (`Magoc and Salzberg 2011 <https://doi.org/10.1093/bioinformatics/btr507>`_).
-3. Filter for primers and trim to target region, using
+2. Filter for primers and trim to target region, using
    `Cutadapt <https://github.com/marcelm/cutadapt>`_
    (`Martin 2011 <https://doi.org/10.14806/ej.17.1.200>`_).
-4. Apply a minimum abundance threshold (guided by any negative controls).
+3. Apply a minimum abundance threshold (guided by any negative controls).
 
 Sequence classification
 -----------------------

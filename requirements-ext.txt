@@ -9,5 +9,4 @@ flash
 graphviz
 hmmer
 swarm < 3.0.0
-trimmomatic
 unzip
