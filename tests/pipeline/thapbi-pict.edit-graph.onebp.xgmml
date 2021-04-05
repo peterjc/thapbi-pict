@@ -3,8 +3,8 @@
   <node id="6e847180a4da6eed316e1fb98b21218f" label="P. plurivora">
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="6e847180a4da6eed316e1fb98b21218f"/>
-    <att type="integer" name="Total-abundance" value="976"/>
-    <att type="integer" name="Max-sample-abundance" value="976"/>
+    <att type="integer" name="Total-abundance" value="1171"/>
+    <att type="integer" name="Max-sample-abundance" value="1171"/>
     <att type="integer" name="Sample-count" value="1"/>
     <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
@@ -30,6 +30,16 @@
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora cryptogea;Phytophthora pseudocryptogea"/>
   </node>
+  <node id="c50b7fc6de0f1405b4388e95bdb01b4c" label="P. capsici;P. glovera">
+    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="c50b7fc6de0f1405b4388e95bdb01b4c"/>
+    <att type="integer" name="Total-abundance" value="356"/>
+    <att type="integer" name="Max-sample-abundance" value="356"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="1"/>
+    <att type="string" name="Genus" value="Phytophthora"/>
+    <att type="string" name="Taxonomy" value="Phytophthora capsici;Phytophthora glovera"/>
+  </node>
   <node id="468dc60921568e6ca5c197d04032eb44" label="P. pseudocryptogea">
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
     <att type="string" name="MD5" value="468dc60921568e6ca5c197d04032eb44"/>
@@ -49,16 +59,6 @@
     <att type="integer" name="in-db" value="1"/>
     <att type="string" name="Genus" value="Phytophthora"/>
     <att type="string" name="Taxonomy" value="Phytophthora agathidicida;Phytophthora castaneae"/>
-  </node>
-  <node id="c50b7fc6de0f1405b4388e95bdb01b4c" label="P. capsici;P. glovera">
-    <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
-    <att type="string" name="MD5" value="c50b7fc6de0f1405b4388e95bdb01b4c"/>
-    <att type="integer" name="Total-abundance" value="290"/>
-    <att type="integer" name="Max-sample-abundance" value="290"/>
-    <att type="integer" name="Sample-count" value="1"/>
-    <att type="integer" name="in-db" value="1"/>
-    <att type="string" name="Genus" value="Phytophthora"/>
-    <att type="string" name="Taxonomy" value="Phytophthora capsici;Phytophthora glovera"/>
   </node>
   <node id="7f3b213656cc5541bdcdf4692a3ed5bb" label="P. crassamura;P. megasperma">
     <graphics type="CIRCLE" fill="#FF0000" outline="#000000" h="50.00" w="50.00"/>
