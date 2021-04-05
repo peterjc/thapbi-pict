@@ -17,6 +17,7 @@ been mock communities with known species composition.
 
    woody_hosts/index
    recycled_water/index
+   drained_ponds/index
    fungal_mock/index
    microalgal_mock/index
    great_lakes/index
@@ -36,6 +37,13 @@ been mock communities with known species composition.
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container
     nursery. https://doi.org/10.1094/PBIOMES-10-18-0043-R
+
+* :ref:`drained_ponds` - An example with a single marker and custom database.
+  Based on:
+
+    Muri *et al.* (2020) Read counts from environmental DNA (eDNA)
+    metabarcoding reflect fish abundance and biomass in drained ponds.
+    https://doi.org/10.3897/mbmg.4.56959
 
 * :ref:`fungal_mock` - An example with multiple markers (including two
   sequenced together) requiring separate primers settings and databases, based
