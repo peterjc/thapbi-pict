@@ -40,7 +40,7 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
 .. code:: console
 
-    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
+    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm
 
 If you want to install the very latest unreleased code, you must download the
 source code from the `repository on GitHub
