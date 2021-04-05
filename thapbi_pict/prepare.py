@@ -598,15 +598,21 @@ def prepare_sample(
         count_flash = _header["flash"]
         del _header
     else:
-        # trimmomatic
-        trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
-        trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
-        count_raw, count_trimmomatic = run_trimmomatic(
-            raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu
-        )
-        for _ in (trim_R1, trim_R2):
-            if not os.path.isfile(_):
-                sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+        if False:
+            # trimmomatic
+            trim_R1 = os.path.join(tmp, "trimmomatic_R1.fastq")
+            trim_R2 = os.path.join(tmp, "trimmomatic_R2.fastq")
+            count_raw, count_trimmomatic = run_trimmomatic(
+                raw_R1, raw_R2, trim_R1, trim_R2, debug=debug, cpu=cpu
+            )
+            for _ in (trim_R1, trim_R2):
+                if not os.path.isfile(_):
+                    sys.exit(f"ERROR: Expected file {_!r} from trimmomatic\n")
+        else:
+            # skim trim
+            trim_R1 = raw_R1
+            trim_R2 = raw_R2
+            count_raw = count_trimmomatic = None  # lazy!
 
         # flash
         merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
@@ -615,6 +621,8 @@ def prepare_sample(
         )
         if not os.path.isfile(merged_fastq):
             sys.exit(f"ERROR: Expected file {merged_fastq!r} from flash\n")
+        if count_trimmomatic is None:
+            count_raw = count_trimmomatic = count_tmp  # hackery!
         if count_tmp != count_trimmomatic:
             sys.exit(
                 f"ERROR: Trimmomatic says wrote {count_trimmomatic} pairs,"
