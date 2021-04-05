@@ -1,8 +1,7 @@
 #left_primer:GAAGGTGAAGTCGTAACAAGG
 #right_primer:GCARRGACTTTCGTCCCYRC
 #raw_fastq:238
-#trimmomatic:175
-#flash:166
+#flash:229
 #cutadapt:15
 #abundance:8
 #threshold:2
