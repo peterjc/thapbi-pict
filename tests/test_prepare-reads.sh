@@ -25,7 +25,7 @@ rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "827" ]; then echo "Wrong FASTA output count"; false; fi
 
 # In this case, --flip makes no difference, as does -n ""
 # Also using -p / --primers too.
@@ -34,7 +34,7 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta $TMP/DNAMIX_S95_L001.failed-primers.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --flip -n "" --merged-cache $TMP/merged_cache/ -p $TMP/ \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "827" ]; then echo "Wrong FASTA output count"; false; fi
 diff $TMP/DNAMIX_S95_L001.failed-primers.fasta tests/prepare-reads/DNAMIX_S95_L001.failed-primers.fasta
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
@@ -42,17 +42,17 @@ rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -n "-" --merged-cache $TMP/merged_cache/ \
     -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm thapbi_pict/hmm/controls.hmm
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --hmm ''
-if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "24" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "Generating mock control file"
 # Using just 50 real reads (50 * 4 = 200 lines)
