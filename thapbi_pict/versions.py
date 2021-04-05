@@ -38,7 +38,6 @@ def check_tools(names, debug):
         "flash": version_flash,
         "hmmscan": version_hmmer,
         "makeblastdb": version_blast,
-        "trimmomatic": version_trimmomatic,
         "swarm": version_swarm,
     }
     missing = []
@@ -184,23 +183,3 @@ def version_swarm(cmd="swarm"):
     ver = text.split("\n", 1)[0].strip()
     if ver.lower().startswith("swarm "):
         return ver[6:].strip()
-
-
-def version_trimmomatic(cmd="trimmomatic"):
-    """Return the version of trimmomatic (as a short string).
-
-    Uses the output with -version::
-
-        $ trimmomatic -version
-        0.38
-
-    It would capture this:
-
-    >>> version_trimmomatic()
-    '0.38'
-
-    If the command is not on the path, returns None.
-    """
-    text = getoutput(cmd + " -version").strip().split("\n", 1)[0]
-    if "." in text:
-        return text
