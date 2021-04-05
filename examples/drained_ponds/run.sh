@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eup pipeline
 
-echo NOTE: Expected first time run time is under 10 minutes,
+echo NOTE: Expected first time run time is under 5 minutes,
 echo repeat runs take seconds just to regenerate reports
 echo
 
@@ -30,6 +30,6 @@ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
             -o summary/ -r drained_ponds \
             --minlen 80 --maxlen 130 -a 50 -d NCBI_12S.sqlite --showdb \
             --left ACTGGGATTAGATACCCC --right TAGAACAGGCTCCTCTAG \
-            -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,3
+            -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,2,3
 
 echo "Done"
