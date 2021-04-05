@@ -519,7 +519,7 @@ def prepare_sample(
 ):
     """Create FASTA file for sample from paired FASTQ.
 
-    Runs trimmomatic, pear, does primer filtering, does HMM filtering.
+    Runs trimmomatic, flash, does primer filtering, does HMM filtering.
 
     Returns fasta filename, unique sequence count, and max abundance
     (dict keyed by HMM name).
