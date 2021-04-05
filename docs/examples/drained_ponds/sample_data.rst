@@ -98,4 +98,32 @@ Other files
 
 Files ``cichlid_control.known.tsv`` and ``negative_control.known.tsv`` and are
 used in ``setup.sh`` to create ``expected/*.known.tsv`` entries for the
-positive and negative controls.
+positive and negative controls, including the blank controls.
+
+12 fish species were translocated to New Lake, of which nine were also in the
+middle lake. Referring to the results text and Figure 1B, and pooling the two
+observed hybrids with a parent species, the expected species in the two lakes
+are as follows.
+
+Middle lake and new lake both had:
+
+ - *Abramis brama*
+ - *Barbus barbus*
+ - *Carassius carassius*
+ - *Cyprinus carpio*
+ - *Perca fluviatilis*
+ - *Rutilus rutilus*
+ - *Scardinius erythrophthalmus*
+ - *Squalius cephalus*
+ - *Tinca tinca*
+
+New lake only also had:
+
+ - *Acipenser* spp.
+ - *Ctenopharyngodon idella*
+ - *Silurus glanis*
+
+File ``middle_lake.known.tsv`` lists the 9 species found in the middle lake,
+and ``new_lake.known.tsv`` lists the 12 species in the new lake (although not
+all fish are expected at all sites within each lake), and these are assigned
+to the remaining samples as ``expected/*.known.tsv`` by running ``setup.sh``.
