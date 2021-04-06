@@ -496,32 +496,6 @@ def find_paired_files(
     return input_list
 
 
-def parse_species_list_from_tsv(tabular_file):
-    """Extract species list from TSV header line (ignores genus only)."""
-    with open(tabular_file) as handle:
-        line = handle.readline()
-    if not line.startswith("#") or line.count("\t") != 3:
-        sys.exit(f"ERROR: {tabular_file} does not have 4 column TSV header:\n{line}")
-    parts = line.rstrip("\n").split("\t")
-    if (
-        parts[0] != "#sequence-name"
-        or parts[1] != "taxid"
-        or not parts[2].startswith("genus-species")
-        or parts[3] != "note"
-    ):
-        sys.stderr.write(f"{parts!r}\n")
-        sys.exit(
-            f"ERROR: {tabular_file} does not have expected 4 column TSV headers"
-            f" (sequence-name, taxid, genus-species:..., note):\n{line}"
-        )
-    if not parts[2].startswith("genus-species:"):
-        sys.exit(
-            f"ERROR: {tabular_file} does not have species list"
-            f" in genus-species column header:\n{line}"
-        )
-    return [_ for _ in parts[2][14:].split(";") if species_level(_)]
-
-
 def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
     """Parse file of species assignments/predictions by sequence."""
     with open(tabular_file) as handle:
