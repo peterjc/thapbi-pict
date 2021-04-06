@@ -18,7 +18,7 @@ as follows, and you should get six output report files:
 
 .. code:: console
 
-    $ mkdir intermediate_defaults/ summary_defaults/
+    $ mkdir -p intermediate_defaults/ summary_defaults/
     $ thapbi_pict pipeline \
       -i raw_data/ -o summary_defaults/ -s intermediate_defaults/ \
       -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6

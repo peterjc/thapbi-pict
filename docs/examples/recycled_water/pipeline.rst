@@ -11,7 +11,7 @@ our custom database built with matching primer trimmed entries:
 
 .. code:: console
 
-    $ mkdir intermediate/ summary/
+    $ mkdir -p intermediate/ summary/
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \

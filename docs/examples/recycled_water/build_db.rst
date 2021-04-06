@@ -47,7 +47,7 @@ from the NCBI:
 
 .. code:: console
 
-    $ mkdir cache
+    $ mkdir -p cache
     $ cd cache
     $ for ACC in `cut -f 1 ../Redekar_et_al_2019_sup_table_3.tsv`; do curl -L -o "$ACC.fasta" "https://www.ebi.ac.uk/ena/browser/api/fasta/$ACC"; done
     ...

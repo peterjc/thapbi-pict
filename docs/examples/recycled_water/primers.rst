@@ -24,7 +24,7 @@ run the prepare-reads step:
 
 .. code:: console
 
-    $ mkdir intermediate/
+    $ mkdir -p intermediate/
     $ thapbi_pict prepare-reads \
       -i raw_data/ -o intermediate/ \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
