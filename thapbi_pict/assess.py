@@ -10,9 +10,11 @@ This implements the ``thapbi_pict assess ...`` command.
 import sys
 from collections import Counter
 
+from .db_orm import connect_to_db
+from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import find_paired_files
-from .utils import parse_species_list_from_tsv
+from .utils import genus_species_name
 from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
@@ -130,9 +132,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                 ), f"{sp} from prediction {pred} is not species-level"
                 classes.add(sp)
                 if sp and sp not in db_sp_list:
-                    sys.exit(
-                        f"ERROR: Species {sp} was not in the prediction file's header!"
-                    )
+                    sys.exit(f"ERROR: Predicted species {sp} was not in the database!")
     if impossible:
         sys.stderr.write(
             f"WARNING: {len(impossible)} expected species were not a"
@@ -321,6 +321,7 @@ assert extract_global_tally({("A;B", "A;C"): 1}, ["A", "B", "C", "D"]) == (1, 1,
 def main(
     inputs,
     known,
+    db_url,
     method,
     min_abundance,
     assess_output,
@@ -339,21 +340,23 @@ def main(
     if not input_list:
         sys.exit(f"ERROR: Found no pairs *.{method}.tsv with *.{known}.tsv")
 
-    db_sp_list = None
+    # Connect to the DB,
+    Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
+    session = Session()
+    view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
+    db_sp_list = sorted(
+        {genus_species_name(t.genus, t.species) for t in view if t.species}
+    )
+    session.close()
+    if not db_sp_list:
+        sys.exit("ERROR: No species listed in DB")
+
     file_count = 0
     global_tally = {}
 
     for predicted_file, expected_file in input_list:
         if debug:
             sys.stderr.write(f"Assessing {predicted_file} vs {expected_file}\n")
-        if db_sp_list is None:
-            # Note this will ignore genus level classifications:
-            db_sp_list = parse_species_list_from_tsv(predicted_file)
-        elif db_sp_list != parse_species_list_from_tsv(predicted_file):
-            sys.exit("ERROR: Inconsistent species lists in predicted file headers")
-        if debug:
-            assert db_sp_list is not None, db_sp_list
-
         file_count += 1
         expt = sp_in_tsv(expected_file, min_abundance)
         pred = sp_in_tsv(predicted_file, min_abundance)

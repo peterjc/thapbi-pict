@@ -274,6 +274,7 @@ def assess_classification(args=None):
     return main(
         inputs=args.input,
         known=args.known,
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         method=args.method,
         min_abundance=args.abundance,
         assess_output=args.output,
@@ -461,6 +462,7 @@ def pipeline(args=None):
         return_code = assess(
             inputs=known_files + classified_files,
             known="known",  # =args.known,
+            db_url=db,
             method=args.method,
             min_abundance=args.abundance,
             assess_output=f"{stem}.assess.{method}.tsv",
@@ -1287,6 +1289,9 @@ def main(args=None):
         "against which the method in -m / --method is assessed. "
         "This could be any defined method, default is 'known'.",
     )
+    arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    arg.help += " Used for species list to infer true negatives."
+    del arg
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     subcommand_parser.add_argument(
         "-a",
