@@ -29,6 +29,7 @@ files downloaded correctly:
 
     $ cd raw_data/
     $ md5sum -c MD5SUM.txt
+    ...
     $ cd ..
 
 There is no need to decompress the files.
