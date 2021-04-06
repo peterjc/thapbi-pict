@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.8.1  2021-04-06 Dropped species list embedded in intermediate TSV, ``assess`` needs DB now.
 v0.8.0  2021-04-06 Revised genus/species columns in sample report. Added ``scripts/`` folder.
 v0.7.11 2021-03-30 ``assess`` now only at sample level. Abundance threshold in ``classify``.
 v0.7.10 2021-03-24 Pipeline includes ``fasta-nr`` command making non-redundant FASTA file.
