@@ -30,9 +30,9 @@ files downloaded correctly:
 
 .. code:: console
 
-   $ cd raw_data/
-   $ md5sum -c MD5SUM.txt
-   $ cd ../
+     $ cd raw_data/
+     $ md5sum -c MD5SUM.txt
+     $ cd ../
 
 There is no need to decompress the files.
 

@@ -17,15 +17,15 @@ You can install these tools using:
 
 .. code:: console
 
-   $ pip install pre-commit
-   $ pre-commit install  # within the thapbi_pict main directory
+    $ pip install pre-commit
+    $ pre-commit install  # within the thapbi_pict main directory
 
 The checks will then run automatically when you make a git commit. You can
 also run the checks directly using:
 
 .. code:: console
 
-   $ pre-commit run -a
+    $ pre-commit run -a
 
 If your editor can be configured to run flake8 and/or black automatically,
 even better. These checks are done as part of the continuous integration when
@@ -70,8 +70,8 @@ the command line with ``git``.
 
 .. code:: console
 
-   $ git clone https://github.com/peterjc/thapbi-pict.git
-   $ cd thapbi-pict
+    $ git clone https://github.com/peterjc/thapbi-pict.git
+    $ cd thapbi-pict
 
 Then load the plain text SQL dump of the default database into SQLite3,
 see ``database/README.rst`` for more information on this. Make it read
@@ -79,15 +79,15 @@ only to prevent accidental edits:
 
 .. code:: console
 
-   $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
-   $ chmod a-w thapbi_pict/ITS1_DB.sqlite
+    $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+    $ chmod a-w thapbi_pict/ITS1_DB.sqlite
 
 Assuming your default Python is at least version 3.5, to install the
 tool and automatically get our Python dependencies:
 
 .. code:: console
 
-   $ pip install .
+    $ pip install .
 
 If your system defaults to Python 2, try ``pip3 install .`` or
 ``python3 -m pip install .`` instead.
@@ -96,7 +96,7 @@ Once installed, you should be able to run the tool using:
 
 .. code:: console
 
-   $ thapbi_pict
+    $ thapbi_pict
 
 This should automatically find the installed copy of the Python code.
 Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for
@@ -113,19 +113,19 @@ using the plain text dump which is under version control:
 
 .. code:: bash
 
-   rm -rf thapbi_pict/ITS1_DB.sqlite
-   sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
-   chmod a-w thapbi_pict/ITS1_DB.sqlite
+    rm -rf thapbi_pict/ITS1_DB.sqlite
+    sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+    chmod a-w thapbi_pict/ITS1_DB.sqlite
 
 If not, skip directly to:
 
 .. code:: bash
 
-   rm -rf build/
-   python setup.py sdist --formats=gztar && python setup.py bdist_wheel
-   git tag vX.Y.Z
-   git push origin master --tags
-   twine upload dist/thapbi_pict-X.Y.Z*
+    rm -rf build/
+    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
+    git tag vX.Y.Z
+    git push origin master --tags
+    twine upload dist/thapbi_pict-X.Y.Z*
 
 The PyPI upload should trigger an automated pull request updating the
 `THAPBI PICT BioConda recipe

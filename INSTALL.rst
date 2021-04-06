@@ -11,7 +11,7 @@ We recommend installing this tool on Linux or macOS using the `Conda
 
 .. code:: console
 
-   $ conda install thapbi_pict
+    $ conda install thapbi_pict
 
 The availability of all the command line dependencies likely rules out
 using Windows.
@@ -22,7 +22,7 @@ with its Python dependencies:
 
 .. code:: console
 
-   $ pip install thapbi_pict
+    $ pip install thapbi_pict
 
 However, in this case you will still need to install various external command
 line tools like ``hmmer``, and others which are only used for some classifiers
@@ -30,7 +30,7 @@ line tools like ``hmmer``, and others which are only used for some classifiers
 
 .. code:: console
 
-   $ conda install --file requirements-ext.txt
+    $ conda install --file requirements-ext.txt
 
 If you are not using Conda,  then on a typical Linux system most of the tools
 required will be available via the default distribution packages, although not
@@ -40,7 +40,7 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
 .. code:: console
 
-   $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
+    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm trimmomatic
 
 If you want to install the very latest unreleased code, you must download the
 source code from the `repository on GitHub
@@ -51,7 +51,7 @@ Once installed, you should be able to run the tool using:
 
 .. code:: console
 
-   $ thapbi_pict
+    $ thapbi_pict
 
 This should automatically find the installed copy of the Python code. Use
 ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
@@ -63,13 +63,13 @@ If you installed via conda, this should work:
 
 .. code:: console
 
-   $ conda update thapbi-pict
+    $ conda update thapbi-pict
 
 If you installed via pip, this should work:
 
 .. code:: console
 
-    $ pip install --upgrade thapbi-pict
+     $ pip install --upgrade thapbi-pict
 
 Either way, you can check the installed tool version using:
 

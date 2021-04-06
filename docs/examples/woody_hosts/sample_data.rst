@@ -43,9 +43,9 @@ FASTA files into your ``intermediate/`` subdirectory:
 
 .. code:: console
 
-   $ tar -jxvf intermediate.tar.bz2
-   $ ls -1 intermediate/*.fasta | wc -l
-   122
+    $ tar -jxvf intermediate.tar.bz2
+    $ ls -1 intermediate/*.fasta | wc -l
+    122
 
 Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
