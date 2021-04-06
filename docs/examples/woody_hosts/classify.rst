@@ -60,7 +60,7 @@ help. You could open the file in R, Excel, etc. Slightly abridged and
 reformatted, we have:
 
 ========================================= ============== ==================================================== ====
-#sequence-name                            taxid          genus-species:...                                    note
+#sequence-name                            taxid          genus-species                                        note
 ========================================= ============== ==================================================== ====
 ``2e4f0ed53888ed39a2aee6d6d8e02206_2271`` 221518         *Phytophthora pseudosyringae*                        ...
 ``c1a720b2005f101a9858107545726123_716``  78237          *Phytophthora gonapodyides*                          ...
@@ -81,12 +81,11 @@ taxid 53983) and close relative *Phytophthora x cambivora* (NCBI taxid
 If you are familiar with the command line search tool ``grep`` and the regular
 expression syntax, you should find the format of these intermediate TSV files
 lends itself to some simple searches. For example, you could see which samples
-had matches to *Phytophthora rubi* using ``grep`` twice as follows (exclude
-header lines, then find species):
+had matches to *Phytophthora rubi* using ``grep`` as follows:
 
 .. code:: console
 
-    $ grep -v "^#" intermediate/*.tsv | grep "Phytophthora rubi"
+    $ grep "Phytophthora rubi" intermediate/*.tsv
     intermediate/DNA10MIX_bycopynumber.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_278  129364  Phytophthora rubi  Unique taxonomy match
     intermediate/DNA10MIX_diluted25x.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_349    129364  Phytophthora rubi  Unique taxonomy match
     intermediate/DNA10MIX_undiluted.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_271     129364  Phytophthora rubi  Unique taxonomy match
