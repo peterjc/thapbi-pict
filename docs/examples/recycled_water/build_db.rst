@@ -171,7 +171,7 @@ the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
 .. code:: console
 
     $ curl -L -O https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2019-12-01.zip
-    $ unzip -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
+    $ unzip -n -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
     ...
     $ ls taxdmp_2019-12-01/n*.dmp
     taxdmp_2019-12-01/names.dmp  taxdmp_2019-12-01/nodes.dmp
