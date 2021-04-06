@@ -29,8 +29,9 @@ use https://www.ncbi.nlm.nih.gov/bioproject/PRJNA417859/
 
 It will download 768 raw FASTQ files (384 pairs), taking about 4.8GB on disk
 
-If you have the ``md5sum`` tool installed (standard on Linux), verify the FASTQ
-files downloaded correctly:
+If you have the ``md5sum`` tool installed (standard on Linux; we suggest
+``conda install coreutils`` to install this on macOS), verify the FASTQ files
+downloaded correctly:
 
 .. code:: console
 
