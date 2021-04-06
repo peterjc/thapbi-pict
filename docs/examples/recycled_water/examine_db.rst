@@ -33,7 +33,7 @@ filtering at genus or species level, for example:
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
       -g Phytophthora -s fallax -o P_fallax.tsv
-    Wrote 8 txt format entries to 'P_fallax.tsv'
+    Wrote 5 txt format entries to 'P_fallax.tsv'
 
 This gives a short table, summarised as follows:
 
@@ -58,7 +58,7 @@ Adding ``-m`` or ``--minimal`` to the command gives instead:
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
       -g Phytophthora -s fallax -o P_fallax.tsv -m
-    Wrote 1 txt format entries to 'P_fallax.tsv'
+    Wrote 2 txt format entries to 'P_fallax.tsv'
 
 Now the table only has one data row per unique marker sequences:
 
@@ -80,6 +80,9 @@ Instead we can ask for FASTA output:
 This produces a short FASTA file as follows (with line wrapping added
 for display)::
 
+.. code:: console
+
+    $ cat P_fallax.fasta
     >DQ297398.1 Phytophthora fallax;HQ261557.1 Phytophthora fallax;HQ261558.1
     Phytophthora fallax;HQ261559.1 Phytophthora fallax
     CCACACCTAAAAAAATTCCACGTGAACTGTATTGTCAACCAAATTCGGGGATTCCTTGCTAGCGTGCCTTCGGGCGTGCC
@@ -92,12 +95,18 @@ for display)::
 
 To be clear, each FASTA record is written as two potentially very long lines.
 The first title line consists of the FASTA new record ``>`` marker and then
-five semi-colon separated accessions with species. The sequence shared by those
-five entries is given on the second line (without line breaks as markers tend
+four semi-colon separated accessions with species. The sequence shared by those
+four entries is given on the second line (without line breaks as markers tend
 not to be overly long, and it facilitates command line analysis/debugging).
 
-Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to::
+Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to:
 
+.. code:: console
+
+    $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
+      -g Phytophthora -s fallax -f fasta -o P_fallax_minimal.fasta -m
+    Wrote 2 fasta format entries to 'P_fallax_minimal.fasta'
+    $ cat P_fallax_minimal.fasta
     >693cf88b7f57bcc7a3532a6b7ff0268a Phytophthora fallax
     CCACACCTAAAAAAATTCCACGTGAACTGTATTGTCAACCAAATTCGGGGATTCCTTGCTAGCGTGCCTTCGGGCGTGCC
     GGTAGGTTGAGACCCATCAAACGAAAACATCGGCTGAAAGGTCGGAGCCAGTAGTTACCTTTGTAAACCCTTTACTAAAT
@@ -109,7 +118,8 @@ Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to::
 
 This discards the original accessions and instead uses ``>``, MD5 checksum,
 space, semi-colon separated list of taxonomic assignments, new line, sequences,
-new line. Again, there is deliberatly no sequence line wrapping.
+new line. Again, there is deliberately no sequence line wrapping in the file
+itself.
 
 Edit graph
 ----------
