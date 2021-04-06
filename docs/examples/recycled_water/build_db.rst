@@ -258,7 +258,7 @@ Then ``cutadapt -g GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA ...``
 found and removed 64 left prefixes. This was followed by running
 ``cutadapt -a GCACATCGATGAAGAACGCT ...`` which trimmed 1439 sequences (99.9%)
 and warned that the "adapter" might be incomplete because the sequence
-preceeding it was highly conserved. That left 1451 sequences, but with many
+preceding it was highly conserved. That left 1451 sequences, but with many
 duplicates. This was made non-redundant giving 841 unique sequences with
 de-duplicated entries recorded with semi-colon separated FASTA title lines.
 
@@ -269,6 +269,7 @@ taxonomy pre-loaded, but not enforced (``-x`` or ``--lax`` mode):
 
     $ rm -rf Redekar_et_al_2019_sup_table_3.sqlite  # remove it if already there
     $ thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
+    ...
     $ thapbi_pict curated-import -x \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -i Redekar_et_al_2019_sup_table_3.fasta
