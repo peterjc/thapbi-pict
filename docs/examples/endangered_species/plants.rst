@@ -90,7 +90,7 @@ Quite diverse, with over fifty unique sequences recovered:
 .. code:: console
 
     $ grep -c ">" summary/ITS2.all_reads.fasta
-    9
+    54
 
 Finds all the *Brassica* and *Echinocactus* sp., most of the *Euphorbia* sp.
 
