@@ -44,6 +44,7 @@ FASTA files into your ``intermediate/`` subdirectory:
 .. code:: console
 
     $ tar -jxvkf intermediate.tar.bz2
+    ...
     $ ls -1 intermediate/*.fasta | wc -l
     122
 
