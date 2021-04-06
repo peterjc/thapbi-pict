@@ -69,7 +69,7 @@ If you installed via pip, this should work:
 
 .. code:: console
 
-     $ pip install --upgrade thapbi-pict
+    $ pip install --upgrade thapbi-pict
 
 Either way, you can check the installed tool version using:
 
