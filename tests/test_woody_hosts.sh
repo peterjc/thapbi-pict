@@ -102,6 +102,7 @@ echo "=========================="
 echo "Running woody hosts assess"
 echo "=========================="
 time thapbi_pict assess -i $TMP/woody_hosts/positive_controls/ $TMP/woody_hosts/intermediate/ -o $TMP/woody_hosts/DNA_MIXES.assess.tsv
+echo diff $TMP/woody_hosts/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 diff $TMP/woody_hosts/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 
 echo "$0 - test_woody_hosts.sh passed"
