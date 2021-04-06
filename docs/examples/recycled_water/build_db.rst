@@ -171,10 +171,12 @@ the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
 .. code:: console
 
     $ curl -L -O https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2019-12-01.zip
+    ...
     $ unzip -n -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
     ...
-    $ ls taxdmp_2019-12-01/n*.dmp
-    taxdmp_2019-12-01/names.dmp  taxdmp_2019-12-01/nodes.dmp
+    $ ls -1 taxdmp_2019-12-01/n*.dmp
+    taxdmp_2019-12-01/names.dmp
+    taxdmp_2019-12-01/nodes.dmp
 
 Now building the database is a two-step process, first importing the
 taxonomy, and second importing the sequences.
@@ -195,9 +197,9 @@ If you are working with different organisms you will also need to set the
       -i Redekar_et_al_2019_sup_table_3_download.fasta \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC
-    File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1449 accepted.
-    Of 1451 potential entries, 0 unparsable, 2 failed sp. validation, 1449 OK.
-    Could not validate 2 different species names
+    File Redekar_et_al_2019_sup_table_3_download.fasta had 1454 sequences, of which 1447 accepted.
+    Of 1451 potential entries, 0 unparsable, 4 failed sp. validation, 1447 OK.
+    Could not validate 4 different species names
 
 Notice this time we ran ``thapbi_pict ncbi-import`` without the ``-x``
 (``--lax``) option, and it complained about two species names and two entries
@@ -207,9 +209,15 @@ command you can see:
 - *Phytophthora lagoariana* from
   `EF590256.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EF590256.1>`_,
   which the NCBI says should be "*Phytophthora* sp. 'lagoariana'"
+- *Phytophthora personensis* from
+  `EU301169.2 <https://www.ncbi.nlm.nih.gov/nucleotide/EU301169.2>`_,
+  which was not in this revision of the tax dump.
 - *Phytophthora novaeguinee* from
   `EU035774.1 <https://www.ncbi.nlm.nih.gov/nucleotide/EU035774.1>`_,
   which the NCBI says should be "*Phytophthora* sp. *novaeguinee*"
+- *Globisporangium rostratifingens* from
+  `HQ643764.1 <https://www.ncbi.nlm.nih.gov/nucleotide/HQ643764.1>`_,
+  which was at the time of this tax dump *Pythium rostratifingen*.
 
 Strict validation has its downsides when combined with uncurated metadata
 and unrecorded synonyms. It is also a moving target - in this case if rather
@@ -309,8 +317,9 @@ Let's run this on the custom database, with output to a file:
 
 .. code:: console
 
-    $ thapbi_pict conflicts -d Redekar_et_al_2019_sup_table_3.sqlite -o conflicts.tsv
+    $ thapbi_pict conflicts -d Redekar_et_al_2019_sup_table_3.sqlite -o conflicts.tsv; echo "(Return code $?)"
     Loaded taxonomy for 838 sequences from DB
+    (Return code 3)
 
 This produces a plain text tab separated table ``conflicts.tsv`` which starts
 as follows:
