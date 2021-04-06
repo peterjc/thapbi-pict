@@ -32,12 +32,14 @@ files downloaded correctly:
 
     $ cd raw_data/V4/
     $ md5sum -c MD5SUM.txt
+    ...
     $ cd ../../
 
 .. code:: console
 
     $ cd raw_data/V8V9/
     $ md5sum -c MD5SUM.txt
+    ...
     $ cd ../../
 
 There is no need to decompress the files.

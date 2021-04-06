@@ -28,12 +28,14 @@ files downloaded correctly:
 
     $ cd amp_lib_one/raw_data/
     $ md5sum -c MD5SUM.txt
+    ...
     $ cd ../../
 
 .. code:: console
 
     $ cd amp_lib_two/raw_data/
     $ md5sum -c MD5SUM.txt
+    ...
     $ cd ../../
 
 There is no need to decompress the files.
