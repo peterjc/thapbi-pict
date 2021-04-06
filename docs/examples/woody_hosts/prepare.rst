@@ -34,7 +34,7 @@ replicates from each of 14 sample sites where the file name stem is
 
 You should find 122 small FASTA files in the ``intermediate/`` folder (or you
 can get these from the compressed file as described above). Note this is
-robust to being interupted and restarted (e.g. a job might time out on the
+robust to being interrupted and restarted (e.g. a job might time out on the
 cluster).
 
 .. WARNING::
@@ -74,6 +74,25 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
    lines starting ``#``. Some tools need this to be removed, but others will
    accept this as valid FASTA format.
 
+For example, here the header tells us this sample started with 6136 reads in
+the paired FASTQ files, down to just 4486 after processing.
+
+.. code:: console
+
+    $ head intermediate/Site_1_sample_1.fasta
+    #left_primer:GAAGGTGAAGTCGTAACAAGG
+    #right_primer:GCARRGACTTTCGTCCCYRC
+    #raw_fastq:6136
+    #trimmomatic:6105
+    #flash:5869
+    #cutadapt:5861
+    #abundance:4180
+    #threshold:100
+    >2e4f0ed53888ed39a2aee6d6d8e02206_2272
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
+    GGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTG
+    AGCTAGTAGCTATTTTTTAAACCCATTCTTTAATACTGATTATACT
+
 The sequence entries in the FASTA file are named ``<checksum>_<abundance>``.
 Here ``<checksum>`` is the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_
 of the sequence, and this is used as a unique shorthand. It is a 32 character
@@ -94,60 +113,24 @@ that having them on one line without line breaks is no hardship - and it is
 *extremely* helpful for simple tasks like using ``grep`` to look for a
 particular sequence fragment at the command line.
 
-For example,
-
 .. code:: console
 
-    $ cat intermediate/Site_1_sample_1.fasta
-    #left_primer:GAAGGTGAAGTCGTAACAAGG
-    #right_primer:GCARRGACTTTCGTCCCYRC
-    #raw_fastq:6136
-    #trimmomatic:6105
-    #flash:5869
-    #cutadapt:5861
-    #abundance:4179
-    #threshold:100
-    >2e4f0ed53888ed39a2aee6d6d8e02206_2271
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
-    GGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTG
-    AGCTAGTAGCTATTTTTTAAACCCATTCTTTAATACTGATTATACT
+    $ grep "^>" intermediate/Site_1_sample_1.fasta
+    >2e4f0ed53888ed39a2aee6d6d8e02206_2272
     >c1a720b2005f101a9858107545726123_716
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATT
-    TGGGGGCTTGCTCGGCGGCGTGTGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAG
-    CGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
     >96e0e2f0475bd1617a4b05e778bb04c9_331
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAAT
-    TTGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGA
-    GCGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
     >fb30156d7f66c8abf91f9da230f4d19e_208
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCGTTAGTTG
-    GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
-    GTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
     >dcd6316eb77be50ee344fbeca6e005c7_193
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTAGTTG
-    GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
-    GTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
     >972db44c016a166de86a2bacab3f4226_182
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAACCCACTTAGTTG
-    GGGGCTAGTCCCGGCGGCTGGCTGTCGATGTCAAAGTTGACGGCTGCTGCTGTGTGTCGGGCCCTATCATGGCGAGCGTT
-    TGGGTCCCTCTCGGGGGAACTGAGCCAGTAGCCCTTATTTTTTAAACCCATTCTTGAATACTGAATATACT
     >d9bc3879fdab3b4184c04bfbb5cf6afb_165
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAATCCTTTTATT
-    GGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGTCTGGGTGGCGGCTCTATCATGGTGACCGCTCTGGGCTTCGGCTTGGAG
-    TTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACATACT
     >ed15fefb7a3655147115fc28a8d6d671_113
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAAACTTTCCACGTGAACCGTATCAACCCCTATAATT
-    TGGGGGCTTGCTCGGCGGCGTGCGTGCTGGCCTGTAATGGGTCGGCGTGCTGCTGCTGGGCGGGCTCTATCATGGGCGAG
-    CGTTTGGGCTTCGGCTCGAGCTAGTAGCTATCAATTTTAAACCCTTTCTTAAATACTGAACATACT
 
-Note that for this documentation, the grep output has had the sequences line
+Note that for this documentation, the FASTA output has had the sequences line
 wrapped at 80 characters.
 
-The header tells us this sample started with 6136 reads in the paired FASTQ
-files, down to just 4179 after processing. The final output has just eight
-unique sequences accepted, happily none of which match the synthetic controls.
-The most common is listed first, and had MD5 checksum
-``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2271 reads.
+The final output has just eight unique sequences accepted, happily none of
+which match the synthetic controls. The most common is listed first, and had
+MD5 checksum ``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2272 reads.
 
 You could easily find out which other samples had this unique sequence using
 the command line search tool ``grep`` as follows:
@@ -184,7 +167,7 @@ If you wished to lower the threshold from the default to 50, you could use:
 
 .. code:: console
 
-    $ rm -rf intermediate/*.fasta
+    $ rm -rf intermediate/*.fasta  # Are you sure?
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -a 50
     ...
 
@@ -196,10 +179,10 @@ If you wished to lower the threshold from the default to 50, you could use:
 
 .. WARNING::
 
-    Setting the abundance threhold low (say under 50) risks letting background
-    contamination through into the results. Do not do this without strong
-    justification (e.g. look at suitable controls over multiple plates from
-    your own laboratory procedure).
+    Setting the abundance threshold low (say under 50) risks background
+    contamination coming through into the results. Do not do this without
+    strong justification (e.g. look at suitable controls over multiple plates
+    from your own laboratory procedure).
 
 .. WARNING::
 

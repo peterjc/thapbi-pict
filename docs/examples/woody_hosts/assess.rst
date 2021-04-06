@@ -159,9 +159,9 @@ grep to show all lines with this species name:
 .. code:: console
 
     $ grep "Phytophthora agathidicida" intermediate/DNA10MIX_*.onebp.tsv
-    intermediate/DNA10MIX_bycopynumber.onebp.tsv:5122dde24762f8e3d6a54e3f79077254_246  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    intermediate/DNA10MIX_diluted25x.onebp.tsv:5122dde24762f8e3d6a54e3f79077254_672    1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    intermediate/DNA10MIX_undiluted.onebp.tsv:5122dde24762f8e3d6a54e3f79077254_632     1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    intermediate/DNA10MIX_bycopynumber.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_245  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    intermediate/DNA10MIX_diluted25x.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_656    1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    intermediate/DNA10MIX_undiluted.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_625     1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
 
 The same applies to *Phytophthora capsici* and *Phytophthora glovera*,
 although in this case both were in the mixture.

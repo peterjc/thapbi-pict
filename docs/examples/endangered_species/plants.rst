@@ -55,12 +55,12 @@ review before using THAPBI PICT's default ``onebp`` classifier.
 trnl-UAA
 --------
 
-Not very diverse, only nine unique sequences recovered:
+Not very diverse, only eight unique sequences recovered:
 
 .. code:: console
 
     $ grep -c ">" summary/trnl-UAA.all_reads.fasta
-    9
+    8
 
 We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
 *Brassica napus* (and the genus in general) are discussed in the paper too.

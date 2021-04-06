@@ -86,7 +86,7 @@ had matches to *Phytophthora rubi* using ``grep`` as follows:
 .. code:: console
 
     $ grep "Phytophthora rubi" intermediate/*.tsv
-    intermediate/DNA10MIX_bycopynumber.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_278  129364  Phytophthora rubi  Unique taxonomy match
+    intermediate/DNA10MIX_bycopynumber.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_279  129364  Phytophthora rubi  Unique taxonomy match
     intermediate/DNA10MIX_diluted25x.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_349    129364  Phytophthora rubi  Unique taxonomy match
     intermediate/DNA10MIX_undiluted.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_271     129364  Phytophthora rubi  Unique taxonomy match
 
