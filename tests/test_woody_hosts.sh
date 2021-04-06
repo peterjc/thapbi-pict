@@ -41,6 +41,7 @@ if [ -d tests/woody_hosts/raw_data/ ]; then
     mkdir $TMP/woody_hosts/intermediate_new
     time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/woody_hosts/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
     for f in $TMP/woody_hosts/intermediate/*.fasta; do
+        echo diff $f $TMP/woody_hosts/intermediate_new/${f##*/}
         diff $f $TMP/woody_hosts/intermediate_new/${f##*/}
     done
 fi
@@ -49,12 +50,14 @@ echo "======================================="
 echo "Running woody hosts fasta-nr & classify"
 echo "======================================="
 thapbi_pict fasta-nr -i $TMP/woody_hosts/intermediate/*.fasta -o $TMP/woody_hosts/all.fasta
+echo $TMP/woody_hosts/all.fasta tests/woody_hosts/all.fasta
 diff $TMP/woody_hosts/all.fasta tests/woody_hosts/all.fasta
 for M in onebp identity blast; do
     # Writing to stdout to set a single filename.
     # Discarding the comment column, and the header,
     # leaving the most stable core part of the output
     thapbi_pict classify -i $TMP/woody_hosts/all.fasta -o - -m $M | grep -v "^#" | cut -f 1-3 > $TMP/woody_hosts/all.$M.tsv
+    echo diff $TMP/woody_hosts/all.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts/all.$M.tsv tests/woody_hosts/all.$M.tsv
 done
 
