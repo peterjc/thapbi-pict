@@ -44,22 +44,9 @@ function pool {
     echo "Computing species list for combined header..."
     # Quick and dirty pooling by concatenating the intermediate
     # classifier result files per sample is enough for sample-summary,
-    # but headers need reworking for the assess command to work...
-    #
-    # This is largely messing about to get tabs in the right places
-    echo "#sequence-name" > header.tmp
-    echo "taxid" >> header.tmp
-    echo -n "genus-species:" >> header.tmp
-    # Get all possible species classifications, one per line, sorted and unique, then semi-colon separate them
-    cat intermediate/*/*.onebp.tsv | grep -v '^#' | cut -f 3 | tr ';' '\n' | sort | uniq | tr '\n' ';' >> header.tmp
-    echo "" >> header.tmp
-    tr '\n' '\t' < header.tmp > intermediate_pool/header.onebp.txt
-    echo "note" >> intermediate_pool/header.onebp.txt
-    rm header.tmp
-
     echo "Pooling intermediate onebp classifications..."
     for S in `cut -f 4 PRJEB18620.tsv | grep -v "sample_alias"`; do
-        cp intermediate_pool/header.onebp.txt intermediate_pool/$S.onebp.tsv
+        echo -e "#sequence-name\ttaxid\tgenus-species\tnote" > intermediate_pool/$S.onebp.tsv
         cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
     done;
 
@@ -68,9 +55,10 @@ function pool {
     thapbi_pict summary -m onebp -i intermediate_pool/ \
         -o summary/ -r pooled \
         -t metadata.tsv -c 3,4,5 -x 2 -g 4
-    # And the assessment
-    thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
-        -o summary/pooled.assess.onebp.tsv
+
+    # assessment... as of v0.8.1 as would need a DB giving possible species
+    # thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
+    #     -o summary/pooled.assess.onebp.tsv
 
     echo "Pooled results done"
 }
