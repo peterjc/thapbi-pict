@@ -27,16 +27,17 @@ Only three members of the mock community should match. Looking at the
 line, when run at a minimum abundance threshold of 10, these are the key
 numbers:
 
-===================== === === === ===
-#Species              TP  FP  FN  TN
---------------------- --- --- --- ---
-OVERALL               9   5   0   656
-Pisidium compressum   3   0   0   7
-Sphaerium corneum     3   0   0   7
-Sphaerium nucleus     0   3   0   7
-Sphaerium simile      3   1   0   6
-Sphaerium striatinum  0   1   0   9
-===================== === === === ===
+.. code:: console
+
+    $ cut -f 1-5 summary/SPH16S.assess.onebp.tsv
+    #Species                TP  FP  FN  TN
+    OVERALL                 9   5   0   656
+    Pisidium compressum     3   0   0   7
+    Sphaerium corneum       3   0   0   7
+    Sphaerium nucleus       0   3   0   7
+    Sphaerium simile        3   1   0   6
+    Sphaerium striatinum    0   1   0   9
+    OTHER 62 SPECIES IN DB  0   0   0   620
 
 No false negatives (but we have set the threshold very low), but 5 false
 positives: Three cases of *Sphaerium nucleus*, and one each of *S. simile*
@@ -62,25 +63,26 @@ Looking at the ``summary/MOL16S.assess.onebp.tsv`` output file in Excel or
 at the command line, when run at a minimum abundance threshold of 10, these
 are the key numbers:
 
-========================== === === === ====
-#Species                   TP  FP  FN  TN
--------------------------- --- --- --- ----
-OVERALL                    69  19  8   1235
-Cipangopaludina chinensis  7   0   0   4
-Dreissena bugensis         0   7   0   4
-Dreissena polymorpha       7   0   0   4
-Dreissena rostriformis     7   0   0   4
-Gillia altilis             7   0   0   4
-Melanoides tuberculata     2   0   5   4
-Mytilopsis leucophaeata    7   0   0   4
-Pisidium compressum        7   1   0   3
-Potamopyrgus antipodarum   7   0   0   4
-Sander vitreus             4   0   3   4
-Sphaerium corneum          7   0   0   4
-Sphaerium nucleus          0   7   0   4
-Sphaerium simile           7   3   0   1
-Sphaerium striatinum       0   1   0   10
-========================== === === === ====
+.. code:: console
+
+    $ cut -f 1-5 summary/MOL16S.assess.onebp.tsv
+    #Species                   TP  FP  FN  TN
+    OVERALL                    69  19  8   1235
+    Cipangopaludina chinensis  7   0   0   4
+    Dreissena bugensis         0   7   0   4
+    Dreissena polymorpha       7   0   0   4
+    Dreissena rostriformis     7   0   0   4
+    Gillia altilis             7   0   0   4
+    Melanoides tuberculata     2   0   5   4
+    Mytilopsis leucophaeata    7   0   0   4
+    Pisidium compressum        7   1   0   3
+    Potamopyrgus antipodarum   7   0   0   4
+    Sander vitreus             4   0   3   4
+    Sphaerium corneum          7   0   0   4
+    Sphaerium nucleus          0   7   0   4
+    Sphaerium simile           7   3   0   1
+    Sphaerium striatinum       0   1   0   10
+    OTHER 107 SPECIES IN DB    0   0   0   1177
 
 This time we do have false negatives - in five of the seven samples the
 lowest abundance *Melanoides tuberculata* was not found. Given this was
