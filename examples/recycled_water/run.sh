@@ -11,7 +11,7 @@ echo =====================
 echo "First with default settings and DB"
 mkdir -p intermediate_defaults/ summary/
 thapbi_pict pipeline \
-            -i raw_data/ -o defaults/ -s intermediate_defaults/ \
+            -i raw_data/ -o summary/ -s intermediate_defaults/ \
             -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo "Building ITS1 database"
