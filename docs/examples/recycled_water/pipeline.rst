@@ -18,23 +18,21 @@ our custom database built with matching primer trimmed entries:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 3577559 of 9956078 sequences from 384 files
-    ...
     Wrote summary/recycled-water-custom.samples.onebp.*
     Wrote summary/recycled-water-custom.reads.onebp.*
-    Loaded 3054 unique sequences from 384 FASTA files.
-    Matched 81 unique sequences in database
     ...
     $ ls -1 intermediate/SRR*.fasta | wc -l
     384
     $ ls -1 intermediate/SRR*.onebp.tsv | wc -l
     384
     $ ls -1 summary/recycled-water-custom.*
-    recycled-water-custom.reads.onebp.tsv
-    recycled-water-custom.reads.onebp.xlsx
-    recycled-water-custom.samples.onebp.tsv
-    recycled-water-custom.samples.onebp.txt
-    recycled-water-custom.edit-graph.xgmml
+    summary/recycled-water-custom.all_reads.fasta
+    summary/recycled-water-custom.edit-graph.onebp.xgmml
+    summary/recycled-water-custom.reads.onebp.tsv
+    summary/recycled-water-custom.reads.onebp.xlsx
+    summary/recycled-water-custom.samples.onebp.tsv
+    summary/recycled-water-custom.samples.onebp.txt
+    summary/recycled-water-custom.samples.onebp.xlsx
 
 Note the classifier method was set explicitly with ``-m`` (or ``--method``),
 using the default of ``onebp``. With the narrower set of *Phytophthora*
