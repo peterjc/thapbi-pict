@@ -26,14 +26,14 @@ files downloaded correctly:
 
 .. code:: console
 
-    $ cd amp_lib_one/raw_data/
+    $ cd raw_data/AL1/
     $ md5sum -c MD5SUM.txt
     ...
     $ cd ../../
 
 .. code:: console
 
-    $ cd amp_lib_two/raw_data/
+    $ cd raw_data/AL1/
     $ md5sum -c MD5SUM.txt
     ...
     $ cd ../../
@@ -43,17 +43,17 @@ There is no need to decompress the files.
 Amplicon primers & reference sequences
 --------------------------------------
 
-Amplicon library one amplified a small region of ITS1 using the BITS/B58S3
-primer pair (``ACCTGCGGARGGATC`` and ``GAGATCCRTTGYTRAAAGTT``), as shown in
-the paper's supplementary Table S4.
+Amplicon library one (AL1) amplified a small region of ITS1 using primer pair
+BITS/B58S3 (``ACCTGCGGARGGATC`` and ``GAGATCCRTTGYTRAAAGTT``), as shown in the
+paper's supplementary Table S4.
 
-Amplicon library two amplified a larger region of ITS1 using the ITS1f/ITS2
-primer pair (``CTTGGTCATTTAGAGGAAGTAA`` and ``GCTGCGTTCTTCATCGATGC``), which
+Amplicon library two (AL2) amplified a larger region of ITS1 using primer pair
+ITS1f/ITS2 (``CTTGGTCATTTAGAGGAAGTAA`` and ``GCTGCGTTCTTCATCGATGC``), which
 includes the first library’s target region entirely. Similar yields as per
 supplementary Table S4 vs S5.
 
-Additionally, amplicon library two amplified ITS2 using the ITS3‐KYO2 and
-ITS4‐KYO3 primer pair (``GATGAAGAACGYAGYRAA`` and ``CTBTTVCCKCTTCACTCG``),
+Additionally, amplicon library two (AL2) amplified ITS2 using primer pair
+ITS3‐KYO2 with ITS4‐KYO3 (``GATGAAGAACGYAGYRAA`` and ``CTBTTVCCKCTTCACTCG``),
 with lower yields as per supplementary Table S5 vs S6.
 
 This means we need to run THAPBI PICT three times (for each primer pair used
@@ -64,12 +64,18 @@ discussion on the similar Redekar *et al.* (2019) worked example.
 
 Files ``ITS1.fasta`` and ``ITS2.fasta`` were extracted from supplementary
 materials appendix S2, with the species name alone added to the FASTA titles
-(for use with ``thapbi_pict curated-import``).
+(for input to ``thapbi_pict curated-import`` with primer trimming).
 
 Metadata
 --------
 
-The amplicon specific files ``metadata.tsv`` have seven columns:
+The amplicon specific files ``metadata_AL1.tsv`` and ``metadata_AL2.tsv`` are
+based on the metadata downloaded from the ENA, with some reformatting. The
+split into amplicon one and two was based on supplementary Tables S4, S5 and
+S6 (for the mock community samples) and reading the paper (for placing the
+negative controls).
+
+They have seven columns:
 
 1. Accession, assigned by the public archive, e.g. "SRR5314337"
 2. MiSeq-name, author's filename stem, e.g. "FMockE.HC_S190"
@@ -83,7 +89,8 @@ When calling THAPBI PICT, the meta data commands are given as follows:
 
 .. code:: console
 
-    $ thapbi_pict ... -t metadata.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+    $ thapbi_pict ... -t metadata_AL1.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+    $ thapbi_pict ... -t metadata_AL2.tsv -c 5,6,7,3,4,2 -x 1 -g 6
 
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
@@ -106,11 +113,5 @@ The provided ``negative_control.known.tsv`` and ``mock_community.known.tsv``
 files lists the expected species in the negative controls (none) and the mock
 community samples (the same 19 species, although not always in equal ratios).
 
-The two folders ``amp_lib_one/`` and ``amp_lib_two/`` will be used for the
-two separate amplicon libraries discussed in the paper. Each comes with a
-``metadata.tsv`` file based on the metadata downloaded from the ENA, with
-some reformatting. The split into amplicon one and two was based on
-supplementary Tables S4, S5 and S6 (for the mock community samples) and
-reading the paper (for placing the negative controls). They each have a
-``raw_data/`` subdirectory containing a file named ``MD5SUM.txt`` which
-can be used to validate the FASTQ files.
+Sub-folders under ``intermediate/`` are used for intermediate files, a folder
+for each amplicon library (AL1 and AL2) and primer-pair combination.
