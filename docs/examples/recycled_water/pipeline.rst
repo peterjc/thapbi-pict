@@ -18,7 +18,7 @@ our custom database built with matching primer trimmed entries:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 3578362 of 9958427 sequences from 384 files
+    onebp classifier assigned species/genus to 3578362 of 10966156 sequences from 384 files
     Wrote summary/recycled-water-custom.samples.onebp.*
     Wrote summary/recycled-water-custom.reads.onebp.*
     ...
@@ -38,11 +38,11 @@ Note the classifier method was set explicitly with ``-m`` (or ``--method``),
 using the default of ``onebp``. With the narrower set of *Phytophthora*
 sequences and comparatively well sampled database, that was a good default.
 Recall running with the *Phytophthora* defaults gave a taxonomic assignment
-for 2126870 of 2608541 reads - which was 82% of 2.6 million reads.
+for 2126870 of 2608939 reads - which was 82% of 2.6 million reads.
 
 Here with our relatively sparse database, the ``onebp`` method is perhaps
-overly strict - only 36% of the reads were matched (3578362 of 9958427).
-However, with the different primer settings, we are examining almost ten
+overly strict - only 33% of the reads were matched (3578362 of 10966156).
+However, with the different primer settings, we are examining over ten
 million reads (nearly four times as many), so we're doing about twice as well
 in terms of number of raw reads with a classification.
 
@@ -57,15 +57,15 @@ more matches:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    blast classifier assigned species/genus to 4282074 of 9958427 sequences from 384 files
+    blast classifier assigned species/genus to 4282074 of 10966156 sequences from 384 files
     Wrote summary/recycled-water-custom.samples.blast.*
     Wrote summary/recycled-water-custom.reads.blast.*
     ...
     $ ls -1 intermediate/SRR*.blast.tsv | wc -l
     384
 
-Better, in that we are up to 43% of the reads with a taxonomic assignment
-(4282074 of 9958427 reads). But how many of these are false positives? Sadly,
+Better, in that we are up to 39% of the reads with a taxonomic assignment
+(4282074 of 10966156 reads). But how many of these are false positives? Sadly,
 we don't have any controls for this dataset in order to objectively assess the
 classifier performance of the various algorithm and database combinations.
 

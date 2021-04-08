@@ -86,20 +86,19 @@ sequences. At the command line:
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:12564
-    #trimmomatic:12543
-    #flash:11620
-    #cutadapt:91
-    #abundance:80
+    #flash:11641
+    #cutadapt:112
+    #abundance:98
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_48
+    >d51507f661ebee38a85bec35b70b7ee1_64
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
-    >daadc4126b5747c43511bd3be0ea2438_32
+    >daadc4126b5747c43511bd3be0ea2438_34
     ATTAGTGATTAATTATTGAGTGTAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCAAG
     CAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
 
-Using a minimum of 10 has excluded 11 singletons here (48 + 32 + 11 = 91,
-the read count given above with no threshold).
+Using a minimum of 10 has excluded lots of singletons etc here.
+
 
 .. code:: console
 
@@ -107,20 +106,18 @@ the read count given above with no threshold).
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:16297
-    #trimmomatic:16282
-    #flash:15814
-    #cutadapt:117
-    #abundance:100
+    #flash:15829
+    #cutadapt:132
+    #abundance:111
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_90
+    >d51507f661ebee38a85bec35b70b7ee1_101
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
     >e5b7a8b5dc0da33108cc8a881eb409f5_10
     ATTAGTGATTAATTATTGAGTGATAAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCA
     AGCAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
 
-Using a minimum of 10 has excluded a sequence with two reads, and 15
-singletons (90 + 10 + 2 + 15 = 117, the count given above with no threshold).
+Using a minimum of 10 has again excluded lots of singletons.
 
 As elsewhere in the documentation, the FASTA sequences have been line
 wrapped at 80bp for display.
@@ -142,17 +139,15 @@ a pale blue background in the Excel reports). Working at the terminal:
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:19406
-    #trimmomatic:19287
-    #flash:12021
-    #cutadapt:1041
-    #abundance:994
+    #flash:12140
+    #cutadapt:1153
+    #abundance:1085
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_994
+    >d51507f661ebee38a85bec35b70b7ee1_1085
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
 
-The minimum abundance excuded lots of singletons, a few seen twice, and once
-read seen four times.
+The minimum abundance excuded lots of singletons etc.
 
 .. code:: console
 
@@ -160,12 +155,11 @@ read seen four times.
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:7285
-    #trimmomatic:6798
-    #flash:5642
-    #cutadapt:3860
-    #abundance:3631
+    #flash:6128
+    #cutadapt:4343
+    #abundance:4017
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_3575
+    >d51507f661ebee38a85bec35b70b7ee1_3961
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
     >716f6111ac2ee192c23282e07d23078a_25
@@ -179,10 +173,10 @@ read seen four times.
     ATTACTGATTTGCTTAATTGCACCACATGTGTTTTTTATTGAACAAATTTCTTTGGTGGCGGGAGCAATCCTACCGCCAG
     AGGTTATAACTAAACCAAACTTTTTATTTACAGTCAAACTTGATTTATTATTACAATAGTCAA
 
-The minimum abundance excluded lots of singletons, doubles, and a few more
-abundance reads up to 6 copies. The vast majority of these are slight variants
-of the dominant sequence (you can call ``thapbi_pict edit-graph`` on this
-single sample to visualise this), and can thus be explained as PCR noise.
+The minimum abundance excluded lots of singletons etc. The vast majority of
+these are slight variants of the dominant sequence (you can call ``thapbi_pict
+edit-graph`` on this single sample to visualise this), and can thus be
+explained as PCR noise.
 
 Again, both samples have ``d51507f661ebee38a85bec35b70b7ee1`` as their main
 (or only) unwanted sequence above the threshold, a perfect match to *Fusarium

@@ -54,9 +54,9 @@ Working at the command line or using Excel should show the following:
 ====================== ==== === === ====
 #Species               TP   FP  FN  TN
 ====================== ==== === === ====
-OVERALL                1033 489 265 6793
+OVERALL                1035 491 263 6791
 Acipenser schrenckii   0    10  0   133
-Aloe variegata         108  0   27  8
+Aloe variegata         110  0   25  8
 Anguilla anguilla      3    0   3   137
 Beta vulgaris          0    0   16  127
 Bos taurus             139  2   0   2
@@ -71,10 +71,10 @@ Cycas revoluta         0    0   6   137
 Dendrobium sp.         131  0   3   9
 Echinocactus sp.       6    0   0   137
 Euphorbia sp.          3    0   3   137
-Gallus gallus          6    0   0   137
+Gallus gallus          6    1   0   136
 Glycine max            16   0   0   127
 Gossypium hirsutum     16   0   0   127
-Homo sapiens           0    1   0   142
+Homo sapiens           0    2   0   141
 Huso dauricus          92   0   36  15
 Lactuca altaica        0    66  0   77
 Lactuca sativa         74   2   0   67
@@ -97,8 +97,8 @@ Most of the false positives (FP) are alternative genus level matches in
 There are more interesting FP for *Acipenser schrenckii* (the authors found
 this was accidentally included from the *Huso dauricus* caviar used), human
 (*Homo sapiens*, presumed laboratory contamination), and finally *Lactuca
-sativa*, and cow (*Bos taurus*) which the authors traced to
-cross-contamination during sample preparation or DNA isolation.
+sativa*, cow (*Bos taurus*) and chicken (*Gallus gallus*) which the authors
+traced to cross-contamination during sample preparation or DNA isolation.
 
 Why do *Cullen* sp. show up in ``S1`` from the trnL P6 loop marker (as well
 as ``S3`` which the authors found too, see their Table 8)?

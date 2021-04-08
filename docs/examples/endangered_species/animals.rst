@@ -37,7 +37,7 @@ sequences:
 .. code:: console
 
     $ grep -c ">" summary/Mini-16S.all_reads.fasta
-    18
+    85
 
 The most common is again a perfect match to *Bos taurus*, which this time has
 no false negatives (but two false positives?).

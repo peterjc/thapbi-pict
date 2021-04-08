@@ -28,7 +28,7 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,10-11 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9-10 summary/SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
@@ -37,24 +37,24 @@ columns, you should see:
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
 ======= ============== ============ ========= ======== ==========
-MOL16S  Aquarium       BIR2M        306311    8        0
-MOL16S  Aquarium       BIR6M        291954    24       0
+MOL16S  Aquarium       BIR2M        306311    22       0
+MOL16S  Aquarium       BIR6M        291954    29       0
 MOL16S  Control        BIM8M        2433      0        0
-MOL16S  Mock Community SC3PRO1      689712    72       0
-MOL16S  Mock Community SC3PRO2      405048    70       0
-MOL16S  Mock Community SC3PRO3      402219    32       0
-MOL16S  Mock Community NFSC3PRO3    349590    41       10
-MOL16S  Mock Community SC3PRO4      671241    27       0
-MOL16S  Mock Community NFSC3PRO4    420015    18       0
-MOL16S  Mock Community SC3PRO5      480606    55       0
-MOL16S  River          BIM6M        821849    0        0
-MOL16S  River          BIM2M        1119271   40       0
-MOL16S  River          BIM4M        709472    46       19
-SPH16S  Aquarium       BIR2S        498926    251724   209434
-SPH16S  Aquarium       BIR6S        240360    226083   191469
-SPH16S  Mock Community SPSC3PRO1    425271    318149   224718
-SPH16S  Mock Community SPSC3PRO2    341476    282623   204289
-SPH16S  Mock Community SPSC3PRO4    410780    304178   197522
+MOL16S  Mock Community SC3PRO1      689712    2693     0
+MOL16S  Mock Community SC3PRO2      405048    2063     0
+MOL16S  Mock Community SC3PRO3      402219    1007     0
+MOL16S  Mock Community NFSC3PRO3    349590    853      10
+MOL16S  Mock Community SC3PRO4      671241    974      0
+MOL16S  Mock Community NFSC3PRO4    420015    533      0
+MOL16S  Mock Community SC3PRO5      480606    1396     0
+MOL16S  River          BIM6M        821849    2        0
+MOL16S  River          BIM2M        1119271   447      0
+MOL16S  River          BIM4M        709472    50       19
+SPH16S  Aquarium       BIR2S        498926    251731   209435
+SPH16S  Aquarium       BIR6S        240360    226084   191469
+SPH16S  Mock Community SPSC3PRO1    425271    318150   224718
+SPH16S  Mock Community SPSC3PRO2    341476    282637   204289
+SPH16S  Mock Community SPSC3PRO4    410780    304194   197522
 ======= ============== ============ ========= ======== ==========
 
 Things to note:
@@ -80,7 +80,7 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,10-11 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9-10 summary/MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
@@ -89,54 +89,53 @@ columns, you should see:
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
 ======= ============== ============ ========= ======== ==========
-MOL16S  Aquarium       BIR2M        306311    279297   241040
-MOL16S  Aquarium       BIR6M        291954    265476   238455
-MOL16S  Control        BIM8M        2433      928      513
-MOL16S  Mock Community SC3PRO1      689712    247703   210186
-MOL16S  Mock Community SC3PRO2      405048    102735   85233
-MOL16S  Mock Community SC3PRO3      402219    116643   94972
-MOL16S  Mock Community NFSC3PRO3    349590    105425   85705
-MOL16S  Mock Community SC3PRO4      671241    168201   130612
-MOL16S  Mock Community NFSC3PRO4    420015    116666   76161
-MOL16S  Mock Community SC3PRO5      480606    152834   129132
-MOL16S  River          BIM6M        821849    764830   674428
-MOL16S  River          BIM2M        1119271   886766   769302
-MOL16S  River          BIM4M        709472    342913   297102
-SPH16S  Aquarium       BIR2S        498926    30       0
-SPH16S  Aquarium       BIR6S        240360    30       0
-SPH16S  Mock Community SPSC3PRO1    425271    40       14
-SPH16S  Mock Community SPSC3PRO2    341476    2184     806
-SPH16S  Mock Community SPSC3PRO4    410780    102      16
+MOL16S  Aquarium       BIR2M        306311    297738   256466
+MOL16S  Aquarium       BIR6M        291954    286488   256527
+MOL16S  Control        BIM8M        2433      1010     551
+MOL16S  Mock Community SC3PRO1      689712    656795   550336
+MOL16S  Mock Community SC3PRO2      405048    377068   297912
+MOL16S  Mock Community SC3PRO3      402219    380395   304641
+MOL16S  Mock Community NFSC3PRO3    349590    328997   262983
+MOL16S  Mock Community SC3PRO4      671241    628747   494294
+MOL16S  Mock Community NFSC3PRO4    420015    364291   262739
+MOL16S  Mock Community SC3PRO5      480606    459043   383892
+MOL16S  River          BIM6M        821849    799497   703741
+MOL16S  River          BIM2M        1119271   954741   823977
+MOL16S  River          BIM4M        709472    367498   317391
+SPH16S  Aquarium       BIR2S        498926    33       0
+SPH16S  Aquarium       BIR6S        240360    35       0
+SPH16S  Mock Community SPSC3PRO1    425271    64       14
+SPH16S  Mock Community SPSC3PRO2    341476    2322     833
+SPH16S  Mock Community SPSC3PRO4    410780    432      108
 ======= ============== ============ ========= ======== ==========
 
 Looking at the same points, we see two problems:
 
 * The control sample BIM8M (SRR5534986) had almost a thousand unwanted MOL16S
-  matches, reduced to 513 with a minimum abundance threshold of 10.
+  matches, reduced to 551 with a minimum abundance threshold of 10.
 
 * All the SPH16S mock community samples have unwanted MOS16S matches, the
   worst case being SPSC3PRO2 (SRR5534981) with over two thousand reduced to
-  805 with the minimum abundance threshold of 10.
+  833 with the minimum abundance threshold of 10.
 
 To see exactly what is in these two problematic samples, we can turn to the
 read report - or look directly at the intermediate FASTA files:
 
 .. code:: console
 
-    $ head -n 14 intermediate/MOL16S/SRR5534986.fasta
+    $ head -n 13 intermediate/MOL16S/SRR5534986.fasta
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:2433
-    #trimmomatic:2306
-    #flash:1837
-    #cutadapt:928
-    #abundance:513
+    #flash:1963
+    #cutadapt:1010
+    #abundance:551
     #threshold:10
-    >20c0669e4c6f8436c9d42736df727c83_442
+    >20c0669e4c6f8436c9d42736df727c83_478
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
     AATTAAAGAGTTGGTTGCG
-    >a36d3f7291c173c4243f22c2afbd111e_48
+    >a36d3f7291c173c4243f22c2afbd111e_49
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGATT
     AATTAAAGAGTTGGTTGCG
@@ -161,14 +160,13 @@ read report, or at the command line:
 
 .. code:: console
 
-    $ head -n 14 intermediate/MOL16S/SRR5534981.fasta
+    $ head -n 13 intermediate/MOL16S/SRR5534981.fasta
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:341476
-    #trimmomatic:341289
-    #flash:314812
-    #cutadapt:2184
-    #abundance:806
+    #flash:314983
+    #cutadapt:2322
+    #abundance:833
     #threshold:10
     >abb4c9d82203b201ff91fc87b7c4e337_624
     ATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTT
@@ -200,8 +198,7 @@ to look like either a SPH16S product *or* a MOL16S product.
     #left_primer:TAGGGGAAGGTATGAATGGTTTG
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:341476
-    #trimmomatic:341289
-    #flash:314812
+    #flash:314983
     #cutadapt:2237
     #abundance:584
     #threshold:10
@@ -210,6 +207,7 @@ to look like either a SPH16S product *or* a MOL16S product.
     AGACCCTATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAA
     CGCTTTTTTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGA
     GAGGACTAATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGT
+    >65d623a2e264ec3d7928de0cfe5dc22e_49
 
 This longer sequence (shown here with line wrapping at 80 characters) again
 matches *Pisidium compressum* (ignoring the last 12 bases).
@@ -224,8 +222,7 @@ SRR5534978 aka SPSC3PRO1, with an unwanted long sequence seen 10 times.
     #left_primer:TAGGGGAAGGTATGAATGGTTTG
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:425271
-    #trimmomatic:425236
-    #flash:395494
+    #flash:395523
     #cutadapt:149
     #abundance:10
     #threshold:10

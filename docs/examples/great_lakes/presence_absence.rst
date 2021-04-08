@@ -80,22 +80,23 @@ Or open this in Excel. You should find:
 ========================= == == == ====
 #Species                  TP FP FN TN
 ========================= == == == ====
-OVERALL                   69 19 8  1224
+OVERALL                   74 25 3  1218
 Cipangopaludina chinensis 7  0  0  4
-Dreissena bugensis        0  7  0  4
-Dreissena polymorpha      7  0  0  4
-Dreissena rostriformis    7  0  0  4
+Corbicula fluminea        0  1  0  10
+Dreissena bugensis        0  8  0  3
+Dreissena polymorpha      7  1  0  3
+Dreissena rostriformis    7  1  0  3
 Gillia altilis            7  0  0  4
-Melanoides tuberculata    2  0  5  4
+Melanoides tuberculata    7  0  0  4
 Mytilopsis leucophaeata   7  0  0  4
 Pisidium compressum       7  1  0  3
 Potamopyrgus antipodarum  7  0  0  4
 Sander vitreus            4  0  3  4
-Sphaerium corneum         7  0  0  4
-Sphaerium nucleus         0  7  0  4
+Sphaerium corneum         7  1  0  3
+Sphaerium nucleus         0  8  0  3
 Sphaerium simile          7  3  0  1
 Sphaerium striatinum      0  1  0  10
-OTHER 106 SPECIES IN DB   0  0  0  1166
+OTHER 105 SPECIES IN DB   0  0  0  1155
 ========================= == == == ====
 
 This time we do have false negatives - in five of the seven samples the
@@ -108,13 +109,18 @@ are from Community 3 where this is intended to be at only 14 copies, the third
 was ``SC3PRO2`` aka ``SRR5534972`` for Mock Community 2 MOL16S with Fish Block
 Primer, with a target abundance of 72 copies. Here the fish block worked.
 
-Again we have lots of false positives, mostly sister species. The exception
-is the *Pisidium compressum* false positive. Looking at the sample summary
-``MOL16S.samples.onebp.xlsx`` in Excel this from ``SPSC3PRO2`` aka
-``SRR5534981`` which was meant to be only SPH16S amplicons. As discussed
-earlier, this seems to be from primer mixing.
+Again we have lots of false positives, mostly sister species which reflects
+limitations of the reference set.
 
-The other false positives here are limitations of the reference set.
+The exceptions are *Corbicula fluminea* and *Pisidium compressum*, both can be
+found in the sample summary ``MOL16S.samples.onebp.xlsx``. The only sample
+showing any *Corbicula fluminea* is from ``SC3PRO1`` aka ``SRR5534973``, and
+at low abundance. This species was present in the aquaria sample sediment, but
+did not amplify there - so cross-contamination seem less likely.
+
+The *Pisidium compressum* came from ``SPSC3PRO2`` aka ``SRR5534981``, which
+was meant to be only SPH16S amplicons. As discussed earlier, this seems to be
+from primer mixing.
 
 Unknowns
 --------

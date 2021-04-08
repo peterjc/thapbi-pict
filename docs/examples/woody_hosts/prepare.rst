@@ -75,18 +75,17 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
    accept this as valid FASTA format.
 
 For example, here the header tells us this sample started with 6136 reads in
-the paired FASTQ files, down to just 4486 after processing.
+the paired FASTQ files, down to just 4185 after processing.
 
 .. code:: console
 
-    $ head intermediate/Site_1_sample_1.fasta
+    $ head -n 9 intermediate/Site_1_sample_1.fasta
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:6136
-    #trimmomatic:6105
-    #flash:5869
-    #cutadapt:5861
-    #abundance:4180
+    #flash:5900
+    #cutadapt:5892
+    #abundance:4185
     #threshold:100
     >2e4f0ed53888ed39a2aee6d6d8e02206_2272
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
@@ -113,20 +112,20 @@ that having them on one line without line breaks is no hardship - and it is
 *extremely* helpful for simple tasks like using ``grep`` to look for a
 particular sequence fragment at the command line.
 
+Note that for this documentation, the FASTA output has had the sequences line
+wrapped at 80 characters.
+
 .. code:: console
 
     $ grep "^>" intermediate/Site_1_sample_1.fasta
     >2e4f0ed53888ed39a2aee6d6d8e02206_2272
     >c1a720b2005f101a9858107545726123_716
     >96e0e2f0475bd1617a4b05e778bb04c9_331
-    >fb30156d7f66c8abf91f9da230f4d19e_208
-    >dcd6316eb77be50ee344fbeca6e005c7_193
+    >fb30156d7f66c8abf91f9da230f4d19e_212
+    >dcd6316eb77be50ee344fbeca6e005c7_194
     >972db44c016a166de86a2bacab3f4226_182
     >d9bc3879fdab3b4184c04bfbb5cf6afb_165
     >ed15fefb7a3655147115fc28a8d6d671_113
-
-Note that for this documentation, the FASTA output has had the sequences line
-wrapped at 80 characters.
 
 The final output has just eight unique sequences accepted, happily none of
 which match the synthetic controls. The most common is listed first, and had

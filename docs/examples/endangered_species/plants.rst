@@ -40,7 +40,7 @@ recovered:
 .. code:: console
 
     $ grep -c ">" summary/Mini-rbcL.all_reads.fasta
-    215
+    279
 
 We see expected plant species like *Lactuca sativa*, *Brassica oleracea*,
 *Aloe variegata* and *Dendrobium sp.* - exactly how they are classified
@@ -91,7 +91,7 @@ Quite diverse, with over fifty unique sequences recovered:
 .. code:: console
 
     $ grep -c ">" summary/ITS2.all_reads.fasta
-    54
+    59
 
 Finds all the *Brassica* and *Echinocactus* sp., most of the *Euphorbia* sp.
 
