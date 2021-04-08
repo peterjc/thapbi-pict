@@ -82,7 +82,7 @@ sequences. At the command line:
 
 .. code:: console
 
-    $ cat amp_lib_one/intermediate/BITS_B58S3/SRR5314317.fasta
+    $ cat intermediate/AL1_BITS_B58S3/SRR5314317.fasta
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:12564
@@ -103,7 +103,7 @@ the read count given above with no threshold).
 
 .. code:: console
 
-    $ cat amp_lib_one/intermediate/BITS_B58S3/SRR5314316.fasta
+    $ cat intermediate/AL1_BITS_B58S3/SRR5314316.fasta
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:16297
@@ -138,7 +138,7 @@ a pale blue background in the Excel reports). Working at the terminal:
 
 .. code:: console
 
-    $ cat amp_lib_one/intermediate/BITS_B58S3/SRR5314315.fasta
+    $ cat intermediate/AL1_BITS_B58S3/SRR5314315.fasta
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:19406
@@ -156,7 +156,7 @@ read seen four times.
 
 .. code:: console
 
-    $ cat amp_lib_one/intermediate/BITS_B58S3/SRR5314314.fasta
+    $ cat intermediate/AL1_BITS_B58S3/SRR5314314.fasta
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:7285
@@ -222,7 +222,7 @@ as the most fuzzy of the three:
 
 .. code:: console
 
-    $ cut -f 1-5 amp_lib_one/summary/amp_lib_one.BITS_B58S3.assess.blast.tsv
+    $ cut -f 1-5 summary/AL1_BITS_B58S3.assess.blast.tsv
     #Species                  TP   FP  FN   TN
     OVERALL                   345  5   168  71
     Alternaria alternata      26   0   1    4
@@ -282,7 +282,7 @@ ITS1f/ITS2 primer is more successful:
 
 .. code:: console
 
-    $ cut -f 1-5 amp_lib_two/summary/amp_lib_two.ITS1f_ITS2.assess.blast.tsv
+    $ cut -f 1-5 summary/AL2_ITS1f_ITS2.assess.blast.tsv
     #Species                  TP   FP  FN   TN
     OVERALL                   398  0   115  57
     Alternaria alternata      23   0   4    3
@@ -326,7 +326,7 @@ primers:
 
 .. code:: console
 
-    $ cut -f 1-5 amp_lib_two/summary/amp_lib_two.ITS3-KYO2_ITS4-KYO3.assess.blast.tsv
+    $ cut -f 1-5 summary/AL2_ITS3-KYO2_ITS4-KYO3.assess.blast.tsv
     #Species                  TP   FP  FN   TN
     OVERALL                   313  0   200  57
     Alternaria alternata      16   0   11   3

@@ -31,11 +31,11 @@ MD5 checksum                         Max Species
 ``702929cef71042156acb3a28270d8831``  14 *Candida tropicalis*
 ==================================== === ==================================
 
-Here are the the reads from entries with a maximum sample abundance over 75
+Here are the reads from entries with a maximum sample abundance over 75
 which the ``onebp`` and in some cases ``blast`` based classifier failed to
 match, along with the most likely match from reviewing an online NCBI BLAST
 search. You can easily extract these entries (and their sequences) from the
-bottom of the ``amp_lib_one.BITS-B593S.*.reads.tsv`` files:
+bottom of the ``summary/AL1_BITS_B58S3.reads.*.tsv`` files:
 
 ==================================== ==== ========================================
 MD5 checksum                         Max  Species
@@ -118,7 +118,7 @@ bottom middle). Those labelled *glomeromycetes* are in the middle near, and in
 once case connected to, a dark red *Rhizophagus irregularis* node.
 
 i.e. None of the ITS1 sequences in amplicon library two are clear cut external
-contaimination.
+contamination.
 
 Amplicon library two - ITS2
 ---------------------------
