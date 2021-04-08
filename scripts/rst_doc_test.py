@@ -20,7 +20,7 @@ import subprocess
 import sys
 import tempfile
 
-if len(sys.argv) == 2 or not os.path.isfile(sys.argv[1]):
+if len(sys.argv) == 1 or not os.path.isfile(sys.argv[1]):
     sys.exit("ERROR: Requires one or more RST filesnames as input.")
 
 
