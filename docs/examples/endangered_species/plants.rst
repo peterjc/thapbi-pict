@@ -59,7 +59,7 @@ Not very diverse, only eight unique sequences recovered:
 
 .. code:: console
 
-    $ grep -c ">" summary/trnl-UAA.all_reads.fasta
+    $ grep -c ">" summary/trnL-UAA.all_reads.fasta
     8
 
 We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
