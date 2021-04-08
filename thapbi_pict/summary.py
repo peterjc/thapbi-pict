@@ -708,11 +708,11 @@ def main(
     # Not loading the post-abundance-threshold count, or the threshold.
     # Count should match the Seq-count column, but will not if running
     # report with higher abundance threshold - simpler to exclude them:
-    stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt", "Threshold")
+    stats_fields = ("Raw FASTQ", "Flash", "Cutadapt", "Threshold")
     try:
         sample_stats = load_fasta_headers(
             fasta_files,
-            ("raw_fastq", "trimmomatic", "flash", "cutadapt", "threshold"),
+            ("raw_fastq", "flash", "cutadapt", "threshold"),
             -1,
         )
     except KeyError as err:
