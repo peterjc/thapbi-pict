@@ -85,3 +85,7 @@ thapbi_pict prepare-reads -a 10 \
             --left TAGGGGAAGGTATGAATGGTTTG \
             --right ARTCCAACATCGAGGT \
             -i raw_data -o intermediate/large/
+
+echo ====
+echo Done
+echo ====

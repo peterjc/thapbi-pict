@@ -85,3 +85,7 @@ LEFT=GATGAAGAACGYAGYRAA
 RIGHT=CTBTTVCCKCTTCACTCG
 
 analyse # call function above
+
+echo ====
+echo Done
+echo ====

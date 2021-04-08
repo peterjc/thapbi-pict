@@ -43,3 +43,7 @@ LEFT=ATAACAGGTCTGTGATGCCCT
 RIGHT=CCTTCYGCAGGTTCACCTAC
 
 analyse # call function above
+
+echo ====
+echo Done
+echo ====

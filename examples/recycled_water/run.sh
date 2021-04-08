@@ -4,15 +4,19 @@ set -eup pipeline
 echo NOTE: Expected first time run time is about 1 hour,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
-echo =====================
-echo Recycled water - ITS1
-echo =====================
+echo =========================
+echo Recycled water - Defaults
+echo =========================
 
 echo "First with default settings and DB"
 mkdir -p intermediate_defaults/ summary/
 thapbi_pict pipeline \
             -i raw_data/ -o summary/ -s intermediate_defaults/ \
             -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+
+echo ==========================
+echo Recycled water - Custom DB
+echo ==========================
 
 echo "Building ITS1 database"
 # Remove any pre-existing DB
@@ -39,3 +43,7 @@ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
         --right AGCGTTCTTCATCGATGTGC \
         -d Redekar_et_al_2019_sup_table_3.sqlite --showdb -m onebp \
         -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+
+echo ====
+echo Done
+echo ====
