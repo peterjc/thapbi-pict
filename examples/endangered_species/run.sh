@@ -5,12 +5,16 @@ echo NOTE: Expected first time run time is about 1.5 hours,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
+rm -rf references/pooled.sqlite
+
 # Takes arguments via variable names
 function analyse {
     echo "Building database for $NAME"
     rm -rf references/${NAME}.sqlite
     # Assume pre-trimmed
     thapbi_pict curated-import -i references/${NAME}.fasta -d references/${NAME}.sqlite -x
+    # This is a big hack, just for the assess command to work on the pool:
+    thapbi_pict curated-import -i references/${NAME}.fasta -d references/pooled.sqlite -x
 
     echo "Running analysis for $NAME"
     mkdir -p intermediate/$NAME/
@@ -56,9 +60,9 @@ function pool {
         -o summary/ -r pooled \
         -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
-    # assessment... as of v0.8.1 as would need a DB giving possible species
-    # thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
-    #     -o summary/pooled.assess.onebp.tsv
+    # assessment... as of v0.8.1 need a DB giving possible species
+    thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
+         -d references/pooled.sqlite -o summary/pooled.assess.onebp.tsv
 
     echo "Pooled results done"
 }
