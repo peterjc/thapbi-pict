@@ -139,19 +139,22 @@ def tsv_align(text, min_pad=2):
 
 def tsv_to_rst(text):
     """Turn TSV output into a simple RST table."""
+    first_line, rest = text.split("\n", 1)
+    headers = first_line.split("\t")
     text = tsv_align(text, min_pad=1)
     lines = text.split("\n")
     width = max(len(_) for _ in lines)
     first_line, rest = text.split("\n", 1)
-    header = (
-        "".join(
-            " "
-            if i < len(first_line) and first_line[i] == " " and first_line[i + 1] != " "
-            else "="
-            for i in range(width)
-        )
-        + "\n"
-    )
+
+    cuts = []
+    index = len(headers[0])
+    for col_name in headers[1:]:
+        index = first_line.index(col_name, index)
+        assert first_line[index] != " " and index > 0 and first_line[index - 1] == " "
+        cuts.append(index - 1)
+    del index
+
+    header = "".join(" " if i in cuts else "=" for i in range(width)) + "\n"
     return header + first_line + "\n" + header + rest + header
 
 
