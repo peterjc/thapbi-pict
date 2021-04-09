@@ -83,8 +83,14 @@ traditional medicine samples where the true species content is unknown.
     Zea mays                0    0    128  15
     OTHER 27 SPECIES IN DB  0    0    0    3861
 
-There are false positives for *Acipenser schrenckii*, human, and alternative
-genus level matches in *Brassica* and *Lactuca* (as discussed in the paper).
+Most of the false positives (FP) are alternative genus level matches in
+*Brassica* and *Lactuca* (as discussed in the paper).
+
+There are more interesting FP for *Acipenser schrenckii* (the authors found
+this was accidentally included from the *Huso dauricus* caviar used), human
+(*Homo sapiens*, presumed laboratory contamination), and finally *Lactuca
+sativa*, and cow (*Bos taurus*) which the authors traced to
+cross-contamination during sample preparation or DNA isolation.
 
 If the sample database had been more inclusive there would have been many
 more false positives. For example, the trnL-UAA sequence perfectly matching
@@ -100,12 +106,6 @@ used) lack any markers for *Beta vulgaris*, *Cycas revoluta*, *Parapenaeopsis*
 sp., *Triticum aestivum* or *Zea mays*. Most of these were present at only a
 few percent dry weight, and are likely present below the default minimum
 abundance threshold. This explains the false negatives.
-
-That leaves just a few FP for *Bos taurus* (from ``EM_8`` and ``EM_9`` with
-the Mini-16S marker), one human (from ``EM_8`` with Mini-cyt-b), and ten for
-*Acipenser schrenckii* (from multiple samples with both Mini-COI and
-Mini-cyt-b, which which was also found in the paper and explained due to
-sample preparation).
 
 Conclusion
 ----------
