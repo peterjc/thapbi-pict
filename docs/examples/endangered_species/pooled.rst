@@ -47,41 +47,48 @@ traditional medicine samples where the true species content is unknown.
 .. code:: console
 
     $ cut -f 1-5 summary/pooled.assess.onebp.tsv
-    #Species                TP   FP   FN   TN
-    OVERALL                 999  470  299  6669
-    Acipenser schrenckii    0    10   0    133
-    Aloe variegata          108  0    27   8
-    Anguilla anguilla       3    0    3    137
-    Beta vulgaris           0    0    16   127
-    Bos taurus              139  2    0    2
-    Brassica juncea         0    127  0    16
-    Brassica napus          10   0    6    127
-    Brassica nigra          0    127  0    16
-    Brassica oleracea       128  3    0    12
-    Carica papaya           16   0    0    127
-    Crocodylus niloticus    122  0    12   9
-    Cycas revoluta          0    0    6    137
-    Dendrobium sp.          97   0    37   9
-    Echinocactus sp.        6    0    0    137
-    Euphorbia sp.           3    0    3    137
-    Gallus gallus           6    0    0    137
-    Glycine max             16   0    0    127
-    Gossypium hirsutum      16   0    0    127
-    Homo sapiens            0    1    0    142
-    Huso dauricus           92   0    36   15
-    Lactuca altaica         0    66   0    77
-    Lactuca sativa          74   2    0    67
-    Lactuca serriola        0    66   0    77
-    Lactuca virosa          0    66   0    77
-    Meleagris gallopavo     16   0    0    127
-    Parapenaeopsis sp.      0    0    6    137
-    Pieris brassicae        6    0    0    137
-    Pleuronectes platessa   61   0    3    79
-    Solanum lycopersicum    16   0    0    127
-    Sus scrofa              64   0    0    79
-    Triticum aestivum       0    0    16   127
-    Zea mays                0    0    128  15
-    OTHER 27 SPECIES IN DB  0    0    0    3861
+    <SEE TABLE BELOW>
+
+Working at the command line or using Excel should show the following:
+
+====================== === === === ====
+#Species               TP  FP  FN  TN
+====================== === === === ====
+OVERALL                999 470 299 6669
+Acipenser schrenckii   0   10  0   133
+Aloe variegata         108 0   27  8
+Anguilla anguilla      3   0   3   137
+Beta vulgaris          0   0   16  127
+Bos taurus             139 2   0   2
+Brassica juncea        0   127 0   16
+Brassica napus         10  0   6   127
+Brassica nigra         0   127 0   16
+Brassica oleracea      128 3   0   12
+Carica papaya          16  0   0   127
+Crocodylus niloticus   122 0   12  9
+Cycas revoluta         0   0   6   137
+Dendrobium sp.         97  0   37  9
+Echinocactus sp.       6   0   0   137
+Euphorbia sp.          3   0   3   137
+Gallus gallus          6   0   0   137
+Glycine max            16  0   0   127
+Gossypium hirsutum     16  0   0   127
+Homo sapiens           0   1   0   142
+Huso dauricus          92  0   36  15
+Lactuca altaica        0   66  0   77
+Lactuca sativa         74  2   0   67
+Lactuca serriola       0   66  0   77
+Lactuca virosa         0   66  0   77
+Meleagris gallopavo    16  0   0   127
+Parapenaeopsis sp.     0   0   6   137
+Pieris brassicae       6   0   0   137
+Pleuronectes platessa  61  0   3   79
+Solanum lycopersicum   16  0   0   127
+Sus scrofa             64  0   0   79
+Triticum aestivum      0   0   16  127
+Zea mays               0   0   128 15
+OTHER 27 SPECIES IN DB 0   0   0   3861
+====================== === === === ====
 
 Most of the false positives (FP) are alternative genus level matches in
 *Brassica* and *Lactuca* (as discussed in the paper).

@@ -9,7 +9,7 @@ Of course, just as in the original author's analysis, not everything we think
 was present is detected. And *vice versa*, we see some things which are not
 classified.
 
-The experiement had a negative PCR control, but it was not sequenced. The two
+The experiment had a negative PCR control, but it was not sequenced. The two
 different amplicons were sequenced separately, but since the FASTQ files are
 provided pre-trimmed, we can't try using the other primer pair on each sample
 as a negative control.
@@ -31,27 +31,27 @@ is useful - this shows the expected 12 species:
 .. code:: console
 
     $ cut -f 1-5 summary/V4.assess.onebp.tsv
-    ...
+    <SEE TABLE BELOW>
 
 Or, open the file ``V4.assess.onebp.tsv`` in Excel. You should see:
 
-================================================= ==== === === ==
-Species                                           TP   FP  FN  TN
-------------------------------------------------- ---- --- --- --
-OVERALL                                           134  0   82  36
-Chlorella vulgaris strain CCAP 211/11B            15   0   3   3
-Cryptomonas pyrenoidifera strain CCAP 979/61      15   0   3   3
-Heterocapsa niei strain UTEX LB 2722              14   0   4   3
-Isochrysis galbana strain CCAP 927/1              0    0   18  3
-Nannochloropsis oculata strain CCMP225            7    0   11  3
-Ochromonas sp. UTEX LB 2575                       12   0   6   3
-Prymnesium parvum strain CCAP 946/6               0    0   18  3
-Rhodomonas sp. CCAP 995/5                         15   0   3   3
-Symbiodinium microadriaticum strain UTEX LB 2281  14   0   4   3
-Tetradesmus obliquus strain CCAP 276/3A           15   0   3   3
-Thalassiosira pseudonana strain CCAP 1085/12      12   0   6   3
-Trebouxia sp. CCAP 213/3                          15   0   3   3
-================================================= ==== === === ==
+================================================ === == == ==
+#Species                                         TP  FP FN TN
+================================================ === == == ==
+OVERALL                                          134 0  82 36
+Chlorella vulgaris strain CCAP 211/11B           15  0  3  3
+Cryptomonas pyrenoidifera strain CCAP 979/61     15  0  3  3
+Heterocapsa niei strain UTEX LB 2722             14  0  4  3
+Isochrysis galbana strain CCAP 927/1             0   0  18 3
+Nannochloropsis oculata strain CCMP225           7   0  11 3
+Ochromonas sp. UTEX LB 2575                      12  0  6  3
+Prymnesium parvum strain CCAP 946/6              0   0  18 3
+Rhodomonas sp. CCAP 995/5                        15  0  3  3
+Symbiodinium microadriaticum strain UTEX LB 2281 14  0  4  3
+Tetradesmus obliquus strain CCAP 276/3A          15  0  3  3
+Thalassiosira pseudonana strain CCAP 1085/12     12  0  6  3
+Trebouxia sp. CCAP 213/3                         15  0  3  3
+================================================ === == == ==
 
 Notice 2 of the 12 species were not detected, *Isochrysis galbana* and
 *Prymnesium parvum* exactly as per the authors' analysis, attributed to
@@ -126,27 +126,27 @@ Proceeding along the same basis:
 .. code:: console
 
     $ cut -f 1-5 summary/V8V9.assess.onebp.tsv
-    ...
+    <SEE TABLE BELOW>
 
 Or, open the file ``V8V9.assess.onebp.tsv`` in Excel. You should see:
 
-================================================= ==== === === ==
-Species                                           TP   FP  FN  TN
-------------------------------------------------- ---- --- --- --
-OVERALL                                           131  0   85  36
-Chlorella vulgaris strain CCAP 211/11B            12   0   6   3
-Cryptomonas pyrenoidifera strain CCAP 979/61      14   0   4   3
-Heterocapsa niei strain UTEX LB 2722              12   0   6   3
-Isochrysis galbana strain CCAP 927/1              12   0   6   3
-Nannochloropsis oculata strain CCMP225            5    0   13  3
-Ochromonas sp. UTEX LB 2575                       12   0   6   3
-Prymnesium parvum strain CCAP 946/6               12   0   6   3
-Rhodomonas sp. CCAP 995/5                         14   0   4   3
-Symbiodinium microadriaticum strain UTEX LB 2281  12   0   6   3
-Tetradesmus obliquus strain CCAP 276/3A           12   0   6   3
-Thalassiosira pseudonana strain CCAP 1085/12      0    0   18  3
-Trebouxia sp. CCAP 213/3                          14   0   4   3
-================================================= ==== === === ==
+================================================ === == == ==
+#Species                                         TP  FP FN TN
+================================================ === == == ==
+OVERALL                                          131 0  85 36
+Chlorella vulgaris strain CCAP 211/11B           12  0  6  3
+Cryptomonas pyrenoidifera strain CCAP 979/61     14  0  4  3
+Heterocapsa niei strain UTEX LB 2722             12  0  6  3
+Isochrysis galbana strain CCAP 927/1             12  0  6  3
+Nannochloropsis oculata strain CCMP225           5   0  13 3
+Ochromonas sp. UTEX LB 2575                      12  0  6  3
+Prymnesium parvum strain CCAP 946/6              12  0  6  3
+Rhodomonas sp. CCAP 995/5                        14  0  4  3
+Symbiodinium microadriaticum strain UTEX LB 2281 12  0  6  3
+Tetradesmus obliquus strain CCAP 276/3A          12  0  6  3
+Thalassiosira pseudonana strain CCAP 1085/12     0   0  18 3
+Trebouxia sp. CCAP 213/3                         14  0  4  3
+================================================ === == == ==
 
 Very similar, but time *Thalassiosira pseudonana* is missing with the default
 strict ``onebp`` classifier - and the authors did not report its absence. The

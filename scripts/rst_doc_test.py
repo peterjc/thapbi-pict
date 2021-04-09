@@ -41,23 +41,57 @@ def scan_rst(filename):
                     if not block and line.startswith("     "):
                         # Over indented
                         sys.exit(
-                            "ERROR: Console entry not four space indented in"
-                            f" {filename}:\n{line}"
+                            "ERROR: Console entry not four space indented"
+                            f" in {filename}:\n{line}"
                         )
                         break
                     elif not line.startswith("    "):
                         # Under indented
                         sys.exit(
-                            "ERROR: Console entry not four space indented in"
-                            f" {filename}:\n{line}"
+                            "ERROR: Console entry not four space indented"
+                            f" in {filename}:\n{line}"
                         )
                         break
+                    elif line.strip() == "<SEE TABLE BELOW>":
+                        # Magic happens, expect a blank line ending console
+                        # section, a paragraph of text, and then an RST Table
+                        line = lines.pop(0)
+                        if line != "\n":
+                            sys.exit(
+                                "ERROR: Expected blank line after <SEE TABLE BELOW>"
+                                f" in {filename}:\n{line!r}"
+                            )
+                        line = lines.pop(0)
+                        if line[0] == " ":
+                            sys.exit(
+                                "ERROR: Expected paragraph after <SEE TABLE BELOW>"
+                                f" in {filename}:\n{line!r}"
+                            )
+                        while line.strip():
+                            line = lines.pop(0)
+                        assert not line.strip()
+                        line = lines.pop(0)
+                        # Now should be a table!
+                        if line.startswith("    ="):
+                            sys.exit(
+                                "ERROR: Don't indent the table after <SEE TABLE BELOW>"
+                                f" in  {filename}"
+                            )
+                        if not line.startswith("="):
+                            sys.exit(
+                                "ERROR: Expected table after <SEE TABLE BELOW>"
+                                f" in {filename}:\n{line!r}"
+                            )
+                        while line.strip():
+                            block.append(line)
+                            line = lines.pop(0)
+                        lines.insert(0, line)  # Put the blank line back
                     else:
                         block.append(line[4:])
                 if not block[0].startswith("$ "):
                     sys.exit(
-                        "ERROR: Console entry does not start four space dollar space in"
-                        f" {filename}:\n{block[0]}"
+                        "ERROR: Console entry does not start four space dollar space"
+                        f" in {filename}:\n{block[0]}"
                     )
                 assert "\n" not in block, block
                 yield block
@@ -91,16 +125,34 @@ def run_cmd(cmd):
     return child.stdout, child.stderr
 
 
-def tsv_align(text):
+def tsv_align(text, min_pad=2):
     """Align columns of TSV output."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".tsv", delete=False) as handle:
         handle.write(text)
         filename = handle.name
-    output = subprocess.getoutput(f"xsv table -d '\t' {filename}")
+    output = subprocess.getoutput(f"xsv table -p {min_pad} -d '\t' {filename}")
     os.remove(filename)
     # Remove any trailing whitespace for RST readiness
     output = "\n".join(line.rstrip() for line in output.split("\n"))
     return output.rstrip("\n") + "\n"
+
+
+def tsv_to_rst(text):
+    """Turn TSV output into a simple RST table."""
+    text = tsv_align(text, min_pad=1)
+    lines = text.split("\n")
+    width = max(len(_) for _ in lines)
+    first_line, rest = text.split("\n", 1)
+    header = (
+        "".join(
+            " "
+            if i < len(first_line) and first_line[i] == " " and first_line[i + 1] != " "
+            else "="
+            for i in range(width)
+        )
+        + "\n"
+    )
+    return header + first_line + "\n" + header + rest + header
 
 
 def fasta_wrap(text):
@@ -189,6 +241,8 @@ for filename in sys.argv[1:]:
             # Transform the output
             if new_out.startswith(">") or "\n>" in new_out:
                 new_out = fasta_wrap(new_out)
+            elif "\t" in new_out and old_out.startswith("="):
+                new_out = tsv_to_rst(new_out)
             elif "\t" in new_out:
                 new_out = tsv_align(new_out)
 
