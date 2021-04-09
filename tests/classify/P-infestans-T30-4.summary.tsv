@@ -3,7 +3,6 @@
 #					Description	Single isolate positive control
 #					Date	2018
 #					Raw FASTQ	70000
-#					Trimmomatic	69000
 #					Flash	68000
 #					Cutadapt	65000
 #ITS1-MD5	onebp-predictions	Sequence	Sample-count	Max-sample-abundance	Total-abundance	P-infestans-T30-4
