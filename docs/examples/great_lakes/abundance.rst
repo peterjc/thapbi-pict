@@ -28,34 +28,34 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,10-11 summary/SPH16S.samples.onebp.tsv
-    ...
+    $ cut -f 1,2,4,7,9-10 summary/SPH16S.samples.onebp.tsv
+    <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
-======== =============== ============= ========== ========= ==========
-Marker   Group           library_name  Raw FASTQ  Cutadapt  Read count
--------- --------------- ------------- ---------- --------- ----------
-MOL16S   Aquarium        BIR2M         306311     8         0
-MOL16S   Aquarium        BIR6M         291954     24        0
-MOL16S   Control         BIM8M         2433       0         0
-MOL16S   Mock Community  SC3PRO1       689712     72        0
-MOL16S   Mock Community  SC3PRO2       405048     70        0
-MOL16S   Mock Community  SC3PRO3       402219     32        0
-MOL16S   Mock Community  NFSC3PRO3     349590     41        10
-MOL16S   Mock Community  SC3PRO4       671241     27        0
-MOL16S   Mock Community  NFSC3PRO4     420015     18        0
-MOL16S   Mock Community  SC3PRO5       480606     55        0
-MOL16S   River           BIM6M         821849     0         0
-MOL16S   River           BIM2M         1119271    40        0
-MOL16S   River           BIM4M         709472     46        19
-SPH16S   Aquarium        BIR2S         498926     251724    209358
-SPH16S   Aquarium        BIR6S         240360     226083    191393
-SPH16S   Mock Community  SPSC3PRO1     425271     318149    224510
-SPH16S   Mock Community  SPSC3PRO2     341476     282623    204137
-SPH16S   Mock Community  SPSC3PRO4     410780     304178    197340
-======== =============== ============= ========== ========= ==========
+======= ============== ============ ========= ======== ==========
+Marker  Group          library_name Raw FASTQ Cutadapt Read count
+------- -------------- ------------ --------- -------- ----------
+MOL16S  Aquarium       BIR2M        306311    8        0
+MOL16S  Aquarium       BIR6M        291954    24       0
+MOL16S  Control        BIM8M        2433      0        0
+MOL16S  Mock Community SC3PRO1      689712    72       0
+MOL16S  Mock Community SC3PRO2      405048    70       0
+MOL16S  Mock Community SC3PRO3      402219    32       0
+MOL16S  Mock Community NFSC3PRO3    349590    41       10
+MOL16S  Mock Community SC3PRO4      671241    27       0
+MOL16S  Mock Community NFSC3PRO4    420015    18       0
+MOL16S  Mock Community SC3PRO5      480606    55       0
+MOL16S  River          BIM6M        821849    0        0
+MOL16S  River          BIM2M        1119271   40       0
+MOL16S  River          BIM4M        709472    46       19
+SPH16S  Aquarium       BIR2S        498926    251724   209358
+SPH16S  Aquarium       BIR6S        240360    226083   191393
+SPH16S  Mock Community SPSC3PRO1    425271    318149   224510
+SPH16S  Mock Community SPSC3PRO2    341476    282623   204137
+SPH16S  Mock Community SPSC3PRO4    410780    304178   197340
+======= ============== ============ ========= ======== ==========
 
 Things to note:
 
@@ -80,34 +80,34 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,10-11 summary/MOL16S.samples.onebp.tsv
-    ...
+    $ cut -f 1,2,4,7,9-10 summary/MOL16S.samples.onebp.tsv
+    <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
-======== =============== ============= ========== ========= ==========
-Marker   Group           library_name  Raw FASTQ  Cutadapt  Read count
--------- --------------- ------------- ---------- --------- ----------
-MOL16S   Aquarium        BIR2M         306311     279297    240659
-MOL16S   Aquarium        BIR6M         291954     265476    238141
-MOL16S   Control         BIM8M         2433       928       513
-MOL16S   Mock Community  SC3PRO1       689712     247703    210045
-MOL16S   Mock Community  SC3PRO2       405048     102735    85080
-MOL16S   Mock Community  SC3PRO3       402219     116643    94799
-MOL16S   Mock Community  NFSC3PRO3     349590     105425    85476
-MOL16S   Mock Community  SC3PRO4       671241     168201    130340
-MOL16S   Mock Community  NFSC3PRO4     420015     116666    75975
-MOL16S   Mock Community  SC3PRO5       480606     152834    129045
-MOL16S   River           BIM6M         821849     764830    673378
-MOL16S   River           BIM2M         1119271    886766    767797
-MOL16S   River           BIM4M         709472     342913    296602
-SPH16S   Aquarium        BIR2S         498926     30        0
-SPH16S   Aquarium        BIR6S         240360     30        0
-SPH16S   Mock Community  SPSC3PRO1     425271     40        14
-SPH16S   Mock Community  SPSC3PRO2     341476     2184      805
-SPH16S   Mock Community  SPSC3PRO4     410780     102       16
-======== =============== ============= ========== ========= ==========
+======= ============== ============ ========= ======== ==========
+Marker  Group          library_name Raw FASTQ Cutadapt Read count
+------- -------------- ------------ --------- -------- ----------
+MOL16S  Aquarium       BIR2M        306311    279297   240659
+MOL16S  Aquarium       BIR6M        291954    265476   238141
+MOL16S  Control        BIM8M        2433      928      513
+MOL16S  Mock Community SC3PRO1      689712    247703   210045
+MOL16S  Mock Community SC3PRO2      405048    102735   85080
+MOL16S  Mock Community SC3PRO3      402219    116643   94799
+MOL16S  Mock Community NFSC3PRO3    349590    105425   85476
+MOL16S  Mock Community SC3PRO4      671241    168201   130340
+MOL16S  Mock Community NFSC3PRO4    420015    116666   75975
+MOL16S  Mock Community SC3PRO5      480606    152834   129045
+MOL16S  River          BIM6M        821849    764830   673378
+MOL16S  River          BIM2M        1119271   886766   767797
+MOL16S  River          BIM4M        709472    342913   296602
+SPH16S  Aquarium       BIR2S        498926    30       0
+SPH16S  Aquarium       BIR6S        240360    30       0
+SPH16S  Mock Community SPSC3PRO1    425271    40       14
+SPH16S  Mock Community SPSC3PRO2    341476    2184     805
+SPH16S  Mock Community SPSC3PRO4    410780    102      16
+======= ============== ============ ========= ======== ==========
 
 Looking at the same points, we see two problems:
 

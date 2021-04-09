@@ -223,27 +223,34 @@ as the most fuzzy of the three:
 .. code:: console
 
     $ cut -f 1-5 summary/AL1_BITS_B58S3.assess.blast.tsv
-    #Species                  TP   FP  FN   TN
-    OVERALL                   345  5   168  71
-    Alternaria alternata      26   0   1    4
-    Aspergillus flavus        25   0   2    4
-    Candida apicola           27   0   0    4
-    Chytriomyces hyalinus     0    0   27   4
-    Claviceps purpurea        27   0   0    4
-    Fusarium graminearum      27   4   0    0
-    Fusarium oxysporum        27   0   0    4
-    Fusarium verticillioides  0    0   27   4
-    Mortierella verticillata  27   1   0    3
-    Naganishia albida         27   0   0    4
-    Neosartorya fischeri      24   0   3    4
-    Penicillium expansum      22   0   5    4
-    Rhizoctonia solani        19   0   8    4
-    Rhizomucor miehei         0    0   27   4
-    Rhizophagus irregularis   13   0   14   4
-    Saccharomyces cerevisiae  0    0   27   4
-    Saitoella complicata      27   0   0    4
-    Trichoderma reesei        27   0   0    4
-    Ustilago maydis           0    0   27   4
+    <SEE TABLE BELOW>
+
+Or open this in Excel. You should find:
+
+======================== === == === ==
+#Species                 TP  FP FN  TN
+======================== === == === ==
+OVERALL                  345 5  168 71
+Alternaria alternata     26  0  1   4
+Aspergillus flavus       25  0  2   4
+Candida apicola          27  0  0   4
+Chytriomyces hyalinus    0   0  27  4
+Claviceps purpurea       27  0  0   4
+Fusarium graminearum     27  4  0   0
+Fusarium oxysporum       27  0  0   4
+Fusarium verticillioides 0   0  27  4
+Mortierella verticillata 27  1  0   3
+Naganishia albida        27  0  0   4
+Neosartorya fischeri     24  0  3   4
+Penicillium expansum     22  0  5   4
+Rhizoctonia solani       19  0  8   4
+Rhizomucor miehei        0   0  27  4
+Rhizophagus irregularis  13  0  14  4
+Saccharomyces cerevisiae 0   0  27  4
+Saitoella complicata     27  0  0   4
+Trichoderma reesei       27  0  0   4
+Ustilago maydis          0   0  27  4
+======================== === == === ==
 
 Or, open this plain text tab separated Excel.
 
@@ -283,27 +290,34 @@ ITS1f/ITS2 primer is more successful:
 .. code:: console
 
     $ cut -f 1-5 summary/AL2_ITS1f_ITS2.assess.blast.tsv
-    #Species                  TP   FP  FN   TN
-    OVERALL                   398  0   115  57
-    Alternaria alternata      23   0   4    3
-    Aspergillus flavus        27   0   0    3
-    Candida apicola           12   0   15   3
-    Chytriomyces hyalinus     25   0   2    3
-    Claviceps purpurea        27   0   0    3
-    Fusarium graminearum      27   0   0    3
-    Fusarium oxysporum        27   0   0    3
-    Fusarium verticillioides  12   0   15   3
-    Mortierella verticillata  27   0   0    3
-    Naganishia albida         27   0   0    3
-    Neosartorya fischeri      23   0   4    3
-    Penicillium expansum      24   0   3    3
-    Rhizoctonia solani        24   0   3    3
-    Rhizomucor miehei         4    0   23   3
-    Rhizophagus irregularis   11   0   16   3
-    Saccharomyces cerevisiae  9    0   18   3
-    Saitoella complicata      27   0   0    3
-    Trichoderma reesei        25   0   2    3
-    Ustilago maydis           17   0   10   3
+    <SEE TABLE BELOW>
+
+Or open this in Excel. You should find:
+
+======================== === == === ==
+#Species                 TP  FP FN  TN
+======================== === == === ==
+OVERALL                  398 0  115 57
+Alternaria alternata     23  0  4   3
+Aspergillus flavus       27  0  0   3
+Candida apicola          12  0  15  3
+Chytriomyces hyalinus    25  0  2   3
+Claviceps purpurea       27  0  0   3
+Fusarium graminearum     27  0  0   3
+Fusarium oxysporum       27  0  0   3
+Fusarium verticillioides 12  0  15  3
+Mortierella verticillata 27  0  0   3
+Naganishia albida        27  0  0   3
+Neosartorya fischeri     23  0  4   3
+Penicillium expansum     24  0  3   3
+Rhizoctonia solani       24  0  3   3
+Rhizomucor miehei        4   0  23  3
+Rhizophagus irregularis  11  0  16  3
+Saccharomyces cerevisiae 9   0  18  3
+Saitoella complicata     27  0  0   3
+Trichoderma reesei       25  0  2   3
+Ustilago maydis          17  0  10  3
+======================== === == === ==
 
 Everything was found, although *Rhizomucor miehei* in particular found rarely,
 followed by *Saccharomyces cerevisiae*. The original author wrote:
@@ -327,27 +341,34 @@ primers:
 .. code:: console
 
     $ cut -f 1-5 summary/AL2_ITS3-KYO2_ITS4-KYO3.assess.blast.tsv
-    #Species                  TP   FP  FN   TN
-    OVERALL                   313  0   200  57
-    Alternaria alternata      16   0   11   3
-    Aspergillus flavus        24   0   3    3
-    Candida apicola           0    0   27   3
-    Chytriomyces hyalinus     0    0   27   3
-    Claviceps purpurea        23   0   4    3
-    Fusarium graminearum      27   0   0    3
-    Fusarium oxysporum        27   0   0    3
-    Fusarium verticillioides  27   0   0    3
-    Mortierella verticillata  12   0   15   3
-    Naganishia albida         27   0   0    3
-    Neosartorya fischeri      16   0   11   3
-    Penicillium expansum      23   0   4    3
-    Rhizoctonia solani        11   0   16   3
-    Rhizomucor miehei         0    0   27   3
-    Rhizophagus irregularis   5    0   22   3
-    Saccharomyces cerevisiae  27   0   0    3
-    Saitoella complicata      26   0   1    3
-    Trichoderma reesei        22   0   5    3
-    Ustilago maydis           0    0   27   3
+    <SEE TABLE BELOW>
+
+Or open this in Excel. You should find:
+
+======================== === == === ==
+#Species                 TP  FP FN  TN
+======================== === == === ==
+OVERALL                  313 0  200 57
+Alternaria alternata     16  0  11  3
+Aspergillus flavus       24  0  3   3
+Candida apicola          0   0  27  3
+Chytriomyces hyalinus    0   0  27  3
+Claviceps purpurea       23  0  4   3
+Fusarium graminearum     27  0  0   3
+Fusarium oxysporum       27  0  0   3
+Fusarium verticillioides 27  0  0   3
+Mortierella verticillata 12  0  15  3
+Naganishia albida        27  0  0   3
+Neosartorya fischeri     16  0  11  3
+Penicillium expansum     23  0  4   3
+Rhizoctonia solani       11  0  16  3
+Rhizomucor miehei        0   0  27  3
+Rhizophagus irregularis  5   0  22  3
+Saccharomyces cerevisiae 27  0  0   3
+Saitoella complicata     26  0  1   3
+Trichoderma reesei       22  0  5   3
+Ustilago maydis          0   0  27  3
+======================== === == === ==
 
 This time we're missing *Candida apicola*, *Chytriomyces hyalinus*,
 *Rhizomucor miehei* and *Ustilago maydis*.
