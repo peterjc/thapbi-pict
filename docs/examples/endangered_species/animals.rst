@@ -31,13 +31,13 @@ samples expected - perhaps the default abundance threshold is too high?
 Mini-16S - short marker
 -----------------------
 
-The output from the Mini-16S marker is far more diverse, with 25 unique
+The output from the Mini-16S marker is far more diverse, with 18 unique
 sequences:
 
 .. code:: console
 
     $ grep -c ">" summary/Mini-16S.all_reads.fasta
-    25
+    18
 
 The most common is again a perfect match to *Bos taurus*, which this time has
 no false negatives (but two false positives?).
@@ -95,7 +95,7 @@ The output from the Mini-COI marker had only 19 unique sequences:
 .. code:: console
 
     $ grep -c ">" summary/Mini-cyt-b.all_reads.fasta
-    19
+    17
 
 This found all the expected *Sus scrofa* and *Meleagris gallopavo*, and most
 *Bos taurus*, *Crocodylus niloticus*, *Huso dauricus* and some of the

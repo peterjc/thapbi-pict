@@ -20,8 +20,9 @@ is one of the traditional medicine samples.
 rbcL - long target
 ------------------
 
-This gave the following sequence (and a one SNP variant) at the default
-abundance threshold, all from ``S3``::
+Using our default abundance threshold and the author's minimum length of 140bp,
+we got no sequences at all. Allowing a minimum length of 100 (our default)
+gave the following sequence and a one SNP variant, all from ``S3``::
 
     >3ec67342f519461a0ad40fef436b1b1d
     GACTGCGGGGTTCAAAGCTGGTGTTAAAGATTATAGATTGACGTATTATACTCCTGAATTGGGGTTATCCGCTAAGAATT

@@ -5,6 +5,13 @@ echo NOTE: Expected first time run time is about 1.5 hours,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
+# Quoting paper on minimum lengths:
+#
+#     We implemented a minimum DNA barcode length of 200 nt, except for DNA
+#     barcodes with a basic length shorter than 200 nt, in which case the
+#     minimum expected DNA barcode length is set to 100 nt for ITS2, 140 nt
+#     for mini-rbcL, and 10 nt for the trnL (P6 loop) marker.
+
 rm -rf references/pooled.sqlite
 
 # Takes arguments via variable names
@@ -12,20 +19,18 @@ function analyse {
     echo "Building database for $NAME"
     rm -rf references/${NAME}.sqlite
     # Assume pre-trimmed
-    thapbi_pict curated-import -i references/${NAME}.fasta -d references/${NAME}.sqlite -x
+    thapbi_pict curated-import -i references/${NAME}.fasta -d references/${NAME}.sqlite \
+        -x --minlen $MINLEN
     # This is a big hack, just for the assess command to work on the pool:
-    thapbi_pict curated-import -i references/${NAME}.fasta -d references/pooled.sqlite -x
+    thapbi_pict curated-import -i references/${NAME}.fasta -d references/pooled.sqlite \
+        -x --minlen $MINLEN
 
     echo "Running analysis for $NAME"
     mkdir -p intermediate/$NAME/
-    thapbi_pict prepare-reads --left $LEFT --right $RIGHT \
-        -i raw_data/ --merged-cache tmp_merged/ -o intermediate/$NAME/
     thapbi_pict pipeline -d references/${NAME}.sqlite --showdb \
-        --merged-cache tmp_merged/ \
-        --left $LEFT --right $RIGHT \
-                -i raw_data/ expected/ \
-                -s intermediate/$NAME/ -o summary/ -r $NAME \
-                -t metadata.tsv -c 3,4,5 -x 2 -g 4
+        -i raw_data/ expected/ -s intermediate/$NAME/ --merged-cache tmp_merged/ \
+        -o summary/ -r $NAME --left $LEFT --right $RIGHT --minlen $MINLEN \
+        -t metadata.tsv -c 3,4,5 -x 2 -g 4
     # Pipeline now includes the fasta-nr step:
     # thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all_reads.fasta
     thapbi_pict classify -i summary/$NAME.all_reads.fasta -o summary/ -d references/$NAME.sqlite
@@ -74,6 +79,7 @@ echo =====================================================
 NAME=16S
 LEFT=CGCCTGTTTATCAAAAACAT
 RIGHT=CCGGTCTGAACTCAGATCACGT
+MINLEN=200
 
 analyse # call function above
 
@@ -84,6 +90,7 @@ echo ==========================================================
 NAME=Mini-16S
 LEFT=AYAAGACGAGAAGACCC
 RIGHT=GATTGCGCTGTTATTCC
+MINLEN=200
 
 analyse # call function above
 
@@ -96,6 +103,7 @@ echo ==========================================================
 NAME=Mini-COI
 LEFT=GGWACWGGWTGAACWGTWTAYCCYCC
 RIGHT=TAIACYTCIGGRTGICCRAARAAYCA
+MINLEN=200
 
 analyse # call function above
 
@@ -106,6 +114,7 @@ echo =======================================================
 NAME=cyt-b
 LEFT=CCATCCAACATCTCAGCATGATGAAA
 RIGHT=GGCAAATAGGAARTATCATTC
+MINLEN=200
 
 echo "Skipping, failed to amplify at default threhold or even 50."
 echo "Drop to -a 10 and you get a modest number of sequences."
@@ -119,6 +128,7 @@ echo ============================================================
 NAME=Mini-cyt-b
 LEFT=CCATCCAACATCTCAGCATGATGAAA
 RIGHT=CCCTCAGAATGATATTTGTCCTCA
+MINLEN=200
 
 analyse # call function above
 
@@ -129,6 +139,7 @@ echo =====================================================
 NAME=matK
 LEFT=ACCCAGTCCATCTGGAAATCTTGGTTC
 RIGHT=CGTACAGTACTTTTGTGTTTACGAG
+MINLEN=200
 
 echo "Skipping, failed to amplify"
 echo "(at least at default threshold)"
@@ -144,6 +155,7 @@ echo =====================================================
 NAME=rbcL
 LEFT=ATGTCACCACAAACAGAGACTAAAGC
 RIGHT=GTAAAATCAAGTCCACCRCG
+MINLEN=100  # Even shorter than author's 200 default
 
 analyse
 
@@ -154,6 +166,7 @@ echo ==========================================================
 NAME=Mini-rbcL
 LEFT=GTTGGATTCAAAGCTGGTGTTA
 RIGHT=CVGTCCAMACAGTWGTCCATGT
+MINLEN=140  # Shorter!
 
 analyse # call function above
 
@@ -164,6 +177,7 @@ echo =========================================================
 NAME=trnL-UAA
 LEFT=CGAAATCGGTAGACGCTACG
 RIGHT=GGGGATAGAGGGACTTGAAC
+MINLEN=200
 
 analyse # call function above
 
@@ -174,12 +188,9 @@ echo =============================================================
 NAME=trnL-P6-loop
 LEFT=GGGCAATCCTGAGCCAA
 RIGHT=CCATTGAGTCTCTGCACCTATC
+MINLEN=10  # Much shorter!
 
-echo "Skipping, failed to amplify - no trimmed sequence found"
-echo "more than once, only singletons which are as good as noise."
-echo "Need to set --min-len 10 to match the author's analysis."
-
-#analyse
+analyse
 
 echo =====================================================
 echo Universal plant DNA barcodes and mini-barcodes - ITS2
@@ -188,6 +199,7 @@ echo =====================================================
 NAME=ITS2
 LEFT=ATGCGATACTTGGTGTGAAT
 RIGHT=GACGCTTCTCCAGACTACAAT
+MINLEN=100  # Shorter!
 
 analyse # call function above
 
