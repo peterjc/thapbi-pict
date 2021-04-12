@@ -206,8 +206,8 @@ def parse_cutadapt_stdout(stdout):
             before = after = 0
         elif words[:-1] == ["Total", "reads", "processed:"]:
             before = int(words[3].replace(",", ""))
-        elif words[:4] == ["Reads", "written", "(passing", "filters):"]:
-            after = int(words[4].replace(",", ""))
+        elif words[:-2] == ["Reads", "with", "adapters:"]:
+            after = int(words[3].replace(",", ""))
     if before is None or after is None:
         sys.exit(
             f"ERROR: Could not extract cutadapt before and after pair count:"
@@ -216,6 +216,7 @@ def parse_cutadapt_stdout(stdout):
     return before, after
 
 
+# Typical example,
 assert (
     parse_cutadapt_stdout(
         """\
@@ -229,6 +230,21 @@ Reads written (passing filters):         5,861 (99.9%)
 """
     )
     == (5869, 5861)
+)
+# Example recording the bad primers,
+assert (
+    parse_cutadapt_stdout(
+        """\
+=== Summary ===
+
+Total reads processed:                  51,804
+Reads with adapters:                    51,601 (99.6%)
+Reads that were too short:                   0 (0.0%)
+Reads that were too long:                    0 (0.0%)
+Reads written (passing filters):        51,804 (100.0%)
+"""
+    )
+    == (51804, 51601)
 )
 
 
