@@ -20,7 +20,7 @@ thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # Try a real example
-rm -rf $TMP/DNAMIX_S95_L001.fasta
+rm -rf $TMP/DNAMIX_S95_L001.fasta $TMP/DNAMIX_S95_L001.failed-primers.fasta
 rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
@@ -28,12 +28,14 @@ thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
 
 # In this case, --flip makes no difference, as does -n ""
+# Also using -p / --primers too.
 # Using merged cache also should make no difference
-rm -rf $TMP/DNAMIX_S95_L001.fasta
+rm -rf $TMP/DNAMIX_S95_L001.fasta $TMP/DNAMIX_S95_L001.failed-primers.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    --flip -n "" --merged-cache $TMP/merged_cache/ \
+    --flip -n "" --merged-cache $TMP/merged_cache/ -p $TMP/ \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "735" ]; then echo "Wrong FASTA output count"; false; fi
+diff $TMP/DNAMIX_S95_L001.failed-primers.fasta tests/prepare-reads/DNAMIX_S95_L001.failed-primers.fasta
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 # Reusing the pre-primer time pre-abundance cache here:
