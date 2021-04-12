@@ -19,3 +19,4 @@ default ``onebp`` classifier method.
 
    sample_data
    edit_graph
+   pooling
