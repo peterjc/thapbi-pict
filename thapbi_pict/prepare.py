@@ -192,7 +192,7 @@ def run_trimmomatic(
     return parse_trimmomatic_stderr(run(cmd, debug=debug).stderr)
 
 
-def parse_cutadapt_stdout(stdout):
+def parse_cutadapt_stdout(stdout, bad_primers=False):
     r"""Extract FASTA count before and after cutadapt.
 
     >>> parse_cutadapt_stdout("...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n...")
@@ -206,8 +206,15 @@ def parse_cutadapt_stdout(stdout):
             before = after = 0
         elif words[:-1] == ["Total", "reads", "processed:"]:
             before = int(words[3].replace(",", ""))
-        elif words[:-2] == ["Reads", "with", "adapters:"]:
+        elif bad_primers and words[:-2] == ["Reads", "with", "adapters:"]:
             after = int(words[3].replace(",", ""))
+        elif not bad_primers and words[:4] == [
+            "Reads",
+            "written",
+            "(passing",
+            "filters):",
+        ]:
+            after = int(words[4].replace(",", ""))
     if before is None or after is None:
         sys.exit(
             f"ERROR: Could not extract cutadapt before and after pair count:"
@@ -216,22 +223,24 @@ def parse_cutadapt_stdout(stdout):
     return before, after
 
 
-# Typical example,
+# Example where not recording bad primers, want smaller number
 assert (
     parse_cutadapt_stdout(
         """\
 === Summary ===
 
-Total reads processed:                   5,869
-Reads with adapters:                     5,861 (99.9%)
-Reads that were too short:                   1 (0.0%)
+Total reads processed:                 106,089
+Reads with adapters:                     1,511 (1.4%)
+Reads that were too short:               3,271 (3.1%)
 Reads that were too long:                    0 (0.0%)
-Reads written (passing filters):         5,861 (99.9%)
-"""
+Reads written (passing filters):         1,471 (1.4%)
+""",
+        bad_primers=False,
     )
-    == (5869, 5861)
+    == (106089, 1471)
 )
-# Example recording the bad primers,
+
+# Example recording the bad primers, want lower number
 assert (
     parse_cutadapt_stdout(
         """\
@@ -242,7 +251,8 @@ Reads with adapters:                    51,601 (99.6%)
 Reads that were too short:                   0 (0.0%)
 Reads that were too long:                    0 (0.0%)
 Reads written (passing filters):        51,804 (100.0%)
-"""
+""",
+        bad_primers=True,
     )
     == (51804, 51601)
 )
@@ -307,7 +317,7 @@ def run_cutadapt(
         trimmed_out,
         long_in,
     ]
-    return parse_cutadapt_stdout(run(cmd, debug=debug).stdout)
+    return parse_cutadapt_stdout(run(cmd, debug=debug).stdout, bad_out)
 
 
 def parse_flash_stdout(stdout):
