@@ -80,7 +80,7 @@ Or open this in Excel. You should find:
 ========================= == == == ====
 #Species                  TP FP FN TN
 ========================= == == == ====
-OVERALL                   69 19 8  1235
+OVERALL                   69 19 8  1224
 Cipangopaludina chinensis 7  0  0  4
 Dreissena bugensis        0  7  0  4
 Dreissena polymorpha      7  0  0  4
@@ -95,7 +95,7 @@ Sphaerium corneum         7  0  0  4
 Sphaerium nucleus         0  7  0  4
 Sphaerium simile          7  3  0  1
 Sphaerium striatinum      0  1  0  10
-OTHER 107 SPECIES IN DB   0  0  0  1177
+OTHER 106 SPECIES IN DB   0  0  0  1166
 ========================= == == == ====
 
 This time we do have false negatives - in five of the seven samples the
