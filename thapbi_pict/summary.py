@@ -708,10 +708,12 @@ def main(
     # Not loading the post-abundance-threshold count, or the threshold.
     # Count should match the Seq-count column, but will not if running
     # report with higher abundance threshold - simpler to exclude them:
-    stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt")
+    stats_fields = ("Raw FASTQ", "Trimmomatic", "Flash", "Cutadapt", "Threshold")
     try:
         sample_stats = load_fasta_headers(
-            fasta_files, ("raw_fastq", "trimmomatic", "flash", "cutadapt"), -1
+            fasta_files,
+            ("raw_fastq", "trimmomatic", "flash", "cutadapt", "threshold"),
+            -1,
         )
     except KeyError as err:
         sys.stderr.write(
@@ -721,18 +723,20 @@ def main(
         stats_fields = []
 
     bad_fields = []
-    for i in range(len(stats_fields)):
+    for i, field in enumerate(stats_fields):
         if -1 in (_[i] for _ in sample_stats.values()):
             bad_fields.append(i)
+            sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
+        elif field == "Threshold" and len({_[i] for _ in sample_stats.values()}) == 1:
+            bad_fields.append(i)
+            if debug:
+                sys.stderr.write("DEBUG: Dropping abundance threshold as all same\n")
     if bad_fields:
         for sample, value in sample_stats.items():
             sample_stats[sample] = [
                 _ for i, _ in enumerate(value) if i not in bad_fields
             ]
         stats_fields = [_ for i, _ in enumerate(stats_fields) if i not in bad_fields]
-        sys.stderr.write(
-            f"WARNING: Dropping {len(bad_fields)} missing stats column(s)\n"
-        )
     del bad_fields
 
     md5_abundance = Counter()
