@@ -8,7 +8,7 @@ for example in woody_hosts recycled_water fungal_mock microalgal_mock great_lake
     echo "Cleaning $example"
     echo "========================="
     # Do not touch woody_hosts/intermediate.tar.bz2
-    rm -rf $example/*.sqlite $example/intermediate $example/intermediate_* $example/tmp_merged
+    rm -rf $example/*.sqlite $example/*/*.sqlite $example/intermediate $example/intermediate_* $example/tmp_merged
     echo "Done"
 done
 
