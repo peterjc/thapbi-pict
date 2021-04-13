@@ -981,8 +981,6 @@ def main(
 
     if debug:
         sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
-    if setup_fn:
-        setup_fn(session, shared_tmp, debug, cpu)
 
     classifier_output = []  # return value
 
@@ -1025,6 +1023,11 @@ def main(
                         match_count += a
                     del a, parts
             continue
+
+        if setup_fn:
+            # There are some files still to process, do setup now (once only)
+            setup_fn(session, shared_tmp, debug, cpu)
+            setup_fn = None
 
         sys.stderr.write(f"Running {method} classifier on {filename}\n")
         if debug:
