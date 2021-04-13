@@ -18,18 +18,18 @@ echo ==========================
 echo Recycled water - Custom DB
 echo ==========================
 
-echo "Building ITS1 database"
-# Remove any pre-existing DB
-rm -rf Redekar_et_al_2019_sup_table_3.sqlite
+if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
+    echo "Building ITS1 database"
 
-# Loading NCBI taxonomy for handling synonyms
-thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
+    # Loading NCBI taxonomy for handling synonyms
+    thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
 
-# Using -x / --lax (does not insist on taxonomy match)
-# Not giving primers, sequences are already trimmed
-thapbi_pict curated-import -x \
-        -d Redekar_et_al_2019_sup_table_3.sqlite \
-        -i Redekar_et_al_2019_sup_table_3.fasta
+    # Using -x / --lax (does not insist on taxonomy match)
+    # Not giving primers, sequences are already trimmed
+    thapbi_pict curated-import -x \
+            -d Redekar_et_al_2019_sup_table_3.sqlite \
+            -i Redekar_et_al_2019_sup_table_3.fasta
+fi
 
 echo "Drawing edit-graph for database entries alone"
 # Using -s / --showdb

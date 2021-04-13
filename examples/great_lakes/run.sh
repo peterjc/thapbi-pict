@@ -9,12 +9,12 @@ mkdir -p intermediate/ summary/
 
 # Takes arguments via variable names
 function analyse {
-    echo "Building $NAME database"
-    rm -rf ${NAME}.sqlite
-
-    # Pre-trimmed, not validating species names
-    thapbi_pict curated-import -d ${NAME}.sqlite \
-                -i $NAME.fasta -x
+    if [ ! -f ${NAME}.sqlite ]; then
+        echo "Building $NAME database"
+        # Pre-trimmed, not validating species names
+        thapbi_pict curated-import -d ${NAME}.sqlite \
+                    -i $NAME.fasta -x
+    fi
 
     echo "Running analysis"
     # Note the unusually minimum low abundance threshold
