@@ -7,9 +7,10 @@ echo
 
 # Takes arguments via variable names
 function analyse {
-    echo "Building $MARKER database for $NAME"
-    rm -rf ${NAME}.sqlite
-    thapbi_pict curated-import -i ${MARKER}.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+    if [ ! -f ${NAME}.sqlite ]; then
+        echo "Building $MARKER database for $NAME"
+        thapbi_pict curated-import -i ${MARKER}.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+    fi
 
     echo "Running analysis with minimum abundance threshold ten"
     # No threshold (-a 0 or -a 1) gives 450k total unique entries over samples

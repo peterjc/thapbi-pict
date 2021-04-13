@@ -7,10 +7,11 @@ echo
 
 # Takes arguments via variable names
 function analyse {
-    echo "Building $NAME database for $NAME"
-    rm -rf ${NAME}.sqlite
-    # FASTA file has full 18S rRNA gene, use primers to trim to targetted region:
-    thapbi_pict curated-import -i mock_community.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+    if [ ! -f ${NAME}.sqlite ]; then
+        echo "Building $NAME database for $NAME"
+        # FASTA file has full 18S rRNA gene, use primers to trim to targetted region:
+        thapbi_pict curated-import -i mock_community.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+    fi
 
     echo "Running analysis"
     mkdir -p intermediate/$NAME/
