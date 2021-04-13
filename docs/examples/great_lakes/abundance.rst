@@ -28,15 +28,15 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,10-11 summary/SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
 ======= ============== ============ ========= ======== ==========
-Marker  Group          library_name Raw FASTQ Cutadapt Read count
-------- -------------- ------------ --------- -------- ----------
+#Marker Group          Library-name Raw FASTQ Cutadapt Read count
+======= ============== ============ ========= ======== ==========
 MOL16S  Aquarium       BIR2M        306311    8        0
 MOL16S  Aquarium       BIR6M        291954    24       0
 MOL16S  Control        BIM8M        2433      0        0
@@ -50,11 +50,11 @@ MOL16S  Mock Community SC3PRO5      480606    55       0
 MOL16S  River          BIM6M        821849    0        0
 MOL16S  River          BIM2M        1119271   40       0
 MOL16S  River          BIM4M        709472    46       19
-SPH16S  Aquarium       BIR2S        498926    251724   209358
-SPH16S  Aquarium       BIR6S        240360    226083   191393
-SPH16S  Mock Community SPSC3PRO1    425271    318149   224510
-SPH16S  Mock Community SPSC3PRO2    341476    282623   204137
-SPH16S  Mock Community SPSC3PRO4    410780    304178   197340
+SPH16S  Aquarium       BIR2S        498926    251724   209434
+SPH16S  Aquarium       BIR6S        240360    226083   191469
+SPH16S  Mock Community SPSC3PRO1    425271    318149   224718
+SPH16S  Mock Community SPSC3PRO2    341476    282623   204289
+SPH16S  Mock Community SPSC3PRO4    410780    304178   197522
 ======= ============== ============ ========= ======== ==========
 
 Things to note:
@@ -64,7 +64,7 @@ Things to note:
   hundreds of thousands for the final five samples amplified with these
   primers (good). The first 13 samples were amplified with the MOL16S primers,
   but still have low levels of sequences matching the SPH16S primers (bad).
-* The "Seq-count" column is after applying the minimum abundance threshold
+* The "Read count" column is after applying the minimum abundance threshold
   (here 10). Two negative controls still have reads, lifting the threshold
   to 20 or more would fix this. These are *Sphaerium simile* in mock community
   ``NFSC3PRO3``, and an unknown in river sample ``BIM4M``.
@@ -80,32 +80,32 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,10-11 summary/MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
 columns, you should see:
 
 ======= ============== ============ ========= ======== ==========
-Marker  Group          library_name Raw FASTQ Cutadapt Read count
-------- -------------- ------------ --------- -------- ----------
-MOL16S  Aquarium       BIR2M        306311    279297   240659
-MOL16S  Aquarium       BIR6M        291954    265476   238141
+#Marker Group          Library-name Raw FASTQ Cutadapt Read count
+======= ============== ============ ========= ======== ==========
+MOL16S  Aquarium       BIR2M        306311    279297   241040
+MOL16S  Aquarium       BIR6M        291954    265476   238455
 MOL16S  Control        BIM8M        2433      928      513
-MOL16S  Mock Community SC3PRO1      689712    247703   210045
-MOL16S  Mock Community SC3PRO2      405048    102735   85080
-MOL16S  Mock Community SC3PRO3      402219    116643   94799
-MOL16S  Mock Community NFSC3PRO3    349590    105425   85476
-MOL16S  Mock Community SC3PRO4      671241    168201   130340
-MOL16S  Mock Community NFSC3PRO4    420015    116666   75975
-MOL16S  Mock Community SC3PRO5      480606    152834   129045
-MOL16S  River          BIM6M        821849    764830   673378
-MOL16S  River          BIM2M        1119271   886766   767797
-MOL16S  River          BIM4M        709472    342913   296602
+MOL16S  Mock Community SC3PRO1      689712    247703   210186
+MOL16S  Mock Community SC3PRO2      405048    102735   85233
+MOL16S  Mock Community SC3PRO3      402219    116643   94972
+MOL16S  Mock Community NFSC3PRO3    349590    105425   85705
+MOL16S  Mock Community SC3PRO4      671241    168201   130612
+MOL16S  Mock Community NFSC3PRO4    420015    116666   76161
+MOL16S  Mock Community SC3PRO5      480606    152834   129132
+MOL16S  River          BIM6M        821849    764830   674428
+MOL16S  River          BIM2M        1119271   886766   769302
+MOL16S  River          BIM4M        709472    342913   297102
 SPH16S  Aquarium       BIR2S        498926    30       0
 SPH16S  Aquarium       BIR6S        240360    30       0
 SPH16S  Mock Community SPSC3PRO1    425271    40       14
-SPH16S  Mock Community SPSC3PRO2    341476    2184     805
+SPH16S  Mock Community SPSC3PRO2    341476    2184     806
 SPH16S  Mock Community SPSC3PRO4    410780    102      16
 ======= ============== ============ ========= ======== ==========
 
