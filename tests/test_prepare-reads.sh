@@ -107,4 +107,10 @@ thapbi_pict prepare-reads --hmm '' --left CTGCTGCTGGATCATTACCC --right CGCCAGCAC
     -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_flip_a10.fasta
 
+echo "Testing pathological trimming example"
+rm -rf $TMP/6e847180a4da6eed316e1fb98b21218f.fasta
+thapbi_pict prepare-reads -i tests/reads/6e847180a4da6eed316e1fb98b21218f_R?.fastq \
+    -o $TMP/ -a 1
+diff $TMP/6e847180a4da6eed316e1fb98b21218f.fasta tests/prepare-reads/6e847180a4da6eed316e1fb98b21218f.fasta
+
 echo "$0 - test_prepare-reads.sh passed"
