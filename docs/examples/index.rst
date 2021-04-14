@@ -16,6 +16,7 @@ been mock communities with known species composition.
    :maxdepth: 1
 
    woody_hosts/index
+   british_soil/index
    recycled_water/index
    drained_ponds/index
    fungal_mock/index
@@ -24,12 +25,20 @@ been mock communities with known species composition.
    soil_nematodes/index
    endangered_species/index
 
-* :ref:`woody_hosts` - A simple example using the default primers and
+* :ref:`woody_hosts` - A simple example using the default ITS1 primers and
   database. Based on a paper from earlier in the THAPBI Phyto-Threats project:
 
     Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
     host-associated *Phytophthora* spp. in soils at public gardens and
     amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
+
+* :ref:`british_soil` - Another example using the default ITS1 primers and
+  database. Based on a paper which also tried a COI marker on soil samples:
+
+    Landa *et al.* (2021) Diversity of *Phytophthora* Species Detected in
+    Disturbed and Undisturbed British Soils Using High-Throughput Sequencing
+    Targeting ITS rRNA and COI mtDNA Regions.
+    https://doi.org/10.3390/f12020229
 
 * :ref:`recycled_water` - An example where the defaults can be used, but
   ideally requires a different primer pair and a custom database. Based on:

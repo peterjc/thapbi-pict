@@ -2,7 +2,7 @@ See https://thapbi-pict.readthedocs.io/en/latest/examples/british_soil/index.htm
 
 This example is based on:
 
-    Landa *et al.* (2021) Diversity of Phytophthora Species Detected in
+    Landa *et al.* (2021) Diversity of *Phytophthora* Species Detected in
     Disturbed and Undisturbed British Soils Using High-Throughput Sequencing
     Targeting ITS rRNA and COI mtDNA Regions.
     https://doi.org/10.3390/f12020229
