@@ -131,7 +131,7 @@ Rutilus rutilus                     63  0   18  18
 Scardinius erythrophthalmus         7   0   74  18
 Silurus glanis                      9   0   0   90
 Spinibarbus denticulatus            0   16  0   83
-Squalidus gracilis gracilis         0   1   0   98
+Squalidus gracilis                  0   1   0   98
 Squalius cephalus                   7   0   74  18
 Tinca tinca                         62  0   19  18
 OTHER 36 SPECIES IN DB              0   0   0   3564
