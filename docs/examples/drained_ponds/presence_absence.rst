@@ -19,8 +19,8 @@ have also used a threshold of 50 to match the original paper.
 
 At this threshold, the 4 cichlid "positive" samples, 6 PCR "negative", and 8
 "blank" controls are perfect - as far as the fish go. We do see unexpected
-human and chicken reads in the PCR negatives, and also ducks and cattle in
-and pigs in the field "blanks":
+human and chicken reads in the PCR negatives, and also ducks, cattle and pigs
+in the field "blanks":
 
 .. code:: console
 
@@ -180,13 +180,13 @@ the ad-hoc DB?
 
 A similar choice was made in compiling the *ad hoc* database, dropping all the
 *Sander* sp. entries for the following sequence in favour of just *Perca
-fluviatilis* as the sole expected Percidae:
+fluviatilis* as the sole expected Percidae::
 
     >7e88b1bdeff6b6a361cc2175f4f630fd
     ACTATGCCTAGCCATAAACATTGGTAGCACACTACACCCACTACCCGCCTGGGAACTACGAGCATCAGCTTGAAACCCAA
     AGGACTTGGCGGTGCTTTAGATCCAC
 
-This was based on the authors choice:
+This was based on the authors' choice:
 
     All fish OTUs were identified to species level with the exceptions of
     records matching the family Percidae. Percidae records were manually
@@ -248,7 +248,7 @@ True positives
 --------------
 
 Rather than reviewing all of the true positives, I will note that in some
-cases we found more reads and that declared a result in more samples.
+cases we found more reads and thus declared a result in more samples.
 For example, we report *Barbus barbus* in 49 samples, versus:
 
     In addition, *Barbus barbus* was detected at two sites (202 reads), ...
