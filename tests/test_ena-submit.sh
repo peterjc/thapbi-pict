@@ -21,10 +21,14 @@ echo "Checking ena-submit"
 thapbi_pict ena-submit 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
-thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 -o $TMP/ena_submit.tsv
+thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 \
+    -o $TMP/ena_submit.tsv -e UTF-8
 diff $TMP/ena_submit.tsv tests/reads/ena_submit.tsv
 
-thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 -o $TMP/ena_submit_custom.tsv --library "Test set" --instrument "Illumina Widget" --design "Ad hoc" --protocol "Making it up" --insert 275
+thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 \
+    -o $TMP/ena_submit_custom.tsv --metaencoding latin1 \
+    --library "Test set" --instrument "Illumina Widget" \
+    --design "Ad hoc" --protocol "Making it up" --insert 275
 diff $TMP/ena_submit_custom.tsv tests/reads/ena_submit_custom.tsv
 
 echo "$0 - test_ena-submit.sh passed"
