@@ -529,6 +529,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
 
 def load_metadata(
     metadata_file,
+    metadata_encoding,
     metadata_cols,
     metadata_groups=None,
     metadata_name_row=1,
@@ -538,6 +539,8 @@ def load_metadata(
     debug=False,
 ):
     """Load specified metadata as several lists.
+
+    The encoding argument can be None or "", meaning use the default.
 
     The columns argument should be a string like "1,3,5" - a comma
     separated list of columns to output. The column numbers are assumed
@@ -620,15 +623,20 @@ def load_metadata(
 
     names = [""] * len(value_cols)  # default
     meta = {}
+    if not metadata_encoding:
+        metadata_encoding = None
     try:
-        # Try with default encoding first...
-        with open(metadata_file) as handle:
+        # Use metadata_encoding=None to try with default encoding:
+        with open(metadata_file, encoding=metadata_encoding) as handle:
             lines = list(handle)
     except UnicodeDecodeError:
-        # Automatically try latin1, which seems to be
-        # default when save tab-delimited from macOS Excel
-        with open(metadata_file, encoding="latin1") as handle:
-            lines = list(handle)
+        if metadata_encoding:
+            sys.exit(
+                f"ERROR: Specified encoding {metadata_encoding!r}"
+                f" incompatible with {metadata_file}"
+            )
+        else:
+            sys.exit(f"ERROR: Default encoding incompatible with {metadata_file}")
 
     if metadata_name_row:
         line = lines[metadata_name_row - 1]
