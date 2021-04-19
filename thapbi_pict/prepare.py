@@ -430,13 +430,14 @@ def annotate_fasta_with_hmm_and_header(
 
     Assumes the SWARM naming convention.
 
-    Returns the number of unique sequences (integer), and
-    maximum abundance (dict keyed by HMM name).
+    Returns the number of unique sequences (integer), total read
+    count (integer) and maximum abundance (dict keyed by HMM name).
     """
     max_hmm_abundance = Counter()
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     count = 0
+    total = 0
     with open(output_fasta, "w") as out_handle:
         if header_dict:
             for key, value in header_dict.items():
@@ -452,12 +453,14 @@ def annotate_fasta_with_hmm_and_header(
             else:
                 out_handle.write(f">{title}\n{full_seq}\n")
             count += 1
+            abundance = abundance_from_read_name(title.split(None, 1)[0])
+            total += abundance
             max_hmm_abundance[hmm_name] = max(
                 max_hmm_abundance[hmm_name],
-                abundance_from_read_name(title.split(None, 1)[0]),
+                abundance,
             )
 
-    return count, max_hmm_abundance
+    return count, total, max_hmm_abundance
 
 
 def prepare_sample(
@@ -483,8 +486,8 @@ def prepare_sample(
 
     Runs flash, does primer filtering, does HMM filtering.
 
-    Returns fasta filename, unique sequence count, and max abundance
-    (dict keyed by HMM name).
+    Returns fasta filename, accepted unique sequence count, accepted
+    total read count, and a dict of max abundance (keyed by HMM name).
     """
     folder, stem = os.path.split(stem)
     if out_dir and out_dir != "-":
@@ -499,10 +502,11 @@ def prepare_sample(
         failed_primer_name is None or os.path.isfile(failed_primer_name)
     ):
         if control:
-            uniq_count, _, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
-            return fasta_name, uniq_count, max_hmm_abundance
+            uniq_count, total, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
+            return fasta_name, uniq_count, total, max_hmm_abundance
         else:
-            return fasta_name, None, {}
+            # Don't actually need the max abundance
+            return fasta_name, None, None, {}
 
     if debug:
         sys.stderr.write(
@@ -670,11 +674,11 @@ def prepare_sample(
         )
         if failed_primer_name:
             shutil.move(bad_primer_fasta, failed_primer_name)
-        return fasta_name, 0, {}
+        return fasta_name, 0, 0, {}
 
     # Determine if synthetic controls are present using hmmscan,
     dedup = os.path.join(tmp, "dedup_its1.fasta")
-    uniq_count, max_hmm_abundance = annotate_fasta_with_hmm_and_header(
+    uniq_count, total, max_hmm_abundance = annotate_fasta_with_hmm_and_header(
         merged_fasta,
         dedup,
         stem,
@@ -705,7 +709,7 @@ def prepare_sample(
             f" (max abundance {max(max_hmm_abundance.values(), default=0)})\n"
         )
 
-    return fasta_name, uniq_count, max_hmm_abundance
+    return fasta_name, uniq_count, total, max_hmm_abundance
 
 
 def main(
@@ -835,7 +839,7 @@ def main(
             if control
             else max(min_abundance, pool_worst_control.get(pool_key, 0))
         )
-        fasta_file, uniq_count, max_abundance_by_hmm = prepare_sample(
+        fasta_file, uniq_count, total, max_abundance_by_hmm = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
@@ -865,8 +869,8 @@ def main(
             if debug or max_its1_abundance > min_abundance:
                 sys.stderr.write(
                     f"Control {stem} has max marker abundance {max_its1_abundance}"
-                    f" ({uniq_count} unique sequences over default threshold"
-                    f" {min_abundance})\n"
+                    f" ({uniq_count} unique sequences, {total} reads, over default"
+                    f" threshold {min_abundance})\n"
                 )
             if max_its1_abundance > pool_worst_control.get(pool_key, -1):
                 # Record even if zero, nice to have for summary later
@@ -887,8 +891,8 @@ def main(
                 sys.stderr.write(f"Skipping {fasta_file} as already done\n")
         else:
             sys.stderr.write(
-                f"Sample {stem} has {uniq_count} unique sequences over"
-                f" abundance threshold {min_a}"
+                f"Sample {stem} has {uniq_count} unique sequences, {total}"
+                f" reads, over abundance threshold {min_a}"
                 f" (max marker abundance {max_its1_abundance})\n"
             )
 
