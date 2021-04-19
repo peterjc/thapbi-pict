@@ -766,6 +766,30 @@ def main(
     )
     fastq_file_pairs = [_ for _ in fastq_file_pairs if _ not in control_file_pairs]
 
+    if min_abundance < 2:
+        # Warning only if on a single file, or on negative controls only
+        if len(control_file_pairs) > 1:
+            sys.exit(
+                "ERROR: Singletons should never be accepted"
+                " (except perhaps for debugging controls)"
+            )
+        else:
+            sys.stderr.write(
+                "STRONG WARNING: Singletons should never be accepted"
+                " (except perhaps for debugging controls).\n"
+            )
+    elif min_abundance < 10:
+        sys.stderr.write(
+            "STRONG WARNING: Setting the minimum abundance threshold below 10"
+            " is not  advised. You will accept many erroneous reads, and also"
+            " slow down the pipeline.\n"
+        )
+    elif min_abundance < 50:
+        sys.stderr.write(
+            "WARNING: Only set the minimum abundance threshold below 50 if"
+            " you have negative controls to justify this.\n"
+        )
+
     # Make a unified file list, with control flag
     file_pairs = [
         (True, stem, raw_R1, raw_R2) for stem, raw_R1, raw_R2 in control_file_pairs
