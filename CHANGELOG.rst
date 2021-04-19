@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.0  *Pending*  Dropped use of Trimmomatic, faster and slightly higher read counts.
+v0.9.0  2021-04-19 Dropped use of Trimmomatic, faster and slightly higher read counts.
 v0.8.4  2021-04-13 Speed up re-running by delaying method setup until and if required.
 v0.8.3  2021-04-13 Include abundance threshold in summary reports (if varied by sample).
 v0.8.2  2021-04-13 Sample report pooling script. Fixed ``-p`` in ``prepare-reads``.
