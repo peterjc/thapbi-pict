@@ -708,11 +708,11 @@ ARG_PRIMER_RIGHT_BLANK = dict(  # noqa: C408
 # "--hmm",
 ARG_HMM = dict(  # noqa: C408
     type=str,
-    default="-",
+    default="",
     metavar="PATH",
     help="Location of negative control HMMER3 Hidden Markov Model "
     "file, filename stem without the '.h3i', '.h3f', etc extension. "
-    "Use '' for none, or '-' for default four synthetic controls (default).",
+    "Use '' for none (default), or '-' for our four synthetic ITS1 controls.",
 )
 
 # Common pipeline arguments
