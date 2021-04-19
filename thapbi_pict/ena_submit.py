@@ -98,6 +98,7 @@ def main(
     fastq,
     output,
     metadata_file=None,
+    metadata_encoding=None,
     metadata_cols=None,
     metadata_fieldnames=None,
     metadata_index=None,
@@ -144,6 +145,7 @@ def main(
 
     (metadata, _, meta_names, group_col,) = load_metadata(
         metadata_file,
+        metadata_encoding,
         metadata_cols,
         None,  # i.e. metadata_groups=None,
         metadata_fieldnames,

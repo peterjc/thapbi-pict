@@ -303,6 +303,7 @@ def summary(args=None):
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
+        metadata_encoding=args.metaencoding,
         metadata_cols=args.metacols,
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
@@ -438,6 +439,7 @@ def pipeline(args=None):
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
+        metadata_encoding=args.metaencoding,
         metadata_cols=args.metacols,
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
@@ -526,6 +528,7 @@ def ena_submit(args=None):
         fastq=args.input,
         output=args.output,
         metadata_file=args.metadata,
+        metadata_encoding=args.metaencoding,
         metadata_cols=args.metacols,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
@@ -756,6 +759,15 @@ ARG_METADATA = dict(  # noqa: C408
     "sample name. Must also specify the columns with -c / --metacols. ",
 )
 
+# "-e", "--metaencoding",
+ARG_METAENCODING = dict(  # noqa: C408
+    type=str,
+    default="",
+    metavar="ENCODING",
+    help="Optional encoding of the metadata table, e.g. 'UTF-8', 'latin1', "
+    "or if exporting from Microsoft Excel on macOS use 'macintosh'.",
+)
+
 # "-c", "--metacols",
 ARG_METACOLS = dict(  # noqa: C408
     type=str,
@@ -890,6 +902,7 @@ def main(args=None):
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
@@ -1391,6 +1404,7 @@ def main(args=None):
         "abundance entries).",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
@@ -1505,6 +1519,7 @@ def main(args=None):
         help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
+    subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)

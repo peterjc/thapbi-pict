@@ -639,6 +639,7 @@ def main(
     method,
     min_abundance=1,
     metadata_file=None,
+    metadata_encoding=None,
     metadata_cols=None,
     metadata_groups=None,
     metadata_fieldnames=None,
@@ -658,6 +659,7 @@ def main(
 
     (stem_to_meta, meta_to_stem, meta_names, group_col,) = load_metadata(
         metadata_file,
+        metadata_encoding,
         metadata_cols,
         metadata_groups,
         metadata_fieldnames,
