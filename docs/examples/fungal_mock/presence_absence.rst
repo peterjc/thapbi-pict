@@ -126,7 +126,7 @@ Both have ``d51507f661ebee38a85bec35b70b7ee1`` as their more common unwanted
 sequence, a perfect match to *Fusarium graminearum* in the mock community.
 
 The lower abundance sequence ``daadc4126b5747c43511bd3be0ea2438`` gives
-perfect NCBI BLAST matches to several accessions of fungus *Wallemia muriae*),
+perfect NCBI BLAST matches to several accessions of fungus *Wallemia muriae*,
 likewise ``e5b7a8b5dc0da33108cc8a881eb409f5`` gives perfect NCBI BLAST matches
 to *Wallemia muriae* and *Wallemia sebi*.
 
@@ -147,7 +147,7 @@ a pale blue background in the Excel reports). Working at the terminal:
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
 
-The minimum abundance excuded lots of singletons etc.
+The minimum abundance excluded lots of singletons etc.
 
 .. code:: console
 
