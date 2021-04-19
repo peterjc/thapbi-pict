@@ -54,7 +54,9 @@ thapbi_pict summary --input tests/classify/P-infestans-T30-4.fasta tests/classif
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
 
 # Now require metadata, but give entire folder as input
-thapbi_pict summary --input tests/classify/ -o $TMP/ -r summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -r summary -q
+thapbi_pict summary --input tests/classify/ -o $TMP/ -r summary \
+    -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -e latin1 \
+    -r summary -q
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
 
 
