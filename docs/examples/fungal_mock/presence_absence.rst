@@ -41,10 +41,10 @@ replicated in duplicate:
 ==================================== ============ ========== ===== ====
 Description                          MiSeq-name   Accession  Count Max
 ------------------------------------ ------------ ---------- ----- ----
-negative control from DNA extraction NegDNAA_S163 SRR5314317    91   48
-negative control from DNA extraction NegDNAB_S175 SRR5314316   117   90
-negative control from PCR step       NegPCRA_S187 SRR5314315  1041  994
-negative control from PCR step       NegPCRB_S104 SRR5314314  3860 3574
+negative control from DNA extraction NegDNAA_S163 SRR5314317   112   64
+negative control from DNA extraction NegDNAB_S175 SRR5314316   132  101
+negative control from PCR step       NegPCRA_S187 SRR5314315  1153 1085
+negative control from PCR step       NegPCRB_S104 SRR5314314  4343 3961
 ==================================== ============ ========== ===== ====
 
 Amplicon library two, ITS1 using the ITS1f/ITS2 primer pair:
