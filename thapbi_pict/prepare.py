@@ -748,9 +748,6 @@ def main(
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
 
-    if negative_controls and not hmm_stem:
-        sys.exit("ERROR: If using negative controls, must use --hmm too.")
-
     check_tools(["flash", "cutadapt"], debug)
     if hmm_stem:
         check_tools(["hmmscan"], debug)
