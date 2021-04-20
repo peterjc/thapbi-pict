@@ -3,10 +3,15 @@
 # This tells setuptools what files to distribute.
 
 include MANIFEST.in
+include requirements.txt
+include requirements-ext.txt
 include *.rst
+include .zenodo.json
+include .flake8
 
 recursive-include thapbi_pict *.py
 recursive-include scripts *.py
+include scripts/README.rst
 
 # Placing the HMM and DB binary files within the Python tree as
 # the simplest way to get them included in a wheel for install:
@@ -30,7 +35,7 @@ include database/single_isolates/*.fasta
 
 # The following is better than a blanket include wildcard * but
 # this still risks unwanted includes of any working files:
-recursive-include tests *.sh *.txt *.tsv *.fasta *.fastq.gz *.xgmml
+recursive-include tests *.sh *.rst *.txt *.tsv *.fasta *.fastq.gz *.xgmml
 
 include tests/reads/6e847180a4da6eed316e1fb98b21218f_R?.fastq
 include tests/reads/SRR6303948_sample_?.fastq
