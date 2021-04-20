@@ -50,7 +50,7 @@ include examples/woody_hosts/intermediate.tar.bz2
 include examples/woody_hosts/expected/*.known.tsv
 
 include examples/recycled_water/README.rst
-include examples/recycled_water/PRJNA417859.txt
+include examples/recycled_water/PRJNA417859.tsv
 include examples/recycled_water/setup.sh
 include examples/recycled_water/run.sh
 include examples/recycled_water/Redekar_et_al_2019_sup_table_3.fasta
@@ -60,7 +60,7 @@ include examples/recycled_water/metadata.tsv
 include examples/recycled_water/raw_data/MD5SUM.txt
 
 include examples/fungal_mock/README.rst
-include examples/fungal_mock/PRJNA377530.txt
+include examples/fungal_mock/PRJNA377530.tsv
 include examples/fungal_mock/ITS1.fasta
 include examples/fungal_mock/ITS2.fasta
 include examples/fungal_mock/mock_community.known.tsv
@@ -73,7 +73,7 @@ include examples/fungal_mock/amp_lib_one/raw_data/MD5SUM.txt
 include examples/fungal_mock/amp_lib_two/raw_data/MD5SUM.txt
 
 include examples/microalgal_mock/README.rst
-include examples/microalgal_mock/PRJNA314977.txt
+include examples/microalgal_mock/PRJNA314977.tsv
 include examples/microalgal_mock/mock_community.fasta
 include examples/microalgal_mock/mock_community.known.tsv
 include examples/microalgal_mock/mock_freshwater.known.tsv
@@ -85,7 +85,7 @@ include examples/microalgal_mock/raw_data/V4/MD5SUM.txt
 include examples/microalgal_mock/raw_data/V8V9/MD5SUM.txt
 
 include examples/great_lakes/README.rst
-include examples/great_lakes/PRJNA379165.txt
+include examples/great_lakes/PRJNA379165.tsv
 include examples/great_lakes/setup.sh
 include examples/great_lakes/run.sh
 include examples/great_lakes/metadata.tsv
@@ -97,7 +97,7 @@ include examples/great_lakes/expected/mock_community.SPH16S.known.tsv
 include examples/great_lakes/expected/negative_control.known.tsv
 
 include examples/fecal_sequel/README.rst
-include examples/fecal_sequel/PRJNA574765.txt
+include examples/fecal_sequel/PRJNA574765.tsv
 include examples/fecal_sequel/setup.sh
 include examples/fecal_sequel/run.sh
 include examples/fecal_sequel/metadata.tsv
@@ -107,7 +107,7 @@ include examples/fecal_sequel/mock_community.known.tsv
 include examples/fecal_sequel/raw_data/MD5SUM.txt
 
 include examples/endangered_species/README.rst
-include examples/endangered_species/PRJEB18620.txt
+include examples/endangered_species/PRJEB18620.tsv
 include examples/endangered_species/setup.sh
 include examples/endangered_species/run.sh
 include examples/endangered_species/metadata.tsv
