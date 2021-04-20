@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.1  *Pending*  Can specify encoding of metadata TSV file. Warn on low abundance threshold.
+v0.9.1  2021-04-20 Can specify encoding of metadata TSV file. Warn on low abundance threshold.
 v0.9.0  2021-04-19 Dropped use of Trimmomatic, faster and slightly higher read counts.
 v0.8.4  2021-04-13 Speed up re-running by delaying method setup until and if required.
 v0.8.3  2021-04-13 Include abundance threshold in summary reports (if varied by sample).
