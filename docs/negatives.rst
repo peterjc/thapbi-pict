@@ -28,6 +28,10 @@ For example, if running with the default minimum abundance threshold of 100,
 and a negative control contains a biological sequence at abundance 136, then
 the threshold for the non-control samples in that folder is raised to 136.
 
+If you have no spike-in controls, then any sequences in the negative controls
+can raise the threshold - regardless of what they may or may not match in the
+reference database.
+
 Spike-in Controls
 -----------------
 
@@ -38,21 +42,21 @@ no biological meaning (avoiding any secondary structure forming). They were
 synthesised using `Integrated DNA Technologies gBlocks Gene Fragments
 <https://www.idtdna.com/pages/products/genes-and-gene-fragments/double-stranded-dna-fragments/gblocks-gene-fragments>`_.
 
-Our 96-well PCR plates included multiple samples which were known ratios of
-these synthetic sequences, rather than environmental DNA.
+Our 96-well PCR plates included multiple control samples which were known
+ratios of these synthetic sequences, rather than environmental DNA.
 
 The tool needs a way to distinguish biological marker sequences (for which
 we wanted to make as few assumptions as possible) from the synthetic ones
 (where the template sequences were known, subject only to PCR noise).
 
-To do this an optional FASTA file of spike-in synthetic controls is given,
-and similar sequences in the samples are considered to be spike-ins and
-ignored in the threshold calculations above. This matching is relaxed,
-anything up to a Levenshtein edit-distance of 25bp is used - and while the
-PCR noise is typically just a few base pair changes, we also found large
-deletions relatively common.
+The spike-in controls are assumed to be in the database, by default under
+the synthetic "genus" but that is configurable. Similar sequences in the
+samples are considered to be spike-ins and ignored in the threshold
+calculations above. This matching is relaxed, anything up to a Levenshtein
+edit-distance of 25bp is used - and while the PCR noise is typically just
+a few base pair changes, we also found large deletions relatively common.
 
 Conversely, the presence of the synthetic controls in any of the biological
-samples is also problematic. To that end, our synthetic control sequences are
-also included in the default database and can be matched by the classifier,
-and appear in the reports.
+samples is also problematic. Since our synthetic control sequences are in
+the default database, they and can be matched by the chosen classifier, and
+appear in the reports.
