@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.9.3  *Pending*  Replaced HMM for spike-in control detection, now via DB & *k*-mer counting.
 v0.9.2  2021-04-28 Fixed obscure problem using relative versions of absolute paths.
 v0.9.1  2021-04-20 Can specify encoding of metadata TSV file. Warn on low abundance threshold.
 v0.9.0  2021-04-19 Dropped use of Trimmomatic, faster and slightly higher read counts.

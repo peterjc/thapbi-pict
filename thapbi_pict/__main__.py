@@ -74,23 +74,6 @@ def expand_database_argument(text, exist=False, hyphen_default=False):
     return prefix + db
 
 
-def expand_hmm_argument(text, hyphen_default=True):
-    """Validate/expand an HMMER3 HMM stem."""
-    if text == "-":
-        if hyphen_default:
-            # Expand to the default bundled HMM
-            text = os.path.join(os.path.split(__file__)[0], "hmm", "controls.hmm")
-        else:
-            sys.exit("ERROR: Using hyphen as HMM default is not supported here.")
-    if not text:
-        sys.stderr.write("WARNING: Applying no HMM filtering!\n")
-        return ""
-    for ext in (".h3f", ".h3i", ".h3m", ".h3p"):
-        if not os.path.isfile(text + ext):
-            sys.exit(f"ERROR: The HMM {text} was not found (e.g. {text + ext})")
-    return text
-
-
 # Subcommand dispatch
 # ===================
 
@@ -202,7 +185,10 @@ def prepare_reads(args=None):
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=args.output,
-        hmm_stem=expand_hmm_argument(args.hmm),
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True)
+        if args.database
+        else None,
+        spike_genus=args.spike,
         primer_dir=args.primers,
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
@@ -363,8 +349,6 @@ def pipeline(args=None):
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
 
-    hmm = expand_hmm_argument(args.hmm)
-
     if args.report:
         stem = os.path.join(args.output, args.report)
     else:
@@ -377,7 +361,8 @@ def pipeline(args=None):
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
-        hmm_stem=hmm,
+        db_url=db,
+        spike_genus=args.spike,
         primer_dir=None,
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
@@ -705,14 +690,13 @@ ARG_PRIMER_RIGHT_BLANK = dict(  # noqa: C408
     type=str, default="", metavar="PRIMER", help="Right primer sequence, default blank."
 )
 
-# "--hmm",
-ARG_HMM = dict(  # noqa: C408
+# "-k", "--spike",
+ARG_SPIKE = dict(  # noqa: C408
     type=str,
-    default="",
-    metavar="PATH",
-    help="Location of negative control HMMER3 Hidden Markov Model "
-    "file, filename stem without the '.h3i', '.h3f', etc extension. "
-    "Use '' for none (default), or '-' for our four synthetic ITS1 controls.",
+    default="synthetic",
+    metavar="GENUS",
+    help="Comma separated genus list of any spike-in sequences in the "
+    "negative controls, used with the database setting. Default 'synthetic'.",
 )
 
 # Common pipeline arguments
@@ -893,7 +877,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     # Not using -l and -r for primers as used -r for report:
@@ -1161,7 +1145,15 @@ def main(args=None):
         "default is next to each input file.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
-    subcommand_parser.add_argument("--hmm", **ARG_HMM)
+    subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
+    subcommand_parser.add_argument(
+        "-d",
+        "--database",
+        type=str,
+        default="",
+        help="Marker DB containing any spike-in control sequences. "
+        "Default '' for none, use '-' for bundled DB.",
+    )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument(
