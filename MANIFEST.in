@@ -13,13 +13,8 @@ recursive-include thapbi_pict *.py
 recursive-include scripts *.py
 include scripts/README.rst
 
-# Placing the HMM and DB binary files within the Python tree as
-# the simplest way to get them included in a wheel for install:
-include thapbi_pict/hmm/controls.hmm
-include thapbi_pict/hmm/controls.hmm.h3f
-include thapbi_pict/hmm/controls.hmm.h3i
-include thapbi_pict/hmm/controls.hmm.h3m
-include thapbi_pict/hmm/controls.hmm.h3p
+# Placing the DB binary file within the Python tree as
+# the simplest way to get it included in a wheel for install:
 include thapbi_pict/ITS1_DB.sqlite
 
 # Deliberately not risking everything in database/ via wildcards.

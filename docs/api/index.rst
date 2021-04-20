@@ -18,7 +18,6 @@ Python API
    thapbi_pict.dump
    thapbi_pict.edit_graph
    thapbi_pict.fasta_nr
-   thapbi_pict.hmm
    thapbi_pict.ncbi
    thapbi_pict.prepare
    thapbi_pict.seq_import

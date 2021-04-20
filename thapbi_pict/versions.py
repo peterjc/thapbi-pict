@@ -1,4 +1,4 @@
-# Copyright 2019-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -36,7 +36,6 @@ def check_tools(names, debug):
         "blastn": version_blast,
         "cutadapt": version_cutadapt,
         "flash": version_flash,
-        "hmmscan": version_hmmer,
         "makeblastdb": version_blast,
         "swarm": version_swarm,
     }
@@ -108,29 +107,6 @@ def version_cutadapt(cmd="cutadapt"):
     text = getoutput(cmd + " --version").strip().split("\n", 1)[0]
     if "." in text:
         return text
-
-
-def version_hmmer(cmd="hmmscan"):
-    """Return the version of hmmer (as a short string).
-
-    Parses the output with ``-h``::
-
-        $ hmmscan -h | grep HMMER
-        # HMMER 3.2.1 (June 2018); http://hmmer.org/
-
-    In this example, it would behave as follows:
-
-    >>> version_hmmer()
-    '3.2.1 (June 2018)'
-
-    If the command is not on the path, returns None.
-    """
-    text = getoutput(cmd + " -h")
-    for line in text.splitlines():
-        if line.startswith("# HMMER"):
-            if line.endswith("; http://hmmer.org/"):
-                line = line.rsplit(";", 1)[0]
-            return line[7:].strip()
 
 
 def version_flash(cmd="flash"):

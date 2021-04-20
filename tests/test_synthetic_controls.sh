@@ -39,7 +39,7 @@ for PLATE in A B C D; do
         | gzip > $TMP/mock_plates/merged/spike-in-${PLATE}.fasta.gz
 done
 
-thapbi_pict prepare-reads --hmm - -a 75 \
+thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
@@ -78,14 +78,14 @@ fi
 
 echo "Checking the mock samples and thresholds used..."
 
-# A, threshold raised to 1053:
-if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-A.fasta` != "#threshold:1053" ]; then
+# A, threshold kept at 75:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-A.fasta` != "#threshold:75" ]; then
     echo "Wrong abundance threshold in sample-A.fasta"; false
 fi
-if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-A.fasta` -ne "1" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-A.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-A.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:1171" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:3684" ]; then
     echo "Wrong count accepted after abundance threshold in sample-A.fasta"; false
 fi
 # B, threshold kept at 75:
@@ -125,7 +125,7 @@ echo "-------------------------------------"
 
 # As above, but write the FASTA files next to the FASTQ inputs
 # (no explicit -o / --output setting)
-thapbi_pict prepare-reads --hmm - -a 75 \
+thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/
@@ -157,7 +157,7 @@ for PLATE in A B C D; do
         | gzip > $TMP/single_plate/merged/spike-in-${PLATE}.fasta.gz
 done
 
-thapbi_pict prepare-reads --hmm - -a 75 \
+thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/single_plate/raw_data/ \
             -n $TMP/single_plate/raw_data/spike-in-* \
             --merged-cache $TMP/single_plate/merged/ \
@@ -172,8 +172,8 @@ done
 
 echo "Checking the mock sample and threshold used..."
 
-# Should be same plate A above since that had the highest threshold:
-diff $TMP/single_plate/prepared/sample.fasta $TMP/mock_plates/prepared/sample-A.fasta
+# Should be same as plate D above since that had the highest threshold:
+diff $TMP/single_plate/prepared/sample.fasta $TMP/mock_plates/prepared/sample-D.fasta
 
 echo "===="
 echo "Done"

@@ -17,8 +17,13 @@ from collections import Counter
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm import contains_eager
 
-from .hmm import filter_for_hmm
+from .db_orm import connect_to_db
+from .db_orm import ITS1
+from .db_orm import SequenceSource
+from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import load_fasta_header
@@ -310,7 +315,12 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
 
 
 def save_nr_fasta(
-    counts, output_fasta, min_abundance=0, gzipped=False, header_dict=None
+    counts,
+    output_fasta,
+    min_abundance=None,
+    gzipped=False,
+    spikes=None,
+    header_dict=None,
 ):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -318,17 +328,31 @@ def save_nr_fasta(
     default style used in SWARM. This could in future be generalised,
     for example ``>MD5;size=abundance;\n`` for the VSEARCH default.
 
+    If they match a spike-in, they are named ``>MD5_abundance spike-name\n``
+    instead.
+
     Results are sorted by decreasing abundance then alphabetically by
     sequence.
 
     Returns the total and number of unique sequences accepted (above any
-    minimum abundance specified).
+    minimum abundance specified), and a dict of max spike abundances
+    (incuding non-spikes under the empty string).
 
     Use output_fasta='-' for standard out.
     """
     accepted_total = 0
     accepted_count = 0
-    values = sorted((-count, seq) for seq, count in counts.items())
+    max_spike_abundance = {}
+    if not spikes:
+        spikes = []
+    # Storing negative count for decreasing sort, then alphabetic sort
+    # Could alternatively have used a key function to achieve this
+    if min_abundance is None:
+        values = sorted((-count, seq) for seq, count in counts.items())
+    else:
+        values = sorted(
+            (-count, seq) for seq, count in counts.items() if count >= min_abundance
+        )
     if output_fasta == "-":
         if gzipped:
             raise ValueError("Does not support gzipped output to stdout.")
@@ -338,29 +362,70 @@ def save_nr_fasta(
     else:
         out_handle = open(output_fasta, "w")
     if header_dict:
+        assert "abundance" not in header_dict
+        assert "threshold" not in header_dict
         for key, value in header_dict.items():
             out_handle.write(f"#{key}:{value}\n")
+        if min_abundance is not None:
+            # Note counts currently negative for sorting requirement
+            out_handle.write(f"#abundance:{sum(-count for count, _ in values)}\n")
+            out_handle.write(f"#threshold:{min_abundance}\n")
     for count, seq in values:
-        if -count < min_abundance:
-            # Sorted, so everything hereafter is too rare
-            break
-        out_handle.write(f">{md5seq(seq)}_{-count}\n{seq}\n")
-        accepted_total -= count
+        count = -count  # was negative for decreasing sorting
+        assert (
+            min_abundance is None or count >= min_abundance
+        ), f"{count} for {seq} vs minimum {min_abundance}"
+        spike_name = is_spike_in(seq, spikes)
+        if spike_name:
+            out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
+        else:
+            out_handle.write(f">{md5seq(seq)}_{count}\n{seq}\n")
+        accepted_total += count
         accepted_count += 1
+        max_spike_abundance[spike_name] = max(
+            max_spike_abundance.get(spike_name, 0),
+            count,
+        )
     if output_fasta != "-":
         out_handle.close()
-    return accepted_total, accepted_count
+    assert accepted_total >= 0 and accepted_count >= 0
+    return accepted_total, accepted_count, max_spike_abundance
+
+
+def kmers(sequence, k=31):
+    """Make set of all kmers in the given sequence."""
+    return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
+
+
+def has_enough_kmers(sequence, kmers, threshold=70, k=31):
+    """Check if given sequence shares at least this many kmers."""
+    count = 0
+    for i in range(len(sequence) - k + 1):
+        if sequence[i : i + k] in kmers:
+            count += 1
+            if count >= threshold:
+                return True
+    return False
+
+
+def is_spike_in(sequence, spikes):
+    """Return spike-in name if sequence matches, else empty string."""
+    for spike_name, spike_seq, spike_kmers in spikes:
+        if sequence == spike_seq or has_enough_kmers(sequence, spike_kmers):
+            return spike_name
+    return ""
 
 
 def make_nr_fasta(
     input_fasta_or_fastq,
     output_fasta,
-    min_abundance=0,
+    min_abundance=None,
     min_len=0,
     max_len=sys.maxsize,
     weighted_input=False,
     fastq=False,
     gzipped=False,
+    spikes=None,
     header_dict=None,
     debug=False,
 ):
@@ -382,8 +447,8 @@ def make_nr_fasta(
     Returns the total number of accepted reads before de-duplication
     (integer), number of those unique (integer), and the total number
     of those which passed the minimum abundance threshold (integer),
-    number of those unique (integer), and the maximum abundance of
-    any one read (for use with controls for setting the threshold).
+    number of those unique (integer), and a dict of maximum abundance
+    by spike in (for use with controls for setting the threshold).
     """
     counts = Counter()
     with open(input_fasta_or_fastq) as handle:
@@ -404,38 +469,45 @@ def make_nr_fasta(
             for _, seq in SimpleFastaParser(handle):
                 assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
                 counts[seq.upper()] += 1
-    accepted_total, accepted_count = save_nr_fasta(
-        counts, output_fasta, min_abundance, gzipped=gzipped, header_dict=header_dict
+    accepted_total, accepted_count, max_spike_abundance = save_nr_fasta(
+        counts,
+        output_fasta,
+        min_abundance,
+        gzipped=gzipped,
+        spikes=spikes,
+        header_dict=header_dict,
     )
     return (
         sum(counts.values()) if counts else 0,
         len(counts),
         accepted_total,
         accepted_count,
-        max(counts.values()) if counts else 0,
+        max_spike_abundance,
     )
 
 
-def annotate_fasta_with_hmm_and_header(
+def annotate_fasta_with_spike_and_header(
     input_fasta,
     output_fasta,
     stem,
     shared_tmp_dir,
-    hmm_stem=None,
+    spikes=None,
     header_dict=None,
     debug=False,
 ):
     """Filter for ITS1 regions.
 
-    Assumes you have already applied trimming (and are not using
-    the HMM results for this).
+    Assumes you have already applied trimming.
 
     Assumes the SWARM naming convention.
 
-    Returns the number of unique sequences (integer), total read
-    count (integer) and maximum abundance (dict keyed by HMM name).
+    Returns the number of unique sequences (integer), total read count
+    (integer) and maximum abundance (dict keyed by spike name).
     """
-    max_hmm_abundance = Counter()
+    if not spikes:
+        spikes = []
+
+    max_spike_abundance = Counter()
     # This could be generalised if need something else, e.g.
     # >name;size=6; for VSEARCH.
     count = 0
@@ -444,25 +516,22 @@ def annotate_fasta_with_hmm_and_header(
         if header_dict:
             for key, value in header_dict.items():
                 out_handle.write(f"#{key}:{value}\n")
-        for title, full_seq, hmm_name in filter_for_hmm(
-            input_fasta, shared_tmp_dir, hmm=hmm_stem, debug=debug
-        ):
-            if hmm_name is None:
-                # Using HMM match(es) to spot control reads
-                hmm_name = ""
-            if hmm_name:
-                out_handle.write(f">{title} {hmm_name}\n{full_seq}\n")
-            else:
-                out_handle.write(f">{title}\n{full_seq}\n")
-            count += 1
-            abundance = abundance_from_read_name(title.split(None, 1)[0])
-            total += abundance
-            max_hmm_abundance[hmm_name] = max(
-                max_hmm_abundance[hmm_name],
-                abundance,
-            )
+        with open(input_fasta) as handle:
+            for title, full_seq in SimpleFastaParser(handle):
+                spike_name = is_spike_in(full_seq, spikes)
+                if spike_name:
+                    out_handle.write(f">{title} {spike_name}\n{full_seq}\n")
+                else:
+                    out_handle.write(f">{title}\n{full_seq}\n")
+                count += 1
+                abundance = abundance_from_read_name(title.split(None, 1)[0])
+                total += abundance
+                max_spike_abundance[spike_name] = max(
+                    max_spike_abundance[spike_name],
+                    abundance,
+                )
 
-    return count, total, max_hmm_abundance
+    return count, total, max_spike_abundance
 
 
 def prepare_sample(
@@ -476,7 +545,7 @@ def prepare_sample(
     flip,
     min_len,
     max_len,
-    hmm_stem,
+    spikes,
     min_abundance,
     control,
     merged_cache,
@@ -486,10 +555,10 @@ def prepare_sample(
 ):
     """Create FASTA file for sample from paired FASTQ.
 
-    Runs flash, does primer filtering, does HMM filtering.
+    Runs flash, does primer filtering, does spike-in detection.
 
-    Returns fasta filename, accepted unique sequence count, accepted
-    total read count, and a dict of max abundance (keyed by HMM name).
+    Returns fasta filename, accepted unique sequence count, accepted total
+    read count, and a dict of max abundance (keyed by spike-in name).
     """
     folder, stem = os.path.split(stem)
     if out_dir and out_dir != "-":
@@ -504,8 +573,10 @@ def prepare_sample(
         failed_primer_name is None or os.path.isfile(failed_primer_name)
     ):
         if control:
-            uniq_count, total, max_hmm_abundance = abundance_values_in_fasta(fasta_name)
-            return fasta_name, uniq_count, total, max_hmm_abundance
+            uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
+                fasta_name
+            )
+            return fasta_name, uniq_count, total, max_spike_abundance
         else:
             # Don't actually need the max abundance
             return fasta_name, None, None, {}
@@ -554,6 +625,7 @@ def prepare_sample(
             make_nr_fasta(
                 merged_fastq,
                 tmp_fasta_gz,
+                min_abundance=None,
                 fastq=True,
                 gzipped=True,
                 header_dict={
@@ -617,23 +689,36 @@ def prepare_sample(
             )
 
     # deduplicate and apply minimum abundance threshold
-    merged_fasta = os.path.join(tmp, "dedup_trimmed.fasta")
+    # and tag sequences if they look like spike-ins
+    dedup = os.path.join(tmp, "dedup_trimmed.fasta")
     (
         count,
         uniq_count,
         accepted_total,
         accepted_uniq_count,
-        max_hmm_abundance,
+        max_spike_abundance,
     ) = make_nr_fasta(
         trimmed_fasta,
-        merged_fasta,
+        dedup,
         min_abundance=min_abundance,
         min_len=min_len,
         max_len=max_len,
         weighted_input=bool(merged_fasta_gz),
         gzipped=False,
+        spikes=spikes,
+        header_dict={
+            "left_primer": left_primer,
+            "right_primer": right_primer,
+            "raw_fastq": count_raw,
+            "flash": count_flash,
+            "cutadapt": count_cutadapt,
+            # "abundance": accepted_total,
+            # "threshold": min_abundance,
+        },
         debug=debug,
     )
+    if accepted_total or accepted_uniq_count:
+        assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
     if count_cutadapt != count:
         sys.exit(
             f"ERROR: Cutadapt says wrote {count_cutadapt}, but we saw {count} reads."
@@ -650,7 +735,7 @@ def prepare_sample(
             f"From {count_raw} paired FASTQ reads,"
             f" found {uniq_count} unique sequences,"
             f" {accepted_uniq_count} above min abundance {min_abundance}"
-            f" (max abundance {max_hmm_abundance})\n"
+            f" (max abundance {max(max_spike_abundance.values())})\n"
         )
 
     if not accepted_uniq_count:
@@ -660,43 +745,6 @@ def prepare_sample(
                 f" but none above {'control' if control else 'sample'}"
                 f" minimum abundance threshold {min_abundance}\n"
             )
-        # Effectively empty FASTA file, just header
-        save_nr_fasta(
-            {},
-            fasta_name,
-            header_dict={
-                "left_primer": left_primer,
-                "right_primer": right_primer,
-                "raw_fastq": count_raw,
-                "flash": count_flash,
-                "cutadapt": count_cutadapt,
-                "abundance": accepted_total,
-                "threshold": min_abundance,
-            },
-        )
-        if failed_primer_name:
-            shutil.move(bad_primer_fasta, failed_primer_name)
-        return fasta_name, 0, 0, {}
-
-    # Determine if synthetic controls are present using hmmscan,
-    dedup = os.path.join(tmp, "dedup_its1.fasta")
-    uniq_count, total, max_hmm_abundance = annotate_fasta_with_hmm_and_header(
-        merged_fasta,
-        dedup,
-        stem,
-        shared_tmp,
-        hmm_stem=hmm_stem,
-        header_dict={
-            "left_primer": left_primer,
-            "right_primer": right_primer,
-            "raw_fastq": count_raw,
-            "flash": count_flash,
-            "cutadapt": count_cutadapt,
-            "abundance": accepted_total,
-            "threshold": min_abundance,
-        },
-        debug=debug,
-    )
 
     # File done
     shutil.move(dedup, fasta_name)
@@ -708,17 +756,20 @@ def prepare_sample(
             f"DEBUG: Filtered {stem} down to {uniq_count} unique sequences"
             f" above {'control' if control else 'sample'}"
             f" min abundance threshold {min_abundance}"
-            f" (max abundance {max(max_hmm_abundance.values(), default=0)})\n"
+            f" (max abundance {max(max_spike_abundance.values(), default=0)})\n"
         )
 
-    return fasta_name, uniq_count, total, max_hmm_abundance
+    if accepted_uniq_count or accepted_total:
+        assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
+    return fasta_name, accepted_uniq_count, accepted_total, max_spike_abundance
 
 
 def main(
     fastq,
     negative_controls,
     out_dir,
-    hmm_stem,
+    db_url,
+    spike_genus,
     primer_dir,
     left_primer,
     right_primer,
@@ -745,14 +796,61 @@ def main(
     if merged_cache and not os.path.isdir(merged_cache):
         sys.exit(f"ERROR: {merged_cache} for merged cache is not a directory.")
 
+    if fastq:
+        # Possible in a pipeline setting may need to pass a null value,
+        # e.g. -i "" or -i "-" when only have negatives?
+        fastq = [_ for _ in fastq if _ and _ != "-"]
     if negative_controls:
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
 
+    spikes = []
+    if not negative_controls:
+        # No point loading the spike-ins
+        spike_genus = None
+        db_url = None
+    elif spike_genus and db_url:
+        if debug:
+            sys.stderr.write("DEBUG: Loading spike-in control sequences from DB...\n")
+        # Connect to the DB,
+        Session = connect_to_db(db_url)  # echo=debug
+        session = Session()
+        # Doing a join to pull in the ITS1 and Taxonomy tables too:
+        cur_tax = aliased(Taxonomy)
+        its1_seq = aliased(ITS1)
+        view = (
+            session.query(SequenceSource)
+            .join(its1_seq, SequenceSource.its1)
+            .join(cur_tax, SequenceSource.current_taxonomy)
+            .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+        )
+        # Sorting for reproducibility
+        view = view.order_by(its1_seq.sequence, SequenceSource.id)
+        # Split on commas, strip white spaces
+        spike_genus = [_.strip() for _ in spike_genus.strip().split(",")]
+        for x in spike_genus:
+            if not session.query(Taxonomy).filter_by(genus=x).count():
+                sys.stderr.write(f"WARNING: Spike-in genus {x!r} not in database\n")
+        view = view.filter(cur_tax.genus.in_(spike_genus))
+        for seq_source in view:
+            spikes.append(
+                (
+                    seq_source.source_accession,
+                    seq_source.its1.sequence,
+                    kmers(seq_source.its1.sequence),
+                )
+            )
+        session.close()
+        sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
+    elif db_url and not spike_genus:
+        sys.stderr.write("ERROR: Database given, but no spike-in genus.\n")
+    else:  # spike_genus and not db_url
+        # Happens with default command line settings for prepare-reads
+        pass
+
     check_tools(["flash", "cutadapt"], debug)
-    if hmm_stem:
-        check_tools(["hmmscan"], debug)
 
     if negative_controls:
         control_file_pairs = find_fastq_pairs(
@@ -838,7 +936,7 @@ def main(
             if control
             else max(min_abundance, pool_worst_control.get(pool_key, 0))
         )
-        fasta_file, uniq_count, total, max_abundance_by_hmm = prepare_sample(
+        fasta_file, uniq_count, total, max_abundance_by_spike = prepare_sample(
             stem,
             raw_R1,
             raw_R2,
@@ -849,7 +947,7 @@ def main(
             flip,
             min_length,
             max_length,
-            hmm_stem,
+            spikes,
             min_a,
             control,
             merged_cache,
@@ -861,9 +959,11 @@ def main(
             sys.exit(f"ERROR: Multiple files named {fasta_file}")
         fasta_files_prepared.append(fasta_file)
         if uniq_count:
-            assert max_abundance_by_hmm, max_abundance_by_hmm
-        # Any HMM is assumed to be a synthetic control, no HMM means biological
-        max_its1_abundance = max_abundance_by_hmm.get("", 0)
+            assert (
+                max_abundance_by_spike
+            ), f"Got {max_abundance_by_spike!r} from {fasta_file}"
+        # Any spike-in is assumed to be a synthetic control, rest assumed biological
+        max_its1_abundance = max_abundance_by_spike.get("", 0)
         if control:
             if debug or max_its1_abundance > min_abundance:
                 sys.stderr.write(
@@ -880,7 +980,8 @@ def main(
                     % (
                         stem,
                         ", ".join(
-                            f"{k}: {v}" for k, v in sorted(max_abundance_by_hmm.items())
+                            f"{k}: {v}"
+                            for k, v in sorted(max_abundance_by_spike.items())
                         ),
                     )
                 )
