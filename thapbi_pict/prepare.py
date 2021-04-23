@@ -136,7 +136,7 @@ def parse_cutadapt_stdout(stdout, bad_primers=False):
     """  # noqa: E501
     before = None
     after = None
-    for line in stdout.strip().split("\n"):
+    for line in stdout.strip().splitlines():
         words = line.strip().split()
         if words == ["No", "reads", "processed!"]:
             before = after = 0
@@ -264,7 +264,7 @@ def parse_flash_stdout(stdout):
     """  # noqa: E501
     before = None
     after = None
-    for line in stdout.strip().split("\n"):
+    for line in stdout.strip().splitlines():
         words = line.strip().split()
         if words[:-1] == ["[FLASH]", "Total", "pairs:"]:
             before = int(words[-1])
