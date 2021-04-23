@@ -83,7 +83,7 @@ def version_blast(cmd="blastn"):
     If the command is not on the path, returns None.
     """
     text = getoutput(cmd + " -h")
-    for line in text.split("\n"):
+    for line in text.splitlines():
         if line.strip().endswith("+"):
             words = line.strip().split()
             if "BLAST" in words or "version" in words:
@@ -126,7 +126,7 @@ def version_hmmer(cmd="hmmscan"):
     If the command is not on the path, returns None.
     """
     text = getoutput(cmd + " -h")
-    for line in text.split("\n"):
+    for line in text.splitlines():
         if line.startswith("# HMMER"):
             if line.endswith("; http://hmmer.org/"):
                 line = line.rsplit(";", 1)[0]
