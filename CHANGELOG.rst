@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.9.2  2021-04-28 Fixed obsure problem using relative versions of absolute paths.
 v0.9.1  2021-04-20 Can specify encoding of metadata TSV file. Warn on low abundance threshold.
 v0.9.0  2021-04-19 Dropped use of Trimmomatic, faster and slightly higher read counts.
 v0.8.4  2021-04-13 Speed up re-running by delaying method setup until and if required.
