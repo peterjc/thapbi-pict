@@ -15,7 +15,9 @@ echo "=============================================="
 echo "Checking prepare-reads with synthetic controls"
 echo "=============================================="
 
-echo "Setting up four plate example"
+echo "------------------"
+echo "Four plate example"
+echo "------------------"
 
 rm -rf $TMP/mock_plates/
 mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared
@@ -117,8 +119,47 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundan
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
+
+echo "--------------------"
+echo "Single plate example"
+echo "--------------------"
+
+rm -rf $TMP/single_plate/
+mkdir -p $TMP/single_plate/raw_data/ $TMP/single_plate/merged $TMP/single_plate/prepared
+
+cp tests/reads/DNAMIX_S95_L001_R1_001.fastq.gz \
+   $TMP/single_plate/raw_data/sample_R1.fastq.gz
+cp tests/reads/DNAMIX_S95_L001_R2_001.fastq.gz \
+   $TMP/single_plate/raw_data/sample_R2.fastq.gz
+for PLATE in A B C D; do
+    # Create empty FASTQ pair to setup mock control input
+    echo | gzip > $TMP/single_plate/raw_data/spike-in-${PLATE}_R1.fastq.gz
+    echo | gzip > $TMP/single_plate/raw_data/spike-in-${PLATE}_R2.fastq.gz
+    # The merged cache uses gzipped deduplicated FASTA files:
+    cat tests/synthetic_controls/spike-in-${PLATE}.fasta \
+        | gzip > $TMP/single_plate/merged/spike-in-${PLATE}.fasta.gz
+done
+
+thapbi_pict prepare-reads --hmm - -a 75 \
+            -i $TMP/single_plate/raw_data/ \
+            -n $TMP/single_plate/raw_data/spike-in-* \
+            --merged-cache $TMP/single_plate/merged/ \
+            -o $TMP/single_plate/prepared/
+
+echo "Checking spike-in controls..."
+
+# Should all be same as above:
+for PLATE in A B C D; do
+    diff $TMP/single_plate/prepared/spike-in-${PLATE}.fasta $TMP/mock_plates/prepared/spike-in-${PLATE}.fasta
+done
+
+echo "Checking the mock sample and threshold used..."
+
+# Should be same plate A above since that had the highest threshold:
+diff $TMP/single_plate/prepared/sample.fasta $TMP/mock_plates/prepared/sample-A.fasta
+
 echo "===="
 echo "Done"
 echo "===="
 
-echo "$0 - test_summary.sh passed"
+echo "$0 - test_synthetic_controls.sh passed"
