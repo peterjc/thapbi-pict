@@ -50,7 +50,9 @@ def find_fastq_pairs(
 
     answer = []
     for x in filenames_or_folders:
-        x = os.path.normpath(os.path.relpath(x))
+        if not os.path.isabs(x):
+            x = os.path.relpath(x)
+        x = os.path.normpath(x)
         if os.path.isdir(x):
             if debug:
                 sys.stderr.write(f"Walking directory {x!r}\n")
@@ -900,12 +902,12 @@ def main(
     for pool_key in sorted(pool_worst_control):
         if pool_worst_control[pool_key] > min_abundance:
             sys.stderr.write(
-                os.path.relpath(pool_key)
+                (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
                 + f" abundance threshold raised to {pool_worst_control[pool_key]}\n"
             )
         else:
             sys.stderr.write(
-                os.path.relpath(pool_key)
+                (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
                 + f" negative control abundance {pool_worst_control[pool_key]} (good)\n"
             )
 
