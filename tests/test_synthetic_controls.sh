@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# Copyright 2021 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
+IFS=$'\n\t'
+set -euo pipefail
+
+export TMP=${TMP:-/tmp}
+
+echo "=============================================="
+echo "Checking prepare-reads with synthetic controls"
+echo "=============================================="
+
+echo "Setting up four plate example"
+
+rm -rf $TMP/mock_plates/
+mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared
+
+for PLATE in A B C D; do
+    # Making mock plates, each with a sample pair and a control pair
+    mkdir -p -p $TMP/mock_plates/plate-${PLATE}
+    # Setup the biological sample pair
+    cp tests/reads/DNAMIX_S95_L001_R1_001.fastq.gz \
+       $TMP/mock_plates/plate-${PLATE}/sample-${PLATE}_R1.fastq.gz
+    cp tests/reads/DNAMIX_S95_L001_R2_001.fastq.gz \
+       $TMP/mock_plates/plate-${PLATE}/sample-${PLATE}_R2.fastq.gz
+    # Create empty FASTQ pair to setup mock control input
+    mkdir -p -p $TMP/mock_plates/plate-${PLATE}
+    echo | gzip > $TMP/mock_plates/plate-${PLATE}/spike-in-${PLATE}_R1.fastq.gz
+    echo | gzip > $TMP/mock_plates/plate-${PLATE}/spike-in-${PLATE}_R2.fastq.gz
+    # The merged cache uses gzipped deduplicated FASTA files:
+    cat tests/synthetic_controls/spike-in-${PLATE}.fasta \
+        | gzip > $TMP/mock_plates/merged/spike-in-${PLATE}.fasta.gz
+done
+
+thapbi_pict prepare-reads --hmm - -a 75 \
+            -i $TMP/mock_plates/plate-* \
+            -n $TMP/mock_plates/plate-*/spike-in-* \
+            --merged-cache $TMP/mock_plates/merged/ \
+            -o $TMP/mock_plates/prepared/
+
+echo "Checking spike-in controls..."
+
+# A:
+if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-A.fasta` -ne "12" ]; then
+    echo "Wrong unique count after abundance threshold in spike-in-A.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-A.fasta` != "#abundance:38473" ]; then
+    echo "Wrong count accepted after abundance threshold in spike-in-A.fasta"; false
+fi
+# B:
+if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-B.fasta` -ne "8" ]; then
+    echo "Wrong unique count after abundance threshold in spike-in-B.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-B.fasta` != "#abundance:84648" ]; then
+    echo "Wrong count accepted after abundance threshold in spike-in-B.fasta"; false
+fi
+# C:
+if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-C.fasta` -ne "7" ]; then
+    echo "Wrong unique count after abundance threshold in spike-in-C.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-C.fasta` != "#abundance:44501" ]; then
+    echo "Wrong count accepted after abundance threshold in spike-in-C.fasta"; false
+fi
+# D:
+if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-D.fasta` -ne "6" ]; then
+    echo "Wrong unique count after abundance threshold in spike-in-D.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-D.fasta` != "#abundance:25102" ]; then
+    echo "Wrong count accepted after abundance threshold in spike-in-D.fasta"; false
+fi
+
+echo "Checking the mock samples and thresholds used..."
+
+# A, threshold raised to 1053:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-A.fasta` != "#threshold:1053" ]; then
+    echo "Wrong abundance threshold in sample-A.fasta"; false
+fi
+if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-A.fasta` -ne "1" ]; then
+    echo "Wrong unique count after abundance threshold in sample-A.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:1171" ]; then
+    echo "Wrong count accepted after abundance threshold in sample-A.fasta"; false
+fi
+# B, threshold kept at 75:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-B.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in sample-B.fasta"; false
+fi
+if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-B.fasta` -ne "8" ]; then
+    echo "Wrong unique count after abundance threshold in sample-B.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-B.fasta` != "#abundance:3684" ]; then
+    echo "Wrong count accepted after abundance threshold in sample-B.fasta"; false
+fi
+# C, threshold kept at 75:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-C.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in sample-C.fasta"; false
+fi
+if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-C.fasta` -ne "8" ]; then
+    echo "Wrong unique count after abundance threshold in sample-C.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-C.fasta` != "#abundance:3684" ]; then
+    echo "Wrong count accepted after abundance threshold in sample-C.fasta"; false
+fi
+# D, threshold raised to 107:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-D.fasta` != "#threshold:107" ]; then
+    echo "Wrong abundance threshold in sample-D.fasta"; false
+fi
+if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-D.fasta` -ne "7" ]; then
+    echo "Wrong unique count after abundance threshold in sample-D.fasta"; false
+fi
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundance:3586" ]; then
+    echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
+fi
+
+echo "===="
+echo "Done"
+echo "===="
+
+echo "$0 - test_summary.sh passed"
