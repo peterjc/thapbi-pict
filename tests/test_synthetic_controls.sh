@@ -15,9 +15,9 @@ echo "=============================================="
 echo "Checking prepare-reads with synthetic controls"
 echo "=============================================="
 
-echo "------------------"
-echo "Four plate example"
-echo "------------------"
+echo "-----------------------------------"
+echo "Four plate example, separate output"
+echo "-----------------------------------"
 
 rm -rf $TMP/mock_plates/
 mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared
@@ -119,6 +119,23 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundan
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
+echo "-------------------------------------"
+echo "Four plate example, co-located output"
+echo "-------------------------------------"
+
+# As above, but write the FASTA files next to the FASTQ inputs
+# (no explicit -o / --output setting)
+thapbi_pict prepare-reads --hmm - -a 75 \
+            -i $TMP/mock_plates/plate-* \
+            -n $TMP/mock_plates/plate-*/spike-in-* \
+            --merged-cache $TMP/mock_plates/merged/
+
+echo "Checking same output..."
+
+for PLATE in A B C D; do
+    diff $TMP/mock_plates/plate-${PLATE}/spike-in-${PLATE}.fasta $TMP/mock_plates/prepared/spike-in-${PLATE}.fasta
+    diff $TMP/mock_plates/plate-${PLATE}/sample-${PLATE}.fasta $TMP/mock_plates/prepared/sample-${PLATE}.fasta
+done
 
 echo "--------------------"
 echo "Single plate example"
