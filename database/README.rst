@@ -17,7 +17,7 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
 - NCBI Oomycota (including *Phytophthora*) at genus level, 4907 entries in
-  file ``database/2021-01-28-ITS_Oomycota_w32.fasta`` trimmed to start at the
+  file ``database/2021-02-23-ITS_Oomycota_w32.fasta`` trimmed to start at the
   expected 32bp leader, and any obvious right primer removed (which the import
   would do anyway - but this gives a smaller more useful intermediate file),
   using::
