@@ -31,6 +31,8 @@ from .utils import md5seq
 from .utils import run
 from .versions import check_tools
 
+KMER_LENGTH = 31
+
 
 def find_fastq_pairs(
     filenames_or_folders, ext=(".fastq", ".fastq.gz"), ignore_prefixes=None, debug=False
@@ -392,12 +394,12 @@ def save_nr_fasta(
     return accepted_total, accepted_count, max_spike_abundance
 
 
-def kmers(sequence, k=31):
+def kmers(sequence, k=KMER_LENGTH):
     """Make set of all kmers in the given sequence."""
     return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
 
 
-def has_enough_kmers(sequence, kmers, threshold=70, k=31):
+def has_enough_kmers(sequence, kmers, threshold=70, k=KMER_LENGTH):
     """Check if given sequence shares at least this many kmers."""
     count = 0
     for i in range(len(sequence) - k + 1):
@@ -411,7 +413,12 @@ def has_enough_kmers(sequence, kmers, threshold=70, k=31):
 def is_spike_in(sequence, spikes):
     """Return spike-in name if sequence matches, else empty string."""
     for spike_name, spike_seq, spike_kmers in spikes:
-        if sequence == spike_seq or has_enough_kmers(sequence, spike_kmers):
+        if sequence == spike_seq:
+            return spike_name
+        # This will not work when len(spike) <~ kmer length
+        # (fail gracefully with an impossible to meet value of 10)
+        threshold = min((len(spike_seq) - KMER_LENGTH) / 3, 10)
+        if has_enough_kmers(sequence, spike_kmers, threshold):
             return spike_name
     return ""
 
