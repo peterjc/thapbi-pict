@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -11,7 +11,6 @@ Python objects.
 """
 from sqlalchemy import Column
 from sqlalchemy import create_engine
-from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Index
 from sqlalchemy import Integer
@@ -36,7 +35,6 @@ class DataSource(Base):
     name = Column(String(100))  # e.g. NCBI, Legacy v0.005
     uri = Column(String(200))  # e.g. traceable filename or URL
     md5 = Column(String(32), unique=True)
-    date = Column(DateTime)
     notes = Column(String(1000))
 
     def __repr__(self):
@@ -122,20 +120,6 @@ class SequenceSource(Base):
     # Initially based on the values above, but expect to reclassify some
     current_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
     current_taxonomy = relationship(Taxonomy, foreign_keys=[current_taxonomy_id])
-
-    # date_added = Column(DateTime) -> see data_source.date
-    date_modified = Column(DateTime)
-
-    # Implement as an enum?
-    # Unknown, Public DB, Direct Sequencing, Genome Sequence, Metabarcoding
-    seq_strategy = Column(Integer)
-
-    # Implement as an enum?
-    # Unknown, Sanger, Illumina, Roche 454, PacBio, Oxford Nanopore, etc
-    seq_platform = Column(Integer)
-
-    # Start with something like -1 = bad, +1 = good?
-    curated_trust = Column(Integer)
 
 
 def connect_to_db(*args, **kwargs):
