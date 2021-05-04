@@ -24,9 +24,10 @@ with its Python dependencies:
 
     $ pip install thapbi_pict
 
-However, in this case you will still need to install various external command
-line tools like ``hmmer``, and others which are only used for some classifiers
-(like ``blast`` and ``swarm``). If you have BioConda setup, use the following:
+However, in this case you will still need to install at least the command line
+tool ``flash`` (for merging Illumina paired reads), and optionally others used
+for some classifier methods (like ``blast`` and ``swarm``). If you have
+BioConda setup, use the following:
 
 .. code:: console
 
@@ -40,7 +41,7 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
 .. code:: console
 
-    $ sudo apt-get install ncbi-blast+ cutadapt hmmer swarm
+    $ sudo apt-get install ncbi-blast+ swarm
 
 If you want to install the very latest unreleased code, you must download the
 source code from the `repository on GitHub
