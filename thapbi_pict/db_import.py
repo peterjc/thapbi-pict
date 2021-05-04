@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -359,9 +359,6 @@ def import_fasta_file(
                         sequence=seq,
                         original_taxonomy=taxonomy,
                         current_taxonomy=taxonomy,
-                        seq_strategy=0,
-                        seq_platform=0,
-                        curated_trust=0,
                     )
                     session.add(record_entry)
                 good_entries += 1  # count once?
