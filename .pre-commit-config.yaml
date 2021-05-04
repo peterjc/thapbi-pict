@@ -1,7 +1,7 @@
 # pre-commit run --all-files
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v3.4.0
     hooks:
     -   id: check-yaml
     -   id: check-executables-have-shebangs
@@ -22,12 +22,12 @@ repos:
         language: pygrep
         files: \.(py|sh|rst|yml|yaml)$
 -   repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 21.4b2
     hooks:
     -   id: black
         args: [--check]
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.9
+    rev: 3.9.1
     hooks:
     -   id: flake8
         additional_dependencies: [
@@ -43,7 +43,7 @@ repos:
             'pydocstyle>=5.0.0',
          ]
 -   repo: https://github.com/asottile/blacken-docs
-    rev: v1.6.0
+    rev: v1.10.0
     hooks:
     -   id: blacken-docs
         additional_dependencies: [black==19.10b0]
@@ -58,12 +58,12 @@ repos:
             --ignore-substitutions=version
         ]
 -   repo: https://github.com/PyCQA/doc8
-    rev: ''
+    rev: '0.9.0a1'
     hooks:
     -   id: doc8
         additional_dependencies: [pygments]
         args: [--quiet,--ignore=D001]
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.3.5
+    rev: v2.5.0
     hooks:
     -   id: reorder-python-imports
