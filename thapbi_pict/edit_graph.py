@@ -540,7 +540,7 @@ def main(
                     check1,
                     check2,
                     len=edge_length,
-                    edit_dist=dist,
+                    edit_dist=int(dist),  # cast numpy.uint64 to int
                     K=edge_length,
                     weight=edge_weight,
                     style=edge_style,

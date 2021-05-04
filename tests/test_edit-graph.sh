@@ -32,7 +32,7 @@ if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta 
 # Same example as above with default xgmml output, but here different output formats:
 if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f graphml | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f gexf | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
-# gml fails, https://github.com/networkx/networkx/issues/3471
+if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f gml | grep -c "  edge \["` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 
 # Same example, but PDF output (more dependencies):
 thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f pdf | grep "%PDF-1.4"
