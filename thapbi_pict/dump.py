@@ -14,7 +14,7 @@ from sqlalchemy.orm import contains_eager
 
 from .classify import taxid_and_sp_lists
 from .db_orm import connect_to_db
-from .db_orm import ITS1
+from .db_orm import RefMarker
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
 from .utils import genus_species_name
@@ -56,7 +56,7 @@ def main(
 
     # Doing a join to pull in the marker and taxonomy tables too:
     cur_tax = aliased(Taxonomy)
-    marker_seq = aliased(ITS1)
+    marker_seq = aliased(RefMarker)
     view = (
         session.query(SequenceSource)
         .join(marker_seq, SequenceSource.its1)

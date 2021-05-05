@@ -21,7 +21,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
-from .db_orm import ITS1
+from .db_orm import RefMarker
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
 from .utils import abundance_filter_fasta
@@ -56,7 +56,7 @@ def md5_to_taxon(md5_list, session):
     # (since at some point we'll want to define database subsets
     # consistently). Still, might be able to refactor this query...
     cur_tax = aliased(Taxonomy)
-    marker_seq = aliased(ITS1)
+    marker_seq = aliased(RefMarker)
     view = (
         session.query(SequenceSource)
         .join(marker_seq, SequenceSource.its1)
@@ -131,7 +131,7 @@ def perfect_match_in_db(session, seq, debug=False):
     """
     assert seq == seq.upper(), seq
     # Now, does this equal any of the marker sequences in our DB?
-    marker = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+    marker = session.query(RefMarker).filter(RefMarker.sequence == seq).one_or_none()
     if marker is None:
         return 0, "", "No DB match"
     assert marker.sequence == seq
@@ -162,7 +162,7 @@ def perfect_substr_in_db(session, seq, debug=False):
     # Now, does this match any of the marker seq in our DB (as a substring)
     # This didn't work:
     #
-    # session.query(ITS1).filter(ITS1.sequence.match(seq)).one_or_none()
+    # session.query(RefMarker).filter(RefMarker.sequence.match(seq)).one_or_none()
     #
     # Gave:
     #
@@ -174,7 +174,9 @@ def perfect_substr_in_db(session, seq, debug=False):
     #     FROM marker_sequence
     #     WHERE marker_sequence.sequence MATCH ?]
     t = set()
-    for marker in session.query(ITS1).filter(ITS1.sequence.like("%" + seq + "%")):
+    for marker in session.query(RefMarker).filter(
+        RefMarker.sequence.like("%" + seq + "%")
+    ):
         assert marker is not None
         assert seq in marker.sequence
         t.update(
@@ -239,7 +241,7 @@ def seq_method_identity(seq, session, debug=False):
     Returns taxid (integer or string), genus-species (string), note (string).
     If there are multiple matches, semi-colon separated strings are returned.
     """
-    marker = session.query(ITS1).filter(ITS1.sequence == seq).one_or_none()
+    marker = session.query(RefMarker).filter(RefMarker.sequence == seq).one_or_none()
     if marker is None:
         return 0, "", "No DB match"
     else:
@@ -282,7 +284,7 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     global fuzzy_matches
     fuzzy_matches = {}
 
-    view = session.query(ITS1)
+    view = session.query(RefMarker)
     count = 0
     for marker in view:
         count += 1
@@ -358,7 +360,11 @@ def onebp_match_in_db(session, seq, debug=False):
         # If there are any *different* genus matches 1bp away, they'll be
         # reported too, but that would most likely be a DB problem...
         for db_seq in [seq] + fuzzy_matches[md5_16b]:
-            marker = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
+            marker = (
+                session.query(RefMarker)
+                .filter(RefMarker.sequence == db_seq)
+                .one_or_none()
+            )
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.update(
                 _.current_taxonomy
@@ -383,7 +389,7 @@ def _setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
     db_seqs = set()
-    view = session.query(ITS1)
+    view = session.query(RefMarker)
     for marker in view:
         db_seqs.add(marker.sequence.upper())
     # Now set fuzzy_matches too...
@@ -452,7 +458,9 @@ def dist_in_db(session, seq, debug=False):
 
     genus = set()
     for db_seq in best:
-        marker = session.query(ITS1).filter(ITS1.sequence == db_seq).one_or_none()
+        marker = (
+            session.query(RefMarker).filter(RefMarker.sequence == db_seq).one_or_none()
+        )
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
             _.current_taxonomy.genus
@@ -486,7 +494,7 @@ def method_dist(
 
 def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a BLAST DB from the marker sequence DB entries."""
-    view = session.query(ITS1)
+    view = session.query(RefMarker)
     db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     count = 0
@@ -615,7 +623,7 @@ def method_blast(
 
 def make_swarm_db_fasta(db_fasta, session):
     """Prepare a SWARM style marker FASTA sequence from our DB."""
-    view = session.query(ITS1)
+    view = session.query(RefMarker)
     count = 0
     skip = 0
     unambig = set("ACGT")
@@ -960,7 +968,7 @@ def main(
     if not db_sp_list:
         sys.exit("ERROR: Have no marker sequences in DB with species information.\n")
 
-    count = session.query(ITS1).count()
+    count = session.query(RefMarker).count()
     if debug:
         sys.stderr.write(f"Marker sequnce table contains {count} distinct sequences.\n")
     if not count:
