@@ -3,7 +3,7 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-"""Object Relational Mapping for ITS1 sequence database.
+"""Object Relational Mapping for marker sequence database.
 
 Using SQLalchemy, the Python classes defined here give us a
 database schema and the code to import/export the data as
@@ -24,7 +24,7 @@ Base = declarative_base()
 
 
 class DataSource(Base):
-    """Database entry for a data source (NCBI, Legacy, etc).
+    """Database entry for a data source (NCBI, curated, etc).
 
     Each accession is expected to be unique within a data source.
     """
@@ -84,23 +84,23 @@ class Synonym(Base):
 
 
 class ITS1(Base):
-    """Database entry for a single ITS1 sequence."""
+    """Database entry for a single marker reference sequence."""
 
-    __tablename__ = "its1_sequence"
+    __tablename__ = "its1_sequence"  # TODO - marker_sequence or marker_reference
 
     id = Column(Integer, primary_key=True)
     md5 = Column(String(32), unique=True)
     sequence = Column(String(250), unique=True)
 
     def __repr__(self):
-        """Represent an ITS1 database entry as a string."""
+        """Represent a marker database reference sequence as a string."""
         return f"ITS1(md5={self.md5!r}, sequence={self.sequence!r})"
 
 
 class SequenceSource(Base):
-    """Database entry for source of an ITS1 sequence entry."""
+    """Database entry for source of a marker sequence entry."""
 
-    __tablename__ = "its1_source"
+    __tablename__ = "its1_source"  # TODO - marker_source or sequence_source
 
     id = Column(Integer, primary_key=True)
 
@@ -111,7 +111,7 @@ class SequenceSource(Base):
     its1_id = Column(Integer, ForeignKey("its1_sequence.id"))
     its1 = relationship(ITS1, foreign_keys=[its1_id])
 
-    sequence = Column(String(1000))  # Full sequence, can be longer than ITS1
+    sequence = Column(String(1000))  # Full sequence, can be longer than marker
 
     # Whatever was recorded in the original data source
     original_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))

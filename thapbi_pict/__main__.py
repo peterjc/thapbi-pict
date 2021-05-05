@@ -910,7 +910,7 @@ def main(args=None):
 
     # load-tax
     subcommand_parser = subparsers.add_parser(
-        "load-tax", description="Load an NCBI taxonomy dump into an ITS1 database."
+        "load-tax", description="Load an NCBI taxonomy dump into a marker database."
     )
     subcommand_parser.add_argument(
         "-t",
@@ -937,14 +937,14 @@ def main(args=None):
     # ncbi-import
     subcommand_parser = subparsers.add_parser(
         "ncbi-import",
-        description="Load an NCBI format ITS1 FASTA file into a database. "
+        description="Load an NCBI format FASTA file into a database. "
         "By default verifies species names against a pre-loaded taxonomy, "
         "non-matching entries are rejected. In lax mode uses heuristics to "
         "split the species and any following free text - see also the "
         "curated-import command which avoids this ambiguity.",
     )
     subcommand_parser.add_argument(
-        "-i", "--input", type=str, required=True, help="One ITS1 fasta filename."
+        "-i", "--input", type=str, required=True, help="One NCBI-style fasta filename."
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
@@ -980,7 +980,7 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="One or more ITS1 FASTA and classifier filenames or folders "
+        help="One or more marker FASTA and classifier filenames or folders "
         "(names containing files named *.fasta and *.method.tsv, where "
         "method is set via the -m / --method argument).",
     )
@@ -1014,7 +1014,7 @@ def main(args=None):
             "over-and-above whatever was used to prepare the FASTA file. "
             f"Default here is {DEFAULT_MIN_ABUNDANCE * 10}, ten times the default "
             f" of {DEFAULT_MIN_ABUNDANCE} used for the classification pipeline - "
-            "be cautious what goes in your ITS1 database)."
+            "be cautious what goes in your marker database)."
         ),
     )
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
@@ -1051,7 +1051,7 @@ def main(args=None):
     # dump
     subcommand_parser = subparsers.add_parser(
         "dump",
-        description="Export an ITS1 database to a text file.",
+        description="Export a marker database to a text file.",
         epilog="e.g. 'thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt'",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
@@ -1411,7 +1411,7 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "edit-graph",
         description="Draw network graph of marker sequences using edit distance.",
-        epilog="Takes an ITS1 database and/or prepared FASTA files as input. "
+        epilog="Takes a marker database and/or prepared FASTA files as input. "
         "The output is a network graph (in a choice of format) with unique "
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
         "colored by genus, size set by total abundance in the FASTA files), "

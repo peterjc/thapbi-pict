@@ -3,7 +3,7 @@
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-"""Prepare raw ITS1 sequencing reads (trimming, merging, etc).
+"""Prepare raw amplicon sequencing reads (trimming, merging, etc).
 
 This implements the ``thapbi_pict prepare-reads ...`` command.
 """
@@ -502,7 +502,7 @@ def annotate_fasta_with_spike_and_header(
     header_dict=None,
     debug=False,
 ):
-    """Filter for ITS1 regions.
+    """Annotate FASTA file with header and any spike-in matches.
 
     Assumes you have already applied trimming.
 
@@ -823,18 +823,18 @@ def main(
         # Connect to the DB,
         Session = connect_to_db(db_url)  # echo=debug
         session = Session()
-        # Doing a join to pull in the ITS1 and Taxonomy tables too:
+        # Doing a join to pull in the marker and taxonomy tables too:
         cur_tax = aliased(Taxonomy)
-        its1_seq = aliased(ITS1)
+        marker_seq = aliased(ITS1)
         view = (
             session.query(SequenceSource)
-            .join(its1_seq, SequenceSource.its1)
+            .join(marker_seq, SequenceSource.its1)
             .join(cur_tax, SequenceSource.current_taxonomy)
-            .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+            .options(contains_eager(SequenceSource.its1, alias=marker_seq))
             .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
         )
         # Sorting for reproducibility
-        view = view.order_by(its1_seq.sequence, SequenceSource.id)
+        view = view.order_by(marker_seq.sequence, SequenceSource.id)
         # Split on commas, strip white spaces
         spike_genus = [_.strip() for _ in spike_genus.strip().split(",")]
         for x in spike_genus:
@@ -970,17 +970,17 @@ def main(
                 max_abundance_by_spike
             ), f"Got {max_abundance_by_spike!r} from {fasta_file}"
         # Any spike-in is assumed to be a synthetic control, rest assumed biological
-        max_its1_abundance = max_abundance_by_spike.get("", 0)
+        max_non_spike_abundance = max_abundance_by_spike.get("", 0)
         if control:
-            if debug or max_its1_abundance > min_abundance:
+            if debug or max_non_spike_abundance > min_abundance:
                 sys.stderr.write(
-                    f"Control {stem} has max marker abundance {max_its1_abundance}"
+                    f"Control {stem} has max marker abundance {max_non_spike_abundance}"
                     f" ({uniq_count} unique sequences, {total} reads, over default"
                     f" threshold {min_abundance})\n"
                 )
-            if max_its1_abundance > pool_worst_control.get(pool_key, -1):
+            if max_non_spike_abundance > pool_worst_control.get(pool_key, -1):
                 # Record even if zero, nice to have for summary later
-                pool_worst_control[pool_key] = max_its1_abundance
+                pool_worst_control[pool_key] = max_non_spike_abundance
             if debug:
                 sys.stderr.write(
                     "Control %s max abundance breakdown %s\n"
@@ -1000,7 +1000,7 @@ def main(
             sys.stderr.write(
                 f"Sample {stem} has {uniq_count} unique sequences, {total}"
                 f" reads, over abundance threshold {min_a}"
-                f" (max marker abundance {max_its1_abundance})\n"
+                f" (max marker abundance {max_non_spike_abundance})\n"
             )
 
     if skipped_samples:

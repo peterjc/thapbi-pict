@@ -1,9 +1,9 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-"""Dumping out ITS1 database to text files.
+"""Dumping out marker database to text files.
 
 This implements the ``thapbi_pict dump ...`` command.
 """
@@ -54,18 +54,18 @@ def main(
     else:
         out_handle = open(output_filename, "w")
 
-    # Doing a join to pull in the ITS1 and Taxonomy tables too:
+    # Doing a join to pull in the marker and taxonomy tables too:
     cur_tax = aliased(Taxonomy)
-    its1_seq = aliased(ITS1)
+    marker_seq = aliased(ITS1)
     view = (
         session.query(SequenceSource)
-        .join(its1_seq, SequenceSource.its1)
+        .join(marker_seq, SequenceSource.its1)
         .join(cur_tax, SequenceSource.current_taxonomy)
-        .options(contains_eager(SequenceSource.its1, alias=its1_seq))
+        .options(contains_eager(SequenceSource.its1, alias=marker_seq))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
     # Sorting for reproducibility
-    view = view.order_by(its1_seq.sequence, SequenceSource.id)
+    view = view.order_by(marker_seq.sequence, SequenceSource.id)
 
     genus_list = []
     if genus.strip():

@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -6,7 +6,7 @@
 """Code for THAPBI PICT to deal with NCBI taxonomy dumps.
 
 The code is needed initially for loading an NCBI taxdump folder (files
-``names.dmp``, ``nodes.dmp`` etc) into an ITS1 database.
+``names.dmp``, ``nodes.dmp`` etc) into a marker database.
 """
 import os
 import sys
@@ -170,7 +170,7 @@ def not_top_species(top_species, children, ranks, names, genus_list):
 
 
 def main(tax, db_url, ancestors, debug=True):
-    """Load an NCBI taxdump into an ITS1 database."""
+    """Load an NCBI taxdump into a database."""
     if not os.path.isdir(tax):
         sys.exit(f"ERROR: Could not find taxdump directory: {tax!r}\n")
     for filename in ("names.dmp", "nodes.dmp"):
