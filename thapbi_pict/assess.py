@@ -1,9 +1,9 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
-"""Assess classification of ITS1 reads at species level.
+"""Assess classification of marker reads at species level.
 
 This implements the ``thapbi_pict assess ...`` command.
 """

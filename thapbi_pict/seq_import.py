@@ -10,20 +10,20 @@ FASTA files from the prepared read step, and their known classifications, and
 outputs FASTA files with the species names in the record description - ready
 for importing into a database with the ``thapbi_pict curated-import`` command.
 
-This could be used to import classified sequences using one DB into
-another DB, but that is not the motivating use case.
+This could be used to import classified sequences using one DB into another
+DB, but that is not the motivating use case.
 
 The ``thapbi_pict assess`` command can compare two sets of classifier
-predictions, but defaults to comparing to set of a "known" values which
-can be created for positive controls (e.g. sequencing a plate where
-the samples are all from single isolates).
+predictions, but defaults to comparing to set of a "known" values which can be
+created for positive controls (e.g. sequencing a plate where the samples are
+all from single isolates).
 
 You can also give these positive control "known" classifications to
 ``thapbi_pict curated-seq`` to then import into a database. The idea here
-is to capture experimentally real biological variants beyond the
-single canonical ITS1 sequence typically available for each species.
-In order to guard against importing PCR artefacts or cross-sample
-contamination, you can set a minimum abundance for importing.
+is to capture experimentally real biological variants beyond the single
+canonical marker sequence typically available for each species. In order to
+guard against importing PCR artefacts or cross-sample contamination, you can
+set a minimum abundance for importing.
 """
 import os
 import shutil

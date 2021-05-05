@@ -1,4 +1,4 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -16,7 +16,7 @@ Or, using the NCBI Entrez Direct command line tools::
         -query "its1 AND Phytophthora[Organism] AND 150:800[Sequence Length]" \
         | efetch -format fasta > example.fasta
 
-Then, import this into our ITS DB using::
+Then, import this into your ITS1 DB using::
 
     $ thapbi_pict ncbi-import -d example.sqlite -i example.fasta
 

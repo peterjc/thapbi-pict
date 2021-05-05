@@ -338,24 +338,24 @@ def import_fasta_file(
                 assert taxonomy is not None
                 # at this point we don't have the full sequence
                 # prior to any primer removal...
-                its1_seq = seq.upper()
+                marker_seq = seq.upper()
                 if True:
-                    # its1_seq_count += 1
-                    its1_md5 = md5seq(its1_seq)
+                    # marker_seq_count += 1
+                    marker_md5 = md5seq(marker_seq)
 
                     # Is sequence already there? e.g. duplicate sequences in FASTA file
-                    its1 = (
+                    marker = (
                         session.query(ITS1)
-                        .filter_by(md5=its1_md5, sequence=its1_seq)
+                        .filter_by(md5=marker_md5, sequence=marker_seq)
                         .one_or_none()
                     )
-                    if its1 is None:
-                        its1 = ITS1(md5=its1_md5, sequence=its1_seq)
-                        session.add(its1)
+                    if marker is None:
+                        marker = ITS1(md5=marker_md5, sequence=marker_seq)
+                        session.add(marker)
                     record_entry = SequenceSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
-                        its1=its1,
+                        its1=marker,
                         sequence=seq,
                         original_taxonomy=taxonomy,
                         current_taxonomy=taxonomy,
