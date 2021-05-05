@@ -83,7 +83,7 @@ class Synonym(Base):
         return f"Synonym(name={self.name})"
 
 
-class ITS1(Base):
+class RefMarker(Base):
     """Database entry for a single marker reference sequence."""
 
     __tablename__ = "its1_sequence"  # TODO - marker_sequence or marker_reference
@@ -94,7 +94,7 @@ class ITS1(Base):
 
     def __repr__(self):
         """Represent a marker database reference sequence as a string."""
-        return f"ITS1(md5={self.md5!r}, sequence={self.sequence!r})"
+        return f"RefMarker(md5={self.md5!r}, sequence={self.sequence!r})"
 
 
 class SequenceSource(Base):
@@ -109,7 +109,7 @@ class SequenceSource(Base):
     source = relationship(DataSource)
 
     its1_id = Column(Integer, ForeignKey("its1_sequence.id"))
-    its1 = relationship(ITS1, foreign_keys=[its1_id])
+    its1 = relationship(RefMarker, foreign_keys=[its1_id])
 
     sequence = Column(String(1000))  # Full sequence, can be longer than marker
 
