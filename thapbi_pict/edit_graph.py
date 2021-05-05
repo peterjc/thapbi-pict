@@ -324,9 +324,9 @@ def main(
         view = (
             session.query(SequenceSource)
             .join(marker_seq, SequenceSource.marker)
-            .join(cur_tax, SequenceSource.current_taxonomy)
+            .join(cur_tax, SequenceSource.taxonomy)
             .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+            .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
         )
         # Sorting for reproducibility
         view = view.order_by(SequenceSource.id)
@@ -340,7 +340,7 @@ def main(
             md5_in_db.add(md5)
             md5_to_seq[md5] = seq_source.marker.sequence
             genus_species = genus_species_name(
-                seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
+                seq_source.taxonomy.genus, seq_source.taxonomy.species
             )
             try:
                 md5_species[md5].add(genus_species)

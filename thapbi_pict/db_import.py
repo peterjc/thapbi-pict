@@ -357,8 +357,7 @@ def import_fasta_file(
                         source=db_source,
                         marker=marker,
                         sequence=seq,
-                        original_taxonomy=taxonomy,
-                        current_taxonomy=taxonomy,
+                        taxonomy=taxonomy,
                     )
                     session.add(record_entry)
                 good_entries += 1  # count once?

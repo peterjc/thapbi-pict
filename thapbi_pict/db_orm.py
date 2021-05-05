@@ -114,13 +114,9 @@ class SequenceSource(Base):
 
     sequence = Column(String(1000))  # Full sequence, can be longer than marker
 
-    # Whatever was recorded in the original data source
-    original_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
-    original_taxonomy = relationship(Taxonomy, foreign_keys=[original_taxonomy_id])
-
-    # Initially based on the values above, but expect to reclassify some
-    current_taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
-    current_taxonomy = relationship(Taxonomy, foreign_keys=[current_taxonomy_id])
+    # TODO - change its1_source.taxonomy_id to .taxonomy_id
+    taxonomy_id = Column("current_taxonomy_id", Integer, ForeignKey("taxonomy.id"))
+    taxonomy = relationship(Taxonomy, foreign_keys=[taxonomy_id])
 
 
 def connect_to_db(*args, **kwargs):

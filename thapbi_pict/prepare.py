@@ -829,9 +829,9 @@ def main(
         view = (
             session.query(SequenceSource)
             .join(marker_seq, SequenceSource.marker)
-            .join(cur_tax, SequenceSource.current_taxonomy)
+            .join(cur_tax, SequenceSource.taxonomy)
             .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-            .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+            .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
         )
         # Sorting for reproducibility
         view = view.order_by(marker_seq.sequence, SequenceSource.id)
