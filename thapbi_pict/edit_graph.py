@@ -323,9 +323,9 @@ def main(
         marker_seq = aliased(RefMarker)
         view = (
             session.query(SequenceSource)
-            .join(marker_seq, SequenceSource.its1)
+            .join(marker_seq, SequenceSource.marker)
             .join(cur_tax, SequenceSource.current_taxonomy)
-            .options(contains_eager(SequenceSource.its1, alias=marker_seq))
+            .options(contains_eager(SequenceSource.marker, alias=marker_seq))
             .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
         )
         # Sorting for reproducibility
@@ -333,12 +333,12 @@ def main(
         # TODO - Copy genus/species filtering behvaiour from dump command?
 
         for seq_source in view:
-            md5 = seq_source.its1.md5
+            md5 = seq_source.marker.md5
             if not always_show_db and md5 not in md5_in_fasta:
                 # Low abundance or absenst from FASTA files, ignore it
                 continue
             md5_in_db.add(md5)
-            md5_to_seq[md5] = seq_source.its1.sequence
+            md5_to_seq[md5] = seq_source.marker.sequence
             genus_species = genus_species_name(
                 seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
             )

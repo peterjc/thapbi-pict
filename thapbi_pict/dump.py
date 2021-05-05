@@ -59,9 +59,9 @@ def main(
     marker_seq = aliased(RefMarker)
     view = (
         session.query(SequenceSource)
-        .join(marker_seq, SequenceSource.its1)
+        .join(marker_seq, SequenceSource.marker)
         .join(cur_tax, SequenceSource.current_taxonomy)
-        .options(contains_eager(SequenceSource.its1, alias=marker_seq))
+        .options(contains_eager(SequenceSource.marker, alias=marker_seq))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
     # Sorting for reproducibility
@@ -113,16 +113,16 @@ def main(
         md5_seq = {}
         md5_sp = {}
         for seq_source in view:
-            md5 = seq_source.its1.md5
+            md5 = seq_source.marker.md5
             # genus_species = genus_species_name(
             #                            seq_source.current_taxonomy.genus,
             #                            seq_source.current_taxonomy.species,
             #                            )
             if md5 in md5_seq:
-                assert md5_seq[md5] == seq_source.its1.sequence
+                assert md5_seq[md5] == seq_source.marker.sequence
                 md5_sp[md5].add(seq_source.current_taxonomy)
             else:
-                md5_seq[md5] = seq_source.its1.sequence
+                md5_seq[md5] = seq_source.marker.sequence
                 md5_sp[md5] = set([seq_source.current_taxonomy])  # noqa: C405
         for md5, seq in md5_seq.items():
             _, genus_species, _ = taxid_and_sp_lists(list(md5_sp[md5]))
@@ -142,7 +142,7 @@ def main(
     elif output_format == "fasta":
         seq_entry = {}
         for seq_source in view:
-            seq = seq_source.its1.sequence
+            seq = seq_source.marker.sequence
             entry = genus_species_name(
                 seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
             )
@@ -176,8 +176,8 @@ def main(
                     f"\t{none_str(seq_source.current_taxonomy.genus)}"
                     f"\t{none_str(seq_source.current_taxonomy.species)}"
                     f"\t{taxid}"
-                    f"\t{seq_source.its1.md5}"
-                    f"\t{seq_source.its1.sequence}"
+                    f"\t{seq_source.marker.md5}"
+                    f"\t{seq_source.marker.sequence}"
                     f"\t{seq_source.sequence}\n"
                 )
             except BrokenPipeError:

@@ -37,17 +37,17 @@ def main(db_url, output_filename, debug=False):
     marker_seq = aliased(RefMarker)
     view = (
         session.query(SequenceSource)
-        .join(marker_seq, SequenceSource.its1)
+        .join(marker_seq, SequenceSource.marker)
         .join(cur_tax, SequenceSource.current_taxonomy)
-        .options(contains_eager(SequenceSource.its1, alias=marker_seq))
+        .options(contains_eager(SequenceSource.marker, alias=marker_seq))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
     md5_to_seq = {}
     md5_to_genus = {}
     md5_to_species = {}
     for seq_source in view:
-        md5 = seq_source.its1.md5
-        seq = seq_source.its1.sequence
+        md5 = seq_source.marker.md5
+        seq = seq_source.marker.sequence
         genus = seq_source.current_taxonomy.genus
         md5_to_seq[md5] = seq
         if genus:

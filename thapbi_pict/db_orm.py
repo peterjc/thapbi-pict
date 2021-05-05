@@ -108,8 +108,9 @@ class SequenceSource(Base):
     source_id = Column(Integer, ForeignKey("data_source.id"))
     source = relationship(DataSource)
 
-    its1_id = Column(Integer, ForeignKey("its1_sequence.id"))
-    its1 = relationship(RefMarker, foreign_keys=[its1_id])
+    # TODO - change its1_source.its1_id column in DB to .marker_id
+    marker_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
+    marker = relationship(RefMarker, foreign_keys=[marker_id])
 
     sequence = Column(String(1000))  # Full sequence, can be longer than marker
 
