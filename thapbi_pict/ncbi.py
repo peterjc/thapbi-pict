@@ -31,10 +31,14 @@ def parse_fasta_entry(text, known_species=None):
 
     Returns a two-tuple: taxid (always zero), presumed genus-species
     (taken as two words by default if cannot be matched to a provided
-    known species).
+    known species) which may be the empty string.
 
     >>> parse_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
     (0, 'Phytophthora drechsleri')
+    >>> parse_fasta_entry('A57915.1 Sequence 20 from Patent EP0751227')
+    (0, '')
+    >>> parse_fasta_entry('Y08654.1 P.cambivora ribosomal internal ...')
+    (0, '')
 
     Dividing the species name into genus, species, strain etc
     is not handled here.
@@ -48,19 +52,16 @@ def parse_fasta_entry(text, known_species=None):
             name.pop()  # discard last word
         if len(name) > 1:
             # Found a perfect match
-            return taxid, " ".join(name)
+            return 0, " ".join(name)
 
     # Heuristics
     name = parts[1:3]  # assumes "Genus species" only (2 words)
     rest = parts[3:]
     assert name, text
-    if len(name[0]) > 2 and name[0].startswith("P."):
-        # Special case, but can we assume these are Phytophthora?
+    if len(name[0]) > 2 and name[0][0].isupper() and name[0][1] == ".":
+        # Would need more information to infer the genus here
         # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
-        sys.stderr.write(
-            f"WARNING: Assuming {name[0]} from {parts[0]} is Phytophthora\n"
-        )
-        name = ["Phytophthora", name[0][2:]]
+        return 0, ""
     while rest and name[-1] in ("taxon", "aff.", "cf.", "x"):
         # Looks like species name needs at least one more word...
         # Note that sp. or sp doesn't always have another word.
@@ -68,7 +69,7 @@ def parse_fasta_entry(text, known_species=None):
     if name[0] == "Sequence":
         # Another special case
         # e.g. A57915.1 Sequence 20 from Patent EP0751227
-        name = []
+        return 0, ""
     if len(rest) >= 2 and rest[0] == "x":
         # Hybrid
         if name[0] == rest[1] and len(rest) >= 3:
@@ -84,6 +85,10 @@ assert parse_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
     0,
     "Phytophthora drechsleri",
 )
+
+assert parse_fasta_entry("A57915.1 Sequence 20 from Patent EP0751227") == (0, "")
+
+assert parse_fasta_entry("Y08654.1 P.cambivora ribosomal internal ...") == (0, "")
 
 assert parse_fasta_entry(
     "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
