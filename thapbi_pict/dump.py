@@ -106,7 +106,8 @@ def main(
         out_handle.write("#MD5\tSpecies\tSequence\n")
     else:
         out_handle.write(
-            "#Identifier\tGenus\tSpecies\tTaxID\tITS1-MD5\tITS1-seq\tSequence\n"
+            "#Identifier\tGenus\tSpecies\tTaxID"
+            "\tMarker-MD5\tMarker-sequence\tSource-sequence\n"
         )
 
     if minimal:

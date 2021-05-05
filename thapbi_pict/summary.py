@@ -490,7 +490,7 @@ def read_summary(
     # TSV main header
     # ---------------
     handle.write(
-        "#ITS1-MD5\t%s-predictions\tSequence\tSample-count"
+        "#Marker-MD5\t%s-predictions\tMarker-sequence\tSample-count"
         "\tMax-sample-abundance\tTotal-abundance\t%s\n"
         % (method, "\t".join(stem_to_meta))
     )
@@ -527,9 +527,9 @@ def read_summary(
 
     # Excel main header
     # -----------------
-    worksheet.write_string(current_row, 0, "ITS1-MD5")
+    worksheet.write_string(current_row, 0, "Marker-MD5")
     worksheet.write_string(current_row, 1, method + "-predictions")
-    worksheet.write_string(current_row, 2, "Sequence")
+    worksheet.write_string(current_row, 2, "Marker-Sequence")
     worksheet.write_string(current_row, 3, "Sample-count")
     worksheet.write_string(current_row, 4, "Max-sample-abundance")
     worksheet.write_string(current_row, 5, "Total-abundance")

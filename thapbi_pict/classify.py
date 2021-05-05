@@ -371,7 +371,7 @@ def onebp_match_in_db(session, seq, debug=False):
                 for _ in session.query(SequenceSource).filter_by(marker=marker)
             )
         note = (
-            f"{len(fuzzy_matches[md5_16b])} ITS1 matches with up to 1bp diff,"
+            f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff,"
             f" {len(t)} taxonomy entries"
         )
         if not t:
