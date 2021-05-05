@@ -60,12 +60,12 @@ def md5_to_taxon(md5_list, session):
     view = (
         session.query(SequenceSource)
         .join(marker_seq, SequenceSource.marker)
-        .join(cur_tax, SequenceSource.current_taxonomy)
+        .join(cur_tax, SequenceSource.taxonomy)
         .options(contains_eager(SequenceSource.marker, alias=marker_seq))
         .filter(marker_seq.md5.in_(md5_list))
-        .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+        .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
     )
-    return list({_.current_taxonomy for _ in view})  # dedulicate
+    return list({_.taxonomy for _ in view})  # dedulicate
 
 
 def unique_or_separated(values, sep=";"):
@@ -139,10 +139,7 @@ def perfect_match_in_db(session, seq, debug=False):
     # each SequenceSource -> one current taxonomy
     # TODO: Refactor the query to get the DB to apply disinct?
     t = list(
-        {
-            _.current_taxonomy
-            for _ in session.query(SequenceSource).filter_by(marker=marker)
-        }
+        {_.taxonomy for _ in session.query(SequenceSource).filter_by(marker=marker)}
     )
     if not t:
         sys.exit(
@@ -180,8 +177,7 @@ def perfect_substr_in_db(session, seq, debug=False):
         assert marker is not None
         assert seq in marker.sequence
         t.update(
-            _.current_taxonomy
-            for _ in session.query(SequenceSource).filter_by(marker=marker)
+            _.taxonomy for _ in session.query(SequenceSource).filter_by(marker=marker)
         )
     if not t:
         return 0, "", "No DB match"
@@ -367,7 +363,7 @@ def onebp_match_in_db(session, seq, debug=False):
             )
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.update(
-                _.current_taxonomy
+                _.taxonomy
                 for _ in session.query(SequenceSource).filter_by(marker=marker)
             )
         note = (
@@ -463,7 +459,7 @@ def dist_in_db(session, seq, debug=False):
         )
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
-            _.current_taxonomy.genus
+            _.taxonomy.genus
             for _ in session.query(SequenceSource).filter_by(marker=marker)
         )
     assert genus
@@ -945,7 +941,7 @@ def main(
     # Now want to get the number of species associated with marker DB entries,
     #
     # $ sqlite3 L5-2019-01-01.sqlite "SELECT DISTINCT taxonomy.genus, taxonomy.species
-    # FROM taxonomy JOIN its1_source ON taxonomy.id == its1_source.current_taxonomy_id
+    # FROM taxonomy JOIN its1_source ON taxonomy.id == its1_source.taxonomy_id
     # ORDER BY taxonomy.genus, taxonomy.species;" | wc -l
     # 143
     #
@@ -957,7 +953,7 @@ def main(
     view = (
         session.query(Taxonomy)
         .distinct(Taxonomy.genus, Taxonomy.species)
-        .join(SequenceSource, SequenceSource.current_taxonomy_id == Taxonomy.id)
+        .join(SequenceSource, SequenceSource.taxonomy_id == Taxonomy.id)
     )
     db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list

@@ -38,9 +38,9 @@ def main(db_url, output_filename, debug=False):
     view = (
         session.query(SequenceSource)
         .join(marker_seq, SequenceSource.marker)
-        .join(cur_tax, SequenceSource.current_taxonomy)
+        .join(cur_tax, SequenceSource.taxonomy)
         .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-        .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+        .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
     )
     md5_to_seq = {}
     md5_to_genus = {}
@@ -48,17 +48,15 @@ def main(db_url, output_filename, debug=False):
     for seq_source in view:
         md5 = seq_source.marker.md5
         seq = seq_source.marker.sequence
-        genus = seq_source.current_taxonomy.genus
+        genus = seq_source.taxonomy.genus
         md5_to_seq[md5] = seq
         if genus:
             try:
                 md5_to_genus[md5].add(genus)
             except KeyError:
                 md5_to_genus[md5] = {genus}
-            if seq_source.current_taxonomy.species:
-                genus_species = genus_species_name(
-                    genus, seq_source.current_taxonomy.species
-                )
+            if seq_source.taxonomy.species:
+                genus_species = genus_species_name(genus, seq_source.taxonomy.species)
                 try:
                     md5_to_species[md5].add(genus_species)
                 except KeyError:

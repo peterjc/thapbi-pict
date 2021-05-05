@@ -60,9 +60,9 @@ def main(
     view = (
         session.query(SequenceSource)
         .join(marker_seq, SequenceSource.marker)
-        .join(cur_tax, SequenceSource.current_taxonomy)
+        .join(cur_tax, SequenceSource.taxonomy)
         .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-        .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
+        .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
     )
     # Sorting for reproducibility
     view = view.order_by(marker_seq.sequence, SequenceSource.id)
@@ -116,15 +116,15 @@ def main(
         for seq_source in view:
             md5 = seq_source.marker.md5
             # genus_species = genus_species_name(
-            #                            seq_source.current_taxonomy.genus,
-            #                            seq_source.current_taxonomy.species,
+            #                            seq_source.taxonomy.genus,
+            #                            seq_source.taxonomy.species,
             #                            )
             if md5 in md5_seq:
                 assert md5_seq[md5] == seq_source.marker.sequence
-                md5_sp[md5].add(seq_source.current_taxonomy)
+                md5_sp[md5].add(seq_source.taxonomy)
             else:
                 md5_seq[md5] = seq_source.marker.sequence
-                md5_sp[md5] = set([seq_source.current_taxonomy])  # noqa: C405
+                md5_sp[md5] = set([seq_source.taxonomy])  # noqa: C405
         for md5, seq in md5_seq.items():
             _, genus_species, _ = taxid_and_sp_lists(list(md5_sp[md5]))
             if output_format == "fasta":
@@ -145,7 +145,7 @@ def main(
         for seq_source in view:
             seq = seq_source.marker.sequence
             entry = genus_species_name(
-                seq_source.current_taxonomy.genus, seq_source.current_taxonomy.species
+                seq_source.taxonomy.genus, seq_source.taxonomy.species
             )
             entry = f"{seq_source.source_accession} {entry}"
             if seq in seq_entry:
@@ -167,15 +167,15 @@ def main(
         for seq_source in view:
             entry_count += 1
             taxid = (
-                str(seq_source.current_taxonomy.ncbi_taxid)
-                if seq_source.current_taxonomy.ncbi_taxid
+                str(seq_source.taxonomy.ncbi_taxid)
+                if seq_source.taxonomy.ncbi_taxid
                 else ""
             )
             try:
                 out_handle.write(
                     f"{seq_source.source_accession}"
-                    f"\t{none_str(seq_source.current_taxonomy.genus)}"
-                    f"\t{none_str(seq_source.current_taxonomy.species)}"
+                    f"\t{none_str(seq_source.taxonomy.genus)}"
+                    f"\t{none_str(seq_source.taxonomy.species)}"
                     f"\t{taxid}"
                     f"\t{seq_source.marker.md5}"
                     f"\t{seq_source.marker.sequence}"
@@ -189,13 +189,9 @@ def main(
                 sys.exit(1)
 
             if genus_list:
-                assert (
-                    seq_source.current_taxonomy.genus in genus_list
-                ), seq_source.current_taxonomy
+                assert seq_source.taxonomy.genus in genus_list, seq_source.taxonomy
             if sp_list:
-                assert (
-                    seq_source.current_taxonomy.species in sp_list
-                ), seq_source.current_taxonomy
+                assert seq_source.taxonomy.species in sp_list, seq_source.taxonomy
 
     if output_filename == "-":
         sys.stderr.write(f"Wrote {entry_count} {output_format} format entries\n")
