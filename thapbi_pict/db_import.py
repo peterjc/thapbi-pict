@@ -355,7 +355,7 @@ def import_fasta_file(
                     record_entry = SequenceSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
-                        its1=marker,
+                        marker=marker,
                         sequence=seq,
                         original_taxonomy=taxonomy,
                         current_taxonomy=taxonomy,

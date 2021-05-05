@@ -59,9 +59,9 @@ def md5_to_taxon(md5_list, session):
     marker_seq = aliased(RefMarker)
     view = (
         session.query(SequenceSource)
-        .join(marker_seq, SequenceSource.its1)
+        .join(marker_seq, SequenceSource.marker)
         .join(cur_tax, SequenceSource.current_taxonomy)
-        .options(contains_eager(SequenceSource.its1, alias=marker_seq))
+        .options(contains_eager(SequenceSource.marker, alias=marker_seq))
         .filter(marker_seq.md5.in_(md5_list))
         .options(contains_eager(SequenceSource.current_taxonomy, alias=cur_tax))
     )
@@ -141,7 +141,7 @@ def perfect_match_in_db(session, seq, debug=False):
     t = list(
         {
             _.current_taxonomy
-            for _ in session.query(SequenceSource).filter_by(its1=marker)
+            for _ in session.query(SequenceSource).filter_by(marker=marker)
         }
     )
     if not t:
@@ -181,7 +181,7 @@ def perfect_substr_in_db(session, seq, debug=False):
         assert seq in marker.sequence
         t.update(
             _.current_taxonomy
-            for _ in session.query(SequenceSource).filter_by(its1=marker)
+            for _ in session.query(SequenceSource).filter_by(marker=marker)
         )
     if not t:
         return 0, "", "No DB match"
@@ -368,7 +368,7 @@ def onebp_match_in_db(session, seq, debug=False):
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.update(
                 _.current_taxonomy
-                for _ in session.query(SequenceSource).filter_by(its1=marker)
+                for _ in session.query(SequenceSource).filter_by(marker=marker)
             )
         note = (
             f"{len(fuzzy_matches[md5_16b])} ITS1 matches with up to 1bp diff,"
@@ -464,7 +464,7 @@ def dist_in_db(session, seq, debug=False):
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
             _.current_taxonomy.genus
-            for _ in session.query(SequenceSource).filter_by(its1=marker)
+            for _ in session.query(SequenceSource).filter_by(marker=marker)
         )
     assert genus
     # TODO - look up genus taxid
