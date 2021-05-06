@@ -57,15 +57,15 @@ thapbi_pict import -c ncbi -d $DB -g -i $TMP/multiple_hmm.fasta \
 # File tests/ncbi-import/multiple_hmm.fasta had 5 sequences. Found 5 with ITS1, of which 3 accepted.
 # Of 5 potential entries, 0 unparsable, 2 failed sp. validation, 3 OK.
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "3" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "3" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "3" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "3" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 # Debugging output,
-# $ sqlite3 $DB "SELECT md5, LENGTH(its1_sequence.sequence), source_accession FROM its1_sequence, its1_source WHERE its1_sequence.id=its1_source.its1_id;"
+# $ sqlite3 $DB "SELECT md5, LENGTH(marker_sequence.sequence), source_accession FROM marker_sequence, sequence_source WHERE marker_sequence.id=sequence_source.its1_id;"
 # 63fa728c0fe76536f13eb593df99bd46|179|MF370571.1
 # 4c9e98f437ca0f55d0d8ba3b2928239c|199|MH169111.1
 # 7f27d3a8f7150e0ee7ad64073e6da6b5|170|DQ641247.1
-if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM its1_sequence;"` -ne "217" ]; then echo "Wrong max ITS1 sequence length"; false; fi
+if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM marker_sequence;"` -ne "217" ]; then echo "Wrong max ITS1 sequence length"; false; fi
 
 # When importing NCBI files, we no longer assume P. is Phytophthora:
 rm -rf $TMP/20th_Century_ITS1.fasta $TMP/20th_Century_ITS1_Peronosporaceae.fasta
@@ -80,8 +80,8 @@ export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
 thapbi_pict import -c ncbi -x -d $DB -i $TMP/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "120" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "103" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "120" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "103" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "42" ]; then echo "Wrong taxonomy count"; false; fi
 # Other values subject to change
 
@@ -95,8 +95,8 @@ if [ `sqlite3 $DB "SELECT COUNT(DISTINCT species) FROM taxonomy;"` -ne "258" ]; 
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "258" ]; then echo "Wrong taxonomy count"; false; fi
 thapbi_pict import -c ncbi -d $DB -i $TMP/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "120" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "103" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "120" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "103" ]; then echo "Wrong marker_sequence count"; false; fi
 # Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum
 thapbi_pict dump -d $DB | cut -f 1-4 | grep AF271230.1 | grep Phytophthora
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "258" ]; then echo "Wrong taxonomy count"; false; fi
@@ -113,8 +113,8 @@ thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 thapbi_pict import -c ncbi -d $DB -i $TMP/20th_Century_ITS1.fasta -g
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "120" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "103" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "120" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "103" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 # Confirm AF271230.1 Pythium undulatum -> Phytophthora undulatum -> Phytophthora
 thapbi_pict dump -d $DB | cut -f1-3 | grep AF271230.1 | grep Phytophthora
@@ -127,14 +127,14 @@ thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 thapbi_pict import -c ncbi -d $DB -i $TMP/20th_Century_ITS1.fasta
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "120" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "103" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "120" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "103" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 if [ `thapbi_pict dump -d $DB -f fasta | grep "^>" | grep  " Phytophthora " -c` -ne 101 ]; then echo "Wrong Phytophthora species count"; false; fi
 thapbi_pict import -c ncbi -d $DB -i $TMP/20th_Century_ITS1_Peronosporaceae.fasta -g
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "2" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_source;"` -ne "269" ]; then echo "Wrong its1_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM its1_sequence;"` -ne "109" ]; then echo "Wrong its1_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "269" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "109" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1378" ]; then echo "Wrong taxonomy count"; false; fi
 # 118 + 122 + 29 = 269
 if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c Phytophthora$'\t'[a-z]` -ne 118 ]; then echo "Wrong Phytophthora species count"; false; fi
