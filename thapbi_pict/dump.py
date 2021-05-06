@@ -32,6 +32,7 @@ def main(
     db_url,
     output_filename,
     output_format,
+    marker="",
     minimal=False,
     genus="",
     species="",

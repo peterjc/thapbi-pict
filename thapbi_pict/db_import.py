@@ -18,6 +18,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from . import __version__
 from .db_orm import connect_to_db
 from .db_orm import DataSource
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Synonym
@@ -275,9 +276,13 @@ def import_fasta_file(
     db_url,
     fasta_entry_fn,
     entry_taxonomy_fn,
+    marker,
+    left_primer=None,
+    right_primer=None,
     min_length=0,
     max_length=sys.maxsize,
     name=None,
+    trim=True,
     debug=True,
     validate_species=False,
     genus_only=False,
@@ -302,6 +307,54 @@ def import_fasta_file(
             "Taxonomy/synonym tables contains"
             f" {len(preloaded_taxonomy)} distinct species names\n"
         )
+
+    if marker:
+        reference_marker = (
+            session.query(MarkerDef).filter(MarkerDef.name == marker).one_or_none()
+        )
+    else:
+        # Can omit if DB has one and only one entry...
+        reference_marker = session.query(MarkerDef).one_or_none()
+        if reference_marker:
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Defaulting to only marker in the DB: {marker}\n"
+                )
+            marker = reference_marker.name
+        else:
+            # Zero or more than one in DB
+            sys.exit(
+                "ERROR: Marker name is required (unless there is only one in the DB)."
+            )
+    if reference_marker:
+        # Load primers etc
+        if left_primer and reference_marker.left_primer != left_primer:
+            sys.exit(
+                "ERROR: Given left primer "
+                f"{left_primer} does not match DB {reference_marker.left_primer}"
+            )
+        if right_primer and reference_marker.right_primer != right_primer:
+            sys.exit(
+                "ERROR: Given right primer "
+                f"{right_primer} does not match DB {reference_marker.right_primer}"
+            )
+        left_primer = reference_marker.left_primer
+        right_primer = reference_marker.right_primer
+    elif not left_primer or not right_primer:
+        sys.exit("ERROR: Both primers must be supplied when defining a new marker.")
+    else:
+        # New marker!
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: New marker {marker} primers {left_primer} & {right_primer}\n"
+            )
+        reference_marker = MarkerDef()
+        reference_marker.name = marker
+        reference_marker.left_primer = left_primer
+        reference_marker.right_primer = right_primer
+        reference_marker.min_length = min_length
+        reference_marker.max_length = max_length
+        session.add(reference_marker)
 
     md5 = md5_hexdigest(fasta_file)
 
@@ -446,7 +499,9 @@ def import_fasta_file(
                         .one_or_none()
                     )
                     if marker_seq is None:
-                        marker_seq = MarkerSeq(md5=marker_md5, sequence=seq)
+                        marker_seq = MarkerSeq(
+                            md5=marker_md5, sequence=seq, marker=reference_marker
+                        )
                         session.add(marker_seq)
                     record_entry = SeqSource(
                         source_accession=entry.split(None, 1)[0],
@@ -495,6 +550,9 @@ def import_fasta_file(
 def main(
     fasta,
     db_url,
+    marker,
+    left_primer=None,
+    right_primer=None,
     min_length=0,
     max_length=sys.maxsize,
     name=None,
@@ -544,6 +602,9 @@ def main(
             db_url,
             fasta_entry_fn,
             fasta_parsing_function[convention],
+            marker,
+            left_primer,
+            right_primer,
             min_length=min_length,
             max_length=max_length,
             name=name,

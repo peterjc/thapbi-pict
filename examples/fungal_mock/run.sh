@@ -16,7 +16,7 @@ function analyse {
         cutadapt --quiet -g $LEFT $MARKER.fasta \
           | cutadapt --quiet -a $RIGHT_RC -o $NAME.fasta /dev/stdin
         echo "Building $MARKER database for $NAME"
-        thapbi_pict import -i $NAME.fasta -d $NAME.sqlite -x
+        thapbi_pict import -k $NAME -i $NAME.fasta -d $NAME.sqlite -x
     fi
 
     echo "Running analysis with minimum abundance threshold ten"

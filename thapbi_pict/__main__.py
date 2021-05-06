@@ -113,6 +113,9 @@ def db_import(args=None):
     return main(
         fasta=args.input,
         db_url=expand_database_argument(args.database),
+        marker=args.marker,
+        left_primer=args.left,
+        right_primer=args.right,
         min_length=args.minlen,
         max_length=args.maxlen,
         name=args.name,
@@ -151,6 +154,7 @@ def dump(args=None):
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         output_filename=args.output,
         output_format=args.format,
+        marker=args.marker,
         minimal=args.minimal,
         genus=args.genus,
         species=args.species,
@@ -558,6 +562,22 @@ ARG_CPU = dict(  # noqa: C408
 # Common import arguments
 # =======================
 
+# "-k", "--marker",
+ARG_MARKER = dict(  # noqa: C408
+    type=str,
+    help="Unique marker name for a barcode, linked to a PCR primer pair for "
+    "a diagnostic amplicon. e.g. ITS1, COI, 12S. If not already in the DB, "
+    "it will be added but this requires both left and right primers, and min "
+    "and max product length are recommended. Required unless DB as exactly "
+    "one marker already defined in it.",
+)
+ARG_MARKER_PICK = dict(  # noqa: C408
+    type=str,
+    default="",
+    # Comma separated?
+    help="Which amplicon marker from the DB should be used. Default all.",
+)
+
 # "-d", "--database",
 ARG_DB_WRITE = dict(  # noqa: C408
     type=str, required=True, help="Which database to write to (or create)."
@@ -856,6 +876,29 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
+    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER)
+    subcommand_parser.add_argument(
+        "-l",
+        "--left",
+        type=str,
+        metavar="PRIMER",
+        help="Left primer sequence to record in DB for this marker. "
+        "Can use IUPAC ambiguity codes. Default DB uses 21bp ITS6 "
+        "'GAAGGTGAAGTCGTAACAAGG' from Cooke et al. 2000 "
+        "https://doi.org/10.1006/fgbi.2000.1202",
+    )
+    subcommand_parser.add_argument(
+        "-r",
+        "--right",
+        type=str,
+        metavar="PRIMER",
+        help="Right primer sequence to record in the DB for this marker. "
+        "Will find and remove the reverse complement from end of marker "
+        "sequences. Can use IUPAC ambiguity codes. Default DB uses 20bp "
+        "5.8S-1R primer 'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
+        "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
+        "look for 'GYRGGGACGAAAGTCYYTGC' after the marker.",
+    )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument(
@@ -987,6 +1030,7 @@ def main(args=None):
         choices=["txt", "fasta"],
         help="Format to write out (default 'txt' for debugging).",
     )
+    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER)
     subcommand_parser.add_argument(
         "-g",
         "--genus",

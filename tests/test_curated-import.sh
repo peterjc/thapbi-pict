@@ -14,6 +14,9 @@ export TMP=${TMP:-/tmp/thapbi_pict}/curated_import
 rm -rf $TMP
 mkdir -p $TMP
 
+export LEFT=GAAGGTGAAGTCGTAACAAGG
+export RIGHT=GCARRGACTTTCGTCCCYRC
+
 echo "======================="
 echo "Checking curated-import"
 echo "======================="
@@ -25,7 +28,8 @@ set -o pipefail
 echo "Controls (lax mode, without the synthetic controls in the taxonomy)"
 export DB=$TMP/contols_lax.sqlite
 rm -rf $DB
-thapbi_pict import -d $DB -i database/controls.fasta -x
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+    -i database/controls.fasta -x
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "4" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "4" ]; then echo "Wrong marker_sequence count"; false; fi
@@ -37,7 +41,8 @@ echo "Curated ITS1 with taxdump"
 export DB=$TMP/curated.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
-thapbi_pict import -d $DB -i database/Phytophthora_ITS1_curated.fasta -s ";"
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+    -i database/Phytophthora_ITS1_curated.fasta -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "215" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "190" ]; then echo "Wrong marker_sequence count"; false; fi
@@ -52,7 +57,8 @@ echo "With duplicated sequences (and multi-entry records using Ctrl+A)"
 # Only 6 FASTA records, but two are double entries so want 8 here
 export DB=$TMP/dup_seqs.sqlite
 rm -rf $DB
-thapbi_pict import -x -d $DB -i tests/curated-import/dup_seqs.fasta -c ncbi -s $'\001'
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+    -i tests/curated-import/dup_seqs.fasta -x -c ncbi -s $'\001'
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "8" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "2" ]; then echo "Wrong marker_sequence count"; false; fi
@@ -65,7 +71,8 @@ echo "With duplicated sequences (ignoring the multi-entry record naming)"
 # Expect 6 entries, and two very silly species names!
 export DB=$TMP/dup_seqs_bad.sqlite
 rm -rf $DB
-thapbi_pict import -x -d $DB -i tests/curated-import/dup_seqs.fasta -c simple -s ";"
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+    -i tests/curated-import/dup_seqs.fasta -x -c simple -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "6" ]; then echo "Wrong its1_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "2" ]; then echo "Wrong its1_sequence count"; false; fi
@@ -76,7 +83,8 @@ echo "Redekar supplementary table 3"
 export DB=$TMP/Redekar_et_al_2019_sup_table_3.sqlite
 rm -rf $DB
 # This uses the semi-colon separator
-thapbi_pict import -x -d $DB -i examples/recycled_water/Redekar_et_al_2019_sup_table_3.fasta -s ";"
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+    -i examples/recycled_water/Redekar_et_al_2019_sup_table_3.fasta -x -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "1451" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "838" ]; then echo "Wrong marker_sequence count"; false; fi
