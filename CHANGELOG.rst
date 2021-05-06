@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.10 *Pending*  Combined summary/pipeline ``-o`` and ``-r`` into single ``-o`` output stem.
+v0.10.0 *Pending*  Reworked to handle multiple markers - uses a modified DB schema.
 v0.9.9  2021-07-08 Dropped SWARM based classifiers. Single intermediate TSV file in pipeline.
 v0.9.8  2021-06-17 Dropped edit-graph in pipeline. Require full length primers in merged reads.
 v0.9.7  2021-06-04 Support USEARCH SINTAX and OBITools FASTA conventions in ``import`` command.
