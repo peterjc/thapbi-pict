@@ -86,7 +86,7 @@ class Synonym(Base):
 class MarkerSeq(Base):
     """Database entry for a single marker reference sequence."""
 
-    __tablename__ = "its1_sequence"  # TODO - marker_sequence
+    __tablename__ = "marker_sequence"
 
     id = Column(Integer, primary_key=True)
     md5 = Column(String(32), unique=True)
@@ -100,7 +100,7 @@ class MarkerSeq(Base):
 class SeqSource(Base):
     """Database entry for source of a marker sequence entry."""
 
-    __tablename__ = "its1_source"  # TODO - sequence_source
+    __tablename__ = "sequence_source"
 
     id = Column(Integer, primary_key=True)
 
@@ -109,11 +109,10 @@ class SeqSource(Base):
     source = relationship(DataSource)
 
     # TODO - change its1_source.its1_id column in DB to .marker_seq_id
-    marker_seq_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
+    marker_seq_id = Column(Integer, ForeignKey("marker_sequence.id"))
     marker_seq = relationship(MarkerSeq, foreign_keys=[marker_seq_id])
 
-    # TODO - change its1_source.taxonomy_id to .taxonomy_id
-    taxonomy_id = Column("current_taxonomy_id", Integer, ForeignKey("taxonomy.id"))
+    taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
     taxonomy = relationship(Taxonomy, foreign_keys=[taxonomy_id])
 
 
