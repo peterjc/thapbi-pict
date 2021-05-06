@@ -31,7 +31,8 @@ if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
     # Not giving primers, sequences are already trimmed
     thapbi_pict import -x -s ";" \
             -d Redekar_et_al_2019_sup_table_3.sqlite \
-            -i Redekar_et_al_2019_sup_table_3.fasta
+            -i Redekar_et_al_2019_sup_table_3.fasta \
+            -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
 fi
 
 echo "Drawing edit-graph for database entries alone"

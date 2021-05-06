@@ -23,7 +23,8 @@ set -o pipefail
 
 export DB=$TMP/seven.sqlite
 rm -rf $DB
-thapbi_pict import -d $DB -i tests/assess/seven.fasta -x -s ";"
+thapbi_pict import -d $DB -i tests/assess/seven.fasta -x -s ";" \
+            -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
 
 # Simple examples with expected output to compare against
 for SAMPLE in ex1 ex2 ex3 ex4 unclassified fp; do
