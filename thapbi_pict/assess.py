@@ -13,7 +13,7 @@ from collections import Counter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
-from .db_orm import SequenceSource
+from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import file_to_sample_name
 from .utils import find_requested_files
@@ -426,7 +426,7 @@ def main(
     view = (
         session.query(Taxonomy)
         .distinct(Taxonomy.genus, Taxonomy.species)
-        .join(SequenceSource)
+        .join(SeqSource)
     )
     db_sp_list = sorted(
         {genus_species_name(t.genus, t.species) for t in view if t.species}

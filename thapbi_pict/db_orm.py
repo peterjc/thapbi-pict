@@ -83,10 +83,10 @@ class Synonym(Base):
         return f"Synonym(name={self.name})"
 
 
-class RefMarker(Base):
+class MarkerSeq(Base):
     """Database entry for a single marker reference sequence."""
 
-    __tablename__ = "its1_sequence"  # TODO - marker_sequence or marker_reference
+    __tablename__ = "its1_sequence"  # TODO - marker_sequence
 
     id = Column(Integer, primary_key=True)
     md5 = Column(String(32), unique=True)
@@ -94,13 +94,13 @@ class RefMarker(Base):
 
     def __repr__(self):
         """Represent a marker database reference sequence as a string."""
-        return f"RefMarker(md5={self.md5!r}, sequence={self.sequence!r})"
+        return f"MarkerSeq(md5={self.md5!r}, sequence={self.sequence!r})"
 
 
-class SequenceSource(Base):
+class SeqSource(Base):
     """Database entry for source of a marker sequence entry."""
 
-    __tablename__ = "its1_source"  # TODO - marker_source or sequence_source
+    __tablename__ = "its1_source"  # TODO - sequence_source
 
     id = Column(Integer, primary_key=True)
 
@@ -110,7 +110,7 @@ class SequenceSource(Base):
 
     # TODO - change its1_source.its1_id column in DB to .marker_id
     marker_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
-    marker = relationship(RefMarker, foreign_keys=[marker_id])
+    marker = relationship(MarkerSeq, foreign_keys=[marker_id])
 
     # TODO - change its1_source.taxonomy_id to .taxonomy_id
     taxonomy_id = Column("current_taxonomy_id", Integer, ForeignKey("taxonomy.id"))

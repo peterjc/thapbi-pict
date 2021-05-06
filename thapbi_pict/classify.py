@@ -20,8 +20,8 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
-from .db_orm import RefMarker
-from .db_orm import SequenceSource
+from .db_orm import MarkerSeq
+from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_filter_fasta
 from .utils import abundance_from_read_name
@@ -54,14 +54,14 @@ def md5_to_taxon(md5_list, session):
     # (since at some point we'll want to define database subsets
     # consistently). Still, might be able to refactor this query...
     cur_tax = aliased(Taxonomy)
-    marker_seq = aliased(RefMarker)
+    marker_seq = aliased(MarkerSeq)
     view = (
-        session.query(SequenceSource)
-        .join(marker_seq, SequenceSource.marker)
-        .join(cur_tax, SequenceSource.taxonomy)
-        .options(contains_eager(SequenceSource.marker, alias=marker_seq))
+        session.query(SeqSource)
+        .join(marker_seq, SeqSource.marker)
+        .join(cur_tax, SeqSource.taxonomy)
+        .options(contains_eager(SeqSource.marker, alias=marker_seq))
         .filter(marker_seq.md5.in_(md5_list))
-        .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
+        .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
     return list({_.taxonomy for _ in view})  # dedulicate
 
@@ -161,16 +161,14 @@ def perfect_match_in_db(session, seq, debug=False):
     """
     assert seq == seq.upper(), seq
     # Now, does this equal any of the marker sequences in our DB?
-    marker = session.query(RefMarker).filter(RefMarker.sequence == seq).one_or_none()
+    marker = session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
     if marker is None:
         return 0, "", "No DB match"
     assert marker.sequence == seq
-    # marker -> one or more SequenceSource
-    # each SequenceSource -> one current taxonomy
+    # marker -> one or more SeqSource
+    # each SeqSource -> one current taxonomy
     # TODO: Refactor the query to get the DB to apply disinct?
-    t = list(
-        {_.taxonomy for _ in session.query(SequenceSource).filter_by(marker=marker)}
-    )
+    t = list({_.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker)})
     if not t:
         sys.exit(
             "ERROR: perfect_match_in_db, no taxonomy for"
@@ -189,7 +187,7 @@ def perfect_substr_in_db(session, seq, debug=False):
     # Now, does this match any of the marker seq in our DB (as a substring)
     # This didn't work:
     #
-    # session.query(RefMarker).filter(RefMarker.sequence.match(seq)).one_or_none()
+    # session.query(MarkerSeq).filter(MarkerSeq.sequence.match(seq)).one_or_none()
     #
     # Gave:
     #
@@ -201,14 +199,12 @@ def perfect_substr_in_db(session, seq, debug=False):
     #     FROM marker_sequence
     #     WHERE marker_sequence.sequence MATCH ?]
     t = set()
-    for marker in session.query(RefMarker).filter(
-        RefMarker.sequence.like("%" + seq + "%")
+    for marker in session.query(MarkerSeq).filter(
+        MarkerSeq.sequence.like("%" + seq + "%")
     ):
         assert marker is not None
         assert seq in marker.sequence
-        t.update(
-            _.taxonomy for _ in session.query(SequenceSource).filter_by(marker=marker)
-        )
+        t.update(_.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker))
     if not t:
         return 0, "", "No DB match"
     else:
@@ -270,7 +266,7 @@ def seq_method_identity(seq, session, debug=False):
     Returns taxid (integer or string), genus-species (string), note (string).
     If there are multiple matches, semi-colon separated strings are returned.
     """
-    marker = session.query(RefMarker).filter(RefMarker.sequence == seq).one_or_none()
+    marker = session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
     if marker is None:
         return 0, "", "No DB match"
     else:
@@ -313,7 +309,7 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     global fuzzy_matches
     fuzzy_matches = {}
 
-    view = session.query(RefMarker)
+    view = session.query(MarkerSeq)
     count = 0
     for marker in view:
         count += 1
@@ -390,14 +386,13 @@ def onebp_match_in_db(session, seq, debug=False):
         # reported too, but that would most likely be a DB problem...
         for db_seq in [seq] + fuzzy_matches[md5_16b]:
             marker = (
-                session.query(RefMarker)
-                .filter(RefMarker.sequence == db_seq)
+                session.query(MarkerSeq)
+                .filter(MarkerSeq.sequence == db_seq)
                 .one_or_none()
             )
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.update(
-                _.taxonomy
-                for _ in session.query(SequenceSource).filter_by(marker=marker)
+                _.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker)
             )
         note = (
             f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff,"
@@ -419,7 +414,7 @@ def _setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
     db_seqs = set()
-    view = session.query(RefMarker)
+    view = session.query(MarkerSeq)
     for marker in view:
         db_seqs.add(marker.sequence.upper())
     # Now set fuzzy_matches too...
@@ -489,12 +484,11 @@ def dist_in_db(session, seq, debug=False):
     genus = set()
     for db_seq in best:
         marker = (
-            session.query(RefMarker).filter(RefMarker.sequence == db_seq).one_or_none()
+            session.query(MarkerSeq).filter(MarkerSeq.sequence == db_seq).one_or_none()
         )
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
-            _.taxonomy.genus
-            for _ in session.query(SequenceSource).filter_by(marker=marker)
+            _.taxonomy.genus for _ in session.query(SeqSource).filter_by(marker=marker)
         )
     assert genus
     # TODO - look up genus taxid
@@ -524,7 +518,7 @@ def method_dist(
 
 def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a BLAST DB from the marker sequence DB entries."""
-    view = session.query(RefMarker)
+    view = session.query(MarkerSeq)
     db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     count = 0
@@ -762,7 +756,7 @@ def main(
     view = (
         session.query(Taxonomy)
         .distinct(Taxonomy.genus, Taxonomy.species)
-        .join(SequenceSource, SequenceSource.taxonomy_id == Taxonomy.id)
+        .join(SeqSource, SeqSource.taxonomy_id == Taxonomy.id)
     )
     db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list
@@ -773,7 +767,7 @@ def main(
     if not db_sp_list:
         sys.exit("ERROR: Have no marker sequences in DB with species information.\n")
 
-    count = session.query(RefMarker).count()
+    count = session.query(MarkerSeq).count()
     if debug:
         sys.stderr.write(f"Marker sequnce table contains {count} distinct sequences.\n")
     if not count:

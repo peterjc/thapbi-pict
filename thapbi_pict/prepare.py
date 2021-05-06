@@ -21,8 +21,8 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
-from .db_orm import RefMarker
-from .db_orm import SequenceSource
+from .db_orm import MarkerSeq
+from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
@@ -784,14 +784,14 @@ def main(
                 sys.stderr.write(f"WARNING: Spike-in genus {x!r} not in database\n")
         # Doing a join to pull in the marker and taxonomy tables too:
         cur_tax = aliased(Taxonomy)
-        marker_seq = aliased(RefMarker)
+        marker_seq = aliased(MarkerSeq)
         for seq_source in (
-            session.query(SequenceSource)
-            .join(marker_seq, SequenceSource.marker)
-            .join(cur_tax, SequenceSource.taxonomy)
-            .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-            .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
-            .order_by(marker_seq.sequence, SequenceSource.id)
+            session.query(SeqSource)
+            .join(marker_seq, SeqSource.marker)
+            .join(cur_tax, SeqSource.taxonomy)
+            .options(contains_eager(SeqSource.marker, alias=marker_seq))
+            .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
+            .order_by(marker_seq.sequence, SeqSource.id)
             .filter(cur_tax.genus.in_(spike_genus))
         ):
             spikes.append(

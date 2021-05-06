@@ -10,8 +10,8 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
-from .db_orm import RefMarker
-from .db_orm import SequenceSource
+from .db_orm import MarkerSeq
+from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import genus_species_name
 
@@ -34,13 +34,13 @@ def main(db_url, output_filename, debug=False):
 
     # Doing a join to pull in the marker and taxonomy tables too:
     cur_tax = aliased(Taxonomy)
-    marker_seq = aliased(RefMarker)
+    marker_seq = aliased(MarkerSeq)
     view = (
-        session.query(SequenceSource)
-        .join(marker_seq, SequenceSource.marker)
-        .join(cur_tax, SequenceSource.taxonomy)
-        .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-        .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
+        session.query(SeqSource)
+        .join(marker_seq, SeqSource.marker)
+        .join(cur_tax, SeqSource.taxonomy)
+        .options(contains_eager(SeqSource.marker, alias=marker_seq))
+        .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
     md5_to_seq = {}
     md5_to_genus = {}

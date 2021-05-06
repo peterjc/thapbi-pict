@@ -18,8 +18,8 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from . import __version__
 from .db_orm import connect_to_db
 from .db_orm import DataSource
-from .db_orm import RefMarker
-from .db_orm import SequenceSource
+from .db_orm import MarkerSeq
+from .db_orm import SeqSource
 from .db_orm import Synonym
 from .db_orm import Taxonomy
 from .utils import find_requested_files
@@ -441,14 +441,14 @@ def import_fasta_file(
 
                     # Is sequence already there? e.g. duplicate sequences in FASTA file
                     marker = (
-                        session.query(RefMarker)
+                        session.query(MarkerSeq)
                         .filter_by(md5=marker_md5, sequence=seq)
                         .one_or_none()
                     )
                     if marker is None:
-                        marker = RefMarker(md5=marker_md5, sequence=seq)
+                        marker = MarkerSeq(md5=marker_md5, sequence=seq)
                         session.add(marker)
-                    record_entry = SequenceSource(
+                    record_entry = SeqSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
                         marker=marker,
