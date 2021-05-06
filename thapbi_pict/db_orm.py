@@ -83,6 +83,19 @@ class Synonym(Base):
         return f"Synonym(name={self.name})"
 
 
+class MarkerDef(Base):
+    """Database entry for a marker listing primers and amplicon length limits."""
+
+    __tablename__ = "marker_definition"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(32), unique=True)
+    left_primer = Column(String(100))
+    right_primer = Column(String(100))
+    min_length = Column(Integer)
+    max_length = Column(Integer)
+
+
 class MarkerSeq(Base):
     """Database entry for a single marker reference sequence."""
 
@@ -91,6 +104,8 @@ class MarkerSeq(Base):
     id = Column(Integer, primary_key=True)
     md5 = Column(String(32), unique=True)
     sequence = Column(String(250), unique=True)
+    marker_id = Column(Integer, ForeignKey("marker_definition.id"))
+    marker = relationship(MarkerDef, foreign_keys=[marker_id])
 
     def __repr__(self):
         """Represent a marker database reference sequence as a string."""
