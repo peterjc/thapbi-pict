@@ -39,8 +39,7 @@ thapbi_pict import -d "$DB.sqlite" -i controls.fasta
 # ===================
 # NCBI at genus level
 # ===================
-# thapbi_pict import --ncbi -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC -g \
-#             -d "$DB.sqlite" -i 2021-02-23-ITS_Oomycota_w32.fasta --minlen 150 --maxlen 750
+# thapbi_pict import -d "$DB.sqlite" -i 2021-02-23-ITS_Oomycota_w32.fasta --ncbi -g --minlen 150 --maxlen 750
 # Add hoc fix for some accessions apparently with wrong genus
 # BAD="('MN128447.1', 'MK794853.1', 'MK794848.1', 'MK795051.1', 'HQ237483.1', 'KP183959.1', 'MW426376.1', 'MW426384.1', 'KY785380.1', 'KY785381.1', 'KU715054.1')"
 # sqlite3 "$DB.sqlite" "DELETE FROM its1_sequence WHERE id IN (SELECT its1_sequence.id FROM its1_sequence JOIN its1_source ON its1_sequence.id = its1_source.its1_id WHERE source_accession IN $BAD);"
