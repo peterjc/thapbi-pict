@@ -12,9 +12,7 @@ different naming conventions.
 """
 import os
 import sys
-import tempfile
 
-from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from . import __version__
@@ -29,8 +27,6 @@ from .utils import genus_species_name
 from .utils import genus_species_split
 from .utils import md5_hexdigest
 from .utils import md5seq
-from .utils import run
-from .versions import check_tools
 
 
 def parse_ncbi_fasta_entry(text, known_species=None):
@@ -136,27 +132,6 @@ assert parse_curated_fasta_entry("P13660 Phytophthora aff infestans") == (
 )
 
 
-def run_cutadapt_keep(
-    long_in, trimmed_out, left_primer, right_primer, debug=False, cpu=0
-):
-    """Run cutadapt on a single file, cropping at either primer if found,.
-
-    The input and/or output files may be compressed as long as they
-    have an appropriate suffix (e.g. gzipped with ``.gz`` suffix).
-    """
-    cmd = ["cutadapt"]
-    if cpu:
-        # Not compatible with --untrimmed-output
-        cmd += ["-j", str(cpu)]
-    # Can't do together as while RIGHT may match, LEFT might not
-    if left_primer:
-        cmd += ["-g", left_primer]
-    if right_primer:
-        cmd += ["-a", reverse_complement(right_primer)]
-    cmd += ["-o", trimmed_out, long_in]
-    return run(cmd, debug=debug)
-
-
 def load_taxonomy(session):
     """Pre-load all the species and synonym names as a set."""
     names = set()
@@ -211,8 +186,6 @@ def import_fasta_file(
     debug=True,
     validate_species=False,
     genus_only=False,
-    left_primer=None,
-    right_primer=None,
     tmp_dir=None,
 ):
     """Import a FASTA file into the database."""
@@ -240,30 +213,6 @@ def import_fasta_file(
     if not name:
         name = "Import of " + os.path.basename(fasta_file)
 
-    if left_primer or right_primer:
-        if tmp_dir:
-            # Up to the user to remove the files
-            tmp_obj = None
-            shared_tmp = tmp_dir
-        else:
-            tmp_obj = tempfile.TemporaryDirectory()
-            shared_tmp = tmp_obj.name
-
-        if left_primer:
-            trim_left = os.path.join(shared_tmp, "cutadapt_left.fasta")
-            run_cutadapt_keep(fasta_file, trim_left, left_primer, None, debug)  # cpu
-        else:
-            trim_left = fasta_file
-        if right_primer:
-            trimmed_fasta = os.path.join(shared_tmp, "cutadapt.fasta")
-            run_cutadapt_keep(
-                trim_left, trimmed_fasta, None, right_primer, debug
-            )  # cpu
-        else:
-            trimmed_fasta = trim_left
-    else:
-        trimmed_fasta = fasta_file
-
     # TODO - explicit check for reusing name, and/or unique in schema
     # TODO - explicit check for reusing MD5 (not just DB schema check)
     db_source = DataSource(
@@ -287,7 +236,7 @@ def import_fasta_file(
 
     valid_letters = set("GATCRYWSMKHBVDN")
 
-    with open(trimmed_fasta) as handle:
+    with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
             if "-" in seq:
                 sys.exit(f"ERROR: Gap in sequence for {title}")
@@ -458,8 +407,6 @@ def main(
     sep=None,
     validate_species=False,
     genus_only=False,
-    left_primer=None,
-    right_primer=None,
     ignore_prefixes=None,
     tmp_dir=None,
     debug=False,
@@ -488,9 +435,6 @@ def main(
             """Treat all FASTA entries as singletons."""
             return [text]
 
-    if left_primer or right_primer:
-        check_tools(["cutadapt"], debug)
-
     fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
     if debug:
         sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
@@ -504,9 +448,7 @@ def main(
             min_length=min_length,
             max_length=max_length,
             name=name,
-            debug=debug,
             validate_species=validate_species,
             genus_only=genus_only,
-            left_primer=left_primer,
-            right_primer=right_primer,
+            debug=debug,
         )
