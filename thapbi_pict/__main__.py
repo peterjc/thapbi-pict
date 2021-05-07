@@ -90,21 +90,23 @@ def load_tax(args=None):
     )
 
 
-def ncbi_import(args=None):
-    """Subcommand to import an NCBI FASTA file into a basebase."""
-    from .ncbi import main
+def db_import(args=None):
+    """Subcommand to import a FASTA file into a basebase."""
+    from .db_import import main
 
     return main(
-        fasta_file=args.input,
+        fasta=args.input,
         db_url=expand_database_argument(args.database),
         min_length=args.minlen,
         max_length=args.maxlen,
         name=args.name,
         validate_species=not args.lax,
+        ncbi_heuristics=args.ncbi,
         genus_only=args.genus,
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
-        sep=args.sep,
+        sep=(CTRL_A if args.ncbi else ";") if args.sep is None else args.sep,
+        ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -123,26 +125,6 @@ def curated_seq(args=None):
         min_abundance=args.abundance,
         ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
-        debug=args.verbose,
-    )
-
-
-def curated_import(args=None):
-    """Subcommand to import a curated marker FASTA file into the basebase."""
-    from .curated import main
-
-    return main(
-        fasta=args.input,
-        db_url=expand_database_argument(args.database),
-        min_length=args.minlen,
-        max_length=args.maxlen,
-        name=args.name,
-        validate_species=not args.lax,
-        genus_only=args.genus,
-        left_primer=primer_clean(args.left),
-        right_primer=primer_clean(args.right),
-        sep=args.sep,
-        ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
     )
 
@@ -601,37 +583,9 @@ ARG_CPU = dict(  # noqa: C408
 # Common import arguments
 # =======================
 
-# "-s", "--sep",
-ARG_FASTA_SEP = dict(  # noqa: C408
-    type=str,
-    default=";",
-    metavar="CHAR",
-    help="FASTA description entry separator, default semi-colon.",
-)
-
 # "-d", "--database",
 ARG_DB_WRITE = dict(  # noqa: C408
     type=str, required=True, help="Which database to write to (or create)."
-)
-
-# "-n", "--name",
-ARG_NAME = dict(  # noqa: C408
-    type=str, default="", help="Name to record for this data source (string)."
-)
-
-# "-x", "--lax",
-ARG_LAX = dict(  # noqa: C408
-    default=False,
-    action="store_true",
-    help="Accept species names without pre-loaded taxonomy.",
-)
-
-# "-g", "--genus"
-ARG_GENUS_ONLY = dict(  # noqa: C408
-    default=False,
-    action="store_true",
-    help="Record at genus level only (and only validate at genus level, "
-    "unless using -x / --lax in which case anything is accepted as a genus).",
 )
 
 # Prepare reads arguments
@@ -671,7 +625,10 @@ ARG_PRIMER_LEFT = dict(  # noqa: C408
     "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
 )
 ARG_PRIMER_LEFT_BLANK = dict(  # noqa: C408
-    type=str, default="", metavar="PRIMER", help="Left primer sequence, default blank."
+    type=str,
+    default="",
+    metavar="PRIMER",
+    help="Left primer sequence, default blank (no trimming).",
 )
 
 # "-r", "--right",
@@ -687,7 +644,10 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
 )
 ARG_PRIMER_RIGHT_BLANK = dict(  # noqa: C408
-    type=str, default="", metavar="PRIMER", help="Right primer sequence, default blank."
+    type=str,
+    default="",
+    metavar="PRIMER",
+    help="Right primer sequence, default blank (no trimming).",
 )
 
 # "-k", "--spike",
@@ -934,37 +894,63 @@ def main(args=None):
     subcommand_parser.set_defaults(func=load_tax)
     del subcommand_parser  # To prevent acidentally adding more
 
-    # ncbi-import
+    # import
     subcommand_parser = subparsers.add_parser(
-        "ncbi-import",
-        description="Load an NCBI format FASTA file into a database. "
-        "By default verifies species names against a pre-loaded taxonomy, "
-        "non-matching entries are rejected. In lax mode uses heuristics to "
-        "split the species and any following free text - see also the "
-        "curated-import command which avoids this ambiguity.",
+        "import",
+        description="Load a FASTA file into a database. "
+        "Supports multiple entries in a single record using a FASTA title "
+        "line of identifier1, space, species1, separator, identifier2, "
+        "space, species2, etc. By default verifies species names against a "
+        "pre-loaded taxonomy, non-matching entries are rejected. With NCBI "
+        "heuristics enabled, tries to split the species and any following "
+        "free text. Set both primers to '' to disable primer trimming.",
     )
-    subcommand_parser.add_argument(
-        "-i", "--input", type=str, required=True, help="One NCBI-style fasta filename."
-    )
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
-    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
-    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
-    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument(
+        "-n",
+        "--name",
+        type=str,
+        default="",
+        help="Name to record for this data source (string).",
+    )
+    subcommand_parser.add_argument(
+        "-x",
+        "--lax",
+        default=False,
+        action="store_true",
+        help="Accept species names without pre-loaded taxonomy.",
+    )
+    subcommand_parser.add_argument(
+        "-g",
+        "--genus",
+        default=False,
+        action="store_true",
+        help="Record at genus level only (and only validate at genus level, "
+        "unless using -x / --lax in which case any word is accepted as a genus).",
+    )
+    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT_BLANK)
+    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT_BLANK)
+    subcommand_parser.add_argument(
+        "--ncbi",
+        action="store_true",
+        help="Enable NCBI naming style heuristics.",
+    )
     subcommand_parser.add_argument(
         "-s",
         "--sep",
         type=str,
-        default=CTRL_A,
+        default=None,
         metavar="CHAR",
-        help="FASTA description entry separator, default Ctrl+A.",
+        help="FASTA description multi-entry separator. Default semi-colon or "
+        "Ctrl+A with --ncbi. Use '' if single entries.",
     )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=ncbi_import)
+    subcommand_parser.set_defaults(func=db_import)
     del subcommand_parser  # To prevent acidentally adding more
 
     # curated-seq
@@ -1022,32 +1008,6 @@ def main(args=None):
     subcommand_parser.set_defaults(func=curated_seq)
     del subcommand_parser  # To prevent acidentally adding more
 
-    # curated-import
-    subcommand_parser = subparsers.add_parser(
-        "curated-import",
-        description="Load curated marker FASTA file(s) into a database. "
-        "Treats the FASTA title lines as identitier, space, species. "
-        "Also supports multiple entries in a single record using a FASTA "
-        "title line of identifier1, space, species1, separator, identifier2, "
-        "space, species2, etc. "
-        "By default verifies species names against a pre-loaded taxonomy, "
-        "non-matching entries are rejected.",
-    )
-    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
-    subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
-    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
-    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument("-n", "--name", **ARG_NAME)
-    subcommand_parser.add_argument("-x", "--lax", **ARG_LAX)
-    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_ONLY)
-    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT_BLANK)
-    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT_BLANK)
-    subcommand_parser.add_argument("-s", "--sep", **ARG_FASTA_SEP)
-    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=curated_import)
-    del subcommand_parser  # To prevent acidentally adding more
-
     # dump
     subcommand_parser = subparsers.add_parser(
         "dump",
@@ -1094,7 +1054,13 @@ def main(args=None):
         "spaces after each comma). Requires a single genus argument be given. "
         "Default is not to filter by species.",
     )
-    subcommand_parser.add_argument("--sep", **ARG_FASTA_SEP)
+    subcommand_parser.add_argument(
+        "--sep",
+        type=str,
+        default=";",
+        metavar="CHAR",
+        help="FASTA description entry separator, default semi-colon.",
+    )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=dump)
     del subcommand_parser  # To prevent acidentally adding more
