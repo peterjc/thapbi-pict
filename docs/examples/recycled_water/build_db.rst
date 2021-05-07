@@ -88,15 +88,15 @@ from the author submitted description which starts with an older name,
 the NCBI taxonomy database under `taxonomy ID 611798
 <https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=611798>`_.
 
-THAPBI PICT offers two solutions. First, the import commands by default
-expect a pre-loaded NCBI taxonomy in the database for validation purposes.
-This allows ``thapbi_pict ncbi-import`` to try as many words as possible
-from the NCBI style FASTA description in looking for a match in the NCBI
-taxonomy, including synonyms. If that fails and lax mode is used (``-x`` or
-``--lax``), it falls back on heuristics to identify which part of the
-description is the species. The example above didn't preload a taxonomy.
-Second, ``thapbi_pict curated-import`` takes the *entire* FASTA description
-(after the identifier) as the species name, giving full control to the user.
+THAPBI PICT offers two solutions. By default the *entire* FASTA description
+(after the identifier) is the species name, giving full control to the user.
+
+However, the ``--ncbi`` switch enables heuristics. This is best used with a
+pre-loaded NCBI taxonomy in the database for validation purposes. This tries
+as many words as possible from the NCBI style FASTA description in looking for
+a match in the NCBI taxonomy, including synonyms. If that fails and lax mode
+is used (``-x`` or ``--lax``), it falls back on heuristics to identify which
+part of the description is the species.
 
 Species validation
 ------------------
@@ -127,20 +127,16 @@ If you are working with different organisms you will also need to set the
 <https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=4762>`_ for
 *Oomycetes*.
 
-Curated import
---------------
-
-The ``thapbi_pict curated-import`` differs from ``thapbi_pict ncbi-import``
-in two key points. First, by default it expects the sequences to be
-pre-trimmed (it does not do primer trimming). Second, it does not use
-heuristics but simply assumes the FASTA description line is an identifier
-followed by the species name *only*.
+Primer trimming
+---------------
 
 We have provided file ``Redekar_et_al_2019_sup_table_3.fasta`` which contains
 primer trimmed versions of the full sequences of each accession, plus the
 species name from ``Redekar_et_al_2019_sup_table_3.tsv`` which was based on
 those given in Redekar *et al.* (2019) Supplementary Table 3 but with some
-light curation to better match the NCBI usage.
+light curation to better match the NCBI usage. Note that matching sequences
+have been combined into single FASTA records with a semi-colon separated
+description.
 
 The sequencing trimming ought to be very close to that used in the Redekar
 *et al.* (2019) paper's database. This file was constructed with a short Python

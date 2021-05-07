@@ -9,7 +9,7 @@ echo
 function analyse {
     if [ ! -f ${NAME}.sqlite ]; then
         echo "Building $MARKER database for $NAME"
-        thapbi_pict curated-import -i ${MARKER}.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+        thapbi_pict import -i ${MARKER}.fasta -d ${NAME}.sqlite -l $LEFT -r $RIGHT -x
     fi
 
     echo "Running analysis with minimum abundance threshold ten"

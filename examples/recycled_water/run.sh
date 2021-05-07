@@ -26,7 +26,7 @@ if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
 
     # Using -x / --lax (does not insist on taxonomy match)
     # Not giving primers, sequences are already trimmed
-    thapbi_pict curated-import -x \
+    thapbi_pict import -x \
             -d Redekar_et_al_2019_sup_table_3.sqlite \
             -i Redekar_et_al_2019_sup_table_3.fasta
 fi

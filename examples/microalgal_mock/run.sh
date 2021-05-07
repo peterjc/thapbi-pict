@@ -10,7 +10,7 @@ function analyse {
     if [ ! -f ${NAME}.sqlite ]; then
         echo "Building $NAME database for $NAME"
         # FASTA file has full 18S rRNA gene, use primers to trim to targetted region:
-        thapbi_pict curated-import -i mock_community.fasta -d ${NAME}.sqlite --left $LEFT --right $RIGHT -x
+        thapbi_pict import -i mock_community.fasta -d ${NAME}.sqlite -l $LEFT -r $RIGHT -x
     fi
 
     echo "Running analysis"
