@@ -103,8 +103,6 @@ def db_import(args=None):
         validate_species=not args.lax,
         ncbi_heuristics=args.ncbi,
         genus_only=args.genus,
-        left_primer=primer_clean(args.left),
-        right_primer=primer_clean(args.right),
         sep=(CTRL_A if args.ncbi else ";") if args.sep is None else args.sep,
         ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
@@ -624,12 +622,6 @@ ARG_PRIMER_LEFT = dict(  # noqa: C408
     "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
     "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
 )
-ARG_PRIMER_LEFT_BLANK = dict(  # noqa: C408
-    type=str,
-    default="",
-    metavar="PRIMER",
-    help="Left primer sequence, default blank (no trimming).",
-)
 
 # "-r", "--right",
 ARG_PRIMER_RIGHT = dict(  # noqa: C408
@@ -642,12 +634,6 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
     "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
-)
-ARG_PRIMER_RIGHT_BLANK = dict(  # noqa: C408
-    type=str,
-    default="",
-    metavar="PRIMER",
-    help="Right primer sequence, default blank (no trimming).",
 )
 
 # "-k", "--spike",
@@ -903,7 +889,7 @@ def main(args=None):
         "space, species2, etc. By default verifies species names against a "
         "pre-loaded taxonomy, non-matching entries are rejected. With NCBI "
         "heuristics enabled, tries to split the species and any following "
-        "free text. Set both primers to '' to disable primer trimming.",
+        "free text.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
@@ -931,8 +917,6 @@ def main(args=None):
         help="Record at genus level only (and only validate at genus level, "
         "unless using -x / --lax in which case any word is accepted as a genus).",
     )
-    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT_BLANK)
-    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT_BLANK)
     subcommand_parser.add_argument(
         "--ncbi",
         action="store_true",

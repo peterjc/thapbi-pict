@@ -8,8 +8,13 @@ echo
 # Takes arguments via variable names
 function analyse {
     if [ ! -f ${NAME}.sqlite ]; then
+        echo "Trimming $MARKER sequences for $NAME"
+        export RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
+        # Doing the left and right primer trimming separately:
+        cutadapt --quiet -g $LEFT $MARKER.fasta \
+          | cutadapt --quiet -a $RIGHT_RC -o $NAME.fasta /dev/stdin
         echo "Building $MARKER database for $NAME"
-        thapbi_pict import -i ${MARKER}.fasta -d ${NAME}.sqlite -l $LEFT -r $RIGHT -x
+        thapbi_pict import -i $NAME.fasta -d $NAME.sqlite -x
     fi
 
     echo "Running analysis with minimum abundance threshold ten"

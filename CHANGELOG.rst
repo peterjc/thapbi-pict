@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.5  2021-05-10 Combined ``ncbi-import`` and ``curated-import`` commands as ``import``.
+v0.9.5  2021-05-10 Simplified to just one ``import`` command for pre-trimmed FASTA input.
 v0.9.4  2021-05-05 Dropped unused metadata fields from DB schema. Fixed GML format edit graphs.
 v0.9.3  2021-05-04 Replaced HMM for spike-in control detection, now via DB & *k*-mer counting.
 v0.9.2  2021-04-28 Fixed obscure problem using relative versions of absolute paths.
