@@ -11,12 +11,12 @@ echo ==================
 # Setup two database, FASTA files are both already primer trimmed
 if [ ! -f COI_430_bats.sqlite ]; then
     echo "Setting up first database"
-    thapbi_pict curated-import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
+    thapbi_pict import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
 fi
 if [ ! -f COI_ext_bats.sqlite ]; then
     echo "Setting up extended database"
     cp COI_430_bats.sqlite COI_ext_bats.sqlite
-    thapbi_pict curated-import -d COI_ext_bats.sqlite -i observed_3_bats.fasta -x
+    thapbi_pict import -d COI_ext_bats.sqlite -i observed_3_bats.fasta -x
 fi
 
 echo ---------------------------------------------------------------

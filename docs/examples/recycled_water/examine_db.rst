@@ -4,7 +4,7 @@ Examining the database
 ======================
 
 This example follows on from :ref:`custom_database_building`, and assumes
-you have used ``thapbi_pict curated-import`` with the provided FASTA file
+you have used ``thapbi_pict import`` with the provided FASTA file
 (based on Supplementary Table 3 in Redekar *et al.* 2019), and created a
 THAPBI PICT database named ``Redekar_et_al_2019_sup_table_3.sqlite``.
 

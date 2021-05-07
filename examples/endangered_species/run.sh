@@ -19,11 +19,12 @@ function analyse {
     if [ ! -f references/${NAME}.sqlite ]; then
         echo "Building database for $NAME"
         # Assume pre-trimmed
-        thapbi_pict curated-import -i references/${NAME}.fasta -d references/${NAME}.sqlite \
+        thapbi_pict import -i references/${NAME}.fasta -d references/${NAME}.sqlite \
             -x --minlen $MINLEN
     fi
+    echo "Adding $NAME to pooled database"
     # This is a big hack, just for the assess command to work on the pool:
-    thapbi_pict curated-import -i references/${NAME}.fasta -d references/pooled.sqlite \
+    thapbi_pict import -i references/${NAME}.fasta -d references/pooled.sqlite \
         -x --minlen $MINLEN
 
     echo "Running analysis for $NAME"

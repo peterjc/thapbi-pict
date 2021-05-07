@@ -64,7 +64,7 @@ discussion on the similar Redekar *et al.* (2019) worked example.
 
 Files ``ITS1.fasta`` and ``ITS2.fasta`` were extracted from supplementary
 materials appendix S2, with the species name alone added to the FASTA titles
-(for input to ``thapbi_pict curated-import`` with primer trimming).
+(for input to ``thapbi_pict import`` with primer trimming).
 
 Metadata
 --------

@@ -13,7 +13,7 @@ and we can load this into a new THAPBI PICT database using:
 .. code:: console
 
     $ rm -rf COI_430_bats.sqlite  # delete any pre-existing DB
-    $ thapbi_pict curated-import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
+    $ thapbi_pict import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
     File COI_430_bats.fasta had 430 sequences, of which 430 accepted.
     Of 430 potential entries, loaded 430 entries, 0 failed parsing.
 
@@ -42,7 +42,7 @@ dominant variant (two variants were seen in 40 samples). Finally, on the right
 for *Corynorhinus townsendii* the reference is a one base pair edit away from
 the two dominant variants (seen in 40 and 23 samples).
 
-This is a severve handicap for the default ``onebp`` classifier which looks
+This is a severe handicap for the default ``onebp`` classifier which looks
 for identical matches or up to a single base pair different. We can either
 switch to a fuzzier classifier (like the ``blast`` based classifier), or look
 at filling in the database.

@@ -7,7 +7,7 @@ echo
 
 if [ ! -f NCBI_12S.sqlite ]; then
     echo "Building 12S database from NCBI sequences"
-    thapbi_pict curated-import -d NCBI_12S.sqlite -i NCBI_12S.fasta -x
+    thapbi_pict import -d NCBI_12S.sqlite -i NCBI_12S.fasta -x
 fi
 
 # Primers, quoting Muri et al:
