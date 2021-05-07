@@ -28,18 +28,19 @@ sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C2');"
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C3');"
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C4');"
-thapbi_pict curated-import -d "$DB.sqlite" -i controls.fasta
+thapbi_pict import -d "$DB.sqlite" -i controls.fasta
 
 # ===============
 # Single isolates
 # ===============
 # FASTA files prepared via thapbi_pict prepare-reads and curated-seq steps:
-# thapbi_pict curated-import -d "$DB.sqlite" -i single_isolates/*.fasta
+# thapbi_pict import -d "$DB.sqlite" -i single_isolates/*.fasta
 
 # ===================
 # NCBI at genus level
 # ===================
-# thapbi_pict ncbi-import -d "$DB.sqlite" -i 2021-02-23-ITS_Oomycota_w32.fasta -g --minlen 150 --maxlen 750
+# thapbi_pict import --ncbi -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC -g \
+#             -d "$DB.sqlite" -i 2021-02-23-ITS_Oomycota_w32.fasta --minlen 150 --maxlen 750
 # Add hoc fix for some accessions apparently with wrong genus
 # BAD="('MN128447.1', 'MK794853.1', 'MK794848.1', 'MK795051.1', 'HQ237483.1', 'KP183959.1', 'MW426376.1', 'MW426384.1', 'KY785380.1', 'KY785381.1', 'KU715054.1')"
 # sqlite3 "$DB.sqlite" "DELETE FROM its1_sequence WHERE id IN (SELECT its1_sequence.id FROM its1_sequence JOIN its1_source ON its1_sequence.id = its1_source.its1_id WHERE source_accession IN $BAD);"
@@ -48,7 +49,7 @@ thapbi_pict curated-import -d "$DB.sqlite" -i controls.fasta
 # =================
 # Curated sequences
 # =================
-thapbi_pict curated-import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta
+thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
