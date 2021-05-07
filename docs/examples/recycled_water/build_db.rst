@@ -159,7 +159,7 @@ taxonomy pre-loaded (which will enable synonym support), but not enforced
     $ rm -rf Redekar_et_al_2019_sup_table_3.sqlite  # remove it if already there
     $ thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
     ...
-    $ thapbi_pict curated-import -x \
+    $ thapbi_pict import -x \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -i Redekar_et_al_2019_sup_table_3.fasta
     File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
