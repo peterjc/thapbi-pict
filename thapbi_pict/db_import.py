@@ -24,12 +24,116 @@ from .db_orm import RefMarker
 from .db_orm import SequenceSource
 from .db_orm import Synonym
 from .db_orm import Taxonomy
+from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import genus_species_split
 from .utils import md5_hexdigest
 from .utils import md5seq
 from .utils import run
 from .versions import check_tools
+
+
+def parse_ncbi_fasta_entry(text, known_species=None):
+    """Split an entry of Accession Genus Species-name Description.
+
+    Returns a two-tuple: taxid (always zero), presumed genus-species
+    (taken as two words by default if cannot be matched to a provided
+    known species) which may be the empty string.
+
+    >>> parse_ncbi_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
+    (0, 'Phytophthora drechsleri')
+    >>> parse_ncbi_fasta_entry('A57915.1 Sequence 20 from Patent EP0751227')
+    (0, '')
+    >>> parse_ncbi_fasta_entry('Y08654.1 P.cambivora ribosomal internal ...')
+    (0, '')
+
+    Dividing the species name into genus, species, strain etc
+    is not handled here.
+    """  # noqa: E501
+    parts = text.rstrip().split()
+    taxid = 0
+    name = parts[1:]  # ignore accession
+
+    if known_species:
+        while name and " ".join(name) not in known_species:
+            name.pop()  # discard last word
+        if len(name) > 1:
+            # Found a perfect match
+            return 0, " ".join(name)
+
+    # Heuristics
+    name = parts[1:3]  # assumes "Genus species" only (2 words)
+    rest = parts[3:]
+    assert name, text
+    if len(name[0]) > 2 and name[0][0].isupper() and name[0][1] == ".":
+        # Would need more information to infer the genus here
+        # e.g. Y08654.1 P.cambivora ribosomal internal transcribed spacer, ITS1
+        return 0, ""
+    while rest and name[-1] in ("taxon", "aff.", "cf.", "x"):
+        # Looks like species name needs at least one more word...
+        # Note that sp. or sp doesn't always have another word.
+        name.append(rest.pop(0))
+    if name[0] == "Sequence":
+        # Another special case
+        # e.g. A57915.1 Sequence 20 from Patent EP0751227
+        return 0, ""
+    if len(rest) >= 2 and rest[0] == "x":
+        # Hybrid
+        if name[0] == rest[1] and len(rest) >= 3:
+            # Genus repeated
+            name.append("x")
+            name.append(rest[2])
+        else:
+            name.extend(rest[:2])
+    return taxid, " ".join(name)
+
+
+assert parse_ncbi_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...") == (
+    0,
+    "Phytophthora drechsleri",
+)
+
+assert parse_ncbi_fasta_entry("A57915.1 Sequence 20 from Patent EP0751227") == (0, "")
+
+assert parse_ncbi_fasta_entry("Y08654.1 P.cambivora ribosomal internal ...") == (0, "")
+
+assert parse_ncbi_fasta_entry(
+    "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+) == (0, "Phytophthora humicola x inundata")
+
+assert parse_ncbi_fasta_entry(
+    "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+) == (0, "Phytophthora humicola x inundata")
+
+
+def parse_curated_fasta_entry(text, known_species=None):
+    """Split an entry of "Acession genus species etc" into fields.
+
+    Returns a two-tuple of taxid (always zero), genus-species.
+
+    >>> parse_curated_fasta_entry('HQ013219 Phytophthora arenaria')
+    (0, 'Phytophthora arenaria')
+
+    >>> parse_curated_fasta_entry('P13660 Phytophthora aff infestans')
+    (0, 'Phytophthora aff infestans')
+    """
+    acc, sp = text.split(None, 1)
+    taxid = 0
+    # if sp not in known_species:
+    #     sys.stderr.write(f"WARNING: Unexpected species name {sp}\n")
+    while "  " in sp:
+        sp = sp.replace("  ", " ")
+    return taxid, sp.strip()
+
+
+assert parse_curated_fasta_entry("HQ013219 Phytophthora arenaria") == (
+    0,
+    "Phytophthora arenaria",
+)
+assert parse_curated_fasta_entry("P13660 Phytophthora aff infestans") == (
+    0,
+    "Phytophthora aff infestans",
+)
 
 
 def run_cutadapt_keep(
@@ -99,70 +203,19 @@ def lookup_genus(session, name):
 def import_fasta_file(
     fasta_file,
     db_url,
+    fasta_entry_fn,
+    entry_taxonomy_fn,
     min_length=0,
     max_length=sys.maxsize,
     name=None,
     debug=True,
-    fasta_entry_fn=None,
-    entry_taxonomy_fn=None,
     validate_species=False,
     genus_only=False,
     left_primer=None,
     right_primer=None,
     tmp_dir=None,
 ):
-    """Import a FASTA file into the database.
-
-    For ``thapbi_pict curated-import`` some FASTA sequences are
-    treated as multiple entries sharing that same sequence. For
-    ``thapbi_pict ncbi-import``, each FASTA sequence is treated
-    as a single entry. For ``thapbi_pict seq-import`` again each
-    FASTA sequence is treated as a single entry, but depending on
-    the meta-data it may or may not be imported into the DB.
-
-    That behaviour is controlled by the optional argument
-    fasta_entry_fn which is a function which will be given the
-    full FASTA title line, and should return a list of sub-entries
-    (by default, a single entry list) to be imported. This can
-    return an empty list if the FASTA entry is to be ignored.
-
-    Required argument entry_taxonomy_fn is a function which will
-    be given the entries from function fasta_split_fn, and should
-    return the associated taxonomy information. This can be done
-    by parsing the string, or looking it up in another source.
-
-    In ``thapbi_pict curated-import`` and ``thapbi_pict ncbi-import``
-    the species metadata is recorded directly in the FASTA title
-    lines. However, the metadata for ``thapbi_pict seq-import``
-    comes from a sister TSV file, and is cross-referenced by the
-    FASTA sequence identifier.
-
-    For ``thapbi_pict curated-import`` we expect pre-trimmed curated
-    marker sequences. For ``thapbi_pict seq-import`` the reads have
-    been primer-trimed by ``thapbi_pict prepare-reads``. However,
-    for ``thapbi_pict ncbi-import`` many of the sequences will be
-    longer than the marker region of interest - and thus should be
-    in-silico primer trimmed.
-    """
-    if left_primer or right_primer:
-        check_tools(["cutadapt"], debug)
-
-    # Argument validation,
-    if fasta_entry_fn is None:
-        if debug:
-            sys.stderr.write("DEBUG: Treating each FASTA entry as a singleton.\n")
-
-        def fasta_entry_fn(text):
-            """Treat all FASTA entries as singletons.
-
-            Default is not to support merged FASTA entries, and accept
-            all the sequences.
-            """
-            return [text]
-
-    if entry_taxonomy_fn is None:
-        raise ValueError("Need function to get species from FASTA title.")
-
+    """Import a FASTA file into the database."""
     if os.stat(fasta_file).st_size == 0:
         if debug:
             sys.stderr.write(f"Ignoring empty FASTA file {fasta_file}\n")
@@ -394,4 +447,68 @@ def import_fasta_file(
     if bad_species and (validate_species or debug):
         sys.stderr.write(
             f"Could not validate {len(bad_species)} different species names\n"
+        )
+
+
+def main(
+    fasta,
+    db_url,
+    min_length=0,
+    max_length=sys.maxsize,
+    name=None,
+    ncbi_heuristics=False,
+    sep=None,
+    validate_species=False,
+    genus_only=False,
+    left_primer=None,
+    right_primer=None,
+    ignore_prefixes=None,
+    tmp_dir=None,
+    debug=False,
+):
+    """Import FASTA file(s) into the database.
+
+    For NCBI files, recommend using ``--ncbi`` and leave ``--sep ''``
+    as it is since single entries are expected.
+
+    For curated FASTA files, omit ``--ncbi`` and use ``--sep ';'``
+    or whatever multi-entry separator you are using.
+
+    Primer trimming is done if and only if primers are given.
+    """
+    if sep:
+
+        def fasta_entry_fn(text):
+            """Split FASTA entries on the separator character."""
+            return [_.strip() for _ in text.split(sep)]
+
+    else:
+        if debug:
+            sys.stderr.write("DEBUG: Treating each FASTA entry as a singleton.\n")
+
+        def fasta_entry_fn(text):
+            """Treat all FASTA entries as singletons."""
+            return [text]
+
+    if left_primer or right_primer:
+        check_tools(["cutadapt"], debug)
+
+    fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
+    if debug:
+        sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
+
+    for fasta_file in fasta_files:
+        import_fasta_file(
+            fasta_file,
+            db_url,
+            fasta_entry_fn,
+            parse_ncbi_fasta_entry if ncbi_heuristics else parse_curated_fasta_entry,
+            min_length=min_length,
+            max_length=max_length,
+            name=name,
+            debug=debug,
+            validate_species=validate_species,
+            genus_only=genus_only,
+            left_primer=left_primer,
+            right_primer=right_primer,
         )
