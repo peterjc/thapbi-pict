@@ -17,20 +17,21 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
 - NCBI Oomycota (including *Phytophthora*) at genus level, 4907 entries in
-  file ``database/2021-02-23-ITS_Oomycota_w32.fasta`` trimmed to start at the
-  expected 32bp leader, and any obvious right primer removed, using::
-
-      $ cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
-      --discard-untrimmed 2021-02-23-ITS_Oomycota_36025.fasta \
-      | cutadapt -a GYRGGGACGAAAGTCYYTGC --fasta /dev/stdin \
-      -o 2021-02-23-ITS_Oomycota_w32.fasta
-
-  Started from 36025 downloaded from an NCBI Entrez search on 2021-02-23::
+  file ``database/2021-02-23-ITS_Oomycota_w32.fasta`` extracted from 36025
+  downloaded from an NCBI Entrez search on 2021-02-23::
 
       ((internal AND transcribed AND spacer) OR its1) AND
       150:10000[sequence length] AND Oomycota[organism]
 
-  Note the NCBI import command discards uncultured entries.
+  Any obvious left and right primers were removed, and the sequence trimmed to
+  the expected 32bp leader as follows::
+
+      $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2021-02-23-ITS_Oomycota_36025.fasta \
+        --quiet | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
+        | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
+        --discard-untrimmed --quiet /dev/stdin -o 2021-02-23-ITS_Oomycota_w32.fasta
+
+  Note the import command discards uncultured entries.
 
 - Observed ITS1 sequence files ``single_isolates/*.fasta`` from single isolate
   positive controls run on MiSeq plates. Created using
