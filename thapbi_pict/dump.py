@@ -105,10 +105,7 @@ def main(
     elif minimal:
         out_handle.write("#MD5\tSpecies\tSequence\n")
     else:
-        out_handle.write(
-            "#Identifier\tGenus\tSpecies\tTaxID"
-            "\tMarker-MD5\tMarker-sequence\tSource-sequence\n"
-        )
+        out_handle.write("#Identifier\tGenus\tSpecies\tTaxID\tMD5\tSequence\n")
 
     if minimal:
         md5_seq = {}
@@ -178,8 +175,7 @@ def main(
                     f"\t{none_str(seq_source.taxonomy.species)}"
                     f"\t{taxid}"
                     f"\t{seq_source.marker.md5}"
-                    f"\t{seq_source.marker.sequence}"
-                    f"\t{seq_source.sequence}\n"
+                    f"\t{seq_source.marker.sequence}\n"
                 )
             except BrokenPipeError:
                 # Likely writing to stdout | head, or similar
