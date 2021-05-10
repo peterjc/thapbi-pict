@@ -35,23 +35,23 @@ is useful - this shows the expected 12 species:
 
 Or, open the file ``V4.assess.onebp.tsv`` in Excel. You should see:
 
-================================================ === == == ==
-#Species                                         TP  FP FN TN
-================================================ === == == ==
-OVERALL                                          134 0  82 36
-Chlorella vulgaris strain CCAP 211/11B           15  0  3  3
-Cryptomonas pyrenoidifera strain CCAP 979/61     15  0  3  3
-Heterocapsa niei strain UTEX LB 2722             14  0  4  3
-Isochrysis galbana strain CCAP 927/1             0   0  18 3
-Nannochloropsis oculata strain CCMP225           7   0  11 3
-Ochromonas sp. UTEX LB 2575                      12  0  6  3
-Prymnesium parvum strain CCAP 946/6              0   0  18 3
-Rhodomonas sp. CCAP 995/5                        15  0  3  3
-Symbiodinium microadriaticum strain UTEX LB 2281 14  0  4  3
-Tetradesmus obliquus strain CCAP 276/3A          15  0  3  3
-Thalassiosira pseudonana strain CCAP 1085/12     12  0  6  3
-Trebouxia sp. CCAP 213/3                         15  0  3  3
-================================================ === == == ==
+============================ === == == ==
+#Species                     TP  FP FN TN
+============================ === == == ==
+OVERALL                      134 0  82 36
+Chlorella vulgaris           15  0  3  3
+Cryptomonas pyrenoidifera    15  0  3  3
+Heterocapsa niei             14  0  4  3
+Isochrysis galbana           0   0  18 3
+Nannochloropsis oculata      7   0  11 3
+Ochromonas sp. UTEX LB 2575  12  0  6  3
+Prymnesium parvum            0   0  18 3
+Rhodomonas sp. CCAP 995/5    15  0  3  3
+Symbiodinium microadriaticum 14  0  4  3
+Tetradesmus obliquus         15  0  3  3
+Thalassiosira pseudonana     12  0  6  3
+Trebouxia sp. CCAP 213/3     15  0  3  3
+============================ === == == ==
 
 Notice 2 of the 12 species were not detected, *Isochrysis galbana* and
 *Prymnesium parvum* exactly as per the authors' analysis, attributed to
@@ -130,23 +130,23 @@ Proceeding along the same basis:
 
 Or, open the file ``V8V9.assess.onebp.tsv`` in Excel. You should see:
 
-================================================ === == == ==
-#Species                                         TP  FP FN TN
-================================================ === == == ==
-OVERALL                                          131 0  85 36
-Chlorella vulgaris strain CCAP 211/11B           12  0  6  3
-Cryptomonas pyrenoidifera strain CCAP 979/61     14  0  4  3
-Heterocapsa niei strain UTEX LB 2722             12  0  6  3
-Isochrysis galbana strain CCAP 927/1             12  0  6  3
-Nannochloropsis oculata strain CCMP225           5   0  13 3
-Ochromonas sp. UTEX LB 2575                      12  0  6  3
-Prymnesium parvum strain CCAP 946/6              12  0  6  3
-Rhodomonas sp. CCAP 995/5                        14  0  4  3
-Symbiodinium microadriaticum strain UTEX LB 2281 12  0  6  3
-Tetradesmus obliquus strain CCAP 276/3A          12  0  6  3
-Thalassiosira pseudonana strain CCAP 1085/12     0   0  18 3
-Trebouxia sp. CCAP 213/3                         14  0  4  3
-================================================ === == == ==
+============================ === == == ==
+#Species                     TP  FP FN TN
+============================ === == == ==
+OVERALL                      143 0  73 36
+Chlorella vulgaris           12  0  6  3
+Cryptomonas pyrenoidifera    14  0  4  3
+Heterocapsa niei             12  0  6  3
+Isochrysis galbana           12  0  6  3
+Nannochloropsis oculata      5   0  13 3
+Ochromonas sp. UTEX LB 2575  12  0  6  3
+Prymnesium parvum            12  0  6  3
+Rhodomonas sp. CCAP 995/5    14  0  4  3
+Symbiodinium microadriaticum 12  0  6  3
+Tetradesmus obliquus         12  0  6  3
+Thalassiosira pseudonana     12  0  6  3
+Trebouxia sp. CCAP 213/3     14  0  4  3
+============================ === == == ==
 
 Very similar, but time *Thalassiosira pseudonana* is missing with the default
 strict ``onebp`` classifier - and the authors did not report its absence. The
@@ -182,7 +182,7 @@ from the authors for this mock community member, and is in our database:
 .. code:: console
 
     $ thapbi_pict dump -d V8V9.sqlite -g Thalassiosira -f fasta
-    >KU900218.1 Thalassiosira pseudonana strain CCAP 1085/12
+    >KU900218.1 Thalassiosira pseudonana
     TAGATGTCCTGGGCCGCACGCGCGCTACACTGATGCACTCAACGAGCATATAACCTTGGCCGAGAGGCCTGGGTAATCTT
     GTTAACATGCATCGTGATAGGGATAGATTATTGCAATTATTAATCTTGAACGAGGAATTCCTAGTAATCGCAGATCATCA
     ATCTGCAATGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCACCTACCGATTGGATGGTCCGGTGAGGAGTCGAG

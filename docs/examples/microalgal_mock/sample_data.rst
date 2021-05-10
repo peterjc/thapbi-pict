@@ -107,8 +107,9 @@ Other files
 -----------
 
 File ``mock_community.fasta`` contains the sequences from accession numbers
-KU900218 to KU900229 (published with the paper), with the description line
-holding just the assigned species.
+KU900218 to KU900229 (published with the paper) plus HF565127 (a longer entry
+for *Thalassiosira pseudonana*), with the description line holding just the
+assigned species.
 
 Files ``mock_community.known.tsv``, ``mock_freshwater.known.tsv`` and
 ``mock_marine.known.tsv`` describe the expected 12 species in the mock
