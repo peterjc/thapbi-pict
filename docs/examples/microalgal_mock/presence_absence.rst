@@ -115,8 +115,9 @@ as in this Excel screenshot (freshwater in pale blue, marine in dark blue):
 .. image:: https://gist.githubusercontent.com/peterjc/3baeb3a648b8cdd7cfa970920eaf7f38/raw/4061bc7aafe7360e3c1b90ab82e92cffaaad02ff/V4.samples.onebp.svg?sanitize=true
    :alt: Excel screenshot from a cropped and sorted THAPBI PICT sample report
 
-Notice there are no unknowns - this example seems to behave perfectly, and at
-this threshold minority samples present at the 1:100 ratio are not found.
+Notice there are no unknowns in the mock community samples - this example
+seems to behave perfectly, and at this threshold minority samples present at
+the 1:100 ratio are not found.
 
 18S rRNA V8V9 marker
 --------------------
@@ -148,9 +149,8 @@ Thalassiosira pseudonana     12  0  6  3
 Trebouxia sp. CCAP 213/3     14  0  4  3
 ============================ === == == ==
 
-Very similar, but time *Thalassiosira pseudonana* is missing with the default
-strict ``onebp`` classifier - and the authors did not report its absence. The
-reason for this is discussed shortly.
+This time everything expected is found. Again, *Nannochloropsis oculata*
+detection is comparatively low.
 
 Open ``V8V9.samples.onebp.xlsx`` and focus on the mock community rows (yellow
 background). Again, in the following screen shot we have sorted the columns
@@ -163,38 +163,34 @@ Again, much the same picture *except* all the communities (although not all
 the replicates at the freshwater end) report unknown sequences.
 
 If you open ``V8V9.reads.onebp.xlsx`` you can see all the sequences not
-assigned a species. If you delete the other samples and re-sort, you should
-find this is the most abundance unassigned sequence (column 1 is the MD5
-checksum, column 2 is blank for no classification, column 3 is the sequence)::
+assigned a species. Column 1 is the MD5 checksum, column 2 is blank for no
+classification, column 3 is the sequence). The three most common unexpected
+sequences by sample number are all freshwater associated::
 
-    >e586634fe2e532c7fd59b071493579c3
-    TAGATGTCCTGGGCCGCACGCGCGCTACACTGATGCACTCAACGAGCATATAACCTTGGCCGAGAGGCCTGGGTAATCTT
-    GTTAACATGCATCGTGATAGGGATAGATTATTGCAATTATTAATCTTGAACGAGGAATTCCTAGTAATCGCAGATCATCA
-    ATCTGCAATGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCACCTACCGATTGGATGGTCCGGTGAGGAGTCGAG
-    ATTGTGGCCTGGTTCCTTTATTGGGATTTGGCTACGAGAACTTCTCCAAACCTTATCATCTAGAGGAAGGTGAAGTCGTA
-    ACAAGGTTTCC
+    >613d11944836cb12a0c673a00d08f5b0
+    TAGATGTTCTGGGCCGCACGCGCGCTACACTGATGCATTCAACGAGTTTTTCCTTGGCCGAGAGGCCTGGGCAATCTTTT
+    GAACGTGCATCGTGATAGGGATAGATTATTGCAATTATTAATCTTGAACGAGGAATTCCTAGTAAACGCAGATCATCAAT
+    CTGCATTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCACCTACCGATTGAATGGTCCGGTGAAGCCTCGGGAT
+    TGTGGTGAATTTCCTTTACTGGGAGTTCATTGCGAGAACTTGTCTAAACCTTATCATTTAGAGGAAGGTGAAGTCGTAAC
+    AAGGTTTCC
+    >a88c421a0232583cdf19cc21559ea7fd
+    TAGATGTCCTGGGCCGCACGCGTGCTACACTGACATATACAGCGAGCATCTCCAGCGCCGCGAGGTCGCTGGTAATCAGC
+    AATATATGTCGTGATGGGGATAGATCTTTGGAATTATTGATCTTGAACGAGGAATGCCTAGTAAGCGCAGTTCATCAGAC
+    TGCGTTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCTCCTACCGATTTCGAGTGGTCCGGTGAACCTTTCGGA
+    CCGAGGGCAGCCCCGTGCTGTCTTTGGGAAGTCAAGTAAACCACATCACTTAGAGGAAGGAGAAGTCGTAACAAGGTTTC
+    C
+    >f6bb4bcda071c78157ea0a2b81aefac8
+    TAGATGTCCTGGGCCGCACGCGTGCTACACTGACATATACAGCGAGCATCTCCAGCGCCGCGAGGTCGCTGGTAATCAGC
+    AATATATGTCGTGATGGGGATAGATCTTTGGAATTATTGATCTTGAACGAGGAATGCCTAGTAAGCGCAGTTCATCAGAC
+    TGCGTTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCTCCTACCGATTTCGAGTGGTCCGGTGAACCTTTCGGA
+    CCGAGGACAGCCCCGTGCTGTTTTTGGGAAGTCAAGTAAACCACATCACTTAGAGGAAGGAGAAGTCGTAACAAGGTTTC
+    C
 
-Running an NCBI BLAST search online gives perfect full length hits to multiple
-*Thalassiosira pseudonana* accessions (and *Thalassiosira oceanica* too). It
-also gives a perfect but partial match to KU900218.1 which is the accession
-from the authors for this mock community member, and is in our database:
+NCBI BLAST gives perfect matches to *Nitzschia palea*, *Choreotrichia* sp. bLPN2,
+and 99% identical match to the same *Choreotrichia*.
 
-.. code:: console
-
-    $ thapbi_pict dump -d V8V9.sqlite -g Thalassiosira -f fasta
-    >KU900218.1 Thalassiosira pseudonana
-    TAGATGTCCTGGGCCGCACGCGCGCTACACTGATGCACTCAACGAGCATATAACCTTGGCCGAGAGGCCTGGGTAATCTT
-    GTTAACATGCATCGTGATAGGGATAGATTATTGCAATTATTAATCTTGAACGAGGAATTCCTAGTAATCGCAGATCATCA
-    ATCTGCAATGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCACCTACCGATTGGATGGTCCGGTGAGGAGTCGAG
-    ATTGTGGCCTGGTTCCTTTATTGGGATTTGGCTACGAGAACTTCTCCAAACCTTATCATCTAGAGGAAG
-    Wrote 1 fasta format entries
-
-Unfortunately it seems to be incomplete, missing the last 22bp,
-``GTGAAGTCGTAACAAGGTTTCC`` - as can be seen on the full length record (e.g.
-`KU900218.1 on NCBI <https://www.ncbi.nlm.nih.gov/nucleotide/KU900218.1>`_).
-
-The second and third most common unexpected sequence are both marine
-associated::
+The following unclassified entries are striking as only appearing in the mock
+community::
 
     >64f90363dd2c1f85645af55a92d4c376
     TAGATGTTCTGGGCTGCACGCGCGCTACACTGATGCGCTCAACGAGTTTATGACCTTGCCCGGAAGGGTTGGGTAATCTT
@@ -214,37 +210,6 @@ microadriaticum* and KU900227.1 *Heterocapsa niei* respectively amongst their
 top hits - both accessions from the mock community - but at only 97% identify.
 These could be a secondary variant copies in those genomes?
 
-The fourth and fifth most common unexpected sequence are both freshwater
-associated::
-
-    >935f0cd55155d64af97bef8245b36f4d
-    TAGATGTTCTGGGCCGCACGCGCGCTACACTGATGGATGCAACGAGCTCTACCCTTGACCGAAAGGCCCGGGTAAACTTG
-    TCAAAATCCATCGTGATGGGGATAGATTATTGCAATTCTTGATCTTCAACGAGGAATTCCTAGTAAGCGCGAGTCATCAG
-    CTCGCGTTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCTCCTACCGATTGAATGGTCCGGTGAAATCTTCGGA
-    TTGCTGACTTTGGCATTTATTTGTCTTAGTTGCGAGAAGTTGATTGAACCTTATCATTTAGAGGAAGGAGAAGTCGTAAC
-    AAGGTTTCC
-    >065d987074eac615c1a2292b2a6e2680
-    TAGATGTTCTGGGCCGCACGCGCGCTACACTGATGAATGCAACGAGCTCCTCCCTTATTCGAAAGAATCGGGTAAACTTG
-    TGAAAATTCATCGTGATGGGGATAGATTATTGCAATTATTAATCTTCAACGAGGAATTCCTAGTAAGCGCGAGTCATCAG
-    CTCGCGTTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCTCCTACCGATTGAATGGTCCGGCGAAATCTTCAGA
-    TTGCTGGCGAGTTCTTCACGGTTCTCGCTGTGAGAAGTTGATTAAACCTTATCATTTAGAGGAAGGAGAAGTCGTAACAA
-    GGTTTCC
-
-Running an NCBI BLAST search online gives KU900223.1 *Rhodomonas* sp. CCAP
-995/5, and KU900222.1 *Cryptomonas pyrenoidifera* respectively amongst their
-top hits - again both accessions from the mock community - but at only 96%
-identify. Likewise the sixth most common unexpected sequence has a 97% identity
-match to KU900220.1 *Chlorella vulgaris*::
-
-    >1610815dfa2c7d4b602e84114d15cd51
-    TAGATGTTCTGGGCCGCACGCGCGCTACACTGATGCATTCAACAAGCCTATCCTTGACCGAAGGGTCTGGGTAATCTTTG
-    AAACTGCATCGTGATGGGGATAGATTATTGCAATTATTAGTCTTCAACGAGGAATGCCTAGTAAGCGCAAGTCATCAGCT
-    TGCGTTGATTACGTCCCTGCCCTTTGTACACACCGCCCGTCGCTCCTACCGATTGGGTGTGCTGGTGAAGTGTTCGGATT
-    GGCGACCTGGGGCGGTCTCCGCTCTCGGCCGCCGAGAAGTTCATTAAACCCTCCCACCTAGAGGAAGGAGAAGTCGTAAC
-    AAGGTTTCC
-
-The remaining unexpected samples appeared in only one of the sequenced sample
-replicates, but again could be BLAST matched to the mock community.
 
 Conclusion
 ----------
