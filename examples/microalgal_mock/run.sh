@@ -10,9 +10,7 @@ function analyse {
     if [ ! -f ${NAME}.sqlite ]; then
         echo "Trimming mock community sequences for $NAME"
         export RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
-        # Doing the left and right primer trimming separately:
-        cutadapt --quiet -g $LEFT mock_community.fasta \
-          | cutadapt --quiet -a $RIGHT_RC -o $NAME.fasta /dev/stdin
+        cutadapt --quiet -g $LEFT...$RIGHT_RC -o $NAME.fasta mock_community.fasta
         echo "Building database for $NAME"
         # FASTA file has full 18S rRNA gene, use primers to trim to targetted region:
         thapbi_pict import -i $NAME.fasta -d $NAME.sqlite -x
