@@ -291,12 +291,13 @@ def import_fasta_file(
         for title, seq in SimpleFastaParser(handle):
             if "-" in seq:
                 sys.exit(f"ERROR: Gap in sequence for {title}")
+            # NOTE: at this point don't have full sequence prior to primer removal
+            seq = seq.upper()
             if set(seq.upper()).difference(valid_letters):
                 bad = ", ".join(sorted(set(seq.upper()).difference(valid_letters)))
                 sys.exit(
                     f"ERROR: Non-IUPAC DNA character(s) {bad} in sequence for {title}"
                 )
-
             seq_count += 1
             idn = title.split(None, 1)[0]
 
@@ -389,27 +390,24 @@ def import_fasta_file(
                         additional_taxonomy[name] = taxonomy
 
                 assert taxonomy is not None
-                # at this point we don't have the full sequence
-                # prior to any primer removal...
-                marker_seq = seq.upper()
+
                 if True:
                     # marker_seq_count += 1
-                    marker_md5 = md5seq(marker_seq)
+                    marker_md5 = md5seq(seq)
 
                     # Is sequence already there? e.g. duplicate sequences in FASTA file
                     marker = (
                         session.query(RefMarker)
-                        .filter_by(md5=marker_md5, sequence=marker_seq)
+                        .filter_by(md5=marker_md5, sequence=seq)
                         .one_or_none()
                     )
                     if marker is None:
-                        marker = RefMarker(md5=marker_md5, sequence=marker_seq)
+                        marker = RefMarker(md5=marker_md5, sequence=seq)
                         session.add(marker)
                     record_entry = SequenceSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
                         marker=marker,
-                        sequence=seq,
                         taxonomy=taxonomy,
                     )
                     session.add(record_entry)

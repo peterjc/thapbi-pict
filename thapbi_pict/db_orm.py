@@ -112,8 +112,6 @@ class SequenceSource(Base):
     marker_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
     marker = relationship(RefMarker, foreign_keys=[marker_id])
 
-    sequence = Column(String(1000))  # Full sequence, can be longer than marker
-
     # TODO - change its1_source.taxonomy_id to .taxonomy_id
     taxonomy_id = Column("current_taxonomy_id", Integer, ForeignKey("taxonomy.id"))
     taxonomy = relationship(Taxonomy, foreign_keys=[taxonomy_id])
