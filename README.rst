@@ -70,8 +70,8 @@ However, in this case you will still need to install various external
 command line tools. See ``INSTALL.rst`` for more details, and if you
 want to modify the software read ``CONTRIBUTING.rst`` as well.
 
-If you are on Windows, and do not wish or cannot use the Windows Subsystem for
-Linux (WSL), using the tool should still be possible although not all the
+If you are on Windows, and do not wish to or cannot use the Windows Subsystem
+for Linux (WSL), using the tool should still be possible although not all the
 command line dependencies are available on Conda. You can install BLAST (if
 required) by hand from the NCBI, and there are alternatives to ``unzip`` and
 ``md5sum`` for following the worked examples.
