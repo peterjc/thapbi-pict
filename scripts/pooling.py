@@ -186,7 +186,7 @@ def pool(
                     meta_species[meta] = None
             else:
                 assert "-" not in sp_counts, sp_counts
-                sp_counts = np.array([int(_) for _ in sp_counts], np.int)
+                sp_counts = np.array([int(_) for _ in sp_counts], int)
                 if meta in meta_samples:
                     meta_samples[meta].update(samples)
                     if meta_species[meta] is None:
