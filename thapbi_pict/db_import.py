@@ -30,6 +30,10 @@ from .utils import md5_hexdigest
 from .utils import md5seq
 
 
+DEF_MIN_LENGTH = 100
+DEF_MAX_LENGTH = 1000
+
+
 def parse_ncbi_fasta_entry(text, known_species=None):
     """Split an entry of Accession Genus Species-name Description.
 
@@ -279,8 +283,8 @@ def import_fasta_file(
     marker,
     left_primer=None,
     right_primer=None,
-    min_length=0,
-    max_length=sys.maxsize,
+    min_length=None,
+    max_length=None,
     name=None,
     trim=True,
     debug=True,
@@ -340,10 +344,28 @@ def import_fasta_file(
             )
         left_primer = reference_marker.left_primer
         right_primer = reference_marker.right_primer
+        if min_length is None:
+            min_length = reference_marker.min_length
+        elif min_length < reference_marker.min_length:
+            sys.exit(
+                "ERROR: Requested minimum length "
+                f"{min_length} lower than that in DB {reference_marker.min_length}"
+            )
+        if max_length is None:
+            max_length = reference_marker.max_length
+        elif reference_marker.max_length < max_length:
+            sys.exit(
+                "ERROR: Requested maximum length "
+                f"{max_length} exceeds that in DB {reference_marker.max_length}"
+            )
     elif not left_primer or not right_primer:
         sys.exit("ERROR: Both primers must be supplied when defining a new marker.")
     else:
         # New marker!
+        if min_length is None:
+            min_length = DEF_MIN_LENGTH
+        if max_length is None:
+            max_length = DEF_MAX_LENGTH
         if debug:
             sys.stderr.write(
                 f"DEBUG: New marker {marker} primers {left_primer} & {right_primer}\n"
