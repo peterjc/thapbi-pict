@@ -259,7 +259,9 @@ for filename in sys.argv[1:]:
                 pass
             elif old_out == new_out + err_out or old_out == err_out + new_out:
                 pass
-            elif old_out.startswith("...\n") and err_out.endswith(old_out[3:]):
+            elif old_out.startswith("...\n") and (
+                new_out.endswith(old_out[3:]) or err_out.endswith(old_out[3:])
+            ):
                 pass
             elif (
                 old_out.startswith("...\n")
