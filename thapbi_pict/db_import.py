@@ -500,7 +500,9 @@ def import_fasta_file(
                     )
                     if marker_seq is None:
                         marker_seq = MarkerSeq(
-                            md5=marker_md5, sequence=seq, marker=reference_marker
+                            md5=marker_md5,
+                            sequence=seq,
+                            marker_definition=reference_marker,
                         )
                         session.add(marker_seq)
                     record_entry = SeqSource(
