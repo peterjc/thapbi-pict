@@ -15,6 +15,8 @@ import sys
 
 from . import __version__
 from .classify import method_classify_file as method_classifier
+from .db_import import DEF_MAX_LENGTH
+from .db_import import DEF_MIN_LENGTH
 from .db_import import fasta_parsing_function as fasta_conventions
 from .utils import find_requested_files
 from .utils import primer_clean
@@ -589,17 +591,17 @@ ARG_DB_WRITE = dict(  # noqa: C408
 # "--minlen",
 ARG_MIN_LENGTH = dict(  # noqa: C408
     type=int,
-    default=100,
+    default=DEF_MIN_LENGTH,
     metavar="LENGTH",
-    help="Minimum length sequence to accept (default 100).",
+    help=f"Minimum length sequence to accept (default {DEF_MIN_LENGTH}).",
 )
 
 # "--maxlen",
 ARG_MAX_LENGTH = dict(  # noqa: C408
     type=int,
-    default=1000,
+    default=DEF_MAX_LENGTH,
     metavar="LENGTH",
-    help="Maximum length sequence to accept (default 1000).",
+    help=f"Maximum length sequence to accept (default {DEF_MAX_LENGTH}).",
 )
 
 # "--flip",
@@ -899,8 +901,26 @@ def main(args=None):
         "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
         "look for 'GYRGGGACGAAAGTCYYTGC' after the marker.",
     )
-    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
-    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument(
+        "--minlen",
+        type=int,
+        default=None,
+        metavar="LENGTH",
+        help="Minimum acceptable amplicon length for this import. "
+        f"Default {DEF_MIN_LENGTH} if marker not already defined. "
+        "Will be recorded for a new marker, if marker already defined "
+        "can use a stricter value for this import.",
+    )
+    subcommand_parser.add_argument(
+        "--maxlen",
+        type=int,
+        default=None,
+        metavar="LENGTH",
+        help="Maximum acceptable amplicon length for this import. "
+        f"Default {DEF_MAX_LENGTH} if marker not already defined. "
+        "Will be recorded for a new marker, if marker already defined "
+        "can use a stricter value for this import.",
+    )
     subcommand_parser.add_argument(
         "-n",
         "--name",
@@ -1111,6 +1131,7 @@ def main(args=None):
         help="Marker DB containing any spike-in control sequences. "
         "Default '' for none, use '-' for bundled DB.",
     )
+    # TODO - make minlen/maxlen optional to override database settings
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)

@@ -29,7 +29,7 @@ echo "Controls (lax mode, without the synthetic controls in the taxonomy)"
 export DB=$TMP/contols_lax.sqlite
 rm -rf $DB
 thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
-    -i database/controls.fasta -x
+    -i database/controls.fasta -x --minlen 150 --maxlen 250
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "4" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "4" ]; then echo "Wrong marker_sequence count"; false; fi
@@ -41,7 +41,7 @@ echo "Curated ITS1 with taxdump"
 export DB=$TMP/curated.sqlite
 rm -rf $DB
 thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
-thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
+thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT --minlen 100 --maxlen 250 \
     -i database/Phytophthora_ITS1_curated.fasta -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "215" ]; then echo "Wrong sequence_source count"; false; fi
