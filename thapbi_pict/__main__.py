@@ -19,7 +19,6 @@ from .db_import import DEF_MAX_LENGTH
 from .db_import import DEF_MIN_LENGTH
 from .db_import import fasta_parsing_function as fasta_conventions
 from .utils import find_requested_files
-from .utils import primer_clean
 
 
 # Common command line defaults
@@ -187,16 +186,10 @@ def prepare_reads(args=None):
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=args.output,
-        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True)
-        if args.database
-        else None,
+        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         spike_genus=args.spike,
-        left_primer=primer_clean(args.left),
-        right_primer=primer_clean(args.right),
         flip=args.flip,
         min_abundance=args.abundance,
-        min_length=args.minlen,
-        max_length=args.maxlen,
         ignore_prefixes=tuple(args.ignore_prefixes),
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
@@ -358,12 +351,8 @@ def pipeline(args=None):
         out_dir=intermediate_dir,
         db_url=db,
         spike_genus=args.spike,
-        left_primer=primer_clean(args.left),
-        right_primer=primer_clean(args.right),
         flip=args.flip,
         min_abundance=args.abundance,
-        min_length=args.minlen,
-        max_length=args.maxlen,
         ignore_prefixes=tuple(args.ignore_prefixes),
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
@@ -382,8 +371,8 @@ def pipeline(args=None):
         revcomp=None,
         output=all_fasta,
         min_abundance=args.abundance,
-        min_length=args.minlen,
-        max_length=args.maxlen,
+        # min_length=args.minlen,
+        # max_length=args.maxlen,
         debug=args.verbose,
     )
 
@@ -816,11 +805,6 @@ def main(args=None):
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
-    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
-    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    # Not using -l and -r for primers as used -r for report:
-    subcommand_parser.add_argument("--left", **ARG_PRIMER_LEFT)
-    subcommand_parser.add_argument("--right", **ARG_PRIMER_RIGHT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
@@ -1123,19 +1107,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
-    subcommand_parser.add_argument(
-        "-d",
-        "--database",
-        type=str,
-        default="",
-        help="Marker DB containing any spike-in control sequences. "
-        "Default '' for none, use '-' for bundled DB.",
-    )
-    # TODO - make minlen/maxlen optional to override database settings
-    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
-    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
-    subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)

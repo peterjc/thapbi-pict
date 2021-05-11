@@ -21,38 +21,41 @@ set -x
 thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
-# Try a real example
+export DB=$TMP/w32_on_primer.sqlite
+rm -rf $DB
+thapbi_pict import -d $DB -x -k ITS1 --minlen 100 --maxlen 700 \
+    --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
+    --right GCARRGACTTTCGTCCCYRC -i database/Phytophthora_ITS1_curated.fasta
+
+# Try a real example with the above primers
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    -a 0 -d $DB
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "826" ]; then echo "Wrong FASTA output count"; false; fi
 
 # In this case, --flip makes no difference, as does -n ""
 # Using merged cache also should make no difference
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    --flip -n "" --merged-cache $TMP/merged_cache/ \
-    -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    --flip -n "" --merged-cache $TMP/merged_cache/ -a 0 -d $DB
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "826" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 # Reusing the pre-primer-trim pre-abundance cache here:
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -n "-" --merged-cache $TMP/merged_cache/ \
-    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
+    -n "-" --merged-cache $TMP/merged_cache/ -a 5 -d $DB
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
-    --spike synthetic --database '-'
+    -a 5 -d $DB --spike synthetic --database '-'
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 5 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA --spike ''
+    -a 5 -d $DB --spike ''
 if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "Generating mock control file"
@@ -90,23 +93,31 @@ diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_default.
 
 # Testing primers (actual)
 rm -rf $TMP/SRR6303948*.fasta
-thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2 \
-        --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC
+export DB=$TMP/alt_primers.sqlite
+rm -rf $DB
+thapbi_pict import -d $DB -x -k ITS1 --minlen 100 --maxlen 700 \
+    --left GAAGGTGAAGTCGTAACAAGG --right AGCGTTCTTCATCGATGTGC \
+    -i database/Phytophthora_ITS1_curated.fasta
+thapbi_pict prepare-reads -o $TMP -i tests/reads/SRR6303948_sample_*.fastq -a 2 -d $DB
 diff $TMP/SRR6303948_sample.fasta tests/prepare-reads/SRR6303948_sample_primers.fasta
 
 echo "Testing --flip works"
 # Took only 50 reads from original file (about 6%),
 # dropping abudnance threshold from 100 to only 10.
 
+export DB=$TMP/nematode_primers.sqlite
+rm -rf $DB
+thapbi_pict import -d $DB -x -k ITS1 --minlen 150 --maxlen 350 \
+    --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG \
+    -i database/Phytophthora_ITS1_curated.fasta # empty file would work
+
 rm -rf $TMP/sample.fasta
-thapbi_pict prepare-reads --spike '' \
-    --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
+thapbi_pict prepare-reads --spike '' -d $DB \
     -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
 
 rm -rf $TMP/sample.fasta
-thapbi_pict prepare-reads --spike '' --database '' \
-    --left CTGCTGCTGGATCATTACCC --right CGCCAGCACAGCCGTTAG --minlen 150 --maxlen 350 \
+thapbi_pict prepare-reads --spike '' --database $DB \
     -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
 diff $TMP/sample.fasta tests/nematodes/sample_flip_a10.fasta
 

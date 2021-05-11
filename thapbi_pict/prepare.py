@@ -21,6 +21,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -717,12 +718,8 @@ def main(
     out_dir,
     db_url,
     spike_genus,
-    left_primer,
-    right_primer,
     flip=False,
     min_abundance=100,
-    min_length=0,
-    max_length=sys.maxsize,
     ignore_prefixes=None,
     merged_cache=None,
     tmp_dir=None,
@@ -751,6 +748,18 @@ def main(
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
 
+    # Connect to the DB,
+    Session = connect_to_db(db_url)  # echo=debug
+    session = Session()
+    # Look up the marker(s)
+    reference_marker = session.query(MarkerDef).one_or_none()
+    if not reference_marker:
+        sys.exit("ERROR: Currently only support one marker in the DB")
+    left_primer = reference_marker.left_primer
+    right_primer = reference_marker.right_primer
+    min_length = reference_marker.min_length
+    max_length = reference_marker.max_length
+
     spikes = []
     if not negative_controls:
         # No point loading the spike-ins
@@ -759,9 +768,6 @@ def main(
     elif spike_genus and db_url:
         if debug:
             sys.stderr.write("DEBUG: Loading spike-in control sequences from DB...\n")
-        # Connect to the DB,
-        Session = connect_to_db(db_url)  # echo=debug
-        session = Session()
         # Split on commas, strip white spaces
         spike_genus = [_.strip() for _ in spike_genus.strip().split(",")]
         for x in spike_genus:
@@ -788,9 +794,7 @@ def main(
             )
         session.close()
         sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
-    elif db_url and not spike_genus:
-        sys.stderr.write("ERROR: Database given, but no spike-in genus.\n")
-    else:  # spike_genus and not db_url
+    else:
         # Happens with default command line settings for prepare-reads
         pass
 
