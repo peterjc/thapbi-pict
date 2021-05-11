@@ -187,10 +187,10 @@ identifies it as *Pisidium compressum*, giving a perfect match if we discard
 the final 12bp. This is one of the control species in the mock community, but
 recall the amplified regions of the MOL16S and SPH16S primers overlap...
 
-This sequence appears be part of a longer unwanted product of the SPH16S_F
-primer (``TAGGGGAAGGTATGAATGGTTTG`` - should be present here) and MOL16S_R
-primer (``ARTCCAACATCGAGGT`` - not not be present here), which can be trimmed
-to look like either a SPH16S product *or* a MOL16S product.
+This sequence appears be a chimera, or part of a longer unwanted product of the
+SPH16S_F primer (``TAGGGGAAGGTATGAATGGTTTG`` - should be present here) and
+MOL16S_R primer (``ARTCCAACATCGAGGT`` - should not be present here), which can
+be trimmed to look like either a SPH16S product *or* a MOL16S product.
 
 .. code:: console
 
