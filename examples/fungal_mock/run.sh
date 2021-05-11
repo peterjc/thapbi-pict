@@ -16,7 +16,8 @@ function analyse {
         cutadapt --quiet -g $LEFT $MARKER.fasta \
           | cutadapt --quiet -a $RIGHT_RC -o $NAME.fasta /dev/stdin
         echo "Building $MARKER database for $NAME"
-        thapbi_pict import -k $NAME -i $NAME.fasta -d $NAME.sqlite -x
+        thapbi_pict import -d $NAME.sqlite -i $NAME.fasta  -x \
+                    -k $NAME --left $LEFT --right $RIGHT
     fi
 
     echo "Running analysis with minimum abundance threshold ten"
@@ -24,12 +25,11 @@ function analyse {
     # Using minimum of 2 gives 75k unique, 5 gives 22k, and 10 gives 8.8k unique.
     # Using minimum of 100 (default) gives under 800 unique over samples.
     # [Counts were over both amplicons using the actual primer pairs, 3 runs]
-    mkdir -p intermediate/${LIBRARY}_${NAME}/
+    mkdir -p intermediate/${LIBRARY}/
     for METHOD in identity onebp blast; do
         thapbi_pict pipeline -d ${NAME}.sqlite \
-                    --left $LEFT --right $RIGHT \
                     -i raw_data/$LIBRARY/ expected/$LIBRARY/ -m $METHOD \
-                    -s intermediate/${LIBRARY}_${NAME}/ \
+                    -s intermediate/${LIBRARY}/ \
                     -o summary/${LIBRARY}_${NAME} -a 10 \
                     -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
@@ -39,7 +39,7 @@ function analyse {
     # Including all DB entries with -s / --showdb argument
     # Do not show the classifier output using -m with "-"
     thapbi_pict edit-graph -d ${NAME}.sqlite --showdb \
-                -i intermediate/${LIBRARY}_${NAME}/ -a 75 -m - \
+                -i intermediate/${LIBRARY}/${NAME}/ -a 75 -m - \
                 -o summary/${LIBRARY}_${NAME}.edit-graph.a75.xgmml
     echo "$NAME done"
 }

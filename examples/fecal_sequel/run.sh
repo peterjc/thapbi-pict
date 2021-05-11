@@ -32,15 +32,14 @@ echo ---------------------------------------------------------------
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
 # Default edit-graph has very few DB nodes, so using --showdb argument
 mkdir -p intermediate/COI_430_bats/
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
             -o summary/ -r mock-community.COI_430_bats \
-            -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
-            --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
+            -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4
 
 # Default edit-graph has very few DB nodes, so run another edit-graph
 # including all DB entries with -s / --showdb argument
 thapbi_pict edit-graph -d COI_430_bats.sqlite \
-            -i intermediate/COI_430_bats/*.fasta \
+            -i intermediate/COI/*.fasta \
             summary/mock-community.COI_430_bats.all_reads.onebp.tsv \
             -s -o mock-community.COI_430_bats.edit-graph.xgmml
 
@@ -48,17 +47,13 @@ echo ---------------------------------------------------------------
 echo Fecal sequel - COI - Mock community using extended reference DB
 echo ---------------------------------------------------------------
 
-# The FASTA intermediate files are the same, no point regenerating them...
-mkdir -p intermediate/COI_ext_bats/
-cd intermediate/COI_ext_bats/
-for FASTA in ../COI_430_bats/*.fasta; do ln -f -s $FASTA; done
-cd ../../
+# The FASTA intermediate files are the same, no point regenerating.
+# Currently no TSV files are kept there so using same path with -s
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_ext_bats/ \
+thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
             -o summary/ -r mock-community.COI_ext_bats \
-            -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
-            --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
+            -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4
 
 echo ====
 echo Done

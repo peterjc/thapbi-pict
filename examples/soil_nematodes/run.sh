@@ -29,13 +29,13 @@ function analyse {
     if [ ! -f references/$NAME.sqlite ]; then
         echo "Making DB $NAME.sqlite"
         thapbi_pict import -d references/$NAME.sqlite \
-                    -i references/$NAME.fasta -s ";" -x
+                    -i references/$NAME.fasta -s ";" -x \
+                    -k $NAME --left $LEFT --right $RIGHT
     fi
 
     echo "Running analysis"
     mkdir -p intermediate/$NAME/
     thapbi_pict pipeline -d references/$NAME.sqlite --merged-cache tmp_merged/ \
-                 --left $LEFT --right $RIGHT \
                 -i raw_data/ expected/$NAME/ -s intermediate/$NAME/ \
                 -o summary/$NAME -t metadata.tsv -x 1 -c 4,3
 
