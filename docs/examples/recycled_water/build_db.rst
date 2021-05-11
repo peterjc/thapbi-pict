@@ -157,7 +157,8 @@ de-duplicated entries recorded with semi-colon separated FASTA title lines.
 
 Now, let's load the FASTA file into a new THAPBI PICT database with the NCBI
 taxonomy pre-loaded (which will enable synonym support), but not enforced
-(``-x`` or ``--lax`` mode):
+(``-x`` or ``--lax`` mode). We'll name the new marker "ITS1" and record the
+left and right primers which will be used later when processing the reads:
 
 .. code:: console
 
@@ -166,7 +167,8 @@ taxonomy pre-loaded (which will enable synonym support), but not enforced
     ...
     $ thapbi_pict import -x -s ";" \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
-      -i Redekar_et_al_2019_sup_table_3.fasta
+      -i Redekar_et_al_2019_sup_table_3.fasta \
+      -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
     File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 

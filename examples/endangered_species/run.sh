@@ -34,8 +34,7 @@ function analyse {
     mkdir -p intermediate/$NAME/
     thapbi_pict pipeline -d references/${NAME}.sqlite \
         -i raw_data/ expected/ -s intermediate/$NAME/ --merged-cache tmp_merged/ \
-        -o summary/ -r $NAME --left $LEFT --right $RIGHT --minlen $MINLEN \
-        -t metadata.tsv -c 3,4,5 -x 2 -g 4
+        -o summary/ -t metadata.tsv -c 3,4,5 -x 2 -g 4
     # Pipeline now includes the fasta-nr step:
     # thapbi_pict fasta-nr -i intermediate/$NAME/*.fasta -o summary/$NAME.all_reads.fasta
     thapbi_pict classify -i summary/$NAME.all_reads.fasta -o summary/ -d references/$NAME.sqlite

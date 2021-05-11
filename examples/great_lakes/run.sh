@@ -21,15 +21,14 @@ function analyse {
     # through - see the discussion in the documentation.
     mkdir -p intermediate/$NAME/
     thapbi_pict pipeline -d ${NAME}.sqlite \
-                --left $LEFT --right $RIGHT -a 10 \
-                -i raw_data/ expected/$NAME/ \
+                -i raw_data/ expected/$NAME/ -a 10 \
                 --merged-cache tmp_merged/ \
-                -s intermediate/$NAME/ -o summary/$NAME \
+                -s intermediate/ -o summary/$NAME \
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.tsv -x 1 -c 4,8
 
-    # Run an edit graph at the default -a 100 setting, without
-    # the --showdb setting (most of the DB content )
+    # Run an edit graph at the default -a 100 setting,
+    # without the --showdb setting
     thapbi_pict edit-graph -d ${NAME}.sqlite \
                 -i intermediate/$NAME/ -a 100 \
                 -o summary/$NAME.edit-graph.a100.xgmml

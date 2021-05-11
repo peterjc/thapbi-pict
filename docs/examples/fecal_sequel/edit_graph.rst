@@ -13,12 +13,15 @@ and we can load this into a new THAPBI PICT database using:
 .. code:: console
 
     $ rm -rf COI_430_bats.sqlite  # delete any pre-existing DB
-    $ thapbi_pict import -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
+    $ thapbi_pict import -k COI \
+      --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC \
+      -d COI_430_bats.sqlite -i COI_430_bats.fasta -x
     File COI_430_bats.fasta had 430 sequences, of which 430 accepted.
     Of 430 potential entries, loaded 430 entries, 0 failed parsing.
 
-Calling ``run.sh`` will first run the pipeline using the SFF_145f/SFF_351r
-primers, this COI database, and the metadata as described earlier. This will
+Here we have named the new marker COI, and recorded the SFF_145f/SFF_351r
+primer pair. Calling ``run.sh`` will first run the pipeline using this COI
+database and primers, and the metadata as described earlier. This will
 make an edit-graph named ``mock-community.COI_430_bats.edit-graph.xgmml``
 which you can open in Cytoscape. This contains three main connected components
 for the three expected species, and a smattering of singletons and other tiny

@@ -6,16 +6,14 @@ Pipeline with custom database
 Running thapbi-pict pipeline
 ----------------------------
 
-Compared to the original worked example, we must specify the primers and
-our custom database built with matching primer trimmed entries:
+Compared to the original worked example, we must specify our custom database
+(which contains the primer information, and matching primer trimmed entries):
 
 .. code:: console
 
     $ mkdir -p intermediate/ summary/
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
       -o summary/recycled-water-custom \
-      --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
-      --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
@@ -52,8 +50,6 @@ more matches:
 
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
       -o summary/recycled-water-custom \
-      --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
-      --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
