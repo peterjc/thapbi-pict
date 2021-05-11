@@ -26,7 +26,8 @@ set -o pipefail
 export DB=$TMP/curated.sqlite
 if [ ! -f $DB ]; then
     thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
-    thapbi_pict import -d $DB -i database/Phytophthora_ITS1_curated.fasta -s ";"
+    thapbi_pict import -d $DB -i database/Phytophthora_ITS1_curated.fasta -s ";" \
+                -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
 fi
 
 # Passing one filename; default output dir:
@@ -78,7 +79,7 @@ for EXAMPLE in P_bilorbang P_vulcanica genus_boundary; do
     DB=$TMP/${EXAMPLE}.sqlite
     rm -rf $DB $TMP/${EXAMPLE}_query.*
     set -x
-    thapbi_pict import -d $DB -i tests/classifier/${EXAMPLE}.fasta -x
+    thapbi_pict import -d $DB -i tests/classifier/${EXAMPLE}.fasta -x -k ITS1 -l NNN -r NNN
     diff tests/classifier/${EXAMPLE}.fasta <(thapbi_pict dump -m -f fasta -d $DB)
     set +x
     for M in identity onebp 1s2g 1s3g 1s4g 1s5g; do
