@@ -524,13 +524,13 @@ def import_fasta_file(
                         marker_seq = MarkerSeq(
                             md5=marker_md5,
                             sequence=seq,
-                            marker_definition=reference_marker,
                         )
                         session.add(marker_seq)
                     record_entry = SeqSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
                         marker_seq=marker_seq,
+                        marker_definition=reference_marker,
                         taxonomy=taxonomy,
                     )
                     session.add(record_entry)
