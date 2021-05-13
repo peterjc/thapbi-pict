@@ -33,7 +33,7 @@ def main(
     db_url,
     output_filename,
     output_format,
-    marker="",
+    marker=None,
     minimal=False,
     genus="",
     species="",
@@ -71,6 +71,9 @@ def main(
     )
     # Sorting for reproducibility
     view = view.order_by(marker_def.name, marker_seq.sequence, SeqSource.id)
+    if marker:
+        # TODO - Check this is actually in the DB?
+        view = view.filter(marker_def.name == marker)
 
     genus_list = []
     if genus.strip():

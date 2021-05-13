@@ -1020,6 +1020,14 @@ def main(args=None):
         help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument(
+        "-k",
+        "--marker",
+        type=str,
+        default=None,
+        help="Which amplicon marker from the DB wanted? Default all. "
+        "Recommend for minimal and FASTA output.",
+    )
+    subcommand_parser.add_argument(
         "-m",
         "--minimal",
         action="store_true",
@@ -1034,7 +1042,6 @@ def main(args=None):
         choices=["txt", "fasta"],
         help="Format to write out (default 'txt' for debugging).",
     )
-    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER)
     subcommand_parser.add_argument(
         "-g",
         "--genus",
