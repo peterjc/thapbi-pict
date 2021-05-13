@@ -104,8 +104,6 @@ class MarkerSeq(Base):
     id = Column(Integer, primary_key=True)
     md5 = Column(String(32), unique=True)
     sequence = Column(String(250), unique=True)
-    marker_definition_id = Column(Integer, ForeignKey("marker_definition.id"))
-    marker_definition = relationship(MarkerDef, foreign_keys=[marker_definition_id])
 
     def __repr__(self):
         """Represent a marker database reference sequence as a string."""
@@ -125,6 +123,9 @@ class SeqSource(Base):
 
     marker_seq_id = Column(Integer, ForeignKey("marker_sequence.id"))
     marker_seq = relationship(MarkerSeq, foreign_keys=[marker_seq_id])
+
+    marker_definition_id = Column(Integer, ForeignKey("marker_definition.id"))
+    marker_definition = relationship(MarkerDef, foreign_keys=[marker_definition_id])
 
     taxonomy_id = Column(Integer, ForeignKey("taxonomy.id"))
     taxonomy = relationship(Taxonomy, foreign_keys=[taxonomy_id])
