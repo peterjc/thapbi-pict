@@ -14,6 +14,7 @@ from sqlalchemy.orm import contains_eager
 
 from .classify import taxid_and_sp_lists
 from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -58,15 +59,18 @@ def main(
     # Doing a join to pull in the marker and taxonomy tables too:
     cur_tax = aliased(Taxonomy)
     marker_seq = aliased(MarkerSeq)
+    marker_def = aliased(MarkerDef)
     view = (
         session.query(SeqSource)
         .join(marker_seq, SeqSource.marker_seq)
+        .join(marker_def, SeqSource.marker_definition)
         .join(cur_tax, SeqSource.taxonomy)
         .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
+        .options(contains_eager(SeqSource.marker_definition, alias=marker_def))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
     # Sorting for reproducibility
-    view = view.order_by(marker_seq.sequence, SeqSource.id)
+    view = view.order_by(marker_def.name, marker_seq.sequence, SeqSource.id)
 
     genus_list = []
     if genus.strip():
@@ -106,7 +110,7 @@ def main(
     elif minimal:
         out_handle.write("#MD5\tSpecies\tSequence\n")
     else:
-        out_handle.write("#Identifier\tGenus\tSpecies\tTaxID\tMD5\tSequence\n")
+        out_handle.write("#Marker\tIdentifier\tGenus\tSpecies\tTaxID\tMD5\tSequence\n")
 
     if minimal:
         md5_seq = {}
@@ -123,6 +127,7 @@ def main(
             else:
                 md5_seq[md5] = seq_source.marker_seq.sequence
                 md5_sp[md5] = set([seq_source.taxonomy])  # noqa: C405
+        # TODO - Cannot key on MD5 with multiple markers
         for md5, seq in md5_seq.items():
             _, genus_species, _ = taxid_and_sp_lists(list(md5_sp[md5]))
             if output_format == "fasta":
@@ -171,7 +176,8 @@ def main(
             )
             try:
                 out_handle.write(
-                    f"{seq_source.source_accession}"
+                    f"{seq_source.marker_definition.name}"
+                    f"\t{seq_source.source_accession}"
                     f"\t{none_str(seq_source.taxonomy.genus)}"
                     f"\t{none_str(seq_source.taxonomy.species)}"
                     f"\t{taxid}"
