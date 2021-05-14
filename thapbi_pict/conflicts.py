@@ -10,6 +10,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -35,14 +36,18 @@ def main(db_url, output_filename, debug=False):
     # Doing a join to pull in the marker and taxonomy tables too:
     cur_tax = aliased(Taxonomy)
     marker_seq = aliased(MarkerSeq)
+    marker_def = aliased(MarkerDef)
     view = (
         session.query(SeqSource)
         .join(marker_seq, SeqSource.marker_seq)
+        .join(marker_def, SeqSource.marker_definition)
         .join(cur_tax, SeqSource.taxonomy)
         .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
+        .options(contains_eager(SeqSource.marker_definition, alias=marker_def))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
     md5_to_seq = {}
+    md5_to_marker = {}
     md5_to_genus = {}
     md5_to_species = {}
     for seq_source in view:
@@ -50,6 +55,10 @@ def main(db_url, output_filename, debug=False):
         seq = seq_source.marker_seq.sequence
         genus = seq_source.taxonomy.genus
         md5_to_seq[md5] = seq
+        try:
+            md5_to_marker[md5].add(seq_source.marker_definition.name)
+        except KeyError:
+            md5_to_marker[md5] = {seq_source.marker_definition.name}
         if genus:
             try:
                 md5_to_genus[md5].add(genus)
@@ -64,8 +73,13 @@ def main(db_url, output_filename, debug=False):
 
     sys.stderr.write(f"Loaded taxonomy for {len(md5_to_seq)} sequences from DB\n")
 
+    marker_conflicts = 0
     genus_conflicts = 0
     out_handle.write("#MD5\tLevel\tConflicts\n")
+    for md5, markers in sorted(md5_to_marker.items()):
+        if len(markers) > 1:
+            out_handle.write(f"{md5}\tmarker\t{';'.join(sorted(markers))}\n")
+            marker_conflicts += 1
     for md5, genus in sorted(md5_to_genus.items()):
         if len(genus) > 1:
             out_handle.write(f"{md5}\tgenus\t{';'.join(sorted(genus))}\n")
@@ -78,6 +92,7 @@ def main(db_url, output_filename, debug=False):
         out_handle.close()
 
     if debug:
+        sys.stderr.write(f"{marker_conflicts} marker level conflicts\n")
         sys.stderr.write(f"{genus_conflicts} genus level conflicts\n")
 
-    return genus_conflicts
+    return marker_conflicts + genus_conflicts  # non-zero error
