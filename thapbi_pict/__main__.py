@@ -1074,8 +1074,8 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "conflicts",
         description="Count genus or species conflicts in a marker database.",
-        epilog="Number of genus level conflicts is used as the return code. "
-        "e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
+        epilog="Number of marker or genus level conflicts is used as the return "
+        "code. e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument(
