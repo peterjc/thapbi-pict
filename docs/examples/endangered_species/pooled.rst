@@ -13,13 +13,12 @@ Sample report
 Please open the ``summary/pooled.samples.onebp.xlsx`` sample report, zoomed
 out you should have something like this:
 
-.. image:: https://user-images.githubusercontent.com/63959/76228065-23591800-6218-11ea-83fe-a1eff8e61dce.png
+.. image:: https://user-images.githubusercontent.com/63959/118682572-7c4b1580-b7f8-11eb-8973-15f1b50543f9.png
    :alt: Excel screenshot showing summary/pooled.samples.onebp.xlsx
 
-Column E (the first vertical red column) is the sequence count (non-zero for
-all the samples). Next in column F is the unknowns - and even at this zoom it
-is possible to see a solid red region for the two traditional medicine samples
-(wide green bands).
+Column H is the read count (non-zero for all the samples). The final column is
+the unknowns - and even at this zoom it is possible to see a solid red region
+for the two traditional medicine samples (wide green background bands).
 
 Read report
 -----------
@@ -30,7 +29,7 @@ sequences with a species prediction in column B. It is clear that the majority
 of the unknown sequences are from the two traditional medicine samples (wide
 green bands):
 
-.. image:: https://user-images.githubusercontent.com/63959/76227914-e9881180-6217-11ea-8f21-0fcf3a43ae87.png
+.. image:: https://user-images.githubusercontent.com/63959/118682235-29715e00-b7f8-11eb-8dfb-bf18153a1ffa.png
    :alt: Excel screenshot showing pooled.reads.onebp.xlsx
 
 Overall the replicates are reassuringly consistent - look at neighbouring
