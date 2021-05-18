@@ -90,6 +90,9 @@ We find this dominated by *Brassica oleracea* in most samples. However, at
 our default abundance threshold we do not find *Cycas revoluta* which is
 consistent with the original analysis reporting this at very low abundance.
 
+Our reference set here has *Aloe reynoldsii* sequences, but none for the
+expected entry *Aloe variegata*.
+
 An obvious false positive here is *Cullen* sp. which like the authors we found
 in the ``S3`` traditional medicine, but also unexpectedly in all the ``S1``
 samples.
