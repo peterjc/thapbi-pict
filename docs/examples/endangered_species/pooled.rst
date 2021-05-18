@@ -1,5 +1,5 @@
-Universal animal and plant DNA barcodes and mini-barcodes
-=========================================================
+Pooled animal and plant DNA barcodes
+====================================
 
 We have very briefly reviewed the output of each of the animal and plant
 markers, noting some have no sequences at the THAPBI PICT default minimum
