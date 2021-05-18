@@ -69,19 +69,30 @@ We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
 trnL-P6-loop
 ------------
 
-This gave no sequences at the default abundance threshold, and disabling
-the abundance threshold no unique trimmed sequence was seen more than once.
-This is strange, given the authors report finding *Lactuca sativa* and
-*Cycas revoluta* from this primer. It is however easily explained, quoting
-the paper:
+Initially I saw no sequences with this marker, even disabling the abundance
+threshold. This was strange, however easily explained - quoting the paper:
 
    We implemented a minimum DNA barcode length of 200 nt, except for DNA
    barcodes with a basic length shorter than 200 nt, in which case the
    minimum expected DNA barcode length is set to 100 nt for ITS2, 140 nt
    for mini-rbcL, and 10 nt for the trnL (P6 loop) marker.
 
-We should have changed the THAPBI PICT minimum length from 100 (our default)
-to 10 as well.
+Therefore in ``run.sh`` we have changed the THAPBI PICT minimum length from
+100 (our default) to 10 for this marker - and now get lots, and nearly two
+hundred unique sequences:
+
+.. code:: console
+
+    $ grep -c ">" summary/trnL-P6-loop.all_reads.fasta
+    180
+
+We find this dominated by *Brassica oleracea* in most samples. However, at
+our default abundance threshold we do not find *Cycas revoluta* which is
+consistent with the original analysis reporting this at very low abundance.
+
+An obvious false positive here is *Cullen* sp. which like the authors we found
+in the ``S3`` traditional medicine, but also unexpectedly in all the ``S1``
+samples.
 
 ITS2
 ----

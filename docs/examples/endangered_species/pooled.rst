@@ -2,7 +2,7 @@ Universal animal and plant DNA barcodes and mini-barcodes
 =========================================================
 
 We have very briefly reviewed the output of each of the animal and plant
-markers, noting many have no sequences at the THAPBI PICT default minimum
+markers, noting some have no sequences at the THAPBI PICT default minimum
 abundance threshold. Now we discuss the pooled results produced by the
 ``run.sh`` shell script (which literally pooled the markers for each sample
 by concatenating the intermediate files together).
@@ -10,11 +10,11 @@ by concatenating the intermediate files together).
 Sample report
 -------------
 
-Please open the ``pooled.samples.onebp.xlsx`` sample report, zoomed out you
-should have something like this (with the genus level columns hidden):
+Please open the ``summary/pooled.samples.onebp.xlsx`` sample report, zoomed
+out you should have something like this:
 
 .. image:: https://user-images.githubusercontent.com/63959/76228065-23591800-6218-11ea-83fe-a1eff8e61dce.png
-   :alt: Excel screenshot showing pooled.samples.onebp.xlsx
+   :alt: Excel screenshot showing summary/pooled.samples.onebp.xlsx
 
 Column E (the first vertical red column) is the sequence count (non-zero for
 all the samples). Next in column F is the unknowns - and even at this zoom it
@@ -24,8 +24,8 @@ is possible to see a solid red region for the two traditional medicine samples
 Read report
 -----------
 
-To look at the unknown reads see ``pooled.reads.onebp.xlsx``, again zoomed out
-you should have something like this where the top half of the rows are those
+To look at the unknown reads see ``summary/pooled.reads.onebp.xlsx``. Zoomed
+out should show something like this where the top half of the rows are those
 sequences with a species prediction in column B. It is clear that the majority
 of the unknown sequences are from the two traditional medicine samples (wide
 green bands):
@@ -33,14 +33,14 @@ green bands):
 .. image:: https://user-images.githubusercontent.com/63959/76227914-e9881180-6217-11ea-8f21-0fcf3a43ae87.png
    :alt: Excel screenshot showing pooled.reads.onebp.xlsx
 
-Overall the replicates are reassuringly consistent - look at neigbouring
+Overall the replicates are reassuringly consistent - look at neighbouring
 rows/columns within the colour bands in the two reports.
 
 Pooled classifier assessment
 ----------------------------
 
-The automated model assessment output in ``pooled.assess.onebp.tsv`` is
-also worth review. Note this only looks at the experimental mixtures where
+The automated model assessment output in ``summary/pooled.assess.onebp.tsv``
+is also worth review. Note this only looks at the experimental mixtures where
 there is a ground truth (S1, S2, S4, S5, S6, S7, S9 and S10) - not the
 traditional medicine samples where the true species content is unknown.
 
@@ -125,7 +125,3 @@ It appears that the THAPBI PICT default minimum abundance threshold of 100
 reads is too stringent for detecting all the markers in a complex pool like
 this. Including negative sequencing controls would help set an objective
 lower bound.
-
-Also as noted earlier, any trnL-P6-loop matches were lost due to not changing
-the THAPBI PICT default minimum length of 100bp. The authors used a minimum of
-10bp for this marker.
