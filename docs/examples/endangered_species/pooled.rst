@@ -54,8 +54,9 @@ Working at the command line or using Excel should show the following:
 ====================== ==== === === ====
 #Species               TP   FP  FN  TN
 ====================== ==== === === ====
-OVERALL                1035 491 263 6791
-Acipenser schrenckii   0    10  0   133
+OVERALL                1061 728 237 7698
+Acipenser schrenckii   0    20  0   123
+Aloe reynoldsii        0    115 0   28
 Aloe variegata         110  0   25  8
 Anguilla anguilla      3    0   3   137
 Beta vulgaris          0    0   16  127
@@ -64,10 +65,12 @@ Brassica juncea        0    127 0   16
 Brassica napus         10   0   6   127
 Brassica nigra         0    127 0   16
 Brassica oleracea      128  6   0   9
+Brassicaceae (misc)    0    70  0   73
+Cactaceae (misc)       0    3   0   140
 Carica papaya          16   0   0   127
 Crocodylus niloticus   122  0   12  9
 Cullen sp.             0    16  0   127
-Cycas revoluta         0    0   6   137
+Cycas revoluta         3    0   3   137
 Dendrobium sp.         131  0   3   9
 Echinocactus sp.       6    0   0   137
 Euphorbia sp.          3    0   3   137
@@ -75,24 +78,32 @@ Gallus gallus          6    1   0   136
 Glycine max            16   0   0   127
 Gossypium hirsutum     16   0   0   127
 Homo sapiens           0    2   0   141
-Huso dauricus          92   0   36  15
+Huso dauricus          112  0   16  15
 Lactuca altaica        0    66  0   77
 Lactuca sativa         74   2   0   67
 Lactuca serriola       0    66  0   77
+Lactuca tatarica       0    39  0   104
 Lactuca virosa         0    66  0   77
 Meleagris gallopavo    16   0   0   127
 Parapenaeopsis sp.     0    0   6   137
 Pieris brassicae       6    0   0   137
-Pleuronectes platessa  61   0   3   79
+Pleuronectes platessa  64   0   0   79
 Solanum lycopersicum   16   0   0   127
 Sus scrofa             64   0   0   79
 Triticum aestivum      0    0   16  127
 Zea mays               0    0   128 15
-OTHER 27 SPECIES IN DB 0    0   0   3861
+OTHER 31 SPECIES IN DB 0    0   0   4433
 ====================== ==== === === ====
 
 Most of the false positives (FP) are alternative genus level matches in
-*Brassica* and *Lactuca* (as discussed in the paper).
+*Brassica* and *Lactuca* (as discussed in the paper). The two sequences we
+recorded in the Mini-rbcL reference set as the family Brassicaceae are likely
+also *Brassica*. The trnL-P6-loop marker had references for *Aloe reynoldsii*
+but these matches are most likely from *Aloe variegata*.
+
+A couple of the unique sequences are in the Mini-rbcL reference as the family
+Cactaceae, and since they only appeared in the experimental mixes, these are
+likely *Echinocactus* sp. or *Euphorbia* sp.
 
 There are more interesting FP for *Acipenser schrenckii* (the authors found
 this was accidentally included from the *Huso dauricus* caviar used), human
@@ -113,10 +124,10 @@ an appropriate marker database - and the content should depend in part on your
 target samples.
 
 Currently the provided references sequences (and thus classification databases
-used) lack any markers for *Beta vulgaris*, *Cycas revoluta*, *Parapenaeopsis*
-sp., *Triticum aestivum* or *Zea mays*. Most of these were present at only a
-few percent dry weight, and are likely present below the default minimum
-abundance threshold. This explains the false negatives.
+used) lack any markers for *Beta vulgaris*, *Parapenaeopsis* sp.,
+*Triticum aestivum* or *Zea mays*. Most of these were present at only a few
+percent dry weight, and are likely present below the default minimum abundance
+threshold. This explains the false negatives.
 
 Conclusion
 ----------
@@ -125,3 +136,7 @@ It appears that the THAPBI PICT default minimum abundance threshold of 100
 reads is too stringent for detecting all the markers in a complex pool like
 this. Including negative sequencing controls would help set an objective
 lower bound.
+
+There also appear to be marker sequences in these control samples which have
+not yet been published, which would help by filling in gaps in the reference
+set used for classification.
