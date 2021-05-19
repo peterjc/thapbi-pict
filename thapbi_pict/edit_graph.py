@@ -420,6 +420,29 @@ def main(
             f" will draw {len(wanted)} nodes.\n"
         )
 
+    if graph_format == "matrix":
+        if graph_output == "-":
+            handle = sys.stdout
+        else:
+            handle = open(graph_output, "w")
+        cols = "\t".join(check2 for check2 in md5_list if check2 in wanted)
+        handle.write(f"MD5\tSpecies\t{cols}\n")
+        del cols
+        for i, check1 in enumerate(md5_list):
+            if check1 not in wanted:
+                continue
+            sp = ",".join(sorted(md5_species.get(check1, [])))
+            dists = "\t".join(
+                str(distances[i, j])
+                for j, check2 in enumerate(md5_list)
+                if check2 in wanted
+            )
+            handle.write(f"{check1}\t{sp}\t{dists}\n")
+            del sp, dists
+        if graph_output != "-":
+            handle.close()
+        return 0
+
     # Matrix computation of multi-step paths vs edit distances, e.g.
     # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
     one_bp = distances == 1  # boolean

@@ -1433,7 +1433,7 @@ def main(args=None):
         "--format",
         type=str,
         default="xgmml",
-        choices=["graphml", "gexf", "gml", "xgmml", "pdf"],
+        choices=["graphml", "gexf", "gml", "xgmml", "pdf", "matrix"],
         help="Format to write out (default 'xgmml' for Cytoscape).",
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
