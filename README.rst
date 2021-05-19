@@ -103,15 +103,26 @@ in the ``examples/`` folder (which are based on published datasets).
 Funding
 -------
 
-The Phyto-Threats project was supported from 2016 to 2019 under the Tree
-Health and Plant Biosecurity Initiative (THAPBI), jointly funded by the
-Biotechnology and Biological Sciences Research Council (`BBSRC
-<https://bbsrc.ukri.org/>`_), Department for Environment, Food and Rural
-affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
-Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
-`Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
-Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
-and `Scottish Government <https://www.gov.scot/>`_.
+The initial work was supported from 2016 to 2019 under the Tree Health and
+Plant Biosecurity Initiative (THAPBI) Phyto-Threats project:
+
+  This research was supported by a grant funded jointly by the 
+  Biotechnology and Biological Sciences Research Council (`BBSRC
+  <https://bbsrc.ukri.org/>`_), Department for Environment, Food and Rural
+  affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
+  Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
+  `Forestry Commission <https://www.gov.uk/government/organisations/forestry-commission>`_,
+  Natural Environment Research Council (`NERC <https://nerc.ukri.org>`_)
+  and `Scottish Government <https://www.gov.scot/>`_, under the Tree
+  Health and Plant Biosecurity Initiative, grant number ``BB/N023463/1``.
+
+Work from 2020 to 2021 was supported in part under the *Early detection of
+Phytophthora in EU and third country nurseries and traded plants (ID-PHYT)*
+Euphresco project:
+
+  Funded by DEFRA as part of the Future Proofing Plant Health project in
+  support of Euphresco ID-PHYT.
+
 
 Background
 ----------
