@@ -106,7 +106,7 @@ Funding
 The initial work was supported from 2016 to 2019 under the Tree Health and
 Plant Biosecurity Initiative (THAPBI) Phyto-Threats project:
 
-  This research was supported by a grant funded jointly by the 
+  This research was supported by a grant funded jointly by the
   Biotechnology and Biological Sciences Research Council (`BBSRC
   <https://bbsrc.ukri.org/>`_), Department for Environment, Food and Rural
   affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
