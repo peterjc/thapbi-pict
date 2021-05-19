@@ -378,7 +378,7 @@ def main(
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
     # or for environmental sequences at high abundance)
-    md5_list = list(md5_to_seq)
+    md5_list = sorted(md5_to_seq)
     wanted = set()
     n = len(md5_list)
     todo = n * (n - 1) // 2
@@ -409,16 +409,6 @@ def main(
     )
     del done, todo
 
-    # Matrix computation of multi-step paths vs edit distances, e.g.
-    # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
-    one_bp = distances == 1  # boolean
-    two_step = np.dot(one_bp, one_bp)  # matrix multiply
-    two_bp = (distances == 2) | two_step
-    three_step = (
-        np.dot(one_bp, two_bp) | np.dot(two_bp, one_bp) | np.dot(one_bp, one_bp, one_bp)
-    )
-    del one_bp, two_bp
-
     for md5 in md5_list:
         if md5 not in wanted:
             # Will include high abundance singletons too
@@ -429,6 +419,16 @@ def main(
             "Including high abundance isolated sequences,"
             f" will draw {len(wanted)} nodes.\n"
         )
+
+    # Matrix computation of multi-step paths vs edit distances, e.g.
+    # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
+    one_bp = distances == 1  # boolean
+    two_step = np.dot(one_bp, one_bp)  # matrix multiply
+    two_bp = (distances == 2) | two_step
+    three_step = (
+        np.dot(one_bp, two_bp) | np.dot(two_bp, one_bp) | np.dot(one_bp, one_bp, one_bp)
+    )
+    del one_bp, two_bp
 
     if md5_sample_count:
         # scaling factor
