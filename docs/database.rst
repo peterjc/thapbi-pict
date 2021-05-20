@@ -82,13 +82,11 @@ the user wish however, their database could record a single assignment like
 *Phytophthora infestans*-complex.
 
 Our default primers for *Phytophthora* can amplify related genera, not just
-*Peronosporales*, but also other *Oomycetes*. Expanding the database coverage
+*Peronosporales*, but also some *Pythiales*. Expanding the database coverage
 runs into two main problems. First, with less published sequences available,
-the default strict classifier fails to match many sequences to a published
-sequence. Second, the taxonomic annotation becomes less consistent, with the
-same sequence sometimes assigned to multiple genera. This could be due to
-misannotation, historical taxonomy not drawing on molecular data, or simply
-that this region is more highly conserved in some branches of the *Oomycetes*.
+the default strict classifier may fail to match many sequences to a published
+sequence. Second, with past renaming and splitting of some genera, the
+taxonomic annotation can becomes less consistent,
 
 The ``thapbi_pict conflicts`` subcommand can be used to report any conflicts
 at species or genus level.
