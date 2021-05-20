@@ -11,6 +11,7 @@ import sys
 from collections import Counter
 
 from .db_orm import connect_to_db
+from .db_orm import SequenceSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import find_paired_files
@@ -343,7 +344,11 @@ def main(
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
     session = Session()
-    view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
+    view = (
+        session.query(Taxonomy)
+        .distinct(Taxonomy.genus, Taxonomy.species)
+        .join(SequenceSource)
+    )
     db_sp_list = sorted(
         {genus_species_name(t.genus, t.species) for t in view if t.species}
     )
