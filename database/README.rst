@@ -16,20 +16,21 @@ sets of biological sequences (subject to taxonomy filtering):
 - Curated *Nothophytophthora* ITS1 sequences (mostly at species level) from
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
-- NCBI Oomycota (including *Phytophthora*) at genus level, 4907 entries in
-  file ``database/2021-02-23-ITS_Oomycota_w32.fasta`` extracted from 36025
-  downloaded from an NCBI Entrez search on 2021-02-23::
+- NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
+  4206 entries in file ``database/2021-05-20-ITS_Oomycota_w32.fasta``
+  extracted from 31788 downloaded from an NCBI Entrez search on 2021-05-20::
 
-      ((internal AND transcribed AND spacer) OR its1) AND
-      150:10000[sequence length] AND Oomycota[organism]
+      (Peronosporales[organism] OR Pythiales[organism])
+      AND ((internal AND transcribed AND spacer) OR its1)
+      AND 150:10000[sequence length]
 
   Any obvious left and right primers were removed, and the sequence trimmed to
   the expected 32bp leader as follows::
 
-      $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2021-02-23-ITS_Oomycota_36025.fasta \
+      $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2021-05-20-ITS_Oomycota_31788.fasta \
         --quiet | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
         | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
-        --discard-untrimmed --quiet /dev/stdin -o 2021-02-23-ITS_Oomycota_w32.fasta
+        --discard-untrimmed --quiet /dev/stdin -o 2021-05-20-ITS_Oomycota_w32.fasta
 
   Note the import command discards uncultured entries.
 
