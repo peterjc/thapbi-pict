@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.6  *Pending*  Default DB now uses May 2021 taxonomy, and Peronosporales & Pythiales only.
+v0.9.6  2021-05-21 Updated default DB taxonomy, Peronosporales & Pythiales up to 450bp only.
 v0.9.5  2021-05-10 Simplified to just one ``import`` command for pre-trimmed FASTA input.
 v0.9.4  2021-05-05 Dropped unused metadata fields from DB schema. Fixed GML format edit graphs.
 v0.9.3  2021-05-04 Replaced HMM for spike-in control detection, now via DB & *k*-mer counting.
