@@ -12,6 +12,9 @@ set -o pipefail
 
 # Note all tests here (initially) using default database:
 
+export TMP=${TMP:-/tmp/thapbi_pict_conflicts}
+mkdir -p $TMP
+
 echo "=================="
 echo "Checking conflicts"
 echo "=================="
