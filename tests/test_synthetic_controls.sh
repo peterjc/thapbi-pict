@@ -9,7 +9,8 @@
 IFS=$'\n\t'
 set -euo pipefail
 
-export TMP=${TMP:-/tmp}
+export TMP=${TMP:-/tmp/thapbi_pict_synthetic_controls}
+mkdir -p $TMP
 
 echo "=============================================="
 echo "Checking prepare-reads with synthetic controls"

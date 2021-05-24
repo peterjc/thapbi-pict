@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -9,7 +9,8 @@
 IFS=$'\n\t'
 set -euo pipefail
 
-export TMP=${TMP:-/tmp}
+export TMP=${TMP:-/tmp/thapbi_pict_woody_host}
+mkdir -p $TMP
 
 echo "Preparing sample data for woody hosts example"
 

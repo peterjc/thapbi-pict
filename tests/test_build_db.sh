@@ -9,7 +9,9 @@
 IFS=$'\n\t'
 set -euo pipefail
 
-export TMP=${TMP:-/tmp}
+export TMP=${TMP:-/tmp/thapbi_pict_build_db}
+mkdir -p $TMP
+
 export `grep ^TAX= database/build_ITS1_DB.sh`
 
 if [ ! -f "${TAX}.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/${TAX}.zip"; fi

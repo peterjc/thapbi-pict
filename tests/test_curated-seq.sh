@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -10,7 +10,8 @@ IFS=$'\n\t'
 set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
-export TMP=${TMP:-/tmp}
+export TMP=${TMP:-/tmp/thapbi_pict_curated_seq}
+mkdir -p $TMP
 
 echo "===================="
 echo "Checking curated-seq"
