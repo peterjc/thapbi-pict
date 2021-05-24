@@ -10,6 +10,9 @@ IFS=$'\n\t'
 set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
+export TMP=${TMP:-/tmp/thapbi_pict_ena_submit}
+mkdir -p $TMP
+
 echo "==================="
 echo "Checking ena-submit"
 echo "==================="
