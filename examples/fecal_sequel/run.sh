@@ -8,6 +8,8 @@ echo ==================
 echo Fecal sequel - COI
 echo ==================
 
+mkdir -p intermediate/ summary/
+
 # Setup two database, FASTA files are both already primer trimmed
 if [ ! -f COI_430_bats.sqlite ]; then
     echo "Setting up first database"

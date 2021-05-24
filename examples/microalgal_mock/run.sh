@@ -5,6 +5,8 @@ echo NOTE: Expected first time run time is about 10 minutes,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
+mkdir -p intermediate/ summary/
+
 # Takes arguments via variable names
 function analyse {
     if [ ! -f ${NAME}.sqlite ]; then

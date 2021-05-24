@@ -18,6 +18,8 @@ echo ==========================
 echo Recycled water - Custom DB
 echo ==========================
 
+mkdir -p intermediate/ summary/
+
 if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
     echo "Building ITS1 database"
 

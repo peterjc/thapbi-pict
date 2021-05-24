@@ -5,6 +5,8 @@ echo NOTE: Expected first time run time is about 1.5 hours,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
+mkdir -p intermediate/ summary/
+
 # Quoting paper on minimum lengths:
 #
 #     We implemented a minimum DNA barcode length of 200 nt, except for DNA
