@@ -28,6 +28,7 @@ from .utils import genus_species_name
 from .utils import genus_species_split
 from .utils import md5_hexdigest
 from .utils import md5seq
+from .utils import valid_marker_name
 
 
 DEF_MIN_LENGTH = 100
@@ -362,6 +363,11 @@ def import_fasta_file(
         sys.exit("ERROR: Both primers must be supplied when defining a new marker.")
     else:
         # New marker!
+        if not valid_marker_name(marker):
+            sys.exit(
+                "ERROR: Inappropriate marker name. Please use only letters,"
+                "and if you wish numbers and/or the minus sign."
+            )
         if min_length is None:
             min_length = DEF_MIN_LENGTH
         if max_length is None:

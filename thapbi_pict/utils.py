@@ -11,9 +11,31 @@ import subprocess
 import sys
 import time
 from collections import Counter
+from keyword import iskeyword
 
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+
+
+def valid_marker_name(text):
+    """Check the proposed string valid for use as a marker name.
+
+    Want to be able to use the string for file or directory names, and also
+    column names etc in reports. At very least should reject whitespace, line
+    breaks, and slashes.
+
+    Also rejecting all digits, as might want to accept integers as argument
+    (e.g. cluster array job mapping task numbers to marker numbers).
+
+    Also rejecting the underscore, as may want to use it as a field separator
+    in sequence names (e.g. ``marker_md5_abundance``), and full stop as may
+    use it as a field separator in filenames.
+
+    May want to relax this later, thus defining this central function.
+    """
+    return (
+        text.replace("-", "").isalnum() and not iskeyword(text) and not text.isdigit()
+    )
 
 
 def primer_clean(primer):
