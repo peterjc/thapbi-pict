@@ -823,25 +823,23 @@ def main(
         # Connect to the DB,
         Session = connect_to_db(db_url)  # echo=debug
         session = Session()
-        # Doing a join to pull in the marker and taxonomy tables too:
-        cur_tax = aliased(Taxonomy)
-        marker_seq = aliased(RefMarker)
-        view = (
-            session.query(SequenceSource)
-            .join(marker_seq, SequenceSource.marker)
-            .join(cur_tax, SequenceSource.taxonomy)
-            .options(contains_eager(SequenceSource.marker, alias=marker_seq))
-            .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
-        )
-        # Sorting for reproducibility
-        view = view.order_by(marker_seq.sequence, SequenceSource.id)
         # Split on commas, strip white spaces
         spike_genus = [_.strip() for _ in spike_genus.strip().split(",")]
         for x in spike_genus:
             if not session.query(Taxonomy).filter_by(genus=x).count():
                 sys.stderr.write(f"WARNING: Spike-in genus {x!r} not in database\n")
-        view = view.filter(cur_tax.genus.in_(spike_genus))
-        for seq_source in view:
+        # Doing a join to pull in the marker and taxonomy tables too:
+        cur_tax = aliased(Taxonomy)
+        marker_seq = aliased(RefMarker)
+        for seq_source in (
+            session.query(SequenceSource)
+            .join(marker_seq, SequenceSource.marker)
+            .join(cur_tax, SequenceSource.taxonomy)
+            .options(contains_eager(SequenceSource.marker, alias=marker_seq))
+            .options(contains_eager(SequenceSource.taxonomy, alias=cur_tax))
+            .order_by(marker_seq.sequence, SequenceSource.id)
+            .filter(cur_tax.genus.in_(spike_genus))
+        ):
             spikes.append(
                 (
                     seq_source.source_accession,
