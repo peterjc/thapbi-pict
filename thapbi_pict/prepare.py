@@ -137,7 +137,7 @@ def find_fastq_pairs(
     return pairs
 
 
-def parse_cutadapt_stdout(stdout, bad_primers=False):
+def parse_cutadapt_stdout(stdout):
     r"""Extract FASTA count before and after cutadapt.
 
     >>> parse_cutadapt_stdout("...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n...")
@@ -151,9 +151,7 @@ def parse_cutadapt_stdout(stdout, bad_primers=False):
             before = after = 0
         elif words[:-1] == ["Total", "reads", "processed:"]:
             before = int(words[3].replace(",", ""))
-        elif bad_primers and words[:-2] == ["Reads", "with", "adapters:"]:
-            after = int(words[3].replace(",", ""))
-        elif not bad_primers and words[:4] == [
+        elif words[:4] == [
             "Reads",
             "written",
             "(passing",
@@ -180,33 +178,14 @@ Reads that were too short:               3,271 (3.1%)
 Reads that were too long:                    0 (0.0%)
 Reads written (passing filters):         1,471 (1.4%)
 """,
-        bad_primers=False,
     )
     == (106089, 1471)
-)
-
-# Example recording the bad primers, want lower number
-assert (
-    parse_cutadapt_stdout(
-        """\
-=== Summary ===
-
-Total reads processed:                  51,804
-Reads with adapters:                    51,601 (99.6%)
-Reads that were too short:                   0 (0.0%)
-Reads that were too long:                    0 (0.0%)
-Reads written (passing filters):        51,804 (100.0%)
-""",
-        bad_primers=True,
-    )
-    == (51804, 51601)
 )
 
 
 def run_cutadapt(
     long_in,
     trimmed_out,
-    bad_out,
     left_primer,
     right_primer,
     min_len=None,
@@ -239,14 +218,9 @@ def run_cutadapt(
             return total, total
         else:
             sys.exit(f"ERROR: called on {long_in} with no primers")
-    cmd = ["cutadapt", "--fasta"]
-    if bad_out:
-        cmd += ["--untrimmed-output", bad_out]
-    else:
-        cmd += ["--discard-untrimmed"]
-        if cpu:
-            # Not compatible with --untrimmed-output
-            cmd += ["-j", str(cpu)]
+    cmd = ["cutadapt", "--fasta", "--discard-untrimmed"]
+    if cpu:
+        cmd += ["-j", str(cpu)]
     if min_len:
         cmd += ["-m", str(min_len)]
     if max_len:
@@ -262,7 +236,7 @@ def run_cutadapt(
         trimmed_out,
         long_in,
     ]
-    return parse_cutadapt_stdout(run(cmd, debug=debug).stdout, bad_out)
+    return parse_cutadapt_stdout(run(cmd, debug=debug).stdout)
 
 
 def parse_flash_stdout(stdout):
@@ -546,7 +520,6 @@ def prepare_sample(
     raw_R1,
     raw_R2,
     out_dir,
-    primer_dir,
     left_primer,
     right_primer,
     flip,
@@ -571,14 +544,8 @@ def prepare_sample(
     if out_dir and out_dir != "-":
         folder = out_dir
     fasta_name = os.path.join(folder, f"{stem}.fasta")
-    if primer_dir:
-        failed_primer_name = os.path.join(primer_dir, f"{stem}.failed-primers.fasta")
-    else:
-        failed_primer_name = None
 
-    if os.path.isfile(fasta_name) and (
-        failed_primer_name is None or os.path.isfile(failed_primer_name)
-    ):
+    if os.path.isfile(fasta_name):
         if control:
             uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
                 fasta_name
@@ -651,15 +618,10 @@ def prepare_sample(
 
     # trim
     trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
-    if failed_primer_name:
-        bad_primer_fasta = os.path.join(tmp, "bad_primers.fasta")
-    else:
-        bad_primer_fasta = None
     # These counts will be of NR FASTA if using merged cache...
     count_tmp, count_cutadapt = run_cutadapt(
         merged_fastq or merged_fasta_gz,
         trimmed_fasta,
-        bad_primer_fasta,
         left_primer,
         right_primer,
         min_len=min_len,
@@ -755,8 +717,6 @@ def prepare_sample(
 
     # File done
     shutil.move(dedup, fasta_name)
-    if failed_primer_name:
-        shutil.move(bad_primer_fasta, failed_primer_name)
 
     if debug:
         sys.stderr.write(
@@ -777,7 +737,6 @@ def main(
     out_dir,
     db_url,
     spike_genus,
-    primer_dir,
     left_primer,
     right_primer,
     flip=False,
@@ -946,7 +905,6 @@ def main(
             raw_R1,
             raw_R2,
             out_dir,
-            primer_dir,
             left_primer,
             right_primer,
             flip,

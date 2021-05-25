@@ -169,7 +169,6 @@ def prepare_reads(args=None):
         if args.database
         else None,
         spike_genus=args.spike,
-        primer_dir=args.primers,
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
         flip=args.flip,
@@ -343,7 +342,6 @@ def pipeline(args=None):
         out_dir=intermediate_dir,
         db_url=db,
         spike_genus=args.spike,
-        primer_dir=None,
         left_primer=primer_clean(args.left),
         right_primer=primer_clean(args.right),
         flip=args.flip,
@@ -1106,14 +1104,6 @@ def main(args=None):
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument(
-        "-p",
-        "--primers",
-        type=str,
-        default="",
-        metavar="DIRNAME",
-        help="Where to write optional failed primer FASTA files.",
-    )
     subcommand_parser.add_argument("-l", "--left", **ARG_PRIMER_LEFT)
     subcommand_parser.add_argument("-r", "--right", **ARG_PRIMER_RIGHT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
