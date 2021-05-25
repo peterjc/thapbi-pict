@@ -541,9 +541,7 @@ def prepare_sample(
     read count, and a dict of max abundance (keyed by spike-in name).
     """
     folder, stem = os.path.split(stem)
-    if out_dir and out_dir != "-":
-        folder = out_dir
-    fasta_name = os.path.join(folder, f"{stem}.fasta")
+    fasta_name = os.path.join(out_dir, f"{stem}.fasta")
 
     if os.path.isfile(fasta_name):
         if control:
@@ -871,7 +869,7 @@ def main(
             " no non-control reads!\n"
         )
 
-    if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
+    if out_dir and not os.path.isdir(out_dir):
         sys.stderr.write(f"Making output directory {out_dir!r}\n")
         os.mkdir(out_dir)
 

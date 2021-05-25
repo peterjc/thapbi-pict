@@ -1087,10 +1087,9 @@ def main(args=None):
         "-o",
         "--output",
         type=str,
-        default="-",
+        required=True,
         metavar="DIRNAME",
-        help="Directory to write output FASTA files to, "
-        "default is next to each input file.",
+        help="Output directory. Required.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
