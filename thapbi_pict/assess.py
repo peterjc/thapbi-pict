@@ -468,7 +468,7 @@ def main(
         specificity = float(tn) / (tn + fp) if tn else 0.0
         # precision or positive predictive value (PPV)
         precision = float(tp) / (tp + fp) if tp else 0.0
-        # F1 score
+        # F1 score, aka F-measure
         f1 = tp * 2.0 / (2 * tp + fp + fn) if tp else 0.0
         # Hamming Loss = (total number of mis-predicted class entries
         #                 / number of class-level predictions)

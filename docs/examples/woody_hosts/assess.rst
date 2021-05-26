@@ -237,33 +237,34 @@ More usually, you would output to a named file, and look at that:
 
     $ thapbi_pict assess -i expected/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
     Assessed onebp vs known in 1 files (174 species)
-    $ cut -f 1-5,11 DNA15MIX.assess.tsv
+    $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
 
-You should be able to open this ``DNA15MIX.assess.tsv`` file in R, Excel, etc:
+You should be able to open this ``DNA15MIX.assess.tsv`` file in R, Excel, etc,
+and focus on the same column selection:
 
-=========================== == == == === ===========
-#Species                    TP FP FN TN  Ad-hoc-loss
-=========================== == == == === ===========
-OVERALL                     8  1  7  158 0.500
-Phytophthora aleatoria      0  1  0  0   1.000
-Phytophthora austrocedri    1  0  0  0   0.000
-Phytophthora boehmeriae     0  0  1  0   1.000
-Phytophthora cactorum       1  0  0  0   0.000
-Phytophthora cambivora      0  0  1  0   1.000
-Phytophthora chlamydospora  0  0  1  0   1.000
-Phytophthora cinnamomi      0  0  1  0   1.000
-Phytophthora gonapodyides   1  0  0  0   0.000
-Phytophthora ilicis         1  0  0  0   0.000
-Phytophthora kernoviae      1  0  0  0   0.000
-Phytophthora lateralis      0  0  1  0   1.000
-Phytophthora obscura        1  0  0  0   0.000
-Phytophthora plurivora      0  0  1  0   1.000
-Phytophthora pseudosyringae 1  0  0  0   0.000
-Phytophthora ramorum        1  0  0  0   0.000
-Phytophthora syringae       0  0  1  0   1.000
-OTHER 158 SPECIES IN DB     0  0  0  158 0.000
-=========================== == == == === ===========
+=========================== == == == === ==== ===========
+#Species                    TP FP FN TN  F1   Ad-hoc-loss
+=========================== == == == === ==== ===========
+OVERALL                     8  1  7  158 0.67 0.500
+Phytophthora aleatoria      0  1  0  0   0.00 1.000
+Phytophthora austrocedri    1  0  0  0   1.00 0.000
+Phytophthora boehmeriae     0  0  1  0   0.00 1.000
+Phytophthora cactorum       1  0  0  0   1.00 0.000
+Phytophthora cambivora      0  0  1  0   0.00 1.000
+Phytophthora chlamydospora  0  0  1  0   0.00 1.000
+Phytophthora cinnamomi      0  0  1  0   0.00 1.000
+Phytophthora gonapodyides   1  0  0  0   1.00 0.000
+Phytophthora ilicis         1  0  0  0   1.00 0.000
+Phytophthora kernoviae      1  0  0  0   1.00 0.000
+Phytophthora lateralis      0  0  1  0   0.00 1.000
+Phytophthora obscura        1  0  0  0   1.00 0.000
+Phytophthora plurivora      0  0  1  0   0.00 1.000
+Phytophthora pseudosyringae 1  0  0  0   1.00 0.000
+Phytophthora ramorum        1  0  0  0   1.00 0.000
+Phytophthora syringae       0  0  1  0   0.00 1.000
+OTHER 158 SPECIES IN DB     0  0  0  158 0.00 0.000
+=========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 1 false
 positives, 7 false negatives, and 158 true negatives. The final number needs a
@@ -271,16 +272,17 @@ little explanation. First, 8+1+7+158 = 174, which is the number of species in
 the database. With only one sample being considered, 174 is the number of other
 species in the database which the tool correctly says are not present.
 
-The additional columns (not shown) include traditional metrics like
-sensitivity, specificity, precision, F1, Hamming loss, plus our own metric
+Following this we get one line per species, considering this species in
+isolation (making this a traditional and simpler to interpret classification
+problem). Here there is only one sample, so this time TP+FP+FN+TN=1.
+
+The additional columns (not all shown here) include traditional metrics like
+sensitivity, specificity, precision, F1, and Hamming loss. We've shown F1 or
+F-measure here (from zero to one for perfect recall), plus our own metric
 provisionally called *Ad hoc loss* which is a modification of the Hamming loss
 without using the true negative count (which we expect to always be very large
 as the database will contain many species, while a community might contain
 only ten).
-
-Following this we get one line per species, considering this species in
-isolation (making this a traditional and simpler to interpret classification
-problem). Here there is only one sample, so this time TP+FP+FN+TN=1.
 
 Next, let's run the assess command on all four positive control samples, just
 by giving the input directory names (it will work out the common filenames):
@@ -289,45 +291,45 @@ by giving the input directory names (it will work out the common filenames):
 
     $ thapbi_pict assess -i expected/ intermediate/ -o thabpi-pict.assess.tsv
     Assessed onebp vs known in 4 files (174 species)
-    $ cut -f 1-5,11 thabpi-pict.assess.tsv
+    $ cut -f 1-5,9,11 thabpi-pict.assess.tsv
     <SEE TABLE BELOW>
 
 New table ``thabpi-pict.assess.tsv`` is similar:
 
-=========================== == == == === ===========
-#Species                    TP FP FN TN  Ad-hoc-loss
-=========================== == == == === ===========
-OVERALL                     32 7  13 644 0.385
-Phytophthora agathidicida   0  3  0  1   1.000
-Phytophthora aleatoria      0  1  0  3   1.000
-Phytophthora austrocedri    1  0  0  3   0.000
-Phytophthora boehmeriae     0  0  4  0   1.000
-Phytophthora cactorum       1  0  3  0   0.750
-Phytophthora cambivora      0  0  1  3   1.000
-Phytophthora capsici        3  0  0  1   0.000
-Phytophthora castaneae      3  0  0  1   0.000
-Phytophthora chlamydospora  0  0  1  3   1.000
-Phytophthora cinnamomi      0  0  1  3   1.000
-Phytophthora fallax         3  0  0  1   0.000
-Phytophthora foliorum       3  0  0  1   0.000
-Phytophthora glovera        0  3  0  1   1.000
-Phytophthora gonapodyides   1  0  0  3   0.000
-Phytophthora ilicis         1  0  0  3   0.000
-Phytophthora kernoviae      1  0  0  3   0.000
-Phytophthora lateralis      0  0  1  3   1.000
-Phytophthora obscura        4  0  0  0   0.000
-Phytophthora plurivora      3  0  1  0   0.250
-Phytophthora pseudosyringae 1  0  0  3   0.000
-Phytophthora ramorum        1  0  0  3   0.000
-Phytophthora rubi           3  0  0  1   0.000
-Phytophthora siskiyouensis  3  0  0  1   0.000
-Phytophthora syringae       0  0  1  3   1.000
-OTHER 150 SPECIES IN DB     0  0  0  600 0.000
-=========================== == == == === ===========
+=========================== == == == === ==== ===========
+#Species                    TP FP FN TN  F1   Ad-hoc-loss
+=========================== == == == === ==== ===========
+OVERALL                     32 7  13 644 0.76 0.385
+Phytophthora agathidicida   0  3  0  1   0.00 1.000
+Phytophthora aleatoria      0  1  0  3   0.00 1.000
+Phytophthora austrocedri    1  0  0  3   1.00 0.000
+Phytophthora boehmeriae     0  0  4  0   0.00 1.000
+Phytophthora cactorum       1  0  3  0   0.40 0.750
+Phytophthora cambivora      0  0  1  3   0.00 1.000
+Phytophthora capsici        3  0  0  1   1.00 0.000
+Phytophthora castaneae      3  0  0  1   1.00 0.000
+Phytophthora chlamydospora  0  0  1  3   0.00 1.000
+Phytophthora cinnamomi      0  0  1  3   0.00 1.000
+Phytophthora fallax         3  0  0  1   1.00 0.000
+Phytophthora foliorum       3  0  0  1   1.00 0.000
+Phytophthora glovera        0  3  0  1   0.00 1.000
+Phytophthora gonapodyides   1  0  0  3   1.00 0.000
+Phytophthora ilicis         1  0  0  3   1.00 0.000
+Phytophthora kernoviae      1  0  0  3   1.00 0.000
+Phytophthora lateralis      0  0  1  3   0.00 1.000
+Phytophthora obscura        4  0  0  0   1.00 0.000
+Phytophthora plurivora      3  0  1  0   0.86 0.250
+Phytophthora pseudosyringae 1  0  0  3   1.00 0.000
+Phytophthora ramorum        1  0  0  3   1.00 0.000
+Phytophthora rubi           3  0  0  1   1.00 0.000
+Phytophthora siskiyouensis  3  0  0  1   1.00 0.000
+Phytophthora syringae       0  0  1  3   0.00 1.000
+OTHER 150 SPECIES IN DB     0  0  0  600 0.00 0.000
+=========================== == == == === ==== ===========
 
 This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 644 TN.
-That total 32+7+13+644 = 696 = 4 * 174, the number of samples times the number
-of species in the database.
+Their total, 32+7+13+644 = 696 = 4 * 174, is the number of samples times the
+number of species in the database.
 
 This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
 samples.
