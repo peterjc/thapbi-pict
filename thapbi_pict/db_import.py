@@ -132,6 +132,12 @@ assert parse_curated_fasta_entry("P13660 Phytophthora aff infestans") == (
 )
 
 
+fasta_parsing_function = {
+    "simple": parse_curated_fasta_entry,
+    "ncbi": parse_ncbi_fasta_entry,
+}
+
+
 def load_taxonomy(session):
     """Pre-load all the species and synonym names as a set."""
     names = set()
@@ -403,7 +409,7 @@ def main(
     min_length=0,
     max_length=sys.maxsize,
     name=None,
-    ncbi_heuristics=False,
+    convention="simple",
     sep=None,
     validate_species=False,
     genus_only=False,
@@ -411,15 +417,18 @@ def main(
     tmp_dir=None,
     debug=False,
 ):
-    """Import FASTA file(s) into the database.
+    r"""Import FASTA file(s) into the database.
 
-    For NCBI files, recommend using ``--ncbi`` and leave ``--sep ''``
-    as it is since single entries are expected.
+    For curated FASTA files, use convention "simple" (default here and at the
+    command line), and specify any multi-entry separator you are using.
 
-    For curated FASTA files, omit ``--ncbi`` and use ``--sep ';'``
-    or whatever multi-entry separator you are using.
+    For NCBI files, convention "ncbi" and for the separator use Ctrl+A (type
+    ``-s $'\001'`` at the command line) if appropriate, or "" or None
+    (function default) if single entries are expected.
     """
     if sep:
+        if debug:
+            sys.stderr.write(f"DEBUG: Splitting each FASTA entry using {sep!r}.\n")
 
         def fasta_entry_fn(text):
             """Split FASTA entries on the separator character."""
@@ -442,7 +451,7 @@ def main(
             fasta_file,
             db_url,
             fasta_entry_fn,
-            parse_ncbi_fasta_entry if ncbi_heuristics else parse_curated_fasta_entry,
+            fasta_parsing_function[convention],
             min_length=min_length,
             max_length=max_length,
             name=name,
