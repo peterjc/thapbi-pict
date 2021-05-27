@@ -180,10 +180,50 @@ assert parse_sintax_fasta_entry(
 ) == (0, "Escherichia coli")
 
 
+def parse_obitools_fasta_entry(text, known_species=None):
+    """Parse species from the OBITools extended FASTA header.
+
+    See https://pythonhosted.org/OBITools/attributes.html which explains that
+    OBITools splits the FASTA line into identifier, zero or more key=value;
+    entries, and a free text description.
+
+    We are specifically interested in the species_name, genus_name (used if
+    species_name is missing), and taxid.
+
+    >>> entry = "AP009202 species_name=Abalistes stellaris; taxid=392897; ..."
+    >>> parse_obitools_fasta_entry(entry)
+    (392897, 'Abalistes stellaris')
+
+    Note this will *not* try to parse any key=value entries embedded in the
+    first word (which taken as the identifier).
+    """
+    taxid = 0
+    sp = ""
+    identifier, description = text.split(None, 1)
+    for part in description.split(";"):
+        part = part.strip()  # We may be more lienent that OBITools here
+        if part.startswith("taxid="):
+            taxid = int(part[6:].strip())
+        elif part.startswith("species_name="):
+            sp = part[13:].strip()
+        elif not sp and part.startswith("genus_name="):
+            sp = part[11:].strip()
+    return taxid, sp
+
+
+assert parse_obitools_fasta_entry(
+    "AP009202 species_name=Abalistes stellaris; taxid=392897; genus_name=Abalistes; rank=species; Abalistes stellaris mitochondrial DNA, complete genome"  # noqa E501
+) == (392897, "Abalistes stellaris")
+
+assert parse_obitools_fasta_entry(
+    "MF101792 family_name=Acipenseridae; species_name=Scaphirhynchus suttkusi; family=7900; reverse_match=CTTCCGGTACACTTACCATG; taxid=36179; rank=species; forward_error=0; forward_tm=60.26; genus_name=Scaphirhynchus; seq_length_ori=16495; forward_match=ACACCGCCCGTCACTCT; reverse_tm=54.79; genus=7909; reverse_error=0; species=36179; strand=D; Scaphirhynchus suttkusi isolate NFWFLH10433 mitochondrion, complete genome"  # noqa: E501
+) == (36179, "Scaphirhynchus suttkusi")
+
 fasta_parsing_function = {
     "simple": parse_curated_fasta_entry,
     "ncbi": parse_ncbi_fasta_entry,
     "sintax": parse_sintax_fasta_entry,
+    "obitools": parse_obitools_fasta_entry,
 }
 
 
