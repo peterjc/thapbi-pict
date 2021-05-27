@@ -418,8 +418,6 @@ def main(
 
     For curated FASTA files, omit ``--ncbi`` and use ``--sep ';'``
     or whatever multi-entry separator you are using.
-
-    Primer trimming is done if and only if primers are given.
     """
     if sep:
 
