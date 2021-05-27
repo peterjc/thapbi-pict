@@ -132,9 +132,58 @@ assert parse_curated_fasta_entry("P13660 Phytophthora aff infestans") == (
 )
 
 
+def parse_sintax_fasta_entry(text, known_species=None):
+    """Extract the species from SINTAX taxonomy annotation.
+
+    See https://drive5.com/usearch/manual/tax_annot.html which defines
+    this taxonomy annotation convention as used in USEARCH and VSEARCH.
+    The tax=names field is separated from other fields in the FASTA
+    description line by semi-colons, for example:
+
+    >>> entry = "X80725_S000004313;tax=d:...,g:Escherichia/Shigella,s:Escherichia_coli"
+    >>> parse_sintax_fasta_entry(entry)
+    (0, 'Escherichia coli')
+
+    If there is no species entry (prefix ``s:``) then the genus is returned
+    (prefix ``g:``), else the empty string:
+
+    >>> parse_sintax_fasta_entry("AB008314;tax=d:...,g:Streptococcus;")
+    (0, 'Streptococcus')
+
+    """
+    valid = False
+    for part in text.split(";"):
+        part = part.strip().replace("_", " ")
+        if not part.startswith("tax="):
+            continue
+        fields = [_.strip() for _ in part.split(",")]
+        # Try for species first:
+        for field in fields:
+            if field.startswith("s:"):
+                return 0, field[2:]
+        # Fall back on genus:
+        for field in fields:
+            if field.startswith("g:"):
+                return 0, field[2:]
+        valid = True
+    if not valid:
+        raise ValueError(f"FASTA entry not in SINTAX format: {text!r}")
+    return 0, ""
+
+
+assert parse_sintax_fasta_entry(
+    "AB008314;tax=d:Bacteria,p:Firmicutes,c:Bacilli,o:Lactobacillales,f:Streptococcaceae,g:Streptococcus;"  # noqa: E501
+) == (0, "Streptococcus")
+
+assert parse_sintax_fasta_entry(
+    ">X80725_S000004313;tax=d:Bacteria,p:Proteobacteria,c:Gammaproteobacteria,o:Enterobacteriales,f:Enterobacteriaceae,g:Escherichia/Shigella,s:Escherichia_coli"  # noqa: E501
+) == (0, "Escherichia coli")
+
+
 fasta_parsing_function = {
     "simple": parse_curated_fasta_entry,
     "ncbi": parse_ncbi_fasta_entry,
+    "sintax": parse_sintax_fasta_entry,
 }
 
 
