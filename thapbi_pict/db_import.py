@@ -516,6 +516,9 @@ def main(
     (function default) if single entries are expected.
     """
     if sep:
+        if convention in ["sintax", "obitools"]:
+            sys.exit(f"ERROR: Can't use separator with {convention} naming.")
+
         if debug:
             sys.stderr.write(f"DEBUG: Splitting each FASTA entry using {sep!r}.\n")
 
