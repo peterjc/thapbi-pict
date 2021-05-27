@@ -39,7 +39,7 @@ thapbi_pict import -d "$DB.sqlite" -i single_isolates/*.fasta
 # ===================
 # NCBI at genus level
 # ===================
-thapbi_pict import -d "$DB.sqlite" -i 2021-05-20-ITS_Oomycota_w32.fasta --ncbi -g --minlen 150 --maxlen 450
+thapbi_pict import -d "$DB.sqlite" -i 2021-05-20-ITS_Oomycota_w32.fasta -c ncbi -g --minlen 150 --maxlen 450
 # Add hoc fix for some accessions apparently with wrong genus
 BAD="('MN128447.1', 'MK794853.1', 'MK794848.1', 'MK795051.1', 'HQ237483.1', 'KP183959.1', 'MW426376.1', 'MW426384.1', 'KY785380.1', 'KY785381.1', 'KU715054.1', 'GQ149496.1', 'JF916542.1')"
 sqlite3 "$DB.sqlite" "DELETE FROM its1_sequence WHERE id IN (SELECT its1_sequence.id FROM its1_sequence JOIN its1_source ON its1_sequence.id = its1_source.its1_id WHERE source_accession IN $BAD);"
@@ -48,7 +48,7 @@ sqlite3 "$DB.sqlite" "DELETE FROM its1_source WHERE source_accession IN $BAD;"
 # =================
 # Curated sequences
 # =================
-thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450
+thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450 -s ";"
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"

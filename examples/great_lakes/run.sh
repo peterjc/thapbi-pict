@@ -12,7 +12,7 @@ function analyse {
     if [ ! -f ${NAME}.sqlite ]; then
         echo "Building $NAME database"
         # Pre-trimmed, not validating species names
-        thapbi_pict import -d ${NAME}.sqlite -i $NAME.fasta -x
+        thapbi_pict import -d ${NAME}.sqlite -i $NAME.fasta -x -s ";"
     fi
 
     echo "Running analysis"

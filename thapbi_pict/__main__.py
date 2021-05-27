@@ -15,6 +15,7 @@ import sys
 
 from . import __version__
 from .classify import method_classify_file as method_classifier
+from .db_import import fasta_parsing_function as fasta_conventions
 from .utils import find_requested_files
 from .utils import primer_clean
 
@@ -100,10 +101,10 @@ def db_import(args=None):
         min_length=args.minlen,
         max_length=args.maxlen,
         name=args.name,
+        convention=args.convention,
+        sep=args.sep,
         validate_species=not args.lax,
-        ncbi_heuristics=args.ncbi,
         genus_only=args.genus,
-        sep=(CTRL_A if args.ncbi else ";") if args.sep is None else args.sep,
         ignore_prefixes=tuple(args.ignore_prefixes),
         tmp_dir=args.temp,
         debug=args.verbose,
@@ -916,9 +917,12 @@ def main(args=None):
         "unless using -x / --lax in which case any word is accepted as a genus).",
     )
     subcommand_parser.add_argument(
-        "--ncbi",
-        action="store_true",
-        help="Enable NCBI naming style heuristics.",
+        "-c",
+        "--convention",
+        type=str,
+        default="simple",
+        choices=list(fasta_conventions),
+        help="Which naming convention does the FASTA file follow.",
     )
     subcommand_parser.add_argument(
         "-s",
@@ -926,8 +930,8 @@ def main(args=None):
         type=str,
         default=None,
         metavar="CHAR",
-        help="FASTA description multi-entry separator. Default semi-colon or "
-        "Ctrl+A with --ncbi. Use '' if single entries.",
+        help="FASTA description multi-entry separator character. Default none "
+        "meaning assume single entries.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
