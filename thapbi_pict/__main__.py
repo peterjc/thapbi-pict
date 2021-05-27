@@ -27,7 +27,7 @@ from .utils import primer_clean
 DEFAULT_METHOD = "onebp"
 DEFAULT_MIN_ABUNDANCE = 100
 CTRL_A = chr(1)
-IGNORE_PREFIXES = ("Undetermined",)
+IGNORE_PREFIXES = ("Undetermined_", "unknown_")
 
 # Argument validation functions
 # =============================
@@ -530,8 +530,8 @@ ARG_IGNORE_PREFIXES = dict(  # noqa: C408
     nargs="+",
     metavar="STEM",
     default=IGNORE_PREFIXES,
-    help="One or more filename prefixes to ignore, default %s"
-    % ", ".join(repr(_) for _ in IGNORE_PREFIXES),
+    help="One or more filename prefixes to ignore, default "
+    + " ".join(IGNORE_PREFIXES),
 )
 
 # "-m", "--method",
