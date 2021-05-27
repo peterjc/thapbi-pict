@@ -8,7 +8,7 @@
 #
 
 biopython
-cutadapt >= 3.0
+cutadapt >= 3.4
 matplotlib
 networkx >= 2.4
 pydot
