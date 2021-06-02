@@ -30,8 +30,8 @@ The worked examples include oomycetes, fungi, microalgae, and bats, and cover
 markers in ITS1, ITS2, 18S rRNA and COI and more. The main criteria has been
 mock communities with known species composition.
 
-The THAPBI Phyto-Threats project is supported by a grant funded jointly by the
-Biotechnology and Biological Sciences Research Council (`BBSRC
+The THAPBI Phyto-Threats project was initially supported by a grant funded
+jointly by the Biotechnology and Biological Sciences Research Council (`BBSRC
 <https://bbsrc.ukri.org/>`_), the Department for Environment, Food and Rural
 affairs (`DEFRA <https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs>`_),
 the Economic and Social Research Council (`ESRC <https://esrc.ukri.org>`_),
