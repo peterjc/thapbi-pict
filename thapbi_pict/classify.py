@@ -76,6 +76,61 @@ def unique_or_separated(values, sep=";"):
         return sep.join(str(_) for _ in values)
 
 
+def consoliate_and_sort_taxonomy(genus_species_taxid):
+    """Remove any redundant entries, returns new sorted list.
+
+    Drops zero taxid entries if has matching non-zero entry.
+
+    Drops genus only entries if have species level entries.
+    Note ignoring the TaxID here - would need to know the parent/child
+    relationship to confirm the genus we're removing does have species
+    level children in the prediction set.
+    """
+    # First drop any redundant genus-only entries...
+    answer = []
+    genera_with_species = set()
+    with_taxid = set()
+    # Reverse sort to put genus only before genus with species
+    for genus, species, taxid in sorted(genus_species_taxid, reverse=True):
+        assert genus
+        if species:
+            genera_with_species.add(genus)
+        if not species and genus in genera_with_species:
+            # Drop this genus only entry as have an entry with species
+            continue
+        if taxid:
+            with_taxid.add((genus, species))
+        answer.append((genus, species, taxid))
+    # Now drop any redundant zero-taxid entries...
+    if with_taxid:
+        answer = [
+            (genus, species, taxid)
+            for (genus, species, taxid) in answer
+            if taxid or (genus, species) not in with_taxid
+        ]
+    # Done, just need to reverse the answer...
+    return sorted(answer)
+
+
+assert consoliate_and_sort_taxonomy([("Genie", "alpha", 101), ("Genie", "", 100)]) == [
+    ("Genie", "alpha", 101)
+]
+assert consoliate_and_sort_taxonomy([("Genie", "", 100), ("Genie", "", 0)]) == [
+    ("Genie", "", 100)
+]
+assert (
+    consoliate_and_sort_taxonomy(
+        [
+            ("Genie", "alpha", 0),
+            ("Genie", "", 0),
+            ("Genie", "", 100),
+            ("Genie", "alpha", 101),
+        ]
+    )
+    == [("Genie", "alpha", 101)]
+)
+
+
 def taxid_and_sp_lists(taxon_entries):
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
@@ -89,37 +144,14 @@ def taxid_and_sp_lists(taxon_entries):
     string instead (in the same order so you can match taxid to species, sorting
     on the genus-species string).
     """
-    if not taxon_entries:
-        # Unexpected - this is perhaps worth an assert statement / debug msg?
-        return 0, "", "No taxonomy entries"
-
-    genus_with_species = {t.genus for t in taxon_entries if t.species}
-    if genus_with_species:
-        # Want either species level predictions, or genus level without a
-        # child species level prediction.
-        #
-        # Note ignoring the TaxID here - would need to know the parent/child
-        # relationship to confirm the genus we're removing does have species
-        # level children in the prediction set.
-        taxon_entries = [
-            t for t in taxon_entries if t.species or t.genus not in genus_with_species
-        ]
-
-    if len(taxon_entries) == 1:
-        t = taxon_entries[0]
-        return (
-            t.ncbi_taxid,
-            genus_species_name(t.genus, t.species),
-            "Unique taxonomy match",
-        )
-
-    # Discard clade, and now remove duplicates, sort on genus-sepcies
-    tax = sorted({(t.genus, t.species, t.ncbi_taxid) for t in taxon_entries})
+    tax = consoliate_and_sort_taxonomy(
+        {(t.genus, t.species, t.ncbi_taxid) for t in taxon_entries}
+    )
 
     return (
         unique_or_separated([t[2] for t in tax]),
         unique_or_separated([genus_species_name(t[0], t[1]) for t in tax]),
-        "",  # Not useful to report # of entries as redundant info
+        "",  # Not very useful to report # of entries
     )
 
 
