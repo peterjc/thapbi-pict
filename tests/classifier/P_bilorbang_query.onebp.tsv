@@ -1,9 +1,9 @@
-#sequence-name	taxid	genus-species	note
-reference_species	0	Phytophthora bilorbang	
-with_A_in_db_genus	0	Phytophthora bilorbang	1 matches with up to 1bp diff, 2 taxonomy entries
-with_G	0	Phytophthora bilorbang	2 matches with up to 1bp diff, 2 taxonomy entries
-with_GG	0		No DB matches, even with 1bp diff
-with_GGG	0		No DB matches, even with 1bp diff
-with_GGGG	0		No DB matches, even with 1bp diff
-with_GGGGG	0		No DB matches, even with 1bp diff
-with_GGGGGG	0		No DB matches, even with 1bp diff
+#sequence-name	taxid	genus-species
+reference_species	0	Phytophthora bilorbang
+with_A_in_db_genus	0	Phytophthora bilorbang
+with_G	0	Phytophthora bilorbang
+with_GG	0	
+with_GGG	0	
+with_GGGG	0	
+with_GGGGG	0	
+with_GGGGGG	0	

@@ -1,9 +1,9 @@
-#sequence-name	taxid	genus-species	note
-reference_species	0	Phytophthora bilorbang	
-with_A_in_db_genus	0	Phytophthora	
-with_G	0		No DB match
-with_GG	0		No DB match
-with_GGG	0		No DB match
-with_GGGG	0		No DB match
-with_GGGGG	0		No DB match
-with_GGGGGG	0		No DB match
+#sequence-name	taxid	genus-species
+reference_species	0	Phytophthora bilorbang
+with_A_in_db_genus	0	Phytophthora
+with_G	0	
+with_GG	0	
+with_GGG	0	
+with_GGGG	0	
+with_GGGGG	0	
+with_GGGGGG	0	

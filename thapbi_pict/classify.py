@@ -233,7 +233,10 @@ def apply_method_to_file(
             count += abundance
             taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
             tax_counts[genus_species] += abundance
-            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+            if debug:
+                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+            else:
+                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
     assert count == sum(tax_counts.values())
     return tax_counts
 
@@ -645,7 +648,10 @@ def method_blast(
             taxid = 0
             genus_species = ""
             note = "No DB match"
-        read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+        if debug:
+            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+        else:
+            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
         tax_counts[genus_species] += abundance
     return tax_counts
 
@@ -802,18 +808,26 @@ def method_swarm_core(
                     seq = str(seq_dict[idn].seq).upper()
                     taxid2, genus_species2, _ = perfect_match_in_db(session, seq)
                     if genus_species2:
-                        read_report.write(
-                            "%s\t%s\t%s\t%s\n"
-                            % (
-                                idn,
-                                str(taxid2),
-                                genus_species2,
-                                f"Cluster #{cluster_count} - {len(read_idns)} seqs,"
-                                " but this seq itself in DB",
+                        if debug:
+                            read_report.write(
+                                "%s\t%s\t%s\t%s\n"
+                                % (
+                                    idn,
+                                    str(taxid2),
+                                    genus_species2,
+                                    f"Cluster #{cluster_count} - {len(read_idns)} seqs,"
+                                    " but this seq itself in DB",
+                                )
                             )
-                        )
+                        else:
+                            read_report.write(
+                                f"{idn}\t{str(taxid2)}\t{genus_species2}\n"
+                            )
                         continue
-                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+                if debug:
+                    read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+                else:
+                    read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
             tax_counts[genus_species] += abundance
     sys.stderr.write(f"Swarm generated {cluster_count} clusters\n")
     assert count == sum(tax_counts.values())
@@ -1090,7 +1104,10 @@ def main(
             pred_handle = open(tmp_pred, "w")
 
         # Could write one column per db_sp_list entry, but would be very sparse.
-        pred_handle.write("#sequence-name\ttaxid\tgenus-species\tnote\n")
+        if debug:
+            pred_handle.write("#sequence-name\ttaxid\tgenus-species\tnote\n")
+        else:
+            pred_handle.write("#sequence-name\ttaxid\tgenus-species\n")
         # Will get empty dict for empty file
         headers = load_fasta_header(filename)
         if not headers or headers["abundance"]:
