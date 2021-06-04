@@ -9,7 +9,7 @@
 IFS=$'\n\t'
 set -euo pipefail
 
-export TMP=${TMP:-/tmp/thapbi_pict}
+export TMP=${TMP:-/tmp/thapbi_pict}/woody_hosts
 mkdir -p $TMP
 
 echo "Preparing sample data for woody hosts example"
