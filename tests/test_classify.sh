@@ -81,4 +81,22 @@ for M in identity onebp blast 1s3g; do
     diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
 done
 
+for EXAMPLE in P_bilorbang P_vulcanica genus_boundary; do
+
+    DB=$TMP/${EXAMPLE}.sqlite
+    rm -rf $DB $TMP/${EXAMPLE}_query.*
+    set -x
+    thapbi_pict import -d $DB -i tests/classifier/${EXAMPLE}.fasta -x
+    diff tests/classifier/${EXAMPLE}.fasta <(thapbi_pict dump -m -f fasta -d $DB)
+    set +x
+    for M in identity onebp 1s2g 1s3g 1s4g 1s5g; do
+        echo
+        echo "Checking ${EXAMPLE} example with $M classifier"
+        set -x
+        thapbi_pict classify -d $DB -i tests/classifier/${EXAMPLE}_query.fasta -m $M -o $TMP
+        diff $TMP/${EXAMPLE}_query.$M.tsv tests/classifier/${EXAMPLE}_query.$M.tsv
+        set +x
+    done
+done
+
 echo "$0 - test_classify.sh passed"
