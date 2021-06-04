@@ -11,7 +11,3 @@ hmm_trim
 
  - Unknown
 
-multiple_its1
-
- - Unknown
-

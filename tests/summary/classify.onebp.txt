@@ -17,7 +17,3 @@ hmm_trim
  - Phytophthora x cambivora(*)
  - Unknown
 
-multiple_its1
-
- - Unknown
-

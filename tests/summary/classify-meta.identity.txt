@@ -20,7 +20,3 @@ Sequencing sample: hmm_trim
 
  - Unknown
 
-Sequencing sample: multiple_its1
-
- - Unknown
-
