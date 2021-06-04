@@ -409,7 +409,8 @@ def onebp_match_in_db(session, seq, debug=False):
             )
         taxid, genus_species, _ = taxid_and_sp_lists(list(t))
     elif not genus_species:
-        note = "No DB matches, even with 1bp diff"
+        taxid = 0
+        note = "No DB match"
     return taxid, genus_species, note
 
 
@@ -643,7 +644,7 @@ def method_blast(
         else:
             taxid = 0
             genus_species = ""
-            note = "No BLAST hit"
+            note = "No DB match"
         read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
         tax_counts[genus_species] += abundance
     return tax_counts
