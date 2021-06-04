@@ -65,14 +65,6 @@ for M in identity onebp substr blast swarm swarmid 1s3g; do
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
 done
 
-rm -rf $TMP/multiple_its1.*.tsv
-# Have not handled this in swarm classifier....
-for M in identity onebp blast 1s3g; do
-    echo "Checking multiple HMM containing sequences with $M"
-    thapbi_pict classify -i tests/classify/multiple_its1.fasta -o $TMP/ -m $M
-    diff $TMP/multiple_its1.$M.tsv tests/classify/multiple_its1.$M.tsv
-done
-
 rm -rf $TMP/hmm_trim.*.tsv
 # Swarm classifier can't cope with multiple HMM hits...
 for M in identity onebp blast 1s3g; do

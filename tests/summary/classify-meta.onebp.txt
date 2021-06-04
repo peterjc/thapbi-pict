@@ -26,7 +26,3 @@ Sequencing sample: hmm_trim
  - Phytophthora x cambivora(*)
  - Unknown
 
-Sequencing sample: multiple_its1
-
- - Unknown
-
