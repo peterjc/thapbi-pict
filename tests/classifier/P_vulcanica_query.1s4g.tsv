@@ -1,0 +1,16 @@
+#sequence-name	taxid	genus-species	note
+reference_species	0	Phytophthora vulcanica	
+ref_genusA_1bp_from_sp	0	Phytophthora vulcanica	3 matches with up to 1bp diff, 2 taxonomy entries
+ref_genusB_2bp_from_sp	0	Phytophthora	1 matches with up to 1bp diff, 1 taxonomy entries
+ref_genusC_2bp_from_sp	0	Phytophthora	1 matches with up to 1bp diff, 1 taxonomy entries
+ref_genusC_with_G	0	Phytophthora	1 matches with up to 1bp diff, 1 taxonomy entries
+ref_genusC_with_GG	0	Phytophthora	1 matches at distance 2
+ref_genusC_with_GGG	0	Phytophthora	1 matches at distance 3
+ref_genusC_with_GGGG	0	Phytophthora	1 matches at distance 4
+ref_genusC_with_GGGGG	0		No matches up to distance 4
+ref_del1	0	Phytophthora vulcanica	1 matches with up to 1bp diff, 1 taxonomy entries
+ref_del2	0	Phytophthora	1 matches at distance 2
+ref_del3	0	Phytophthora	1 matches at distance 3
+ref_del4	0	Phytophthora	2 matches at distance 4
+ref_del5	0		No matches up to distance 4
+ref_del6	0		No matches up to distance 4

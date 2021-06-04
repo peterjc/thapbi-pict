@@ -1,0 +1,16 @@
+#sequence-name	taxid	genus-species	note
+reference_species	0	Phytophthora vulcanica	
+ref_genusA_1bp_from_sp	0	Phytophthora	
+ref_genusB_2bp_from_sp	0	Phytophthora	
+ref_genusC_2bp_from_sp	0	Phytophthora	
+ref_genusC_with_G	0		No DB match
+ref_genusC_with_GG	0		No DB match
+ref_genusC_with_GGG	0		No DB match
+ref_genusC_with_GGGG	0		No DB match
+ref_genusC_with_GGGGG	0		No DB match
+ref_del1	0		No DB match
+ref_del2	0		No DB match
+ref_del3	0		No DB match
+ref_del4	0		No DB match
+ref_del5	0		No DB match
+ref_del6	0		No DB match
