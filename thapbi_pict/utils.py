@@ -539,7 +539,9 @@ def find_paired_files(
     return input_list
 
 
-def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
+def parse_species_tsv(
+    tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
+):
     """Parse file of species assignments/predictions by sequence."""
     with open(tabular_file) as handle:
         for line in handle:
@@ -554,7 +556,7 @@ def parse_species_tsv(tabular_file, min_abundance=0, req_species_level=False):
                     f"ERROR: {tabular_file} is not 3 or 4 column TSV"
                     f" (name, taxid, genus-species, optional note):\n{line}"
                 )
-            if name == "*":
+            if name == "*" and not allow_wildcard:
                 raise ValueError("Wildcard species name found")
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue

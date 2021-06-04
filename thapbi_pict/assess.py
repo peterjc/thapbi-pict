@@ -13,7 +13,6 @@ from collections import Counter
 from .db_orm import connect_to_db
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
-from .utils import abundance_from_read_name
 from .utils import find_paired_files
 from .utils import genus_species_name
 from .utils import parse_species_tsv
@@ -27,22 +26,9 @@ def sp_in_tsv(classifier_file, min_abundance):
     Will ignore genus level predictions.
     """
     species = set()
-    for line in open(classifier_file):
-        if line.startswith("#") or not line.strip():
-            continue
-        try:
-            name, taxid, sp, etc = line.split("\t", 3)
-        except ValueError:
-            sys.exit(f"ERROR: Wrong field count in {classifier_file}\n")
-        if not sp:
-            continue
-        # Using "*" as name (without abundance) as wildcard
-        if (
-            name != "*"
-            and min_abundance > 1
-            and abundance_from_read_name(name) < min_abundance
-        ):
-            continue
+    for _name, _taxid, sp in parse_species_tsv(
+        classifier_file, min_abundance, req_species_level=True, allow_wildcard=True
+    ):
         species.update(sp.split(";"))
     return ";".join(sorted(_ for _ in species if species_level(_)))
 
