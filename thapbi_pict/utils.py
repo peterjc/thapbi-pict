@@ -128,7 +128,10 @@ def onebp_variants(seq):
     for s in "ACGT":
         # One base "insertion" at the end
         variants.add(seq + s)
-    variants.remove(seq)
+    try:
+        variants.remove(seq)
+    except KeyError:
+        pass
     return variants
 
 
@@ -144,6 +147,22 @@ assert set(onebp_variants("A")) == {
     "AC",
     "AG",
     "AT",
+}
+
+assert set(onebp_variants("Y")) == {
+    "",
+    "A",
+    "C",
+    "G",
+    "T",
+    "AY",
+    "CY",
+    "GY",
+    "TY",
+    "YA",
+    "YC",
+    "YG",
+    "YT",
 }
 
 assert set(onebp_variants("AA")) == {
@@ -164,6 +183,30 @@ assert set(onebp_variants("AA")) == {
     "AAC",
     "AAG",
     "AAT",
+}
+
+
+assert set(onebp_variants("AY")) == {
+    "A",
+    "Y",
+    "CY",
+    "GY",
+    "TY",
+    "AA",
+    "AC",
+    "AG",
+    "AT",
+    "AAY",
+    "CAY",
+    "GAY",
+    "TAY",
+    "ACY",
+    "AGY",
+    "ATY",
+    "AYA",
+    "AYC",
+    "AYG",
+    "AYT",
 }
 
 
