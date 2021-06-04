@@ -10,7 +10,7 @@ IFS=$'\n\t'
 set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
-export TMP=${TMP:-/tmp/thapbi_pict}
+export TMP=${TMP:-/tmp/thapbi_pict}/classify
 mkdir -p $TMP
 
 echo "================="
@@ -21,15 +21,19 @@ thapbi_pict classify 2>&1 | grep "the following arguments are required"
 thapbi_pict classify -d "sqlite:///:memory:" -i hypothetical_example.fasta 2>&1 | grep "cannot classify anything"
 set -o pipefail
 
+# The same DB is also created and used in tests/test_curated-import.sh
 export DB=$TMP/curated.sqlite
-if [ ! -f $DB ]; then echo "Run test_curated-import.sh to setup test DB"; false; fi
+if [ ! -f $DB ]; then
+    thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
+    thapbi_pict import -d $DB -i database/Phytophthora_ITS1_curated.fasta -s ";"
+fi
 
 # Passing one filename; default output dir:
-rm -rf $TMP/classify/
-mkdir -p $TMP/classify/
-cp database/Phytophthora_ITS1_curated.fasta $TMP/classify/
-thapbi_pict classify -m identity -d $DB -i $TMP/classify/Phytophthora_ITS1_curated.fasta
-if [ "`grep -c -v '^#' $TMP/classify/Phytophthora_ITS1_curated.identity.tsv`" -ne "`grep -c '^>' $TMP/classify/Phytophthora_ITS1_curated.fasta`" ]; then echo "Expected one line per input seq"; false; fi
+rm -rf $TMP/input/
+mkdir -p $TMP/input/
+cp database/Phytophthora_ITS1_curated.fasta $TMP/input/
+thapbi_pict classify -m identity -d $DB -i $TMP/input/Phytophthora_ITS1_curated.fasta
+if [ "`grep -c -v '^#' $TMP/input/Phytophthora_ITS1_curated.identity.tsv`" -ne "`grep -c '^>' $TMP/input/Phytophthora_ITS1_curated.fasta`" ]; then echo "Expected one line per input seq"; false; fi
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
