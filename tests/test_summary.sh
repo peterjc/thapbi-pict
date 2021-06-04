@@ -45,10 +45,12 @@ diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv 
 diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
 diff $TMP/summary-qu.samples.1s3g.txt tests/summary_meta/summary-qu.samples.1s3g.txt
 
-
+# This was originally created in test_classify.sh
+if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then
+    thapbi_pict classify -m identity -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
+fi
 thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
-    $TMP/DNAMIX_S95_L001.identity.tsv \
-    -m identity -o $TMP/ -r summary
+    $TMP/DNAMIX_S95_L001.identity.tsv -m identity -o $TMP/ -r summary
 
 # With metadata, using default method, -m onebp
 thapbi_pict summary --input tests/classify/P-infestans-T30-4.fasta tests/classify/P-infestans-T30-4.onebp.tsv -o $TMP/ -r summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5

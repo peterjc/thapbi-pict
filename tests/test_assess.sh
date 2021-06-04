@@ -41,8 +41,14 @@ set +o pipefail
 thapbi_pict assess -d $DB -m identity --input tests/assess/*.identity.tsv tests/assess/*.known.tsv 2>&1 | grep "WARNING: 1 expected species were not a possible prediction: Phytophthora fallax"
 set -o pipefail
 
-if [ ! -f $TMP/thapbi_swarm/DNAMIX_S95_L001.swarm.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
-if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then echo "Run test_classify.sh to setup test input"; false; fi
+# Originally these were created in tests/test_classify.sh
+if [ ! -f $TMP/DNAMIX_S95_L001.swarm.tsv ]; then
+    mkdir -p $TMP/thapbi_swarm/
+    thapbi_pict classify -m swarm -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm/
+fi
+if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then
+    thapbi_pict classify -m identity -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
+fi
 
 rm -rf $TMP/assess_swarm_vs_identity.tsv
 rm -rf $TMP/confusion_swarm_vs_identity.tsv
