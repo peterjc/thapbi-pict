@@ -561,14 +561,20 @@ def parse_species_tsv(
             if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
                 continue
             if req_species_level:
-                assert taxid.count(";") == genus_species.count(";"), line
-                wanted = [
-                    (t, s)
-                    for (t, s) in zip(taxid.split(";"), genus_species.split(";"))
-                    if species_level(s)
-                ]
-                taxid = ";".join(t for (t, s) in wanted)
-                genus_species = ";".join(s for (t, s) in wanted)
+                if taxid and taxid != "0":
+                    assert taxid.count(";") == genus_species.count(";"), line
+                    wanted = [
+                        (t, s)
+                        for (t, s) in zip(taxid.split(";"), genus_species.split(";"))
+                        if species_level(s)
+                    ]
+                    taxid = ";".join(t for (t, s) in wanted)
+                    genus_species = ";".join(s for (t, s) in wanted)
+                else:
+                    taxid = ""
+                    genus_species = ";".join(
+                        s for s in genus_species.split(";") if species_level(s)
+                    )
             yield name, taxid, genus_species
 
 
