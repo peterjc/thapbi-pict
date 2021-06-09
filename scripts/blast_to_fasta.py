@@ -26,7 +26,9 @@ of a matched sequence differ slightly from the BLAST matches.
 import os
 import sys
 
-if len(sys.argv) != 2 or not os.path.isfile(sys.argv[1]):
+if len(sys.argv) != 2 or (
+    sys.argv[1] != "/dev/stdin" and not os.path.isfile(sys.argv[1])
+):
     sys.exit("ERROR: Require a BLAST TSV filename as input.")
 
 seq_to_entry = {}
