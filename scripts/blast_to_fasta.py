@@ -17,7 +17,8 @@ For brevity this example loads the species names in lax mode. You may prefer
 to first load the NCBI taxonomy, and drop the -x import argument.
 
 You are likely to require manual curation for best results - for example
-removing problematic entries with suspect species assignments.
+removing problematic entries with suspect species assignments. This script
+does drop uncultured and unidentified entries, and environmental samples.
 
 WARNING: This may result in duplicated identifiers where the end points
 of a matched sequence differ slightly from the BLAST matches.
@@ -48,6 +49,10 @@ for line in open(sys.argv[1]):
             "ERROR: Unexpected punctuation in ssciname field (column 3):\n" + ssciname
         )
     if "synthetic construct" in ssciname:
+        continue
+    if "environmental sample" in ssciname:
+        continue
+    if ssciname.startswith(("uncultured ", "unidentified ")):
         continue
     sseq = sseq.upper().replace("-", "")
     entry = f"{saccver} {ssciname}"
