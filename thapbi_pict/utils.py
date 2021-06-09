@@ -558,7 +558,11 @@ def parse_species_tsv(
                 )
             if name == "*" and not allow_wildcard:
                 raise ValueError("Wildcard species name found")
-            if min_abundance > 1 and abundance_from_read_name(name) < min_abundance:
+            if (
+                min_abundance > 1
+                and abundance_from_read_name(name) < min_abundance
+                and name != "*"
+            ):
                 continue
             if req_species_level:
                 if taxid and taxid != "0":
