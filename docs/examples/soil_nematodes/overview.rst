@@ -90,14 +90,13 @@ green plant under streptophyta), but also some *Blastocystis* (Stramenopiles),
     $ for MARKER in NF1-18Sr2b SSUF04-SSUR22 D3Af-D3Br JB3-JB5GED; do \
       grep $MARKER.Blank summary/$MARKER.samples.onebp.tsv | cut -f 1,2,4; \
       done
-    <SEE TABLE BELOW>
+    <SEE TABLE EXCERPT BELOW>
 
 Or manually looking at the four separate files - where column 4 is a text
 summary of the classifier output:
 
 ============= ===== ===================================================================================
 NF1-18Sr2b    Blank Fungi (unknown species), Urtica sp., Unknown
-============= ===== ===================================================================================
 SSUF04-SSUR22 Blank Blastocystis sp., Fungi (unknown species), Unknown
 D3Af-D3Br     Blank Cercomonas sp., Fungi (unknown species), Sphaerularioidea gen. sp. EM-2016, Unknown
 JB3-JB5GED    Blank Unknown
