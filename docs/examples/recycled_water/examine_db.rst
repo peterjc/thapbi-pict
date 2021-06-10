@@ -78,7 +78,7 @@ Instead we can ask for FASTA output:
     Wrote 2 fasta format entries to 'P_fallax.fasta'
 
 This produces a short FASTA file as follows (with line wrapping added
-for display)::
+for display):
 
 .. code:: console
 
