@@ -12,6 +12,10 @@ line continuation supported) and expected terminal output. The special output
 line ``...`` can be used to indicate omitted output. The commands are run in
 the current directory.
 
+In place of the normal standard output, the special string "<SEE TABLE BELOW>"
+or "<SEE TABLE EXCERPT BELOW>" will assume TSV output which will converted to
+a simple RST table (with and without a header row respectively).
+
 STRONG WARNING: Do not use this on untrusted input files!
 """
 # TODO - Configurable skipped commands prefix/suffix list?
@@ -34,6 +38,7 @@ def scan_rst(filename):
                 line = lines.pop(0)
                 assert not line.strip()
                 block = []
+                meta = {}
                 while lines:
                     line = lines.pop(0)
                     if not line.strip("\n").strip():
@@ -52,9 +57,13 @@ def scan_rst(filename):
                             f" in {filename}:\n{line}"
                         )
                         break
-                    elif line.strip() == "<SEE TABLE BELOW>":
+                    elif line.strip() in (
+                        "<SEE TABLE BELOW>",
+                        "<SEE TABLE EXCERPT BELOW>",
+                    ):
                         # Magic happens, expect a blank line ending console
                         # section, a paragraph of text, and then an RST Table
+                        meta["rst_table_with_header"] = "EXCERPT" not in line
                         line = lines.pop(0)
                         if line != "\n":
                             sys.exit(
@@ -94,7 +103,7 @@ def scan_rst(filename):
                         f" in {filename}:\n{block[0]}"
                     )
                 assert "\n" not in block, block
-                yield block
+                yield block, meta
             elif ".. code:: console" in line:
                 sys.exit(f"ERROR: {filename} has this line:\n{repr(line)}")
 
@@ -137,7 +146,7 @@ def tsv_align(text, min_pad=2):
     return output.rstrip("\n") + "\n"
 
 
-def tsv_to_rst(text):
+def tsv_to_rst(text, with_header=True):
     """Turn TSV output into a simple RST table."""
     first_line, rest = text.split("\n", 1)
     headers = first_line.split("\t")
@@ -155,7 +164,10 @@ def tsv_to_rst(text):
     del index
 
     header = "".join(" " if i in cuts else "=" for i in range(width)) + "\n"
-    return header + first_line + "\n" + header + rest + header
+    if with_header:
+        return header + first_line + "\n" + header + rest + header
+    else:
+        return header + first_line + "\n" + rest + header
 
 
 def fasta_wrap(text):
@@ -214,7 +226,7 @@ for filename in sys.argv[1:]:
 
     print(filename)
 
-    for block in scan_rst(filename):
+    for block, block_meta in scan_rst(filename):
         for cmd, old_out in parse_block(block):
             print("$ " + cmd)
             if cmd.startswith(
@@ -245,7 +257,10 @@ for filename in sys.argv[1:]:
             if new_out.startswith(">") or "\n>" in new_out:
                 new_out = fasta_wrap(new_out)
             elif "\t" in new_out and old_out.startswith("="):
-                new_out = tsv_to_rst(new_out)
+                sys.stderr.write(f"TSV to RST {block_meta}\n")
+                new_out = tsv_to_rst(
+                    new_out, with_header=block_meta.get("rst_table_with_header", True)
+                )
             elif "\t" in new_out:
                 new_out = tsv_align(new_out)
 
