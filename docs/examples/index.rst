@@ -22,6 +22,7 @@ been mock communities with known species composition.
    microalgal_mock/index
    great_lakes/index
    fecal_sequel/index
+   soil_nematodes/index
    endangered_species/index
 
 * :ref:`woody_hosts` - A simple example using the default primers and
@@ -32,7 +33,7 @@ been mock communities with known species composition.
     amenity woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
 * :ref:`recycled_water` - An example where the defaults can be used, but
-  ideally requires different primer pair and a custom database. Based on:
+  ideally requires a different primer pair and a custom database. Based on:
 
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container
@@ -74,6 +75,14 @@ been mock communities with known species composition.
     Walker *et al.* (2019) A fecal sequel: Testing the limits of a genetic
     assay for bat species identification.
     https://doi.org/10.1371/journal.pone.0224969
+
+* :ref:`soil_nematodes` - Four markers (sequenced separately) in a soil nematode
+  mock community. Based on:
+
+    Ahmed *et al.* (2019) Metabarcoding of soil nematodes: the importance of
+    taxonomic coverage and availability of reference sequences in choosing
+    suitable marker(s)
+    https://doi.org/10.3897/mbmg.3.36408
 
 * :ref:`endangered_species` - A dozen markers in animals and plants (sequenced
   together), pushing THAPBI PICT beyond its original design goals by pooling
