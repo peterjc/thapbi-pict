@@ -4,7 +4,7 @@ Soil Nematode Mock Community
 ============================
 
 Here we consider a mock community of over 20 soil nematodes (in triplicate),
-sequeced separately with four markers, with no template control blanks:
+sequeced separately with four markers, with no-template PCR control blanks:
 
     Ahmed *et al.* (2019) Metabarcoding of soil nematodes: the importance of
     taxonomic coverage and availability of reference sequences in choosing
