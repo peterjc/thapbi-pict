@@ -313,7 +313,6 @@ def pipeline(args=None):
     from .classify import main as classify
     from .summary import main as summary
     from .assess import main as assess
-    from .edit_graph import main as edit_graph
 
     check_output_directory(args.output)
     if args.sampleout:
@@ -441,33 +440,6 @@ def pipeline(args=None):
             sys.stderr.write("ERROR: Pipeline aborted during assess\n")
             sys.exit(return_code)
         sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
-
-    edit_graph_filename = f"{stem}.edit-graph.{method}.xgmml"
-    if os.path.isfile(edit_graph_filename):
-        # This is slow to compute on complex sample sets
-        sys.stderr.write(f"WARNING: Skipping {edit_graph_filename} as already exists\n")
-    else:
-        # The XGMML output has minimal dependencies compared to PDF output
-        return_code = edit_graph(
-            graph_output=edit_graph_filename,
-            graph_format="xgmml",
-            db_url=db,
-            inputs=fasta_files + classified_files,
-            method=args.method,
-            min_abundance=args.abundance,
-            # total_min_abundance=args.total,
-            always_show_db=args.showdb,
-            # max_edit_dist=args.editdist,
-            ignore_prefixes=tuple(args.ignore_prefixes),
-            debug=args.verbose,
-        )
-        if return_code == 2:
-            # Special value indicating graph skipped as too large
-            pass
-        elif return_code:
-            sys.stderr.write("ERROR: Pipeline aborted during edit-graph\n")
-            sys.exit(return_code)
-        sys.stderr.write(f"Wrote {edit_graph_filename}\n")
 
     sys.stderr.write("All done!\n")
 
@@ -790,7 +762,7 @@ def main(args=None):
         "pipeline",
         description="Run default classification pipeline on paired FASTQ files.",
         epilog="This is equivalent to running the individual stages (prepare-reads, "
-        "classify, summary, edit-graph) with their defaults, with only a minority of "
+        "classify, summary, assess) with their defaults, with only a minority of "
         "settings available here.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
@@ -836,13 +808,6 @@ def main(args=None):
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
-    # Can't use -s for --showdb as already used for sample intermediates
-    subcommand_parser.add_argument(
-        "--showdb",
-        action="store_true",
-        help="Show DB entries in edit-graph, regardless of their abundance "
-        "in samples. Very slow with large database.",
-    )
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)

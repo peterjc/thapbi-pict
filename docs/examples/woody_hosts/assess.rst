@@ -354,7 +354,6 @@ reports:
     summary/with-metadata.assess.confusion.onebp.tsv
     summary/with-metadata.assess.onebp.tsv
     summary/with-metadata.assess.tally.onebp.tsv
-    summary/with-metadata.edit-graph.onebp.xgmml
     summary/with-metadata.reads.onebp.tsv
     summary/with-metadata.reads.onebp.xlsx
     summary/with-metadata.samples.onebp.tsv

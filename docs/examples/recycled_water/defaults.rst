@@ -33,7 +33,6 @@ as follows, and you should get six output report files:
     384
     $ ls -1 summary/recycled-water-defaults.*
     summary/recycled-water-defaults.all_reads.fasta
-    summary/recycled-water-defaults.edit-graph.onebp.xgmml
     summary/recycled-water-defaults.reads.onebp.tsv
     summary/recycled-water-defaults.reads.onebp.xlsx
     summary/recycled-water-defaults.samples.onebp.tsv
