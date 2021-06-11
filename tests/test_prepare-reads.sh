@@ -21,7 +21,7 @@ thapbi_pict prepare-reads 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # Try a real example
-rm -rf $TMP/DNAMIX_S95_L001.fasta $TMP/DNAMIX_S95_L001.failed-primers.fasta
+rm -rf $TMP/DNAMIX_S95_L001.fasta
 rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
@@ -30,7 +30,7 @@ if [ `grep -c "^>" $TMP/DNAMIX_S95_L001.fasta` -ne "827" ]; then echo "Wrong FAS
 
 # In this case, --flip makes no difference, as does -n ""
 # Using merged cache also should make no difference
-rm -rf $TMP/DNAMIX_S95_L001.fasta $TMP/DNAMIX_S95_L001.failed-primers.fasta
+rm -rf $TMP/DNAMIX_S95_L001.fasta
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --flip -n "" --merged-cache $TMP/merged_cache/ \
     -a 0 --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
