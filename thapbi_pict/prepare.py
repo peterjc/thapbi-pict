@@ -926,7 +926,7 @@ def main(
             " no non-control reads!\n"
         )
 
-    if out_dir and not os.path.isdir(out_dir):
+    if not os.path.isdir(out_dir):
         sys.stderr.write(f"Making output directory {out_dir!r}\n")
         os.mkdir(out_dir)
 
@@ -943,6 +943,9 @@ def main(
 
     fasta_files_prepared = []
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
+        if not os.path.isdir(os.path.join(out_dir, reference_marker.name)):
+            sys.stderr.write(f"Making {reference_marker.name} output sub-directory\n")
+            os.mkdir(os.path.join(out_dir, reference_marker.name))
         # Spike-in negative controls are marker specific
         spikes = []
         if negative_controls and spike_genus:
@@ -975,7 +978,7 @@ def main(
         fasta_files_prepared.extend(
             marker_cut(
                 file_pairs,
-                out_dir,
+                os.path.join(out_dir, reference_marker.name),
                 merged_cache,
                 shared_tmp,
                 reference_marker.name,
