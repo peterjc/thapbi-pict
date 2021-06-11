@@ -23,64 +23,52 @@ mkdir -p tmp_merged/ intermediate/ summary/
 # JB3 TTTTTTGGGCATCCTGAGGTTTAT Bowles et al. 1992
 # JB5GED  AGCACCTAAACTTAAAACATARTGRAARTG Derycke et al. 2010
 
+if [ ! -f references/pooled.sqlite ]; then
+    echo =================
+    echo Creating database
+    echo =================
 
-# Takes arguments via variable names
-function analyse {
-    if [ ! -f references/$NAME.sqlite ]; then
-        echo "Making DB $NAME.sqlite"
-        thapbi_pict import -d references/$NAME.sqlite \
-                    -i references/$NAME.fasta -s ";" -x \
-                    -k $NAME --left $LEFT --right $RIGHT
-    fi
+    NAME=NF1-18Sr2b
+    LEFT=GGTGGTGCATGGCCGTTCTTAGTT
+    RIGHT=TACAAAGGGCAGGGACGTAAT
 
-    echo "Running analysis"
-    mkdir -p intermediate/$NAME/
-    thapbi_pict pipeline -d references/$NAME.sqlite --merged-cache tmp_merged/ \
-                -i raw_data/ expected/$NAME/ -s intermediate/$NAME/ \
-                -o summary/$NAME -t metadata.tsv -x 1 -c 4,3
+    thapbi_pict import -d references/pooled.sqlite \
+                -i references/$NAME.fasta -s ";" -x \
+                -k $NAME --left $LEFT --right $RIGHT
 
-    echo "$NAME done"
-}
+    NAME=SSUF04-SSUR22
+    LEFT=GCTTGTCTCAAAGATTAAGCC
+    RIGHT=GCCTGCTGCCTTCCTTGGA
 
-echo ========================
-echo NF1/18Sr2b
-echo ========================
+    thapbi_pict import -d references/pooled.sqlite \
+                -i references/$NAME.fasta -s ";" -x \
+                -k $NAME --left $LEFT --right $RIGHT
 
-NAME=NF1-18Sr2b
-LEFT=GGTGGTGCATGGCCGTTCTTAGTT
-RIGHT=TACAAAGGGCAGGGACGTAAT
+    NAME=D3Af-D3Br
+    LEFT=GACCCGTCTTGAAACACGGA
+    RIGHT=CGGAAGGAACCAGCTACTA
 
-analyse  # call function above
+    thapbi_pict import -d references/pooled.sqlite \
+                -i references/$NAME.fasta -s ";" -x \
+                -k $NAME --left $LEFT --right $RIGHT
 
-echo ========================
-echo SSUF04/SSUR22
-echo ========================
+    NAME=JB3-JB5GED
+    LEFT=TTTTTTGGGCATCCTGAGGTTTAT
+    RIGHT=AGCACCTAAACTTAAAACATARTGRAARTG
 
-NAME=SSUF04-SSUR22
-LEFT=GCTTGTCTCAAAGATTAAGCC
-RIGHT=GCCTGCTGCCTTCCTTGGA
+    thapbi_pict import -d references/pooled.sqlite \
+                -i references/$NAME.fasta -s ";" -x \
+                -k $NAME --left $LEFT --right $RIGHT
 
-analyse  # call function above
+fi
 
-echo ========================
-echo D3Af/D3Br
-echo ========================
+echo ================
+echo Running analysis
+echo ================
 
-NAME=D3Af-D3Br
-LEFT=GACCCGTCTTGAAACACGGA
-RIGHT=CGGAAGGAACCAGCTACTA
-
-analyse  # call function above
-
-echo ========================
-echo JB3/JB5GED
-echo ========================
-
-NAME=JB3-JB5GED
-LEFT=TTTTTTGGGCATCCTGAGGTTTAT
-RIGHT=AGCACCTAAACTTAAAACATARTGRAARTG
-
-analyse  # call function above
+thapbi_pict pipeline -d references/pooled.sqlite --merged-cache tmp_merged/ \
+            -i raw_data/ expected/ -s intermediate/ -k '' \
+            -o summary/soil_nematodes -t metadata.tsv -x 1 -c 4,3
 
 echo ====
 echo Done
