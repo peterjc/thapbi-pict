@@ -18,6 +18,8 @@ from .classify import method_classify_file as method_classifier
 from .db_import import DEF_MAX_LENGTH
 from .db_import import DEF_MIN_LENGTH
 from .db_import import fasta_parsing_function as fasta_conventions
+from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .utils import find_requested_files
 
 
@@ -182,11 +184,17 @@ def prepare_reads(args=None):
     check_output_directory(args.output, must_exist=False)
     if args.temp:
         check_output_directory(args.temp)
+
+    # Connect to the DB,
+    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+    Session = connect_to_db(db)
+    session = Session()
+
     return_code = main(
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=args.output,
-        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        session=session,
         spike_genus=args.spike,
         flip=args.flip,
         min_abundance=args.abundance,
@@ -196,6 +204,8 @@ def prepare_reads(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
+
+    session.close()
     if isinstance(return_code, list):
         # Should be a list of FASTA filenames
         return 0
@@ -229,9 +239,16 @@ def classify(args=None):
         check_output_directory(args.output, must_exist=False)
     if args.temp:
         check_output_directory(args.temp)
+
+    # Connect to the DB,
+    Session = connect_to_db(
+        expand_database_argument(args.database, exist=True, hyphen_default=True)
+    )
+    session = Session()
+
     return_code = main(
         fasta=args.input,
-        db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        session=session,
         method=args.method,
         out_dir=args.output,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -240,6 +257,8 @@ def classify(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
+
+    session.close()
     if isinstance(return_code, list):
         # Should be a list of *.method.tsv filenames.
         return 0
@@ -339,9 +358,13 @@ def pipeline(args=None):
         check_input_file(args.metadata)
         if not args.metacols:
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
-    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+    method = args.method
 
-    stem = args.output  # TODO - drop stem variable?
+    # Connect to the DB,
+    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+    Session = connect_to_db(db)
+    session = Session()
+    markers = sorted(_.name for _ in session.query(MarkerDef))
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
@@ -349,11 +372,12 @@ def pipeline(args=None):
     sys.stderr.write("----------------------------------\n")
     sys.stderr.write("Preparing intermediate FASTA files\n")
     sys.stderr.write("----------------------------------\n")
-    fasta_files = prepare(
+    # This will do all the markers itself
+    all_fasta_files = prepare(
         fastq=args.input,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
-        db_url=db,
+        session=session,
         spike_genus=args.spike,
         flip=args.flip,
         min_abundance=args.abundance,
@@ -363,104 +387,107 @@ def pipeline(args=None):
         debug=args.verbose,
         cpu=args.cpu,
     )
-    if isinstance(fasta_files, int):
-        return_code = fasta_files
+    if isinstance(all_fasta_files, int):
+        return_code = all_fasta_files
         if return_code:
+            session.close()
             sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
             sys.exit(return_code)
 
-    sys.stderr.write("\n")
-    sys.stderr.write("--------------------------------\n")
-    sys.stderr.write("Preparing combined NR FASTA file\n")
-    sys.stderr.write("--------------------------------\n")
-    all_fasta = stem + ".all_reads.fasta"
-    fasta_nr(
-        inputs=fasta_files,
-        revcomp=None,
-        output=all_fasta,
-        min_abundance=args.abundance,
-        # min_length=args.minlen,
-        # max_length=args.maxlen,
-        debug=args.verbose,
-    )
+    all_classified_files = []
+    for marker in markers:
+        stem = f"{args.output}.{marker}"
+        fasta_files = [
+            _
+            for _ in all_fasta_files
+            if _.startswith(os.path.join(intermediate_dir, marker) + os.path.sep)
+        ]
+        if len(markers) > 1:
+            sys.stderr.write("\n")
+            sys.stderr.write("----------------------------------\n")
+            sys.stderr.write(f"Processesing {marker}\n")
+            sys.stderr.write("----------------------------------\n")
+        all_fasta = f"{stem}.all_reads.fasta"
+        fasta_nr(
+            inputs=fasta_files,
+            revcomp=None,
+            output=all_fasta,
+            min_abundance=args.abundance,
+            # min_length=args.minlen,
+            # max_length=args.maxlen,
+            debug=args.verbose,
+        )
+        classified_files = classify(
+            fasta=[all_fasta],
+            session=session,
+            method=args.method,
+            out_dir=os.path.split(stem)[0],  # i.e. next to FASTA all_reads input,
+            ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
+            min_abundance=args.abundance,
+            tmp_dir=args.temp,
+            debug=args.verbose,
+            cpu=args.cpu,
+        )
+        if isinstance(classified_files, int):
+            return_code = classified_files
+            if return_code:
+                sys.stderr.write(f"ERROR: Pipeline aborted during {marker} classify\n")
+                sys.exit(return_code)
+        if 1 != len(classified_files):
+            sys.exit(f"ERROR: {len(fasta_files)} FASTA files expected only one")
+        all_classified_files.extend(classified_files)
 
-    sys.stderr.write("\n")
-    sys.stderr.write("--------------------------------\n")
-    sys.stderr.write("Preparing intermediate TSV files\n")
-    sys.stderr.write("--------------------------------\n")
-    classified_files = classify(
-        fasta=[all_fasta],
-        db_url=db,
-        method=args.method,
-        out_dir=os.path.split(stem)[0],  # i.e. next to FASTA all_reads input
-        ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
-        min_abundance=args.abundance,
-        tmp_dir=args.temp,
-        debug=args.verbose,
-        cpu=args.cpu,
-    )
-    if isinstance(classified_files, int):
-        return_code = classified_files
-        if return_code:
-            sys.stderr.write("ERROR: Pipeline aborted during classify\n")
-            sys.exit(return_code)
-    if 1 != len(classified_files):
-        sys.exit(f"ERROR: {len(fasta_files)} FASTA files expected only one")
-
-    method = args.method
-
-    sys.stderr.write("\n")
-    sys.stderr.write("-------------------------\n")
-    sys.stderr.write("Preparing summary reports\n")
-    sys.stderr.write("-------------------------\n")
-    return_code = summary(
-        inputs=fasta_files + classified_files,
-        report_stem=stem,
-        method=args.method,
-        min_abundance=args.abundance,
-        metadata_file=args.metadata,
-        metadata_encoding=args.metaencoding,
-        metadata_cols=args.metacols,
-        metadata_groups=args.metagroups,
-        metadata_fieldnames=args.metafields,
-        metadata_index=args.metaindex,
-        require_metadata=args.requiremeta,
-        show_unsequenced=args.unsequenced,
-        ignore_prefixes=tuple(args.ignore_prefixes),
-        debug=args.verbose,
-    )
-    if return_code:
-        sys.stderr.write("ERROR: Pipeline aborted during summary\n")
-        sys.exit(return_code)
-
-    # TODO - Support known setting...
-    known_files = find_requested_files(
-        args.input,
-        ".known.tsv",
-        ignore_prefixes=tuple(args.ignore_prefixes),
-        debug=args.verbose,
-    )
-    if known_files:
-        sys.stderr.write("\n")
-        sys.stderr.write("--------------------------------\n")
-        sys.stderr.write("Assessing classifier performance\n")
-        sys.stderr.write("--------------------------------\n")
-        return_code = assess(
-            inputs=known_files + fasta_files + classified_files,
-            known="known",  # =args.known,
-            db_url=db,
+        return_code = summary(
+            inputs=fasta_files + classified_files,
+            report_stem=stem,
             method=args.method,
             min_abundance=args.abundance,
-            assess_output=f"{stem}.assess.{method}.tsv",
-            map_output=f"{stem}.assess.tally.{method}.tsv",
-            confusion_output=f"{stem}.assess.confusion.{method}.tsv",
+            metadata_file=args.metadata,
+            metadata_encoding=args.metaencoding,
+            metadata_cols=args.metacols,
+            metadata_groups=args.metagroups,
+            metadata_fieldnames=args.metafields,
+            metadata_index=args.metaindex,
+            require_metadata=args.requiremeta,
+            show_unsequenced=args.unsequenced,
             ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
         )
         if return_code:
-            sys.stderr.write("ERROR: Pipeline aborted during assess\n")
+            sys.stderr.write(f"ERROR: Pipeline aborted during {marker} summary\n")
+            session.close()
             sys.exit(return_code)
-        sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
+
+        # TODO - Support known setting...
+        known_files = find_requested_files(
+            args.input,
+            ".known.tsv",
+            ignore_prefixes=tuple(args.ignore_prefixes),
+            debug=args.verbose,
+        )
+        if known_files and len(markers) == 1:
+            sys.stderr.write(f"Assessing {marker} classification...\n")
+            return_code = assess(
+                inputs=known_files + fasta_files + classified_files,
+                known="known",  # =args.known,
+                db_url=db,
+                method=args.method,
+                min_abundance=args.abundance,
+                assess_output=f"{stem}.assess.{method}.tsv",
+                map_output=f"{stem}.assess.tally.{method}.tsv",
+                confusion_output=f"{stem}.assess.confusion.{method}.tsv",
+                ignore_prefixes=tuple(args.ignore_prefixes),
+                debug=args.verbose,
+            )
+            if return_code:
+                sys.stderr.write("ERROR: Pipeline aborted during assess\n")
+                session.close()
+                sys.exit(return_code)
+            sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
+
+    # TODO - pooled reports
+
+    session.close()
 
     sys.stderr.write("\n")
     sys.stderr.write("------------------\n")

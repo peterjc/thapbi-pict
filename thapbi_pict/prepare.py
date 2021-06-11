@@ -20,7 +20,6 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
-from .db_orm import connect_to_db
 from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
@@ -825,7 +824,7 @@ def main(
     fastq,
     negative_controls,
     out_dir,
-    db_url,
+    session,
     spike_genus,
     flip=False,
     min_abundance=100,
@@ -863,10 +862,6 @@ def main(
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
-
-    # Connect to the DB,
-    Session = connect_to_db(db_url)  # echo=debug
-    session = Session()
 
     # Split on commas, strip white spaces
     spike_genus = [_.strip() for _ in spike_genus.strip().split(",") if _.strip()]
@@ -1001,7 +996,6 @@ def main(
     else:
         tmp_obj.cleanup()
 
-    session.close()
     if debug:
         sys.stderr.write(f"Prepared {len(fasta_files_prepared)} FASTA files\n")
     sys.stdout.flush()

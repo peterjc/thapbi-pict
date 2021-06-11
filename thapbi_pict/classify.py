@@ -19,7 +19,6 @@ from Levenshtein import distance as levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
-from .db_orm import connect_to_db
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -704,7 +703,7 @@ method_setup = {
 
 def main(
     fasta,
-    db_url,
+    session,
     method,
     out_dir,
     ignore_prefixes,
@@ -739,10 +738,6 @@ def main(
     except KeyError:
         req_tools = []
     check_tools(req_tools, debug)
-
-    # Connect to the DB,
-    Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
-    session = Session()
 
     count = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species).count()
     if debug:
