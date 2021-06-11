@@ -345,6 +345,10 @@ def pipeline(args=None):
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
+    sys.stderr.write("\n")
+    sys.stderr.write("----------------------------------\n")
+    sys.stderr.write("Preparing intermediate FASTA files\n")
+    sys.stderr.write("----------------------------------\n")
     fasta_files = prepare(
         fastq=args.input,
         negative_controls=args.negctrls,
@@ -365,6 +369,10 @@ def pipeline(args=None):
             sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
             sys.exit(return_code)
 
+    sys.stderr.write("\n")
+    sys.stderr.write("--------------------------------\n")
+    sys.stderr.write("Preparing combined NR FASTA file\n")
+    sys.stderr.write("--------------------------------\n")
     all_fasta = stem + ".all_reads.fasta"
     fasta_nr(
         inputs=fasta_files,
@@ -376,6 +384,10 @@ def pipeline(args=None):
         debug=args.verbose,
     )
 
+    sys.stderr.write("\n")
+    sys.stderr.write("--------------------------------\n")
+    sys.stderr.write("Preparing intermediate TSV files\n")
+    sys.stderr.write("--------------------------------\n")
     classified_files = classify(
         fasta=[all_fasta],
         db_url=db,
@@ -397,6 +409,10 @@ def pipeline(args=None):
 
     method = args.method
 
+    sys.stderr.write("\n")
+    sys.stderr.write("-------------------------\n")
+    sys.stderr.write("Preparing summary reports\n")
+    sys.stderr.write("-------------------------\n")
     return_code = summary(
         inputs=fasta_files + classified_files,
         report_stem=stem,
@@ -425,6 +441,10 @@ def pipeline(args=None):
         debug=args.verbose,
     )
     if known_files:
+        sys.stderr.write("\n")
+        sys.stderr.write("--------------------------------\n")
+        sys.stderr.write("Assessing classifier performance\n")
+        sys.stderr.write("--------------------------------\n")
         return_code = assess(
             inputs=known_files + fasta_files + classified_files,
             known="known",  # =args.known,
@@ -442,7 +462,10 @@ def pipeline(args=None):
             sys.exit(return_code)
         sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
 
-    sys.stderr.write("All done!\n")
+    sys.stderr.write("\n")
+    sys.stderr.write("------------------\n")
+    sys.stderr.write("Pipeline all done!\n")
+    sys.stderr.write("------------------\n")
 
 
 def ena_submit(args=None):
