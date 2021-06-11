@@ -20,7 +20,7 @@ function analyse {
     # of 10 is deliberate. This *does* let unwanted noise
     # through - see the discussion in the documentation.
     mkdir -p intermediate/$NAME/
-    thapbi_pict pipeline -d ${NAME}.sqlite --showdb \
+    thapbi_pict pipeline -d ${NAME}.sqlite \
                 --left $LEFT --right $RIGHT -a 10 \
                 -i raw_data/ expected/$NAME/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \

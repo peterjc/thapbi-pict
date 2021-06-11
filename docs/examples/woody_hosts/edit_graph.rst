@@ -6,19 +6,15 @@ Edit Graph
 Running thapbi_pict edit-graph
 ------------------------------
 
-The final step of the pipeline command can be run alone as ``thapbi_pict
-edit-graph``:
+This is not run as part of the pipeline command, but must be run separately:
 
 .. code:: console
 
     $ thapbi_pict edit-graph -h
     ...
 
-This command does not use the intermediate TSV files or metadata, just the
-intermediate FASTA files and the ITS1 database.
-
-To mimic the pipeline output, we must set the output filename explicitly
-with ``-o`` or ``--output``:
+This command does not use metdata, but can optionally use the intermediate
+TSV files. It requires the FASTA files:
 
 .. code:: console
 
@@ -136,7 +132,7 @@ PDF output, likewise the grey edge styles.
 
 The node attributes include the full MD5 (so you can lookup the full sequence
 or classification results for any node of interest), sample count, total read
-abundance (both numbers shown in the ``thapbi_pict read-summary`` report),
+abundance (both numbers shown in the ``thapbi_pict summary`` reports),
 genus (allowing you to do your own color scheme), and species if known.
 
 The edge attributes include ``Edit-distance`` (values ``1``, ``2``, ``3``

@@ -3,11 +3,11 @@ Edit Graphs
 
 The sequence :ref:`edit_graph` is very useful for understanding what came off
 the sequencer - although you may need to play with the thresholds to find a
-sweet spot for hiding the noise. Using ``run.sh`` you will get large noisy
-XGMML files from running the pipeline at minimum abundance 10, but also
-graphs using the default minimum abundance of 100, filenames
+sweet spot for hiding the noise. Using ``run.sh`` calls the pipeline with a
+minimum abundance 10, which would give large noisy edit graphs. Instead, we
+build them using a minimum abundance of 100, giving files
 ``SPH16S.edit-graph.a100.xgmml`` and ``MOL16S.edit-graph.a100.xgmml``, and
-graphs for the mock community samples alone.
+additional graphs for the mock community samples alone.
 
 My main conclusion from the figures below is that the THAPBI PICT default
 ``onebp`` classifier is reasonable for these mock communities markers.

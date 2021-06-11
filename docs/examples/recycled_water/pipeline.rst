@@ -27,7 +27,6 @@ our custom database built with matching primer trimmed entries:
     $ ls -1 intermediate/SRR*.onebp.tsv | wc -l
     384
     $ ls -1 summary/recycled-water-custom.*.onebp.*
-    summary/recycled-water-custom.edit-graph.onebp.xgmml
     summary/recycled-water-custom.reads.onebp.tsv
     summary/recycled-water-custom.reads.onebp.xlsx
     summary/recycled-water-custom.samples.onebp.tsv

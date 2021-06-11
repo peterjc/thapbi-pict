@@ -30,7 +30,7 @@ function analyse {
                     -i raw_data/$LIBRARY/ expected/$LIBRARY/ -m $METHOD \
                     -s intermediate/${LIBRARY}_${NAME}/ -o summary/ \
                     -r ${LIBRARY}_${NAME} -a 10 \
-                    --showdb -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+                    -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     # Now run an edit-graph at a higher abundance threshold
     # (works as long as pipeline or prepare-reads was run with

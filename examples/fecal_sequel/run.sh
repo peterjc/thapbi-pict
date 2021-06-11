@@ -29,9 +29,15 @@ echo ---------------------------------------------------------------
 # Default edit-graph has very few DB nodes, so using --showdb argument
 mkdir -p intermediate/COI_430_bats/
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
-            -o summary/ -r mock-community.COI_430_bats --showdb \
+            -o summary/ -r mock-community.COI_430_bats \
             -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4 \
             --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC
+
+# Default edit-graph has very few DB nodes, so run another edit-graph
+# including all DB entries with -s / --showdb argument
+thapbi_pict edit-graph -d COI_430_bats.sqlite \
+            -i intermediate/COI_430_bats/*.fasta intermediate/COI_430_bats/*.onebp.tsv \
+            -s -o mock-community.COI_430_bats.edit-graph.xgmml
 
 echo ---------------------------------------------------------------
 echo Fecal sequel - COI - Mock community using extended reference DB

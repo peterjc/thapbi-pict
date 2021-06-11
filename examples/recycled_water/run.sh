@@ -43,7 +43,7 @@ echo "Running analysis"
 thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
         --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
         --right AGCGTTCTTCATCGATGTGC \
-        -d Redekar_et_al_2019_sup_table_3.sqlite --showdb -m onebp \
+        -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
         -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo ====
