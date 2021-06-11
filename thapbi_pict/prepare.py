@@ -869,7 +869,7 @@ def main(
     session = Session()
 
     # Split on commas, strip white spaces
-    spike_genus = [_.strip() for _ in spike_genus.strip().split(",")]
+    spike_genus = [_.strip() for _ in spike_genus.strip().split(",") if _.strip()]
     for x in spike_genus:
         if not session.query(Taxonomy).filter_by(genus=x).count():
             sys.stderr.write(f"WARNING: Spike-in genus {x!r} not in database\n")
