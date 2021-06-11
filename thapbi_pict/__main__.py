@@ -1077,12 +1077,10 @@ def main(args=None):
         epilog="Each pair of input files should follow the naming style"
         "XXX_1.fastq[.gz] and XXX_2.fastq[.gz], or "
         "XXX_R1.fastq[.gz] and XXX_R2.fastq[.gz], or "
-        "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz], and will "
-        "result an output file XXX.fasta in the specified ouput"
-        "directory (which defaults to the FASTQ directory).\n\n"
-        "The output FASTA files are non-redundant, records named by "
-        "checksum and their abundance, and sorted by decreasing "
-        "abundance then alphabetically by sequence.",
+        "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz], and will given an "
+        "output file XXX.fasta. These are non-redundant, entries named by "
+        "checksum and their abundance, and sorted by decreasing abundance "
+        "then alphabetically by sequence.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
