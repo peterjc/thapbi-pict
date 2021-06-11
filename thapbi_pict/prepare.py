@@ -558,22 +558,22 @@ def prepare_sample(
     debug=False,
     cpu=0,
 ):
-    """Create FASTA file for sample from paired FASTQ.
+    """Create specified FASTA file for sample from paired FASTQ.
 
     Runs flash, does primer filtering, does spike-in detection.
 
-    Returns fasta filename, accepted unique sequence count, accepted total
-    read count, and a dict of max abundance (keyed by spike-in name).
+    Returns accepted unique sequence count, accepted total read count, and a
+    dict of max abundance (keyed by spike-in name).
     """
     if os.path.isfile(fasta_name):
         if control:
             uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
                 fasta_name
             )
-            return fasta_name, uniq_count, total, max_spike_abundance
+            return uniq_count, total, max_spike_abundance
         else:
             # Don't actually need the max abundance
-            return fasta_name, None, None, {}
+            return None, None, {}
 
     if debug:
         sys.stderr.write(
@@ -692,7 +692,7 @@ def prepare_sample(
 
     if accepted_uniq_count or accepted_total:
         assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
-    return fasta_name, accepted_uniq_count, accepted_total, max_spike_abundance
+    return accepted_uniq_count, accepted_total, max_spike_abundance
 
 
 def marker_cut(
@@ -732,6 +732,8 @@ def marker_cut(
         pool_key = os.path.abspath(os.path.split(stem)[0])
         stem = os.path.split(stem)[1]
         fasta_name = os.path.join(out_dir, f"{stem}.fasta")  # insert marker here
+        if fasta_name in fasta_files_prepared:
+            sys.exit(f"ERROR: Multiple files named {fasta_name}")
         if merged_cache:
             merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
         else:
@@ -746,7 +748,7 @@ def marker_cut(
             if control
             else max(min_abundance, pool_worst_control.get(pool_key, 0))
         )
-        fasta_file, uniq_count, total, max_abundance_by_spike = prepare_sample(
+        uniq_count, total, max_abundance_by_spike = prepare_sample(
             fasta_name,
             merged_fasta_gz,
             left_primer,
@@ -761,13 +763,11 @@ def marker_cut(
             debug=debug,
             cpu=cpu,
         )
-        if fasta_file in fasta_files_prepared:
-            sys.exit(f"ERROR: Multiple files named {fasta_file}")
-        fasta_files_prepared.append(fasta_file)
+        fasta_files_prepared.append(fasta_name)
         if uniq_count:
             assert (
                 max_abundance_by_spike
-            ), f"Got {max_abundance_by_spike!r} from {fasta_file}"
+            ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
         # Any spike-in is assumed to be a synthetic control, rest assumed biological
         max_non_spike_abundance = max_abundance_by_spike.get("", 0)
         if control:
@@ -794,7 +794,7 @@ def marker_cut(
         elif uniq_count is None:
             skipped_samples.add(stem)
             if debug:
-                sys.stderr.write(f"Skipping {fasta_file} as already done\n")
+                sys.stderr.write(f"Skipping {fasta_name} as already done\n")
         else:
             sys.stderr.write(
                 f"Sample {stem} has {uniq_count} unique sequences, {total}"
@@ -1002,7 +1002,8 @@ def main(
         tmp_obj.cleanup()
 
     session.close()
-
+    if debug:
+        sys.stderr.write(f"Prepared {len(fasta_files_prepared)} FASTA files\n")
     sys.stdout.flush()
     sys.stderr.flush()
     return fasta_files_prepared
