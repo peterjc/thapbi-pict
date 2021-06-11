@@ -110,6 +110,15 @@ include examples/fecal_sequel/observed_3_bats.fasta
 include examples/fecal_sequel/mock_community.known.tsv
 include examples/fecal_sequel/raw_data/MD5SUM.txt
 
+include examples/soil_nematodes/README.rst
+include examples/soil_nematodes/PRJEB27581.tsv
+include examples/soil_nematodes/setup.sh
+include examples/soil_nematodes/run.sh
+include examples/soil_nematodes/metadata.tsv
+include examples/soil_nematodes/mock_community.known.tsv
+include examples/soil_nematodes/negative_control.known.tsv
+include examples/soil_nematodes/raw_data/MD5SUM.txt
+
 include examples/endangered_species/README.rst
 include examples/endangered_species/PRJEB18620.tsv
 include examples/endangered_species/setup.sh
