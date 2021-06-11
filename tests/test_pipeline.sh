@@ -24,23 +24,23 @@ set -o pipefail
 rm -rf $TMP/intermediate $TMP/output
 mkdir $TMP/intermediate $TMP/output
 thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output/thapbi-pict -i tests/reads/
-diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/thapbi-pict.all_reads.fasta tests/pipeline/thapbi-pict.all_reads.fasta
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 
 # Leaving the intermediate files in place... plus some stray files:
-touch $TMP/intermediate/unwanted.fasta
-touch $TMP/intermediate/unwanted.onebp.tsv
-touch $TMP/intermediate/unwanted.identity.tsv
-touch $TMP/intermediate/distraction.fasta
-touch $TMP/intermediate/ignore-me.onebp.tsv
+touch $TMP/intermediate/ITS1/unwanted.fasta
+touch $TMP/intermediate/ITS1/unwanted.onebp.tsv
+touch $TMP/intermediate/ITS1/unwanted.identity.tsv
+touch $TMP/intermediate/ITS1/distraction.fasta
+touch $TMP/intermediate/ITS1/ignore-me.onebp.tsv
 # Run again with some explicit options set (shouldn't change output)
 # Using --flip will have no effect as already have the intermediate files
 rm -rf $TMP/output/*
 thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output/report -m onebp -a 250 -d - --flip --metaencoding UTF-8
-diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/report.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/report.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/report.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
@@ -49,10 +49,10 @@ diff $TMP/output/report.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.t
 rm -rf $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
 mkdir $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
 thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/
-for F in $TMP/intermediate_with_cache/*.fasta; do
-    diff $F $TMP/intermediate/${F##*/}
+for F in $TMP/intermediate_with_cache/ITS1/*.fasta; do
+    diff $F $TMP/intermediate/ITS1/${F##*/}
 done
-diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
+diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv

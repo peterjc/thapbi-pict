@@ -50,74 +50,74 @@ thapbi_pict prepare-reads -d - -a 75 \
 echo "Checking spike-in controls..."
 
 # A:
-if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-A.fasta` -ne "12" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` -ne "12" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-A.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-A.fasta` != "#abundance:38473" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` != "#abundance:38473" ]; then
     echo "Wrong count accepted after abundance threshold in spike-in-A.fasta"; false
 fi
 # B:
-if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-B.fasta` -ne "8" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-B.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-B.fasta` != "#abundance:84648" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` != "#abundance:84648" ]; then
     echo "Wrong count accepted after abundance threshold in spike-in-B.fasta"; false
 fi
 # C:
-if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-C.fasta` -ne "7" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-C.fasta` -ne "7" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-C.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-C.fasta` != "#abundance:44501" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-C.fasta` != "#abundance:44501" ]; then
     echo "Wrong count accepted after abundance threshold in spike-in-C.fasta"; false
 fi
 # D:
-if [ `grep -c "^>" $TMP/mock_plates/prepared/spike-in-D.fasta` -ne "6" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-D.fasta` -ne "6" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-D.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/spike-in-D.fasta` != "#abundance:25102" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-D.fasta` != "#abundance:25102" ]; then
     echo "Wrong count accepted after abundance threshold in spike-in-D.fasta"; false
 fi
 
 echo "Checking the mock samples and thresholds used..."
 
 # A, threshold kept at 75:
-if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-A.fasta` != "#threshold:75" ]; then
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/sample-A.fasta` != "#threshold:75" ]; then
     echo "Wrong abundance threshold in sample-A.fasta"; false
 fi
-if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-A.fasta` -ne "8" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/sample-A.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-A.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:3683" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-A.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-A.fasta"; false
 fi
 # B, threshold kept at 75:
-if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-B.fasta` != "#threshold:75" ]; then
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/sample-B.fasta` != "#threshold:75" ]; then
     echo "Wrong abundance threshold in sample-B.fasta"; false
 fi
-if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-B.fasta` -ne "8" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/sample-B.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-B.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-B.fasta` != "#abundance:3683" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-B.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-B.fasta"; false
 fi
 # C, threshold kept at 75:
-if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-C.fasta` != "#threshold:75" ]; then
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/sample-C.fasta` != "#threshold:75" ]; then
     echo "Wrong abundance threshold in sample-C.fasta"; false
 fi
-if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-C.fasta` -ne "8" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/sample-C.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-C.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-C.fasta` != "#abundance:3683" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-C.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-C.fasta"; false
 fi
 # D, threshold raised to 107:
-if [ `grep "^#threshold:" $TMP/mock_plates/prepared/sample-D.fasta` != "#threshold:107" ]; then
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta` != "#threshold:107" ]; then
     echo "Wrong abundance threshold in sample-D.fasta"; false
 fi
-if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-D.fasta` -ne "7" ]; then
+if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/sample-D.fasta` -ne "7" ]; then
     echo "Wrong unique count after abundance threshold in sample-D.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundance:3585" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta` != "#abundance:3585" ]; then
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
@@ -151,13 +151,13 @@ echo "Checking spike-in controls..."
 
 # Should all be same as above:
 for PLATE in A B C D; do
-    diff $TMP/single_plate/prepared/spike-in-${PLATE}.fasta $TMP/mock_plates/prepared/spike-in-${PLATE}.fasta
+    diff $TMP/single_plate/prepared/ITS1/spike-in-${PLATE}.fasta $TMP/mock_plates/prepared/ITS1/spike-in-${PLATE}.fasta
 done
 
 echo "Checking the mock sample and threshold used..."
 
 # Should be same as plate D above since that had the highest threshold:
-diff $TMP/single_plate/prepared/sample.fasta $TMP/mock_plates/prepared/sample-D.fasta
+diff $TMP/single_plate/prepared/ITS1/sample.fasta $TMP/mock_plates/prepared/ITS1/sample-D.fasta
 
 echo "===="
 echo "Done"
