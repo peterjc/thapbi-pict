@@ -257,7 +257,6 @@ for filename in sys.argv[1:]:
             if new_out.startswith(">") or "\n>" in new_out:
                 new_out = fasta_wrap(new_out)
             elif "\t" in new_out and old_out.startswith("="):
-                sys.stderr.write(f"TSV to RST {block_meta}\n")
                 new_out = tsv_to_rst(
                     new_out, with_header=block_meta.get("rst_table_with_header", True)
                 )
