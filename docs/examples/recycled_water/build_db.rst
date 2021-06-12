@@ -22,9 +22,14 @@ for this example you should have got a copy of this file, named
 
 This table is sorted alphabetically by species then accession, and starts:
 
+.. code:: console
+
+    $ head Redekar_et_al_2019_sup_table_3.tsv
+    <SEE TABLE EXCERPT BELOW>
+
+You could also look at the TSV file in Excel:
+
 ========== ===================
-Accession  Species
----------- -------------------
 HQ643082.1 Achlya ambisexualis
 HQ643083.1 Achlya ambisexualis
 HQ643084.1 Achlya americana
@@ -91,7 +96,7 @@ the NCBI taxonomy database under `taxonomy ID 611798
 THAPBI PICT offers two solutions. By default the *entire* FASTA description
 (after the identifier) is the species name, giving full control to the user.
 
-However, the ``--ncbi`` switch enables heuristics. This is best used with a
+However, ``-c ncbi`` switches on NCBI heuristics. This is best used with a
 pre-loaded NCBI taxonomy in the database for validation purposes. This tries
 as many words as possible from the NCBI style FASTA description in looking for
 a match in the NCBI taxonomy, including synonyms. If that fails and lax mode
