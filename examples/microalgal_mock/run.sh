@@ -22,7 +22,7 @@ function analyse {
     mkdir -p intermediate/$NAME/
     # Assume FASTQ already have primers removed!
     thapbi_pict pipeline -d ${NAME}.sqlite --left "" --right "" \
-		--ignore-prefixes Unavailable \
+                --ignore-prefixes Unavailable \
                 -i raw_data/$NAME/ expected/$NAME/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -c 1,2,3,4,5 -x $ID_COL
