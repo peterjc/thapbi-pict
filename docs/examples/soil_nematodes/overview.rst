@@ -75,7 +75,7 @@ The excellent news is at the default minimum abundance threshold there are no
 recognisable nematode sequences in any of the blanks.
 
 Looking at the same sample reports (or the more detailed read reports), we
-see that while the blank samples with no PCC template control give lots of
+see that while the blank samples with no PCR template control give lots of
 reads, where they can be identified the organisms are not seen in the mock
 communities. Quoting the paper:
 
