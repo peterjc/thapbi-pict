@@ -184,55 +184,44 @@ read report, or at the command line:
 The unwanted mock community sample is again dominated by a single sequence,
 which was not matched in the database constructed for this example. NCBI BLAST
 identifies it as *Pisidium compressum*, giving a perfect match if we discard
-the final 12bp. This is one of the control species in the mock community, but
-recall the amplified regions of the MOL16S and SPH16S primers overlap...
+the final 12bp, ``CGTACATCTAGT``.
 
-This sequence appears be a chimera, or part of a longer unwanted product of the
-SPH16S_F primer (``TAGGGGAAGGTATGAATGGTTTG`` - should be present here) and
-MOL16S_R primer (``ARTCCAACATCGAGGT`` - should not be present here), which can
-be trimmed to look like either a SPH16S product *or* a MOL16S product.
+This is one of the control species in the mock community, and I initially
+considered this might be from the mixing of the primers to give a longer
+product which could be trimmed to look a SPH16S product *or* a MOL16S product.
+
+However, on closer examination it appears to be a chimera, and if we were to
+check for and require the author's bespoke adapter sequences, we could have
+excluded it automatically.
+
+The most common merged paired-read sequence for this sample contains this
+subsequence of interest:
 
 .. code:: console
 
-    $ head intermediate/large/SRR5534981.fasta
-    #left_primer:TAGGGGAAGGTATGAATGGTTTG
-    #right_primer:ARTCCAACATCGAGGT
+    $ cat tmp_merged/SRR5534981.fasta.gz | gunzip | head -n 4
     #raw_fastq:341476
     #flash:314983
-    #cutadapt:2237
-    #abundance:584
-    #threshold:10
-    >c40a4b99f05302d2fecdbc3b5f619c54_462
-    ACGTGGGAAAAGCTGTCTCTTTTATATAGAAAGAAGTTTATTTTTGAGTGAAAAAGCTTAAATATTTGTAAAAGACGAGA
-    AGACCCTATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAA
-    CGCTTTTTTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGA
-    GAGGACTAATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGT
-    >65d623a2e264ec3d7928de0cfe5dc22e_49
+    >aa2a73352f76a966b72155d74f0f0e5c_93368
+    TCCTATGTAGGGGAAGGTATGAATGGTTTGACGTGGGAAAAGCTGTCTCTTTTATATAGAAAGAAGTTTATTTTTGAGTG
+    AAAAAGCTTAAATATTTGTAAAAGACGAGAAGACCCTATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGT
+    TTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTTTTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTA
+    CCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTAATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGTA
+    CG
 
-This longer sequence (shown here with line wrapping at 80 characters) again
-matches *Pisidium compressum* (ignoring the last 12 bases).
+Breaking this down, the most common merged read starts ``TCCTATG`` (author's
+forward adapter E), then the SPH16S_F primer (``TAGGGGAAGGTATGAATGGTTTG``),
+then 277bp of sequence matching *Pisidium compressum*
+(``ACGTGGGAAAAGCTGTCTCTTTTATATAGA...AATCAAAGAGTTGGTTGCGACCTCGATGTT``) and
+finally ``CGTACATCTAGTACG``. Neither this nor its reverse complement are
+immediately recognisable, but it is certainly not the full length reverse
+primer, nor does it include the author's expected reverse adapter sequence -
+and thus these reads would have been excluded in the author's analysis.
 
-Running THAPBI PICT with this primer pair (as done in the ``run.sh`` script)
-reveals that the only other sample with this kind of primer mixing is
-SRR5534978 aka SPSC3PRO1, with an unwanted long sequence seen 10 times.
-
-.. code:: console
-
-    $ cat intermediate/large/SRR5534978.fasta
-    #left_primer:TAGGGGAAGGTATGAATGGTTTG
-    #right_primer:ARTCCAACATCGAGGT
-    #raw_fastq:425271
-    #flash:395523
-    #cutadapt:149
-    #abundance:10
-    #threshold:10
-    >f520da824d259a518c08d2f4ec46eaf3_10
-    ACGTGGAAAAAACTGTCTCTTTTGTATAAAAAGAAGTTTATTTTTAAGTGAAAAAGCTTGAATGTTTATAAAAGACGAGA
-    AGACCCTATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAA
-    CGCTTTATTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGA
-    GAGGACTAATTAAAGAGTTGGTTGCG
-
-Note this is shown with the sequence line wrapped at 80 characters.
+The vast majority of these reads were rejected by THAPBI PICT too. However, in
+over six hundred cases, variation in those final three bases was enough for it
+to be taken as a fragment of the right primer, giving an apparent amplicon
+product of mostly  *Pisidium compressum* but ending ``CGTACATCTAGT``.
 
 Minimum threshold
 -----------------
