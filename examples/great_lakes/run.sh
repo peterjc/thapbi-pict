@@ -5,7 +5,7 @@ echo "NOTE: Expected first time run time is about 40 minutes,"
 echo "repeat runs under 5 minutes (most of which is rebuilding"
 echo "the edit-graphs)."
 
-mkdir -p intermediate/ summary/
+mkdir -p tmp_merged/ intermediate/ summary/
 
 # Takes arguments via variable names
 function analyse {
@@ -23,6 +23,7 @@ function analyse {
     thapbi_pict pipeline -d ${NAME}.sqlite \
                 --left $LEFT --right $RIGHT -a 10 \
                 -i raw_data/ expected/$NAME/ \
+                --merged-cache tmp_merged/ \
                 -s intermediate/$NAME/ -o summary/ -r $NAME \
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.tsv -x 1 -c 4,8
