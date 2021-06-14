@@ -75,17 +75,6 @@ thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
                    intermediate/SPH16S/SRR5534981.* \
                 -o summary/$NAME.edit-graph.a100.mock.xgmml
 
-echo ==============================
-echo Mixed primers for long product
-echo ==============================
-
-mkdir -p intermediate/large/
-
-thapbi_pict prepare-reads -a 10 \
-            --left TAGGGGAAGGTATGAATGGTTTG \
-            --right ARTCCAACATCGAGGT \
-            -i raw_data -o intermediate/large/
-
 echo ====
 echo Done
 echo ====
