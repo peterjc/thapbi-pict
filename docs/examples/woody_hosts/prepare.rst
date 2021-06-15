@@ -75,7 +75,7 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
    accept this as valid FASTA format.
 
 For example, here the header tells us this sample started with 6136 reads in
-the paired FASTQ files, down to just 4185 after processing.
+the paired FASTQ files, down to just 4180 after processing.
 
 .. code:: console
 
@@ -84,10 +84,10 @@ the paired FASTQ files, down to just 4185 after processing.
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:6136
     #flash:5900
-    #cutadapt:5892
-    #abundance:4185
+    #cutadapt:5886
+    #abundance:4180
     #threshold:100
-    >2e4f0ed53888ed39a2aee6d6d8e02206_2272
+    >2e4f0ed53888ed39a2aee6d6d8e02206_2269
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
     GGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTG
     AGCTAGTAGCTATTTTTTAAACCCATTCTTTAATACTGATTATACT
@@ -118,9 +118,9 @@ wrapped at 80 characters.
 .. code:: console
 
     $ grep "^>" intermediate/Site_1_sample_1.fasta
-    >2e4f0ed53888ed39a2aee6d6d8e02206_2272
-    >c1a720b2005f101a9858107545726123_716
-    >96e0e2f0475bd1617a4b05e778bb04c9_331
+    >2e4f0ed53888ed39a2aee6d6d8e02206_2269
+    >c1a720b2005f101a9858107545726123_715
+    >96e0e2f0475bd1617a4b05e778bb04c9_330
     >fb30156d7f66c8abf91f9da230f4d19e_212
     >dcd6316eb77be50ee344fbeca6e005c7_194
     >972db44c016a166de86a2bacab3f4226_182
@@ -129,7 +129,7 @@ wrapped at 80 characters.
 
 The final output has just eight unique sequences accepted, happily none of
 which match the synthetic controls. The most common is listed first, and had
-MD5 checksum ``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2272 reads.
+MD5 checksum ``2e4f0ed53888ed39a2aee6d6d8e02206`` and was seen in 2269 reads.
 
 You could easily find out which other samples had this unique sequence using
 the command line search tool ``grep`` as follows:
