@@ -1,14 +1,14 @@
 #!/bin/bash
 set -eup pipeline
 
-echo NOTE: Expected first time run time is about XX minutes,
+echo NOTE: Expected first time run time is about 20 minutes,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
 mkdir -p tmp_merged/ intermediate/ summary/
 
-ILL_LEFT=TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
-ILL_RIGHT=GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
+# ILL_LEFT=TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
+# ILL_RIGHT=GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
 
 # Quoting table 2:
 #
@@ -34,7 +34,7 @@ function analyse {
     echo "Running analysis"
     mkdir -p intermediate/$NAME/
     thapbi_pict pipeline -d references/$NAME.sqlite --merged-cache tmp_merged/ \
-                 --left $ILL_LEFT$LEFT --right $ILL_RIGHT$RIGHT \
+                 --left $LEFT --right $RIGHT \
                 -i raw_data/ expected/$NAME/ -s intermediate/$NAME/ \
                 -o summary -r $NAME -t metadata.tsv -x 1 -c 4,3
 
