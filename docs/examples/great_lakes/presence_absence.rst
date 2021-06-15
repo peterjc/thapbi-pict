@@ -80,7 +80,7 @@ Or open this in Excel. You should find:
 ========================= == == == ====
 #Species                  TP FP FN TN
 ========================= == == == ====
-OVERALL                   74 25 3  1218
+OVERALL                   74 23 3  1220
 Cipangopaludina chinensis 7  0  0  4
 Corbicula fluminea        0  1  0  10
 Dreissena bugensis        0  8  0  3
@@ -89,12 +89,12 @@ Dreissena rostriformis    7  1  0  3
 Gillia altilis            7  0  0  4
 Melanoides tuberculata    7  0  0  4
 Mytilopsis leucophaeata   7  0  0  4
-Pisidium compressum       7  1  0  3
+Pisidium compressum       7  0  0  4
 Potamopyrgus antipodarum  7  0  0  4
 Sander vitreus            4  0  3  4
 Sphaerium corneum         7  1  0  3
 Sphaerium nucleus         0  8  0  3
-Sphaerium simile          7  3  0  1
+Sphaerium simile          7  2  0  2
 Sphaerium striatinum      0  1  0  10
 OTHER 105 SPECIES IN DB   0  0  0  1155
 ========================= == == == ====
