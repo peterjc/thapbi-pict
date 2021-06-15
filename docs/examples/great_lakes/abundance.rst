@@ -37,24 +37,24 @@ columns, you should see:
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
 ======= ============== ============ ========= ======== ==========
-MOL16S  Aquarium       BIR2M        306311    22       0
-MOL16S  Aquarium       BIR6M        291954    29       0
+MOL16S  Aquarium       BIR2M        306311    2        0
+MOL16S  Aquarium       BIR6M        291954    14       0
 MOL16S  Control        BIM8M        2433      0        0
-MOL16S  Mock Community SC3PRO1      689712    2693     0
-MOL16S  Mock Community SC3PRO2      405048    2063     0
-MOL16S  Mock Community SC3PRO3      402219    1007     0
-MOL16S  Mock Community NFSC3PRO3    349590    853      10
-MOL16S  Mock Community SC3PRO4      671241    974      0
-MOL16S  Mock Community NFSC3PRO4    420015    533      0
-MOL16S  Mock Community SC3PRO5      480606    1396     0
-MOL16S  River          BIM6M        821849    2        0
-MOL16S  River          BIM2M        1119271   447      0
-MOL16S  River          BIM4M        709472    50       19
-SPH16S  Aquarium       BIR2S        498926    251731   209435
-SPH16S  Aquarium       BIR6S        240360    226084   191469
-SPH16S  Mock Community SPSC3PRO1    425271    318150   224718
-SPH16S  Mock Community SPSC3PRO2    341476    282637   204289
-SPH16S  Mock Community SPSC3PRO4    410780    304194   197522
+MOL16S  Mock Community SC3PRO1      689712    17       0
+MOL16S  Mock Community SC3PRO2      405048    0        0
+MOL16S  Mock Community SC3PRO3      402219    16       0
+MOL16S  Mock Community NFSC3PRO3    349590    33       10
+MOL16S  Mock Community SC3PRO4      671241    6        0
+MOL16S  Mock Community NFSC3PRO4    420015    7        0
+MOL16S  Mock Community SC3PRO5      480606    13       0
+MOL16S  River          BIM6M        821849    0        0
+MOL16S  River          BIM2M        1119271   0        0
+MOL16S  River          BIM4M        709472    40       19
+SPH16S  Aquarium       BIR2S        498926    251148   209401
+SPH16S  Aquarium       BIR6S        240360    226012   191446
+SPH16S  Mock Community SPSC3PRO1    425271    317961   224690
+SPH16S  Mock Community SPSC3PRO2    341476    282516   204248
+SPH16S  Mock Community SPSC3PRO4    410780    303957   197505
 ======= ============== ============ ========= ======== ==========
 
 Things to note:
@@ -89,41 +89,41 @@ columns, you should see:
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
 ======= ============== ============ ========= ======== ==========
-MOL16S  Aquarium       BIR2M        306311    297738   256466
-MOL16S  Aquarium       BIR6M        291954    286488   256527
+MOL16S  Aquarium       BIR2M        306311    297656   256386
+MOL16S  Aquarium       BIR6M        291954    286427   256471
 MOL16S  Control        BIM8M        2433      1010     551
-MOL16S  Mock Community SC3PRO1      689712    656795   550336
-MOL16S  Mock Community SC3PRO2      405048    377068   297912
-MOL16S  Mock Community SC3PRO3      402219    380395   304641
-MOL16S  Mock Community NFSC3PRO3    349590    328997   262983
-MOL16S  Mock Community SC3PRO4      671241    628747   494294
-MOL16S  Mock Community NFSC3PRO4    420015    364291   262739
-MOL16S  Mock Community SC3PRO5      480606    459043   383892
-MOL16S  River          BIM6M        821849    799497   703741
-MOL16S  River          BIM2M        1119271   954741   823977
-MOL16S  River          BIM4M        709472    367498   317391
-SPH16S  Aquarium       BIR2S        498926    33       0
-SPH16S  Aquarium       BIR6S        240360    35       0
-SPH16S  Mock Community SPSC3PRO1    425271    64       14
-SPH16S  Mock Community SPSC3PRO2    341476    2322     833
-SPH16S  Mock Community SPSC3PRO4    410780    432      108
+MOL16S  Mock Community SC3PRO1      689712    656664   550297
+MOL16S  Mock Community SC3PRO2      405048    377024   297877
+MOL16S  Mock Community SC3PRO3      402219    380346   304629
+MOL16S  Mock Community NFSC3PRO3    349590    328955   262966
+MOL16S  Mock Community SC3PRO4      671241    628641   494271
+MOL16S  Mock Community NFSC3PRO4    420015    364229   262727
+MOL16S  Mock Community SC3PRO5      480606    458895   383868
+MOL16S  River          BIM6M        821849    799333   703594
+MOL16S  River          BIM2M        1119271   954520   823795
+MOL16S  River          BIM4M        709472    367468   317366
+SPH16S  Aquarium       BIR2S        498926    27       0
+SPH16S  Aquarium       BIR6S        240360    27       0
+SPH16S  Mock Community SPSC3PRO1    425271    37       0
+SPH16S  Mock Community SPSC3PRO2    341476    175      27
+SPH16S  Mock Community SPSC3PRO4    410780    421      108
 ======= ============== ============ ========= ======== ==========
 
-Looking at the same points, we see two problems:
+Looking at the same points, I see two problems:
 
 * The control sample BIM8M (SRR5534986) had almost a thousand unwanted MOL16S
   matches, reduced to 551 with a minimum abundance threshold of 10.
 
 * All the SPH16S mock community samples have unwanted MOS16S matches, the
-  worst case being SPSC3PRO2 (SRR5534981) with over two thousand reduced to
-  833 with the minimum abundance threshold of 10.
+  worst case being SPSC3PRO4 (SRR5534980) with over four hundred reads reduced
+  to 108 with the minimum abundance threshold of 10.
 
 To see exactly what is in these two problematic samples, we can turn to the
 read report - or look directly at the intermediate FASTA files:
 
 .. code:: console
 
-    $ head -n 13 intermediate/MOL16S/SRR5534986.fasta
+    $ cat intermediate/MOL16S/SRR5534986.fasta
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:2433
@@ -143,10 +143,30 @@ read report - or look directly at the intermediate FASTA files:
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTA
     ATTAAAGAGTTGGTTGCG
+    >778e3dace4b993135e11d450e6c559ff_11
+    ATCGAACTTAAATTATTTGTTTAAATTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTAT
+    TTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTA
+    ATTAAAGAGTTGGTTGCG
 
 The unwanted sequences in the control sample are dominated by a single
 sequence (and variants of it; shown line wrapped at 80 characters), which was
-matched to *Sphaerium simile*.
+matched to *Sphaerium simile*:
+
+.. code:: console
+
+    $ cut -f 1,3 intermediate/MOL16S/SRR5534986.onebp.tsv
+    <SEE TABLE BELOW>
+
+Or look at this file or the full read report in Excel,
+
+==================================== ================
+#sequence-name                       genus-species
+==================================== ================
+20c0669e4c6f8436c9d42736df727c83_478 Sphaerium simile
+a36d3f7291c173c4243f22c2afbd111e_49  Sphaerium simile
+e1d838b4f39bffe88d8c0e79b52700f1_13  Sphaerium simile
+778e3dace4b993135e11d450e6c559ff_11  Sphaerium simile
+==================================== ================
 
 This is consistent with the original author's analysis - although our pipeline
 has produced higher read counts:
@@ -160,66 +180,46 @@ read report, or at the command line:
 
 .. code:: console
 
-    $ head -n 13 intermediate/MOL16S/SRR5534981.fasta
+    $ cat intermediate/MOL16S/SRR5534980.fasta
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
-    #raw_fastq:341476
-    #flash:314983
-    #cutadapt:2322
-    #abundance:833
+    #raw_fastq:410780
+    #flash:375539
+    #cutadapt:421
+    #abundance:108
     #threshold:10
-    >abb4c9d82203b201ff91fc87b7c4e337_624
-    ATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTT
-    TTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
-    AATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGT
-    >dfb3668f028fad9ea3df1408f56c90b2_70
-    ATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTT
-    TTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
-    AATCAAAGAGTTGGTTGCGACCTCGATGTTCGTATATCTAGT
-    >4ffe4f9f031bea2734d75e8b6e55a5d5_29
-    ATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTT
-    TTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
-    AATCAAAGAGTTGGTTGCGACATCGATGTTCGTACATCTAGT
+    >20c0669e4c6f8436c9d42736df727c83_46
+    ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
+    TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
+    AATTAAAGAGTTGGTTGCG
+    >ecdaa082b70f5e268f76128693531760_45
+    ATCGAACTTAATCATTTTTAAAAGAACTCATTTAAAAAGAATTTTTACTGGGGCAGTAAGAAGAAAAAAATAACTCTTCC
+    TTATAAAAAAAAGATCCCTCAATGAGGAGAAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGATC
+    TAATCGAAGAAACGGTTTGCG
+    >98dc259e48de3e258cb93a34c38a9484_17
+    ATCGAACTTAATAGTTTTTAAGAGAAATAGCTTAGAAAGAAGTTTTACTGGGGCAGTAAGAAGAAAAAAATAATTCTTCC
+    TTGAAAAAAAGATCCCTTATTAAGGACAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGAACTAA
+    TCGAAGAAACGGTTTGCG
+    $ cut -f 1,3 intermediate/MOL16S/SRR5534980.onebp.tsv
+    <SEE TABLE BELOW>
 
-The unwanted mock community sample is again dominated by a single sequence,
-which was not matched in the database constructed for this example. NCBI BLAST
-identifies it as *Pisidium compressum*, giving a perfect match if we discard
-the final 12bp, ``CGTACATCTAGT``.
+Giving:
 
-This is one of the control species in the mock community, and I initially
-considered this might be from the mixing of the primers to give a longer
-product which could be trimmed to look a SPH16S product *or* a MOL16S product.
+=================================== =========================================
+#sequence-name                      genus-species
+=================================== =========================================
+20c0669e4c6f8436c9d42736df727c83_46 Sphaerium simile
+ecdaa082b70f5e268f76128693531760_45 Dreissena bugensis;Dreissena rostriformis
+98dc259e48de3e258cb93a34c38a9484_17 Dreissena polymorpha
+=================================== =========================================
 
-However, on closer examination it appears to be a chimera, and if we were to
-check for and require the author's bespoke adapter sequences, we could have
-excluded it automatically.
-
-Looking at the merged reads for this sample from Flash, over 90 thousand have
-this subsequence of interest:
-
-.. code:: console
-
-    $ flash --quiet -M 300 -O -c raw_data/SRR5534981_1.fastq.gz raw_data/SRR5534981_2.fastq.gz | grep ATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTTTTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTAATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGT | sort | uniq -c | sort -n | tail -n 1
-      93368 TCCTATGTAGGGGAAGGTATGAATGGTTTGACGTGGGAAAAGCTGTCTCTTTTATATAGAAAGAAGTTTATTTTTGAGTGAAAAAGCTTAAATATTTGTAAAAGACGAGAAGACCCTATCGAACTTGAATTGTGTGTTTTAGTTTTGGAATACAGAAAGTTTAGTTGGGGAAACTTAAAGTTAAGAAAAACGCTTTTTTGTTATAAAATGATCCTGTATTATAGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTAATCAAAGAGTTGGTTGCGACCTCGATGTTCGTACATCTAGTACG
-
-Breaking this down, the most common merged read starts ``TCCTATG`` (author's
-forward adapter E), then the SPH16S_F primer (``TAGGGGAAGGTATGAATGGTTTG``),
-then 277bp of sequence matching *Pisidium compressum*
-(``ACGTGGGAAAAGCTGTCTCTTTTATATAGA...AATCAAAGAGTTGGTTGCGACCTCGATGTT``) and
-finally ``CGTACATCTAGTACG``. Neither this nor its reverse complement are
-immediately recognisable, but it is certainly not the full length reverse
-primer, nor does it include the author's expected reverse adapter sequence -
-and thus these reads would have been excluded in the author's analysis.
-
-The vast majority of these reads were rejected by THAPBI PICT too. However, in
-over six hundred cases, variation in those final three bases was enough for it
-to be taken as a fragment of the right primer, giving an apparent amplicon
-product of mostly  *Pisidium compressum* but ending ``CGTACATCTAGT``.
+The unwanted mock community sample content is split between *Sphaerium* and
+*Dreissena*, and suggest using a minimum threshold of perhaps 50 reads?
 
 Minimum threshold
 -----------------
 
 Clearly using a minimum abundance threshold of 10 is too low, and it should be
-increased to at least 20 based on this. However, we have the two exceptional
-sequences present at over 500 copies. Setting the minimum that high seems
+increased to at perhaps 50 based on this. However, we have one exceptional
+sequence present at almost 500 copies. Setting the minimum that high seems
 excessive - but perhaps the THAPBI PICT default of 100 is more reasonable?
