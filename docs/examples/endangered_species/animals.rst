@@ -16,7 +16,7 @@ pairs?
 .. code:: console
 
     $ cat summary/16S.all_reads.fasta
-    >1f2b15d58f9f40b862486676809d4744_20230
+    >1f2b15d58f9f40b862486676809d4744_20190
     CACCTCCAGCATTCCCAGTATTGGAGGCATTGCCTGCCCAGTGACAACTGTTTAACGGCCGCGGTATCCTGACCGTGCAA
     AGGTAGCATAATCATTTGTTCTCTAAATAAGGACTTGTATGAATGGCCGCACGAGGGTTTTACTGTCTCTTACTTCCAAT
     CAGTGAAATTGACCTTCCCGTGAAGAGGCGGGAATGCACAAATAAGACGAGAAGACCCTATGGAGCTTTAACTAACCAAC
@@ -37,7 +37,7 @@ sequences:
 .. code:: console
 
     $ grep -c ">" summary/Mini-16S.all_reads.fasta
-    85
+    84
 
 The most common is again a perfect match to *Bos taurus*, which this time has
 no false negatives (but two false positives?).
