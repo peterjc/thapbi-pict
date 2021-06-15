@@ -107,10 +107,10 @@ Using a minimum of 10 has excluded lots of singletons etc here.
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:16297
     #flash:15829
-    #cutadapt:132
-    #abundance:111
+    #cutadapt:131
+    #abundance:110
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_101
+    >d51507f661ebee38a85bec35b70b7ee1_100
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
     >e5b7a8b5dc0da33108cc8a881eb409f5_10
@@ -156,10 +156,10 @@ The minimum abundance excluded lots of singletons etc.
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:7285
     #flash:6128
-    #cutadapt:4343
-    #abundance:4017
+    #cutadapt:4340
+    #abundance:4014
     #threshold:10
-    >d51507f661ebee38a85bec35b70b7ee1_3961
+    >d51507f661ebee38a85bec35b70b7ee1_3958
     ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
     GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
     >716f6111ac2ee192c23282e07d23078a_25
