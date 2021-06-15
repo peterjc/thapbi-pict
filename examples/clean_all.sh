@@ -3,7 +3,7 @@ set -eup pipeline
 
 # Intended to remove intermediate files, custom DB, but not summary reports.
 
-for example in woody_hosts recycled_water fungal_mock microalgal_mock great_lakes fecal_sequel endangered_species; do
+for example in woody_hosts recycled_water fungal_mock microalgal_mock great_lakes fecal_sequel soil_nematodes endangered_species; do
     echo "========================="
     echo "Cleaning $example"
     echo "========================="
