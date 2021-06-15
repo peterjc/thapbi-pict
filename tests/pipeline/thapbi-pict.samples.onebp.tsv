@@ -1,4 +1,4 @@
 #Sequencing sample	Classification summary	Raw FASTQ	Flash	Cutadapt	Read count	Phytophthora agathidicida;Phytophthora castaneae	Phytophthora capsici;Phytophthora glovera	Phytophthora crassamura;Phytophthora megasperma	Phytophthora cryptogea;Phytophthora pseudocryptogea	Phytophthora plurivora	Phytophthora pseudocryptogea	Phytophthora rubi
 6e847180a4da6eed316e1fb98b21218f	-	1	1	1	0	0	0	0	0	0	0	0
-DNAMIX_S95_L001	Phytophthora agathidicida(*), Phytophthora capsici(*), Phytophthora castaneae(*), Phytophthora crassamura(*), Phytophthora cryptogea(*), Phytophthora glovera(*), Phytophthora megasperma(*), Phytophthora plurivora, Phytophthora pseudocryptogea, Phytophthora rubi	5159	4962	4958	3586	298	356	259	390	1171	299	813
+DNAMIX_S95_L001	Phytophthora agathidicida(*), Phytophthora capsici(*), Phytophthora castaneae(*), Phytophthora crassamura(*), Phytophthora cryptogea(*), Phytophthora glovera(*), Phytophthora megasperma(*), Phytophthora plurivora, Phytophthora pseudocryptogea, Phytophthora rubi	5159	4962	4955	3585	298	356	259	390	1170	299	813
 SRR6303948_sample	-	238	229	15	0	0	0	0	0	0	0	0
