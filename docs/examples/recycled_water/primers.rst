@@ -264,5 +264,5 @@ the extended *Phytophthora ramorum* sequence drops to third most abundant:
     ATTTAACATACAACTTTCAACAGTGGATGTCTAGGCTC
 
 NCBI BLAST suggests some of the new sequences could be *Oomycetes*, but there
-are no very close matches - and some of the tenous best matches include
+are no very close matches - and some of the tenuous best matches include
 uncultured fungus, diatoms, green algae, and even green plants.
