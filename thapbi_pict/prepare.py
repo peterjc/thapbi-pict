@@ -232,6 +232,9 @@ def run_cutadapt(
         # -g LEFT...RIGHT = non-anchored
         "-g",
         f"{left_primer}...{reverse_complement(right_primer)}",
+        # -O or --overlap
+        "-O",
+        str(len(left_primer) + len(right_primer)),
         "-o",
         trimmed_out,
         long_in,
