@@ -86,7 +86,7 @@ fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-A.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-A.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:3684" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-A.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-A.fasta"; false
 fi
 # B, threshold kept at 75:
@@ -96,7 +96,7 @@ fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-B.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-B.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-B.fasta` != "#abundance:3684" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-B.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-B.fasta"; false
 fi
 # C, threshold kept at 75:
@@ -106,7 +106,7 @@ fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-C.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in sample-C.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-C.fasta` != "#abundance:3684" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-C.fasta` != "#abundance:3683" ]; then
     echo "Wrong count accepted after abundance threshold in sample-C.fasta"; false
 fi
 # D, threshold raised to 107:
@@ -116,7 +116,7 @@ fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/sample-D.fasta` -ne "7" ]; then
     echo "Wrong unique count after abundance threshold in sample-D.fasta"; false
 fi
-if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundance:3586" ]; then
+if [ `grep "^#abundance:" $TMP/mock_plates/prepared/sample-D.fasta` != "#abundance:3585" ]; then
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
