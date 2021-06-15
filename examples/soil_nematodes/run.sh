@@ -5,7 +5,7 @@ echo NOTE: Expected first time run time is about XX minutes,
 echo repeat runs about 1 minute just to regenerate reports.
 echo
 
-mkdir -p intermediate/ summary/
+mkdir -p tmp_merged/ intermediate/ summary/
 
 ILL_LEFT=TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
 ILL_RIGHT=GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
