@@ -40,7 +40,7 @@ recovered:
 .. code:: console
 
     $ grep -c ">" summary/Mini-rbcL.all_reads.fasta
-    279
+    278
 
 We see expected plant species like *Lactuca sativa*, *Brassica oleracea*,
 *Aloe variegata* and *Dendrobium sp.* - exactly how they are classified
