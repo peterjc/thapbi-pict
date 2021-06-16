@@ -205,6 +205,7 @@ def prepare_reads(args=None):
         spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=args.abundance,
+        min_abundance_fraction=args.abundance_fraction,
         ignore_prefixes=tuple(args.ignore_prefixes),
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
@@ -386,6 +387,7 @@ def pipeline(args=None):
         spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=args.abundance,
+        min_abundance_fraction=args.abundance_fraction,
         ignore_prefixes=tuple(args.ignore_prefixes),
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
@@ -718,10 +720,20 @@ ARG_CONTROLS = dict(  # noqa: C408
 # "-a", "--abundance",
 ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     type=int,
+    metavar="INTEGER",
     default=str(DEFAULT_MIN_ABUNDANCE),
     help="Minimum abundance applied to unique marker sequences in each sample"
-    f" (i.e. each FASTQ pair), default {DEFAULT_MIN_ABUNDANCE}."
-    " May be increased based on negative controls.",
+    f" (i.e. each FASTQ pair). Default {DEFAULT_MIN_ABUNDANCE}, may be"
+    " increased based on negative controls.",
+)
+# "-f", "--abundance-fraction",
+ARG_FASTQ_NOISE_PERC = dict(  # noqa: C408
+    type=float,
+    metavar="FLOAT",
+    default="0",
+    help="Minimum abundance fraction, low frequency noise threshold applied"
+    " to unique marker sequences in each sample. Suggest 0.001 meaning 0.1%%,"
+    " default 0. Not applied to negative controls.",
 )
 
 # Common metadata arguments
@@ -862,6 +874,7 @@ def main(args=None):
         "(FASTQ pair). Defaults to -o / --output.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
@@ -1174,6 +1187,7 @@ def main(args=None):
         help="Output directory. Required.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
     subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)

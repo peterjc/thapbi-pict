@@ -13,6 +13,7 @@ import shutil
 import sys
 import tempfile
 from collections import Counter
+from math import ceil
 from time import time
 
 from Bio.Seq import reverse_complement
@@ -565,6 +566,7 @@ def prepare_sample(
     max_len,
     spikes,
     min_abundance,
+    min_abundance_fraction,
     control,
     count_raw,
     count_flash,
@@ -576,8 +578,9 @@ def prepare_sample(
 
     Does spike-in detection, abundance threshold, and min/max length.
 
-    Returns accepted unique sequence count, accepted total read count, and a
-    dict of max abundance (keyed by spike-in name).
+    Returns accepted unique sequence count, accepted total read count, a dict
+    of max abundance (keyed by spike-in name), and the absolute abundance
+    threshold used.
     """
     if debug:
         sys.stderr.write(f"DEBUG: prepare_sample {trimmed_fasta} --> {fasta_name}\n")
@@ -586,15 +589,16 @@ def prepare_sample(
             uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
                 fasta_name
             )
-            return uniq_count, total, max_spike_abundance
+            return uniq_count, total, max_spike_abundance, -1
         else:
             # Don't actually need the max abundance
-            return None, None, {}
+            return None, None, {}, -1
 
     if debug:
         sys.stderr.write(
             f"DEBUG: Starting to prepare {'control' if control else 'sample'}"
-            f" {fasta_name} (min abundance set to {min_abundance})\n"
+            f" {fasta_name} (min abundance set to {min_abundance};"
+            f" fraction abundance set to {min_abundance_fraction*100}%%)\n"
         )
 
     # count_raw = _header["raw_fastq"]
@@ -614,6 +618,16 @@ def prepare_sample(
     _unique, _total, _max = abundance_values_in_fasta(trimmed_fasta)
     count_cutadapt = _total
     del _unique, _total, _max
+
+    if debug:
+        sys.stderr.write(
+            f"DEBUG: Absolute abundance threshold {min_abundance}, vs"
+            f" {min_abundance_fraction*100}% giving"
+            f" {ceil(min_abundance_fraction * count_cutadapt)}\n"
+        )
+
+    # Using ceiling not floor, as will then take greater-than-or-equal
+    min_abundance = max(min_abundance, ceil(min_abundance_fraction * count_cutadapt))
 
     # deduplicate and apply minimum abundance threshold
     # and tag sequences if they look like spike-ins
@@ -689,7 +703,7 @@ def prepare_sample(
 
     if accepted_uniq_count or accepted_total:
         assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
-    return accepted_uniq_count, accepted_total, max_spike_abundance
+    return accepted_uniq_count, accepted_total, max_spike_abundance, min_abundance
 
 
 def marker_cut(
@@ -700,6 +714,7 @@ def marker_cut(
     tmp,
     flip,
     min_abundance,
+    min_abundance_fraction,
     debug=False,
     cpu=0,
 ):
@@ -778,8 +793,13 @@ def marker_cut(
                 if control
                 else max(min_abundance, pool_worst_control.get(pool_key, 0))
             )
+            if debug and control:
+                assert min_a == min_abundance
+                sys.stderr.write(
+                    f"DEBUG: Control sample so keeping {min_a} as min abundance\n"
+                )
             # Will parse pre-existing control file, skips pre-existing samples
-            uniq_count, total, max_abundance_by_spike = prepare_sample(
+            uniq_count, total, max_abundance_by_spike, min_a = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
                 marker_values["left_primer"],
@@ -788,6 +808,9 @@ def marker_cut(
                 marker_values["max_length"],
                 marker_values["spike_kmers"],
                 min_a,
+                0  # Not applied to negative controls
+                if control
+                else min_abundance_fraction,
                 control,
                 count_raw,
                 count_flash,
@@ -880,6 +903,7 @@ def main(
     spike_genus,
     flip=False,
     min_abundance=100,
+    min_abundance_fraction=0.001,
     ignore_prefixes=None,
     merged_cache=None,
     tmp_dir=None,
@@ -951,11 +975,18 @@ def main(
             " is not  advised. You will accept many erroneous reads, and also"
             " slow down the pipeline.\n"
         )
-    elif min_abundance < 50:
+    elif min_abundance < 50 and not min_abundance_fraction:
         sys.stderr.write(
             "WARNING: Only set the minimum abundance threshold below 50 if"
             " you have negative controls to justify this.\n"
         )
+    if min_abundance_fraction < 0 or 1 < min_abundance_fraction:
+        sys.exit(
+            f"ERROR: Minimum abundance fraction {min_abundance_fraction}"
+            " should be between zero (no effect) and one (all reads must match)."
+        )
+    elif 0.1 < min_abundance_fraction:
+        sys.stderr.write("WARNING: Minimum abundance fraction should be small\n")
 
     # Make a unified file list, with control flag
     file_pairs = [
@@ -1046,6 +1077,7 @@ def main(
         shared_tmp,
         flip,
         min_abundance,
+        min_abundance_fraction,
         debug=debug,
         cpu=cpu,
     )
