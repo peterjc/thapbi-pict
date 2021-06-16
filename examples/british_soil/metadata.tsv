@@ -8,63 +8,63 @@ DS1 (Arboreta)	DS1-6	Cedrus sp.	Healthy	P. austrocedri	-	P. cinnamomi	SRR1339383
 DS1 (Arboreta)	DS1-7	New planting Betula, Nothofagus, Quercus	Healthy	P. austrocedri, P. pseudosyringae	-	-	SRR13393791
 DS1 (Arboreta)	DS1-8	Mixed broadleaved trees and conifers new plantings	Healthy	P. austrocedri	New Clade Phytophthora sp. uncultured 12b	P. megasperma	SRR13393780
 DS1 (Arboreta)	DS1-9	Mixed broadleaved trees and conifers new plantings	Healthy	-	-	-	SRR13393831
-DS1 (Arboreta)	DS1-10	Acid grassland, conifer and broadleaved trees, new plantings	Healthy	-	-	P. cinnamomi	Undetermined
-DS2 (Woodland/Recreational Park)	DS2-1	Fraxinus	Declining	-	-	-	Undetermined
+DS1 (Arboreta)	DS1-10	Acid grassland, conifer and broadleaved trees, new plantings	Healthy	-	-	P. cinnamomi	Unavailable
+DS2 (Woodland/Recreational Park)	DS2-1	Fraxinus	Declining	-	-	-	Unavailable
 DS2 (Woodland/Recreational Park)	DS2-2	Quercus	Dead trees	Clade 7 Phytophthora sp. uncultured 3a and 21a	P. europaea	-	SRR13393830
 DS2 (Woodland/Recreational Park)	DS2-3	Fraxinus	Dead trees	P. cactorum, P. syringae, P. cinnamomi	P. cactorum	-	SRR13393829
 DS2 (Woodland/Recreational Park)	DS2-4	Quercus	Declining	P. cactorum, P. syringae, Clade 7 Phytophthora sp. uncultured 21a	P. uliginosa, Clade 1 Phytophthora sp. uncultured 2b, New Clade Phytophthora sp. uncultured 12b	-	SRR13393828
-DS2 (Woodland/Recreational Park)	DS2-5	Larix	Dead	-	-	-	Undetermined
+DS2 (Woodland/Recreational Park)	DS2-5	Larix	Dead	-	-	-	Unavailable
 DS2 (Woodland/Recreational Park)	DS2-6	Betula	Dead	-	-	-	SRR13393827
-DS2 (Woodland/Recreational Park)	DS2-7	Quercus	Declining	-	-	-	Undetermined
+DS2 (Woodland/Recreational Park)	DS2-7	Quercus	Declining	-	-	-	Unavailable
 DS2 (Woodland/Recreational Park)	DS2-8	Acer campestre	Declining	P. cactorum, P. megasperma/crassamura, P. ramorum, P. rubi/fragariae, Clade 7 Phytophthora sp. uncultured 5a and 6a	Clade X Phytophthora sp. uncultured 11b	-	SRR13393826
 DS2 (Woodland/Recreational Park)	DS2-9	Acer and Fraxinus	Declining	P. plurivora/citricola, P. syringae	-	-	SRR13393825
 DS2 (Woodland/Recreational Park)	DS2-10	Larix in area with Corylus, Fraxinus and Quercus	Healthy	P. capsici, P. obscura, P. plurivora/citricola, P. rubi, P. siskiyouensis, P. syringae, Clade 2 Phytophthora sp. uncultured 17a	-	P. plurivora	SRR13393823
 DS3 (Garden)	DS3-1	Border with herbaceous plants and shrubs, mixed planting	Healthy	Clade 3 Phytophthora sp. uncultured 10a	-	P. plurivora	SRR13393822
-DS3 (Garden)	DS3-2	Kalmia, Quercus and Rhododendron	Healthy	-	-		Undetermined
+DS3 (Garden)	DS3-2	Kalmia, Quercus and Rhododendron	Healthy	-	-		Unavailable
 DS3 (Garden)	DS3-3	Quercus, Rhododendron and Sorbus	Healthy	Clade 11 Phytophthora sp. uncultured 19a	-		SRR13393821
 DS3 (Garden)	DS3-4	Area with silt from a stream with no trees in the last 8 years surrounded by Acer, Larix and Quercus	Healthy	P. obscura, Clade 7 Phytophthora sp. uncultured 1a	-	P. cinnamomi	SRR13393820
 DS3 (Garden)	DS3-5	Border, the old kitchen garden, herbaceous plants and shrubs	Healthy	P. primulae, P. syringae	P. primulae	P. chlamydospora	SRR13393819
 DS3 (Garden)	DS3-6	Burning site for the garden	NA	P. obscura, P. rubi/fragariae	-	P. plurivora	SRR13393817
 DS3 (Garden)	DS3-7	Quercus and Rhododendron	Healthy	P. rubi/fragariae	-	-	SRR13393816
-DS3 (Garden)	DS3-8	Composting area of the garden	NA	Clade 1 Phytophthora sp. uncultured 14a, Clade 11 Phytophthora sp. uncultured 18a and 19a	-	P. plurivora	Undetermined
+DS3 (Garden)	DS3-8	Composting area of the garden	NA	Clade 1 Phytophthora sp. uncultured 14a, Clade 11 Phytophthora sp. uncultured 18a and 19a	-	P. plurivora	Unavailable
 DS3 (Garden)	DS3-9	Mature Fagus, Fraxinus and Quercus	Healthy	-	-	P. cinnamomi	SRR13393818
-DS3 (Garden)	DS3-10	Mature Quercus and Rhododendron	Healthy	-	-	-	Undetermined
+DS3 (Garden)	DS3-10	Mature Quercus and Rhododendron	Healthy	-	-	-	Unavailable
 DS4 (New plantings and a link to nurseries)	DS4-1	Young Sorbus	Dead	-	-	-	SRR13393815
 DS4 (New plantings and a link to nurseries)	DS4-2	Young Quercus	Declining	P. obscura	-	-	SRR13393814
 DS4 (New plantings and a link to nurseries)	DS4-3	Young Salix	Declining	P. austrocedri, P. plurivora/citricola, P. siskiyouensis	-	-	SRR13393812
-DS4 (New plantings and a link to nurseries)	DS4-4	Young Juniperus	Declining	-	-	-	Undetermined
-DS4 (New plantings and a link to nurseries)	DS4-5	Young Salix	Declining	-	P. syringae, New Clade Phytophthora sp. uncultured 16b	-	Undetermined
+DS4 (New plantings and a link to nurseries)	DS4-4	Young Juniperus	Declining	-	-	-	Unavailable
+DS4 (New plantings and a link to nurseries)	DS4-5	Young Salix	Declining	-	P. syringae, New Clade Phytophthora sp. uncultured 16b	-	Unavailable
 DS4 (New plantings and a link to nurseries)	DS4-6	Young Sorbus	Declining	P. ramorum	-	-	SRR13393811
-DS4 (New plantings and a link to nurseries)	DS4-7	Young Betula	Declining	-	-	-	Undetermined
+DS4 (New plantings and a link to nurseries)	DS4-7	Young Betula	Declining	-	-	-	Unavailable
 DS4 (New plantings and a link to nurseries)	DS4-8	Young Prunus	Declining	-	-	-	SRR13393810
 DS4 (New plantings and a link to nurseries)	DS4-9	Young Crataegus	Declining	-	New Clade Phytophthora sp. uncultured 12b	-	SRR13393809
-DS4 (New plantings and a link to nurseries)	DS4-10	Young Corylus	Healthy	-	-	-	Undetermined
-DS5 (Woodland/Recreational Park)	DS5-1	Betula	Declining	-	-	-	Undetermined
-DS5 (Woodland/Recreational Park)	DS5-2	Betula	Declining	-	-	-	Undetermined
+DS4 (New plantings and a link to nurseries)	DS4-10	Young Corylus	Healthy	-	-	-	Unavailable
+DS5 (Woodland/Recreational Park)	DS5-1	Betula	Declining	-	-	-	Unavailable
+DS5 (Woodland/Recreational Park)	DS5-2	Betula	Declining	-	-	-	Unavailable
 DS5 (Woodland/Recreational Park)	DS5-3	Quercus	Declining	P. siskiyouensis	-	-	SRR13393807
 DS5 (Woodland/Recreational Park)	DS5-4	Sorbus	Declining	P. plurivora/citricola, P. syringae	P. plurivora	P. plurivora	SRR13393806
-DS5 (Woodland/Recreational Park)	DS5-5	Abies	Dead	-	-	-	Undetermined
+DS5 (Woodland/Recreational Park)	DS5-5	Abies	Dead	-	-	-	Unavailable
 DS5 (Woodland/Recreational Park)	DS5-6	Quercus robur	Declining	P. plurivora/citricola	-	-	SRR13393805
-DS5 (Woodland/Recreational Park)	DS5-7	Pinus sylvestris	Dead	-	-	-	Undetermined
-DS5 (Woodland/Recreational Park)	DS5-8	Pinus sylvestris	Dead	-	-	-	Undetermined
+DS5 (Woodland/Recreational Park)	DS5-7	Pinus sylvestris	Dead	-	-	-	Unavailable
+DS5 (Woodland/Recreational Park)	DS5-8	Pinus sylvestris	Dead	-	-	-	Unavailable
 DS5 (Woodland/Recreational Park)	DS5-9	Fagus	Declining	-	-	-	SRR13393804
-DS5 (Woodland/Recreational Park)	DS5-10	Fagus	Healthy	-	-	-	Undetermined
+DS5 (Woodland/Recreational Park)	DS5-10	Fagus	Healthy	-	-	-	Unavailable
 DS6 (New plantings and a link to nurseries)	DS6-1	Sorbus aucuparia	Healthy	-	-	-	SRR13393803
 DS6 (New plantings and a link to nurseries)	DS6-2	Betula	Healthy	-	-	-	SRR13393801
 DS6 (New plantings and a link to nurseries)	DS6-3	Juniperus communis	Healthy	-	-	-	SRR13393800
-DS6 (New plantings and a link to nurseries)	DS6-4	Sorbus aucuparia	Rust	-	-	-	Undetermined
-DS6 (New plantings and a link to nurseries)	DS6-5	Alnus	Healthy	-	-	-	Undetermined
+DS6 (New plantings and a link to nurseries)	DS6-4	Sorbus aucuparia	Rust	-	-	-	Unavailable
+DS6 (New plantings and a link to nurseries)	DS6-5	Alnus	Healthy	-	-	-	Unavailable
 DS6 (New plantings and a link to nurseries)	DS6-6	Pinus sylvestris	Healthy	P. kernoviae	-	-	SRR13393799
-DS6 (New plantings and a link to nurseries)	DS6-7	Betula	Declining	-	-	-	Undetermined
-DS6 (New plantings and a link to nurseries)	DS6-8	Alnus	Healthy	-	-	-	Undetermined
-DS6 (New plantings and a link to nurseries)	DS6-9	Alnus	Declining	-	-	-	Undetermined
+DS6 (New plantings and a link to nurseries)	DS6-7	Betula	Declining	-	-	-	Unavailable
+DS6 (New plantings and a link to nurseries)	DS6-8	Alnus	Healthy	-	-	-	Unavailable
+DS6 (New plantings and a link to nurseries)	DS6-9	Alnus	Declining	-	-	-	Unavailable
 DS6 (New plantings and a link to nurseries)	DS6-10	Prunus	Declining	-	-	-	SRR13393798
 DS7 (Woodland/Recreational Park)	DS7-1	Alnus	Dead	P. austrocedri, Clade 11a Phytophthora sp. uncultured 18a and 19a	P. quercina, New Clade Phytophthora sp. uncultured 14b, New Clade Phytophthora sp. uncultured 16b	-	SRR13393797
 DS7 (Woodland/Recreational Park)	DS7-2	Alnus	Declining	P. plurivora/citricola, P. pseudosyringae, P. syringae, Clade 7 Phytophthora sp. uncultured 1a, Clade 3 Phytophthora sp. uncultured 11a	P. plurivora, P. syringae	-	SRR13393796
 DS7 (Woodland/Recreational Park)	DS7-3	Young Abies grandis in Alnus and Betula forest	Healthy	P. cinnamomi, P. uniformis, Clade 7 Phytophthora sp. uncultured 1a and 16a	Clade 7 Phytophthora sp. uncultured 7b and 8b, New Clade Phytophthora sp. uncultured 16b, Nothophytophthora sp. 4	-	SRR13393795
 DS7 (Woodland/Recreational Park)	DS7-4	Quercus in mature woodland	Healthy	P. plurivora/citricola	-	-	SRR13393794
 DS7 (Woodland/Recreational Park)	DS7-5	Crataegus in mature woodland	Dead	P. capsici, P. castaneae, P. cinnamomi, P. fallax, P. foliorum, P. obscura, P. plurivora/citricola, P. rubi/fragariae, P. siskiyouensis, Clade 2 Phytophthora sp. uncultured 17a	-	-	SRR13393793
-DS8 (Woodland/Recreational Park)	DS8-1	Larix	Dead	-	Nothophytophthora sp. 2	-	Undetermined
+DS8 (Woodland/Recreational Park)	DS8-1	Larix	Dead	-	Nothophytophthora sp. 2	-	Unavailable
 DS8 (Woodland/Recreational Park)	DS8-2	Fraxinus	Dead	P. syringae	P. syringae, New Clade Phytophthora sp. uncultured 13b, Nothophytophthora sp. 2	-	SRR13393792
 DS8 (Woodland/Recreational Park)	DS8-3	Alnus	Healthy	P. pseudosyringae, P. syringae, Clade 7 Phytophthora sp. uncultured 6a, Clade 3 Phytophthora sp. uncultured 11a	P. pseudosyringae, P. syringae	-	SRR13393790
 DS8 (Woodland/Recreational Park)	DS8-4	Pinus nigra	Healthy	Clade 7 Phytophthora sp. uncultured 7a	Nothophytophthora sp. 5	-	SRR13393789
@@ -76,17 +76,17 @@ DS9 (Arboreta)	DS9-4	Pinus sylvestris	Healthy	P. primulae	P. primulae	-	SRR13393
 DS9 (Arboreta)	DS9-5	Quercus robur	Healthy	P. fallax, P. foliorum, P. idaei, P. plurivora/citricola, Clade 1 Phytophthora sp. uncultured 12a and 13a, Clade 2 Phytophthora sp. uncultured 17a	New Clade Phytophthora sp. uncultured 15b, New Clade Phytophthora sp. uncultured 17b	-	SRR13393777;SRR13393784
 DS9 (Arboreta)	DS9-6	Taxus baccata	Decline	P. syringae, Clade 6 Phytophthora sp. uncultured 15a	-	P. gonapodyides	SRR13393776
 DS9 (Arboreta)	DS9-7	Mixed species, new plantings: Acer, Cornus, Calocedrus, Fraxinus	Healthy	P. austrocedri	New Clade Phytophthora sp. uncultured 12b, New Clade Phytophthora sp. uncultured 17b	-	SRR13393775;SRR13393783
-DS9 (Arboreta)	DS9-8	Cedrus atlantica	Healthy	-	-	-	Undetermined
+DS9 (Arboreta)	DS9-8	Cedrus atlantica	Healthy	-	-	-	Unavailable
 DS9 (Arboreta)	DS9-9	Quercus petraea, Quercus ilex	Healthy	P. foliorum, P. rubi/fragariae, Clade 11 Phytophthora sp. uncultured 18a and 19a	-	P. plurivora	SRR13393774
 DS9 (Arboreta)	DS9-10	Prumnopitys andina, Pinus contorta, boundary with Larix	Healthy	P. primulae	New Clade Phytophthora sp. uncultured 16b	-	SRR13393782
 DS9 (Arboreta)	DS9-11	Pseudotsuga menziesii	Healthy	P. austrocedri	-	-	SRR13393781
-US1 (Undisturbed site 1)	US1-1	Larix	Dead	-	-	-	Undetermined
+US1 (Undisturbed site 1)	US1-1	Larix	Dead	-	-	-	Unavailable
 US1 (Undisturbed site 1)	US1-2	Sorbus aucuparia	Declining	P. obscura, P. ramorum	P. ramorum	-	SRR13393773
 US1 (Undisturbed site 1)	US1-3	Crataegus	Declining	P. syringae	-	-	SRR13393808
 US1 (Undisturbed site 1)	US1-4	Betula	Dead	P. ramorum	-	-	SRR13393772
-US1 (Undisturbed site 1)	US1-5	Betula	Declining	-	-	-	Undetermined
+US1 (Undisturbed site 1)	US1-5	Betula	Declining	-	-	-	Unavailable
 US1 (Undisturbed site 1)	US1-6	Sorbus aucuparia	Dead	P. plurivora/citricola, Clade 2 Phytophthora sp. uncultured 17a	-	-	SRR13393771
-US1 (Undisturbed site 1)	US1-7	Quercus	Healthy	-	-	-	Undetermined
+US1 (Undisturbed site 1)	US1-7	Quercus	Healthy	-	-	-	Unavailable
 US1 (Undisturbed site 1)	US1-8	Malus	Declining	P. syringae, Clade 6 Phytophthora sp. uncultured 15a	P. syringae, P. gonapodyides	-	SRR13393770
 US1 (Undisturbed site 1)	US1-9	Fraxinus	Declining	P. fallax, P. plurivora/citricola, P. rubi/fragariae, P. siskiyouensis, P. syringae	-	-	SRR13393768
 US1 (Undisturbed site 1)	US1-10	Alnus	Healthy	P. plurivora/citricola, P. pseudosyringae, P. syringae	-	-	SRR13393767
@@ -96,8 +96,8 @@ US2 (Undisturbed site 2)	US2-2	Juniperus communis	Dead	P. kernoviae	-	-	SRR13393
 US2 (Undisturbed site 2)	US2-3	Mature Pinus sylvestris	Healthy	P. cactorum	-	-	SRR13393760
 US2 (Undisturbed site 2)	US2-4	Sorbus aucuparia	Healthy	P. syringae, Clade 7 Phytophthora sp. uncultured 2a	-	-	SRR13393763
 US2 (Undisturbed site 2)	US2-5	Betula pubescens	Declining	Clade 11 Phytophthora sp. uncultured 19a	-	-	SRR13393762
-US2 (Undisturbed site 2)	US2-6	Pinus sylvestris	Healthy	-	-	-	Undetermined
-US2 (Undisturbed site 2)	US2-7	Pinus sylvestris	Healthy	-	-	-	Undetermined
+US2 (Undisturbed site 2)	US2-6	Pinus sylvestris	Healthy	-	-	-	Unavailable
+US2 (Undisturbed site 2)	US2-7	Pinus sylvestris	Healthy	-	-	-	Unavailable
 US2 (Undisturbed site 2)	US2-8	Quercus	Healthy	-	New Clade Phytophthora sp. uncultured 12b, New Clade Phytophthora sp. uncultured 16b	-	SRR13393761
 US2 (Undisturbed site 2)	US2-9	Quercus	Declining	-	-	-	SRR13393759
 US2 (Undisturbed site 2)	US2-10	Juniperus communis	Declining	-	-	-	SRR13393757
@@ -105,7 +105,7 @@ US3 (Undisturbed site 3)	US3-1	Fraxinus	Declining	P. cactorum, P. syringae	P. sy
 US3 (Undisturbed site 3)	US3-2	Corylus	Declining	P. cactorum, P. capsici, P. fallax, P. foliorum, P. plurivora/citricola, P. siskiyouensis, P. syringae	P. plurivora, P. syringae, Clade 7 Phytophthora sp. uncultured 9b, Nothophytophthora sp. 6b	P. plurivora	SRR13393755
 US3 (Undisturbed site 3)	US3-3	Fraxinus windblown trees	NA	P. cactorum, P. plurivora/citricola, P. primulae, P. syringae	P. cactorum, P. plurivora/citricola, P. syringae, Nothophytophthora sp. 1	-	SRR13393754
 US3 (Undisturbed site 3)	US3-4	Decayed Acer campestre	NA	P. cactorum, P. megasperma/crassamura, P. syringae, Clade 7 Phytophthora sp. uncultured 5a	P. cactorum, P. syringae, Clade 7 Phytophthora sp. uncultured 10b, Nothophytophthora sp. 1	-	SRR13393753
-US3 (Undisturbed site 3)	US3-5	Fraxinus	Dead	-	-	-	Undetermined
+US3 (Undisturbed site 3)	US3-5	Fraxinus	Dead	-	-	-	Unavailable
 US3 (Undisturbed site 3)	US3-6	Decayed Fagus	Dead	P. syringae	P. syringae	-	SRR13393752
 US3 (Undisturbed site 3)	US3-7	Acer campestre	Dead	P. ramorum, P. syringae	P. syringae	-	SRR13393751
 US3 (Undisturbed site 3)	US3-8	Betula	Declining	P. cactorum, P. foliorum, P. plurivora/citricola, P. rubi/fragariae, P. syringae, Clade 6 Phytophthora sp. uncultured 15a	P. syringae	P. chlamydospora	SRR13393750
@@ -114,23 +114,23 @@ US3 (Undisturbed site 3)	US3-10	Betula	Dead	P. cactorum, P. primulae, P. syringa
 US4 (Undisturbed site 4)	US4-1	Decayed Betula	Dead	P. cinnamomi	-	-	SRR13393746
 US4 (Undisturbed site 4)	US4-2	Decayed Quercus	Dead	P. cinnamomi, P. pseudosyringae	-	-	SRR13393745
 US4 (Undisturbed site 4)	US4-3	Fraxinus	Healthy	P. plurivora/citricola, P. pseudosyringae, P. syringae, Clade 3 Phytophthora sp. uncultured 11a, Clade 11 Phytophthora sp. uncultured 20a	P. pseudosyringae, P. syringae, New Clade Phytophthora sp. uncultured 13b	-	SRR13393744
-US4 (Undisturbed site 4)	US4-4	Castanea sativa	Healthy	-	-	-	Undetermined
-US4 (Undisturbed site 4)	US4-5	Fagus sylvatica	Healthy	-	-	-	Undetermined
+US4 (Undisturbed site 4)	US4-4	Castanea sativa	Healthy	-	-	-	Unavailable
+US4 (Undisturbed site 4)	US4-5	Fagus sylvatica	Healthy	-	-	-	Unavailable
 US4 (Undisturbed site 4)	US4-6	Betula	Dead	P. cactorum, P. cinnamomi, P. lacustris, P. megasperma/crassamura, P. syringae, Clade 7 Phytophthora sp. uncultured 4a and 5a, Clade 6 Phytophthora sp. uncultured 8a	P. cinnamomi, P. megasperma, P. syringae	P. chlamydospora, P. gonapodyides	SRR13393743
 US4 (Undisturbed site 4)	US4-7	Fagus sylvatica	Healthy	P. pseudosyringae, Clade 3 Phytophthora sp. uncultured 11a	P. pseudosyringae	-	SRR13393742
-US4 (Undisturbed site 4)	US4-8	Quercus	Healthy	-	-	-	Undetermined
+US4 (Undisturbed site 4)	US4-8	Quercus	Healthy	-	-	-	Unavailable
 US4 (Undisturbed site 4)	US4-9	Ulmus glabra	Healthy	P. cactorum, P. syringae	Clade 1 Phytophthora sp. uncultured 3b	-	SRR13393741
 US4 (Undisturbed site 4)	US4-10	Acer campestre	Declining	P. syringae, Clade 7 Phytophthora sp. uncultured 4a, Clade 6 Phytophthora sp. uncultured 9a, Nothophytophthora sp.	Nothophytophthora sp. 3, Nothophytophthora sp. 8	P. plurivora	SRR13393740
 US5 (Undisturbed site 5)	US5-1	Decayed Quercus robur	Dead	P. ramorum	-	-	SRR13393739
 US5 (Undisturbed site 5)	US5-2	Tsuga heterophylla	Healthy	-	-	-	SRR13393738
-US5 (Undisturbed site 5)	US5-3	Picea sitchensis	Healthy	-	-	-	Undetermined
-US5 (Undisturbed site 5)	US5-4	Picea sitchensis	Declining	-	-	-	Undetermined
-US5 (Undisturbed site 5)	US5-5	Bog	NA	-	-	-	Undetermined
-US5 (Undisturbed site 5)	US5-6	Salix	Healthy	-	-	-	Undetermined
+US5 (Undisturbed site 5)	US5-3	Picea sitchensis	Healthy	-	-	-	Unavailable
+US5 (Undisturbed site 5)	US5-4	Picea sitchensis	Declining	-	-	-	Unavailable
+US5 (Undisturbed site 5)	US5-5	Bog	NA	-	-	-	Unavailable
+US5 (Undisturbed site 5)	US5-6	Salix	Healthy	-	-	-	Unavailable
 US5 (Undisturbed site 5)	US5-7	Pinus contorta	Declining	P. capsici, P. foliorum, P. rubi/fragariae, Clade 2 Phytophthora sp. uncultured 17a	-	-	SRR13393737
 US5 (Undisturbed site 5)	US5-8	Decayed Betula	Dead	P. capsici, P. foliorum, P. plurivora/citricola, Clade 2 Phytophthora sp. uncultured 17a	-	-	SRR13393834
-US5 (Undisturbed site 5)	US5-9	Fagus sylvatica	Healthy	-	-	-	Undetermined
-US5 (Undisturbed site 5)	US5-10	Abies procera	Healthy	-	-	-	Undetermined
+US5 (Undisturbed site 5)	US5-9	Fagus sylvatica	Healthy	-	-	-	Unavailable
+US5 (Undisturbed site 5)	US5-10	Abies procera	Healthy	-	-	-	Unavailable
 CP (Control Phytophthora)	CP1	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393837
 CP (Control Phytophthora)	CP2	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393813
 CP (Control Phytophthora)	CP3	-	-	P. capsici, P. castaneae, P. fallax, P. foliorum, P. idaei, P. obscura, P. plurivora, P. rubi, P. siskiyouensis	-	-	SRR13393802
