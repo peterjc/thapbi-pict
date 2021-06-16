@@ -36,8 +36,8 @@ turns out we do see ITS1 reads, but only two copies of even the most abundant:
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:10310
     #flash:59
-    #cutadapt:15
-    #abundance:15
+    #cutadapt:14
+    #abundance:14
     #threshold:1
     >688ca1f52e3ffeb2417adceff1011655_2
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTATTG
@@ -72,10 +72,10 @@ The provided ``run.sh`` script settled on ``-a 50`` to balance these needs.
 
 As a table,
 
-========================== == == == ====
+========================== == == == ===
 #Species                   TP FP FN TN
-========================== == == == ====
-OVERALL                    26 7  4  5458
+========================== == == == ===
+OVERALL                    26 7  4  833
 Phytophthora agathidicida  0  3  0  2
 Phytophthora boehmeriae    0  0  3  2
 Phytophthora capsici       3  0  0  2
@@ -89,8 +89,8 @@ Phytophthora plurivora     3  0  0  2
 Phytophthora rubi          3  0  0  2
 Phytophthora siskiyouensis 3  0  0  2
 Phytophthora syringae      0  1  0  4
-OTHER 1086 SPECIES IN DB   0  0  0  5430
-========================== == == == ====
+OTHER 161 SPECIES IN DB    0  0  0  805
+========================== == == == ===
 
 Looking at the reports, we do see unwanted species in the controls. First we
 can easily dismiss the unwanted predictions of *Phytophthora agathidicida* as
@@ -104,6 +104,11 @@ only case passing our chosen minimum abundance threshold of 50 is
 *Phytophthora syringae* in ``SRR13393813`` (Control Phytophthora 2), with the
 most abundance sequence appearing 86 copies.
 
+.. code:: console
+
+    $ grep "Phytophthora syringae" intermediate/SRR13393813.onebp.tsv
+    32159de6cbb6df37d084e31c37c30e7b_86  67594  Phytophthora syringae
+
 We find *Phytophthora boehmeriae* is absent at this minimum threshold of 50.
 To double check the less abundant sequences you may wish to try running this
 again specifically on just the three positive controls:
@@ -113,8 +118,11 @@ again specifically on just the three positive controls:
     $ rm -rf controls && mkdir controls
     $ thapbi_pict pipeline -i raw_data/SRR13393802_* raw_data/SRR13393813_* \
           raw_data/SRR13393837_* expected/ -o controls/ -r controls-only -a 1
+    ...
+    onebp classifier assigned species/genus to 16467 of 21259 sequences from 3 files
+    ...
     $ grep -E "(predictions|boehmeriae)" controls/controls-only.reads.onebp.tsv | cut -f 1,2,5
-    #ITS1-MD5                         onebp-predictions        Max-sample-abundance
+    #Marker-MD5                       onebp-predictions        Max-sample-abundance
     7ac50609279c89c7fc3d88ffed426dac  Phytophthora boehmeriae  1
     869fb51182270e82dc07e19401f2f8c0  Phytophthora boehmeriae  1
 
@@ -128,7 +136,7 @@ primer match for this species in competitive PCR.
 .. code:: console
 
     $ grep -E "(predictions|idaei)" controls/controls-only.reads.onebp.tsv | cut -f 1,2,7- | head
-    #ITS1-MD5                         onebp-predictions   SRR13393802  SRR13393813  SRR13393837
+    #Marker-MD5                       onebp-predictions   SRR13393802  SRR13393813  SRR13393837
     fe1bd3a42e730f95c9fde798e32f8478  Phytophthora idaei  135          71           41
     23529b55e483660b4aa4b61d49002695  Phytophthora idaei  1            3            2
     5ecb44ee3586c65fdb758f0e25a92bef  Phytophthora idaei  1            2            0

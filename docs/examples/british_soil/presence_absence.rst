@@ -35,22 +35,22 @@ Location ITS Sequencing sample Classification summary                 Read count
 ======== === ================= ====================================== ==========
 CN1      -   SRR13393836       -                                      0
 CN2      -   SRR13393824       -                                      0
-DS1-9    -   SRR13393831       Unknown                                470
-DS2-6    -   SRR13393827       Peronospora (unknown species), Unknown 4430
-DS3-9    -   SRR13393818       Unknown                                3451
-DS4-1    -   SRR13393815       Unknown                                4285
-DS4-8    -   SRR13393810       Unknown                                1014
+DS1-9    -   SRR13393831       Unknown                                469
+DS2-6    -   SRR13393827       Peronospora (unknown species), Unknown 4415
+DS3-9    -   SRR13393818       Unknown                                3447
+DS4-1    -   SRR13393815       Unknown                                4266
+DS4-8    -   SRR13393810       Unknown                                1011
 DS4-9    -   SRR13393809       Unknown                                321
-DS5-9    -   SRR13393804       Unknown                                138
-DS6-1    -   SRR13393803       Unknown                                3145
-DS6-10   -   SRR13393798       Bremia (unknown species), Unknown      5092
-DS6-2    -   SRR13393801       Unknown                                2216
-DS6-3    -   SRR13393800       Unknown                                1322
-DS9-3    -   SRR13393786       Unknown                                2826
-US2-10   -   SRR13393757       Unknown                                3031
-US2-8    -   SRR13393761       Unknown                                2628
-US2-9    -   SRR13393759       Unknown                                1445
-US5-2    -   SRR13393738       Peronospora (unknown species), Unknown 3690
+DS5-9    -   SRR13393804       Unknown                                137
+DS6-1    -   SRR13393803       Unknown                                3134
+DS6-10   -   SRR13393798       Bremia (unknown species), Unknown      5076
+DS6-2    -   SRR13393801       Unknown                                2209
+DS6-3    -   SRR13393800       Unknown                                1319
+DS9-3    -   SRR13393786       Unknown                                2820
+US2-10   -   SRR13393757       Unknown                                3024
+US2-8    -   SRR13393761       Unknown                                2624
+US2-9    -   SRR13393759       Unknown                                1439
+US5-2    -   SRR13393738       Peronospora (unknown species), Unknown 3676
 ======== === ================= ====================================== ==========
 
 Column "Read count" gives the number of reads from the ``prepare-reads`` step,
@@ -75,10 +75,10 @@ With minor abbreviations to fit the table nicely:
 ======== ================ ================= ====================== ==========
 Location ITS              Sequencing sample Classification summary Read count
 ======== ================ ================= ====================== ==========
-DS1-5    P. austrocedri   SRR13393833       Unknown                2921
-DS5-3    P. siskiyouensis SRR13393807       Unknown                2780
-DS9-5    P. fallax, ...   SRR13393784       Unknown                2377
-DS9-7    P. austrocedri   SRR13393783       Unknown                947
+DS1-5    P. austrocedri   SRR13393833       Unknown                2917
+DS5-3    P. siskiyouensis SRR13393807       Unknown                2771
+DS9-5    P. fallax, ...   SRR13393784       Unknown                2376
+DS9-7    P. austrocedri   SRR13393783       Unknown                946
 ======== ================ ================= ====================== ==========
 
 Looking at ``SRR13393833`` from ``DS1-5``, THAPBI PICT does not report any
@@ -145,11 +145,12 @@ line:
 
 .. code:: console
 
-    $ grep -E "(^#ITS1|Phytophthora europaea|\tLocation)" \
+    $ grep -E "(^#Marker|Phytophthora europaea|\tLocation)" \
       summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,22,30
     #                                               DS2-2        DS3-4
-    #ITS1-MD5                         Sample-count  SRR13393830  SRR13393820
-    3d3fa2fd6fe0f183cad80771f5950b27  2             3513         631
+    #Marker-MD5                       Sample-count  SRR13393830  SRR13393820
+    3d3fa2fd6fe0f183cad80771f5950b27  2             3501         630
+
 
 Sample ``DS2-2`` (where the authors found *P. europaea* in the COI data) and
 ``DS3-4`` have the same sequence ``3d3fa2fd6fe0f183cad80771f5950b27`` which
@@ -162,16 +163,17 @@ and ``DS1-8`` (but not ``US4-6``) where the authors could isolate it:
 
 .. code:: console
 
-    $ grep -E "(^#ITS1|Phytophthora gonapodyides|\tLocation)" \
+    $ grep -E "(^#Marker|Phytophthora gonapodyides|\tLocation)" \
       summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,50,68,78,85
     #                                               DS7-1        DS9-6        US1-8        US2-5
-    #ITS1-MD5                         Sample-count  SRR13393797  SRR13393776  SRR13393770  SRR13393762
-    ed15fefb7a3655147115fc28a8d6d671  3             116          1004         0            1057
-    c1a720b2005f101a9858107545726123  1             0            0            326          0
-    96e0e2f0475bd1617a4b05e778bb04c9  1             0            0            179          0
+    #Marker-MD5                       Sample-count  SRR13393797  SRR13393776  SRR13393770  SRR13393762
+    ed15fefb7a3655147115fc28a8d6d671  3             116          998          0            1054
+    c1a720b2005f101a9858107545726123  1             0            0            325          0
+    96e0e2f0475bd1617a4b05e778bb04c9  1             0            0            178          0
     b7ca9a8e6388b39fa2d886e19b8f67ba  1             0            149          0            0
     69ecbd0dba57c8bf258f21109bd81917  1             0            0            0            66
-    2cc48f88c9174b8d3c38f4546c2d402e  1             0            63           0            0
+    2cc48f88c9174b8d3c38f4546c2d402e  1             0            62           0            0
+
 
 Only a single unique sequence matched *P. quercina* but it also matches
 *P. castanetorum*, found in three samples, ``DS3-3``, ``DS7-1`` and ``DS9-9``
@@ -179,24 +181,25 @@ Only a single unique sequence matched *P. quercina* but it also matches
 
 .. code:: console
 
-    $ grep -E "(^#ITS1|Phytophthora quercina|\tLocation)" \
+    $ grep -E "(^#Marker|Phytophthora quercina|\tLocation)" \
       summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,29,50,71
     #                                               DS3-3        DS7-1        DS9-9
-    #ITS1-MD5                         Sample-count  SRR13393821  SRR13393797  SRR13393774
-    ec642d4b8148085bb3f426829665755d  3             4235         2187         1086
+    #Marker-MD5                       Sample-count  SRR13393821  SRR13393797  SRR13393774
+    ec642d4b8148085bb3f426829665755d  3             4230         2178         1080
+
 
 And then two unique sequences matching just *P. uliginosa* from three samples,
 ``DS2-4`` (where the authors detected it with COI), ``US2-1`` and ``US3-2``:
 
 .. code:: console
 
-    $ grep -E "(^#ITS1|Phytophthora uliginosa|\tLocation)" \
+    $ grep -E "(^#Marker|Phytophthora uliginosa|\tLocation)" \
       summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,24,80,90
     #                                               DS2-4        US2-1        US3-2
-    #ITS1-MD5                         Sample-count  SRR13393828  SRR13393765  SRR13393755
-    cab2875a481e358a4993910872ec53a6  2             957          0            198
-    b403844130bc3d20fcc5356a31c19bca  1             0            5481         0
+    #Marker-MD5                       Sample-count  SRR13393828  SRR13393765  SRR13393755
+    cab2875a481e358a4993910872ec53a6  2             953          0            195
+    b403844130bc3d20fcc5356a31c19bca  1             0            5476         0
 
-So with our pipeline we could fine those species in the ITS1 marker data,
+So with our pipeline we could find those species in the ITS1 marker data,
 although not always unambiguously as sadly this marker is not always species
 specific for *Phytophthora*.
