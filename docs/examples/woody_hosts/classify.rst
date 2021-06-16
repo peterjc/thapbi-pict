@@ -53,24 +53,23 @@ These files are not really intended for human use, but are readable:
 .. code:: console
 
     $ cat intermediate/Site_1_sample_1.onebp.tsv
-    ...
+    <SEE TABLE BELOW>
 
 Viewing it like this is not ideal, although there are command line tools which
-help. You could open the file in R, Excel, etc. Slightly abridged and
-reformatted, we have:
+help. You could open the file in R, Excel, etc:
 
-========================================= ============== ==================================================== ====
-#sequence-name                            taxid          genus-species                                        note
-========================================= ============== ==================================================== ====
-``2e4f0ed53888ed39a2aee6d6d8e02206_2271`` 221518         *Phytophthora pseudosyringae*                        ...
-``c1a720b2005f101a9858107545726123_716``  78237          *Phytophthora gonapodyides*                          ...
-``96e0e2f0475bd1617a4b05e778bb04c9_331``  78237          *Phytophthora gonapodyides*                          ...
-``fb30156d7f66c8abf91f9da230f4d19e_208``  164328         *Phytophthora ramorum*                               ...
-``dcd6316eb77be50ee344fbeca6e005c7_193``  164328         *Phytophthora ramorum*                               ...
-``972db44c016a166de86a2bacab3f4226_182``  53983; 2056922 *Phytophthora cambivora*; *Phytophthora x cambivora* ...
-``d9bc3879fdab3b4184c04bfbb5cf6afb_165``  631361         *Phytophthora austrocedri*                           ...
-``ed15fefb7a3655147115fc28a8d6d671_113``  78237          *Phytophthora gonapodyides*                          ...
-========================================= ============== ==================================================== ====
+===================================== ============= ===============================================
+#sequence-name                        taxid         genus-species
+===================================== ============= ===============================================
+2e4f0ed53888ed39a2aee6d6d8e02206_2269 221518        Phytophthora pseudosyringae
+c1a720b2005f101a9858107545726123_715  78237         Phytophthora gonapodyides
+96e0e2f0475bd1617a4b05e778bb04c9_330  78237         Phytophthora gonapodyides
+fb30156d7f66c8abf91f9da230f4d19e_212  164328        Phytophthora ramorum
+dcd6316eb77be50ee344fbeca6e005c7_194  164328        Phytophthora ramorum
+972db44c016a166de86a2bacab3f4226_182  53983;2056922 Phytophthora cambivora;Phytophthora x cambivora
+d9bc3879fdab3b4184c04bfbb5cf6afb_165  631361        Phytophthora austrocedri
+ed15fefb7a3655147115fc28a8d6d671_113  78237         Phytophthora gonapodyides
+===================================== ============= ===============================================
 
 This says most of the unique sequences here have been assigned a single unique
 *Phytophthora* species, except for ``972db44c016a166de86a2bacab3f4226`` (found
