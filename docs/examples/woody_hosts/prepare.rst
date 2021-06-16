@@ -56,8 +56,9 @@ What the prepare command does can be briefly summarised as follows:
 * Primer trim (reads without both primers are discarded).
 * Convert into a non-redundant FASTA file, with the sequence name recording
   the abundance (discarding sequences of low abundance).
-* Filter with Hidden Markov Models (HMMs) of ITS1 and our four synthetic
-  controls (non-matching sequences are discarded).
+* If synthetic controls are defined in the DB, look for matches using k-mers.
+  These will be discounted when using negative control samples to raise the
+  minimum abundance threshold for the plate.
 
 For each input ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz``
 FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
