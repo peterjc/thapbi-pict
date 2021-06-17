@@ -32,7 +32,7 @@ parser.add_option(
     dest="input",
     default="/dev/stdin",
     metavar="FILE",
-    help="Input TSV filename.",
+    help="Input TSV filename, default stdin.",
 )
 parser.add_option(
     "-c",
