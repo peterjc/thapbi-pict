@@ -283,22 +283,21 @@ def pool(
     )
 
     for meta, sp_counts in meta_species.items():
-        # Cases: pending (True/False), data (positive, zero, missing)
+        # Cases: pending (True/False), data (positive/zero, missing)
         # If pending and missing, one line of output only!
-
-        # Some 'magic' for human readable summary
-        if not pcr_status:
-            sample_status = str(len(meta_samples[meta]))
-        elif meta in meta_pending:
-            sample_status = "Positive (NS)"  # Not Sequenced (yet)
-        elif sp_counts is None:
-            sample_status = "Negative"
-        else:
-            sample_status = "Positive"
+        #
+        #           | Pending      | Not Pending
+        # ----------*--------------*----------------
+        # Counts    | Counts & ??? | One counts line
+        # No counts | One ??? line | One --- line
 
         if sp_counts is not None:
             # Line of values for unsequenced data
             # Might have "???" pending line as well!
+            if pcr_status:
+                sample_status = "Positive"
+            else:
+                sample_status = str(len(meta_samples[meta]))
             handle.write(
                 "\t".join(meta)
                 + "\t"
@@ -334,6 +333,10 @@ def pool(
                         )
         if meta in meta_pending:
             # Line of "?" for unsequenced but pending data
+            if pcr_status:
+                sample_status = "Positive (NS)"
+            else:
+                sample_status = str(len(meta_samples[meta]))
             handle.write(
                 "\t".join(meta) + "\t" + sample_status + "\t?" * len(sp_headers) + "\n"
             )
@@ -353,6 +356,11 @@ def pool(
                     )
         elif sp_counts is None:
             # Line of "-" for unsequenced data
+            if pcr_status:
+                sample_status = "Negative"
+            else:
+                assert len(meta_samples[meta]) == 0
+                sample_status = "0"
             handle.write(
                 "\t".join(meta) + "\t" + sample_status + "\t-" * len(sp_headers) + "\n"
             )
