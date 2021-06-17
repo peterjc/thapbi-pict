@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.9.8  *Pending*  Dropped edit-graph in pipeline. Require full length primers in merged reads.
+v0.9.8  2021-06-17 Dropped edit-graph in pipeline. Require full length primers in merged reads.
 v0.9.7  2021-06-04 Support USEARCH SINTAX and OBITools FASTA conventions in ``import`` command.
 v0.9.6  2021-05-21 Updated default DB taxonomy, Peronosporales & Pythiales up to 450bp only.
 v0.9.5  2021-05-10 Simplified to just one ``import`` command for pre-trimmed FASTA input.
