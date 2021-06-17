@@ -63,6 +63,7 @@ jobs:
           command: |
             source activate testing
             # Unpack the tests from the sdist tar-ball
+            tar --wildcards '*/scripts/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/examples/*' -zxvf dist/thapbi_pict-*.tar.gz
             tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
