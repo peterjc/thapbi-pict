@@ -138,7 +138,7 @@ def pool(
 
     meta_samples = {}
     meta_species = {}
-    meta_pending = {}
+    meta_pending = set()
 
     with open(input_filename) as handle:
         line = handle.readline().rstrip("\n")
@@ -165,14 +165,12 @@ def pool(
             if len(parts) != len(header):
                 sys.exit("ERROR: Inconsistent field counts")
             meta = tuple(parts[_] for _ in value_cols)
-            if column_pending is None:
-                meta_pending[meta] = False
-            else:
-                meta_pending[meta] = parts[column_pending].upper().strip() in (
-                    "Y",
-                    "YES",
-                    "TRUE",
-                )
+            if column_pending is not None and parts[column_pending].upper().strip() in (
+                "Y",
+                "YES",
+                "TRUE",
+            ):
+                meta_pending.add(meta)
             samples = [_ for _ in parts[sample_col].split(";") if _ != "-"]
 
             sp_counts = parts[count_col + 1 :]
@@ -291,7 +289,7 @@ def pool(
         # Some 'magic' for human readable summary
         if not pcr_status:
             sample_status = str(len(meta_samples[meta]))
-        elif meta_pending[meta]:
+        elif meta in meta_pending:
             sample_status = "Positive (NS)"  # Not Sequenced (yet)
         elif sp_counts is None:
             sample_status = "Negative"
@@ -334,7 +332,7 @@ def pool(
                         worksheet.write_number(
                             current_row, col_offset + 1 + offset, value
                         )
-        if meta_pending[meta]:
+        if meta in meta_pending:
             # Line of "?" for unsequenced but pending data
             handle.write(
                 "\t".join(meta) + "\t" + sample_status + "\t?" * len(sp_headers) + "\n"
