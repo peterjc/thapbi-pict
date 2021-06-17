@@ -11,7 +11,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup Conda
+          name: Combine precommit config, deps, and python versions for caching
+          command: |
+            cat .pre-commit-config.yaml requirements.txt requirements-ext.txt > all-deps.txt
+            python -VV >> all-deps.txt
+      - restore_cache:
+          keys:
+          - v1-precommit-deps-{{ checksum "all-deps.txt" }}-{{ arch }}
+      - run:
+          name: Setup Conda etc
           command: |
             conda config --set always_yes yes --set changeps1 no --set channel_priority strict
             conda update -q conda
@@ -19,22 +27,11 @@ jobs:
             conda config --add channels bioconda
             conda config --add channels conda-forge
             conda info -a
-      - run:
-          name: Style checks
-          command: |
-            conda create -q -n linting python=3.7
-            source activate linting
+            conda create -q -n py37 python=3.7
+            source activate py37
             python --version
             conda install pre-commit
             pre-commit install
-            pre-commit run -a
-            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
-      - run:
-          name: Dependencies
-          command: |
-            conda create -q -n testing python=3.7
-            source activate testing
-            python --version
             conda install --file requirements-ext.txt
             echo "External (non-Python) dependencies installed"
             conda install curl
@@ -44,6 +41,18 @@ jobs:
             conda install --file requirements.txt
             # python -m pip install -r requirements.txt
             echo "Python dependencies installed"
+      - save_cache:
+          paths:
+            - ~/.cache/pre-commit
+            - ./venv
+            - /opt/conda/pkgs
+            - ~/.conda/envs
+          key: v1-precommit-deps-{{ checksum "all-deps.txt" }}-{{ arch }}
+      - run:
+          name: Style
+          command: |
+            pre-commit run -a
+            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
       - run:
           name: Installation
           command: |
