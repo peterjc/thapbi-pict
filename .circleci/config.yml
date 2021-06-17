@@ -51,12 +51,13 @@ jobs:
       - run:
           name: Style
           command: |
+            source activate py37
             pre-commit run -a
             grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
       - run:
           name: Installation
           command: |
-            source activate testing
+            source activate py37
             rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
             sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
             chmod a-w thapbi_pict/ITS1_DB.sqlite
