@@ -1,0 +1,29 @@
+Location	type	year	PCR-entered	PCR status	Beta sp1	Beta sp2	Beta sp3	Delta sp1	Gamma sp1	Unknown
+Lower river	bank	2019	Negative	Negative	-	-	-	-	-	-
+Lower river	bank	2019	Positive	Positive	204	160	0	54023	860	0
+Lower river	bank	2020	Positive	Positive	134	101	103	20387	707	0
+Lower river	bank	2020	Positive	Positive (NS)	?	?	?	?	?	?
+Lower river	bank	2021	Positive	Positive	271	119	359	66354	1690	0
+Lower river	bank	2022		Positive (NS)	?	?	?	?	?	?
+Lower river	water	2019	Positive	Positive	302	126	0	36910	975	0
+Lower river	water	2020	Positive	Positive	251	223	0	52104	2023	0
+Lower river	water	2020	Positive	Positive (NS)	?	?	?	?	?	?
+Lower river	water	2021	Positive	Positive	214	0	100	56797	2770	0
+Lower river	water	2022		Positive (NS)	?	?	?	?	?	?
+Mid river	bank	2019	Positive	Positive	25293	17155	60338	135278	359	1951
+Mid river	bank	2020	Positive	Positive	0	0	0	44267	337	0
+Mid river	bank	2021	Positive	Positive	0	0	402	10872	0	115
+Mid river	bank	2022		Positive (NS)	?	?	?	?	?	?
+Mid river	water	2019	Positive	Positive	619	712	9830	45825	0	2140
+Mid river	water	2020	Positive	Positive	0	0	0	42437	0	107
+Mid river	water	2021	Positive	Positive	0	0	0	37288	0	0
+Mid river	water	2021	Positive	Positive (NS)	?	?	?	?	?	?
+Mid river	water	2022		Positive (NS)	?	?	?	?	?	?
+Upper river	bank	2020	Positive	Positive	520	290	786	102495	0	0
+Upper river	bank	2020	Negative	Negative	-	-	-	-	-	-
+Upper river	bank	2021	Positive	Positive	514	550	8538	43059	0	2395
+Upper river	bank	2022		Positive (NS)	?	?	?	?	?	?
+Upper river	water	2020	Positive	Positive	0	0	0	46583	0	117
+Upper river	water	2021	Positive	Positive	12015	6557	19390	84287	0	6415
+Upper river	water	2021	Negative	Negative	-	-	-	-	-	-
+Upper river	water	2022		Positive (NS)	?	?	?	?	?	?

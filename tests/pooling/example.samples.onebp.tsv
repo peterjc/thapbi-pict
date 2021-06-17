@@ -1,0 +1,46 @@
+#Sample	Location	type	year	PCR-entered	pending	comment	Sequencing sample	Raw FASTQ	Flash	Read count	Alpha sp1	Alpha sp2	Beta sp1	Beta sp2	Beta sp3	Gamm sp1	Delta sp1	Epsilon (unknown species)	Gamma sp1	Unknown
+LRB2019a	Lower river	bank	2019	Negative	No	"Negative PCR, will not be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+LRB2019b	Lower river	bank	2019	Positive	No	Sequenced	LRB2019b	82125	71727	48147	0	0	0	0	0	0	15721	0	534	0
+LRB2019c	Lower river	bank	2019	Positive	No	Sequenced	LRB2019c	116609	101808	71460	0	0	204	160	0	0	20612	0	114	0
+LRB2019d	Lower river	bank	2019	Positive	No	Sequenced	LRB2019d	84955	74942	54165	0	0	0	0	0	0	17690	0	212	0
+LRB2020a	Lower river	bank	2020	Positive	No	Sequenced	LRB2020a	112366	100344	73047	0	0	134	101	103	0	20212	0	707	0
+LRB2020b	Lower river	bank	2020	Positive	Yes	"Poor yield, more sequencing pending"	LRB2020b	923	805	562	0	0	0	0	0	0	175	0	0	0
+LRB2021a	Lower river	bank	2021	Positive	No	Sequenced	LRB2021a	112837	97822	69908	0	0	170	119	139	0	20645	0	508	0
+LRB2021b	Lower river	bank	2021	Positive	No	Sequenced	LRB2021b	135307	115975	83214	0	0	0	0	106	0	26909	0	812	0
+LRB2021c	Lower river	bank	2021	Positive	No	Sequenced	LRB2021c	97673	84834	57125	0	0	101	0	114	0	18800	0	370	0
+URB2022a	Lower river	bank	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+LRW2019a	Lower river	water	2019	Positive	No	Sequenced	LRW2019a	109115	97288	65906	0	0	105	0	0	0	19873	0	600	0
+LRW2019b	Lower river	water	2019	Positive	No	Sequenced	LRW2019b	98847	88110	60018	0	0	197	126	0	0	17037	0	375	0
+LRW2019a	Lower river	water	2020	Positive	No	Sequenced	LRW2019a	115641	104115	75246	0	0	130	104	0	0	19866	0	835	0
+LRW2020a	Lower river	water	2020	Positive	No	Sequenced	LRW2020a	83292	73920	51703	0	0	0	0	0	0	13817	0	457	0
+LRW2020b	Lower river	water	2020	Positive	Yes	"Positive PCR, will be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+LRW2020c	Lower river	water	2020	Positive	No	Sequenced	LRW2020c	116818	103223	72892	0	0	121	119	0	0	18421	0	731	0
+LRW2020d	Lower river	water	2020	Positive	No	"Positive PCR but sample lost, will not be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+LRW2021a	Lower river	water	2021	Positive	No	Sequenced	LRW2021a	83771	73713	50057	0	0	105	0	0	0	14888	0	327	0
+LRW2021b	Lower river	water	2021	Positive	No	Sequenced	LRW2021b	92314	80378	52935	0	0	109	0	100	0	15216	0	470	0
+LRW2021c	Lower river	water	2021	Positive	No	Sequenced	LRW2021c	169187	160533	125140	0	0	0	0	0	0	26693	0	1973	0
+URW2022a	Lower river	water	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+MRB2019a	Mid river	bank	2019	Positive	No	Sequenced	MRB2019a	136552	76977	48264	0	0	0	0	0	0	18697	0	0	0
+MRB2019b	Mid river	bank	2019	Positive	No	Sequenced	MRB2019b	291127	255278	181129	0	0	25293	17155	60338	0	70508	0	0	1951
+MRB2019c	Mid river	bank	2019	Positive	No	Sequenced	MRB2019c	221287	173797	104551	0	0	0	0	0	0	46073	0	359	0
+MRB2020a	Mid river	bank	2020	Positive	No	Sequenced	MRB2020a	197177	154151	94146	0	0	0	0	0	0	38368	0	337	0
+MRB2020b	Mid river	bank	2020	Positive	No	Sequenced	MRB2020b	227586	142763	91336	0	0	0	0	0	0	5899	0	0	0
+MRB2021c	Mid river	bank	2021	Positive	No	Sequenced	MRB2021c	217163	167592	117700	0	0	0	0	402	0	10872	0	0	115
+MRB2022a	Mid river	bank	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+MRW2019a	Mid river	water	2019	Positive	No	Sequenced	MRW2019a	202871	140900	80688	0	0	619	712	9830	0	45825	0	0	2140
+MRW2019b	Mid river	water	2019	Positive	No	Sequenced	MRW2019b	240386	173323	117582	0	0	0	0	0	0	0	0	0	0
+MRW2020a	Mid river	water	2020	Positive	No	Sequenced	MRW2020a	277301	201496	120305	0	0	0	0	0	0	0	0	0	0
+MRW2020c	Mid river	water	2020	Positive	No	Sequenced	MRW2020c	224214	156824	106592	0	0	0	0	0	0	42437	0	0	107
+MRW2021b	Mid river	water	2021	Positive	No	Sequenced	MRW2021b	248164	178723	118943	0	0	0	0	0	0	37288	0	0	0
+MRW2021c	Mid river	water	2021	Positive	Yes	"Positive PCR, will be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+MRW2022a	Mid river	water	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+URB2020a	Upper river	bank	2020	Positive	No	Sequenced	URB2020a	181687	118508	75019	0	0	0	0	138	0	33817	0	0	0
+URB2020b	Upper river	bank	2020	Positive	No	Sequenced	URB2020b	317652	261240	192557	0	0	520	290	648	0	68678	0	0	0
+URW2021c	Upper river	bank	2020	Negative	No	"Negative PCR, will not be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+URB2021b	Upper river	bank	2021	Positive	No	Sequenced	URB2021b	177817	139978	78309	0	0	514	550	8538	0	43059	0	0	2395
+LRB2022a	Upper river	bank	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+URW2020a	Upper river	water	2020	Positive	No	Sequenced	URW2020a	233054	167828	107977	0	0	0	0	0	0	46583	0	0	117
+URW2021a	Upper river	water	2021	Positive	No	Sequenced	URW2021a	193908	134576	78661	0	0	267	273	3290	0	24510	0	0	1654
+URW2021b	Upper river	water	2021	Negative	No	"Negative PCR, will not be sequenced"	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+URW2021c	Upper river	water	2021	Positive	No	Sequenced	URW2021c	361565	338062	247735	0	0	11748	6284	16100	0	59777	0	0	4761
+LRW2022a	Upper river	water	2022		Yes	Pending	-	-	-	-	-	-	-	-	-	-	-	-	-	-
