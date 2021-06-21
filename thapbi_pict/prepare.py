@@ -296,7 +296,7 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
 def save_nr_fasta(
     counts,
     output_fasta,
-    min_abundance=None,
+    min_abundance=0,
     gzipped=False,
     spikes=None,
     header_dict=None,
@@ -326,12 +326,9 @@ def save_nr_fasta(
         spikes = []
     # Storing negative count for decreasing sort, then alphabetic sort
     # Could alternatively have used a key function to achieve this
-    if min_abundance is None:
-        values = sorted((-count, seq) for seq, count in counts.items())
-    else:
-        values = sorted(
-            (-count, seq) for seq, count in counts.items() if count >= min_abundance
-        )
+    values = sorted(
+        (-count, seq) for seq, count in counts.items() if count >= min_abundance
+    )
     if output_fasta == "-":
         if gzipped:
             raise ValueError("Does not support gzipped output to stdout.")
@@ -345,15 +342,12 @@ def save_nr_fasta(
         assert "threshold" not in header_dict
         for key, value in header_dict.items():
             out_handle.write(f"#{key}:{value}\n")
-        if min_abundance is not None:
-            # Note counts currently negative for sorting requirement
-            out_handle.write(f"#abundance:{sum(-count for count, _ in values)}\n")
-            out_handle.write(f"#threshold:{min_abundance}\n")
+        # Note counts currently negative for sorting requirement
+        out_handle.write(f"#abundance:{sum(-count for count, _ in values)}\n")
+        out_handle.write(f"#threshold:{min_abundance}\n")
     for count, seq in values:
         count = -count  # was negative for decreasing sorting
-        assert (
-            min_abundance is None or count >= min_abundance
-        ), f"{count} for {seq} vs minimum {min_abundance}"
+        assert count >= min_abundance, f"{count} for {seq} vs minimum {min_abundance}"
         spike_name = is_spike_in(seq, spikes)
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
@@ -403,7 +397,7 @@ def is_spike_in(sequence, spikes):
 def make_nr_fasta(
     input_fasta_or_fastq,
     output_fasta,
-    min_abundance=None,
+    min_abundance=0,
     min_len=0,
     max_len=sys.maxsize,
     weighted_input=False,
@@ -600,7 +594,7 @@ def prepare_sample(
             make_nr_fasta(
                 merged_fastq,
                 tmp_fasta_gz,
-                min_abundance=None,
+                min_abundance=0,
                 fastq=True,
                 gzipped=True,
                 header_dict={
