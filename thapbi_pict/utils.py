@@ -676,6 +676,19 @@ def load_metadata(
     else:
         group_col = 0  # Default is the first requested column
 
+    def dequote_line(fields_in_line):
+        return [
+            _[1:-1] if _.count('"') == 2 and _[0] == '"' and _[-1] == '"' else _
+            for _ in fields_in_line
+        ]
+
+    assert dequote_line(["A", "A is B", '"A is also C"', "Not D"]) == [
+        "A",
+        "A is B",
+        "A is also C",
+        "Not D",
+    ]
+
     names = [""] * len(value_cols)  # default
     meta = {}
     if not metadata_encoding:
@@ -697,7 +710,7 @@ def load_metadata(
         line = lines[metadata_name_row - 1]
         if line.startswith("#"):
             line = line[1:]
-        parts = line.rstrip("\n").split("\t")
+        parts = dequote_line(line.rstrip("\n").split("\t"))
         if len(parts) < max(value_cols) + 1:
             sys.exit("ERROR: Not enough columns in metadata name row")
         names = [parts[_].strip() for _ in value_cols]
@@ -714,7 +727,7 @@ def load_metadata(
     lines = [_ for _ in lines[metadata_name_row:] if not _.startswith("#")]
 
     # Break up line into fields
-    lines = [_.rstrip("\n").split("\t") for _ in lines]
+    lines = [dequote_line(_.rstrip("\n").split("\t")) for _ in lines]
 
     # Select columns of interest
     meta_plus_idx = [[_[i].strip() for i in value_cols + [sample_col]] for _ in lines]
