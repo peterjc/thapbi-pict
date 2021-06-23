@@ -11,7 +11,7 @@ import xlsxwriter
 # from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.1")
+    print("v0.0.2")
     sys.exit(0)
 
 # Parse Command Line
