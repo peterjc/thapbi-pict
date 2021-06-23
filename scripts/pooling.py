@@ -89,8 +89,9 @@ parser.add_option(
     "--pcr",
     default=False,
     action="store_true",
-    help="Replace sequence sample count with PCR status, recommend using "
-    "with the -p / --pending setting.",
+    help="Replace sequence sample count with inferred PCR status, recommend "
+    "using with the -p / --pending setting otherwise no Illumina data is "
+    "taken to imply PCR was negative."
 )
 parser.add_option(
     "-o",
