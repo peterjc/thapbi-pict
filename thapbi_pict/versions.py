@@ -37,7 +37,6 @@ def check_tools(names, debug):
         "cutadapt": version_cutadapt,
         "flash": version_flash,
         "makeblastdb": version_blast,
-        "swarm": version_swarm,
     }
     missing = []
     versions = []
@@ -128,34 +127,3 @@ def version_flash(cmd="flash"):
     ver = text.split("\n", 1)[0]
     if ver.upper().startswith("FLASH V"):
         return ver[7:]
-
-
-def version_swarm(cmd="swarm"):
-    """Return the version of swarm (as a short string).
-
-    e.g. Given the following output on stderr::
-
-        $ swarm -v
-        Swarm 2.2.2 [Jun 21 2018 17:48:50]
-        Copyright (C) 2012-2017 Torbjorn Rognes and Frederic Mahe
-        https://github.com/torognes/swarm
-
-        Mahe F, Rognes T, Quince C, de Vargas C, Dunthorn M (2014)
-        Swarm: robust and fast clustering method for amplicon-based studies
-        PeerJ 2:e593 https://doi.org/10.7717/peerj.593
-
-        Mahe F, Rognes T, Quince C, de Vargas C, Dunthorn M (2015)
-        Swarm v2: highly-scalable and high-resolution amplicon clustering
-        PeerJ 3:e1420 https://doi.org/10.7717/peerj.1420
-
-    It would capture the version from the first line, as follows:
-
-    >>> version_swarm()
-    '2.2.2 [Jun 21 2018 17:48:50]'
-
-    If the command is not on the path, returns None.
-    """
-    text = getoutput(cmd + " -v")
-    ver = text.split("\n", 1)[0].strip()
-    if ver.lower().startswith("swarm "):
-        return ver[6:].strip()
