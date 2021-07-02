@@ -21,10 +21,9 @@ import xlsxwriter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .prepare import load_fasta_header
-from .utils import abundance_from_read_name
 from .utils import color_bands
 from .utils import file_to_sample_name
-from .utils import find_paired_files
+from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import split_read_name_abundance
@@ -671,26 +670,32 @@ def main(
     meta_default = tuple([""] * len(meta_names))
     fasta_files = {}
     tsv_files = {}
-    for fasta_file, tsv_file in find_paired_files(
-        inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
-    ):
+
+    for fasta_file in find_requested_files(inputs, ".fasta", ignore_prefixes, debug):
         sample = file_to_sample_name(fasta_file)
         if sample not in stem_to_meta:
             if require_metadata:
-                continue
-            else:
-                stem_to_meta[sample] = meta_default
-                if meta_default in meta_to_stem:
-                    meta_to_stem[meta_default].append(sample)
-                else:
-                    meta_to_stem[meta_default] = [sample]
                 if debug:
-                    sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
+                    sys.stderr.write(
+                        f"DEBUG: Missing required metadata for {fasta_file}\n"
+                    )
+                continue
+            stem_to_meta[sample] = meta_default
+            if meta_default in meta_to_stem:
+                meta_to_stem[meta_default].append(sample)
+            else:
+                meta_to_stem[meta_default] = [sample]
+            if debug:
+                sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
         fasta_files[sample] = fasta_file
-        tsv_files[sample] = tsv_file
-    assert (
-        len(fasta_files) == len(tsv_files) == len(stem_to_meta)
-    ), f"{len(fasta_files)} FASTA, {len(tsv_files)} TSV, {len(stem_to_meta)} meta"
+    for tsv_file in find_requested_files(
+        inputs, f".{method}.tsv", ignore_prefixes, debug
+    ):
+        sample = file_to_sample_name(tsv_file)
+        if sample.endswith(".all_reads") or sample in fasta_files:
+            tsv_files[sample] = tsv_file
+        elif debug:
+            sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
 
     if debug:
         sys.stderr.write(
@@ -699,7 +704,7 @@ def main(
             f" and {len(tsv_files)} TSV for method {method}\n"
         )
     if not tsv_files:
-        sys.exit("ERROR: No input FASTA and TSV files found")
+        sys.exit("ERROR: No input FASTA and/or TSV files found")
 
     if report:
         stem = os.path.join(out_dir, report)
@@ -748,33 +753,47 @@ def main(
     sample_species_counts = {}  # 2nd key is sp list with semi-colons
 
     if debug:
+        sys.stderr.write(f"Loading predictions for {method}\n")
+    for sample, predicted_file in tsv_files.items():
+        # Get MD5 to species mapping from the TSV only
+        assert sample.endswith(".all_reads") or sample in stem_to_meta, sample
+        for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
+            md5, abundance = split_read_name_abundance(name)
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
+            if md5 in md5_species:
+                md5_species[md5].update(sp_list.split(";"))
+            else:
+                md5_species[md5] = set(sp_list.split(";"))
+
+    if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for sample, fasta_file in fasta_files.items():
         assert sample in stem_to_meta, sample
+        assert not sample.endswith(".all_fasta")
+        sample_species_counts[sample] = Counter()
         with open(fasta_file) as handle:
             for title, seq in SimpleFastaParser(handle):
                 md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                 if min_abundance > 1 and abundance < min_abundance:
                     continue
+                if md5 not in md5_species:
+                    if len(tsv_files) == 1:
+                        sys.exit(
+                            f"ERROR: {md5} from {fasta_file} "
+                            f"not in {list(tsv_files.values())[0]}"
+                        )
+                    else:
+                        sys.exit(
+                            f"ERROR: {md5} from {fasta_file} "
+                            f"not in {len(tsv_files)} TSV files"
+                        )
                 abundance_by_samples[md5, sample] = abundance
                 md5_abundance[md5] += abundance
                 md5_to_seq[md5] = seq
-                md5_species[md5] = set()
-    if debug:
-        sys.stderr.write(f"Loading predictions for {method}\n")
-    for sample, predicted_file in tsv_files.items():
-        sample_species_counts[sample] = Counter()
-        assert sample in stem_to_meta, sample
-        # TODO: Look at taxid here?
-        for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
-            md5, abundance = split_read_name_abundance(name)
-            if min_abundance > 1 and abundance < min_abundance:
-                continue
-            assert abundance_by_samples[md5, sample] == abundance, name
-            if sp_list:
-                md5_species[md5].update(sp_list.split(";"))
-
-            sample_species_counts[sample][sp_list] += abundance_from_read_name(name)
+                sample_species_counts[sample][
+                    ";".join(sorted(md5_species[md5]))
+                ] += abundance
 
     sample_summary(
         sample_species_counts,

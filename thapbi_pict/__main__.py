@@ -372,7 +372,7 @@ def pipeline(args=None):
     )
 
     classified_files = classify(
-        fasta=fasta_files,
+        fasta=[all_fasta],
         db_url=db,
         method=args.method,
         out_dir=intermediate_dir,
@@ -387,11 +387,8 @@ def pipeline(args=None):
         if return_code:
             sys.stderr.write("ERROR: Pipeline aborted during classify\n")
             sys.exit(return_code)
-    if len(fasta_files) != len(classified_files):
-        sys.exit(
-            f"ERROR: {len(fasta_files)} FASTA files "
-            f"but {len(classified_files)} classified"
-        )
+    if 1 != len(classified_files):
+        sys.exit(f"ERROR: {len(fasta_files)} FASTA files expected only one")
 
     method = args.method
 
