@@ -37,11 +37,9 @@ if [ "`grep -c -v '^#' $TMP/input/Phytophthora_ITS1_curated.identity.tsv`" -ne "
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
-rm -rf $TMP/thapbi_swarm
 rm -rf $TMP/thapbi_blast
 rm -rf $TMP/thapbi_1s3g
 mkdir -p $TMP/thapbi_onebp
-mkdir -p $TMP/thapbi_swarm
 mkdir -p $TMP/thapbi_blast
 mkdir -p $TMP/thapbi_1s3g
 
@@ -49,8 +47,6 @@ mkdir -p $TMP/thapbi_1s3g
 thapbi_pict classify -m identity -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
 thapbi_pict classify -m onebp -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
 thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
-thapbi_pict classify -m swarm -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
-thapbi_pict classify -m swarmid -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_swarm
 thapbi_pict classify -m 1s3g -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/1s3g
 
 # Passing one directory name (should get all 2 FASTA files):
@@ -63,14 +59,13 @@ if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
-for M in identity onebp substr blast swarm swarmid 1s3g; do
+for M in identity onebp substr blast 1s3g; do
     echo "Checking single isolate control with $M"
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
 done
 
 rm -rf $TMP/hmm_trim.*.tsv
-# Swarm classifier can't cope with multiple HMM hits...
 for M in identity onebp blast 1s3g; do
     echo "Checking HMM trim corner cases with $M"
     thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M -a 50
