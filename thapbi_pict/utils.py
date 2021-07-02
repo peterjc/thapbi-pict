@@ -469,7 +469,7 @@ def find_requested_files(
             elif debug:
                 sys.stderr.write(
                     f"DEBUG: Ignoring {x!r} as does not have"
-                    f" expected extension {ext!r}."
+                    f" expected extension {ext!r}\n"
                 )
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
