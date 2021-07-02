@@ -14,7 +14,6 @@ import tempfile
 from collections import Counter
 from collections import OrderedDict
 
-from Bio import SeqIO
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Levenshtein import distance as levenshtein
 from sqlalchemy.orm import aliased
@@ -26,7 +25,6 @@ from .db_orm import SequenceSource
 from .db_orm import Taxonomy
 from .utils import abundance_filter_fasta
 from .utils import abundance_from_read_name
-from .utils import cmd_as_string
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import load_fasta_header
@@ -656,248 +654,6 @@ def method_blast(
     return tax_counts
 
 
-def make_swarm_db_fasta(db_fasta, session):
-    """Prepare a SWARM style marker FASTA sequence from our DB."""
-    view = session.query(RefMarker)
-    count = 0
-    skip = 0
-    unambig = set("ACGT")
-    with open(db_fasta, "w") as handle:
-        for marker in view:
-            md5 = marker.md5
-            marker_seq = marker.sequence
-            if not unambig.issuperset(marker_seq):
-                skip += 1
-                continue
-            # Using md5_ref_abundance to avoid duplicating any exact
-            # sequence matching read which would be md5_abundance
-            abundance = 1  # need to look at sequence_source join...
-            handle.write(f">{md5}_db_{abundance}\n{marker_seq}\n")
-            count += 1
-    sys.stderr.write(
-        f"Wrote {count} unique sequences from DB to FASTA file for SWARM.\n"
-    )
-    if skip:
-        sys.stderr.write(
-            f"WARNING: Skipped {skip} DB sequences due to ambiguous bases.\n"
-        )
-    return count
-
-
-def run_swarm(input_fasta, output_clusters, diff=1, debug=False, cpu=0):
-    """Run swarm on a prepared FASTA file."""
-    # Seems swarm only looks at one positional argument,
-    # silently ignores any second or third FASTA file.
-    # However, it will take stdin, e.g. swarm -d 1 <(cat *.nu)
-    # This may be useful as we want to feed in the combination
-    # of a database dump (with idn_abundance naming), plus the
-    # prepared sequencing reads.
-    cmd = ["swarm"]
-    if cpu:
-        cmd += ["-t", str(cpu)]  # -t, --threads
-    cmd += ["-d", str(diff)]  # -d, --differences
-    cmd += ["-o", output_clusters]  # -o, --output-file
-    if isinstance(input_fasta, str):
-        cmd += [input_fasta]
-    else:
-        # Swarm defaults to stdin, so don't need this:
-        # cmd += ["/dev/stdin"]
-        # Using grep to remove the header lines from 'FASTA' file:
-        cmd = 'cat "%s" | grep -v "^#" | %s' % (
-            '" "'.join(input_fasta),
-            cmd_as_string(cmd),
-        )
-    return run(cmd, debug=debug)
-
-
-def setup_swarm(session, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare files we'll reuse when running SWARM.
-
-    Dumps the database to a swarm-ready FASTA file, which will
-    later be used as input to swarm together with the prepared
-    read sequnces.
-    """
-    db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
-    make_swarm_db_fasta(db_fasta, session)
-
-
-def method_swarm_core(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    min_abundance=0,
-    identity=False,
-    debug=False,
-    cpu=0,
-):
-    """Classify using SWARM.
-
-    Uses the previously generated dump of the database to a
-    swarm-ready FASTA file, and non-redundant input FASTA, as
-    input to swarm.
-
-    Uses the database sequences to assign species to clusters,
-    and thus input sequences within a cluster to that species.
-
-    If identity=True (i.e. the 'swarmid' classifier), it will
-    override the species for individual sequences with that of
-    any 100% identical matches in the DB. In this mode, acts
-    like the 'identity' classifier with the 'swarm' classifier
-    as a fallback.
-    """
-    db_fasta = os.path.join(shared_tmp_dir, "swarm_db.fasta")
-    if not os.path.isfile(db_fasta):
-        sys.exit(f"ERROR: Missing generated file {db_fasta}\n")
-
-    if min_abundance:
-        old = fasta_file
-        fasta_file = os.path.join(tmp_dir, os.path.basename(old))
-        if debug:
-            sys.stderr.write(
-                "DEBUG: Applying minimum abundance filter, making {fasta_file}\n"
-            )
-        abundance_filter_fasta(old, fasta_file, min_abundance)
-        del old
-
-    if identity:
-        seq_dict = SeqIO.index(fasta_file, "fasta")
-
-    swarm_clusters = os.path.join(tmp_dir, "swarm_clusters.txt")
-    run_swarm([fasta_file, db_fasta], swarm_clusters, diff=1, debug=debug, cpu=cpu)
-
-    if not os.path.isfile(swarm_clusters):
-        sys.exit(
-            f"ERROR: Swarm did not produce expected output file {swarm_clusters}\n"
-        )
-    cluster_count = 0
-    count = 0
-    tax_counts = Counter()
-    with open(swarm_clusters) as handle:
-        for line in handle:
-            cluster_count += 1
-            idns = line.strip().split()
-            # This split is safe if the sequence came though our prepare-reads
-            read_idns = [_ for _ in idns if "_db_" not in _]
-            db_md5s = [_.split("_db_", 1)[0] for _ in idns if "_db_" in _]
-            del idns
-            abundance = sum(abundance_from_read_name(_) for _ in read_idns)
-            count += abundance
-            if not read_idns:
-                # DB only cluster, ignore
-                continue
-            if db_md5s:
-                t = md5_to_taxon(db_md5s, session)
-                taxid, genus_species, note = taxid_and_sp_lists(t)
-                note = (
-                    f"Cluster #{cluster_count} - {len(read_idns)} seqs"
-                    f" and {len(db_md5s)} DB entries. {note}"
-                ).strip()
-            else:
-                # Cannot classify, report
-                taxid = 0
-                genus_species = ""
-                note = (
-                    f"Cluster #{cluster_count} - {len(read_idns)} seqs"
-                    " but no DB entry"
-                )
-            for idn in read_idns:
-                if identity:
-                    # Does this match any of the marker seq in our DB?
-                    seq = str(seq_dict[idn].seq).upper()
-                    taxid2, genus_species2, _ = perfect_match_in_db(session, seq)
-                    if genus_species2:
-                        if debug:
-                            read_report.write(
-                                "%s\t%s\t%s\t%s\n"
-                                % (
-                                    idn,
-                                    str(taxid2),
-                                    genus_species2,
-                                    f"Cluster #{cluster_count} - {len(read_idns)} seqs,"
-                                    " but this seq itself in DB",
-                                )
-                            )
-                        else:
-                            read_report.write(
-                                f"{idn}\t{str(taxid2)}\t{genus_species2}\n"
-                            )
-                        continue
-                if debug:
-                    read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
-                else:
-                    read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
-            tax_counts[genus_species] += abundance
-    sys.stderr.write(f"Swarm generated {cluster_count} clusters\n")
-    assert count == sum(tax_counts.values())
-    return tax_counts
-
-
-def method_swarm(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
-):
-    """SWARM classifier.
-
-    Uses the previously generated dump of the database to a
-    swarm-ready FASTA file, and the prepared non-redundant input
-    FASTA to input to swarm.
-
-    Uses the database sequences to assign species to clusters,
-    and thus input sequences within a cluster to that species.
-    """
-    return method_swarm_core(
-        fasta_file,
-        session,
-        read_report,
-        tmp_dir,
-        shared_tmp_dir,
-        identity=False,
-        min_abundance=min_abundance,
-        debug=debug,
-        cpu=cpu,
-    )
-
-
-def method_swarmid(
-    fasta_file,
-    session,
-    read_report,
-    tmp_dir,
-    shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
-):
-    """SWARM classifier with 100% identity special case.
-
-    Proceeds as per the simple SWARM classifier, with each cluster
-    being assigned species. However, before using the cluster species,
-    checks if the sequence has a 100% identical match in the DB and
-    if so, uses that in preference.
-
-    i.e. This is like method_identity falling back on method_swarm.
-    """
-    return method_swarm_core(
-        fasta_file,
-        session,
-        read_report,
-        tmp_dir,
-        shared_tmp_dir,
-        identity=True,
-        min_abundance=min_abundance,
-        debug=debug,
-        cpu=cpu,
-    )
-
-
 method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
@@ -907,8 +663,6 @@ method_tool_check = {
     "1s4g": [],
     "1s5g": [],
     "substr": [],
-    "swarm": ["swarm"],
-    "swarmid": ["swarm"],
 }
 
 method_classify_file = {
@@ -920,8 +674,6 @@ method_classify_file = {
     "1s4g": method_dist,
     "1s5g": method_dist,
     "substr": method_substr,
-    "swarm": method_swarm,
-    "swarmid": method_swarmid,
 }
 
 # Not all methods define a setup function:
@@ -932,8 +684,6 @@ method_setup = {
     "1s3g": setup_dist3,
     "1s4g": setup_dist4,
     "1s5g": setup_dist5,
-    "swarm": setup_swarm,
-    "swarmid": setup_swarm,  # can share the setup with swarm
 }
 
 
