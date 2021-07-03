@@ -60,22 +60,16 @@ for M in onebp identity blast; do
     diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
 done
 
-echo "============================"
-echo "Running woody hosts classify"
-echo "============================"
-# Default for -o should be the same next to the inputs, which is fine
-time thapbi_pict classify -i $TMP/intermediate/
-
 echo "==========================="
 echo "Running woody hosts summary"
 echo "==========================="
-time thapbi_pict summary -i $TMP/intermediate/ \
+time thapbi_pict summary -i $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/ -r no-metadata
 ls $TMP/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
-time thapbi_pict summary -i $TMP/intermediate/ \
+time thapbi_pict summary -i $TMP/intermediate/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/ -r with-metadata \
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
@@ -93,7 +87,7 @@ if [ `grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; the
 echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
-time thapbi_pict edit-graph -i $TMP/intermediate/ -o $TMP/summary/no-metadata.edit-graph.xgmml
+time thapbi_pict edit-graph -i $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
 if [ `grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 99 ]; then echo "Wrong node count"; false; fi
 if [ `grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then echo "Wrong edge count"; false; fi
 
