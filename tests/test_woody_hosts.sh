@@ -49,16 +49,15 @@ fi
 echo "======================================="
 echo "Running woody hosts fasta-nr & classify"
 echo "======================================="
-thapbi_pict fasta-nr -i $TMP/intermediate/*.fasta -o $TMP/all.fasta
-echo $TMP/all.fasta tests/woody_hosts/all.fasta
-diff $TMP/all.fasta tests/woody_hosts/all.fasta
+thapbi_pict fasta-nr -i $TMP/intermediate/*.fasta -o $TMP/woody_hosts.all_reads.fasta
+diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
 for M in onebp identity blast; do
     # Writing to stdout to set a single filename.
     # Discarding the comment column, and the header,
     # leaving the most stable core part of the output
-    thapbi_pict classify -i $TMP/all.fasta -o - -m $M | grep -v "^#" | cut -f 1-3 > $TMP/all.$M.tsv
-    echo diff $TMP/all.$M.tsv tests/woody_hosts/all.$M.tsv
-    diff $TMP/all.$M.tsv tests/woody_hosts/all.$M.tsv
+    thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -o - -m $M | grep -v "^#" | cut -f 1-3 > $TMP/woody_hosts.all_reads.$M.tsv
+    echo diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
+    diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
 done
 
 echo "============================"
