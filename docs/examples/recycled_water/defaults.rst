@@ -23,16 +23,15 @@ as follows, and you should get six output report files:
       -i raw_data/ -o summary/ -s intermediate_defaults/ \
       -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 2122727 of 2598668 sequences from 384 files
+    onebp classifier assigned species/genus to 2122727 of 2598668 sequences from 1 files
     Wrote summary/recycled-water-defaults.samples.onebp.*
     Wrote summary/recycled-water-defaults.reads.onebp.*
     ...
     $ ls -1 intermediate_defaults/SRR*.fasta | wc -l
     384
-    $ ls -1 intermediate_defaults/SRR*.onebp.tsv | wc -l
-    384
     $ ls -1 summary/recycled-water-defaults.*
     summary/recycled-water-defaults.all_reads.fasta
+    summary/recycled-water-defaults.all_reads.onebp.tsv
     summary/recycled-water-defaults.reads.onebp.tsv
     summary/recycled-water-defaults.reads.onebp.xlsx
     summary/recycled-water-defaults.samples.onebp.tsv
