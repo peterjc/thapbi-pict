@@ -254,6 +254,9 @@ for filename in sys.argv[1:]:
                 new_out += "\n"
 
             # Transform the output
+            if cmd.endswith(" | wc -l"):
+                # remove any leading space on macOS
+                new_out = new_out.lstrip()
             if new_out.startswith(">") or "\n>" in new_out:
                 new_out = fasta_wrap(new_out)
             elif "\t" in new_out and old_out.startswith("="):
