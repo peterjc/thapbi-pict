@@ -578,7 +578,7 @@ def main(
         )
         sys.stderr.write(
             f"DEBUG: {edge_count1} one-bp edges; {edge_count2} two-bp edges;"
-            " {edge_count3} three-bp edges.\n"
+            f" {edge_count3} three-bp edges.\n"
         )
         assert edge_count == edge_count1 + edge_count2 + edge_count3
         sys.stderr.write(f"DEBUG: Dropped {redundant} redundant 2-bp or 3-bp edges.\n")
