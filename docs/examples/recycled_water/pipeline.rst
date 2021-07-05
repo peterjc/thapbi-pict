@@ -18,15 +18,14 @@ our custom database built with matching primer trimmed entries:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 3567127 of 10933210 sequences from 384 files
+    onebp classifier assigned species/genus to 3567127 of 10933210 sequences from 1 files
     Wrote summary/recycled-water-custom.samples.onebp.*
     Wrote summary/recycled-water-custom.reads.onebp.*
     ...
     $ ls -1 intermediate/SRR*.fasta | wc -l
     384
-    $ ls -1 intermediate/SRR*.onebp.tsv | wc -l
-    384
     $ ls -1 summary/recycled-water-custom.*.onebp.*
+    summary/recycled-water-custom.all_reads.onebp.tsv
     summary/recycled-water-custom.reads.onebp.tsv
     summary/recycled-water-custom.reads.onebp.xlsx
     summary/recycled-water-custom.samples.onebp.tsv
@@ -56,12 +55,17 @@ more matches:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    blast classifier assigned species/genus to 4268503 of 10933210 sequences from 384 files
+    blast classifier assigned species/genus to 4268503 of 10933210 sequences from 1 files
     Wrote summary/recycled-water-custom.samples.blast.*
     Wrote summary/recycled-water-custom.reads.blast.*
     ...
-    $ ls -1 intermediate/SRR*.blast.tsv | wc -l
-    384
+    $ ls -1 summary/recycled-water-custom.*.blast.*
+    summary/recycled-water-custom.all_reads.blast.tsv
+    summary/recycled-water-custom.reads.blast.tsv
+    summary/recycled-water-custom.reads.blast.xlsx
+    summary/recycled-water-custom.samples.blast.tsv
+    summary/recycled-water-custom.samples.blast.txt
+    summary/recycled-water-custom.samples.blast.xlsx
 
 Better, in that we are up to 39% of the reads with a taxonomic assignment
 (4268503 of 10933210 reads). But how many of these are false positives? Sadly,
