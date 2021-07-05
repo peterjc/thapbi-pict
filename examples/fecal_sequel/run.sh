@@ -36,7 +36,8 @@ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/COI_430_bats/ \
 # Default edit-graph has very few DB nodes, so run another edit-graph
 # including all DB entries with -s / --showdb argument
 thapbi_pict edit-graph -d COI_430_bats.sqlite \
-            -i intermediate/COI_430_bats/*.fasta intermediate/COI_430_bats/*.onebp.tsv \
+            -i intermediate/COI_430_bats/*.fasta \
+            summary/mock-community.COI_430_bats.all_reads.onebp.tsv \
             -s -o mock-community.COI_430_bats.edit-graph.xgmml
 
 echo ---------------------------------------------------------------
