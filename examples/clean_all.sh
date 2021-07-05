@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 # Intended to remove intermediate files, custom DB, but not summary reports.
 

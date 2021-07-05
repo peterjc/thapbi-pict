@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 mkdir -p intermediate/ summary/ expected/
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 mkdir -p raw_data/ expected/ tmp_merged/ intermediate/ intermediate_pool/ summary/
 if [ ! -f raw_download/MD5SUM.txt ]; then

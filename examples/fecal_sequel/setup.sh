@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 if [ ! -f COI_430_bats.fasta ]; then
     echo "Fetching reference FASTA file of COI sequence for 430 bats,"

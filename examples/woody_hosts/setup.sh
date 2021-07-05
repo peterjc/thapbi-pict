@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 if [ -f raw_data.tar.gz ]; then
     echo "Already have taxdmp_2019-12-01/"

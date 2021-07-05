@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 for example in woody_hosts recycled_water fungal_mock microalgal_mock great_lakes fecal_sequel soil_nematodes endangered_species; do
     echo "========================="

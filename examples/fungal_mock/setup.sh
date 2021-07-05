@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 mkdir -p expected/ intermediate/ summary/
 for LIBRARY in AL1 AL2; do

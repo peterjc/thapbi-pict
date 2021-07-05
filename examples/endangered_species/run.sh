@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 echo NOTE: Expected first time run time is about 1.5 hours,
 echo repeat runs about 1 minute just to regenerate reports.

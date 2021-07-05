@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 # Assumes setup_all.sh has been run to download the data etc,
 # and probably need to have used run_all.sh too.

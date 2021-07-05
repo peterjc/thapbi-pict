@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 echo "NOTE: Expected first time run time is about 40 minutes,"
 echo "repeat runs under 5 minutes (most of which is rebuilding"

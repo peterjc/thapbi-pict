@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eup pipeline
+set -euo pipefail
 
 mkdir -p expected/ summary/
 for LIBRARY in V4 V8V9 ; do
