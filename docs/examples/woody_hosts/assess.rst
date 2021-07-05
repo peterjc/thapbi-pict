@@ -193,7 +193,7 @@ came from running ``thapbi_pict prepare-reads`` on the the pair
 
 The "known" file uses the same column based layout as the intermediate TSV
 files, but while you can provide the expected species for each unique sequence
-in the sample, this can be simiplified to a single wildcard ``*`` line
+in the sample, this can be simplified to a single wildcard ``*`` line
 followed by all the NCBI taxids and species names using semi-colon separators.
 
 Looking at the 15 species mixture, we want to assess the classification in the
