@@ -23,7 +23,6 @@ from .db_orm import RefMarker
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
 from .utils import file_to_sample_name
-from .utils import find_paired_files
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
@@ -231,26 +230,12 @@ def main(
         sys.exit("If not using -i / --input argument, require -s / --showdb.")
 
     if inputs:
-        fasta_files = {}
-        tsv_files = {}
-        if method and method != "-":
-            if debug:
-                sys.stderr.write(f"DEBUG: Loading FASTA and {method} TSV files\n")
-            for fasta_file, tsv_file in find_paired_files(
-                inputs, ".fasta", f".{method}.tsv", ignore_prefixes, debug, strict=True
-            ):
-                sample = file_to_sample_name(fasta_file)
-                fasta_files[sample] = fasta_file
-                tsv_files[sample] = tsv_file
-        else:
-            if debug:
-                sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
-            for fasta_file in find_requested_files(
-                inputs, ".fasta", ignore_prefixes, debug=debug
-            ):
-                sample = file_to_sample_name(fasta_file)
-                fasta_files[sample] = fasta_file
-        for sample, fasta_file in fasta_files.items():
+        if debug:
+            sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
+        for fasta_file in find_requested_files(
+            inputs, ".fasta", ignore_prefixes, debug=debug
+        ):
+            sample = file_to_sample_name(fasta_file)
             samples.add(sample)
             with open(fasta_file) as handle:
                 md5_warn = False
@@ -278,21 +263,39 @@ def main(
                         f"WARNING: Sequence(s) in {fasta_file}"
                         " not using MD5_abundance naming\n"
                     )
-                # Record any assigned species
-                if sample in tsv_files:
-                    for name, _, sp in parse_species_tsv(
-                        tsv_files[sample], min_abundance
-                    ):
-                        if sp:
-                            md5, abundance = split_read_name_abundance(name)
-                            try:
-                                md5_species[md5].update(sp.split(";"))
-                            except KeyError:
-                                md5_species[md5] = set(sp.split(";"))
         sys.stderr.write(
             f"Loaded {len(md5_in_fasta)} unique sequences"
             f" from {len(samples)} FASTA files.\n"
         )
+
+        if method and method != "-":
+            if debug:
+                sys.stderr.write(f"DEBUG: Loading any {method} TSV files\n")
+            for tsv_file in find_requested_files(
+                inputs, f".{method}.tsv", ignore_prefixes, debug
+            ):
+                sample = file_to_sample_name(tsv_file)
+                if not sample.endswith(".all_reads") and sample not in samples:
+                    sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
+                    continue
+                # Record any assigned species
+                # Does min_abundance make sense for all_reads file?
+                for name, _, sp in parse_species_tsv(tsv_file, min_abundance):
+                    md5, abundance = split_read_name_abundance(name)
+                    if md5 not in md5_to_seq:
+                        sys.exit(
+                            f"ERROR: {tsv_file} contained {md5} but not in FASTA files"
+                        )
+                    if sp:
+                        try:
+                            md5_species[md5].update(sp.split(";"))
+                        except KeyError:
+                            md5_species[md5] = set(sp.split(";"))
+            if debug:
+                sys.stderr.write(
+                    f"Have species assignments for {len(md5_species)} unique seqs\n"
+                )
+
         # Drop low total abundance FASTA sequences now (before compute distances)
         if total_min_abundance:
             for md5, total in md5_abundance.items():
