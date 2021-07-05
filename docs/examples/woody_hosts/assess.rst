@@ -158,10 +158,12 @@ grep to show all lines with this species name:
 
 .. code:: console
 
-    $ grep "Phytophthora agathidicida" intermediate/DNA10MIX_*.onebp.tsv
-    intermediate/DNA10MIX_bycopynumber.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_245  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    intermediate/DNA10MIX_diluted25x.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_655    1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    intermediate/DNA10MIX_undiluted.onebp.tsv:29de890989becddc5e0b10ecbbc11b1a_624     1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    $ grep "Phytophthora agathidicida" summary/thapbi-pict.all_reads.onebp.tsv
+    29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/*.fasta
+    intermediate/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
+    intermediate/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
+    intermediate/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
 
 The same applies to *Phytophthora capsici* and *Phytophthora glovera*,
 although in this case both were in the mixture.
@@ -184,12 +186,15 @@ expected species in a particular format.
     $ thapbi_pict assess -h
     ...
 
-The inputs to this command are pairs of plain text tab separated variable
+The inputs to this command can be pairs of plain text tab separated variable
 (TSV) files named ``<sample_name>.known.tsv`` (the expected results) and
 ``<sample_name>.<method>.tsv`` which is the intermediate TSV file from
 running ``thapbi_pict classify`` on ``<sample_name>.fasta``, which in turn
 came from running ``thapbi_pict prepare-reads`` on the the pair
 ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz``.
+
+However, rather than individual ``<sample_name>.<method>.tsv`` files, you can
+provide the original ``<sample_name>.fasta`` and the pooled classifier output.
 
 The "known" file uses the same column based layout as the intermediate TSV
 files, but while you can provide the expected species for each unique sequence
@@ -209,7 +214,8 @@ five columns:
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv | cut -f 1-5
+    $ thapbi_pict classify -i intermediate/DNA15MIX.fasta -o .
+    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv | cut -f 1-5
     Assessed onebp vs known in 1 files (174 species)
     #Species                     TP  FP  FN  TN
     OVERALL                      8   1   7   158
@@ -235,7 +241,7 @@ More usually, you would output to a named file, and look at that:
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv intermediate/DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
+    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
     Assessed onebp vs known in 1 files (174 species)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
@@ -289,7 +295,8 @@ by giving the input directory names (it will work out the common filenames):
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/ intermediate/ -o thabpi-pict.assess.tsv
+    $ thapbi_pict assess -i expected/ intermediate/ \
+      summary/thapbi-pict.all_reads.onebp.tsv -o thabpi-pict.assess.tsv
     Assessed onebp vs known in 4 files (174 species)
     $ cut -f 1-5,9,11 thabpi-pict.assess.tsv
     <SEE TABLE BELOW>

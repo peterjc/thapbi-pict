@@ -8,11 +8,14 @@ Running thapbi-pict-classify
 
    If you don't have the FASTQ files, just the FASTA files, start from here.
 
-The second stage of the pipeline can be run separately as the ``thapbi_pict
-classify`` command:
+The second stage of the pipeline is to merge all the sample specific FASTA
+files into one non-redundant FASTA file, and then classify all the unique
+sequences in it. These steps can be run separately:
 
 .. code:: console
 
+    $ thapbi_pict fasta-nr -h
+    ...
     $ thapbi_pict classify -h
     ...
 
@@ -22,59 +25,64 @@ we will stick with the defaults and tell it to look for FASTA files in the
 
 .. code:: console
 
-    $ thapbi_pict classify -i intermediate/
+    $ thapbi_pict fasta-nr -i intermediate/ -o summary/thapbi-pict.all_reads.fasta
+    ...
+    $ thapbi_pict classify -i summary/thapbi-pict.all_reads.fasta
     ...
 
 Here we have not set the output folder with ``-o`` or ``--output``, which
-means the tool will default to writing the TSV output files next to each
-input FASTA file. There should now be 122 TSV files, one for each FASTA:
+means the classify step will default to writing the TSV output files next to
+the input FASTA file. There should now be a new FASTA and TSV file:
 
 .. code:: console
 
-    $ ls -1 intermediate/*.tsv | wc -l
-    122
+    $ ls -1 summary/thapbi-pict.all_reads.*
+    summary/thapbi-pict.all_reads.fasta
+    summary/thapbi-pict.all_reads.onebp.tsv
 
 Intermediate TSV files
 ----------------------
 
-For each FASTA file named ``<sample_name>.fasta`` a plain text tab separated
-variable (TSV) file is generated named ``<sample_name>.<method>.tsv`` where
-the default method is ``onebp`` (this looks for perfect matches or up to one
-base pair different). The first line is a header comment line (starting with
-``#``) labelling the columns, which are:
+For each input FASTA file ``<name>.fasta`` a plain text tab separated variable
+(TSV) file is generated named ``<name>.<method>.tsv`` where the default method
+is ``onebp`` (which looks for perfect matches or up to one base pair
+different). The first line is a header comment line (starting with ``#``)
+labelling the columns, which are:
 
 * Unique sequence name in ``<checksum>_<abundance>`` format.
 * NCBI taxid of any predictions (semi-colon separated, same order as species)
 * Genus-species of any predictions (semi-colon separated, alphabetical)
-* Text note field (arbitrary debug text from the tool)
+* Text note field in verbose mode (arbitrary debug text from the tool)
 
 These files are not really intended for human use, but are readable:
 
 .. code:: console
 
-    $ cat intermediate/Site_1_sample_1.onebp.tsv
+    $ head summary/thapbi-pict.all_reads.onebp.tsv
     <SEE TABLE BELOW>
 
 Viewing it like this is not ideal, although there are command line tools which
 help. You could open the file in R, Excel, etc:
 
-===================================== ============= ===============================================
-#sequence-name                        taxid         genus-species
-===================================== ============= ===============================================
-2e4f0ed53888ed39a2aee6d6d8e02206_2269 221518        Phytophthora pseudosyringae
-c1a720b2005f101a9858107545726123_715  78237         Phytophthora gonapodyides
-96e0e2f0475bd1617a4b05e778bb04c9_330  78237         Phytophthora gonapodyides
-fb30156d7f66c8abf91f9da230f4d19e_212  164328        Phytophthora ramorum
-dcd6316eb77be50ee344fbeca6e005c7_194  164328        Phytophthora ramorum
-972db44c016a166de86a2bacab3f4226_182  53983;2056922 Phytophthora cambivora;Phytophthora x cambivora
-d9bc3879fdab3b4184c04bfbb5cf6afb_165  631361        Phytophthora austrocedri
-ed15fefb7a3655147115fc28a8d6d671_113  78237         Phytophthora gonapodyides
-===================================== ============= ===============================================
+======================================= ============= ===============================================
+#sequence-name                          taxid         genus-species
+======================================= ============= ===============================================
+2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518        Phytophthora pseudosyringae
+d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361        Phytophthora austrocedri
+32159de6cbb6df37d084e31c37c30e7b_28976  67594         Phytophthora syringae
+ed15fefb7a3655147115fc28a8d6d671_28786  78237         Phytophthora gonapodyides
+972db44c016a166de86a2bacab3f4226_28515  53983;2056922 Phytophthora cambivora;Phytophthora x cambivora
+c1a720b2005f101a9858107545726123_20400  78237         Phytophthora gonapodyides
+96e0e2f0475bd1617a4b05e778bb04c9_17392  78237         Phytophthora gonapodyides
+f27df8e8755049e831b1ea4521ad6eb3_16369  2496075;29920 Phytophthora aleatoria;Phytophthora cactorum
+21d6308d89d74b8ed493d73a2cb4adb5_16169  53983         Phytophthora cambivora
+======================================= ============= ===============================================
 
-This says most of the unique sequences here have been assigned a single unique
-*Phytophthora* species, except for ``972db44c016a166de86a2bacab3f4226`` (found
-in 182 reads for this sample) which has matched *Phytophthora cambivora* (NCBI
-taxid 53983) and close relative *Phytophthora x cambivora* (NCBI taxid
+The first entry says the most abundance sequence with MD5 checksum
+``2e4f0ed53888ed39a2aee6d6d8e02206`` was seen in a total of 163094 reads, and
+was classified as *Phytophthora pseudosyringae* (NCBI taxid 221518). Another
+common sequence has been matched to two closely related species *Phytophthora
+cambivora* (NCBI taxid 53983) and *Phytophthora x cambivora* (NCBI taxid
 2056922).
 
 If you are familiar with the command line search tool ``grep`` and the regular
@@ -84,10 +92,12 @@ had matches to *Phytophthora rubi* using ``grep`` as follows:
 
 .. code:: console
 
-    $ grep "Phytophthora rubi" intermediate/*.tsv
-    intermediate/DNA10MIX_bycopynumber.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_279  129364  Phytophthora rubi
-    intermediate/DNA10MIX_diluted25x.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_349    129364  Phytophthora rubi
-    intermediate/DNA10MIX_undiluted.onebp.tsv:d8613e80b8803b13f7ea5d097f8fe46f_271     129364  Phytophthora rubi
+    $ grep "Phytophthora rubi" summary/thapbi-pict.all_reads.onebp.tsv
+    d8613e80b8803b13f7ea5d097f8fe46f_899  129364  Phytophthora rubi
+    $ grep d8613e80b8803b13f7ea5d097f8fe46f intermediate/*.fasta
+    intermediate/DNA10MIX_bycopynumber.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_279
+    intermediate/DNA10MIX_diluted25x.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_349
+    intermediate/DNA10MIX_undiluted.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_271
 
 The summary reports would also answer this particular question, but this kind
 of search can be useful for exploring specific questions.
