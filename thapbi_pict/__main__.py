@@ -422,7 +422,7 @@ def pipeline(args=None):
     )
     if known_files:
         return_code = assess(
-            inputs=known_files + classified_files,
+            inputs=known_files + fasta_files + classified_files,
             known="known",  # =args.known,
             db_url=db,
             method=args.method,
@@ -1165,10 +1165,11 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "assess",
         description="Assess accuracy of marker sequence classification.",
-        epilog="Takes as input predictions named XXX.method.tsv "
-        "and matching expected classifications in XXX.known.tsv "
-        "(which can be in different directories) to produce a "
-        "multi-species confusion matrix (output on request) and "
+        epilog="Takes as input samples files XXX.fasta and predictions per "
+        "sample named XXX.method.tsv (or a single XXX.all_reads.method.tsv) "
+        "and matching expected classifications per sample in XXX.known.tsv "
+        "(which can be in different directories, or again a single TSV) to "
+        "produce a multi-species confusion matrix (output on request) and "
         "classifier performance metrics (to stdout by default). "
         "You can deliberately compare two prediction methods to "
         "each other using this, but a known set of positive controls "
@@ -1182,9 +1183,9 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="One or more prediction file or folder names. Expects to "
-        "find matching files *.method.tsv to be assessed against "
-        "*.known.tsv, where these filenames can be set via "
+        help="One or more sample FASTA and TSV prediction file or folder "
+        "names. Expects to find matching files *.method.tsv to be assessed "
+        "against *.known.tsv, where these filename suffixes can be set via "
         "-m / --method and -k / --known arguments. ",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)

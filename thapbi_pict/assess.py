@@ -10,14 +10,52 @@ This implements the ``thapbi_pict assess ...`` command.
 import sys
 from collections import Counter
 
+from Bio.SeqIO.FastaIO import SimpleFastaParser
+
 from .db_orm import connect_to_db
 from .db_orm import SequenceSource
 from .db_orm import Taxonomy
-from .utils import find_paired_files
+from .utils import file_to_sample_name
+from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import md5seq
 from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
+
+
+def load_pooled_tsv(classifier_file, min_abundance):
+    """Return dict mapping MD5 to semi-colon separated species string."""
+    md5_species = {}
+    for name, _taxid, sp in parse_species_tsv(
+        classifier_file, min_abundance, req_species_level=True, allow_wildcard=False
+    ):
+        if "_" not in name:
+            sys.exit(f"ERROR: Bad entry {name} in {classifier_file}")
+        # wasteful as parse_species_tsv could do it?
+        md5 = split_read_name_abundance(name)[0]
+        if md5 in md5_species:
+            sys.exit(f"ERROR: Duplicated {md5} in {classifier_file}")
+        md5_species[md5] = sp
+    return md5_species
+
+
+def sp_for_sample(fasta_file, min_abundance, pooled_sp):
+    """Return semi-colon separated species string from FASTA file via dict."""
+    answer = set()
+    with open(fasta_file) as handle:
+        for title, seq in SimpleFastaParser(handle):
+            if "_" not in title:
+                sys.exit(f"ERROR: Bad entry {title} in {fasta_file}")
+            md5, a = split_read_name_abundance(title.split(None, 1)[0])
+            assert md5 == md5seq(seq)
+            if a < min_abundance:
+                continue
+            sp = pooled_sp[md5]
+            if sp:
+                answer.update(sp.split(";"))
+    assert "" not in answer
+    return ";".join(sorted(answer))
 
 
 def sp_in_tsv(classifier_file, min_abundance):
@@ -320,12 +358,67 @@ def main(
     """Implement the (sample/species level) ``thapbi_pict assess`` command."""
     assert isinstance(inputs, list), inputs
 
-    input_list = find_paired_files(
-        inputs, f".{method}.tsv", f".{known}.tsv", ignore_prefixes, debug, strict=False
-    )
+    # TODO - Rationalise this, too many ways to give the inputs!
 
-    if not input_list:
-        sys.exit(f"ERROR: Found no pairs *.{method}.tsv with *.{known}.tsv")
+    fasta_files = {}
+    for fasta_file in find_requested_files(
+        inputs, ".fasta", ignore_prefixes, debug=debug
+    ):
+        sample = file_to_sample_name(fasta_file)
+        if sample.endswith(".all_reads"):
+            sys.exit(f"ERROR: Need per sample FASTA files, not {fasta_file}")
+        elif sample in fasta_files:
+            sys.exit(f"ERROR: More than one FASTA file for {sample}")
+        fasta_files[sample] = fasta_file
+
+    method_tsv = {}
+    pooled_method = None
+    for tsv_file in find_requested_files(
+        inputs, f".{method}.tsv", ignore_prefixes, debug
+    ):
+        sample = file_to_sample_name(tsv_file)
+        if sample.endswith(".all_reads"):
+            if None in method_tsv:
+                sys.exit(f"ERROR: More than one pooled TSV for {method}")
+            pooled_method = load_pooled_tsv(tsv_file, min_abundance)
+        elif sample in fasta_files or not fasta_files:
+            method_tsv[sample] = tsv_file
+        elif debug:
+            sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
+    if len(fasta_files) > 1 and len(method_tsv) == 1 and None not in method_tsv:
+        sys.exit(f"ERROR: Missing some {method} TSV files")
+
+    known_tsv = {}
+    pooled_known = None
+    for tsv_file in find_requested_files(
+        inputs, f".{known}.tsv", ignore_prefixes, debug
+    ):
+        sample = file_to_sample_name(tsv_file)
+        if sample.endswith(".all_reads"):
+            if None in known:
+                sys.exit(f"ERROR: More than one pooled TSV for {method}")
+            pooled_known = load_pooled_tsv(tsv_file, min_abundance)
+        elif sample in fasta_files or not fasta_files:
+            known_tsv[sample] = tsv_file
+        elif debug:
+            sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
+    if len(fasta_files) > 1 and len(known_tsv) == 1 and None not in known_tsv:
+        sys.exit("ERROR: Missing some {known} TSV files")
+
+    if pooled_known and known_tsv:
+        sys.exit(f"ERROR: Use either pooled {known} TSV, or per sample TSV")
+    if pooled_method and method_tsv:
+        sys.exit(f"ERROR: Use either pooled {known} TSV, or per sample TSV")
+    if pooled_known and pooled_method:
+        samples = sorted(fasta_files)  # take the keys!
+    elif pooled_known:
+        samples = sorted(method_tsv)
+    else:
+        samples = sorted(known_tsv)
+    if not samples:
+        sys.exit("ERROR: Could not determine a sample list")
+    if debug:
+        sys.stderr.write(f"Assessing {len(samples)} samples\n")
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
@@ -345,14 +438,22 @@ def main(
     file_count = 0
     global_tally = {}
 
-    for predicted_file, expected_file in input_list:
-        if debug:
-            sys.stderr.write(f"Assessing {predicted_file} vs {expected_file}\n")
+    for sample in samples:
         file_count += 1
-        expt = sp_in_tsv(expected_file, min_abundance)
-        pred = sp_in_tsv(predicted_file, min_abundance)
+        if sample in known_tsv:
+            expt = sp_in_tsv(known_tsv[sample], min_abundance)
+        elif pooled_known:
+            expt = sp_for_sample(fasta_files[sample], min_abundance, pooled_known)
+        else:
+            sys.exit(f"ERROR: Missing {known} results for {sample}")
+        if sample in method_tsv:
+            pred = sp_in_tsv(method_tsv[sample], min_abundance)
+        elif pooled_method:
+            pred = sp_for_sample(fasta_files[sample], min_abundance, pooled_method)
+        else:
+            sys.exit(f"ERROR: Missing {method} results for {sample}")
         global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
-    assert len(input_list) == sum(global_tally.values())
+    assert len(samples) == sum(global_tally.values())
 
     if debug:
         sys.stderr.write(f"DEBUG: Assessing {sum(global_tally.values())} predictions\n")
@@ -380,7 +481,7 @@ def main(
         f" ({len(sp_list)} species)\n"
     )
 
-    assert file_count == len(input_list)
+    assert file_count == len(samples)
 
     if not file_count:
         sys.exit("ERROR: Could not find files to assess\n")
