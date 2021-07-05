@@ -59,23 +59,24 @@ function pool {
     done
 
     echo "Computing species list for combined header..."
-    # Quick and dirty pooling by concatenating the intermediate
-    # classifier result files per sample is enough for sample-summary,
+    # Quick and dirty pooling by concatenating the intermediate per-marker TSV
     echo "Pooling intermediate onebp classifications..."
-    for S in `cut -f 4 PRJEB18620.tsv | grep -v "sample_alias"`; do
-        echo -e "#sequence-name\ttaxid\tgenus-species\tnote" > intermediate_pool/$S.onebp.tsv
-        cat intermediate/*/$S.onebp.tsv | grep -v "^#" >> intermediate_pool/$S.onebp.tsv
-    done;
+    rm -rf summary/pooled.all_reads.onebp.tsv
+    echo -e "#sequence-name\ttaxid\tgenus-species\tnote" > pooled.tmp
+    cat summary/*.all_reads.onebp.tsv | grep -v "^#" >> pooled.tmp
+    mv pooled.tmp summary/pooled.all_reads.onebp.tsv
 
     echo "Generating pooled reports for onebp classifier."
     # Now the reports:
-    thapbi_pict summary -m onebp -i intermediate_pool/ \
+    thapbi_pict summary -m onebp \
+        -i intermediate_pool/ summary/pooled.all_reads.onebp.tsv \
         -o summary/ -r pooled \
         -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
     # assessment... as of v0.8.1 need a DB giving possible species
-    thapbi_pict assess -i expected/ intermediate_pool/ -m onebp \
-         -d references/pooled.sqlite -o summary/pooled.assess.onebp.tsv
+    thapbi_pict assess -m onebp \
+        -i expected/ intermediate_pool/ summary/pooled.all_reads.onebp.tsv \
+        -d references/pooled.sqlite -o summary/pooled.assess.onebp.tsv
 
     echo "Pooled results done"
 }
