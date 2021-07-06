@@ -19,7 +19,6 @@ been mock communities with known species composition.
    recycled_water/index
    drained_ponds/index
    fungal_mock/index
-   microalgal_mock/index
    great_lakes/index
    fecal_sequel/index
    soil_nematodes/index
