@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo NOTE: Expected first time run time is about 1 hour,
-echo repeat runs about 1 minute just to regenerate reports.
+echo "NOTE: Expected first time run time is under an hour,"
+echo "repeat runs about 1 minute (mostly on the edit-graph)."
 echo
 echo =========================
 echo Recycled water - Defaults

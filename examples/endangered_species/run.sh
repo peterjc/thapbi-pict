@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo NOTE: Expected first time run time is about 1.5 hours,
-echo repeat runs about 1 minute just to regenerate reports.
+echo "NOTE: Expected first time run time is about 1.5 hours,"
+echo "repeat runs under a minute (rebuilds the pooled DB)."
 echo
 
 mkdir -p tmp_merged/ intermediate/ intermediate_pool/ summary/

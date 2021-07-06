@@ -2,8 +2,7 @@
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is about 40 minutes,"
-echo "repeat runs under 5 minutes (most of which is rebuilding"
-echo "the edit-graphs)."
+echo "repeat runs about 5 minutes (mostly on the edit-graphs)."
 
 mkdir -p tmp_merged/ intermediate/ summary/
 
@@ -47,7 +46,7 @@ RIGHT=ARTCCAACATCGAGGT
 
 analyse # call function above
 
-#Edit graph of just the mock community samples:
+# Edit graph of just the mock community samples:
 thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
             -i intermediate/MOL16S/SRR5534972.* \
                intermediate/MOL16S/SRR5534973.* \

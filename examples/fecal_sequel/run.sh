@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo NOTE: Expected first time run time is about 5 minues,
-echo repeat runs take seconds just to regenerate reports.
+echo "NOTE: Expected first time run time is about 5 minues,"
+echo "repeat runs under a minute just to regenerate reports."
 echo
 echo ==================
 echo Fecal sequel - COI

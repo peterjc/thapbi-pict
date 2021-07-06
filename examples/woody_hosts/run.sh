@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo NOTE: Expected first time run time is under 5 minues,
-echo repeat runs about 1 minute just to regenerate reports.
+echo "NOTE: Expected first time run time is about a minute,"
+echo "repeat runs a few seconds just to regenerate reports."
 echo
 echo ==================
 echo Woody hosts - ITS1

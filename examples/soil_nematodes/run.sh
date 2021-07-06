@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo NOTE: Expected first time run time is about 20 minutes,
-echo repeat runs about 1 minute just to regenerate reports.
+echo "NOTE: Expected first time run time is about 20 minutes,"
+echo "repeat runs take seconds just to regenerate reports."
 echo
 
 mkdir -p tmp_merged/ intermediate/ summary/
