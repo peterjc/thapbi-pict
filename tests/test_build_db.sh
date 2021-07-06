@@ -10,6 +10,7 @@ IFS=$'\n\t'
 set -euo pipefail
 
 export TMP=${TMP:-/tmp/thapbi_pict}/build_db
+rm -rf $TMP
 mkdir -p $TMP
 
 export `grep ^TAX= database/build_ITS1_DB.sh`

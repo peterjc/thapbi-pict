@@ -10,7 +10,8 @@ IFS=$'\n\t'
 set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
-export TMP=${TMP:-/tmp/thapbi_pict}/classify
+export TMP=${TMP:-/tmp/thapbi_pict}/pooling
+rm -rf $TMP
 mkdir -p $TMP
 
 echo "==================="

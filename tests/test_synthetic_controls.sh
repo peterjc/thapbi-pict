@@ -10,6 +10,7 @@ IFS=$'\n\t'
 set -euo pipefail
 
 export TMP=${TMP:-/tmp/thapbi_pict}/synthetic_controls
+rm -rf $TMP
 mkdir -p $TMP
 
 echo "=============================================="

@@ -13,6 +13,7 @@ set -o pipefail
 # Note all tests here (initially) using default database:
 
 export TMP=${TMP:-/tmp/thapbi_pict}/conflicts
+rm -rf $TMP
 mkdir -p $TMP
 
 echo "=================="
