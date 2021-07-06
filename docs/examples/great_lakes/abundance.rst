@@ -154,19 +154,10 @@ matched to *Sphaerium simile*:
 
 .. code:: console
 
-    $ cut -f 1,3 intermediate/MOL16S/SRR5534986.onebp.tsv
-    <SEE TABLE BELOW>
+    $ grep 20c0669e4c6f8436c9d42736df727c83 summary/MOL16S.reads.onebp.tsv | cut -f 1,2
+    20c0669e4c6f8436c9d42736df727c83  Sphaerium simile
 
-Or look at this file or the full read report in Excel,
-
-==================================== ================
-#sequence-name                       genus-species
-==================================== ================
-20c0669e4c6f8436c9d42736df727c83_478 Sphaerium simile
-a36d3f7291c173c4243f22c2afbd111e_49  Sphaerium simile
-e1d838b4f39bffe88d8c0e79b52700f1_13  Sphaerium simile
-778e3dace4b993135e11d450e6c559ff_11  Sphaerium simile
-==================================== ================
+Or look at this TSV or ``summary/MOL16S.reads.onebp.xlsx`` in Excel.
 
 This is consistent with the original author's analysis - although our pipeline
 has produced higher read counts:
@@ -200,18 +191,19 @@ read report, or at the command line:
     ATCGAACTTAATAGTTTTTAAGAGAAATAGCTTAGAAAGAAGTTTTACTGGGGCAGTAAGAAGAAAAAAATAATTCTTCC
     TTGAAAAAAAGATCCCTTATTAAGGACAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGAACTAA
     TCGAAGAAACGGTTTGCG
-    $ cut -f 1,3 intermediate/MOL16S/SRR5534980.onebp.tsv
+    $ grep -E "(MD5|20c0669e4c6f8436c9d42736df727c83|ecdaa082b70f5e268f76128693531760|98dc259e48de3e258cb93a34c38a9484)" \
+      summary/MOL16S.reads.onebp.tsv | cut -f 1,2
     <SEE TABLE BELOW>
 
 Giving:
 
-=================================== =========================================
-#sequence-name                      genus-species
-=================================== =========================================
-20c0669e4c6f8436c9d42736df727c83_46 Sphaerium simile
-ecdaa082b70f5e268f76128693531760_45 Dreissena bugensis;Dreissena rostriformis
-98dc259e48de3e258cb93a34c38a9484_17 Dreissena polymorpha
-=================================== =========================================
+================================ =========================================
+#Marker-MD5                      onebp-predictions
+================================ =========================================
+ecdaa082b70f5e268f76128693531760 Dreissena bugensis;Dreissena rostriformis
+98dc259e48de3e258cb93a34c38a9484 Dreissena polymorpha
+20c0669e4c6f8436c9d42736df727c83 Sphaerium simile
+================================ =========================================
 
 The unwanted mock community sample content is split between *Sphaerium* and
 *Dreissena*, and suggest using a minimum threshold of perhaps 50 reads?
