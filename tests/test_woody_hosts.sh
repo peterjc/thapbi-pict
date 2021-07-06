@@ -55,7 +55,7 @@ for M in onebp identity blast; do
     # Writing to stdout to set a single filename.
     # Discarding the comment column, and the header,
     # leaving the most stable core part of the output
-    thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -o - -m $M | grep -v "^#" | cut -f 1-3 > $TMP/woody_hosts.all_reads.$M.tsv
+    thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -m $M
     echo diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
 done
