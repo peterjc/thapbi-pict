@@ -654,6 +654,18 @@ def method_blast(
     return tax_counts
 
 
+def method_cleanup():
+    """Free any memory and/or delete any files on disk.
+
+    Currently no need to generalise this for the different classifiers, but
+    could if for example we also needed to delete any files on disk.
+    """
+    global fuzzy_matches, db_seqs, max_dist_genus
+    fuzzy_matches = None  # global variable for onebp classifier
+    db_seqs = None  # global variable for 1s3g classifier
+    max_dist_genus = None  # global variable for 1s?g distance classifier
+
+
 method_tool_check = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
@@ -890,6 +902,8 @@ def main(
             pred_handle.close()
             # Move our temp file into position...
             shutil.move(tmp_pred, output_name)
+
+    method_cleanup()
 
     if skipped_samples:
         sys.stderr.write(
