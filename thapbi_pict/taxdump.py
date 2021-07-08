@@ -23,7 +23,7 @@ def load_nodes(nodes_dmp):
     and the rank of each node.
     """
     tree = {}
-    ranks = {}  # child points at parent
+    ranks = {}  # keys are rank names, values are lists of ids
     descendants = {}  # parent points at children and grandchildren etc
     with open(nodes_dmp) as handle:
         for line in handle:
@@ -32,7 +32,10 @@ def load_nodes(nodes_dmp):
             parent = int(parts[1].strip())
             rank = parts[2].strip()
             tree[taxid] = parent
-            ranks[taxid] = rank
+            try:
+                ranks[rank].append(taxid)
+            except KeyError:
+                ranks[rank] = [taxid]
             try:
                 descendants[parent].add(taxid)
             except KeyError:
@@ -76,8 +79,8 @@ def check_ancestor(tree, ancestors, taxid):
 
 def genera_under_ancestors(tree, ranks, ancestors):
     """Return genus taxid found under ancestors."""
-    for taxid, rank in ranks.items():
-        if rank == "genus" and check_ancestor(tree, ancestors, taxid):
+    for taxid in ranks["genus"]:
+        if check_ancestor(tree, ancestors, taxid):
             yield taxid
 
 
@@ -92,9 +95,11 @@ def get_children(children, taxid):
 
 def synonyms_and_variants(children, ranks, names, synonyms, species_taxid):
     """Return all scientific names and synonyms of any variants etc under species."""
-    assert ranks[species_taxid] in ("species", "species group", "no rank"), ranks[
-        species_taxid
-    ]
+    assert (
+        species_taxid in ranks["species"]
+        or species_taxid in ranks["species group"]
+        or species_taxid in ranks["no rank"]
+    ), species_taxid
     variants = set(synonyms.get(species_taxid, []))  # include own synonyms
     for taxid in get_children(children, species_taxid):
         variants.add(names[taxid])
@@ -112,7 +117,7 @@ def top_level_species(children, ranks, names, genus_list):
     AND to ignore all the species rank entries under it.
     """
     for genus_taxid in genus_list:
-        assert ranks[genus_taxid] in ("genus", "subgenus")
+        assert genus_taxid in ranks["genus"] or genus_taxid in ranks["subgenus"]
         if genus_taxid not in children:
             sys.stderr.write(
                 f"WARNING: Genus {names[genus_taxid]} ({genus_taxid})"
@@ -121,9 +126,9 @@ def top_level_species(children, ranks, names, genus_list):
             continue
         for taxid in children[genus_taxid]:
             name = names[taxid]
-            if ranks[taxid] == "species":
+            if taxid in ranks["species"]:
                 yield taxid, names[genus_taxid], name
-            elif ranks[taxid] == "subgenus":
+            elif taxid in ranks["subgenus"]:
                 if taxid in children:
                     sys.stderr.write(
                         f"WARNING: Collapsing sub-genus {name} into parent\n"
@@ -143,8 +148,7 @@ def top_level_species(children, ranks, names, genus_list):
                     continue
                 # e.g. Hyaloperonospora parasitica species group
                 sys.stderr.write(
-                    f"WARNING: Treating {ranks[taxid]} '{name}' (txid{taxid})"
-                    " as a species.\n"
+                    f"WARNING: Treating '{name}' (txid{taxid}) as a species.\n"
                 )
                 yield taxid, names[genus_taxid], name
 
@@ -160,7 +164,7 @@ def not_top_species(top_species, children, ranks, names, genus_list):
         if genus_taxid not in children:
             continue
         for taxid in children[genus_taxid]:
-            if ranks[taxid] == "species":
+            if taxid in ranks["species"]:
                 if taxid not in top_species:
                     yield genus_taxid, names[taxid]
             if taxid in children:
@@ -189,6 +193,10 @@ def main(tax, db_url, ancestors, debug=True):
     del tree
     if not genus_list:
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
+
+    # Convert lists to sets (AFTER we dropped the tree to free RAM)
+    # as willing to use more RAM now for lookup speed
+    ranks = {rank: set(_) for rank, _ in ranks.items()}
 
     names, synonyms = load_names(os.path.join(tax, "names.dmp"))
     if debug:
