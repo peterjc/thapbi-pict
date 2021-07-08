@@ -61,6 +61,52 @@ def load_names(names_dmp):
     return names, synonym
 
 
+def filter_tree(tree, ranks, ancestors):
+    """Return a filtered version of the tree & ranks dict.
+
+    NOTE: Does NOT preserve the original dict order.
+    """
+    count = len(tree)
+    wanted = {a: a for a in ancestors}  # new tree
+    reject = set()
+    while tree:
+        taxid, parent = tree.popitem()
+        if taxid in wanted:
+            # sys.stderr.write(f"Already took {taxid}\n")
+            continue
+        if taxid in reject:
+            # sys.stderr.write(f"Already rejected {taxid}\n")
+            continue
+        if parent in wanted:
+            # sys.stderr.write(f"Taking {taxid} via {parent}\n")
+            wanted[taxid] = parent
+            continue
+        if taxid == parent or parent in reject:
+            # sys.stderr.write(f"Reject {taxid} via {parent}\n")
+            reject.add(taxid)
+            continue
+        t = parent
+        batch = [parent]
+        while True:
+            t = tree[t]
+            if t in wanted:
+                # sys.stderr.write(f"Taking {taxid} via {batch}\n")
+                wanted[taxid] = parent  # Not in batch, already popped
+                wanted.update((_, tree[_]) for _ in batch)
+                break
+            batch.append(t)
+            if t in reject or t == tree[t]:
+                # sys.stderr.write(f"Rejecting {taxid} via {batch}\n")
+                reject.add(taxid)
+                reject.update(batch)
+                break
+    assert count == len(wanted) + len(reject)
+
+    return wanted, {
+        rank: sorted(set(values).intersection(wanted)) for rank, values in ranks.items()
+    }
+
+
 def check_ancestor(tree, ancestors, taxid):
     """Return True taxid is descended from any of the ancestors.
 
@@ -184,8 +230,13 @@ def main(tax, db_url, ancestors, debug=True):
     tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
+    tree, ranks = filter_tree(tree, ranks, ancestors)
+    if debug:
+        sys.stderr.write(f"Reduced to {len(tree)} nodes under ancestors\n")
     genus_list = sorted(genera_under_ancestors(tree, ranks, ancestors))
-    # Build immediate children list...
+
+    # Build immediate children list... memory heavy but compared to the peak
+    # when loading nodes.dmp should not be too bad.
     children = {}
     for taxid, parent in tree.items():
         if taxid == parent:
