@@ -109,24 +109,6 @@ def filter_tree(tree, ranks, ancestors):
     }
 
 
-def check_ancestor(tree, ancestors, taxid):
-    """Return True taxid is descended from any of the ancestors.
-
-    Argument ancestors is a list of integer taxids.
-    """
-    t = taxid
-    while t not in ancestors and t != tree[t]:
-        t = tree[t]
-    return t in ancestors
-
-
-def genera_under_ancestors(tree, ranks, ancestors):
-    """Return genus taxid found under ancestors."""
-    for taxid in ranks["genus"]:
-        if check_ancestor(tree, ancestors, taxid):
-            yield taxid
-
-
 def get_children(children, taxid):
     """Return all taxid descended from given entry."""
     answer = set()
@@ -235,7 +217,7 @@ def main(tax, db_url, ancestors, debug=True):
     tree, ranks = filter_tree(tree, ranks, ancestors)
     if debug:
         sys.stderr.write(f"Reduced to {len(tree)} nodes under ancestors\n")
-    genus_list = sorted(genera_under_ancestors(tree, ranks, ancestors))
+    genus_list = sorted(ranks["genus"])
     if not genus_list:
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
 
