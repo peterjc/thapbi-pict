@@ -185,14 +185,15 @@ def main(tax, db_url, ancestors, debug=True):
     tree, children, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
+    genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
+    del tree
+    if not genus_list:
+        sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
 
     names, synonyms = load_names(os.path.join(tax, "names.dmp"))
     if debug:
         sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
-    genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
-    if not genus_list:
-        sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
     if debug:
         sys.stderr.write(
             f"Identified {len(genus_list)} genera under specified ancestor node:"
@@ -307,6 +308,8 @@ def main(tax, db_url, ancestors, debug=True):
                 pass
             else:
                 s_old += 1
+
+    del children, genus_species, names, ranks, synonyms
 
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
     for genus_taxid, name in minor_species:
