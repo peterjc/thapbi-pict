@@ -19,12 +19,11 @@ from .db_orm import Taxonomy
 def load_nodes(nodes_dmp):
     """Load the NCBI taxdump nodes.dmp file.
 
-    Returns three dicts, the parent/child relationships (two directions),
-    and the rank of each node.
+    Returns two dicts, the parent/child relationships, and the ranks (values
+    are lists of taxids).
     """
     tree = {}
     ranks = {}  # keys are rank names, values are lists of ids
-    descendants = {}  # parent points at children and grandchildren etc
     with open(nodes_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -36,11 +35,7 @@ def load_nodes(nodes_dmp):
                 ranks[rank].append(taxid)
             except KeyError:
                 ranks[rank] = [taxid]
-            try:
-                descendants[parent].add(taxid)
-            except KeyError:
-                descendants[parent] = {taxid}
-    return tree, descendants, ranks
+    return tree, ranks
 
 
 def load_names(names_dmp):
@@ -186,10 +181,19 @@ def main(tax, db_url, ancestors, debug=True):
     except ValueError:
         sys.exit(f"ERROR: Invalid ancestors argument: {ancestors!r}\n")
 
-    tree, children, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
+    tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
     genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
+    # Build immediate children list...
+    children = {}
+    for taxid, parent in tree.items():
+        if taxid == parent:
+            continue
+        try:
+            children[parent].add(taxid)
+        except KeyError:
+            children[parent] = {taxid}
     del tree
     if not genus_list:
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
