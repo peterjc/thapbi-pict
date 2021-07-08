@@ -243,18 +243,19 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
-    # Build immediate children list... memory heavy but compared to the peak
-    # when loading nodes.dmp before ancestor filtering should not be too bad.
+    # Turn parent/child tree into a dict of immediate children (will need more RAM)
     children = {}
-    for taxid, parent in tree.items():
+    while tree:
+        taxid, parent = tree.popitem()
         if taxid == parent:
             continue
         try:
             children[parent].add(taxid)
         except KeyError:
             children[parent] = {taxid}
-
+    assert not tree
     del tree
+
     # Convert lists to sets (AFTER we dropped the tree to free RAM)
     # as willing to use more RAM now for lookup speed
     ranks = {rank: set(_) for rank, _ in ranks.items()}
