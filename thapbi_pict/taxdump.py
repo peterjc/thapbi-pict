@@ -184,7 +184,7 @@ def main(tax, db_url, ancestors, debug=True):
     tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
-    genus_list = list(genera_under_ancestors(tree, ranks, ancestors))
+    genus_list = sorted(genera_under_ancestors(tree, ranks, ancestors))
     # Build immediate children list...
     children = {}
     for taxid, parent in tree.items():
@@ -212,11 +212,11 @@ def main(tax, db_url, ancestors, debug=True):
             f" {', '.join(sorted(names[_] for _ in genus_list))}\n"
         )
 
-    genus_species = list(top_level_species(children, ranks, names, genus_list))
+    genus_species = sorted(top_level_species(children, ranks, names, genus_list))
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
-    minor_species = list(
+    minor_species = sorted(
         not_top_species(
             {_[0] for _ in genus_species}, children, ranks, names, genus_list
         )
