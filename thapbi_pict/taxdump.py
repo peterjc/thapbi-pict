@@ -38,7 +38,7 @@ def load_nodes(nodes_dmp):
     return tree, ranks
 
 
-def load_names(names_dmp):
+def load_names(names_dmp, wanted=None):
     """Load scientific names of species from NCBI taxdump names.dmp file."""
     names = {}
     synonym = {}
@@ -46,6 +46,8 @@ def load_names(names_dmp):
         for line in handle:
             parts = line.split("\t|\t", 3)
             taxid = int(parts[0].strip())
+            if wanted and taxid not in wanted:
+                continue
             name = parts[1].strip()
             if line.endswith("\t|\tscientific name\t|\n"):
                 names[taxid] = name
@@ -234,9 +236,15 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(f"Reduced to {len(tree)} nodes under ancestors\n")
     genus_list = sorted(genera_under_ancestors(tree, ranks, ancestors))
+    if not genus_list:
+        sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
+
+    names, synonyms = load_names(os.path.join(tax, "names.dmp"), tree)
+    if debug:
+        sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
     # Build immediate children list... memory heavy but compared to the peak
-    # when loading nodes.dmp should not be too bad.
+    # when loading nodes.dmp before ancestor filtering should not be too bad.
     children = {}
     for taxid, parent in tree.items():
         if taxid == parent:
@@ -245,17 +253,11 @@ def main(tax, db_url, ancestors, debug=True):
             children[parent].add(taxid)
         except KeyError:
             children[parent] = {taxid}
-    del tree
-    if not genus_list:
-        sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
 
+    del tree
     # Convert lists to sets (AFTER we dropped the tree to free RAM)
     # as willing to use more RAM now for lookup speed
     ranks = {rank: set(_) for rank, _ in ranks.items()}
-
-    names, synonyms = load_names(os.path.join(tax, "names.dmp"))
-    if debug:
-        sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
     if debug:
         sys.stderr.write(
