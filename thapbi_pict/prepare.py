@@ -201,23 +201,8 @@ def run_cutadapt(
 
     Returns FASTA count before and after cutadapt.
     """
-    if not left_primer and not right_primer:
-        # special case!
-
-        if long_in.endswith(".fasta.gz"):
-            # Should the main intermediates be gzipped?
-            run(f"cat {long_in} | gunzip > {trimmed_out}", debug=debug)
-            _, total, _ = abundance_values_in_fasta(trimmed_out)
-            return total, total
-        elif long_in.endswith(".fastq"):
-            from Bio.SeqIO import convert
-
-            # don't need to parse the names as FASTQ files not using
-            # MD5_abundance yet
-            total = convert(long_in, "fastq", trimmed_out, "fasta")
-            return total, total
-        else:
-            sys.exit(f"ERROR: called on {long_in} with no primers")
+    if not left_primer or not right_primer:
+        sys.exit("ERROR: Can't run cutadapt without two primers")
     cmd = ["cutadapt", "--fasta", "--discard-untrimmed"]
     if cpu:
         cmd += ["-j", str(cpu)]
@@ -817,8 +802,8 @@ def main(
     else:
         control_file_pairs = []
 
-    if not left_primer and not right_primer:
-        sys.stderr.write("WARNING: Primer trimming disabled\n")
+    if not left_primer or not right_primer:
+        sys.stderr.exit("ERROR: Both left and right primers are required")
 
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
