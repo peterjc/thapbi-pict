@@ -294,8 +294,8 @@ def cmd_as_string(cmd):
     Intended for using in debugging or error messages.
     """
     if isinstance(cmd, list):
-        # Quote any entries with spaces
-        return " ".join('"%s"' % _ if " " in _ else _ for _ in cmd)
+        # Quote any entries with spaces or semi-colons
+        return " ".join('"%s"' % _ if (" " in _ or ";" in _) else _ for _ in cmd)
     else:
         return cmd
 
