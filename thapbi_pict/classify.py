@@ -57,9 +57,9 @@ def md5_to_taxon(md5_list, session):
     marker_seq = aliased(MarkerSeq)
     view = (
         session.query(SeqSource)
-        .join(marker_seq, SeqSource.marker)
+        .join(marker_seq, SeqSource.marker_seq)
         .join(cur_tax, SeqSource.taxonomy)
-        .options(contains_eager(SeqSource.marker, alias=marker_seq))
+        .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
         .filter(marker_seq.md5.in_(md5_list))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
@@ -161,18 +161,22 @@ def perfect_match_in_db(session, seq, debug=False):
     """
     assert seq == seq.upper(), seq
     # Now, does this equal any of the marker sequences in our DB?
-    marker = session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
-    if marker is None:
+    marker_seq = (
+        session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
+    )
+    if marker_seq is None:
         return 0, "", "No DB match"
-    assert marker.sequence == seq
-    # marker -> one or more SeqSource
+    assert marker_seq.sequence == seq
+    # marker_seq -> one or more SeqSource
     # each SeqSource -> one current taxonomy
     # TODO: Refactor the query to get the DB to apply disinct?
-    t = list({_.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker)})
+    t = list(
+        {_.taxonomy for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)}
+    )
     if not t:
         sys.exit(
             "ERROR: perfect_match_in_db, no taxonomy for"
-            f" id={marker.id} md5={marker.md5} sequence={marker.sequence}\n"
+            f" id={marker_seq.id} md5={marker_seq.md5} sequence={marker_seq.sequence}\n"
         )
     return taxid_and_sp_lists(t)
 
@@ -199,12 +203,15 @@ def perfect_substr_in_db(session, seq, debug=False):
     #     FROM marker_sequence
     #     WHERE marker_sequence.sequence MATCH ?]
     t = set()
-    for marker in session.query(MarkerSeq).filter(
+    for marker_seq in session.query(MarkerSeq).filter(
         MarkerSeq.sequence.like("%" + seq + "%")
     ):
-        assert marker is not None
-        assert seq in marker.sequence
-        t.update(_.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker))
+        assert marker_seq is not None
+        assert seq in marker_seq.sequence
+        t.update(
+            _.taxonomy
+            for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
+        )
     if not t:
         return 0, "", "No DB match"
     else:
@@ -385,14 +392,15 @@ def onebp_match_in_db(session, seq, debug=False):
         # If there are any *different* genus matches 1bp away, they'll be
         # reported too, but that would most likely be a DB problem...
         for db_seq in [seq] + fuzzy_matches[md5_16b]:
-            marker = (
+            marker_seq = (
                 session.query(MarkerSeq)
                 .filter(MarkerSeq.sequence == db_seq)
                 .one_or_none()
             )
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
             t.update(
-                _.taxonomy for _ in session.query(SeqSource).filter_by(marker=marker)
+                _.taxonomy
+                for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
             )
         note = (
             f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff,"
@@ -483,12 +491,13 @@ def dist_in_db(session, seq, debug=False):
 
     genus = set()
     for db_seq in best:
-        marker = (
+        marker_seq = (
             session.query(MarkerSeq).filter(MarkerSeq.sequence == db_seq).one_or_none()
         )
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
-            _.taxonomy.genus for _ in session.query(SeqSource).filter_by(marker=marker)
+            _.taxonomy.genus
+            for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
         )
     assert genus
     # TODO - look up genus taxid

@@ -108,9 +108,9 @@ class SeqSource(Base):
     source_id = Column(Integer, ForeignKey("data_source.id"))
     source = relationship(DataSource)
 
-    # TODO - change its1_source.its1_id column in DB to .marker_id
-    marker_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
-    marker = relationship(MarkerSeq, foreign_keys=[marker_id])
+    # TODO - change its1_source.its1_id column in DB to .marker_seq_id
+    marker_seq_id = Column("its1_id", Integer, ForeignKey("its1_sequence.id"))
+    marker_seq = relationship(MarkerSeq, foreign_keys=[marker_seq_id])
 
     # TODO - change its1_source.taxonomy_id to .taxonomy_id
     taxonomy_id = Column("current_taxonomy_id", Integer, ForeignKey("taxonomy.id"))

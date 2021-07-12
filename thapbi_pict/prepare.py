@@ -787,9 +787,9 @@ def main(
         marker_seq = aliased(MarkerSeq)
         for seq_source in (
             session.query(SeqSource)
-            .join(marker_seq, SeqSource.marker)
+            .join(marker_seq, SeqSource.marker_seq)
             .join(cur_tax, SeqSource.taxonomy)
-            .options(contains_eager(SeqSource.marker, alias=marker_seq))
+            .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
             .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
             .order_by(marker_seq.sequence, SeqSource.id)
             .filter(cur_tax.genus.in_(spike_genus))
@@ -797,8 +797,8 @@ def main(
             spikes.append(
                 (
                     seq_source.source_accession,
-                    seq_source.marker.sequence,
-                    kmers(seq_source.marker.sequence),
+                    seq_source.marker_seq.sequence,
+                    kmers(seq_source.marker_seq.sequence),
                 )
             )
         session.close()

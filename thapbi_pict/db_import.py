@@ -440,18 +440,18 @@ def import_fasta_file(
                     marker_md5 = md5seq(seq)
 
                     # Is sequence already there? e.g. duplicate sequences in FASTA file
-                    marker = (
+                    marker_seq = (
                         session.query(MarkerSeq)
                         .filter_by(md5=marker_md5, sequence=seq)
                         .one_or_none()
                     )
-                    if marker is None:
-                        marker = MarkerSeq(md5=marker_md5, sequence=seq)
-                        session.add(marker)
+                    if marker_seq is None:
+                        marker_seq = MarkerSeq(md5=marker_md5, sequence=seq)
+                        session.add(marker_seq)
                     record_entry = SeqSource(
                         source_accession=entry.split(None, 1)[0],
                         source=db_source,
-                        marker=marker,
+                        marker_seq=marker_seq,
                         taxonomy=taxonomy,
                     )
                     session.add(record_entry)

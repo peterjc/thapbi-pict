@@ -59,9 +59,9 @@ def main(
     marker_seq = aliased(MarkerSeq)
     view = (
         session.query(SeqSource)
-        .join(marker_seq, SeqSource.marker)
+        .join(marker_seq, SeqSource.marker_seq)
         .join(cur_tax, SeqSource.taxonomy)
-        .options(contains_eager(SeqSource.marker, alias=marker_seq))
+        .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
     # Sorting for reproducibility
@@ -111,16 +111,16 @@ def main(
         md5_seq = {}
         md5_sp = {}
         for seq_source in view:
-            md5 = seq_source.marker.md5
+            md5 = seq_source.marker_seq.md5
             # genus_species = genus_species_name(
             #                            seq_source.taxonomy.genus,
             #                            seq_source.taxonomy.species,
             #                            )
             if md5 in md5_seq:
-                assert md5_seq[md5] == seq_source.marker.sequence
+                assert md5_seq[md5] == seq_source.marker_seq.sequence
                 md5_sp[md5].add(seq_source.taxonomy)
             else:
-                md5_seq[md5] = seq_source.marker.sequence
+                md5_seq[md5] = seq_source.marker_seq.sequence
                 md5_sp[md5] = set([seq_source.taxonomy])  # noqa: C405
         for md5, seq in md5_seq.items():
             _, genus_species, _ = taxid_and_sp_lists(list(md5_sp[md5]))
@@ -140,7 +140,7 @@ def main(
     elif output_format == "fasta":
         seq_entry = {}
         for seq_source in view:
-            seq = seq_source.marker.sequence
+            seq = seq_source.marker_seq.sequence
             entry = genus_species_name(
                 seq_source.taxonomy.genus, seq_source.taxonomy.species
             )
@@ -174,8 +174,8 @@ def main(
                     f"\t{none_str(seq_source.taxonomy.genus)}"
                     f"\t{none_str(seq_source.taxonomy.species)}"
                     f"\t{taxid}"
-                    f"\t{seq_source.marker.md5}"
-                    f"\t{seq_source.marker.sequence}\n"
+                    f"\t{seq_source.marker_seq.md5}"
+                    f"\t{seq_source.marker_seq.sequence}\n"
                 )
             except BrokenPipeError:
                 # Likely writing to stdout | head, or similar
