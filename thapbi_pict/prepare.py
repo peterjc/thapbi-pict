@@ -185,11 +185,8 @@ Reads written (passing filters):         1,471 (1.4%)
 
 def run_cutadapt(
     long_in,
-    trimmed_out,
-    left_primer,
-    right_primer,
-    min_len=None,
-    max_len=None,
+    out_template,
+    marker_definitions,
     flip=False,
     debug=False,
     cpu=0,
@@ -201,8 +198,11 @@ def run_cutadapt(
 
     Returns FASTA count before and after cutadapt.
     """
-    if not left_primer or not right_primer:
-        sys.exit("ERROR: Can't run cutadapt without two primers")
+    assert "{name}" in out_template
+    # Currently at least, cannot set these at the adatper level...
+    min_len = min(_["min_length"] for _ in marker_definitions.values())
+    max_len = max(_["max_length"] for _ in marker_definitions.values())
+
     cmd = ["cutadapt", "--fasta", "--discard-untrimmed"]
     if cpu:
         cmd += ["-j", str(cpu)]
@@ -212,15 +212,22 @@ def run_cutadapt(
         cmd += ["-M", str(max_len)]
     if flip:
         cmd += ["--revcomp"]
+    for marker, values in sorted(marker_definitions.items()):
+        left_primer = values["left_primer"]
+        right_primer = values["right_primer"]
+        if not left_primer or not right_primer:
+            sys.exit(f"ERROR: Missing primer(s) for marker {marker}")
+        cmd += [
+            # -a LEFT...RIGHT = left-anchored
+            # -g LEFT...RIGHT = non-anchored
+            "-g",
+            # Here o=... short for min_overlap=...
+            f"{marker}={left_primer};o={len(left_primer)}..."
+            f"{reverse_complement(right_primer)};o={len(right_primer)}",
+        ]
     cmd += [
-        # -a LEFT...RIGHT = left-anchored
-        # -g LEFT...RIGHT = non-anchored
-        "-g",
-        # Here o=... short for min_overlap=...
-        f"{left_primer};o={len(left_primer)}..."
-        f"{reverse_complement(right_primer)};o={len(right_primer)}",
         "-o",
-        trimmed_out,
+        out_template,
         long_in,
     ]
     return parse_cutadapt_stdout(run(cmd, debug=debug).stdout)
@@ -509,7 +516,9 @@ def merge_paired_reads(
     if os.path.isfile(merged_fasta_gz):
         if debug:
             sys.stderr.write(f"DEBUG: Reusing {merged_fasta_gz}\n")
-        return
+        # Just unzip and read header:
+        header = load_fasta_header(merged_fasta_gz, gzipped=True)
+        return header["raw_fastq"], header["flash"]
     # flash
     merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
     count_raw, count_flash = run_flash(
@@ -540,30 +549,34 @@ def merge_paired_reads(
     shutil.move(tmp_fasta_gz, merged_fasta_gz)
     del tmp_fasta_gz
     merged_fastq = None
+    return count_raw, count_flash
 
 
 def prepare_sample(
     fasta_name,
-    merged_fasta_gz,
+    trimmed_fasta,
     left_primer,
     right_primer,
-    flip,
     min_len,
     max_len,
     spikes,
     min_abundance,
     control,
+    count_raw,
+    count_flash,
     tmp,
     debug=False,
     cpu=0,
 ):
     """Create specified FASTA file for sample from paired FASTQ.
 
-    Runs flash, does primer filtering, does spike-in detection.
+    Does spike-in detection, abundance threshold, and min/max length.
 
     Returns accepted unique sequence count, accepted total read count, and a
     dict of max abundance (keyed by spike-in name).
     """
+    if debug:
+        sys.stderr.write(f"DEBUG: prepare_sample {trimmed_fasta} --> {fasta_name}\n")
     if os.path.isfile(fasta_name):
         if control:
             uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
@@ -580,43 +593,26 @@ def prepare_sample(
             f" {fasta_name} (min abundance set to {min_abundance})\n"
         )
 
-    # Just unzip and read header:
-    _header = load_fasta_header(merged_fasta_gz, gzipped=True)
-    count_raw = _header["raw_fastq"]
-    count_flash = _header["flash"]
-    del _header
-
-    # trim
-    trimmed_fasta = os.path.join(tmp, "cutadapt.fasta")
-    # These counts will be of NR FASTA if using merged cache...
-    count_tmp, count_cutadapt = run_cutadapt(
-        merged_fasta_gz,
-        trimmed_fasta,
-        left_primer,
-        right_primer,
-        min_len=min_len,
-        max_len=max_len,
-        flip=flip,
-        debug=debug,
-        cpu=cpu,
-    )
+    # count_raw = _header["raw_fastq"]
+    # count_flash = _header["flash"]
+    # count_tmp, count_cutadapt = run_cutadapt(...)
     if not os.path.isfile(trimmed_fasta):
         sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
 
     # cutadapt worked on the merged NR reads, so count_cutadapt
     # is currently the unique read count.
-    _unique, _total, _max = abundance_values_in_fasta(merged_fasta_gz, gzipped=True)
-    if _unique != count_tmp:
-        sys.exit(
-            f"ERROR: Gave it {_unique} unique sequences, "
-            f"but cutadapt says saw {count_cutadapt} unique sequences."
-        )
+    # _unique, _total, _max = abundance_values_in_fasta(merged_fasta_gz, gzipped=True)
+    # if _unique != count_tmp:
+    #     sys.exit(
+    #         f"ERROR: Gave it {_unique} unique sequences, "
+    #         f"but cutadapt says saw {count_cutadapt} unique sequences."
+    #     )
     _unique, _total, _max = abundance_values_in_fasta(trimmed_fasta)
-    if _unique != count_cutadapt:
-        sys.exit(
-            f"ERROR: Cutadapt says wrote {count_cutadapt} unique sequences, "
-            f"but we see {_unique} unique sequences."
-        )
+    # if _unique != count_cutadapt:
+    #     sys.exit(
+    #         f"ERROR: Cutadapt says wrote {count_cutadapt} unique sequences, "
+    #         f"but we see {_unique} unique sequences."
+    #     )
     count_cutadapt = _total
     del _unique, _total, _max
 
@@ -635,7 +631,7 @@ def prepare_sample(
         min_abundance=min_abundance,
         min_len=min_len,
         max_len=max_len,
-        weighted_input=bool(merged_fasta_gz),
+        weighted_input=True,
         gzipped=False,
         spikes=spikes,
         header_dict={
@@ -657,8 +653,8 @@ def prepare_sample(
         )
     if debug:
         sys.stderr.write(
-            f"DEBUG: FASTQ pairs {count_raw};"
-            f" flash -> {count_flash};"
+            "DEBUG:"
+            f" FASTQ pairs {count_raw}; flash -> {count_flash};"
             f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
             f" abundance -> {accepted_total} [{accepted_uniq_count} unique]"
             f", or {accepted_total*100.0/count_raw:0.1f}%\n"
@@ -695,44 +691,32 @@ def prepare_sample(
 
 
 def marker_cut(
+    marker_definitions,
     file_pairs,
     out_dir,
     merged_cache,
     tmp,
-    marker,
-    left_primer,
-    right_primer,
-    min_length,
-    max_length,
     flip,
     min_abundance,
-    spikes,
     debug=False,
     cpu=0,
 ):
-    """Apply primer-trimming for a given marker."""
-    sys.stderr.write(f"Looking for {marker} sequences...\n")
-    if not left_primer and not right_primer:
-        # TODO - ERROR if more than one marker? Always an error?
-        sys.stderr.write(f"WARNING: {marker} primer trimming disabled\n")
-    if min_length > max_length:
-        sys.exit(
-            f"ERROR: Marker {marker} has "
-            f"min length {min_length} but max length {max_length}"
-        )
+    """Apply primer-trimming for given markers."""
+    sys.stderr.write(f"Looking for {len(marker_definitions)} marker sequences...\n")
 
-    fasta_files_prepared = []  # return value
+    for marker in marker_definitions:
+        if not os.path.isdir(os.path.join(out_dir, marker)):
+            sys.stderr.write(f"Making {marker} output sub-directory\n")
+            os.mkdir(os.path.join(out_dir, marker))
+
     skipped_samples = set()
-    pool_worst_control = {}  # folder as key, max abundance as value
+    files_to_split = []
     for control, stem, raw_R1, raw_R2 in file_pairs:
         sys.stdout.flush()
         sys.stderr.flush()
 
         pool_key = os.path.abspath(os.path.split(stem)[0])
         stem = os.path.split(stem)[1]
-        fasta_name = os.path.join(out_dir, f"{stem}.fasta")  # insert marker here
-        if fasta_name in fasta_files_prepared:
-            sys.exit(f"ERROR: Multiple files named {fasta_name}")
         if merged_cache:
             merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
         else:
@@ -740,66 +724,99 @@ def marker_cut(
             if not os.path.isdir(os.path.join(tmp, "merged")):
                 os.mkdir(os.path.join(tmp, "merged"))
             merged_fasta_gz = os.path.join(tmp, "merged", f"{stem}.fasta.gz")
-        merge_paired_reads(raw_R1, raw_R2, merged_fasta_gz, tmp, debug=debug, cpu=cpu)
-
-        min_a = (
-            min_abundance
-            if control
-            else max(min_abundance, pool_worst_control.get(pool_key, 0))
+        # Run flash to merge reads
+        count_raw, count_flash = merge_paired_reads(
+            raw_R1, raw_R2, merged_fasta_gz, tmp, debug=debug, cpu=cpu
         )
-        uniq_count, total, max_abundance_by_spike = prepare_sample(
-            fasta_name,
+        # Run cutadapt to cut primers (giving one output per marker)
+        unique_merged, unique_cutadapt = run_cutadapt(
             merged_fasta_gz,
-            left_primer,
-            right_primer,
-            flip,
-            min_length,
-            max_length,
-            spikes,
-            min_a,
-            control,
-            tmp,
+            os.path.join(tmp, stem + ".{name}.fasta"),  # template - leave {name} as is!
+            marker_definitions,
+            flip=flip,
             debug=debug,
             cpu=cpu,
         )
-        fasta_files_prepared.append(fasta_name)
-        if uniq_count:
-            assert (
-                max_abundance_by_spike
-            ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
-        # Any spike-in is assumed to be a synthetic control, rest assumed biological
-        max_non_spike_abundance = max_abundance_by_spike.get("", 0)
-        if control:
-            if debug or max_non_spike_abundance > min_abundance:
-                sys.stderr.write(
-                    f"Control {stem} has max marker abundance {max_non_spike_abundance}"
-                    f" ({uniq_count} unique sequences, {total} reads, over default"
-                    f" threshold {min_abundance})\n"
-                )
-            if max_non_spike_abundance > pool_worst_control.get(pool_key, -1):
-                # Record even if zero, nice to have for summary later
-                pool_worst_control[pool_key] = max_non_spike_abundance
-            if debug:
-                sys.stderr.write(
-                    "Control %s max abundance breakdown %s\n"
-                    % (
-                        stem,
-                        ", ".join(
-                            f"{k}: {v}"
-                            for k, v in sorted(max_abundance_by_spike.items())
-                        ),
-                    )
-                )
-        elif uniq_count is None:
-            skipped_samples.add(stem)
-            if debug:
-                sys.stderr.write(f"Skipping {fasta_name} as already done\n")
-        else:
-            sys.stderr.write(
-                f"Sample {stem} has {uniq_count} unique sequences, {total}"
-                f" reads, over abundance threshold {min_a}"
-                f" (max marker abundance {max_non_spike_abundance})\n"
+        files_to_split.append(
+            (
+                control,
+                pool_key,
+                stem,
+                count_raw,
+                count_flash,
+                unique_merged,
+                unique_cutadapt,
             )
+        )
+
+    fasta_files_prepared = []  # return value
+    for marker, marker_values in marker_definitions.items():
+        pool_worst_control = {}  # folder as key, max abundance as value
+        for control, pool_key, stem, count_raw, count_flash, _, _ in files_to_split:
+            sys.stdout.flush()
+            sys.stderr.flush()
+            fasta_name = os.path.join(out_dir, marker, f"{stem}.fasta")
+            if fasta_name in fasta_files_prepared:
+                sys.exit(f"ERROR: Multiple files named {fasta_name}")
+            min_a = (
+                min_abundance
+                if control
+                else max(min_abundance, pool_worst_control.get(pool_key, 0))
+            )
+            uniq_count, total, max_abundance_by_spike = prepare_sample(
+                fasta_name,
+                os.path.join(tmp, f"{stem}.{marker}.fasta"),
+                marker_values["left_primer"],
+                marker_values["right_primer"],
+                marker_values["min_length"],
+                marker_values["max_length"],
+                marker_values["spike_kmers"],
+                min_a,
+                control,
+                count_raw,
+                count_flash,
+                tmp,
+                debug=debug,
+                cpu=cpu,
+            )
+            fasta_files_prepared.append(fasta_name)
+            if uniq_count:
+                assert (
+                    max_abundance_by_spike
+                ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
+            # Any spike-in is assumed to be a synthetic control, rest assumed biological
+            max_non_spike_abundance = max_abundance_by_spike.get("", 0)
+            if control:
+                if debug or max_non_spike_abundance > min_abundance:
+                    sys.stderr.write(
+                        f"Control {stem} max marker abundance {max_non_spike_abundance}"
+                        f" ({uniq_count} unique sequences, {total} reads, over default"
+                        f" threshold {min_abundance})\n"
+                    )
+                if max_non_spike_abundance > pool_worst_control.get(pool_key, -1):
+                    # Record even if zero, nice to have for summary later
+                    pool_worst_control[pool_key] = max_non_spike_abundance
+                if debug:
+                    sys.stderr.write(
+                        "Control %s max abundance breakdown %s\n"
+                        % (
+                            stem,
+                            ", ".join(
+                                f"{k}: {v}"
+                                for k, v in sorted(max_abundance_by_spike.items())
+                            ),
+                        )
+                    )
+            elif uniq_count is None:
+                skipped_samples.add(stem)
+                if debug:
+                    sys.stderr.write(f"Skipping {fasta_name} as already done\n")
+            else:
+                sys.stderr.write(
+                    f"Sample {stem} has {uniq_count} unique sequences, {total}"
+                    f" reads, over abundance threshold {min_a}"
+                    f" (max marker abundance {max_non_spike_abundance})\n"
+                )
 
     if skipped_samples:
         sys.stderr.write(
@@ -936,11 +953,18 @@ def main(
     if debug:
         sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
 
-    fasta_files_prepared = []
+    marker_definitions = {}
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
-        if not os.path.isdir(os.path.join(out_dir, reference_marker.name)):
-            sys.stderr.write(f"Making {reference_marker.name} output sub-directory\n")
-            os.mkdir(os.path.join(out_dir, reference_marker.name))
+        if not reference_marker.left_primer or not reference_marker.right_primer:
+            # TODO - ERROR if more than one marker? Always an error?
+            sys.exit(f"ERROR: Missing primer(s) for {reference_marker.name}")
+        if reference_marker.min_length > reference_marker.max_length:
+            sys.exit(
+                f"ERROR: Marker {reference_marker.name}"
+                f" min length {reference_marker.min_length}"
+                f" but max length {reference_marker.max_length}"
+            )
+
         # Spike-in negative controls are marker specific
         spikes = []
         if negative_controls and spike_genus:
@@ -970,24 +994,26 @@ def main(
                 )
             sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
 
-        fasta_files_prepared.extend(
-            marker_cut(
-                file_pairs,
-                os.path.join(out_dir, reference_marker.name),
-                merged_cache,
-                shared_tmp,
-                reference_marker.name,
-                reference_marker.left_primer,
-                reference_marker.right_primer,
-                reference_marker.min_length,
-                reference_marker.max_length,
-                flip,
-                min_abundance,
-                spikes,
-                debug=debug,
-                cpu=cpu,
-            )
-        )
+        marker_definitions[reference_marker.name] = {
+            "left_primer": reference_marker.left_primer,
+            "right_primer": reference_marker.right_primer,
+            "min_length": reference_marker.min_length,
+            "max_length": reference_marker.max_length,
+            "spike_kmers": spikes,
+        }
+
+    # Run cutadapt (once doing demultiplexing), apply abundance thresholds
+    fasta_files_prepared = marker_cut(
+        marker_definitions,
+        file_pairs,
+        out_dir,
+        merged_cache,
+        shared_tmp,
+        flip,
+        min_abundance,
+        debug=debug,
+        cpu=cpu,
+    )
 
     if tmp_dir:
         sys.stderr.write(
