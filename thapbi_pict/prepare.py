@@ -28,6 +28,7 @@ from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
 from .utils import load_fasta_header
 from .utils import md5seq
+from .utils import primer_clean
 from .utils import run
 from .versions import check_tools
 
@@ -213,8 +214,8 @@ def run_cutadapt(
     if flip:
         cmd += ["--revcomp"]
     for marker, values in sorted(marker_definitions.items()):
-        left_primer = values["left_primer"]
-        right_primer = values["right_primer"]
+        left_primer = primer_clean(values["left_primer"])
+        right_primer = primer_clean(values["right_primer"])
         if not left_primer or not right_primer:
             sys.exit(f"ERROR: Missing primer(s) for marker {marker}")
         cmd += [
