@@ -652,25 +652,28 @@ def prepare_sample(
         sys.exit(
             f"ERROR: Cutadapt says wrote {count_cutadapt}, but we saw {count} reads."
         )
+    assert bool(sum(max_spike_abundance.values())) == bool(accepted_uniq_count)
     if debug:
         sys.stderr.write(
             "DEBUG:"
             f" FASTQ pairs {count_raw}; flash -> {count_flash};"
             f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
-            f" abundance -> {accepted_total} [{accepted_uniq_count} unique]"
+            f" min abundance {min_abundance} -> {accepted_total}"
+            f" [{accepted_uniq_count} unique]"
             f", or {accepted_total*100.0/count_raw:0.1f}%\n"
         )
-        sys.stderr.write(
-            f"From {count_raw} paired FASTQ reads,"
-            f" found {uniq_count} unique sequences,"
-            f" {accepted_uniq_count} above min abundance {min_abundance}"
-            f" (max abundance {max(max_spike_abundance.values())})\n"
-        )
+        if accepted_uniq_count:
+            sys.stderr.write(
+                f"From {count_raw} paired FASTQ reads,"
+                f" found {uniq_count} unique sequences,"
+                f" {accepted_uniq_count} above min abundance {min_abundance}"
+                f" (max abundance {max(max_spike_abundance.values())})\n"
+            )
 
     if not accepted_uniq_count:
         if debug:
             sys.stderr.write(
-                f"{fasta_name} had {uniq_count} unique sequences,"
+                f"{fasta_name} had {uniq_count} unique marker sequences,"
                 f" but none above {'control' if control else 'sample'}"
                 f" minimum abundance threshold {min_abundance}\n"
             )
@@ -790,8 +793,9 @@ def marker_cut(
             if control:
                 if debug or max_non_spike_abundance > min_abundance:
                     sys.stderr.write(
-                        f"Control {stem} max marker abundance {max_non_spike_abundance}"
-                        f" ({uniq_count} unique sequences, {total} reads, over default"
+                        f"Control {stem} max {marker} abundance"
+                        f" {max_non_spike_abundance} ({uniq_count} unique"
+                        f" sequences, {total} reads, over default"
                         f" threshold {min_abundance})\n"
                     )
                 if max_non_spike_abundance > pool_worst_control.get(pool_key, -1):
@@ -814,8 +818,8 @@ def marker_cut(
                     sys.stderr.write(f"Skipping {fasta_name} as already done\n")
             else:
                 sys.stderr.write(
-                    f"Sample {stem} has {uniq_count} unique sequences, {total}"
-                    f" reads, over abundance threshold {min_a}"
+                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                    f" {total} reads, over abundance threshold {min_a}"
                     f" (max marker abundance {max_non_spike_abundance})\n"
                 )
 
