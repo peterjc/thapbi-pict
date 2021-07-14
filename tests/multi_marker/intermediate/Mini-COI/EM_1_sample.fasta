@@ -1,5 +1,5 @@
 #left_primer:GGWACWGGWTGAACWGTWTAYCCYCC
-#right_primer:TANACYTCNGGRTGNCCRAARAAYCA
+#right_primer:TAIACYTCIGGRTGICCRAARAAYCA
 #raw_fastq:264
 #flash:186
 #cutadapt:14
