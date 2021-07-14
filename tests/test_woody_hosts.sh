@@ -11,7 +11,7 @@ set -euo pipefail
 
 export TMP=${TMP:-/tmp/thapbi_pict}/woody_hosts
 rm -rf $TMP
-mkdir $TMP
+mkdir -p $TMP
 
 echo "Preparing sample data for woody hosts example"
 
