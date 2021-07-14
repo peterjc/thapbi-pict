@@ -2,7 +2,7 @@
 #right_primer:GATTGCGCTGTTATTCC
 #raw_fastq:264
 #flash:186
-#cutadapt:37
+#cutadapt:34
 #abundance:19
 #threshold:10
 >4adac0fd307e213f8b9927c6366a2381_19
