@@ -1,0 +1,9 @@
+#left_primer:GGGCAATCCTGAGCCAA
+#right_primer:CCATTGAGTCTCTGCACCTATC
+#raw_fastq:264
+#flash:186
+#cutadapt:35
+#abundance:34
+#threshold:10
+>7efade5aeb4841ea5509d33c6629f1da_34
+ATCACGTTTTCCGAAAACAAACAACGGTTCAGAAAGCGAAAATCAAAAAG

@@ -1,0 +1,7 @@
+#left_primer:CGAAATCGGTAGACGCTACG
+#right_primer:GGGGATAGAGGGACTTGAAC
+#raw_fastq:264
+#flash:186
+#cutadapt:14
+#abundance:0
+#threshold:10
