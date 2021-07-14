@@ -43,6 +43,7 @@ elif ! [ -x "$(command -v cutadapt)" ]; then
 else
     time tests/test_prepare-reads.sh
     time tests/test_synthetic_controls.sh
+    time tests/test_multi_marker.sh
     time tests/test_pipeline.sh
 fi
 
