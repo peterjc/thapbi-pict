@@ -425,12 +425,12 @@ def make_nr_fasta(
     with open(input_fasta_or_fastq) as handle:
         if fastq:
             assert not weighted_input, "Not implemented for FASTQ"
-            for _, seq, _ in FastqGeneralIterator(handle):
-                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
+            for title, seq, _ in FastqGeneralIterator(handle):
+                assert min_len <= len(seq) <= max_len, f"{title} length {len(seq)}"
                 counts[seq.upper()] += 1
         elif weighted_input:
             for title, seq in SimpleFastaParser(handle):
-                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
+                assert min_len <= len(seq) <= max_len, f"{title} length {len(seq)}"
                 assert title.count(" ") == 0 or (
                     title.count(" ") == 1 and title.endswith(" rc")
                 ), title
