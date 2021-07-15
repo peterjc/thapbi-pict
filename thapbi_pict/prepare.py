@@ -425,21 +425,23 @@ def make_nr_fasta(
     with open(input_fasta_or_fastq) as handle:
         if fastq:
             assert not weighted_input, "Not implemented for FASTQ"
-            for title, seq, _ in FastqGeneralIterator(handle):
-                assert min_len <= len(seq) <= max_len, f"{title} length {len(seq)}"
-                counts[seq.upper()] += 1
+            for _, seq, _ in FastqGeneralIterator(handle):
+                if min_len <= len(seq) <= max_len:
+                    counts[seq.upper()] += 1
         elif weighted_input:
             for title, seq in SimpleFastaParser(handle):
-                assert min_len <= len(seq) <= max_len, f"{title} length {len(seq)}"
                 assert title.count(" ") == 0 or (
                     title.count(" ") == 1 and title.endswith(" rc")
                 ), title
                 assert title.count("_") == 1 and title[32] == "_", title
-                counts[seq.upper()] += abundance_from_read_name(title.split(None, 1)[0])
+                if min_len <= len(seq) <= max_len:
+                    counts[seq.upper()] += abundance_from_read_name(
+                        title.split(None, 1)[0]
+                    )
         else:
             for _, seq in SimpleFastaParser(handle):
-                assert min_len <= len(seq) <= max_len, f"{_} len {len(seq)}"
-                counts[seq.upper()] += 1
+                if min_len <= len(seq) <= max_len:
+                    counts[seq.upper()] += 1
     accepted_total, accepted_count, max_spike_abundance = save_nr_fasta(
         counts,
         output_fasta,
