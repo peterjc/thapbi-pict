@@ -305,7 +305,7 @@ def save_nr_fasta(
     """
     accepted_total = 0
     accepted_count = 0
-    max_spike_abundance = {}
+    max_spike_abundance = {"": 0}
     if not spikes:
         spikes = []
     # Storing negative count for decreasing sort, then alphabetic sort
@@ -329,9 +329,10 @@ def save_nr_fasta(
         # Note counts currently negative for sorting requirement
         out_handle.write(f"#abundance:{sum(-count for count, _ in values)}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
+    for spike_name, _, _ in spikes:
+        max_spike_abundance[spike_name] = 0
     for count, seq in values:
         count = -count  # was negative for decreasing sorting
-        assert count >= min_abundance, f"{count} for {seq} vs minimum {min_abundance}"
         spike_name = is_spike_in(seq, spikes)
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
@@ -340,7 +341,7 @@ def save_nr_fasta(
         accepted_total += count
         accepted_count += 1
         max_spike_abundance[spike_name] = max(
-            max_spike_abundance.get(spike_name, 0),
+            max_spike_abundance[spike_name],
             count,
         )
     if output_fasta != "-":
