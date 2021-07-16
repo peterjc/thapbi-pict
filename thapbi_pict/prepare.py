@@ -708,16 +708,20 @@ def marker_cut(
     cpu=0,
 ):
     """Apply primer-trimming for given markers."""
-    sys.stderr.write(f"Looking for {len(marker_definitions)} marker sequences...\n")
+    sys.stderr.write(
+        f"Looking for {len(marker_definitions)} markers in {len(file_pairs)} samples\n"
+    )
 
     for marker in marker_definitions:
         if not os.path.isdir(os.path.join(out_dir, marker)):
-            sys.stderr.write(f"Making {marker} output sub-directory\n")
+            if debug:
+                sys.stderr.write(f"Making {marker} output sub-directory\n")
             os.mkdir(os.path.join(out_dir, marker))
 
-    skipped_samples = set()
     files_to_split = []
     for control, stem, raw_R1, raw_R2 in file_pairs:
+        if debug:
+            sys.stderr.write(f"Preparing {'control' if control else 'sample'} {stem}\n")
         sys.stdout.flush()
         sys.stderr.flush()
 
@@ -754,10 +758,16 @@ def marker_cut(
                 unique_cutadapt,
             )
         )
+    sys.stderr.write(
+        "Finished merging and primer cutting, applying abundance threshold...\n"
+    )
 
     fasta_files_prepared = []  # return value
     for marker, marker_values in marker_definitions.items():
+        if debug:
+            sys.stderr.write(f"Applying abundance threshold to {marker} sequences...\n")
         pool_worst_control = {}  # folder as key, max abundance as value
+        skipped_samples = set()
         for control, pool_key, stem, count_raw, count_flash, _, _ in files_to_split:
             sys.stdout.flush()
             sys.stderr.flush()
@@ -825,21 +835,23 @@ def marker_cut(
                     f" (max marker abundance {max_non_spike_abundance})\n"
                 )
 
-    if skipped_samples:
-        sys.stderr.write(
-            f"Skipped {len(skipped_samples)} previously prepared samples\n"
-        )
-    for pool_key in sorted(pool_worst_control):
-        if pool_worst_control[pool_key] > min_abundance:
+        # Finished marker
+        if skipped_samples:
             sys.stderr.write(
-                (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
-                + f" abundance threshold raised to {pool_worst_control[pool_key]}\n"
+                f"Skipped {len(skipped_samples)} previously prepared {marker} samples\n"
             )
-        else:
-            sys.stderr.write(
-                (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
-                + f" negative control abundance {pool_worst_control[pool_key]} (good)\n"
-            )
+        for pool_key in sorted(pool_worst_control):
+            if pool_worst_control[pool_key] > min_abundance:
+                sys.stderr.write(
+                    (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
+                    + f" abundance threshold raised to {pool_worst_control[pool_key]}\n"
+                )
+            else:
+                sys.stderr.write(
+                    (pool_key if os.path.isabs(pool_key) else os.path.relpath(pool_key))
+                    + f" negative control abundance {pool_worst_control[pool_key]}"
+                    " (good)\n"
+                )
 
     return fasta_files_prepared
 
