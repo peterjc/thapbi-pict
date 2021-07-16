@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-mkdir -p intermediate/ summary/
+mkdir -p intermediate_defaults/ intermediate_long/ summary/ tmp_merged/
 
 if [ -f taxdmp_2019-12-01/names.dmp ]; then
     echo "Already have taxdmp_2019-12-01/"

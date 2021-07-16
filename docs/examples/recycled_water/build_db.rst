@@ -157,18 +157,18 @@ de-duplicated entries recorded with semi-colon separated FASTA title lines.
 
 Now, let's load the FASTA file into a new THAPBI PICT database with the NCBI
 taxonomy pre-loaded (which will enable synonym support), but not enforced
-(``-x`` or ``--lax`` mode). We'll name the new marker "ITS1" and record the
-left and right primers which will be used later when processing the reads:
+(``-x`` or ``--lax`` mode). We'll name the new marker "ITS1-long" and record
+the left and right primers which will be used later when processing the reads:
 
 .. code:: console
 
     $ rm -rf Redekar_et_al_2019_sup_table_3.sqlite  # remove it if already there
     $ thapbi_pict load-tax -d Redekar_et_al_2019_sup_table_3.sqlite -t taxdmp_2019-12-01/
     ...
-    $ thapbi_pict import -x -s ";" \
-      -d Redekar_et_al_2019_sup_table_3.sqlite \
-      -i Redekar_et_al_2019_sup_table_3.fasta \
-      -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
+    $ thapbi_pict import -d Redekar_et_al_2019_sup_table_3.sqlite \
+      --lax --sep ";" -i Redekar_et_al_2019_sup_table_3.fasta \
+      --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
+      --right AGCGTTCTTCATCGATGTGC --marker ITS1-long
     File Redekar_et_al_2019_sup_table_3.fasta had 841 sequences, of which 838 accepted.
     Of 1451 potential entries, loaded 1451 entries, 0 failed parsing.
 
@@ -239,7 +239,7 @@ output (introduced properly in :ref:`custom_database_examine`), e.g.
 .. code:: console
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
-      | cut -f 1-5 | grep 87e588784b04ba5f4538ff91acb50c0f
+      | cut -f 2-6 | grep 87e588784b04ba5f4538ff91acb50c0f
     HQ643136.1  Lagenidium  caudatum   135481  87e588784b04ba5f4538ff91acb50c0f
     HQ643539.1  Pythium     flevoense  289620  87e588784b04ba5f4538ff91acb50c0f
     Wrote 1451 txt format entries
@@ -252,7 +252,7 @@ as *Brevilegnia gracilis*:
 .. code:: console
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
-      | cut -f 2-5 | grep 9bb2ab5b9f88256516f2ae618c16a62e | sort | uniq -c
+      | cut -f 3-6 | grep 9bb2ab5b9f88256516f2ae618c16a62e | sort | uniq -c
     Wrote 1451 txt format entries
           1 Brevilegnia      gracilis  944588   9bb2ab5b9f88256516f2ae618c16a62e
          42 Globisporangium  ultimum   2052682  9bb2ab5b9f88256516f2ae618c16a62e
