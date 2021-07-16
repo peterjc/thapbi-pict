@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "NOTE: Expected first time run time is about 20 minutes,"
+echo "NOTE: Expected first time run time is a few hours"
+echo "(or about 20 minutes from the merged reads cache),"
 echo "repeat runs take seconds just to regenerate reports."
 echo
 
