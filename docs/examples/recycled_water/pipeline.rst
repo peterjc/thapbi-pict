@@ -11,25 +11,25 @@ Compared to the original worked example, we must specify our custom database
 
 .. code:: console
 
-    $ mkdir -p intermediate/ summary/
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+    $ mkdir -p intermediate_long/ summary/
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate_long/ \
       -o summary/recycled-water-custom \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 3567127 of 10933210 sequences from 1 files
-    Wrote summary/recycled-water-custom.samples.onebp.*
-    Wrote summary/recycled-water-custom.reads.onebp.*
+    Wrote summary/recycled-water-custom.ITS1-long.samples.onebp.*
+    Wrote summary/recycled-water-custom.ITS1-long.reads.onebp.*
     ...
-    $ ls -1 intermediate/SRR*.fasta | wc -l
+    $ ls -1 intermediate_long/ITS1-long/SRR*.fasta | wc -l
     384
     $ ls -1 summary/recycled-water-custom.*.onebp.*
-    summary/recycled-water-custom.all_reads.onebp.tsv
-    summary/recycled-water-custom.reads.onebp.tsv
-    summary/recycled-water-custom.reads.onebp.xlsx
-    summary/recycled-water-custom.samples.onebp.tsv
-    summary/recycled-water-custom.samples.onebp.txt
-    summary/recycled-water-custom.samples.onebp.xlsx
+    summary/recycled-water-custom.ITS1-long.all_reads.onebp.tsv
+    summary/recycled-water-custom.ITS1-long.reads.onebp.tsv
+    summary/recycled-water-custom.ITS1-long.reads.onebp.xlsx
+    summary/recycled-water-custom.ITS1-long.samples.onebp.tsv
+    summary/recycled-water-custom.ITS1-long.samples.onebp.txt
+    summary/recycled-water-custom.ITS1-long.samples.onebp.xlsx
 
 Note the classifier method was set explicitly with ``-m`` (or ``--method``),
 using the default of ``onebp``. With the narrower set of *Phytophthora*
@@ -48,22 +48,22 @@ more matches:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate_long/ \
       -o summary/recycled-water-custom \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     blast classifier assigned species/genus to 4268503 of 10933210 sequences from 1 files
-    Wrote summary/recycled-water-custom.samples.blast.*
-    Wrote summary/recycled-water-custom.reads.blast.*
+    Wrote summary/recycled-water-custom.ITS1-long.samples.blast.*
+    Wrote summary/recycled-water-custom.ITS1-long.reads.blast.*
     ...
     $ ls -1 summary/recycled-water-custom.*.blast.*
-    summary/recycled-water-custom.all_reads.blast.tsv
-    summary/recycled-water-custom.reads.blast.tsv
-    summary/recycled-water-custom.reads.blast.xlsx
-    summary/recycled-water-custom.samples.blast.tsv
-    summary/recycled-water-custom.samples.blast.txt
-    summary/recycled-water-custom.samples.blast.xlsx
+    summary/recycled-water-custom.ITS1-long.all_reads.blast.tsv
+    summary/recycled-water-custom.ITS1-long.reads.blast.tsv
+    summary/recycled-water-custom.ITS1-long.reads.blast.xlsx
+    summary/recycled-water-custom.ITS1-long.samples.blast.tsv
+    summary/recycled-water-custom.ITS1-long.samples.blast.txt
+    summary/recycled-water-custom.ITS1-long.samples.blast.xlsx
 
 Better, in that we are up to 39% of the reads with a taxonomic assignment
 (4268503 of 10933210 reads). But how many of these are false positives? Sadly,

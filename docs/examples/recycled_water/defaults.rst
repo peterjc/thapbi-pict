@@ -25,19 +25,19 @@ as follows, and you should get six output report files:
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 2122727 of 2598668 sequences from 1 files
-    Wrote summary/recycled-water-defaults.samples.onebp.*
-    Wrote summary/recycled-water-defaults.reads.onebp.*
+    Wrote summary/recycled-water-defaults.ITS1.samples.onebp.*
+    Wrote summary/recycled-water-defaults.ITS1.reads.onebp.*
     ...
-    $ ls -1 intermediate_defaults/SRR*.fasta | wc -l
+    $ ls -1 intermediate_defaults/ITS1/SRR*.fasta | wc -l
     384
     $ ls -1 summary/recycled-water-defaults.*
-    summary/recycled-water-defaults.all_reads.fasta
-    summary/recycled-water-defaults.all_reads.onebp.tsv
-    summary/recycled-water-defaults.reads.onebp.tsv
-    summary/recycled-water-defaults.reads.onebp.xlsx
-    summary/recycled-water-defaults.samples.onebp.tsv
-    summary/recycled-water-defaults.samples.onebp.txt
-    summary/recycled-water-defaults.samples.onebp.xlsx
+    summary/recycled-water-defaults.ITS1.all_reads.fasta
+    summary/recycled-water-defaults.ITS1.all_reads.onebp.tsv
+    summary/recycled-water-defaults.ITS1.reads.onebp.tsv
+    summary/recycled-water-defaults.ITS1.reads.onebp.xlsx
+    summary/recycled-water-defaults.ITS1.samples.onebp.tsv
+    summary/recycled-water-defaults.ITS1.samples.onebp.txt
+    summary/recycled-water-defaults.ITS1.samples.onebp.xlsx
 
 Here we used ``-r`` (or ``--report``) to specify a different stem for the
 report filenames. The :ref:`sample metadata options <metadata>` were described

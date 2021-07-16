@@ -30,7 +30,7 @@ function analyse {
         thapbi_pict pipeline -d ${NAME}.sqlite \
                     -i raw_data/$LIBRARY/ expected/$LIBRARY/ -m $METHOD \
                     -s intermediate/${LIBRARY}/ \
-                    -o summary/${LIBRARY}_${NAME} -a 10 \
+                    -o summary/${LIBRARY} -a 10 \
                     -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     # Now run an edit-graph at a higher abundance threshold

@@ -14,7 +14,7 @@ We first ran the pipeline command with :ref:`default settings
     $ mkdir -p intermediate_defaults/
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate_defaults/
     ...
-    $ ls -1 intermediate_defaults/SRR*.fasta | wc -l
+    $ ls -1 intermediate_defaults/ITS1/SRR*.fasta | wc -l
     384
 
 Now we will change the primer settings. Using the actual right primer will
@@ -27,7 +27,10 @@ The up-shot is by cropping about 32bp off the start, and adding about 60bp
 at the end, we will no longer get any matches against the default database
 with the default classifier (it is too strict, the matches are too distant).
 This means before we can run the entire pipeline, we will need to build a
-custom database. But first, we will examine the new FASTA intermediate files.
+custom database. We'll discuss the sequences which go into this database
+soon, but this will also use ``--marker ITS1-long`` to name this marker,
+and set ``--left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA``
+and ``--right AGCGTTCTTCATCGATGTGC`` to declare the primers.
 
 Again we assume you have setup the FASTQ files in ``raw_data/``, and just
 run the prepare-reads step:
@@ -35,17 +38,15 @@ run the prepare-reads step:
 .. code:: console
 
     $ mkdir -p intermediate/
-    $ thapbi_pict prepare-reads \
-      -i raw_data/ -o intermediate/ \
-      --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
-      --right AGCGTTCTTCATCGATGTGC
+    $ thapbi_pict prepare-reads -i raw_data/ -o intermediate_long/ \
+      --db Redekar_et_al_2019_sup_table_3.sqlite
     ...
-    $ ls -1 intermediate/SRR*.fasta | wc -l
+    $ ls -1 intermediate_long/ITS1-long/SRR*.fasta | wc -l
     384
 
-Here we said the left primer is ``GAAGGTGAAGTCGTAACAAGG`` (same as the THAPBI
-PICT default) plus ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` (conserved 32bp
-region), and that the right primer is ``AGCGTTCTTCATCGATGTGC``. This has
+Here the database says the left primer is ``GAAGGTGAAGTCGTAACAAGG`` (same as
+the THAPBI PICT default) plus ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` (conserved
+32bp region), and that the right primer is ``AGCGTTCTTCATCGATGTGC``. This has
 reverse complement ``GCACATCGATGAAGAACGCT`` and is found about 60bp downstream
 of the default right primer in *Phytophthora*, and should also match *Pythium*
 and *Phytopythium* species.
@@ -65,7 +66,7 @@ a reservoir. Here is with the default primer trimming:
 
 .. code:: console
 
-    $ cat intermediate_defaults/SRR6303586.fasta
+    $ cat intermediate_defaults/ITS1/SRR6303586.fasta
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:70396
@@ -99,7 +100,7 @@ header, we again get four sequences passing the abundance threshold:
 
 .. code:: console
 
-    $ cat intermediate/SRR6303586.fasta
+    $ cat intermediate_long/ITS1-long/SRR6303586.fasta
     #left_primer:GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
     #right_primer:AGCGTTCTTCATCGATGTGC
     #raw_fastq:70396
@@ -158,7 +159,7 @@ to omit the header):
 
 .. code:: console
 
-    $ grep -v "^#" intermediate_defaults/SRR6303596.fasta
+    $ grep -v "^#" intermediate_defaults/ITS1/SRR6303596.fasta
     >3dd3b5989ee07ed2d2b3fac826dbb94f_953
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAATCTTTCCACGTGAATTGTTTTGCTGTACCTTTGGG
     CTTCGCCGTTGTCTTGTTCTTTTGTAAGAGAAAGGGGGAGGCGCGGTTGGAGGCCATCAGGGGTGTGTTCGTCGCGGTTT
@@ -170,7 +171,7 @@ is still present but only the second most abundant sequence:
 
 .. code:: console
 
-    $ grep -v "^#" intermediate/SRR6303596.fasta
+    $ grep -v "^#" intermediate_long/ITS1-long/SRR6303596.fasta
     >23710597e30e5d95f1d94d6fe8848fb7_40436
     CCACACCAAAAAAACTTTCCACGTGAACCGTTGTAACTATGTTCTGTGCTCTCTTCTCGGAGAGAGCTGAACGAAGGTGG
     GCTGCTTAATTGTAGTCTGCCGATGTACTTTTAAACCCATTAAACTAATACTGAACTATACTCCGAAAACGAAAGTCTTT
@@ -211,7 +212,7 @@ a single unique sequence matching *Phytophthora ramorum*:
 
 .. code:: console
 
-    $ grep -v "^#" intermediate_defaults/SRR6303948.fasta
+    $ grep -v "^#" intermediate_defaults/ITS1/SRR6303948.fasta
     >dcd6316eb77be50ee344fbeca6e005c7_1439
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTAGTTG
     GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
@@ -222,7 +223,7 @@ the extended *Phytophthora ramorum* sequence drops to third most abundant:
 
 .. code:: console
 
-    $ grep -v "^#" intermediate/SRR6303948.fasta
+    $ grep -v "^#" intermediate_long/ITS1-long/SRR6303948.fasta
     >f2d4b17eb421d8c52320c2bd883e77eb_5311
     CCACACCAAAAAAACACCCCACGTGAATTGTACTGTATGAGCTATGTGCTGCGGATTTCTGCGGCTTAGCGAAGGTTTCG
     AAAGAGACCGATGTACTTTTAAACCCCTTTACATTACTGTCTGATAAATTACATTGCAAACATTTAAAGTGGTTGCTCTT

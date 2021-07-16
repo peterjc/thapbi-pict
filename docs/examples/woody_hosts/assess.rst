@@ -295,7 +295,7 @@ by giving the input directory names (it will work out the common filenames):
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/ intermediate/ \
+    $ thapbi_pict assess -i expected/ intermediate/ITS1/ \
       summary/thapbi-pict.all_reads.onebp.tsv -o thabpi-pict.assess.tsv
     Assessed onebp vs known in 4 files (174 species)
     $ cut -f 1-5,9,11 thabpi-pict.assess.tsv
