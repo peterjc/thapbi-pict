@@ -13,12 +13,10 @@ metabarcoding markers including 16S, COI, cyt-b, matK, rbcL, trnL and ITS2:
     metabarcoding method to identify endangered species in complex samples.
     https://doi.org/10.1093/gigascience/gix080
 
-This example pushes THAPBI PICT beyond its original design goals. It requires
-setting up multiple databases (all of which ought to be properly curated),
-and running the tool multiple times (where potentially different thresholds
-might be needed). In order to provide cross-barcode reporting, the ``run.sh``
-script ends by pooling all the per-marker intermediates by sample, and
-generating combined reports.
+This example requires creating a database of multiple markers (all of which
+ought to be properly curated). In order to provide cross-barcode reporting,
+the ``run.sh`` script ends by pooling all the per-marker intermediates by
+sample, and generating combined reports.
 
 .. toctree::
    :maxdepth: 1
