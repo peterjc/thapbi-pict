@@ -39,16 +39,31 @@ def check_input_file(filename):
         sys.exit(f"ERROR: Could not find input file: {filename}")
 
 
+def check_output_stem(out_stem, dir_must_exist=True):
+    """Command line validation of output stem value."""
+    if not out_stem:
+        sys.exit("ERROR: Output stem is blank")
+    out_dir, basename = os.path.split(out_stem)
+    if not basename:
+        sys.exit(f"ERROR: Output stem needs a partial filename: {out_stem!r}")
+    elif not out_dir or os.path.isdir(out_dir):
+        return True
+    elif os.path.isfile(out_dir):
+        sys.exit(f"ERROR: Output stem directory name is a file: {out_dir!r}")
+    elif dir_must_exist:
+        sys.exit(f"ERROR: Output stem directory does not exist: {out_dir!r}")
+
+
 def check_output_directory(out_dir, must_exist=True):
     """Command line validation of output directory value."""
     if not out_dir:
-        sys.exit("ERROR: Output directory name blank\n")
+        sys.exit("ERROR: Output directory name blank")
     elif out_dir == "-" or os.path.isdir(out_dir):
         return True
     elif os.path.isfile(out_dir):
-        sys.exit(f"ERROR: Output directory name is a file: {out_dir}\n")
+        sys.exit(f"ERROR: Output directory name is a file: {out_dir!r}")
     elif must_exist:
-        sys.exit(f"ERROR: Output directory does not exist: {out_dir}\n")
+        sys.exit(f"ERROR: Output directory does not exist: {out_dir!r}")
 
 
 def expand_database_argument(text, exist=False, hyphen_default=False):
@@ -255,7 +270,7 @@ def summary(args=None):
     """Subcommand to run sample and read summary reports."""
     from .summary import main
 
-    check_output_directory(args.output)
+    check_output_stem(args.output)
 
     if args.metadata:
         check_input_file(args.metadata)
@@ -264,8 +279,7 @@ def summary(args=None):
 
     return main(
         inputs=args.input,
-        out_dir=args.output,
-        report=args.report,
+        report_stem=args.output,
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -314,7 +328,7 @@ def pipeline(args=None):
     from .summary import main as summary
     from .assess import main as assess
 
-    check_output_directory(args.output)
+    check_output_stem(args.output)
     if args.sampleout:
         check_output_directory(args.sampleout)
         intermediate_dir = args.sampleout
@@ -328,11 +342,7 @@ def pipeline(args=None):
             sys.exit("ERROR: Must also supply -c / --metacols argument.")
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
 
-    if args.report:
-        stem = os.path.join(args.output, args.report)
-    else:
-        # Include version number here?
-        stem = os.path.join(args.output, "thapbi-pict")
+    stem = args.output  # TODO - drop stem variable?
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
@@ -375,7 +385,7 @@ def pipeline(args=None):
         fasta=[all_fasta],
         db_url=db,
         method=args.method,
-        out_dir=args.output,
+        out_dir=os.path.split(stem)[0],  # i.e. next to FASTA all_reads input
         ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
         min_abundance=args.abundance,
         tmp_dir=args.temp,
@@ -394,8 +404,7 @@ def pipeline(args=None):
 
     return_code = summary(
         inputs=fasta_files + classified_files,
-        out_dir=args.output,
-        report=args.report,
+        report_stem=stem,
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -770,15 +779,8 @@ def main(args=None):
         "--output",
         type=str,
         required=True,
-        metavar="DIRNAME",
-        help="Output directory. Required.",
-    )
-    subcommand_parser.add_argument(
-        "-r",
-        "--report",
-        type=str,
         metavar="STEM",
-        help="Stem for generating report filenames.",
+        help="Stem for generating output report filenames.",
     )
     subcommand_parser.add_argument(
         "-s",
@@ -1269,15 +1271,8 @@ def main(args=None):
         "--output",
         type=str,
         required=True,
-        metavar="DIRNAME",
-        help="Output directory. Required.",
-    )
-    subcommand_parser.add_argument(
-        "-r",
-        "--report",
-        type=str,
         metavar="STEM",
-        help="Stem for generating report filenames.",
+        help="Stem for generating output report filenames.",
     )
     subcommand_parser.add_argument(
         "-m",

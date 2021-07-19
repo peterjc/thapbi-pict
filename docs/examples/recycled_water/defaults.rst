@@ -20,8 +20,9 @@ as follows, and you should get six output report files:
 
     $ mkdir -p intermediate_defaults/ summary/
     $ thapbi_pict pipeline \
-      -i raw_data/ -o summary/ -s intermediate_defaults/ \
-      -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+      -i raw_data/ -o summary/recycled-water-defaults \
+      -s intermediate_defaults/ \
+      -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 2122727 of 2598668 sequences from 1 files
     Wrote summary/recycled-water-defaults.samples.onebp.*

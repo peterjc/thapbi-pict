@@ -11,8 +11,9 @@ echo =========================
 echo "First with default settings and DB"
 mkdir -p intermediate_defaults/ summary/
 thapbi_pict pipeline \
-            -i raw_data/ -o summary/ -s intermediate_defaults/ \
-            -r recycled-water-defaults -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+        -i raw_data/ -o summary/recycled-water-defaults \
+        -s intermediate_defaults/ \
+        -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo ==========================
 echo Recycled water - Custom DB
@@ -40,11 +41,12 @@ thapbi_pict edit-graph --showdb \
         -o Redekar_et_al_2019_sup_table_3.xgmml
 
 echo "Running analysis"
-thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
+thapbi_pict pipeline \
+        -i raw_data/ -s intermediate/ -o summary/recycled-water-custom \
         --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
         --right AGCGTTCTTCATCGATGTGC \
         -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
-        -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+        -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo ====
 echo Done

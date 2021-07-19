@@ -26,10 +26,11 @@ function analyse {
     # [Counts were over both amplicons using the actual primer pairs, 3 runs]
     mkdir -p intermediate/${LIBRARY}_${NAME}/
     for METHOD in identity onebp blast; do
-        thapbi_pict pipeline -d ${NAME}.sqlite --left $LEFT --right $RIGHT \
+        thapbi_pict pipeline -d ${NAME}.sqlite \
+                    --left $LEFT --right $RIGHT \
                     -i raw_data/$LIBRARY/ expected/$LIBRARY/ -m $METHOD \
-                    -s intermediate/${LIBRARY}_${NAME}/ -o summary/ \
-                    -r ${LIBRARY}_${NAME} -a 10 \
+                    -s intermediate/${LIBRARY}_${NAME}/ \
+                    -o summary/${LIBRARY}_${NAME} -a 10 \
                     -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     # Now run an edit-graph at a higher abundance threshold
