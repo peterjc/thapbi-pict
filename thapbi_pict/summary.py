@@ -13,7 +13,6 @@ and statistics for the internally tracked information about
 each sample like the number of raw reads in the original FASTQ
 files (via header lines in the intermediate FASTA files).
 """
-import os
 import sys
 from collections import Counter
 
@@ -633,8 +632,7 @@ def read_summary(
 
 def main(
     inputs,
-    out_dir,
-    report,
+    report_stem,
     method,
     min_abundance=1,
     metadata_file=None,
@@ -705,12 +703,6 @@ def main(
         )
     if not tsv_files:
         sys.exit("ERROR: No input FASTA and/or TSV files found")
-
-    if report:
-        stem = os.path.join(out_dir, report)
-    else:
-        # Include version number here?
-        stem = os.path.join(out_dir, "thapbi-pict")
 
     # Not loading the post-abundance-threshold count, or the threshold.
     # Count should match the Seq-count column, but will not if running
@@ -804,14 +796,14 @@ def main(
         sample_stats,
         stats_fields,
         show_unsequenced=show_unsequenced,
-        output=f"{stem}.samples.{method}.tsv",
-        excel=f"{stem}.samples.{method}.xlsx",
-        human_output=f"{stem}.samples.{method}.txt",
+        output=f"{report_stem}.samples.{method}.tsv",
+        excel=f"{report_stem}.samples.{method}.xlsx",
+        human_output=f"{report_stem}.samples.{method}.txt",
         method=method,
         min_abundance=min_abundance,
         debug=debug,
     )
-    sys.stderr.write(f"Wrote {stem}.samples.{method}.*\n")
+    sys.stderr.write(f"Wrote {report_stem}.samples.{method}.*\n")
 
     read_summary(
         md5_to_seq,
@@ -823,12 +815,12 @@ def main(
         group_col,
         sample_stats,
         stats_fields,
-        output=f"{stem}.reads.{method}.tsv",
-        excel=f"{stem}.reads.{method}.xlsx",
+        output=f"{report_stem}.reads.{method}.tsv",
+        excel=f"{report_stem}.reads.{method}.xlsx",
         method=method,
         min_abundance=min_abundance,
         debug=debug,
     )
-    sys.stderr.write(f"Wrote {stem}.reads.{method}.*\n")
+    sys.stderr.write(f"Wrote {report_stem}.reads.{method}.*\n")
 
     return 0

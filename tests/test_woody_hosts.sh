@@ -24,7 +24,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positi
 # the FASTQ files here:
 # thapbi_pict pipeline -i sample_data/raw_data/ \
 #     -s $TMP/intermediate \
-#     -o $TMP/summary -r woody-hosts \
+#     -o $TMP/summary/woody-hosts \
 #     -t examples/woody_hosts/metadata.tsv \
 #     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 
@@ -64,13 +64,13 @@ echo "==========================="
 echo "Running woody hosts summary"
 echo "==========================="
 time thapbi_pict summary -i $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv \
-    -o $TMP/summary/ -r no-metadata
+    -o $TMP/summary/no-metadata
 ls $TMP/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
 time thapbi_pict summary -i $TMP/intermediate/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
-    -o $TMP/summary/ -r with-metadata \
+    -o $TMP/summary/with-metadata \
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
 ls $TMP/summary/with-metadata.*

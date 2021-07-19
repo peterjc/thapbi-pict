@@ -23,7 +23,7 @@ function analyse {
                 --left $LEFT --right $RIGHT -a 10 \
                 -i raw_data/ expected/$NAME/ \
                 --merged-cache tmp_merged/ \
-                -s intermediate/$NAME/ -o summary/ -r $NAME \
+                -s intermediate/$NAME/ -o summary/$NAME \
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.tsv -x 1 -c 4,8
 

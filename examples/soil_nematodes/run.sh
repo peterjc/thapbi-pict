@@ -37,7 +37,7 @@ function analyse {
     thapbi_pict pipeline -d references/$NAME.sqlite --merged-cache tmp_merged/ \
                  --left $LEFT --right $RIGHT \
                 -i raw_data/ expected/$NAME/ -s intermediate/$NAME/ \
-                -o summary -r $NAME -t metadata.tsv -x 1 -c 4,3
+                -o summary/$NAME -t metadata.tsv -x 1 -c 4,3
 
     echo "$NAME done"
 }

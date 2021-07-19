@@ -27,8 +27,7 @@ and row numbers):
 
 .. code:: console
 
-    $ time thapbi_pict summary -i intermediate/ -o summary/ \
-      -r with-metadata \
+    $ time thapbi_pict summary -i intermediate/ -o summary/with-metadata \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
 

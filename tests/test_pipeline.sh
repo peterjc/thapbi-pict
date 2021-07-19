@@ -23,7 +23,7 @@ set -o pipefail
 
 rm -rf $TMP/intermediate $TMP/output
 mkdir $TMP/intermediate $TMP/output
-thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output -i tests/reads/
+thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output/thapbi-pict -i tests/reads/
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/thapbi-pict.all_reads.fasta tests/pipeline/thapbi-pict.all_reads.fasta
 diff $TMP/output/thapbi-pict.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
@@ -39,7 +39,7 @@ touch $TMP/intermediate/ignore-me.onebp.tsv
 # Run again with some explicit options set (shouldn't change output)
 # Using --flip will have no effect as already have the intermediate files
 rm -rf $TMP/output/*
-thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output -m onebp -a 250 -r report -d - --flip --metaencoding UTF-8
+thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output/report -m onebp -a 250 -d - --flip --metaencoding UTF-8
 diff $TMP/intermediate/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/report.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/report.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
@@ -48,7 +48,7 @@ diff $TMP/output/report.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.t
 # Clear the intermediate, run again with --merged-cache
 rm -rf $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
 mkdir $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
-thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output -i tests/reads/
+thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/
 for F in $TMP/intermediate_with_cache/*.fasta; do
     diff $F $TMP/intermediate/${F##*/}
 done

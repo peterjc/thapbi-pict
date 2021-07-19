@@ -12,11 +12,12 @@ our custom database built with matching primer trimmed entries:
 .. code:: console
 
     $ mkdir -p intermediate/ summary/
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+      -o summary/recycled-water-custom \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
-      -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+      -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 3567127 of 10933210 sequences from 1 files
     Wrote summary/recycled-water-custom.samples.onebp.*
@@ -49,11 +50,12 @@ more matches:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+      -o summary/recycled-water-custom \
       --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
       --right AGCGTTCTTCATCGATGTGC \
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
-      -r recycled-water-custom -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+      -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     blast classifier assigned species/genus to 4268503 of 10933210 sequences from 1 files
     Wrote summary/recycled-water-custom.samples.blast.*

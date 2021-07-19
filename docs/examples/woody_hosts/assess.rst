@@ -352,8 +352,8 @@ reports:
 .. code:: console
 
     $ thapbi_pict pipeline -i raw_data/ expected/ \
-      -s intermediate/ -o summary/ \
-      -n raw_data/NEGATIVE*.fastq.gz -r with-metadata \
+      -s intermediate/ -o summary/with-metadata \
+      -n raw_data/NEGATIVE*.fastq.gz \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
