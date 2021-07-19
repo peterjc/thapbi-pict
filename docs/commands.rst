@@ -41,8 +41,8 @@ the results, and these are described in the first :ref:`worked example
   report), and by unique sequence and sample (both with Excel reports)
 * ``edit-graph`` - draw the unique sequences as nodes on a graph, connected by
   edit-distance
-* ``pipeline`` - run all of the above in sequence
 * ``assess`` - compare classifier output to known positive controls
+* ``pipeline`` - run all of the above in sequence
 
 There are further sub-commands to do with making or inspecting an SQLite3
 format barcode marker sequence database, most of which are covered in the
