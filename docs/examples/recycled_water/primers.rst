@@ -9,6 +9,8 @@ Running prepare-reads step
 We first ran the pipeline command with :ref:`default settings
 <custom_database_defaults>`, if you skipped that we can do just the reads now:
 
+.. code:: console
+
     $ mkdir -p intermediate_defaults/
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate_defaults/
     ...
