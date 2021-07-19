@@ -84,8 +84,7 @@ been mock communities with known species composition.
     https://doi.org/10.3897/mbmg.3.36408
 
 * :ref:`endangered_species` - A dozen markers in animals and plants (sequenced
-  together), pushing THAPBI PICT beyond its original design goals by pooling
-  markers for sample level analysis. Based on:
+  together). Based on:
 
     Arulandhu *et al.* (2017) Development and validation of a multi-locus DNA
     metabarcoding method to identify endangered species in complex samples.
