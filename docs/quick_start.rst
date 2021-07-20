@@ -137,13 +137,14 @@ Sample Reports
 --------------
 
 The first set of reports from the pipeline or ``thapbi_pict summary`` command
-are the sample reports:
+are the sample reports - using the names from the above example:
 
-* Human readable file ``XXX.samples.onebp.txt`` (plain text).
-* Plain table ``XXX.samples.onebp.tsv`` (tab separated variables, TSV) which
-  can be opened in R, Excel, or similar.
-* Visually formatted table ``thapbi-pict.samples.onebp.xlsx`` (Microsoft Excel
-  format), with the same content but with colors etc applied.
+* Human readable file ``summary/thapbi-pict.ITS1.samples.onebp.txt`` (plain
+  text).
+* Plain table ``summary/thapbi-pict.ITS1.samples.onebp.tsv`` (tab separated
+  variables, TSV) which can be opened in R, Excel, or similar.
+* Visually formatted table ``summary/thapbi-pict.ITS1.samples.onebp.xlsx``
+  (Microsoft Excel format), with the same content but with colors etc applied.
 
 These aim to give a summary of the species identified within each sample. The
 human readable text report deliberately does not include read counts as the
@@ -161,13 +162,14 @@ counts with a red background.
 Read Reports
 ------------
 
-The other set of reports from the pipeline or ``thapbi_pict summary`` command
-are more detailed being at the level of the unique sequences or reads:
+The other report from the pipeline or ``thapbi_pict summary`` command is more
+detailed being at the level of the unique sequences or reads. Again using the
+names from the above example:
 
-* Plain table ``XXX.reads.onebp.tsv`` (tab separated variables, TSV)
-  which can be opened in R, Excel, or similar.
-* Visually formatted table ``XXX.reads.onebp.xlsx`` (Microsoft Excel
-  format), with the same content but with colors etc applied.
+* Plain table ``summary/thapbi-pict.ITS1.reads.onebp.tsv`` (tab separated
+  variables, TSV) which can be opened in R, Excel, or similar.
+* Visually formatted table ``summary/thapbi-pict.ITS1.reads.onebp.xlsx``
+  (Microsoft Excel format), with the same content but with colors etc applied.
 
 This read report has a row for each unique sequence. The first columns are the
 unique sequence MD5 checksum, any species prediction, the sequence itself, the
