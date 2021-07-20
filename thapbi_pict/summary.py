@@ -103,7 +103,7 @@ def sample_summary(
     min_abundance=1,
     debug=False,
 ):
-    """Implement the ``thapbi_pict sample-summary`` command.
+    """Create samples (rows) vs species (cols) report.
 
     The expectation is that the inputs represent all the samples from
     a meaningful group, likely from multiple sequencing runs (plates).
@@ -390,7 +390,7 @@ def read_summary(
     excel=None,
     debug=False,
 ):
-    """Implement the ``thapbi_pict plate-summary`` command.
+    """Create reads (rows) vs species (cols) report.
 
     The expectation is that the inputs represent all the samples
     from one (96 well) plate, or some other meaningful batch.
