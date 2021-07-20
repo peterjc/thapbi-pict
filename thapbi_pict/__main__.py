@@ -368,10 +368,6 @@ def pipeline(args=None):
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
-    sys.stderr.write("\n")
-    sys.stderr.write("----------------------------------\n")
-    sys.stderr.write("Preparing intermediate FASTA files\n")
-    sys.stderr.write("----------------------------------\n")
     # This will do all the markers itself
     all_fasta_files = prepare(
         fastq=args.input,
@@ -404,9 +400,8 @@ def pipeline(args=None):
         ]
         if len(markers) > 1:
             sys.stderr.write("\n")
-            sys.stderr.write("----------------------------------\n")
             sys.stderr.write(f"Processesing {marker}\n")
-            sys.stderr.write("----------------------------------\n")
+            sys.stderr.write("\n")
         all_fasta = f"{stem}.all_reads.fasta"
         fasta_nr(
             inputs=fasta_files,
@@ -489,10 +484,7 @@ def pipeline(args=None):
 
     session.close()
 
-    sys.stderr.write("\n")
-    sys.stderr.write("------------------\n")
-    sys.stderr.write("Pipeline all done!\n")
-    sys.stderr.write("------------------\n")
+    sys.stderr.write("All done!\n")
 
 
 def ena_submit(args=None):
