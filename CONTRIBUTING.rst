@@ -35,8 +35,8 @@ changes are made on GitHub.
 Continuous Integration
 ----------------------
 
-Currently this is setup to do automated testing under Linux on two free
-continuous integration services, CircleCI (using Conda for dependencies):
+Currently this is setup to do automated testing under Linux using free
+continuous integration services:
 
 * CircleCI: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
 
