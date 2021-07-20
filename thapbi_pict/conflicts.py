@@ -18,11 +18,20 @@ from .utils import genus_species_name
 
 
 def main(db_url, output_filename, debug=False):
-    """Implement the conflicts subcommand.
+    """Implement the ``thapbi_pict conflicts`` subcommand.
 
-    Look for taxonomy conflicts at genus or species level, with the
-    number of genus level conflicts used as the return code. i.e.
-    Unix failure (non-zero) when there are genus conflicts.
+    Looks for taxonomy conflicts at marker, genus or species level, with the
+    number of marker or genus level conflicts used as the return code. i.e.
+    Unix failure (non-zero) when there are marker or genus level conflicts.
+
+    A marker level conflict is when a unique sequence appears in the DB under
+    more than one marker name (e.g. both COI and ITS1), which is most likely
+    an error in the DB construction.
+
+    Genus level conflicts are where a unique sequence in the DB is reported
+    from more than one genus, which is considered undesirable. Similarly for
+    species level conflicts, but for some markers this is sadly common and not
+    considered to be an error.
     """
     if output_filename == "-":
         out_handle = sys.stdout
