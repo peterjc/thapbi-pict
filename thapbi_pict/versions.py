@@ -5,18 +5,18 @@
 # file that should have been included as part of this package.
 """Helper code to get command line tool versions.
 
-Defines various functions to check a tool is on the $PATH and if so,
+Defines various functions to check a tool is on the ``$PATH`` and if so,
 return the tool version as a short string (sometimes including a date).
 
-These functions are called from various THAPBI-PICT subcommands which
-call external tools to ensure a clear missing dependency message, and
-to log the version of the external tool used.
+These functions are called from various THAPBI-PICT subcommands which call
+external tools to ensure a clear missing dependency message, and to log the
+version of the external tool used.
 
 If the tool is not on the path, the commands all return None.
 
-If we cannot parse the output, again the commands return None - which
-is likely an indication of a major version change, meaning the tool
-ought to be re-evaluated for use with THAPBI-PICT.
+If we cannot parse the output, again the commands return None - which is
+likely an indication of a major version change, meaning the tool ought to be
+re-evaluated for use with THAPBI-PICT.
 """
 import sys
 from subprocess import getoutput
@@ -29,7 +29,7 @@ def check_tools(names, debug):
 
     If all the tools are present, returns a list of version strings.
 
-    If any tools are missing (or have a version we would not parse),
+    If any tools are missing (or have a version we could not parse),
     aborts.
     """
     easy = {
@@ -61,9 +61,9 @@ def check_tools(names, debug):
 def version_blast(cmd="blastn"):
     """Return the version of the NCBI BLAST+ suite's blastn (as a short string).
 
-    In the absense of a version switch, works by parsing the short
-    help output with ``-h`` (which does vary between the tools in
-    the suite)::
+    In the absense of a built in version switch like ``-v``, this works by
+    parsing the short help output with ``-h`` (which does vary between the
+    tools in the suite)::
 
         $ makeblastdb -h | grep BLAST
         Application to create BLAST databases, version 2.7.1+
