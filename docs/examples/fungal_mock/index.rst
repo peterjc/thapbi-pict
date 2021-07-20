@@ -12,9 +12,9 @@ This example is based on the two amplicon sequencing libraries from this paper:
     experiments.
     https://doi.org/10.1111/1755-0998.12760
 
-Three different sets of primers where used (two targeting ITS1, one for ITS2)
-which with the current THAPBI PICT design requires running the pipeline three
-times.
+The first library used a single primer set targetting ITS1, while the second
+library used two additional sets of primers, making three in total (two
+targeting ITS1, one for ITS2).
 
 .. toctree::
    :maxdepth: 1
