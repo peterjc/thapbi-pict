@@ -52,14 +52,6 @@ been mock communities with known species composition.
     Bakker (2018) A fungal mock community control for amplicon sequencing
     experiments. https://doi.org/10.1111/1755-0998.12760
 
-* :ref:`microalgal_mock` - An example with two markers (sequenced separately)
-  requiring separate primers settings and databases, based on:
-
-    Bradley *et al.* (2016) Design and Evaluation of Illumina
-    MiSeq-Compatible, 18S rRNA Gene-Specific Primers for Improved
-    Characterization of Mixed Phototrophic Communities.
-    https://doi.org/10.1128/AEM.01630-16
-
 * :ref:`great_lakes` - An example with two mitochondrial markers (sequenced
   separately), with mock communities, where we focus on the minimum abundance
   threshold. Based on:
