@@ -38,8 +38,8 @@ from .versions import check_tools
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
 fuzzy_matches = None  # global variable for onebp classifier
-db_seqs = None  # global variable for 1s3g classifier
-max_dist_genus = None  # global variable for 1s?g distance classifier
+db_seqs = None  # global variable for 1s?g distance classifiers
+max_dist_genus = None  # global variable for 1s?g distance classifiers
 
 
 def md5_to_taxon(md5_list, session):
@@ -457,7 +457,7 @@ def setup_dist5(session, shared_tmp_dir, debug=False, cpu=0):
 
 
 def dist_in_db(session, seq, debug=False):
-    """Species up to 1bp, genus up to 3bp away."""
+    """Species up to 1bp, genus up to given distance away."""
     global db_seqs
     global fuzzy_matches
     assert seq and db_seqs and fuzzy_matches
