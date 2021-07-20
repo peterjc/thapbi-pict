@@ -12,8 +12,8 @@ sequeced separately with four markers, with no-template PCR control blanks:
     https://doi.org/10.3897/mbmg.3.36408
     https://www.ebi.ac.uk/ena/data/view/PRJEB27581
 
-Four different sets of primers where used, which with the current THAPBI PICT
-design requires running the pipeline four times.
+This example requires creating a database covering the four different marker
+primers and known sequences (all of which ought to be properly curated).
 
 .. toctree::
    :maxdepth: 1
