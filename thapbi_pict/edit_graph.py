@@ -202,9 +202,16 @@ def main(
 ):
     """Run the edit-graph command with arguments from the command line.
 
-    Plan is to show sequences from a database (possibly with species/genus
-    limits) and/or selected FASTA files (possibly with predictions or other
-    metadata, and minimum abundance limits).
+    This shows sequences from a database (possibly filtered with species/genus
+    limits) and/or selected FASTA files (possibly with classifier predictions,
+    and minimum abundance limits).
+
+    Computes a Levenshtein edit-distance matrix from the selected sequences,
+    which can be exported as a matrix, but is usually converted into a graph
+    of unique sequences as nodes, with short edit distances as edges.
+
+    Graph node size is scaled by sample count (number of FASTA files that it
+    appears in), and colored by asigned species (from a classifier TSV file).
     """
     if inputs is None:
         inputs = []
