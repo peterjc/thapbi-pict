@@ -53,37 +53,37 @@ https://anaconda.org/bioconda/thapbi-pict
 
 You can install all the dependencies using conda, or opt to install the
 Python dependencies from `PyPI <https://pypi.python.org/>`__ with ``pip``
-explicitly or implicitly via ``setup.py``. Either should be fine.
+(via the declarations in our ``setup.py``). Either should be fine.
 
-The two requirements files (``requirements.txt`` for Python dependencies
-- and ``requirements-ext.txt`` for external command line bioinformatics
-tools) can contain exact pinned dependency versions, allowing us to
-define a more reproducible environment for running this software if
-needed.
+The two requirements files (``requirements.txt`` for Python dependencies, and
+``requirements-ext.txt`` for external command line bioinformatics tools) are
+used in the continuous integration testing. These files can contain exact
+pinned dependency versions, allowing us to define a more reproducible
+environment for running this software if needed.
 
 Installing from source
 ----------------------
 
-First, download the code from GitHub and decompress it if required. The
-best way to do this if you are likely to contribute any changes is at
-the command line with ``git``.
+First, download the code from GitHub and decompress it if required. The best
+way to do this if you are likely to contribute any changes is at the command
+line with ``git``.
 
 .. code:: console
 
     $ git clone https://github.com/peterjc/thapbi-pict.git
     $ cd thapbi-pict
 
-Then load the plain text SQL dump of the default database into SQLite3,
-see ``database/README.rst`` for more information on this. Make it read
-only to prevent accidental edits:
+Then load the plain text SQL dump of the default database into SQLite3, see
+``database/README.rst`` for more information on this. Make it read only to
+prevent accidental edits:
 
 .. code:: console
 
     $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
     $ chmod a-w thapbi_pict/ITS1_DB.sqlite
 
-Assuming your default Python is at least version 3.5, to install the
-tool and automatically get our Python dependencies:
+Assuming your default Python is at least version 3.6, to install the tool and
+automatically get our Python dependencies:
 
 .. code:: console
 
@@ -99,8 +99,7 @@ Once installed, you should be able to run the tool using:
     $ thapbi_pict
 
 This should automatically find the installed copy of the Python code.
-Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for
-help.
+Use ``thapbi_pict -v`` to report the version, or ``thapbi_pict -h`` for help.
 
 Release process
 ---------------
@@ -108,8 +107,23 @@ Release process
 For a release, start from a clean git checkout (to reduce the chance of
 bundling any stray local files despite a cautious ``MANIFEST.in``).
 
-If the DB has changed, and this was not done locally, we must update it
-using the plain text dump which is under version control:
+First confirm if the DB at ``thapbi_pict/ITS1_DB.sqlite`` is up to date:
+
+.. code:: bash
+
+    sqlite3 thapbi_pict/ITS1_DB.sqlite .dump | grep "Imported with" | head -n 1
+
+If there have been changes requiring the DB be rebuilt, do this:
+
+.. code:: bash
+
+    cd database
+    ./build_ITS1_DB.sh
+    git commit ITS1_DB.sql -m "Rebuilt DB"
+    cd ..
+
+If the DB has changed, and this was not done locally, we can alternatively
+update it using the plain text dump which is under version control:
 
 .. code:: bash
 
@@ -117,7 +131,7 @@ using the plain text dump which is under version control:
     sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
     chmod a-w thapbi_pict/ITS1_DB.sqlite
 
-If not, skip directly to:
+Then actually do the build:
 
 .. code:: bash
 
