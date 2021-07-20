@@ -1,12 +1,12 @@
-# Copyright 2018-2020 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 """Prepare a non-redundant FASTA file using MD5 naming.
 
-This implements the ``thapbi_pict fasta-nr ...`` command, and does part
-of the work of the ``thapbi_pict prepare-reads`` command.
+This implements the ``thapbi_pict fasta-nr ...`` command, using some of the
+same code internally as the ``thapbi_pict prepare-reads`` command.
 """
 import os
 import sys
