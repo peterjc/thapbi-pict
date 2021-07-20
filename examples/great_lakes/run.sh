@@ -23,7 +23,7 @@ function analyse {
     thapbi_pict pipeline -d ${NAME}.sqlite \
                 -i raw_data/ expected/$NAME/ -a 10 \
                 --merged-cache tmp_merged/ \
-                -s intermediate/ -o summary/$NAME \
+                -s intermediate/ -o summary/great_lakes \
                 -t metadata.tsv -x 1 -c 4,5,3,2
     #           -t PRJNA379165.tsv -x 1 -c 4,8
 
@@ -31,7 +31,7 @@ function analyse {
     # without the --showdb setting
     thapbi_pict edit-graph -d ${NAME}.sqlite \
                 -i intermediate/$NAME/ -a 100 \
-                -o summary/$NAME.edit-graph.a100.xgmml
+                -o summary/great_lakes.$NAME.edit-graph.a100.xgmml
 
     echo "$NAME done"
 }
@@ -55,7 +55,7 @@ thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
                intermediate/MOL16S/SRR5534976.* \
                intermediate/MOL16S/SRR5534977.* \
                intermediate/MOL16S/SRR5534979.* \
-            -o summary/$NAME.edit-graph.a100.mock.xgmml
+            -o summary/great_lakes.$NAME.edit-graph.a100.mock.xgmml
 
 echo ======================
 echo SPH16S primers, 299 bp
@@ -72,7 +72,7 @@ thapbi_pict edit-graph -d ${NAME}.sqlite -a 100 \
                 -i intermediate/SPH16S/SRR5534978.* \
                    intermediate/SPH16S/SRR5534980.* \
                    intermediate/SPH16S/SRR5534981.* \
-                -o summary/$NAME.edit-graph.a100.mock.xgmml
+                -o summary/great_lakes.$NAME.edit-graph.a100.mock.xgmml
 
 echo ====
 echo Done

@@ -28,11 +28,11 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9-10 summary/great_lakes.SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
-Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
-columns, you should see:
+Or, open ``great_lakes.SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the
+left hand columns, you should see:
 
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
@@ -80,11 +80,11 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9-10 summary/great_lakes.MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
-Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the the left hand
-columns, you should see:
+Or, open ``great_lakes.MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the
+left hand columns, you should see:
 
 ======= ============== ============ ========= ======== ==========
 #Marker Group          Library-name Raw FASTQ Cutadapt Read count
@@ -154,7 +154,7 @@ matched to *Sphaerium simile*:
 
 .. code:: console
 
-    $ grep 20c0669e4c6f8436c9d42736df727c83 summary/MOL16S.reads.onebp.tsv | cut -f 1,2
+    $ grep 20c0669e4c6f8436c9d42736df727c83 summary/great_lakes.MOL16S.reads.onebp.tsv | cut -f 1,2
     20c0669e4c6f8436c9d42736df727c83  Sphaerium simile
 
 Or look at this TSV or ``summary/MOL16S.reads.onebp.xlsx`` in Excel.
@@ -192,7 +192,7 @@ read report, or at the command line:
     TTGAAAAAAAGATCCCTTATTAAGGACAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGAACTAA
     TCGAAGAAACGGTTTGCG
     $ grep -E "(MD5|20c0669e4c6f8436c9d42736df727c83|ecdaa082b70f5e268f76128693531760|98dc259e48de3e258cb93a34c38a9484)" \
-      summary/MOL16S.reads.onebp.tsv | cut -f 1,2
+      summary/great_lakes.MOL16S.reads.onebp.tsv | cut -f 1,2
     <SEE TABLE BELOW>
 
 Giving:
