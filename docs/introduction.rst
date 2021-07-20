@@ -54,21 +54,14 @@ The second stage of the pipeline offers a choice of classifier algorithms:
   with a local database built of the database sequences, and takes the species
   of the top BLAST hit(s) subject to some minimum alignment quality to try to
   exclude misleading matches.
-- Clustering using Swarm v2 (``swarm``). This classifier aimed to reproduce
-  the methodology of ``metapy`` used in Riddell *et al.* (2019). For each
-  sample, the reads are clustered with the database entries, and each cluster
-  is assigned the species of any database entries in the cluster.
-- Swarm v2 clustering with identity override (``swarmid``). As above, but if a
-  sequence perfectly matches a database entry that taxonomy is used (ignoring
-  any additional species which it might be clustered with).
 
 These have different strengths and weaknesses, which depend in part on the
 completeness of the database for the target environment. The ``identity``,
 ``substr`` and ``onebp`` classifiers are very strict, and with a sparse
 database could leave a lot a lot of sequences with no prediction. On the other
-hand, the ``blast``, ``swarm`` and ``swarmid`` classifiers are more fuzzy and
-will make classifications on much looser criteria - but with a sparse database
-those matches could be false positives.
+hand, the ``blast`` classifier is much more fuzzy and will make
+classifications on much looser criteria - but with a sparse database those
+matches could easily be false positives.
 
 In assessing the classification performance, it is the *combination* of both
 classification method (algorithm) *and* marker database which which matters.
