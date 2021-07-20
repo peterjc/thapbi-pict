@@ -16,7 +16,7 @@ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
         -o summary/thapbi-pict -n raw_data/NEGATIVE*.fastq.gz
 
 echo "Pipeline with metadata & assess classifier..."
-# Reuses the intermediate files (prepared FASTA and classifer output)
+# Reuses the intermediate files (prepared FASTA files)
 # Giving report name stem (so not to over-write reports without metadata)
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
         -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
