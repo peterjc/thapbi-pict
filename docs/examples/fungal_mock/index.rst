@@ -13,8 +13,8 @@ This example is based on the two amplicon sequencing libraries from this paper:
     https://doi.org/10.1111/1755-0998.12760
 
 The first library used a single primer set targetting ITS1, while the second
-library used two additional sets of primers, making three in total (two
-targeting ITS1, one for ITS2).
+library used two sets of primers targetting a different region of ITS1, and
+ITS2.
 
 .. toctree::
    :maxdepth: 1
