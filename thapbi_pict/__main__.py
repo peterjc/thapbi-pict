@@ -454,13 +454,14 @@ def pipeline(args=None):
             sys.exit(return_code)
 
         # TODO - Support known setting...
+        # TODO - Can we specify different expected results from diff markers?
         known_files = find_requested_files(
             args.input,
             ".known.tsv",
             ignore_prefixes=tuple(args.ignore_prefixes),
             debug=args.verbose,
         )
-        if known_files and len(markers) == 1:
+        if known_files:
             sys.stderr.write(f"Assessing {marker} classification...\n")
             return_code = assess(
                 inputs=known_files + fasta_files + classified_files,
