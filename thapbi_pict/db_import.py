@@ -38,9 +38,8 @@ DEF_MAX_LENGTH = 1000
 def parse_ncbi_fasta_entry(text, known_species=None):
     """Split an entry of Accession Genus Species-name Description.
 
-    Returns a two-tuple: taxid (always zero), presumed genus-species
-    (taken as two words by default if cannot be matched to a provided
-    known species) which may be the empty string.
+    Returns a two-tuple: taxid (always zero), presumed genus-species (may be
+    the empty string).
 
     >>> parse_ncbi_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
     (0, 'Phytophthora drechsleri')
@@ -49,8 +48,15 @@ def parse_ncbi_fasta_entry(text, known_species=None):
     >>> parse_ncbi_fasta_entry('Y08654.1 P.cambivora ribosomal internal ...')
     (0, '')
 
-    Dividing the species name into genus, species, strain etc
-    is not handled here.
+    If a list of known species are used, then right most word is dropped until
+    the text matches a known name. This discards any description (and strain
+    level information if the list is only to species level).
+
+    If there is no match to the provided names, heuristics are used but this
+    defaults to the first two words.
+
+    Dividing the species name into genus, species, strain etc is not handled
+    here.
     """  # noqa: E501
     parts = text.rstrip().split()
     taxid = 0
@@ -109,7 +115,7 @@ assert parse_ncbi_fasta_entry(
 
 
 def parse_curated_fasta_entry(text, known_species=None):
-    """Split an entry of "Acession genus species etc" into fields.
+    """Split an entry of "Accession genus species etc" into fields.
 
     Returns a two-tuple of taxid (always zero), genus-species.
 
