@@ -6,9 +6,9 @@ Introduction
 
 THAPBI PICT has been designed as a framework which can be applied to multiple
 biological contexts, demonstrated in the :ref:`worked examples
-<worked_examples>`. Each new marker (i.e. PCR primer target) will require a
-new reference database be compiled, most likely starting from published
-sequences, but we also sequenced culture collections.
+<worked_examples>`. Each new set of marker(s) (i.e. PCR primer targets) will
+require a new reference database be compiled, most likely starting from
+published sequences, but we also sequenced culture collections.
 
 Applied to environmental samples, some primer pairs will amplify a much wider
 sequence space than others, either reflecting a more diverse genome region, or
@@ -16,7 +16,7 @@ simply a longer sequence. Related to this, the fraction of observed sequences
 with a published reference will also vary - and thus the density of the
 references in sequence space. This in turn will can change which classifier
 algorithm is most appropriate. Inspecting the edit-graph produced for all your
-samples and including your initial database entries can help interpret this.
+samples and your initial database entries can help interpret this.
 
 The default classifier allows perfect matches, or a single base pair
 difference (substitution, insertion or deletion). This requires good database
@@ -27,10 +27,9 @@ Provided database
 -----------------
 
 THAPBI provides a default database which is used when the command line ``-d``
-or ``--database`` setting is omitted. This is intended for use with the
-*Phytophthora* ITS1 region targeted by the default left and right primers
-assumed during preparation of the paired FASTQ files. This is used in the
-first :ref:`worked example <woody_hosts>`.
+or ``--database`` setting is omitted. This is intended for use with a
+*Phytophthora* ITS1 target regio, and is used in the first
+:ref:`worked example <woody_hosts>`.
 
 The default database is compiled from the following sets of sequences:
 
