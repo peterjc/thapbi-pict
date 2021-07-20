@@ -52,7 +52,7 @@ a short fragment of ITS1.
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_one.BITS_B58S3.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library one using BITS/B58S3 primers for ITS1.
 
-This is from file ``amp_lib_one.BITS_B58S3.edit-graph.a75.xgmml`` created by
+This is from file ``AL1.BITS_B58S3.edit-graph.a75.xgmml`` created by
 ``run.sh``.
 
 The dark red nodes represent sequences in the database - given how this
@@ -91,7 +91,7 @@ amplicon one:
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.BITS_B58S3.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using BITS/B58S3 primers for ITS1 (although actually amplified with ITS1f/ITS2 primers).
 
-This is from file ``amp_lib_two.BITS_B58S3.edit-graph.a75.xgmml`` created by
+This is from file ``AL2.BITS_B58S3.edit-graph.a75.xgmml`` created by
 ``run.sh``.
 
 Broadly the same as from amplicon library one, but notice the
@@ -108,7 +108,7 @@ two images above:
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using ITS1f/ITS2 primers for ITS1.
 
-This is from file ``amp_lib_two.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
+This is from file ``AL2.ITS1f_ITS2.edit-graph.a75.xgmml`` created by
 ``run.sh``.
 
 The curious large grey node one edit away from *Fusarium oxysporum* has
@@ -146,7 +146,7 @@ ITS2:
    :target: https://raw.githubusercontent.com/peterjc/thapbi-pict/master/docs/images/amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.svg?sanitize=true
    :alt: Sequence edit-graph for amplicon library two using ITS3-KYO and ITS4-KYO3 primers for ITS2.
 
-This is from file ``amp_lib_two.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.xgmml``
+This is from file ``AL2.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.xgmml``
 created by ``run.sh``.
 
 Some more noteworthy changes to presence/absense, including much more
