@@ -17,8 +17,7 @@ examine THAPBI PICT's minimum read abundance setting.
 Two different sets primers were used targeting overlapping regions of the
 mtDNA 16S RNA marker gene, named MOL16S and SPH16S, which were sequenced
 separately (and not as in some of the other examples pooled together for the
-Illumina sequencing). The current THAPBI PICT design requires running the
-pipeline twice.
+Illumina sequencing).
 
 The full dataset includes aquarium and river environmental samples too, but
 public sequence databases lack many of the sequences detected.
