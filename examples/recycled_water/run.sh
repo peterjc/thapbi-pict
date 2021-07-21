@@ -40,7 +40,7 @@ fi
 
 echo "Drawing edit-graph for database entries alone"
 # Using -k / --marker to show the DB entries too
-thapbi_pict edit-graph -k ITS1 \
+thapbi_pict edit-graph -k ITS1-long \
         -d Redekar_et_al_2019_sup_table_3.sqlite \
         -o Redekar_et_al_2019_sup_table_3.xgmml
 
