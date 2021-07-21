@@ -42,10 +42,14 @@ def check_input_file(filename):
         sys.exit(f"ERROR: Could not find input file: {filename}")
 
 
-def check_output_stem(out_stem, dir_must_exist=True):
+def check_output_stem(out_stem, dir_only_ok=False, dir_must_exist=True):
     """Command line validation of output stem value."""
     if not out_stem:
         sys.exit("ERROR: Output stem is blank")
+    elif out_stem.endswith(os.path.sep) or os.path.isdir(out_stem):
+        if dir_only_ok:
+            return True
+        sys.exit(f"ERROR: Output stem {out_stem!r} is a directory")
     out_dir, basename = os.path.split(out_stem)
     if not basename:
         sys.exit(f"ERROR: Output stem needs a partial filename: {out_stem!r}")
@@ -289,7 +293,7 @@ def summary(args=None):
     """Subcommand to run sample and read summary reports."""
     from .summary import main
 
-    check_output_stem(args.output)
+    check_output_stem(args.output, dir_only_ok=False)
 
     if args.metadata:
         check_input_file(args.metadata)
@@ -347,7 +351,7 @@ def pipeline(args=None):
     from .summary import main as summary
     from .assess import main as assess
 
-    check_output_stem(args.output)
+    check_output_stem(args.output, dir_only_ok=True)
     if args.sampleout:
         check_output_directory(args.sampleout)
         intermediate_dir = args.sampleout
@@ -393,7 +397,12 @@ def pipeline(args=None):
 
     all_classified_files = []
     for marker in markers:
-        stem = f"{args.output}.{marker}"
+        if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
+            # Just a directory
+            stem = os.path.join(args.output, marker)
+        else:
+            # Have a filename stem (possibly with a directory)
+            stem = f"{args.output}.{marker}"
         fasta_files = [
             _
             for _ in all_fasta_files
@@ -836,7 +845,7 @@ def main(args=None):
         type=str,
         required=True,
         metavar="STEM",
-        help="Stem for generating output report filenames.",
+        help="Output directory and/or filename stem for generating reports.",
     )
     subcommand_parser.add_argument(
         "-s",
@@ -1369,7 +1378,7 @@ def main(args=None):
         type=str,
         required=True,
         metavar="STEM",
-        help="Stem for generating output report filenames.",
+        help="Output filename stem for generating reports. Not a directory.",
     )
     subcommand_parser.add_argument(
         "-m",

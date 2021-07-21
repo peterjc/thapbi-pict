@@ -13,6 +13,7 @@ and statistics for the internally tracked information about
 each sample like the number of raw reads in the original FASTQ
 files (via header lines in the intermediate FASTA files).
 """
+import os
 import sys
 from collections import Counter
 
@@ -653,6 +654,9 @@ def main(
     """
     # TODO - refactor the old separate reporting code
     assert isinstance(inputs, list)
+
+    if report_stem.endswith(os.path.sep) or os.path.isdir(report_stem):
+        sys.exit("ERROR: Summary requires an output filename stem, not a directory")
 
     (stem_to_meta, meta_to_stem, meta_names, group_col,) = load_metadata(
         metadata_file,
