@@ -1288,11 +1288,10 @@ def main(args=None):
         help="One or more sample FASTA and TSV prediction file or folder "
         "names. Expects to find matching files *.method.tsv to be assessed "
         "against *.known.tsv, where these filename suffixes can be set via "
-        "-m / --method and -k / --known arguments. ",
+        "-m / --method and --known arguments. ",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
-        "-k",
         "--known",
         type=str,
         default="known",
