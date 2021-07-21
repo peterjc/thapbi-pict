@@ -22,7 +22,7 @@ and we can load this into a new THAPBI PICT database using:
 Here we have named the new marker COI, and recorded the SFF_145f/SFF_351r
 primer pair. Calling ``run.sh`` will first run the pipeline using this COI
 database and primers, and the metadata as described earlier. This will
-make an edit-graph named ``mock-community.COI_430_bats.edit-graph.xgmml``
+make an edit-graph named ``summary/430_bats.COI.edit-graph.xgmml``
 which you can open in Cytoscape. This contains three main connected components
 for the three expected species, and a smattering of singletons and other tiny
 clusters. The ``-k`` or ``--marker`` option was used to  force inclusion of
@@ -59,8 +59,8 @@ observed variants from single species positive controls. It ceases to be an
 entirely fair assessment, but comparing the Excel reports from the two
 database the improvement is quite dramatic.
 
-Looking at ``mock-community.COI_430_bats.samples.onebp.xlsx`` (430 references
-only) compared to ``mock-community.COI_ext_bats.samples.onebp.xlsx`` (with an
+Looking at ``summary/430_bats.COI.samples.onebp.xlsx`` (430 references
+only) compared to ``summary/ext_bats.COI.samples.onebp.xlsx`` (with an
 extra 14 sequences added), the *Tadarida brasiliensis* detection improves
 markedly (although is still spotted in only two of the 20 replicates where it
 is the rare species - consistent with the published analysis and put down to

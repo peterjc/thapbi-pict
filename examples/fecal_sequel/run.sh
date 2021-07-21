@@ -14,15 +14,15 @@ mkdir -p intermediate/ summary/
 if [ ! -f COI_430_bats.sqlite ]; then
     echo "Setting up first database"
     thapbi_pict import -k COI \
-                --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC \
-                -d COI_430_bats.sqlite -i COI_430_bats.fasta -x -s ";"
+        --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC \
+        -d COI_430_bats.sqlite -i COI_430_bats.fasta -x -s ";"
 fi
 if [ ! -f COI_ext_bats.sqlite ]; then
     echo "Setting up extended database"
     cp COI_430_bats.sqlite COI_ext_bats.sqlite
     thapbi_pict import -k COI \
-                --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC \
-                -d COI_ext_bats.sqlite -i observed_3_bats.fasta -x -s ";"
+        --left GTHACHGCYCAYGCHTTYGTAATAAT --right CTCCWGCRTGDGCWAGRTTTCC \
+        -d COI_ext_bats.sqlite -i observed_3_bats.fasta -x -s ";"
 fi
 
 echo ---------------------------------------------------------------
@@ -31,16 +31,16 @@ echo ---------------------------------------------------------------
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
 mkdir -p intermediate/COI_430_bats/
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
-            -o summary/ -r mock-community.COI_430_bats \
-            -d COI_430_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4
+thapbi_pict pipeline -d COI_430_bats.sqlite \
+    -i raw_data/ expected/ -s intermediate/ -o summary/430_bats \
+    -t metadata.tsv -x 1 -c 2,3,4
 
 # Default edit-graph has very few DB nodes, so run another edit-graph
 # including all DB marker entries too
 thapbi_pict edit-graph -d COI_430_bats.sqlite -k COI \
-            -i intermediate/COI/*.fasta \
-            summary/mock-community.COI_430_bats.all_reads.onebp.tsv \
-            -o mock-community.COI_430_bats.edit-graph.xgmml
+    -i intermediate/COI/*.fasta \
+   summary/mock-community.COI_430_bats.all_reads.onebp.tsv \
+    -o mock-community.COI_430_bats.edit-graph.xgmml
 
 echo ---------------------------------------------------------------
 echo Fecal sequel - COI - Mock community using extended reference DB
@@ -50,9 +50,10 @@ echo ---------------------------------------------------------------
 # Currently no TSV files are kept there so using same path with -s
 
 # Primer pair SFF_145f (GTHACHGCYCAYGCHTTYGTAATAAT) and SFF_351r (CTCCWGCRTGDGCWAGRTTTCC)
-thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
-            -o summary/ -r mock-community.COI_ext_bats \
-            -d COI_ext_bats.sqlite -t metadata.tsv -x 1 -c 2,3,4
+thapbi_pict pipeline -d COI_ext_bats.sqlite \
+    -i raw_data/ expected/ -s intermediate/ \
+    -o summary/ext_bats \
+    -t metadata.tsv -x 1 -c 2,3,4
 
 echo ====
 echo Done

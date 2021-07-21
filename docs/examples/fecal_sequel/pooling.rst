@@ -6,7 +6,7 @@ here pooling on the first two columns of the sample report:
 
 .. code:: console
 
-    $ ../../scripts/pooling.py -i summary/mock-community.COI_430_bats.samples.onebp.tsv -c 1,2
+    $ ../../scripts/pooling.py -i summary/430_bats.COI.samples.onebp.tsv -c 1,2
     <SEE TABLE BELOW>
 
 You can specify an output stem like ``-o pooled`` and get ``pooled.tsv`` and
@@ -30,7 +30,7 @@ initial database, but it is found with the extended database:
 
 .. code:: console
 
-    $ ../../scripts/pooling.py -i summary/mock-community.COI_ext_bats.samples.onebp.tsv  -c 1,2
+    $ ../../scripts/pooling.py -i summary/ext_bats.COI.samples.onebp.tsv  -c 1,2
     <SEE TABLE BELOW>
 
 Again, shown as a table:
@@ -51,7 +51,7 @@ summary rather than showing the sum of the reads:
 
 .. code:: console
 
-    $ ../../scripts/pooling.py -i summary/mock-community.COI_ext_bats.samples.onebp.tsv  -c 1,2 -b
+    $ ../../scripts/pooling.py -i summary/ext_bats.COI.samples.onebp.tsv  -c 1,2 -b
     <SEE TABLE BELOW>
 
 All three species (and unknowns) are found in at least one of the 10 samples
