@@ -63,7 +63,7 @@ for NAME in MOL16S SPH16S; do
         -o summary/great_lakes.$NAME.assess.onebp.tsv
 
     # Run an edit graph at the default -a 100 setting,
-    # without the --showdb setting
+    # without showing the DB entries
     thapbi_pict edit-graph -d pooled.sqlite \
         -i intermediate/$NAME/ -a 100 \
         -o summary/great_lakes.$NAME.edit-graph.a100.xgmml

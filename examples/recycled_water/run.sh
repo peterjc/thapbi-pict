@@ -39,8 +39,8 @@ if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
 fi
 
 echo "Drawing edit-graph for database entries alone"
-# Using -s / --showdb
-thapbi_pict edit-graph --showdb \
+# Using -k / --marker to show the DB entries too
+thapbi_pict edit-graph -k ITS1 \
         -d Redekar_et_al_2019_sup_table_3.sqlite \
         -o Redekar_et_al_2019_sup_table_3.xgmml
 

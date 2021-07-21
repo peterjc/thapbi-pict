@@ -42,9 +42,9 @@ function edit_graph {
     # Now run an edit-graph at a higher abundance threshold
     # (works as long as pipeline or prepare-reads was run with
     # the same or lower threshold).
-    # Including all DB entries with -s / --showdb argument
+    # Including relevant DB entries with -k / --marker argument
     # Do not show the classifier output using -m with "-"
-    thapbi_pict edit-graph -d $DB --showdb \
+    thapbi_pict edit-graph -d $DB -k $MARKER \
                 -i intermediate/${LIBRARY}/${MARKER}/ -a 75 -m - \
                 -o summary/${LIBRARY}.${MARKER}.edit-graph.a75.xgmml
 }

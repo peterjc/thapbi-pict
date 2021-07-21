@@ -31,7 +31,7 @@ The following figures are from the example script ``run.sh`` which called
 in a sample from at least 75 reads to be considered. Using a lower value gives
 a much noiser picture (see the :ref:`halo_effect` discussed earlier).
 
-Additionally this used ``-s`` (or ``--showdb``) to force including all of the
+Additionally this used ``-k`` (or ``--marker``) to force including all of the
 database sequences (dark red nodes), as some did not appear in the samples
 (shown as the smallest dark red dots, typically the bottom row of the image).
 And, it used ``-m -`` (or ``--method -``) to deliberatly not label the nodes
