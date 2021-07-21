@@ -143,8 +143,7 @@ echo "Generating pooled reports for onebp classifier."
 # Now the reports:
 thapbi_pict summary -m onebp \
     -i intermediate_pool/ summary/pooled.all_reads.onebp.tsv \
-    -o summary/ -r pooled \
-    -t metadata.tsv -c 3,4,5 -x 2 -g 4
+    -o summary/pooled -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
 # assessment... as of v0.8.1 need a DB giving possible species
 thapbi_pict assess -m onebp \
