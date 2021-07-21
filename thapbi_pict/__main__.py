@@ -199,7 +199,7 @@ def prepare_reads(args=None):
         negative_controls=args.negctrls,
         out_dir=args.output,
         session=session,
-        spike_genus=args.spike,
+        spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=args.abundance,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -379,7 +379,7 @@ def pipeline(args=None):
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
         session=session,
-        spike_genus=args.spike,
+        spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=args.abundance,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -678,8 +678,8 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
 )
 
-# "-k", "--spike",
-ARG_SPIKE = dict(  # noqa: C408
+# "-y", "--synthetic",
+ARG_SYNTHETIC_SPIKE = dict(  # noqa: C408
     type=str,
     default="synthetic",
     metavar="GENUS",
@@ -858,7 +858,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
-    subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
+    subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
@@ -1169,7 +1169,7 @@ def main(args=None):
         help="Output directory. Required.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
-    subcommand_parser.add_argument("-k", "--spike", **ARG_SPIKE)
+    subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
