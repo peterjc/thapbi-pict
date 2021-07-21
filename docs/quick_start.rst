@@ -101,8 +101,8 @@ The first stage of the pipeline can be run separately as the
 ``thapbi_pict prepare`` command. Here each pair of FASTQ files named something
 like ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz`` is
 processed to give a much smaller FASTA format file ``<sample_name>.fasta``
-containing all the unique sequences from that sample which resemble an ITS1
-sequence (or a synthetic control).
+containing all the unique sequences from that sample which have the expected
+primers (so here should resemble an ITS1 sequence or our synthetic controls).
 
 In these FASTA files, each sequence is named as ``<checksum>_<abundance>``
 where the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_ of the
@@ -113,7 +113,7 @@ These MD5 checksums are used later in the pipeline, including in some reports.
 Unusually the intermediate FASTA files start with a header made of multiple
 lines starting with ``#``, which record information about the sample for use
 in reporting. This includes how many raw reads the FASTQ files had, how many
-were left after quality trimming, pair merging, primer trimming and finally
+were left after quality trimming, pair merging, primer trimming, and finally
 the abundance threshold. Many tools will accept these files as FASTA without
 complaint, but some tools require the header be removed.
 
@@ -126,17 +126,17 @@ Intermediate TSV files
 ----------------------
 
 The third stage of the pipeline can be run separately as the ``thapbi_pict
-classify`` command. Here each species predictions are made for each sequence
-in the prepared non-redundant FASTA file, generating a tab separated variable
-(TSV) file where the first column is the sequence name in
-``<checksum>_<abundance>`` format. This is file
-``summary/thapbi-pict.ITS1.all_reads.onebp.tsv`` in the above example.
+classify`` command. Here species predictions are made for each sequence in the
+prepared non-redundant FASTA file, generating a tab separated variable (TSV)
+file where the first column is the sequence name in ``<checksum>_<abundance>``
+format. This is file ``summary/thapbi-pict.ITS1.all_reads.onebp.tsv`` in the
+above example.
 
 Sample Reports
 --------------
 
 The first set of reports from the pipeline or ``thapbi_pict summary`` command
-are the sample reports - using the names from the above example:
+are the sample reports - using the filenames from the above example:
 
 * Human readable file ``summary/thapbi-pict.ITS1.samples.onebp.txt`` (plain
   text).
@@ -162,8 +162,8 @@ Read Reports
 ------------
 
 The other report from the pipeline or ``thapbi_pict summary`` command is more
-detailed being at the level of the unique sequences or reads. Again using the
-names from the above example:
+detailed, being at the level of the unique sequences or reads. Again using the
+filenames from the above example:
 
 * Plain table ``summary/thapbi-pict.ITS1.reads.onebp.tsv`` (tab separated
   variables, TSV) which can be opened in R, Excel, or similar.
