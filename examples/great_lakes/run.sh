@@ -46,7 +46,7 @@ mkdir -p intermediate/ summary/
 thapbi_pict pipeline -d pooled.sqlite \
     -i raw_data/ -a 10 \
     --merged-cache tmp_merged/ \
-    -s intermediate/ -o summary/great_lakes \
+    -s intermediate/ -o summary/ \
     -t metadata.tsv -x 1 -c 4,5,3,2
 #   -t PRJNA379165.tsv -x 1 -c 4,8
 
@@ -59,14 +59,14 @@ for NAME in MOL16S SPH16S; do
     # as need to pass in different expected files per marker.
     thapbi_pict assess -d pooled.sqlite --marker $NAME \
         -i expected/$NAME/ intermediate/$NAME \
-           summary/great_lakes.$NAME.all_reads.onebp.tsv \
-        -o summary/great_lakes.$NAME.assess.onebp.tsv
+           summary/$NAME.all_reads.onebp.tsv \
+        -o summary/$NAME.assess.onebp.tsv
 
     # Run an edit graph at the default -a 100 setting,
     # without showing the DB entries
     thapbi_pict edit-graph -d pooled.sqlite \
         -i intermediate/$NAME/ -a 100 \
-        -o summary/great_lakes.$NAME.edit-graph.a100.xgmml
+        -o summary/$NAME.edit-graph.a100.xgmml
 done
 
 # Edit graph of just the mock community samples:
@@ -78,14 +78,14 @@ thapbi_pict edit-graph -d pooled.sqlite -a 100 \
        intermediate/MOL16S/SRR5534976.* \
        intermediate/MOL16S/SRR5534977.* \
        intermediate/MOL16S/SRR5534979.* \
-    -o summary/great_lakes.MOL16S.edit-graph.a100.mock.xgmml
+    -o summary/MOL16S.edit-graph.a100.mock.xgmml
 
 # Edit graph of just the mock community samples:
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i intermediate/SPH16S/SRR5534978.* \
        intermediate/SPH16S/SRR5534980.* \
        intermediate/SPH16S/SRR5534981.* \
-    -o summary/great_lakes.MOL16S.edit-graph.a100.mock.xgmml
+    -o summary/MOL16S.edit-graph.a100.mock.xgmml
 
 echo ====
 echo Done

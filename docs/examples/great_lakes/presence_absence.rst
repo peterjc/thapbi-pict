@@ -23,13 +23,13 @@ mussel species, so in general we expect less unique sequences than with the
 more general MOL16S primers.
 
 Only three members of the mock community should match. Looking at the
-``summary/great_lakes.SPH16S.assess.onebp.tsv`` output file in Excel or at the
+``summary/SPH16S.assess.onebp.tsv`` output file in Excel or at the
 command line, when run at a minimum abundance threshold of 10, these are the
 key numbers:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/great_lakes.SPH16S.assess.onebp.tsv
+    $ cut -f 1-5 summary/SPH16S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
@@ -66,13 +66,13 @@ but the other false positives here are limitations of the reference set.
 MOL16S
 ------
 
-Looking at the ``summary/great_lakes.MOL16S.assess.onebp.tsv`` output file in
+Looking at the ``summary/MOL16S.assess.onebp.tsv`` output file in
 Excel or at the command line, when run at a minimum abundance threshold of 10,
 these are the key numbers:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/great_lakes.MOL16S.assess.onebp.tsv
+    $ cut -f 1-5 summary/MOL16S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
