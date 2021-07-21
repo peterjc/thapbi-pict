@@ -274,6 +274,7 @@ def assess_classification(args=None):
         inputs=args.input,
         known=args.known,
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
+        marker=args.marker,
         method=args.method,
         min_abundance=args.abundance,
         assess_output=args.output,
@@ -467,6 +468,7 @@ def pipeline(args=None):
                 inputs=known_files + fasta_files + classified_files,
                 known="known",  # =args.known,
                 db_url=db,
+                marker=marker,
                 method=args.method,
                 min_abundance=args.abundance,
                 assess_output=f"{stem}.assess.{method}.tsv",
@@ -1290,6 +1292,14 @@ def main(args=None):
     arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for species list to infer true negatives."
     del arg
+    subcommand_parser.add_argument(
+        # "-k",
+        "--marker",
+        type=str,
+        default=None,
+        help="Which amplicon marker from the DB wanted? Default all. "
+        "Use if assessing a single marker to avoid extra false negatives.",
+    )
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_INPUT)
     subcommand_parser.add_argument(
         "-a",

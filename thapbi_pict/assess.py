@@ -13,6 +13,7 @@ from collections import Counter
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import file_to_sample_name
@@ -352,6 +353,7 @@ def main(
     assess_output,
     map_output,
     confusion_output,
+    marker=None,
     ignore_prefixes=None,
     debug=False,
 ):
@@ -428,6 +430,11 @@ def main(
         .distinct(Taxonomy.genus, Taxonomy.species)
         .join(SeqSource)
     )
+    if marker:
+        # TODO - Check this is actually in the DB?
+        view = view.join(MarkerDef, SeqSource.marker_definition).filter(
+            MarkerDef.name == marker
+        )
     db_sp_list = sorted(
         {genus_species_name(t.genus, t.species) for t in view if t.species}
     )
