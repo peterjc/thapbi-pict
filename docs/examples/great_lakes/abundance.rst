@@ -92,21 +92,21 @@ left hand columns, you should see:
 MOL16S  Aquarium       BIR2M        306311    297656   256386
 MOL16S  Aquarium       BIR6M        291954    286427   256471
 MOL16S  Control        BIM8M        2433      1010     551
-MOL16S  Mock Community SC3PRO1      689712    656664   550297
+MOL16S  Mock Community SC3PRO1      689712    656660   550295
 MOL16S  Mock Community SC3PRO2      405048    377024   297877
-MOL16S  Mock Community SC3PRO3      402219    380346   304629
-MOL16S  Mock Community NFSC3PRO3    349590    328955   262966
-MOL16S  Mock Community SC3PRO4      671241    628641   494271
+MOL16S  Mock Community SC3PRO3      402219    380345   304629
+MOL16S  Mock Community NFSC3PRO3    349590    328952   262964
+MOL16S  Mock Community SC3PRO4      671241    628640   494270
 MOL16S  Mock Community NFSC3PRO4    420015    364229   262727
-MOL16S  Mock Community SC3PRO5      480606    458895   383868
+MOL16S  Mock Community SC3PRO5      480606    458894   383868
 MOL16S  River          BIM6M        821849    799333   703594
 MOL16S  River          BIM2M        1119271   954520   823795
 MOL16S  River          BIM4M        709472    367468   317366
-SPH16S  Aquarium       BIR2S        498926    27       0
+SPH16S  Aquarium       BIR2S        498926    25       0
 SPH16S  Aquarium       BIR6S        240360    27       0
-SPH16S  Mock Community SPSC3PRO1    425271    37       0
-SPH16S  Mock Community SPSC3PRO2    341476    175      27
-SPH16S  Mock Community SPSC3PRO4    410780    421      108
+SPH16S  Mock Community SPSC3PRO1    425271    35       0
+SPH16S  Mock Community SPSC3PRO2    341476    168      27
+SPH16S  Mock Community SPSC3PRO4    410780    420      108
 ======= ============== ============ ========= ======== ==========
 
 Looking at the same points, I see two problems:
@@ -176,7 +176,7 @@ read report, or at the command line:
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:410780
     #flash:375539
-    #cutadapt:421
+    #cutadapt:420
     #abundance:108
     #threshold:10
     >20c0669e4c6f8436c9d42736df727c83_46
