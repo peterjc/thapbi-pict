@@ -19,6 +19,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
 from .db_orm import connect_to_db
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -194,7 +195,7 @@ def main(
     inputs,
     method="-",
     min_abundance=100,
-    always_show_db=False,
+    show_db_marker=None,
     total_min_abundance=0,
     max_edit_dist=3,
     ignore_prefixes=None,
@@ -233,8 +234,10 @@ def main(
     if not (inputs or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")
 
-    if not inputs and not always_show_db:
-        sys.exit("If not using -i / --input argument, require -s / --showdb.")
+    if not inputs and not show_db_marker:
+        sys.exit(
+            "If not using -i / --input argument, require -k / --marker to use DB only."
+        )
 
     if inputs:
         if debug:
@@ -338,14 +341,22 @@ def main(
             .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
             .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
         )
+        if show_db_marker:
+            # TODO - Check this marker is actually in the DB?
+            # Note if marker not specified, will use all the DB entries to
+            # label nodes regardless of which marker they are for - probably
+            # fine, but could have same sequence against multiple markers.
+            view = view.join(MarkerDef, SeqSource.marker_definition).filter(
+                MarkerDef.name == show_db_marker
+            )
         # Sorting for reproducibility
         view = view.order_by(SeqSource.id)
         # TODO - Copy genus/species filtering behvaiour from dump command?
 
         for seq_source in view:
             md5 = seq_source.marker_seq.md5
-            if not always_show_db and md5 not in md5_in_fasta:
-                # Low abundance or absenst from FASTA files, ignore it
+            if not show_db_marker and md5 not in md5_in_fasta:
+                # Low abundance or absent from FASTA files, ignore it
                 continue
             md5_in_db.add(md5)
             md5_to_seq[md5] = seq_source.marker_seq.sequence
@@ -363,14 +374,14 @@ def main(
                 if genus in md5_species[md5]:
                     # If have species level, discard genus level only
                     md5_species[md5].remove(genus)
-        if always_show_db:
+        if show_db_marker:
             sys.stderr.write(
-                f"Loaded {len(md5_in_db)} unique sequences from database\n"
+                f"Loaded {len(md5_in_db)} unique {show_db_marker} sequences from DB\n"
             )
         else:
             sys.stderr.write(f"Matched {len(md5_in_db)} unique sequences in database\n")
 
-    if db_url and inputs and always_show_db:
+    if db_url and inputs and show_db_marker:
         sys.stderr.write(
             f"DB had {len(md5_in_db)} sequences"
             f" ({len(md5_in_db.difference(md5_in_fasta))} not in FASTA),"

@@ -332,7 +332,7 @@ def edit_graph(args=None):
         method=args.method,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
-        always_show_db=args.showdb,
+        show_db_marker=args.marker,
         max_edit_dist=args.editdist,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
@@ -1452,11 +1452,12 @@ def main(args=None):
         "Offered as a way to simplify the final graph.",
     )
     subcommand_parser.add_argument(
-        "-s",
-        "--showdb",
-        action="store_true",
-        help="Show DB entries, regardless of their abundance in the "
-        "FASTA inputs. Required if only drawing DB entries.",
+        "-k",
+        "--marker",
+        type=str,
+        default=None,
+        help="Show DB entries from this marker, regardless of their abundance"
+        " in the FASTA inputs. Required if only drawing DB entries.",
     )
     subcommand_parser.add_argument(
         "-e",

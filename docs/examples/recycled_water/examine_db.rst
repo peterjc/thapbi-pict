@@ -127,11 +127,11 @@ Edit graph
 In the worked example with the default database, we introduced the
 ``edit-graph`` command for use with CytoScape to examine the sequence space of
 the samples. It can also be run on a database alone provided you include the
-``-s`` or ``--showdb`` switch:
+``-k`` or ``--marker`` switch:
 
 .. code:: console
 
-    $ thapbi_pict edit-graph -s \
+    $ thapbi_pict edit-graph -k ITS1 \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -o Redekar_et_al_2019_sup_table_3.xgmml
     Loaded 838 unique sequences from database

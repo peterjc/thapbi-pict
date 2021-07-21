@@ -25,8 +25,8 @@ database and primers, and the metadata as described earlier. This will
 make an edit-graph named ``mock-community.COI_430_bats.edit-graph.xgmml``
 which you can open in Cytoscape. This contains three main connected components
 for the three expected species, and a smattering of singletons and other tiny
-clusters. The ``--showdb`` option was used to  force inclusion of the database
-entries (even if not seen in the samples).
+clusters. The ``-k`` or ``--marker`` option was used to  force inclusion of
+the database entries (even if not seen in the samples).
 
 Importantly, only the *Eptesicus fuscus* cluster includes a red node from the
 database which is also in the samples. i.e. None of the sequence data from
