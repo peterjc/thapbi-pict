@@ -39,8 +39,8 @@ thapbi_pict pipeline -d COI_430_bats.sqlite \
 # including all DB marker entries too
 thapbi_pict edit-graph -d COI_430_bats.sqlite -k COI \
     -i intermediate/COI/*.fasta \
-   summary/mock-community.COI_430_bats.all_reads.onebp.tsv \
-    -o mock-community.COI_430_bats.edit-graph.xgmml
+   summary/430_bats.COI.all_reads.onebp.tsv \
+    -o 430_bats.COI.edit-graph.xgmml
 
 echo ---------------------------------------------------------------
 echo Fecal sequel - COI - Mock community using extended reference DB
