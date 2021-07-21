@@ -1071,6 +1071,7 @@ def main(args=None):
         "--output",
         type=str,
         default="-",
+        metavar="FILENAME",
         help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument(
@@ -1137,6 +1138,7 @@ def main(args=None):
         "--output",
         type=str,
         default="-",
+        metavar="FILENAME",
         help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
@@ -1209,7 +1211,7 @@ def main(args=None):
         "--output",
         type=str,
         default="-",
-        metavar="PATH",
+        metavar="FILENAME",
         help="Single output filename, '-' for stdout (default). "
         "Can be a directory if a single -i/-r input file given.",
     )
@@ -1514,6 +1516,7 @@ def main(args=None):
         "--output",
         type=str,
         default="-",
+        metavar="FILENAME",
         help="File to write to (default '-' meaning stdout)",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
