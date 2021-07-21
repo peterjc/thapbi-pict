@@ -110,7 +110,7 @@ echo ================
 echo Running pipeline
 echo ================
 
-thapbi_pict pipeline -d references/pooled.sqlite -k "" \
+thapbi_pict pipeline -d references/pooled.sqlite --synthetic "" \
             -i raw_data/ expected/ -s intermediate/ --merged-cache tmp_merged/ \
             -o summary/ -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
