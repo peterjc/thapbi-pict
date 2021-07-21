@@ -41,8 +41,7 @@ gzip compressed is preferable for disk space.
     ...
 
 We will make two additional sub-folders, ``intermediate/`` (for the per-sample
-prepared FASTA files and classifier prediction TSV files), and ``summary/``
-for the folder level reports.
+prepared FASTA files), and ``summary/`` for the folder level reports.
 
 .. code:: console
 
