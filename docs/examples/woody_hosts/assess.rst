@@ -214,7 +214,7 @@ five columns:
 
 .. code:: console
 
-    $ thapbi_pict classify -i intermediate/DNA15MIX.fasta -o .
+    $ thapbi_pict classify -i intermediate/ITS1/DNA15MIX.fasta -o .
     $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv | cut -f 1-5
     Assessed onebp vs known in 1 files (174 species)
     #Species                     TP  FP  FN  TN
