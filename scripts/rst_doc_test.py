@@ -224,7 +224,9 @@ for filename in sys.argv[1:]:
         continue
     os.chdir(cur_dir)
 
+    print("=" * len(filename))
     print(filename)
+    print("=" * len(filename))
 
     for block, block_meta in scan_rst(filename):
         for cmd, old_out in parse_block(block):
