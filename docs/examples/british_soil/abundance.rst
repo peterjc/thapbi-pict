@@ -92,6 +92,9 @@ Phytophthora syringae      0  1  0  4
 OTHER 161 SPECIES IN DB    0  0  0  805
 ========================== == == == ===
 
+False positives
+~~~~~~~~~~~~~~~
+
 Looking at the reports, we do see unwanted species in the controls. First we
 can easily dismiss the unwanted predictions of *Phytophthora agathidicida* as
 being indistinguishable from positive control *P. castaneae* (this is explicit
@@ -108,10 +111,61 @@ a single unique sequence ``32159de6cbb6df37d084e31c37c30e7b``:
 
 .. code:: console
 
-    $ grep 32159de6cbb6df37d084e31c37c30e7b intermediate/ITS1/SRR13393813.fasta
+    $ grep -A 1 32159de6cbb6df37d084e31c37c30e7b intermediate/ITS1/SRR13393813.fasta
     >32159de6cbb6df37d084e31c37c30e7b_86
+    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTTATT
+    GGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATCATGGCGACCGCTCTGAGCTTCGGCCTGGAG
+    CTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACAAACT
     $ grep 32159de6cbb6df37d084e31c37c30e7b summary/british_soil.ITS1.all_reads.onebp.tsv
     32159de6cbb6df37d084e31c37c30e7b_48894  67594  Phytophthora syringae
+
+Interestingly before removing the primers this sequence came from a range of
+unique sequences, none seen more than ten times:
+
+.. code:: console
+
+    $ export SEQ=TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATCATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACAAACT
+    $ cat tmp_merged/SRR13393813.fasta.gz | gunzip | grep -B 1 "${SEQ}" \
+      | grep "^>" | head
+    >590e14c00cacf04bc580415ad7cca33f_10
+    >85570853bb0a4f6ff59a2dc0cf1535e6_10
+    >695cd92b7e12e48c0250b4eee7c6c3a1_10
+    >34fc5250c9913e7fa250cbb1dd17ecb9_9
+    >c6d536bd0a2b169c02564d944aa52ca3_9
+    >a2de7264ea9e0fb4ffb3429253961852_6
+    >ade1678898b72a487635a4d0ee729dab_5
+    >519ddc9abe8ca622664debcc91b4ade0_3
+    >64e9b619d178752bf8b7f7e2ec0b2998_3
+    >7314c74a9e7d5e8b6bca1297473838d0_2
+
+There is variation at the allowed ambiguities in the right primer, which we
+can again show with grep. Here ``GAAGGTGAAGTCGTAACAAGG`` is the left primer,
+and ``GYRGGGACGAAAGTCYYTGC`` is the reverse complement of the right primer. We
+are using a regular expression wildcard in place of the ambiguous bases:
+
+.. code:: console
+
+    $ cat tmp_merged/SRR13393813.fasta.gz | gunzip \
+      | grep -B 1 "GAAGGTGAAGTCGTAACAAGG${SEQ}G..GGGACGAAAGTC..TGC" \
+      | grep "^>" | head
+    >590e14c00cacf04bc580415ad7cca33f_10
+    >85570853bb0a4f6ff59a2dc0cf1535e6_10
+    >695cd92b7e12e48c0250b4eee7c6c3a1_10
+    >34fc5250c9913e7fa250cbb1dd17ecb9_9
+    >c6d536bd0a2b169c02564d944aa52ca3_9
+    >a2de7264ea9e0fb4ffb3429253961852_6
+    >ade1678898b72a487635a4d0ee729dab_5
+    >519ddc9abe8ca622664debcc91b4ade0_3
+    >64e9b619d178752bf8b7f7e2ec0b2998_3
+    >7314c74a9e7d5e8b6bca1297473838d0_2
+
+The THAPBI PICT pipeline drops low abundance sequences *after* removing the
+primers when pooling unique sequences. It seems possible the authors did not
+find this *Phytophthora syringae* matching sequence because their pipeline
+removed these sequences as being low abundance *prior* to primer trimming?
+
+False negatives
+~~~~~~~~~~~~~~~
 
 We find *Phytophthora boehmeriae* is absent at this minimum threshold of 50.
 To double check the less abundant sequences you may wish to try running this

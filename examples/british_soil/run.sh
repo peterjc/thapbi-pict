@@ -12,6 +12,7 @@ echo ===================
 # Negative controls give confidence we can lower the default min abundance.
 
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
+            --merged-cache tmp_merged/ \
             --ignore-prefixes Unavailable \
             -o summary/british_soil -a 50 \
             -t metadata.tsv -c 1,2,3,4,5,6,7 -x 8
