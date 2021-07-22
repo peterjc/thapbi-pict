@@ -12,7 +12,7 @@ to the top level ``thapbi_pict pipeline`` command:
     $ thapbi_pict pipeline -h
     ...
 
-Assuming you have the FASTQ files in ``raw_data/``, we could run the pipeline
+Assuming you have the FASTQ files in ``raw_data/``, we can run the pipeline
 command as follows, and should get multiple output report files:
 
 .. code:: console

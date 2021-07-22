@@ -32,10 +32,14 @@ replicates from each of 14 sample sites where the file name stem is
     $ ls -1 intermediate/ITS1/*.fasta | wc -l
     122
 
-You should find 122 small FASTA files in the ``intermediate/`` folder (or you
-can get these from the compressed file as described above). Note this is
-robust to being interrupted and restarted (e.g. a job might time out on the
-cluster).
+Note this is robust to being interrupted and restarted (e.g. a job might time
+out on a cluster).
+
+You should find 122 small FASTA files in the ``intermediate/`` folder
+
+Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
+``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
+negative controls (good).
 
 .. WARNING::
 

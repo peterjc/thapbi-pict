@@ -16,9 +16,6 @@ script ``run.sh`` to do the final run-though automatically (first without
 any metadata, then again with it), but encourage you to follow along the
 individual steps first.
 
-If you skip the raw FASTQ files, you won't be able to run the entire pipeline
-or the prepare-reads steps.
-
 FASTQ data
 ----------
 
@@ -32,28 +29,6 @@ Script ``setup.sh`` will download the raw FASTQ files for Riddell *et al.*
 (2019) from https://doi.org/10.5281/zenodo.3342957
 
 It will download 244 raw FASTQ files (122 pairs), about 215MB on disk
-
-The first step of a typical THAPBI PICT workflow is to transform the paired
-FASTQ files into much smaller FASTA files. We provide those FASTA files
-compressed with the THAPBI PICT source code, so if you skip the FASTQ files,
-you can still follow the rest of a typical analysis.
-
-If you skip the raw data, instead you must decompress the pre-prepared 122
-FASTA files into your ``intermediate/`` subdirectory:
-
-.. code:: console
-
-    $ tar -jxvkf intermediate.tar.bz2
-    ...
-    $ ls -1 intermediate/*.fasta | wc -l
-    122
-
-Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
-``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
-negative controls (good).
-
-We also provide :ref:`metadata for the samples <metadata>` for use in the
-reports.
 
 Amplicon primers & reference sequences
 --------------------------------------
@@ -104,10 +79,6 @@ header line which must be specified.
 
 Other files
 -----------
-
-Compressed archive file ``intermediate.tar.bz2`` contains the results of
-the first step in the analysis, in case you have problems downloading the
-raw FASTQ files (see below).
 
 Subdirectory ``expected/`` contains four plain text tab-separated files,
 describing the expected species in some mock community positive controls:
