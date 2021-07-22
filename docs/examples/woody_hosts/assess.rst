@@ -158,12 +158,12 @@ grep to show all lines with this species name:
 
 .. code:: console
 
-    $ grep "Phytophthora agathidicida" summary/thapbi-pict.all_reads.onebp.tsv
+    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
     29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/*.fasta
-    intermediate/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
-    intermediate/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
-    intermediate/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
+    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/ITS1/*.fasta
+    intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
+    intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
+    intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
 
 The same applies to *Phytophthora capsici* and *Phytophthora glovera*,
 although in this case both were in the mixture.
@@ -296,12 +296,12 @@ by giving the input directory names (it will work out the common filenames):
 .. code:: console
 
     $ thapbi_pict assess -i expected/ intermediate/ITS1/ \
-      summary/thapbi-pict.all_reads.onebp.tsv -o thabpi-pict.assess.tsv
+      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o thabpi-pict.ITS1.assess.tsv
     Assessed onebp vs known in 4 files (174 species)
-    $ cut -f 1-5,9,11 thabpi-pict.assess.tsv
+    $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
-New table ``thabpi-pict.assess.tsv`` is similar:
+New table ``thabpi-pict.ITS1.assess.tsv`` is similar:
 
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
@@ -351,21 +351,21 @@ reports:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ expected/ \
-      -s intermediate/ -o summary/with-metadata \
-      -n raw_data/NEGATIVE*.fastq.gz \
+    $ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
+      -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
     $ ls -1 summary/with-metadata.*
-    summary/with-metadata.all_reads.fasta
-    summary/with-metadata.assess.confusion.onebp.tsv
-    summary/with-metadata.assess.onebp.tsv
-    summary/with-metadata.assess.tally.onebp.tsv
-    summary/with-metadata.reads.onebp.tsv
-    summary/with-metadata.reads.onebp.xlsx
-    summary/with-metadata.samples.onebp.tsv
-    summary/with-metadata.samples.onebp.txt
-    summary/with-metadata.samples.onebp.xlsx
+    summary/with-metadata.ITS1.all_reads.fasta
+    summary/with-metadata.ITS1.all_reads.onebp.tsv
+    summary/with-metadata.ITS1.assess.confusion.onebp.tsv
+    summary/with-metadata.ITS1.assess.onebp.tsv
+    summary/with-metadata.ITS1.assess.tally.onebp.tsv
+    summary/with-metadata.ITS1.reads.onebp.tsv
+    summary/with-metadata.ITS1.reads.onebp.xlsx
+    summary/with-metadata.ITS1.samples.onebp.tsv
+    summary/with-metadata.ITS1.samples.onebp.txt
+    summary/with-metadata.ITS1.samples.onebp.xlsx
 
-Output file ``summary/with-metadata.assess.onebp.tsv`` will match the output
+Output file ``summary/with-metadata.ITS1.assess.onebp.tsv`` will match the output
 above.

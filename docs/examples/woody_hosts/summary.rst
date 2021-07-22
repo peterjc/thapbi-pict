@@ -18,7 +18,7 @@ To mimic what the pipeline command would do, run the following:
 
 .. code:: console
 
-    $ thapbi_pict summary -i intermediate/ -o summary/
+    $ thapbi_pict summary -i intermediate/ -o summary/thapbi-pict
     ...
 
 We will look at the output in a moment, along side the equivalent reports

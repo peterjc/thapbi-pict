@@ -29,7 +29,7 @@ replicates from each of 14 sample sites where the file name stem is
 
 .. code:: console
 
-    $ ls -1 intermediate/*.fasta | wc -l
+    $ ls -1 intermediate/ITS1/*.fasta | wc -l
     122
 
 You should find 122 small FASTA files in the ``intermediate/`` folder (or you
@@ -80,7 +80,7 @@ the paired FASTQ files, down to just 4180 after processing.
 
 .. code:: console
 
-    $ head -n 9 intermediate/Site_1_sample_1.fasta
+    $ head -n 9 intermediate/ITS1/Site_1_sample_1.fasta
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:6136
@@ -118,7 +118,7 @@ wrapped at 80 characters.
 
 .. code:: console
 
-    $ grep "^>" intermediate/Site_1_sample_1.fasta
+    $ grep "^>" intermediate/ITS1/Site_1_sample_1.fasta
     >2e4f0ed53888ed39a2aee6d6d8e02206_2269
     >c1a720b2005f101a9858107545726123_715
     >96e0e2f0475bd1617a4b05e778bb04c9_330
@@ -167,7 +167,7 @@ If you wished to lower the threshold from the default to 50, you could use:
 
 .. code:: console
 
-    $ rm -rf intermediate/*.fasta  # Are you sure?
+    $ rm -rf intermediate/ITS1/*.fasta  # Are you sure?
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -a 50
     ...
 

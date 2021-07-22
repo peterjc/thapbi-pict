@@ -25,9 +25,9 @@ we will stick with the defaults and tell it to look for FASTA files in the
 
 .. code:: console
 
-    $ thapbi_pict fasta-nr -i intermediate/ -o summary/thapbi-pict.all_reads.fasta
+    $ thapbi_pict fasta-nr -i intermediate/ -o summary/thapbi-pict.ITS1.all_reads.fasta
     ...
-    $ thapbi_pict classify -i summary/thapbi-pict.all_reads.fasta
+    $ thapbi_pict classify -i summary/thapbi-pict.ITS1.all_reads.fasta
     ...
 
 Here we have not set the output folder with ``-o`` or ``--output``, which
@@ -36,9 +36,9 @@ the input FASTA file. There should now be a new FASTA and TSV file:
 
 .. code:: console
 
-    $ ls -1 summary/thapbi-pict.all_reads.*
-    summary/thapbi-pict.all_reads.fasta
-    summary/thapbi-pict.all_reads.onebp.tsv
+    $ ls -1 summary/thapbi-pict.ITS1.all_reads.*
+    summary/thapbi-pict.ITS1.all_reads.fasta
+    summary/thapbi-pict.ITS1.all_reads.onebp.tsv
 
 Intermediate TSV files
 ----------------------
@@ -58,7 +58,7 @@ These files are not really intended for human use, but are readable:
 
 .. code:: console
 
-    $ head summary/thapbi-pict.all_reads.onebp.tsv
+    $ head summary/thapbi-pict.ITS1.all_reads.onebp.tsv
     <SEE TABLE BELOW>
 
 Viewing it like this is not ideal, although there are command line tools which
@@ -92,12 +92,12 @@ had matches to *Phytophthora rubi* using ``grep`` as follows:
 
 .. code:: console
 
-    $ grep "Phytophthora rubi" summary/thapbi-pict.all_reads.onebp.tsv
+    $ grep "Phytophthora rubi" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
     d8613e80b8803b13f7ea5d097f8fe46f_899  129364  Phytophthora rubi
-    $ grep d8613e80b8803b13f7ea5d097f8fe46f intermediate/*.fasta
-    intermediate/DNA10MIX_bycopynumber.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_279
-    intermediate/DNA10MIX_diluted25x.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_349
-    intermediate/DNA10MIX_undiluted.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_271
+    $ grep d8613e80b8803b13f7ea5d097f8fe46f intermediate/ITS1/*.fasta
+    intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_279
+    intermediate/ITS1/DNA10MIX_diluted25x.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_349
+    intermediate/ITS1/DNA10MIX_undiluted.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_271
 
 The summary reports would also answer this particular question, but this kind
 of search can be useful for exploring specific questions.

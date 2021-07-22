@@ -17,15 +17,19 @@ command as follows, and should get multiple output report files:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+      -o summary/thapbi-pict
     ...
     $ ls -1 summary/thapbi-pict.*
-    summary/thapbi-pict.all_reads.fasta
-    summary/thapbi-pict.reads.onebp.tsv
-    summary/thapbi-pict.reads.onebp.xlsx
-    summary/thapbi-pict.samples.onebp.tsv
-    summary/thapbi-pict.samples.onebp.txt
-    summary/thapbi-pict.samples.onebp.xlsx
+    summary/thapbi-pict.ITS1.all_reads.fasta
+    summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    summary/thapbi-pict.ITS1.reads.onebp.tsv
+    summary/thapbi-pict.ITS1.reads.onebp.xlsx
+    summary/thapbi-pict.ITS1.samples.onebp.tsv
+    summary/thapbi-pict.ITS1.samples.onebp.txt
+    summary/thapbi-pict.ITS1.samples.onebp.xlsx
+    summary/thapbi-pict.edit-graph.onebp.pdf
+    summary/thapbi-pict.edit-graph.onebp.xgmml
 
 As described for the :ref:`prepare-reads step <prepare_reads>` we should also
 specify which of the samples are negative controls, which may be used to
@@ -33,8 +37,8 @@ increase the plate level minimum abundance threshold:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ -o summary/ \
-      -n raw_data/NEGATIVE*.fastq.gz
+    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+      -o summary/thapbi-pict -n raw_data/NEGATIVE*.fastq.gz
     ...
 
 And, as described for the :ref:`summary reports <summary_reports>`, we can
@@ -46,13 +50,27 @@ provide metadata:
       -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
     ...
+
+Finally, as we will review next, we can ask the pipeline to assess the results
+against any expected sample species classifications:
+
+.. code:: console
+
+    $ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
+      -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+    ...
     $ ls -1 summary/with-metadata.*
-    summary/with-metadata.all_reads.fasta
-    summary/with-metadata.reads.onebp.tsv
-    summary/with-metadata.reads.onebp.xlsx
-    summary/with-metadata.samples.onebp.tsv
-    summary/with-metadata.samples.onebp.txt
-    summary/with-metadata.samples.onebp.xlsx
+    summary/with-metadata.ITS1.all_reads.fasta
+    summary/with-metadata.ITS1.all_reads.onebp.tsv
+    summary/with-metadata.ITS1.assess.confusion.onebp.tsv
+    summary/with-metadata.ITS1.assess.onebp.tsv
+    summary/with-metadata.ITS1.assess.tally.onebp.tsv
+    summary/with-metadata.ITS1.reads.onebp.tsv
+    summary/with-metadata.ITS1.reads.onebp.xlsx
+    summary/with-metadata.ITS1.samples.onebp.tsv
+    summary/with-metadata.ITS1.samples.onebp.txt
+    summary/with-metadata.ITS1.samples.onebp.xlsx
 
 Here we also used ``-r`` (or ``--report``) to specify a different stem
 for the report filenames.
