@@ -32,7 +32,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positi
 echo "=================================="
 echo "Decompressing prepare-reads output"
 echo "=================================="
-time tar -jxvf examples/woody_hosts/intermediate.tar.bz2 -C $TMP/ | wc -l
+time tar -jxvf tests/woody_hosts/intermediate.tar.bz2 -C $TMP/ | wc -l
 
 if [ -d tests/woody_hosts/raw_data/ ]; then
     echo "================================="
@@ -41,9 +41,13 @@ if [ -d tests/woody_hosts/raw_data/ ]; then
     mkdir $TMP/intermediate_new
     time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
     for f in $TMP/intermediate/*.fasta; do
-        echo diff $f $TMP/intermediate_new/${f##*/}
-        diff $f $TMP/intermediate_new/${f##*/}
+        echo diff $f $TMP/intermediate_new/ITS1/${f##*/}
+        diff $f $TMP/intermediate_new/ITS1/${f##*/}
     done
+else
+    echo "To check how much tests/woody_hosts/intermediate.tar.bz2 is out of date,"
+    echo 'use: $ ln -s $PWD/examples/woody_hosts/raw_data tests/woody_hosts/'
+    echo "(and then re-run tests/test_woody_hosts.sh)"
 fi
 
 echo "======================================="
