@@ -67,7 +67,7 @@ echo Running analysis
 echo ================
 
 thapbi_pict pipeline -d references/pooled.sqlite --merged-cache tmp_merged/ \
-            -i raw_data/ expected/ -s intermediate/ -k '' \
+            -i raw_data/ expected/ -s intermediate/ --synthetic '' \
             -o summary/soil_nematodes -t metadata.tsv -x 1 -c 4,3
 
 echo ====
