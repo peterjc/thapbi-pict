@@ -13,7 +13,7 @@ echo ===================
 
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
             --ignore-prefixes Unavailable \
-            -o summary/ -r british_soil_its1 -a 50 \
+            -o summary/british_soil -a 50 \
             -t metadata.tsv -c 1,2,3,4,5,6,7 -x 8
 
 echo =================
@@ -22,17 +22,17 @@ echo =================
 
 mkdir -p controls
 thapbi_pict pipeline -i raw_data/SRR13393802_* raw_data/SRR13393813_* \
-            raw_data/SRR13393837_* expected/ -o controls/ -r controls-only -a 1
+            raw_data/SRR13393837_* expected/ -o controls/controls-only -a 1
 
 echo ----------------------------------
 echo False negatives from P. boehmeriae
 echo ----------------------------------
-grep -E "(predictions|boehmeriae)" controls/controls-only.reads.onebp.tsv | cut -f 1,2,5
+grep -E "(predictions|boehmeriae)" controls/controls-only.ITS1.reads.onebp.tsv | cut -f 1,2,5
 
 echo -----------------------------
 echo False negatives from P. idaei
 echo -----------------------------
-grep -E "(predictions|idaei)" controls/controls-only.reads.onebp.tsv | cut -f 1,2,7- | head
+grep -E "(predictions|idaei)" controls/controls-only.ITS1.reads.onebp.tsv | cut -f 1,2,7- | head
 
 echo ====
 echo Done

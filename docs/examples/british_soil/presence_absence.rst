@@ -18,14 +18,14 @@ the ``-u`` or ``--unsequenced`` option which would include the unsequenced
 samples in the reports. We will initially focus on those without any
 Phytophthora.
 
-Open ``summary/british_soil_its1.samples.onebp.xlsx`` in Excel, or looking at
+Open ``summary/british_soil.ITS1.samples.onebp.xlsx`` in Excel, or looking at
 the plain text TSV equivalent, you can sort or filter for a "-" in column 5,
 the author's ITS result. Here all the THAPBI PICT output *Phytophthora*
 columns are zero.
 
 .. code:: console
 
-    $ cut -f 2,5,8,9,13 summary/british_soil_its1.samples.onebp.tsv | grep -E "(ITS|\t-\t)"
+    $ cut -f 2,5,8,9,13 summary/british_soil.ITS1.samples.onebp.tsv | grep -E "(ITS|\t-\t)"
     <SEE TABLE BELOW>
 
 As a table:
@@ -67,7 +67,7 @@ However, in four files we unexpectedly found only unknowns (i.e. no detectable
 
 .. code:: console
 
-    $ cut -f 2,5,8,9,13 summary/british_soil_its1.samples.onebp.tsv | grep -E "(ITS|\tUnknown\t)" | grep -v "\t-\t"
+    $ cut -f 2,5,8,9,13 summary/british_soil.ITS1.samples.onebp.tsv | grep -E "(ITS|\tUnknown\t)" | grep -v "\t-\t"
     ...
 
 With minor abbreviations to fit the table nicely:
@@ -146,7 +146,7 @@ line:
 .. code:: console
 
     $ grep -E "(^#Marker|Phytophthora europaea|\tLocation)" \
-      summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,22,30
+      summary/british_soil.ITS1.reads.onebp.tsv | cut -f 1,4,22,30
     #                                               DS2-2        DS3-4
     #Marker-MD5                       Sample-count  SRR13393830  SRR13393820
     3d3fa2fd6fe0f183cad80771f5950b27  2             3501         630
@@ -164,7 +164,7 @@ and ``DS1-8`` (but not ``US4-6``) where the authors could isolate it:
 .. code:: console
 
     $ grep -E "(^#Marker|Phytophthora gonapodyides|\tLocation)" \
-      summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,50,68,78,85
+      summary/british_soil.ITS1.reads.onebp.tsv | cut -f 1,4,50,68,78,85
     #                                               DS7-1        DS9-6        US1-8        US2-5
     #Marker-MD5                       Sample-count  SRR13393797  SRR13393776  SRR13393770  SRR13393762
     ed15fefb7a3655147115fc28a8d6d671  3             116          998          0            1054
@@ -182,7 +182,7 @@ Only a single unique sequence matched *P. quercina* but it also matches
 .. code:: console
 
     $ grep -E "(^#Marker|Phytophthora quercina|\tLocation)" \
-      summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,29,50,71
+      summary/british_soil.ITS1.reads.onebp.tsv | cut -f 1,4,29,50,71
     #                                               DS3-3        DS7-1        DS9-9
     #Marker-MD5                       Sample-count  SRR13393821  SRR13393797  SRR13393774
     ec642d4b8148085bb3f426829665755d  3             4230         2178         1080
@@ -194,7 +194,7 @@ And then two unique sequences matching just *P. uliginosa* from three samples,
 .. code:: console
 
     $ grep -E "(^#Marker|Phytophthora uliginosa|\tLocation)" \
-      summary/british_soil_its1.reads.onebp.tsv | cut -f 1,4,24,80,90
+      summary/british_soil.ITS1.reads.onebp.tsv | cut -f 1,4,24,80,90
     #                                               DS2-4        US2-1        US3-2
     #Marker-MD5                       Sample-count  SRR13393828  SRR13393765  SRR13393755
     cab2875a481e358a4993910872ec53a6  2             953          0            195
