@@ -84,7 +84,7 @@ hundred unique sequences:
 .. code:: console
 
     $ grep -c ">" summary/trnL-P6-loop.all_reads.fasta
-    180
+    174
 
 We find this dominated by *Brassica oleracea* in most samples. However, at
 our default abundance threshold we do not find *Cycas revoluta* which is

@@ -53,15 +53,15 @@ Working at the command line or using Excel should show the following:
 ====================== ==== === === ====
 #Species               TP   FP  FN  TN
 ====================== ==== === === ====
-OVERALL                1061 728 237 7698
+OVERALL                1058 727 240 7270
 Acipenser schrenckii   0    20  0   123
-Aloe reynoldsii        0    115 0   28
+Aloe reynoldsii        0    114 0   29
 Aloe variegata         110  0   25  8
 Anguilla anguilla      3    0   3   137
 Beta vulgaris          0    0   16  127
 Bos taurus             139  2   0   2
 Brassica juncea        0    127 0   16
-Brassica napus         10   0   6   127
+Brassica napus         7    0   9   127
 Brassica nigra         0    127 0   16
 Brassica oleracea      128  6   0   9
 Brassicaceae (misc)    0    70  0   73
@@ -91,7 +91,7 @@ Solanum lycopersicum   16   0   0   127
 Sus scrofa             64   0   0   79
 Triticum aestivum      0    0   16  127
 Zea mays               0    0   128 15
-OTHER 31 SPECIES IN DB 0    0   0   4433
+OTHER 28 SPECIES IN DB 0    0   0   4004
 ====================== ==== === === ====
 
 Most of the false positives (FP) are alternative genus level matches in
