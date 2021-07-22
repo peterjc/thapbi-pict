@@ -52,8 +52,6 @@ Intermediate FASTA files
 
 What the prepare command does can be briefly summarised as follows:
 
-* Quality trim the FASTQ reads (pairs where either read becomes too short are
-  discarded).
 * Merge the overlapping paired FASTQ reads into single sequences (pairs which
   do not overlap are discarded, for example from unexpectedly long fragments,
   or not enough left after quality trimming).
