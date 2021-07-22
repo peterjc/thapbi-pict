@@ -43,18 +43,21 @@ def check_input_file(filename):
 
 
 def check_output_stem(out_stem, dir_only_ok=False, dir_must_exist=True):
-    """Command line validation of output stem value."""
+    """Command line validation of output stem value.
+
+    Returns the output directory, or aborts.
+    """
     if not out_stem:
         sys.exit("ERROR: Output stem is blank")
     elif out_stem.endswith(os.path.sep) or os.path.isdir(out_stem):
         if dir_only_ok:
-            return True
+            return out_stem
         sys.exit(f"ERROR: Output stem {out_stem!r} is a directory")
     out_dir, basename = os.path.split(out_stem)
     if not basename:
         sys.exit(f"ERROR: Output stem needs a partial filename: {out_stem!r}")
     elif not out_dir or os.path.isdir(out_dir):
-        return True
+        return out_dir
     elif os.path.isfile(out_dir):
         sys.exit(f"ERROR: Output stem directory name is a file: {out_dir!r}")
     elif dir_must_exist:
@@ -351,12 +354,12 @@ def pipeline(args=None):
     from .summary import main as summary
     from .assess import main as assess
 
-    check_output_stem(args.output, dir_only_ok=True)
+    out_dir = check_output_stem(args.output, dir_only_ok=True)
     if args.sampleout:
         check_output_directory(args.sampleout)
         intermediate_dir = args.sampleout
     else:
-        intermediate_dir = args.output
+        intermediate_dir = out_dir
     if args.temp:
         check_output_directory(args.temp)
     if args.metadata:
