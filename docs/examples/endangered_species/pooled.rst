@@ -53,8 +53,8 @@ Working at the command line or using Excel should show the following:
 ====================== ==== === === ====
 #Species               TP   FP  FN  TN
 ====================== ==== === === ====
-OVERALL                1035 715 263 7282
-Acipenser schrenckii   0    10  0   133
+OVERALL                1058 727 240 7270
+Acipenser schrenckii   0    20  0   123
 Aloe reynoldsii        0    114 0   29
 Aloe variegata         110  0   25  8
 Anguilla anguilla      3    0   3   137
@@ -73,11 +73,11 @@ Cycas revoluta         3    0   3   137
 Dendrobium sp.         131  0   3   9
 Echinocactus sp.       6    0   0   137
 Euphorbia sp.          3    0   3   137
-Gallus gallus          6    0   0   137
+Gallus gallus          6    1   0   136
 Glycine max            16   0   0   127
 Gossypium hirsutum     16   0   0   127
-Homo sapiens           0    1   0   142
-Huso dauricus          92   0   36  15
+Homo sapiens           0    2   0   141
+Huso dauricus          112  0   16  15
 Lactuca altaica        0    66  0   77
 Lactuca sativa         74   2   0   67
 Lactuca serriola       0    66  0   77
@@ -86,7 +86,7 @@ Lactuca virosa         0    66  0   77
 Meleagris gallopavo    16   0   0   127
 Parapenaeopsis sp.     0    0   6   137
 Pieris brassicae       6    0   0   137
-Pleuronectes platessa  61   0   3   79
+Pleuronectes platessa  64   0   0   79
 Solanum lycopersicum   16   0   0   127
 Sus scrofa             64   0   0   79
 Triticum aestivum      0    0   16  127
