@@ -53,7 +53,7 @@ Working at the command line or using Excel should show the following:
 ====================== ==== === === ====
 #Species               TP   FP  FN  TN
 ====================== ==== === === ====
-OVERALL                1058 727 240 7270
+OVERALL                1058 727 240 7699
 Acipenser schrenckii   0    20  0   123
 Aloe reynoldsii        0    114 0   29
 Aloe variegata         110  0   25  8
@@ -91,7 +91,7 @@ Solanum lycopersicum   16   0   0   127
 Sus scrofa             64   0   0   79
 Triticum aestivum      0    0   16  127
 Zea mays               0    0   128 15
-OTHER 28 SPECIES IN DB 0    0   0   4004
+OTHER 31 SPECIES IN DB 0    0   0   4433
 ====================== ==== === === ====
 
 Most of the false positives (FP) are alternative genus level matches in

@@ -38,6 +38,7 @@ if [ ! -f references/pooled.sqlite ]; then
     LEFT=AYAAGACGAGAAGACCC
     RIGHT=GATTGCGCTGTTATTCC
     MINLEN=200
+    import_marker  # calls function defined above
 
     # Universal animal DNA barcodes and mini-barcodes - Mini-COI
     NAME=Mini-COI
