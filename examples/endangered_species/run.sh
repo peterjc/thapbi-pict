@@ -18,7 +18,7 @@ function import_marker {
     # Takes arguments via variable names
     thapbi_pict import -d references/pooled.sqlite \
                 -i references/${NAME}.fasta -x -s ";" \
-                -k $NAME --left $LEFT --right $RIGHT -x --minlen $MINLEN
+                -k $NAME --left $LEFT --right $RIGHT --minlen $MINLEN
 }
 
 if [ ! -f references/pooled.sqlite ]; then
