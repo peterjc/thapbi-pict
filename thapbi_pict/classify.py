@@ -766,7 +766,7 @@ def main(
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(
-            f"Marker entries in DB linked to {len(db_sp_list)} distrinct species.\n"
+            f"Marker entries in DB linked to {len(db_sp_list)} distinct species.\n"
         )
     if not db_sp_list:
         sys.exit("ERROR: Have no marker sequences in DB with species information.\n")
