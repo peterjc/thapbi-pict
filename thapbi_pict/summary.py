@@ -503,7 +503,9 @@ def read_summary(
                     if (md5, sample) in abundance_by_samples
                 )
                 for md5 in md5_to_seq
-            ),
+            )
+            if md5_to_seq
+            else 0,
             max(
                 (
                     abundance_by_samples.get((md5, sample), 0)
@@ -545,7 +547,9 @@ def read_summary(
         max(
             sum(1 for sample in stem_to_meta if (md5, sample) in abundance_by_samples)
             for md5 in md5_to_seq
-        ),
+        )
+        if md5_to_seq
+        else 0,
     )
     worksheet.write_number(
         current_row,
