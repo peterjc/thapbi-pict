@@ -19,6 +19,7 @@ from Levenshtein import distance as levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
+from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
@@ -152,7 +153,7 @@ def taxid_and_sp_lists(taxon_entries):
     )
 
 
-def perfect_match_in_db(session, seq, debug=False):
+def perfect_match_in_db(session, marker_name, seq, debug=False):
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the 100% matches in the DB give multiple species, then taxid and
@@ -180,7 +181,7 @@ def perfect_match_in_db(session, seq, debug=False):
     return taxid_and_sp_lists(t)
 
 
-def perfect_substr_in_db(session, seq, debug=False):
+def perfect_substr_in_db(session, marker_name, seq, debug=False):
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the matches containing the sequence as a substring give multiple species,
@@ -218,7 +219,13 @@ def perfect_substr_in_db(session, seq, debug=False):
 
 
 def apply_method_to_file(
-    method_fn, fasta_file, session, read_report, min_abundance=0, debug=False
+    method_fn,
+    fasta_file,
+    session,
+    marker_name,
+    read_report,
+    min_abundance=0,
+    debug=False,
 ):
     """Call given method on each sequence in the FASTA file."""
     count = 0
@@ -231,7 +238,9 @@ def apply_method_to_file(
             if min_abundance and abundance < min_abundance:
                 continue
             count += abundance
-            taxid, genus_species, note = method_fn(session, seq.upper(), debug=debug)
+            taxid, genus_species, note = method_fn(
+                session, marker_name, seq.upper(), debug=debug
+            )
             tax_counts[genus_species] += abundance
             if debug:
                 read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
@@ -244,6 +253,7 @@ def apply_method_to_file(
 def method_identity(
     fasta_file,
     session,
+    marker_name,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -260,13 +270,14 @@ def method_identity(
         perfect_match_in_db,
         fasta_file,
         session,
+        marker_name,
         read_report,
         min_abundance=min_abundance,
         debug=debug,
     )
 
 
-def seq_method_identity(seq, session, debug=False):
+def seq_method_identity(seq, session, marker_name, debug=False):
     """Look for a perfect match in the database.
 
     Returns taxid (integer or string), genus-species (string), note (string).
@@ -276,12 +287,13 @@ def seq_method_identity(seq, session, debug=False):
     if marker is None:
         return 0, "", "No DB match"
     else:
-        return perfect_match_in_db(session, seq)
+        return perfect_match_in_db(session, marker_name, seq)
 
 
 def method_substr(
     fasta_file,
     session,
+    marker_name,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -299,13 +311,14 @@ def method_substr(
         perfect_substr_in_db,
         fasta_file,
         session,
+        marker_name,
         read_report,
         min_abundance=min_abundance,
         debug=debug,
     )
 
 
-def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a dictionary of DB variants from the DB marker sequences.
 
     Because MD5 checksums are shorter than the typical marker sequences,
@@ -315,7 +328,11 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
     global fuzzy_matches
     fuzzy_matches = {}
 
-    view = session.query(MarkerSeq)
+    view = (
+        session.query(MarkerSeq)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+    )
     count = 0
     for marker in view:
         count += 1
@@ -344,6 +361,7 @@ def setup_onebp(session, shared_tmp_dir, debug=False, cpu=0):
 def method_onebp(
     fasta_file,
     session,
+    marker_name,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -361,13 +379,14 @@ def method_onebp(
         onebp_match_in_db,
         fasta_file,
         session,
+        marker_name,
         read_report,
         min_abundance=min_abundance,
         debug=debug,
     )
 
 
-def onebp_match_in_db(session, seq, debug=False):
+def onebp_match_in_db(session, marker_name, seq, debug=False):
     """Look in database for a perfect match or with 1bp edit.
 
     Returns taxid (integer or string), genus-species (string), note (string).
@@ -377,7 +396,7 @@ def onebp_match_in_db(session, seq, debug=False):
     base pair away, takes that instead.
     """
     global fuzzy_matches
-    taxid, genus_species, note = perfect_match_in_db(session, seq)
+    taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)
     if any(species_level(_) for _ in genus_species.split(";")):
         # Found 100% identical match(es) in DB at species level, done :)
         return taxid, genus_species, note
@@ -417,7 +436,7 @@ def onebp_match_in_db(session, seq, debug=False):
     return taxid, genus_species, note
 
 
-def _setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
+def _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
     db_seqs = set()
@@ -425,38 +444,38 @@ def _setup_dist(session, shared_tmp_dir, debug=False, cpu=0):
     for marker in view:
         db_seqs.add(marker.sequence.upper())
     # Now set fuzzy_matches too...
-    setup_onebp(session, shared_tmp_dir, debug, cpu)
+    setup_onebp(session, marker_name, shared_tmp_dir, debug, cpu)
 
 
-def setup_dist2(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist2(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 2."""
     global max_dist_genus
     max_dist_genus = 2
-    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
-def setup_dist3(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist3(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 3."""
     global max_dist_genus
     max_dist_genus = 3
-    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
-def setup_dist4(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist4(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 4."""
     global max_dist_genus
     max_dist_genus = 4
-    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
-def setup_dist5(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 5."""
     global max_dist_genus
     max_dist_genus = 5
-    _setup_dist(session, shared_tmp_dir, debug=False, cpu=0)
+    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
-def dist_in_db(session, seq, debug=False):
+def dist_in_db(session, marker_name, seq, debug=False):
     """Species up to 1bp, genus up to given distance away."""
     global db_seqs
     global fuzzy_matches
@@ -464,7 +483,7 @@ def dist_in_db(session, seq, debug=False):
     # If seq in db_seqs might be genus only, and
     # we'd prefer a species level match 1bp away:
     if (seq in db_seqs) or (md5seq_16b(seq) in fuzzy_matches):
-        return onebp_match_in_db(session, seq)
+        return onebp_match_in_db(session, marker_name, seq)
     min_dist = 0
     best = {}
     # Any matches are at least 2bp away, will take genus only.
@@ -506,6 +525,7 @@ def dist_in_db(session, seq, debug=False):
 def method_dist(
     fasta_file,
     session,
+    marker_name,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -518,13 +538,14 @@ def method_dist(
         dist_in_db,
         fasta_file,
         session,
+        marker_name,
         read_report,
         min_abundance=min_abundance,
         debug=debug,
     )
 
 
-def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
+def setup_blast(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a BLAST DB from the marker sequence DB entries."""
     view = session.query(MarkerSeq)
     db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
@@ -546,6 +567,7 @@ def setup_blast(session, shared_tmp_dir, debug=False, cpu=0):
 def method_blast(
     fasta_file,
     session,
+    marker_name,
     read_report,
     tmp_dir,
     shared_tmp_dir,
@@ -704,6 +726,7 @@ method_setup = {
 def main(
     fasta,
     session,
+    marker_name,
     method,
     out_dir,
     ignore_prefixes,
@@ -744,6 +767,20 @@ def main(
         sys.stderr.write(f"Taxonomy table contains {count} distinct species.\n")
     if not count:
         sys.exit("ERROR: Taxonomy table empty, cannot classify anything.\n")
+
+    if not marker_name:
+        view = session.query(MarkerDef)
+        if view.count() > 1:
+            sys.exit("ERROR: Need -k / --marker when DB has multiple amplicon markers")
+        marker = view.one_or_none()
+        if not marker:
+            sys.exit("ERROR: Need DB has no amplicon markers defined")
+        marker_name = marker.name
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: Assuming want {marker_name} as only marker in the DB\n"
+            )
+        del marker, view
 
     # Now want to get the number of species associated with marker DB entries,
     #
@@ -840,7 +877,7 @@ def main(
 
         if setup_fn:
             # There are some files still to process, do setup now (once only)
-            setup_fn(session, shared_tmp, debug, cpu)
+            setup_fn(session, marker_name, shared_tmp, debug, cpu)
             setup_fn = None
 
         sys.stderr.write(f"Running {method} classifier on {filename}\n")
@@ -876,6 +913,7 @@ def main(
             tax_counts = classify_file_fn(
                 filename,
                 session,
+                marker_name,
                 pred_handle,
                 tmp,
                 shared_tmp,
