@@ -162,7 +162,12 @@ def perfect_match_in_db(session, marker_name, seq, debug=False):
     assert seq == seq.upper(), seq
     # Now, does this equal any of the marker sequences in our DB?
     marker_seq = (
-        session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
+        session.query(MarkerSeq)
+        .filter(MarkerSeq.sequence == seq)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+        .one_or_none()
     )
     if marker_seq is None:
         return 0, "", "No DB match"
@@ -203,8 +208,12 @@ def perfect_substr_in_db(session, marker_name, seq, debug=False):
     #     FROM marker_sequence
     #     WHERE marker_sequence.sequence MATCH ?]
     t = set()
-    for marker_seq in session.query(MarkerSeq).filter(
-        MarkerSeq.sequence.like("%" + seq + "%")
+    for marker_seq in (
+        session.query(MarkerSeq)
+        .filter(MarkerSeq.sequence.like("%" + seq + "%"))
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
     ):
         assert marker_seq is not None
         assert seq in marker_seq.sequence
@@ -330,6 +339,7 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 
     view = (
         session.query(MarkerSeq)
+        .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
     )
@@ -413,6 +423,9 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
             marker_seq = (
                 session.query(MarkerSeq)
                 .filter(MarkerSeq.sequence == db_seq)
+                .join(SeqSource)
+                .join(MarkerDef, SeqSource.marker_definition)
+                .filter(MarkerDef.name == marker_name)
                 .one_or_none()
             )
             assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
@@ -440,8 +453,12 @@ def _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
     db_seqs = set()
-    view = session.query(MarkerSeq)
-    for marker in view:
+    for marker in (
+        session.query(MarkerSeq)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+    ):
         db_seqs.add(marker.sequence.upper())
     # Now set fuzzy_matches too...
     setup_onebp(session, marker_name, shared_tmp_dir, debug, cpu)
@@ -510,7 +527,12 @@ def dist_in_db(session, marker_name, seq, debug=False):
     genus = set()
     for db_seq in best:
         marker_seq = (
-            session.query(MarkerSeq).filter(MarkerSeq.sequence == db_seq).one_or_none()
+            session.query(MarkerSeq)
+            .filter(MarkerSeq.sequence == db_seq)
+            .join(SeqSource)
+            .join(MarkerDef, SeqSource.marker_definition)
+            .filter(MarkerDef.name == marker_name)
+            .one_or_none()
         )
         assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
         genus.update(
@@ -547,7 +569,12 @@ def method_dist(
 
 def setup_blast(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a BLAST DB from the marker sequence DB entries."""
-    view = session.query(MarkerSeq)
+    view = (
+        session.query(MarkerSeq)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+    )
     db_fasta = os.path.join(shared_tmp_dir, "blast_db.fasta")
     blast_db = os.path.join(shared_tmp_dir, "blast_db")
     count = 0
@@ -798,21 +825,31 @@ def main(
         session.query(Taxonomy)
         .distinct(Taxonomy.genus, Taxonomy.species)
         .join(SeqSource, SeqSource.taxonomy_id == Taxonomy.id)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
     )
     db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list
     if debug:
         sys.stderr.write(
-            f"Marker entries in DB linked to {len(db_sp_list)} distinct species.\n"
+            f"{marker_name} DB entries linked to {len(db_sp_list)} distinct species.\n"
         )
     if not db_sp_list:
-        sys.exit("ERROR: Have no marker sequences in DB with species information.\n")
+        sys.exit(
+            f"ERROR: Have no {marker_name} sequences in DB with species information.\n"
+        )
 
-    count = session.query(MarkerSeq).count()
+    count = (
+        session.query(MarkerSeq)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+        .count()
+    )
     if debug:
-        sys.stderr.write(f"Marker sequnce table contains {count} distinct sequences.\n")
+        sys.stderr.write(f"DB contains {count} distinct sequences for {marker_name}.\n")
     if not count:
-        sys.exit("ERROR: Marker sequence table empty, cannot classify anything.\n")
+        sys.exit(f"ERROR: No {marker_name} sequences, cannot classify anything.\n")
 
     fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
     if debug:
