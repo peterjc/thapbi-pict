@@ -256,6 +256,7 @@ def classify(args=None):
     return_code = main(
         fasta=args.input,
         session=session,
+        marker_name=args.marker,
         method=args.method,
         out_dir=args.output,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -428,6 +429,7 @@ def pipeline(args=None):
         classified_files = classify(
             fasta=[all_fasta],
             session=session,
+            marker_name=marker,
             method=args.method,
             out_dir=os.path.split(stem)[0],  # i.e. next to FASTA all_reads input,
             ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
@@ -623,7 +625,7 @@ ARG_MARKER_PICK = dict(  # noqa: C408
     type=str,
     default="",
     # Comma separated?
-    help="Which amplicon marker from the DB should be used. Default all.",
+    help="If DB has multiple amplicon markers, which one should be used?",
 )
 
 # "-d", "--database",
@@ -1250,6 +1252,7 @@ def main(args=None):
         "FASTA sample file, default 0 (classify all).",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER_PICK)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument(
         "-o",
