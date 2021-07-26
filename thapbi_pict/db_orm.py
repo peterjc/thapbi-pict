@@ -132,7 +132,7 @@ class SeqSource(Base):
 
 
 def connect_to_db(*args, **kwargs):
-    """Create engine and return session make bound to it.
+    """Create engine and return session bound to it.
 
     >>> Session = connect_to_db('sqlite:///:memory:', echo=True)
     >>> session = Session()
