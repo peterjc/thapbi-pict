@@ -30,7 +30,7 @@ thapbi_pict import -d $DB -k ITS1 -x -i tests/marker_clash/Phytophthora_cinnamom
 
 # Now setup the clash, import the controls AGAIN under a different marker name
 # File needs to have different MD5 checksum due to current import assumptions
-head -n 6 database/controls.fasta > $TMP/three_controls.fasta
+head -n 6 database/controls.fasta | sed "s/synthetic/unreal/g" > $TMP/three_controls.fasta
 thapbi_pict import -d $DB -i $TMP/three_controls.fasta -x \
     -k NotITS1 -l ATGCGATACTTGGTGTGAAT -r GACGCTTCTCCAGACTACAAT \
     --minlen 50 --maxlen 250
@@ -39,8 +39,8 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_definition;"` -ne "2" ]; then ec
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "3" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "8" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "5" ]; then echo "Wrong marker_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "5" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 5 ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "8" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 8 ]; then echo "Wrong species count"; false; fi
 
 # This should fail - it should spot the 3 marker level conflicts
 set +o pipefail
@@ -48,13 +48,7 @@ thapbi_pict conflicts -d $DB -o $TMP/conflicts.tsv | true
 set -o pipefail
 diff $TMP/conflicts.tsv tests/marker_clash/conflicts.tsv
 
-set +x
-
 for M in identity onebp substr 1s2g 1s3g 1s4g 1s5g blast; do
-    echo
-    echo "Checking $M classifier with multiple markers..."
-    echo
-
     # This should work, making it explicit to use ITS1:
     rm -rf $TMP/*.tsv
     thapbi_pict classify -m $M  -d $DB -i tests/marker_clash/GBLOCK-example.fasta -o $TMP/ -k ITS1
@@ -71,6 +65,8 @@ for M in identity onebp substr 1s2g 1s3g 1s4g 1s5g blast; do
     thapbi_pict classify -m $M -d $DB  -i tests/marker_clash/GBLOCK-example.fasta -o - 2>&1 | grep "DB has multiple amplicon markers"
     set -o pipefail
 done
+
+set +x
 
 echo "===="
 echo "Done"

@@ -2,3 +2,9 @@
 3b3cb03c4aa9604e922913ad148cd12c	marker	ITS1;NotITS1
 6ad4c7e0216fc47df90fe208a3b7806c	marker	ITS1;NotITS1
 8613c7627e99537203fe5895d0a24e8e	marker	ITS1;NotITS1
+3b3cb03c4aa9604e922913ad148cd12c	genus	synthetic;unreal
+6ad4c7e0216fc47df90fe208a3b7806c	genus	synthetic;unreal
+8613c7627e99537203fe5895d0a24e8e	genus	synthetic;unreal
+3b3cb03c4aa9604e922913ad148cd12c	species	synthetic construct C1;unreal construct C1
+6ad4c7e0216fc47df90fe208a3b7806c	species	synthetic construct C2;unreal construct C2
+8613c7627e99537203fe5895d0a24e8e	species	synthetic construct C3;unreal construct C3

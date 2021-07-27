@@ -16,8 +16,6 @@ from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Levenshtein import distance as levenshtein
-from sqlalchemy.orm import aliased
-from sqlalchemy.orm import contains_eager
 
 from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
@@ -41,29 +39,6 @@ MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 fuzzy_matches = None  # global variable for onebp classifier
 db_seqs = None  # global variable for 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
-
-
-def md5_to_taxon(md5_list, session):
-    """Return all the taxon entries linked to given marker sequences.
-
-    Each marker sequence (matched by MD5 checksum) should be used
-    in one more more source table entries, each of which will have
-    a current taxonomy entry.
-    """
-    # This is deliberately following the query style used in dump
-    # (since at some point we'll want to define database subsets
-    # consistently). Still, might be able to refactor this query...
-    cur_tax = aliased(Taxonomy)
-    marker_seq = aliased(MarkerSeq)
-    view = (
-        session.query(SeqSource)
-        .join(marker_seq, SeqSource.marker_seq)
-        .join(cur_tax, SeqSource.taxonomy)
-        .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
-        .filter(marker_seq.md5.in_(md5_list))
-        .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
-    )
-    return list({_.taxonomy for _ in view})  # dedulicate
 
 
 def unique_or_separated(values, sep=";"):
@@ -639,10 +614,15 @@ def method_blast(
         if idn in blast_hits:
             db_md5s = blast_hits[idn]
             score = blast_score[idn]
-            t = md5_to_taxon(db_md5s, session)
-            if not t:
-                sys.exit(f"ERROR: No taxon entry for {idn}")
-            taxid, genus_species, note = taxid_and_sp_lists(t)
+            taxid, genus_species, note = taxid_and_sp_lists(
+                session.query(Taxonomy)
+                .join(SeqSource)
+                .join(MarkerDef, SeqSource.marker_definition)
+                .filter(MarkerDef.name == marker_name)
+                .join(MarkerSeq)
+                .filter(MarkerSeq.md5.in_(db_md5s))
+                .distinct()
+            )
             note = (f"{len(db_md5s)} BLAST hits (bit score {score}). {note}").strip()
         else:
             taxid = 0
