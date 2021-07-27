@@ -404,6 +404,10 @@ def dist_in_db(session, marker_name, seq, debug=False):
         # Found 1bp away entries in DB at species level, done :)
         return taxid, genus_species, note
 
+    if seq in db_seqs:
+        # Could have cached this genus-only perfect match
+        return perfect_match_in_db(session, marker_name, seq)
+
     # Nothing at species level within 1bp, take genus only info
     genus = {
         _.genus
