@@ -358,19 +358,15 @@ def dist_in_db(session, marker_name, seq, debug=False):
     """Species up to 1bp, genus up to given distance away."""
     global db_seqs
     assert seq and db_seqs
+    # If seq in db_seqs might be genus only, and
+    # we'd prefer a species level match 1bp away:
+    taxid, genus_species, note = onebp_match_in_db(session, marker_name, seq)
+    if genus_species:
+        return taxid, genus_species, note
 
-    if seq in db_seqs:
-        # If seq in db_seqs it might be genus only, and
-        # we'd prefer a species level match 1bp away:
-        taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)
-        if any(species_level(_) for _ in genus_species.split(";")):
-            # Found 100% identical match(es) in DB at species level, done :)
-            return taxid, genus_species, note
-
-    # Any matches to to 1 bp away, will take at species level
-    # Else any matches up to X bp away, will take genus only.
-    best = {}
+    # Else any matches from 2 bp up to X bp away, and will take genus only:
     min_dist = 0
+    best = {}
     for db_seq in db_seqs:
         dist = levenshtein(seq, db_seq)
         if dist > max_dist_genus:
@@ -388,27 +384,9 @@ def dist_in_db(session, marker_name, seq, debug=False):
     if seq in db_seqs:
         assert seq in best and best[seq] == 0
     note = f"{len(best)} matches at distance {min_dist}"
+    assert min_dist > 1  # Should have caught via onebp_match_in_db!
 
-    # Did we get any species level hits within 1bp?
-    short_list = {db_seq for db_seq, dist in best.items() if dist <= 1}
-    taxid, genus_species, note = taxid_and_sp_lists(
-        session.query(Taxonomy)
-        .join(SeqSource)
-        .join(MarkerDef, SeqSource.marker_definition)
-        .filter(MarkerDef.name == marker_name)
-        .join(MarkerSeq)
-        .where(MarkerSeq.sequence.in_(short_list))
-        .distinct()
-    )
-    if any(species_level(_) for _ in genus_species.split(";")):
-        # Found 1bp away entries in DB at species level, done :)
-        return taxid, genus_species, note
-
-    if seq in db_seqs:
-        # Could have cached this genus-only perfect match
-        return perfect_match_in_db(session, marker_name, seq)
-
-    # Nothing at species level within 1bp, take genus only info
+    # Nothing within 1bp, take genus only info from Xbp away:
     genus = {
         _.genus
         for _ in session.query(Taxonomy.genus)
