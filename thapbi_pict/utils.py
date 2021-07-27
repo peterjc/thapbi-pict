@@ -136,6 +136,8 @@ def onebp_variants(seq):
     """Generate all 1bp variants of the sequence (substitution, deletion or insertion).
 
     Assumes unambiguous IUPAC codes A, C, G, T only.
+
+    Will not return the input sequence!
     """
     seq = seq.upper()
     variants = set()
