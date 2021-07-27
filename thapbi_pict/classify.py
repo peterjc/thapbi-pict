@@ -778,7 +778,6 @@ def main(
         .join(SeqSource, SeqSource.taxonomy_id == Taxonomy.id)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
-        .distinct()
     )
     db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list
