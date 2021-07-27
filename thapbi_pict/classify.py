@@ -33,6 +33,7 @@ from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
+fuzzy_matches = None  # global variable for onebp classifier
 db_seqs = None  # global variable for onebp and 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
 
@@ -250,8 +251,13 @@ def method_substr(
 
 
 def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare a set of all the DB marker sequences as upper case strings."""
+    """Prepare a set of all the DB marker sequences as upper case strings.
+
+    Also setup dict of any entries in the DB with a single ambiguous base.
+    """
     global db_seqs
+    global fuzzy_matches
+
     db_seqs = {
         marker.sequence.upper()
         for marker in session.query(MarkerSeq.sequence)
@@ -260,6 +266,19 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
         .filter(MarkerDef.name == marker_name)
         .distinct()
     }
+
+    unambiguous = set("ACGT")
+    fuzzy_matches = {}
+    for seq in db_seqs:
+        bad = [_ for _ in seq if _ not in unambiguous]
+        if len(bad) == 1:
+            # This has a chance to be matched with the onebp classifier
+            for letter in unambiguous:
+                fuzzy_matches[seq.replace(bad[0], letter)] = seq
+    if debug and fuzzy_matches:
+        sys.stderr.write(
+            f"DEBUG: Cloud of {len(fuzzy_matches)} from DB entries with one ambiguity\n"
+        )
 
 
 def method_onebp(
@@ -299,6 +318,7 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
     If there is a perfect genus only match, but a species level match one
     base pair away, takes that instead.
     """
+    global fuzzy_matches
     global db_seqs
     taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)
     if any(species_level(_) for _ in genus_species.split(";")):
@@ -308,7 +328,12 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
     # No species level exact matches, so do we have 1bp off match(es)?
     t = set()
     assert db_seqs
-    for variant in onebp_variants(seq).union([seq]):
+    # Checking variants of the query sequence,
+    # the query sequence itself (not included in the above),
+    # any 1bp variants of DB entries with a single ambiguous base:
+    for variant in (
+        onebp_variants(seq).union([seq]).union([fuzzy_matches.get(seq, None)])
+    ):
         if variant in db_seqs:
             t.update(
                 session.query(Taxonomy)
@@ -574,7 +599,8 @@ def method_cleanup():
     Currently no need to generalise this for the different classifiers, but
     could if for example we also needed to delete any files on disk.
     """
-    global db_seqs, max_dist_genus
+    global fuzzy_matches, db_seqs, max_dist_genus
+    fuzzy_matches = None  # global variable for onebp classifier
     db_seqs = None  # global variable for onbep and 1s?g classifiers
     max_dist_genus = None  # global variable for 1s?g distance classifier
 
