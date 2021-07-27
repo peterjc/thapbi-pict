@@ -286,19 +286,6 @@ def method_identity(
     )
 
 
-def seq_method_identity(seq, session, marker_name, debug=False):
-    """Look for a perfect match in the database.
-
-    Returns taxid (integer or string), genus-species (string), note (string).
-    If there are multiple matches, semi-colon separated strings are returned.
-    """
-    marker = session.query(MarkerSeq).filter(MarkerSeq.sequence == seq).one_or_none()
-    if marker is None:
-        return 0, "", "No DB match"
-    else:
-        return perfect_match_in_db(session, marker_name, seq)
-
-
 def method_substr(
     fasta_file,
     session,
