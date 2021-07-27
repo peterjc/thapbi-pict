@@ -74,6 +74,13 @@ for M in identity onebp blast 1s3g; do
     diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
 done
 
+for M in identity onebp blast 1s2g 1s3g 1s4g 1s5g; do
+    # Using default DB
+    echo "Checking genus corner cases with $M"
+    thapbi_pict classify -i tests/classifier/corner_cases_query.fasta -o $TMP/ -m $M -k ITS1
+    diff $TMP/corner_cases_query.$M.tsv tests/classifier/corner_cases_query.$M.tsv
+done
+
 for EXAMPLE in P_bilorbang P_vulcanica genus_boundary; do
 
     DB=$TMP/${EXAMPLE}.sqlite
