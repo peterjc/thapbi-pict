@@ -145,7 +145,8 @@ def taxid_and_sp_lists(taxon_entries):
     tax = consoliate_and_sort_taxonomy(
         {(t.genus, t.species, t.ncbi_taxid) for t in taxon_entries}
     )
-
+    if not tax:
+        return 0, "", "No DB match"
     return (
         unique_or_separated([t[2] for t in tax]),
         unique_or_separated([genus_species_name(t[0], t[1]) for t in tax]),
@@ -161,29 +162,15 @@ def perfect_match_in_db(session, marker_name, seq, debug=False):
     """
     assert seq == seq.upper(), seq
     # Now, does this equal any of the marker sequences in our DB?
-    marker_seq = (
-        session.query(MarkerSeq)
-        .filter(MarkerSeq.sequence == seq)
+    return taxid_and_sp_lists(
+        session.query(Taxonomy)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
-        .one_or_none()
+        .join(MarkerSeq)
+        .where(MarkerSeq.sequence == seq)
+        .distinct()
     )
-    if marker_seq is None:
-        return 0, "", "No DB match"
-    assert marker_seq.sequence == seq
-    # marker_seq -> one or more SeqSource
-    # each SeqSource -> one current taxonomy
-    # TODO: Refactor the query to get the DB to apply disinct?
-    t = list(
-        {_.taxonomy for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)}
-    )
-    if not t:
-        sys.exit(
-            "ERROR: perfect_match_in_db, no taxonomy for"
-            f" id={marker_seq.id} md5={marker_seq.md5} sequence={marker_seq.sequence}\n"
-        )
-    return taxid_and_sp_lists(t)
 
 
 def perfect_substr_in_db(session, marker_name, seq, debug=False):
@@ -193,38 +180,15 @@ def perfect_substr_in_db(session, marker_name, seq, debug=False):
     then taxid and genus_species will be semi-colon separated strings.
     """
     assert seq == seq.upper(), seq
-    # Now, does this match any of the marker seq in our DB (as a substring)
-    # This didn't work:
-    #
-    # session.query(MarkerSeq).filter(MarkerSeq.sequence.match(seq)).one_or_none()
-    #
-    # Gave:
-    #
-    #     sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to
-    #     use function MATCH in the requested context
-    #     [SQL: SELECT marker_sequence.id AS marker_sequence_id,
-    #     marker_sequence.md5 AS marker_sequence_md5,
-    #     marker_sequence.sequence AS marker_sequence_sequence
-    #     FROM marker_sequence
-    #     WHERE marker_sequence.sequence MATCH ?]
-    t = set()
-    for marker_seq in (
-        session.query(MarkerSeq)
-        .filter(MarkerSeq.sequence.like("%" + seq + "%"))
+    return taxid_and_sp_lists(
+        session.query(Taxonomy)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
-    ):
-        assert marker_seq is not None
-        assert seq in marker_seq.sequence
-        t.update(
-            _.taxonomy
-            for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
-        )
-    if not t:
-        return 0, "", "No DB match"
-    else:
-        return taxid_and_sp_lists(t)
+        .join(MarkerSeq)
+        .filter(MarkerSeq.sequence.like("%" + seq + "%"))
+        .distinct()
+    )
 
 
 def apply_method_to_file(
@@ -325,7 +289,7 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     fuzzy_matches = {}
 
     view = (
-        session.query(MarkerSeq)
+        session.query(MarkerSeq.sequence)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
@@ -439,14 +403,14 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
 def _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences."""
     global db_seqs
-    db_seqs = set()
-    for marker in (
-        session.query(MarkerSeq)
+    db_seqs = {
+        marker.sequence.upper()
+        for marker in session.query(MarkerSeq.sequence)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
-    ):
-        db_seqs.add(marker.sequence.upper())
+        .distinct()
+    }
     # Now set fuzzy_matches too...
     setup_onebp(session, marker_name, shared_tmp_dir, debug, cpu)
 
@@ -814,6 +778,7 @@ def main(
         .join(SeqSource, SeqSource.taxonomy_id == Taxonomy.id)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
+        .distinct()
     )
     db_sp_list = sorted({genus_species_name(t.genus, t.species) for t in view})
     assert "" not in db_sp_list
@@ -827,10 +792,11 @@ def main(
         )
 
     count = (
-        session.query(MarkerSeq)
+        session.query(MarkerSeq.sequence)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
+        .distinct()
         .count()
     )
     if debug:
