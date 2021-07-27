@@ -401,7 +401,7 @@ def import_fasta_file(
         name=name,
         uri=fasta_file,
         md5=md5,
-        notes=f"Imported with thapbi_pict v{__version__}",
+        notes=f"{marker} imported with thapbi_pict v{__version__}",
     )
     session.add(db_source)
 
