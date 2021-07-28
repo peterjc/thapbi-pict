@@ -388,26 +388,27 @@ def dist_in_db(session, marker_name, seq, debug=False):
     taxid, genus_species, note = onebp_match_in_db(session, marker_name, seq)
     if genus_species:
         return taxid, genus_species, note
+    assert seq not in db_seqs
 
     # Else any matches from 2 bp up to X bp away, and will take genus only:
     min_dist = 0
-    best = {}
+    best = set()
+    # Any matches are at least 2bp away, will take genus only.
+    # Fall back on brute force! But only on a minority of cases
     for db_seq in db_seqs:
         dist = levenshtein(seq, db_seq)
         if dist > max_dist_genus:
             pass
         elif dist == min_dist:
             # Best equal
-            best[db_seq] = dist
+            best.add(db_seq)
         elif dist < min_dist or min_dist == 0:
             # New winner
             min_dist = dist
-            best[db_seq] = dist
+            best = {db_seq}
     if not best:
         assert min_dist == 0, min_dist
         return 0, "", f"No matches up to distance {max_dist_genus}"
-    if seq in db_seqs:
-        assert seq in best and best[seq] == 0
     note = f"{len(best)} matches at distance {min_dist}"
     assert min_dist > 1  # Should have caught via onebp_match_in_db!
 
