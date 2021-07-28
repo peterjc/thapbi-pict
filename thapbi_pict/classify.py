@@ -326,25 +326,22 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
         return taxid, genus_species, note
 
     # No species level exact matches, so do we have 1bp off match(es)?
-    t = set()
     assert db_seqs
     # Checking variants of the query sequence,
     # the query sequence itself (not included in the above),
     # any 1bp variants of DB entries with a single ambiguous base:
-    for variant in (
-        onebp_variants(seq).union([seq]).union([fuzzy_matches.get(seq, None)])
-    ):
-        if variant in db_seqs:
-            t.update(
-                session.query(Taxonomy)
-                .join(SeqSource)
-                .join(MarkerDef, SeqSource.marker_definition)
-                .filter(MarkerDef.name == marker_name)
-                .join(MarkerSeq)
-                .filter(MarkerSeq.sequence == variant)
-                .distinct()
-            )
-    taxid, genus_species, _ = taxid_and_sp_lists(t)
+    variants = onebp_variants(seq).union([seq])
+    if seq in fuzzy_matches:
+        variants.update([fuzzy_matches[seq]])
+    taxid, genus_species, _ = taxid_and_sp_lists(
+        session.query(Taxonomy)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+        .join(MarkerSeq)
+        .where(MarkerSeq.sequence.in_(variants))
+        .distinct()
+    )
     if not genus_species:
         taxid = 0
         note = "No DB matches, even with 1bp diff"
