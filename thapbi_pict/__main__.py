@@ -719,7 +719,7 @@ ARG_CONTROLS = dict(  # noqa: C408
 ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     type=int,
     default=str(DEFAULT_MIN_ABUNDANCE),
-    help="Mininum abundance applied to unique marker sequences in each sample"
+    help="Minimum abundance applied to unique marker sequences in each sample"
     f" (i.e. each FASTQ pair), default {DEFAULT_MIN_ABUNDANCE}."
     " May be increased based on negative controls.",
 )
