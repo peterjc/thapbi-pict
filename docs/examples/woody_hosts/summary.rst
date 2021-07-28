@@ -23,12 +23,12 @@ To mimic what the pipeline command would do, run the following:
 
 We will look at the output in a moment, along side the equivalent reports
 generated with :ref:`metadata <metadata>` (see linked discussion about column
-and row numbers):
+numbers):
 
 .. code:: console
 
     $ time thapbi_pict summary -i intermediate/ -o summary/with-metadata \
-      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
 
 Note the trailing slash ``\`` at the end of the first line indicates the

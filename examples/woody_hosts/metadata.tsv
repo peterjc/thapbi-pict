@@ -1,22 +1,3 @@
-# This table is provided as plain text using tab separated variables (TSC), suitable to load into Excel etc.
-# It is based on Supplementary table 1 from https://doi.org/10.7717/peerj.6931/supp-1
-# Additional column added for Illumina MiSeq sample cross reference.
-# Additional rows added for the controls.
-#
-# Original caption: Approximate altitude at centre and underlying soil type for the fourteen sites sampled in this study,
-# and the number of soil samples collected at each site (n=10) from around trees/shrubs in each of six broad taxonomic
-# groupings and two health status categories.
-#
-# Column 1 (A), Anonymised site number with leading zero added (01 to 14), or control name
-# Column 2 (B), Approximate altitude at centre
-# Column 3 (C), underlying soil type
-# Columns 4 to 15 (D to O): Tree/shrub broad taxonomic grouping and health status (H, healthy; D, symptoms/stump/dead)
-# Column 16 (P): Semi-colon separated list of Illumina MiSeq sample names
-#
-# Lines 1-19, human readable header text
-# Lines 20, colum headers
-# Lines 21 onwards, data for 14 field sites and 3 controls
-#
 #Site	Altitude (m)	Underlying soil type	H/Cupressaceae	D/Cupressaceae	H/Other conifers	D/Other conifers	H/Ericaceae	D/Ericaceae	H/Fagaceae or Nothofagaceae	D/Fagaceae or Nothofagaceae	H/Other angiosperms	D/Other angiosperms	H/Other	D/Other	MiSeq Sample(s)
 01	30	Brown earth, moderately well drained	0	1	0	1	0	4	2	1	0	1	0	0	Site_1_sample_1;Site_1_sample_2;Site_1_sample_3;Site_1_sample_4;Site_1_sample_5;Site_1_sample_6;Site_1_sample_7;Site_1_sample_8;Site_1_sample_9-2;Site_1_sample_10
 02	55	Urban 	1	7	0	2	0	0	0	0	0	0	0	0	Site_2_sample_1;Site_2_sample_2;Site_2_sample_3;Site_2_sample_4;Site_2_sample_5;Site_2_sample_6;Site_2_sample_7;Site_2_sample_8;Site_2_sample_9;Site_2_sample_10

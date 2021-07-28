@@ -48,7 +48,7 @@ provide metadata:
 
     $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
       -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
-      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
 
 Finally, as we will review next, we can ask the pipeline to assess the results
@@ -58,7 +58,7 @@ against any expected sample species classifications:
 
     $ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
       -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
-      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
     $ ls -1 summary/with-metadata.*
     summary/with-metadata.ITS1.all_reads.fasta
