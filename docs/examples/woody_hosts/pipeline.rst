@@ -72,8 +72,8 @@ against any expected sample species classifications:
     summary/with-metadata.ITS1.samples.onebp.txt
     summary/with-metadata.ITS1.samples.onebp.xlsx
 
-Here we also used ``-r`` (or ``--report``) to specify a different stem
-for the report filenames.
+Here we also used ``-o`` (or ``--output``) to specify a different stem for the
+report filenames.
 
 Conclusions
 -----------
