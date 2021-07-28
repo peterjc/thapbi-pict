@@ -368,7 +368,7 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
                 f"ERROR: onebp: {len(fuzzy_matches[md5_16b])} matches"
                 f" but no taxonomy entries for {seq}\n"
             )
-        taxid, genus_species, _ = taxid_and_sp_lists(list(t))
+        taxid, genus_species, _ = taxid_and_sp_lists(t)
     elif not genus_species:
         taxid = 0
         note = "No DB match"
@@ -428,7 +428,7 @@ def dist_in_db(session, marker_name, seq, debug=False):
     if (seq in db_seqs) or (md5seq_16b(seq) in fuzzy_matches):
         return onebp_match_in_db(session, marker_name, seq)
     min_dist = 0
-    best = {}
+    best = set()
     # Any matches are at least 2bp away, will take genus only.
     # Fall back on brute force! But only on a minority of cases
     for db_seq in db_seqs:
@@ -437,14 +437,11 @@ def dist_in_db(session, marker_name, seq, debug=False):
             pass
         elif dist == min_dist:
             # Best equal
-            assert dist > 0
             best.add(db_seq)
         elif dist < min_dist or min_dist == 0:
             # New winner
             min_dist = dist
-            best = {
-                db_seq,
-            }
+            best = {db_seq}
     if not min_dist:
         return 0, "", f"No matches up to distance {max_dist_genus}"
     note = f"{len(best)} matches at distance {min_dist}"
