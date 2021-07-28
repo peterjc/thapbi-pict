@@ -140,7 +140,7 @@ def perfect_match_in_db(session, marker_name, seq, debug=False):
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
         .join(MarkerSeq)
-        .where(MarkerSeq.sequence == seq)
+        .filter(MarkerSeq.sequence == seq)
         .distinct()
     )
 
@@ -339,7 +339,7 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
         .join(MarkerSeq)
-        .where(MarkerSeq.sequence.in_(variants))
+        .filter(MarkerSeq.sequence.in_(variants))
         .distinct()
     )
     if not genus_species:
@@ -417,7 +417,7 @@ def dist_in_db(session, marker_name, seq, debug=False):
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
         .join(MarkerSeq)
-        .where(MarkerSeq.sequence.in_(best))
+        .filter(MarkerSeq.sequence.in_(best))
         .distinct()
     }
     assert genus
