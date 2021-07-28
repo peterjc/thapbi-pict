@@ -35,13 +35,6 @@ Internal Transcribed Spacer one, which is a region of eukaryotes genomes
 between the 18S and 5.8S rRNA genes. This is commonly used for molecular
 barcoding, where sequencing this short region can identify species.
 
-*Phytophthora* (from Greek meaning plant-destroyer) species are
-economically important plant pathogens, important in both agriculture
-and forestry. ITS1 is short for Internal Transcribed Spacer one, which
-is a region of eukaryotes genomes between the 18S and 5.8S rRNA genes.
-This is commonly used for molecular barcoding, where sequencing this
-short region can identify species.
-
 The worked examples include oomycetes, fungi, fish, bats, plants, and cover
 markers in ITS1, ITS2, 12S, 16S, and COI and more. The main criteria has been
 mock communities with known species composition.
