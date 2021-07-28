@@ -780,7 +780,7 @@ ARG_METAGROUPS = dict(  # noqa: C408
     "will be together).",
 )
 
-# "-f", "--metafields",
+# "--metafields",
 ARG_METAFIELDS = dict(  # noqa: C408
     type=int,
     default="1",
@@ -871,7 +871,7 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
-    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
@@ -1412,7 +1412,7 @@ def main(args=None):
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
-    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
@@ -1528,7 +1528,7 @@ def main(args=None):
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
-    subcommand_parser.add_argument("-f", "--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument(
         "--library",
         type=str,
