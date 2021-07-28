@@ -26,7 +26,7 @@ v0.7.9  2021-03-15 Option to show unsequenced entries in summary sample report (
 v0.7.8  2021-03-11 Only import IUPAC DNA characters to DB. Fix *N. valdiviana* in default DB.
 v0.7.7  2021-02-24 Revise default ITS1 DB: NCBI Oomycetes, more curation & single isolates.
 v0.7.6  2021-02-17 ``curated-seq`` replaces ``seq-import``, used when building default DB.
-v0.7.5  2021-02-16 Refine default DB by adjusting how genus-level NCBI import was trimmed.
+v0.7.5  2021-02-16 Refine default DB by adjusting how genus-level NCBI import trimmed.
 v0.7.4  2021-02-15 Edit-graph genus-only labels. New ``1s2g``, ``1s4g`` & ``1s5g`` classifiers.
 v0.7.3  2021-01-29 Update NCBI import & taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
 v0.7.2  2020-10-06 New ``ena-submit`` command for use with interactive ENA read submission.
@@ -38,7 +38,7 @@ v0.6.13 2020-03-09 New classifier method ``substr`` for testing with poorly trim
 v0.6.12 2020-03-09 New advanced setting ``--merged-cache`` intended for multiple marker use.
 v0.6.11 2020-03-02 Update genus-level only NCBI import, restrict to those with 32bp leader.
 v0.6.10 2020-02-24 Treat I (for inosine as in tRNA) in primers as N (IUPAC code for any base).
-v0.6.9  2020-02-20 Allow pre-primer-trimmed FASTQ. Fixed row coloring when missing samples.
+v0.6.9  2020-02-20 Allow pre-primer-trimmed FASTQ. Fix row coloring when missing samples.
 v0.6.8  2020-02-17 Metadata ``-x`` default now column 1. Fix read report metadata captions.
 v0.6.7  2020-02-13 Method in ``pipeline`` filenames; max sample abundance in read reports.
 v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
@@ -75,7 +75,7 @@ v0.4.5  2019-10-02 Apply primer trimming to ``ncbi-import`` (crop if primers fou
 v0.4.4  2019-10-02 New ``--hmm`` & ``--flip`` arguments for ``prepare-reads`` and ``pipeline``.
 v0.4.3  2019-09-26 New ``conflicts`` command reporting genus/species level conflicts in DB.
 v0.4.2  2019-09-26 Drop clade from taxonomy table, require unique species entries.
-v0.4.1  2019-09-16 Include NCBI strains/variants/etc and their synonyms as species synonyms.
+v0.4.1  2019-09-16 Include NCBI strains/variants/etc & their synonyms as species synonyms.
 v0.4.0  2019-09-12 NCBI taxonomy synonym support; taxonomy import defaults to *Oomycetes*.
 v0.3.12 2019-09-12 New ``thapbi_pict dump`` option ``-m`` /  ``--minimal`` for DB comparison.
 v0.3.11 2019-09-09 Update default DB and tests to use September 2019 NCBI taxonomy.
@@ -83,18 +83,18 @@ v0.3.10 2019-09-05 Handle missing or empty input FASTQ files more gracefully.
 v0.3.9  2019-08-14 Log BLAST bit score. Merge ``thapbi assess`` warnings, 3dp for ad-hoc loss.
 v0.3.8  2019-08-09 The ``blast`` classifier now applies a minimum BLAST bit score of 100.
 v0.3.7  2019-08-05 Add Python API to the main documentation.
-v0.3.6  2019-07-19 Add Zenodo FASTQ link to worked example, now includes ``assess`` command.
+v0.3.6  2019-07-19 Add Zenodo FASTQ link to worked example and use ``assess`` command.
 v0.3.5  2019-07-12 Add missing ``T`` or ``CT`` to 11 of the legacy ITS1 sequences in the DB.
 v0.3.4  2019-07-08 Worked example using woody hosts dataset from Riddell *et al.* (2019).
 v0.3.3  2019-07-04 Fix regression in group coloring for ``read-summary`` Excel output.
 v0.3.2  2019-07-04 Read The Docs; use ``-i`` / ``--input`` consistently - no positional args.
 v0.3.1  2019-06-27 Reformat documentation to use reStructuredText rather than Markdown.
 v0.3.0  2019-06-26 Include four gBlocks synthetic negative controls in DB and pipeline.
-v0.2.6  2019-06-25 *Phytophthora* ITS1 HMM threshold now set within model file, not the code.
+v0.2.6  2019-06-25 *Phytophthora* ITS1 HMM threshold set within model file, not in code.
 v0.2.5  2019-06-21 Include XGMML edit-graph (for Cytoscape use) in ``pipeline`` output.
 v0.2.4  2019-06-21 Fix 3 *Hyaloperonospora* also in *Peronospora* in default DB.
 v0.2.3  2019-06-18 Sample count rather than total read abundance for node size in edit-graph.
-v0.2.2  2019-06-12 New ``edit-graph`` command for use with Cytoscape etc, or PDF via GraphViz.
+v0.2.2  2019-06-12 New ``edit-graph`` command. Use with Cytoscape etc, or PDF via GraphViz.
 v0.2.1  2019-05-27 Cope better with multiple (short) ITS1 fragments during classification.
 v0.2.0  2019-05-14 Limit ITS1 length, 100 to 250bp. Exclude uncultured NCBI entries from DB.
 v0.1.12 2019-05-09 Sort ``read-summary`` output by species. Set coloring group at command line.
@@ -108,15 +108,15 @@ v0.1.5  2019-04-29 Rework optional metadata integration and its display in summa
 v0.1.4  2019-04-25 Sort samples using the optional metadata fields requested in reports.
 v0.1.3  2019-04-24 Can optionally display sample metadata from TSV file in summary reports.
 v0.1.2  2019-04-17 Keep searching if ``onebp`` classifier perfect match is at genus-level only.
-v0.1.1  2019-04-16 Expand default taxonomy and DB from Peronosporaceae to Peronosporales.
+v0.1.1  2019-04-16 Expand default taxonomy & DB from Peronosporaceae to Peronosporales.
 v0.1.0  2019-04-04 Include a bundled ITS1 DB.
 v0.0.15 2019-04-03 Support for genus-level only entries in the DB.
 v0.0.14 2019-04-01 MD5 in dump output. Fix importing sequences failing taxonomic validation.
-v0.0.13 2019-03-22 Remove conserved 32bp when primer trim. Assess at sample level by default.
+v0.0.13 2019-03-22 Drop conserved 32bp when primer trim. Assess at sample level by default.
 v0.0.12 2019-03-11 Fix bug in ``swarmid`` classifier.
 v0.0.11 2019-03-08 Sped up FASTQ preparation by using ``flash`` instead of ``pear`` v0.9.6.
 v0.0.10 2019-03-06 Replace primer code allowing only 1bp differences with ``cutadapt``.
-v0.0.9  2019-03-05 Looks for expected primers, discards mismatches. Caches HMM files locally.
+v0.0.9  2019-03-05 Looks for expected primers, discards mismatches. Cache HMM files locally.
 v0.0.8  2019-02-21 Fix multi-class TN under-counting. New loss metric, ``swarmid`` classifier.
 v0.0.7  2019-02-12 New ``plate-summary`` command, ``onebp`` classifier.
 v0.0.6  2019-02-07 Misc. cleanup and import fixes.
