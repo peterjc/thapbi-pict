@@ -267,6 +267,7 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
+        .distinct()
     )
     count = 0
     for marker in view:
