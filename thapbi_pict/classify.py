@@ -26,7 +26,6 @@ from .utils import abundance_from_read_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import load_fasta_header
-from .utils import md5seq
 from .utils import md5seq_16b
 from .utils import onebp_variants
 from .utils import run
@@ -340,35 +339,24 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
     # No species level exact matches, so do we have 1bp off match(es)?
     md5_16b = md5seq_16b(seq)
     if md5_16b in fuzzy_matches:
-        t = set()
-        # TODO - Refactor this 2-query-per-loop into one lookup?
         # Including [seq] here in order to retain any perfect genus match.
         # If there are any *different* genus matches 1bp away, they'll be
         # reported too, but that would most likely be a DB problem...
-        for db_seq in [seq] + fuzzy_matches[md5_16b]:
-            marker_seq = (
-                session.query(MarkerSeq)
-                .filter(MarkerSeq.sequence == db_seq)
-                .join(SeqSource)
-                .join(MarkerDef, SeqSource.marker_definition)
-                .filter(MarkerDef.name == marker_name)
-                .one_or_none()
-            )
-            assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
-            t.update(
-                _.taxonomy
-                for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
-            )
-        note = (
-            f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff,"
-            f" {len(t)} taxonomy entries"
+        taxid, genus_species, _ = taxid_and_sp_lists(
+            session.query(Taxonomy)
+            .join(SeqSource)
+            .join(MarkerDef, SeqSource.marker_definition)
+            .filter(MarkerDef.name == marker_name)
+            .join(MarkerSeq)
+            .where(MarkerSeq.sequence.in_([seq] + fuzzy_matches[md5_16b]))
+            .distinct()
         )
-        if not t:
+        note = f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff"
+        if not genus_species:
             sys.exit(
                 f"ERROR: onebp: {len(fuzzy_matches[md5_16b])} matches"
                 f" but no taxonomy entries for {seq}\n"
             )
-        taxid, genus_species, _ = taxid_and_sp_lists(t)
     elif not genus_species:
         taxid = 0
         note = "No DB match"
@@ -447,21 +435,17 @@ def dist_in_db(session, marker_name, seq, debug=False):
     note = f"{len(best)} matches at distance {min_dist}"
     assert min_dist > 1  # Should have caught via fuzzy list!
 
-    genus = set()
-    for db_seq in best:
-        marker_seq = (
-            session.query(MarkerSeq)
-            .filter(MarkerSeq.sequence == db_seq)
-            .join(SeqSource)
-            .join(MarkerDef, SeqSource.marker_definition)
-            .filter(MarkerDef.name == marker_name)
-            .one_or_none()
-        )
-        assert db_seq, f"Could not find {db_seq} ({md5seq(db_seq)}) in DB?"
-        genus.update(
-            _.taxonomy.genus
-            for _ in session.query(SeqSource).filter_by(marker_seq=marker_seq)
-        )
+    # Nothing within 1bp, take genus only info from Xbp away:
+    genus = {
+        _.genus
+        for _ in session.query(Taxonomy.genus)
+        .join(SeqSource)
+        .join(MarkerDef, SeqSource.marker_definition)
+        .filter(MarkerDef.name == marker_name)
+        .join(MarkerSeq)
+        .where(MarkerSeq.sequence.in_(best))
+        .distinct()
+    }
     assert genus
     # TODO - look up genus taxid
     return 0, ";".join(sorted(genus)), note
