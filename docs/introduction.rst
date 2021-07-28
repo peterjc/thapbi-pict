@@ -45,8 +45,7 @@ The second stage of the pipeline offers a choice of classifier algorithms:
   or insertion).
 - Up to one base pair away for a species level match (like the default
   ``onebp`` method), but falling back on up to 3bp, 4bp or 5bp away for a
-  genus level match (``1s3g``, ``1s4g``, ``1s5g``). The current simplistic
-  implementation is too slow for use with very large databases.
+  genus level match (``1s3g``, ``1s4g``, ``1s5g``).
 - Perfect substring (``substr``). Like the identity classifier, but also
   allows for the query sequence to be a perfect substring of a database entry.
   Useful if the database entries have not all been trimmed exactly.

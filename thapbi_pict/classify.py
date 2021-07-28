@@ -26,17 +26,15 @@ from .utils import abundance_from_read_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import load_fasta_header
-from .utils import md5seq_16b
 from .utils import onebp_variants
 from .utils import run
 from .utils import species_level
 from .versions import check_tools
 
-
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
 fuzzy_matches = None  # global variable for onebp classifier
-db_seqs = None  # global variable for 1s?g distance classifiers
+db_seqs = None  # global variable for onebp and 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
 
 
@@ -253,45 +251,34 @@ def method_substr(
 
 
 def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare a dictionary of DB variants from the DB marker sequences.
+    """Prepare a set of all the DB marker sequences as upper case strings.
 
-    Because MD5 checksums are shorter than the typical marker sequences,
-    they are used as the dictionary keys to save memory. We assume there
-    are no collisions.
+    Also setup dict of any entries in the DB with a single ambiguous base.
     """
+    global db_seqs
     global fuzzy_matches
-    fuzzy_matches = {}
 
-    view = (
-        session.query(MarkerSeq.sequence)
+    db_seqs = {
+        marker.sequence.upper()
+        for marker in session.query(MarkerSeq.sequence)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
         .distinct()
-    )
-    count = 0
-    for marker in view:
-        count += 1
-        if count == 4000:
-            # Warn once, this is a somewhat arbitrary threshold
-            sys.stderr.write(
-                "WARNING: Database contains so many unique sequences "
-                "that building a cloud of 1bp variants may run out of memory...\n"
-            )
-        marker_seq = marker.sequence
-        for variant in onebp_variants(marker_seq):
-            md5_16b = md5seq_16b(variant)
-            try:
-                # This variant is 1bp different to multiple DB entries...
-                fuzzy_matches[md5_16b].append(marker_seq)
-            except KeyError:
-                # Thus far this variant is only next to one DB entry:
-                fuzzy_matches[md5_16b] = [marker_seq]
+    }
 
-    sys.stderr.write(
-        f"Expanded {count} marker sequences from DB into cloud of"
-        f" {len(fuzzy_matches)} 1bp different variants\n"
-    )
+    unambiguous = set("ACGT")
+    fuzzy_matches = {}
+    for seq in db_seqs:
+        bad = [_ for _ in seq if _ not in unambiguous]
+        if len(bad) == 1:
+            # This has a chance to be matched with the onebp classifier
+            for letter in unambiguous:
+                fuzzy_matches[seq.replace(bad[0], letter)] = seq
+    if debug and fuzzy_matches:
+        sys.stderr.write(
+            f"DEBUG: Cloud of {len(fuzzy_matches)} from DB entries with one ambiguity\n"
+        )
 
 
 def method_onebp(
@@ -332,90 +319,75 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
     base pair away, takes that instead.
     """
     global fuzzy_matches
+    global db_seqs
     taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)
     if any(species_level(_) for _ in genus_species.split(";")):
         # Found 100% identical match(es) in DB at species level, done :)
         return taxid, genus_species, note
 
     # No species level exact matches, so do we have 1bp off match(es)?
-    md5_16b = md5seq_16b(seq)
-    if md5_16b in fuzzy_matches:
-        # Including [seq] here in order to retain any perfect genus match.
-        # If there are any *different* genus matches 1bp away, they'll be
-        # reported too, but that would most likely be a DB problem...
-        taxid, genus_species, _ = taxid_and_sp_lists(
-            session.query(Taxonomy)
-            .join(SeqSource)
-            .join(MarkerDef, SeqSource.marker_definition)
-            .filter(MarkerDef.name == marker_name)
-            .join(MarkerSeq)
-            .where(MarkerSeq.sequence.in_([seq] + fuzzy_matches[md5_16b]))
-            .distinct()
-        )
-        note = f"{len(fuzzy_matches[md5_16b])} matches with up to 1bp diff"
-        if not genus_species:
-            sys.exit(
-                f"ERROR: onebp: {len(fuzzy_matches[md5_16b])} matches"
-                f" but no taxonomy entries for {seq}\n"
-            )
-    elif not genus_species:
-        taxid = 0
-        note = "No DB match"
-    return taxid, genus_species, note
-
-
-def _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
-    """Prepare a set of all DB marker sequences."""
-    global db_seqs
-    db_seqs = {
-        marker.sequence.upper()
-        for marker in session.query(MarkerSeq.sequence)
+    assert db_seqs
+    # Checking variants of the query sequence,
+    # the query sequence itself (not included in the above),
+    # any 1bp variants of DB entries with a single ambiguous base:
+    variants = onebp_variants(seq).union([seq])
+    if seq in fuzzy_matches:
+        variants.update([fuzzy_matches[seq]])
+    taxid, genus_species, _ = taxid_and_sp_lists(
+        session.query(Taxonomy)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
+        .join(MarkerSeq)
+        .where(MarkerSeq.sequence.in_(variants))
         .distinct()
-    }
-    # Now set fuzzy_matches too...
-    setup_onebp(session, marker_name, shared_tmp_dir, debug, cpu)
+    )
+    if not genus_species:
+        taxid = 0
+        note = "No DB matches, even with 1bp diff"
+    return taxid, genus_species, note
 
 
 def setup_dist2(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 2."""
     global max_dist_genus
     max_dist_genus = 2
-    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
 def setup_dist3(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 3."""
     global max_dist_genus
     max_dist_genus = 3
-    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
 def setup_dist4(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 4."""
     global max_dist_genus
     max_dist_genus = 4
-    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
 def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 5."""
     global max_dist_genus
     max_dist_genus = 5
-    _setup_dist(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
 
 
 def dist_in_db(session, marker_name, seq, debug=False):
     """Species up to 1bp, genus up to given distance away."""
     global db_seqs
-    global fuzzy_matches
-    assert seq and db_seqs and fuzzy_matches
+    assert seq and db_seqs
     # If seq in db_seqs might be genus only, and
     # we'd prefer a species level match 1bp away:
-    if (seq in db_seqs) or (md5seq_16b(seq) in fuzzy_matches):
-        return onebp_match_in_db(session, marker_name, seq)
+    taxid, genus_species, note = onebp_match_in_db(session, marker_name, seq)
+    if genus_species:
+        return taxid, genus_species, note
+    assert seq not in db_seqs
+
+    # Else any matches from 2 bp up to X bp away, and will take genus only:
     min_dist = 0
     best = set()
     # Any matches are at least 2bp away, will take genus only.
@@ -431,10 +403,11 @@ def dist_in_db(session, marker_name, seq, debug=False):
             # New winner
             min_dist = dist
             best = {db_seq}
-    if not min_dist:
+    if not best:
+        assert min_dist == 0, min_dist
         return 0, "", f"No matches up to distance {max_dist_genus}"
     note = f"{len(best)} matches at distance {min_dist}"
-    assert min_dist > 1  # Should have caught via fuzzy list!
+    assert min_dist > 1  # Should have caught via onebp_match_in_db!
 
     # Nothing within 1bp, take genus only info from Xbp away:
     genus = {
@@ -626,7 +599,7 @@ def method_cleanup():
     """
     global fuzzy_matches, db_seqs, max_dist_genus
     fuzzy_matches = None  # global variable for onebp classifier
-    db_seqs = None  # global variable for 1s3g classifier
+    db_seqs = None  # global variable for onbep and 1s?g classifiers
     max_dist_genus = None  # global variable for 1s?g distance classifier
 
 
