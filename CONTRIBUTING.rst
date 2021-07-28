@@ -111,7 +111,7 @@ First confirm if the DB at ``thapbi_pict/ITS1_DB.sqlite`` is up to date:
 
 .. code:: bash
 
-    sqlite3 thapbi_pict/ITS1_DB.sqlite .dump | grep "Imported with" | head -n 1
+    sqlite3 thapbi_pict/ITS1_DB.sqlite .dump | grep -i "Imported with" | head -n 1
 
 If there have been changes requiring the DB be rebuilt, do this:
 
