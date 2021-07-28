@@ -26,7 +26,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positi
 #     -s $TMP/intermediate \
 #     -o $TMP/summary/woody-hosts \
 #     -t examples/woody_hosts/metadata.tsv \
-#     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+#     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
 
 
 echo "=================================="
@@ -76,7 +76,7 @@ if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then 
 time thapbi_pict summary -i $TMP/intermediate/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/with-metadata \
     -t examples/woody_hosts/metadata.tsv \
-    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16 -f 20
+    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
 ls $TMP/summary/with-metadata.*
 if [ `grep -c "^Site: " "$TMP/summary/with-metadata.samples.onebp.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
 if [ `grep -c "^Sequencing sample: " "$TMP/summary/with-metadata.samples.onebp.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
