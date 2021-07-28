@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.10.0 *Pending*  Rework to handle larger DB and multiple markers. Modifies DB schema.
+v0.10.0 2021-07-28 Rework to handle larger DB and multiple markers. Modifies DB schema.
 v0.9.9  2021-07-08 Drop SWARM based classifiers. Single intermediate TSV file in pipeline.
 v0.9.8  2021-06-17 Drop edit-graph in pipeline. Require full length primers in merged reads.
 v0.9.7  2021-06-04 USEARCH SINTAX & OBITools FASTA conventions in ``import`` command.
