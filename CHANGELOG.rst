@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.10.1 2021-07-28 Fix for using SQLAlchemy v1.3 (previous release needed v1.4).
 v0.10.0 2021-07-28 Rework to handle larger DB and multiple markers. Modifies DB schema.
 v0.9.9  2021-07-08 Drop SWARM based classifiers. Single intermediate TSV file in pipeline.
 v0.9.8  2021-06-17 Drop edit-graph in pipeline. Require full length primers in merged reads.
