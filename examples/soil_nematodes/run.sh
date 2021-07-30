@@ -66,9 +66,11 @@ echo ================
 echo Running analysis
 echo ================
 
-thapbi_pict pipeline -d references/pooled.sqlite --merged-cache tmp_merged/ \
-            -i raw_data/ expected/ -s intermediate/ --synthetic '' \
-            -o summary/ -t metadata.tsv -x 1 -c 4,3
+# Fraction 0.001 means 0.1%
+thapbi_pict pipeline -d references/pooled.sqlite --synthetic '' \
+            -i raw_data/ expected/ --merged-cache tmp_merged/ \
+            -s intermediate/ -o summary/ -a 25 -f 0.001 \
+            -t metadata.tsv -x 1 -c 4,3
 
 echo ====
 echo Done

@@ -2,10 +2,11 @@ High level overview
 ===================
 
 The high level summary is that all the samples have high coverage, much higher
-than most of the examples we have used. There is minimal off target signal
-(from the other primer sets), and the no template blanks have lower yields.
-The read counts in the blanks are high, but happily do not appear to contain
-nematode sequence.
+than most of the examples we have used. The coverage also varies between
+samples - making a fractional minimum abundance threshold attractive here.
+There is minimal off target signal (from the other primer sets), and the no
+template blanks have lower yields. The read counts in the blanks are high, but
+happily do not appear to contain nematode sequence.
 
 Per-marker yield
 ----------------
@@ -16,32 +17,32 @@ at the command line or in Excel.
 
 .. code:: console
 
-    $ cut -f 1,2,5-8 summary/NF1-18Sr2b.samples.onebp.tsv
+    $ cut -f 1,2,5-9 summary/NF1-18Sr2b.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open the Excel version ``summary/NF1-18Sr2b.samples.onebp.xlsx``, and focus
 on those early columns:
 
-============= ====== ========= ======= ======== ==========
-#marker       sample Raw FASTQ Flash   Cutadapt Read count
-============= ====== ========= ======= ======== ==========
-D3Af-D3Br     Blank  1193593   1039205 0        0
-D3Af-D3Br     MC1    3897994   3317661 0        0
-D3Af-D3Br     MC2    4228233   3685150 0        0
-D3Af-D3Br     MC3    4309817   3864130 0        0
-JB3-JB5GED    Blank  69641     62060   0        0
-JB3-JB5GED    MC1    1236201   1157824 0        0
-JB3-JB5GED    MC2    2160885   2058441 1        0
-JB3-JB5GED    MC3    1204900   1139777 0        0
-NF1-18Sr2b    Blank  260778    218813  187776   116145
-NF1-18Sr2b    MC1    2483453   2126062 2109488  1062526
-NF1-18Sr2b    MC2    2349364   1985981 1972923  1060055
-NF1-18Sr2b    MC3    2435278   2088185 2070379  1108276
-SSUF04-SSUR22 Blank  57199     46879   0        0
-SSUF04-SSUR22 MC1    3162379   2633321 77       0
-SSUF04-SSUR22 MC2    2790363   2370732 280      0
-SSUF04-SSUR22 MC3    1953138   1640045 52       0
-============= ====== ========= ======= ======== ==========
+============= ====== ========= ======= ======== ========= ==========
+#marker       sample Raw FASTQ Flash   Cutadapt Threshold Read count
+============= ====== ========= ======= ======== ========= ==========
+D3Af-D3Br     Blank  1193593   1039205 0        25        0
+D3Af-D3Br     MC1    3897994   3317661 0        25        0
+D3Af-D3Br     MC2    4228233   3685150 0        25        0
+D3Af-D3Br     MC3    4309817   3864130 0        25        0
+JB3-JB5GED    Blank  69641     62060   0        25        0
+JB3-JB5GED    MC1    1236201   1157824 0        25        0
+JB3-JB5GED    MC2    2160885   2058441 1        25        0
+JB3-JB5GED    MC3    1204900   1139777 0        25        0
+NF1-18Sr2b    Blank  260778    218813  187776   188       115419
+NF1-18Sr2b    MC1    2483453   2126062 2109488  2110      689854
+NF1-18Sr2b    MC2    2349364   1985981 1972923  1973      745031
+NF1-18Sr2b    MC3    2435278   2088185 2070379  2071      766573
+SSUF04-SSUR22 Blank  57199     46879   0        25        0
+SSUF04-SSUR22 MC1    3162379   2633321 77       25        0
+SSUF04-SSUR22 MC2    2790363   2370732 280      25        0
+SSUF04-SSUR22 MC3    1953138   1640045 52       25        0
+============= ====== ========= ======= ======== ========= ==========
 
 You should find the raw FASTQ numbers match the author's Table 5, although
 that omits the blanks - which happily are all much lower.
@@ -59,9 +60,11 @@ trimmed with the NF1-18Sr2b primers, and happily we get high numbers only for
 the NF1-18Sr2b samples, but low levels from the other samples. That could be
 barcode leakage in the demultiplexing, or actual unwanted DNA in the samples.
 
-The final column highlighted here is the "Read count" after applying our
-minimum abundance threshold - and now we only get reads from the NF1-18Sr2b
-samples.
+Then we have our "Threshold" and the final column highlighted here is the
+"Read count" after applying our minimum abundance threshold - and now we only
+get reads from the NF1-18Sr2b samples. Most of the threshold values are the
+absolute threshold picked with ``-a 25`` while the larger thresholds are via
+``-f 0.001``, meaning at least 0.1% of the reads for that primer pair.
 
 We can repeat this for the other three primer sets, and the same pattern is
 observed - strong signal only for the matching samples (with the blanks giving
