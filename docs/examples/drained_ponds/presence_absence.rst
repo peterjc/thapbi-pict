@@ -24,10 +24,10 @@ in the field "blanks":
 
 .. code:: console
 
-    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.samples.onebp.tsv | cut -f 5,10-11,15
+    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15
     <SEE TABLE BELOW>
 
-Or, filter/search ``summary/drained_ponds.samples.onebp.tsv`` in Excel:
+Or, filter/search ``summary/drained_ponds.12S.samples.onebp.tsv`` in Excel:
 
 ======== ================= =========================================================================== ==========
 control  Sequencing sample Classification summary                                                      Read count
@@ -90,7 +90,7 @@ lake, but that is a useful approximation for assessing the classifier:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/drained_ponds.assess.onebp.tsv
+    $ cut -f 1-5 summary/drained_ponds.12S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 You might prefer to open this in Excel:
@@ -202,9 +202,11 @@ find this in the main reports, or at the command line:
 
 .. code:: console
 
-    $ grep "Pseudorasbora parva" intermediate/*.onebp.tsv | cut -f 1,3
-    intermediate/SRR11949854.onebp.tsv:e819f3c222d6493572534fb6a5b7cda7_323  Pseudorasbora parva
-    intermediate/SRR11949925.onebp.tsv:e819f3c222d6493572534fb6a5b7cda7_197  Pseudorasbora parva
+    $ grep "Pseudorasbora parva" summary/drained_ponds.12S.reads.onebp.tsv  | cut -f 1-2
+    e819f3c222d6493572534fb6a5b7cda7  Pseudorasbora parva
+    $ grep e819f3c222d6493572534fb6a5b7cda7 intermediate/12S/*.fasta
+    intermediate/12S/SRR11949854.fasta:>e819f3c222d6493572534fb6a5b7cda7_323
+    intermediate/12S/SRR11949925.fasta:>e819f3c222d6493572534fb6a5b7cda7_197
 
 Specifically we saw 323 reads in ``SRR11949854`` aka ``2LMB`` and 197 reads in
 ``SRR11949925`` aka ``3LMF`` - both middle lake Sterivex (STX) samples.
@@ -225,10 +227,24 @@ mossulensis*, *Notemigonus crysoleucas*, and *Squalidus gracilis*:
 
 .. code:: console
 
-    $ grep -E "(Alburnus mossulensis|Notemigonus crysoleucas|Squalidus gracilis)"  intermediate/*.onebp.tsv | cut -f 1,3
-    intermediate/SRR11949859.onebp.tsv:916da937dccfd5d29502e83713e5d998_98  Abramis brama;Alburnus mossulensis
-    intermediate/SRR11949871.onebp.tsv:c0d532d1c6f8ffff9c72ac4a1873151c_82  Squalidus gracilis
-    intermediate/SRR11949887.onebp.tsv:03f1d4c484ccc0026d851f42fbdb835a_51  Abramis brama;Notemigonus crysoleucas
+    $ grep "Alburnus mossulensis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    916da937dccfd5d29502e83713e5d998  Abramis brama;Alburnus mossulensis
+    $ grep 916da937dccfd5d29502e83713e5d998 intermediate/12S/*.fasta
+    intermediate/12S/SRR11949859.fasta:>916da937dccfd5d29502e83713e5d998_98
+
+.. code:: console
+
+    $ grep "Notemigonus crysoleucas" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    03f1d4c484ccc0026d851f42fbdb835a  Abramis brama;Notemigonus crysoleucas
+    $ grep 03f1d4c484ccc0026d851f42fbdb835a intermediate/12S/*.fasta
+    intermediate/12S/SRR11949887.fasta:>03f1d4c484ccc0026d851f42fbdb835a_51
+
+.. code:: console
+
+    $ grep "Squalidus gracilis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    c0d532d1c6f8ffff9c72ac4a1873151c  Squalidus gracilis
+    $ grep c0d532d1c6f8ffff9c72ac4a1873151c intermediate/12S/*.fasta
+    intermediate/12S/SRR11949871.fasta:>c0d532d1c6f8ffff9c72ac4a1873151c_82
 
 In two cases the sequences are ambiguous with equally good matches to expected
 species *Abramis brama*. Again, we might remove *Alburnus mossulensis* and
@@ -257,14 +273,16 @@ We found *Scardinius erythrophthalmus* in seven samples:
 
 .. code:: console
 
-    $ grep "Scardinius erythrophthalmus" intermediate/*.onebp.tsv | cut -f 1,3
-    intermediate/SRR11949852.onebp.tsv:2a53392fe4add5780f959b56407423d0_126  Scardinius erythrophthalmus
-    intermediate/SRR11949868.onebp.tsv:2a53392fe4add5780f959b56407423d0_147  Scardinius erythrophthalmus
-    intermediate/SRR11949870.onebp.tsv:2a53392fe4add5780f959b56407423d0_120  Scardinius erythrophthalmus
-    intermediate/SRR11949879.onebp.tsv:2a53392fe4add5780f959b56407423d0_156  Scardinius erythrophthalmus
-    intermediate/SRR11949886.onebp.tsv:2a53392fe4add5780f959b56407423d0_76   Scardinius erythrophthalmus
-    intermediate/SRR11949891.onebp.tsv:2a53392fe4add5780f959b56407423d0_76   Scardinius erythrophthalmus
-    intermediate/SRR11949893.onebp.tsv:2a53392fe4add5780f959b56407423d0_136  Scardinius erythrophthalmus
+    $ grep "Scardinius erythrophthalmus" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    2a53392fe4add5780f959b56407423d0  Scardinius erythrophthalmus
+    $ grep 2a53392fe4add5780f959b56407423d0 intermediate/12S/*.fasta
+    intermediate/12S/SRR11949852.fasta:>2a53392fe4add5780f959b56407423d0_126
+    intermediate/12S/SRR11949868.fasta:>2a53392fe4add5780f959b56407423d0_147
+    intermediate/12S/SRR11949870.fasta:>2a53392fe4add5780f959b56407423d0_120
+    intermediate/12S/SRR11949879.fasta:>2a53392fe4add5780f959b56407423d0_156
+    intermediate/12S/SRR11949886.fasta:>2a53392fe4add5780f959b56407423d0_76
+    intermediate/12S/SRR11949891.fasta:>2a53392fe4add5780f959b56407423d0_76
+    intermediate/12S/SRR11949893.fasta:>2a53392fe4add5780f959b56407423d0_136
 
 Quoting the original paper:
 
