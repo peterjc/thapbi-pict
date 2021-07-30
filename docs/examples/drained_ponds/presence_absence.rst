@@ -59,8 +59,8 @@ control species *Astatotilapia calliptera* and *Maylandia zebra*.
 High level overview
 -------------------
 
-Looking over ``summary/drained_ponds.samples.onebp.xlsx`` in Excel, or the TSV
-equivalent of the sample report, there are some general trends visible.
+Looking over ``summary/drained_ponds.12S.samples.onebp.xlsx`` in Excel, or the
+TSV equivalent of the sample report, there are some general trends visible.
 
 First, as noted above the controls are extremely clean with just the expected
 cichlid species for the positive controls, and a few off-target matches in the
