@@ -712,9 +712,10 @@ def main(
     if not tsv_files:
         sys.exit("ERROR: No input FASTA and/or TSV files found")
 
-    # Not loading the post-abundance-threshold count, or the threshold.
+    # Not loading the post-abundance-threshold count,
     # Count should match the Seq-count column, but will not if running
-    # report with higher abundance threshold - simpler to exclude them:
+    # report with higher abundance threshold - simpler to exclude.
+    # For the threshold we have to update this is the report is stricter...
     stats_fields = ("Raw FASTQ", "Flash", "Cutadapt", "Threshold")
     try:
         sample_stats = load_fasta_headers(
@@ -728,6 +729,12 @@ def main(
         )
         sample_stats = {}
         stats_fields = []
+    if "Threshold" in stats_fields:
+        # Apply any over-ride min_abundance for the reports
+        i = stats_fields.index("Threshold")
+        for sample in sample_stats:
+            if sample_stats[sample][i] < min_abundance:
+                sample_stats[sample][i] = min_abundance
 
     bad_fields = []
     for i, field in enumerate(stats_fields):
