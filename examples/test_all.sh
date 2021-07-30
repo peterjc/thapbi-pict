@@ -4,7 +4,7 @@ set -euo pipefail
 # Assumes setup_all.sh has been run to download the data etc,
 # and probably need to have used run_all.sh too.
 
-for example in woody_hosts recycled_water fungal_mock great_lakes fecal_sequel soil_nematodes endangered_species; do
+for example in woody_hosts recycled_water drained_ponds fungal_mock great_lakes fecal_sequel soil_nematodes endangered_species; do
     echo "================================="
     echo "Checking docs for $example"
     echo "================================="
