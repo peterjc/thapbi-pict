@@ -13,9 +13,10 @@ Quoting the Muri *et al.* (2020) paper:
     blanks and PCR negatives, a second arbitrary threshold was applied and all
     records occurring with less than 50 reads assigned were removed.
 
-THAPBI PICT currently only implements an absolute minimum read abundance
+THAPBI PICT initially only implemented an absolute minimum read abundance
 threshold, and setting this to at least 10 excludes low-frequency noise. We
-have also used a threshold of 50 to match the original paper.
+have used ``-a 50`` for an absolute threshold of 50, and ``-f 0.001`` for a
+0.1% sample specific factional threshold to match the paper.
 
 At this threshold, the 4 cichlid "positive" samples, 6 PCR "negative", and 8
 "blank" controls are perfect - as far as the fish go. We do see unexpected
@@ -24,33 +25,37 @@ in the field "blanks":
 
 .. code:: console
 
-    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15
+    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15-16
     <SEE TABLE BELOW>
 
 Or, filter/search ``summary/drained_ponds.12S.samples.onebp.tsv`` in Excel:
 
-======== ================= =========================================================================== ==========
-control  Sequencing sample Classification summary                                                      Read count
-======== ================= =========================================================================== ==========
-blank    SRR11949861       -                                                                           0
-blank    SRR11949885       -                                                                           0
-blank    SRR11949884       (Off-target) Homo sapiens, (Off-target) Sus scrofa                          544
-blank    SRR11949883       (Off-target) Bos taurus, (Off-target) Homo sapiens, (Off-target) Sus scrofa 1629
-blank    SRR11949882       (Off-target) Anatidae (waterfowl)                                           61
-blank    SRR11949881       (Off-target) Homo sapiens                                                   56
-blank    SRR11949880       (Off-target) Anatidae (waterfowl), (Off-target) Homo sapiens                436
-blank    SRR11949834       (Off-target) Homo sapiens                                                   175
-negative SRR11949908       -                                                                           0
-negative SRR11949907       (Off-target) Gallus gallus, (Off-target) Homo sapiens                       606
-negative SRR11949851       -                                                                           0
-negative SRR11949850       -                                                                           0
-negative SRR11949838       (Off-target) Homo sapiens                                                   71
-negative SRR11949837       (Off-target) Homo sapiens                                                   356
-positive SRR11949836       Astatotilapia calliptera(*), Maylandia zebra(*)                             39748
-positive SRR11949835       Astatotilapia calliptera(*), Maylandia zebra(*)                             39244
-positive SRR11949906       Astatotilapia calliptera(*), Maylandia zebra(*)                             62249
-positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             24567
-======== ================= =========================================================================== ==========
+======== ================= =========================================================================== ========= ==========
+control  Sequencing sample Classification summary                                                      Threshold Read count
+======== ================= =========================================================================== ========= ==========
+blank    SRR11949861       -                                                                           50        0
+blank    SRR11949885       -                                                                           50        0
+blank    SRR11949884       (Off-target) Homo sapiens, (Off-target) Sus scrofa                          50        544
+blank    SRR11949883       (Off-target) Bos taurus, (Off-target) Homo sapiens, (Off-target) Sus scrofa 50        1629
+blank    SRR11949882       (Off-target) Anatidae (waterfowl)                                           50        61
+blank    SRR11949881       (Off-target) Homo sapiens                                                   50        56
+blank    SRR11949880       (Off-target) Anatidae (waterfowl), (Off-target) Homo sapiens                50        436
+blank    SRR11949834       (Off-target) Homo sapiens                                                   50        175
+negative SRR11949908       -                                                                           50        0
+negative SRR11949907       (Off-target) Gallus gallus, (Off-target) Homo sapiens                       50        606
+negative SRR11949851       -                                                                           50        0
+negative SRR11949850       -                                                                           50        0
+negative SRR11949838       (Off-target) Homo sapiens                                                   50        71
+negative SRR11949837       (Off-target) Homo sapiens                                                   50        356
+positive SRR11949836       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39748
+positive SRR11949835       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39244
+positive SRR11949906       Astatotilapia calliptera(*), Maylandia zebra(*)                             65        62249
+positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        24567
+======== ================= =========================================================================== ========= ==========
+
+Only in one sample (``SRR11949906``, a positive control) was the percentage
+based abundance threshold stricter than the absolute threshold (65 not 50),
+and it still gives the highest number of reads.
 
 Note that the positive samples only yield a single unique sequence (MD5
 checksum ``17dbc1c331d17cd075aabd6f710a039b``) which matches both the cichlid
@@ -98,43 +103,42 @@ You might prefer to open this in Excel:
 =================================== === === === ====
 #Species                            TP  FP  FN  TN
 =================================== === === === ====
-OVERALL                             440 411 324 5854
+OVERALL                             433 388 331 5877
 (Off-target) Anatidae (waterfowl)   0   70  0   29
 (Off-target) Apodemus               0   4   0   95
-(Off-target) Ardea cinerea          0   13  0   86
-(Off-target) Bos taurus             0   5   0   94
-(Off-target) Canis lupus familiaris 0   11  0   88
+(Off-target) Ardea cinerea          0   11  0   88
+(Off-target) Bos taurus             0   3   0   96
+(Off-target) Canis lupus familiaris 0   7   0   92
 (Off-target) Capra hircus           0   1   0   98
 (Off-target) Columba                0   47  0   52
 (Off-target) Gallinula chloropus    0   50  0   49
 (Off-target) Gallus gallus          0   13  0   86
 (Off-target) Homo sapiens           0   83  0   16
-(Off-target) Ovis aries             0   21  0   78
+(Off-target) Ovis aries             0   17  0   82
 (Off-target) Ovis dalli             0   1   0   98
 (Off-target) Phalacrocorax carbo    0   25  0   74
-(Off-target) Sturnus                0   4   0   95
-(Off-target) Sus scrofa             0   18  0   81
-(Off-target) Turdus                 0   8   0   91
+(Off-target) Sturnus                0   3   0   96
+(Off-target) Sus scrofa             0   16  0   83
+(Off-target) Turdus                 0   7   0   92
 Abramis brama                       65  0   16  18
 Acipenser spp.                      0   0   9   90
 Alburnus mossulensis                0   1   0   98
 Astatotilapia calliptera            4   0   0   95
-Barbus barbus                       49  0   32  18
+Barbus barbus                       46  0   35  18
 Carassius carassius                 64  0   17  18
-Ctenopharyngodon idella             3   16  6   74
+Ctenopharyngodon idella             3   15  6   75
 Cyprinus carpio                     61  0   20  18
 Maylandia zebra                     4   0   0   95
-Notemigonus crysoleucas             0   1   0   98
-Perca fluviatilis                   42  0   39  18
+Perca fluviatilis                   40  0   41  18
 Pseudorasbora parva                 0   2   0   97
 Rutilus rutilus                     63  0   18  18
-Scardinius erythrophthalmus         7   0   74  18
+Scardinius erythrophthalmus         6   0   75  18
 Silurus glanis                      9   0   0   90
-Spinibarbus denticulatus            0   16  0   83
+Spinibarbus denticulatus            0   11  0   88
 Squalidus gracilis                  0   1   0   98
-Squalius cephalus                   7   0   74  18
+Squalius cephalus                   6   0   75  18
 Tinca tinca                         62  0   19  18
-OTHER 36 SPECIES IN DB              0   0   0   3564
+OTHER 37 SPECIES IN DB              0   0   0   3663
 =================================== === === === ====
 
 False positives
@@ -222,8 +226,8 @@ sample names match.
 Other Fish
 ~~~~~~~~~~
 
-We also see one false positive for each of the three fish species *Alburnus
-mossulensis*, *Notemigonus crysoleucas*, and *Squalidus gracilis*:
+We also see one false positive for each of the two fish species *Alburnus
+mossulensis*, and *Squalidus gracilis*:
 
 .. code:: console
 
@@ -232,12 +236,8 @@ mossulensis*, *Notemigonus crysoleucas*, and *Squalidus gracilis*:
     $ grep 916da937dccfd5d29502e83713e5d998 intermediate/12S/*.fasta
     intermediate/12S/SRR11949859.fasta:>916da937dccfd5d29502e83713e5d998_98
 
-.. code:: console
-
-    $ grep "Notemigonus crysoleucas" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
-    03f1d4c484ccc0026d851f42fbdb835a  Abramis brama;Notemigonus crysoleucas
-    $ grep 03f1d4c484ccc0026d851f42fbdb835a intermediate/12S/*.fasta
-    intermediate/12S/SRR11949887.fasta:>03f1d4c484ccc0026d851f42fbdb835a_51
+This sequence is ambiguous with equally good matches to expected species
+*Abramis brama*. Again, we might remove *Alburnus mossulensis* from the DB?
 
 .. code:: console
 
@@ -246,9 +246,7 @@ mossulensis*, *Notemigonus crysoleucas*, and *Squalidus gracilis*:
     $ grep c0d532d1c6f8ffff9c72ac4a1873151c intermediate/12S/*.fasta
     intermediate/12S/SRR11949871.fasta:>c0d532d1c6f8ffff9c72ac4a1873151c_82
 
-In two cases the sequences are ambiguous with equally good matches to expected
-species *Abramis brama*. Again, we might remove *Alburnus mossulensis* and
-*Notemigonus crysoleucas* from the DB?
+This sequence match is with AP011393.1 in the provided reference set.
 
 False negatives
 ---------------
@@ -269,7 +267,7 @@ For example, we report *Barbus barbus* in 49 samples, versus:
 
     In addition, *Barbus barbus* was detected at two sites (202 reads), ...
 
-We found *Scardinius erythrophthalmus* in seven samples:
+We found *Scardinius erythrophthalmus* in six samples:
 
 .. code:: console
 
@@ -281,7 +279,6 @@ We found *Scardinius erythrophthalmus* in seven samples:
     intermediate/12S/SRR11949870.fasta:>2a53392fe4add5780f959b56407423d0_120
     intermediate/12S/SRR11949879.fasta:>2a53392fe4add5780f959b56407423d0_156
     intermediate/12S/SRR11949886.fasta:>2a53392fe4add5780f959b56407423d0_76
-    intermediate/12S/SRR11949891.fasta:>2a53392fe4add5780f959b56407423d0_76
     intermediate/12S/SRR11949893.fasta:>2a53392fe4add5780f959b56407423d0_136
 
 Quoting the original paper:
