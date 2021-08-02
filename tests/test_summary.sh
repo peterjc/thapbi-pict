@@ -66,6 +66,19 @@ diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
 
 
 # Passing filename, default method, explicit min abundance
+# Note:
+#
+#    $ grep threshold tests/classify/*.fasta
+#    tests/classify/P-infestans-T30-4.fasta:#threshold:500
+#    tests/classify/hmm_trim.fasta:#threshold:50
+#
+# i.e. the default of 100 or an explicit value more than 50
+# could exclude some reads - the file is not abundance sorted
+# but the lowest and only values under 100 are:
+#
+#    >62e52211a6661fb05ae292808d79a4a3_75
+#    >330d9e67a26944344219464449fed619_68
+#
 rm -rf $TMP/human.txt $TMP/test-case.tsv $TMP/test-case.xlsx
 thapbi_pict summary -m identity -a 99 -o $TMP/test-case \
     -i tests/classify/*.fasta tests/classify/*.identity.tsv
@@ -75,17 +88,19 @@ diff $TMP/test-case.samples.identity.tsv tests/summary/classify.identity.tsv
 # Passing a folder, trying different methods
 for M in identity onebp blast; do
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
-    thapbi_pict summary -m $M --output $TMP/test-case --input tests/classify/
+    thapbi_pict summary -m $M -a 99 --output $TMP/test-case --input tests/classify/
     diff $TMP/test-case.samples.$M.txt tests/summary/classify.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify.$M.tsv
     # And again, but with metadata
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
-    thapbi_pict summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -o $TMP/test-case -i tests/classify/
+    thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ \
+        -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.txt tests/summary/classify-meta.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta.$M.tsv
     # Now require metadata...
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
-    thapbi_pict summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -m $M -o $TMP/test-case -i tests/classify/ -q
+    thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ -q \
+        -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.txt tests/summary/classify-meta-req.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta-req.$M.tsv
 done

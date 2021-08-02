@@ -1,0 +1,22 @@
+NOTE: Species listed with (*) are where sequences matched multiple species equally well. For example, Phytophthora andina, P. infestans, and P. ipomoeae, share an identical ITS1 marker.
+
+------------------------------------------------------------
+
+TaxID: 4787
+Species: Phytophthora infestans
+Description: Single isolate positive control
+Date: 2018
+
+Sequencing sample: P-infestans-T30-4
+
+ - Phytophthora andina(*)
+ - Phytophthora infestans(*)
+ - Phytophthora ipomoeae(*)
+ - Unknown
+
+------------------------------------------------------------
+
+Sequencing sample: hmm_trim
+
+ - Unknown
+
