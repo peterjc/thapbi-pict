@@ -143,6 +143,6 @@ See the ``CHANGELOG.rst`` file.
 Development Notes
 -----------------
 
-Please see the ``CONTRIBUTING.rst`` file for details of the development
-setup including Python style conventions, git pre-commit hook,
-continuous integration and test coverage, and release process.
+See file ``CONTRIBUTING.rst`` for details of the development setup including
+Python style conventions, git pre-commit hook, continuous integration and test
+coverage, and release process.
