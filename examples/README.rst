@@ -8,5 +8,5 @@ Helper scripts:
 
 * ``setup_all.sh`` to download the raw data and do any setup
 * ``run_all.sh`` to generate all the intermediate files and output reports
-* ``test_all.sh`` to cross check the documentation for the examples.
+* ``test_all.sh`` to cross check the documentation for the examples
 * ``clean_all.sh`` to remove most intermediate files
