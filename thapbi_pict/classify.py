@@ -269,15 +269,18 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 
     unambiguous = set("ACGT")
     fuzzy_matches = {}
+    count = 0
     for seq in db_seqs:
         bad = [_ for _ in seq if _ not in unambiguous]
         if len(bad) == 1:
             # This has a chance to be matched with the onebp classifier
+            count += 1
             for letter in unambiguous:
                 fuzzy_matches[seq.replace(bad[0], letter)] = seq
     if debug and fuzzy_matches:
         sys.stderr.write(
-            f"DEBUG: Cloud of {len(fuzzy_matches)} from DB entries with one ambiguity\n"
+            f"DEBUG: Cloud of {len(fuzzy_matches)} from {count} DB entries"
+            " with one ambiguity\n"
         )
 
 
