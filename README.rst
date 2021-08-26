@@ -4,8 +4,11 @@
 .. image:: https://img.shields.io/github/license/peterjc/thapbi-pict.svg?label=License
    :alt: MIT License
    :target: https://github.com/peterjc/thapbi-pict/blob/master/LICENSE.rst
+.. image:: https://results.pre-commit.ci/badge/github/peterjc/thapbi-pict/master.svg
+   :target: https://results.pre-commit.ci/latest/github/peterjc/thapbi-pict/master
+   :alt: pre-commit.ci status
 .. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=CI&logo=CircleCI
-   :alt: THAPBI PICT CircleCI build status
+   :alt: CircleCI status
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
 .. image:: https://img.shields.io/readthedocs/thapbi-pict.svg?label=RTD&logo=read-the-docs
    :alt: Documentation Status
