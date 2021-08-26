@@ -1,0 +1,62 @@
+
+name: GitHub Actions
+on: [push]
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🗄️ Check out repository code
+        uses: actions/checkout@v2
+      - name: 📦 Installing pre-commit checks
+        run: |
+          pip install pre-commit
+      - name: 🔎 Running pre-commit checks
+        run: |
+          echo "Triggered by a ${{ github.event_name }} event, running ${{ github.ref }} on ${{ runner.os }}"
+          pre-commit run -a
+          echo "Job's status is ${{ job.status }}."
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🗄️ Check out repository code
+        uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          channels: bioconda,conda-forge
+      - name: 📦 Install dependencies
+        run: |
+          conda create -q -n testing python=3.7
+          source activate testing
+          python --version
+          conda install curl
+          # For installing the Python requirements either conda or pip should work,
+          # but conda preferable if there are packages with C code but no wheel
+          conda install --file requirements.txt
+          conda install --file requirements-ext.txt
+      - name: 🛠️ Install THAPBI PICT
+        run: |
+          source activate testing
+          rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
+          sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+          chmod a-w thapbi_pict/ITS1_DB.sqlite
+          python setup.py sdist --formats=gztar
+          python setup.py bdist_wheel
+          echo "Installing our wheel..."
+          cd dist
+          python -m pip install thapbi_pict-*.whl
+          cd ..
+          echo "THAPBI PICT should now be installed"
+          thapbi_pict -v
+      - name: 🔎 Run tests
+        run: |
+          echo "Triggered by a ${{ github.event_name }} event, running ${{ github.ref }} on ${{ runner.os }}"
+          source activate testing
+          # Unpack the tests from the sdist tar-ball
+          tar --wildcards '*/scripts/*' -zxvf dist/thapbi_pict-*.tar.gz
+          tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
+          tar --wildcards '*/examples/*' -zxvf dist/thapbi_pict-*.tar.gz
+          tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
+          cd thapbi_pict-*/
+          # Run the tests (and confirm the tar-ball is complete)
+          tests/run_tests.sh
+          echo "Job's status is ${{ job.status }}."
