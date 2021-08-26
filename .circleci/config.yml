@@ -11,27 +11,16 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup Conda
+          name: Conda and Dependencies
           command: |
+            # Move this grep into pre-commit setup:
+            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
             conda config --set always_yes yes --set changeps1 no --set channel_priority strict
             conda update -q conda
             conda config --add channels defaults
             conda config --add channels bioconda
             conda config --add channels conda-forge
             conda info -a
-      - run:
-          name: Style checks
-          command: |
-            conda create -q -n linting python=3.7
-            source activate linting
-            python --version
-            conda install pre-commit
-            pre-commit install
-            pre-commit run -a
-            grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
-      - run:
-          name: Dependencies
-          command: |
             conda create -q -n testing python=3.7 mamba
             source activate testing
             python --version
@@ -53,6 +42,7 @@ jobs:
             python -m pip install thapbi_pict-*.whl
             cd ..
             echo "THAPBI PICT should now be installed"
+            thapbi_pict -v
       - run:
           name: Test
           command: |
