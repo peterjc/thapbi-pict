@@ -28,7 +28,6 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           conda create -q -n testing python=3.7
-          source activate testing
           python --version
           conda install curl
           # For installing the Python requirements either conda or pip should work,
@@ -37,7 +36,6 @@ jobs:
           conda install --file requirements-ext.txt
       - name: 🛠️ Install THAPBI PICT
         run: |
-          source activate testing
           rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
           sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
           chmod a-w thapbi_pict/ITS1_DB.sqlite
@@ -52,7 +50,6 @@ jobs:
       - name: 🔎 Run tests
         run: |
           echo "Triggered by a ${{ github.event_name }} event, running ${{ github.ref }} on ${{ runner.os }}"
-          source activate testing
           # Unpack the tests from the sdist tar-ball
           tar --wildcards '*/scripts/*' -zxvf dist/thapbi_pict-*.tar.gz
           tar --wildcards '*/tests/*' -zxvf dist/thapbi_pict-*.tar.gz
