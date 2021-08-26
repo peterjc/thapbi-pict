@@ -3,12 +3,18 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
+    -   id: check-added-large-files
+    -   id: check-case-conflict
     -   id: check-executables-have-shebangs
     -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-shebang-scripts-are-executable
+    -   id: check-symlinks
     -   id: check-yaml
     -   id: debug-statements
+    -   id: destroyed-symlinks
     -   id: end-of-file-fixer
-        files: \.py$
+        files: \.(py|sh|rst|yml|yaml)$
     -   id: mixed-line-ending
     -   id: trailing-whitespace
         files: \.(py|sh|rst|yml|yaml)$
