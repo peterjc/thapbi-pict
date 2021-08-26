@@ -2,20 +2,6 @@
 name: GitHub Actions
 on: [push]
 jobs:
-  Lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🗄️ Check out repository code
-        uses: actions/checkout@v2
-      - name: 📦 Installing pre-commit checks
-        run: |
-          pip install pre-commit
-          pre-commit install --install-hooks
-      - name: 🔎 Running pre-commit checks
-        run: |
-          echo "Triggered by a ${{ github.event_name }} event, running ${{ github.ref }} on ${{ runner.os }}"
-          pre-commit run -a
-          echo "Job's status is ${{ job.status }}."
   Test:
     runs-on: ubuntu-latest
     steps:
