@@ -15,7 +15,7 @@
    :target: https://github.com/python/black
 .. image:: https://img.shields.io/github/license/peterjc/thapbi-pict.svg
    :alt: MIT License
-   :target: https://github.com/peterjc/thapbi-pict/blob/master/LICENSE.rst 
+   :target: https://github.com/peterjc/thapbi-pict/blob/master/LICENSE.rst
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4529395.svg
    :alt: Zenodo DOI
    :target: https://doi.org/10.5281/zenodo.4529395
