@@ -32,18 +32,13 @@ jobs:
       - run:
           name: Dependencies
           command: |
-            conda create -q -n testing python=3.7
+            conda create -q -n testing python=3.7 mamba
             source activate testing
             python --version
-            conda install --file requirements-ext.txt
-            echo "External (non-Python) dependencies installed"
-            conda install curl
-            echo "Installed curl"
             # For installing the Python requirements either conda or pip should work,
             # but conda preferable if there are packages with C code but no wheel
-            conda install --file requirements.txt
             # python -m pip install -r requirements.txt
-            echo "Python dependencies installed"
+            mamba install curl --file requirements.txt -file requirements-ext.txt
       - run:
           name: Installation
           command: |
