@@ -27,12 +27,14 @@ jobs:
           python-version: 3.7
           mamba-version: "*"
       - name: 📦 Install dependencies
+        shell: bash -l {0}
         run: |
           python --version
           # For installing the Python requirements either conda or pip should work,
           # but conda preferable if there are packages with C code but no wheel
           mamba install curl --file requirements.txt --file requirements-ext.txt
       - name: 🛠️ Install THAPBI PICT
+        shell: bash -l {0}
         run: |
           rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
           sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
@@ -46,6 +48,7 @@ jobs:
           echo "THAPBI PICT should now be installed"
           thapbi_pict -v
       - name: 🔎 Run tests
+        shell: bash -l {0}
         run: |
           echo "Triggered by a ${{ github.event_name }} event, running ${{ github.ref }} on ${{ runner.os }}"
           # Unpack the tests from the sdist tar-ball
