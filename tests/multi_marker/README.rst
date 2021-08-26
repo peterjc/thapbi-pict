@@ -13,5 +13,3 @@ is based on the following paper:
 We have included a 0.1% sampling of the EM_1 sample (ERR1823567), which still
 gives meaningful output for four of the markers at a minimum abundance
 threshold of 10 reads.
-
-
