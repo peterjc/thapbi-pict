@@ -17,7 +17,7 @@ for LIBRARY in AL1 AL2; do
         for URL in `grep ^$ACC PRJNA377530.tsv | cut -f 6 | sed "s/;/ /g"`; do
             NAME=${URL##*/}
             FILE=raw_data/$LIBRARY/$NAME
-            # Avoiding leaving partial FASTQ if wget is interupted
+            # Avoiding leaving partial FASTQ if wget is interrupted
             rm -rf $FILE.tmp
             if [ -f $FILE ]; then
                 echo "Already have $FILE"

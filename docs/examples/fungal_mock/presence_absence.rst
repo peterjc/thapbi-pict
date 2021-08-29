@@ -275,7 +275,7 @@ The author wrote:
     due to primer annealing efficiency.
 
 That's pretty consistent (we've talked about *Fusarium verticillioides*
-earlier), and suggests using a minimum abudance threshold of 10 in THAPBI
+earlier), and suggests using a minimum abundance threshold of 10 in THAPBI
 PICT is a little stricter that the author's pipeline.
 
 Moving on to the second amplicon library, the larger ITS1 marker using the

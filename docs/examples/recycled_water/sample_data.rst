@@ -58,7 +58,7 @@ can use THAPBI PICT default settings and get meaningful but blinkered results
 (for the subset of the data which our narrower primer set would have amplified,
 using a *Phytophthora* centric database).
 
-In order to classify beyound *Phytophthora*, we need to build a THABPI PICT
+In order to classify beyond *Phytophthora*, we need to build a THABPI PICT
 database including *Pythium* and *Phytopythium*. Redekar *et al.* (2019)
 Supplementary Table 3 provides a list of 1454 unique accessions and the
 species they assigned to it (not always the same as that listed on the NCBI

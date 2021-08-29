@@ -54,7 +54,7 @@ if [ ! -f references/pooled.sqlite ]; then
     LEFT=CCATCCAACATCTCAGCATGATGAAA
     RIGHT=GGCAAATAGGAARTATCATTC
     MINLEN=200
-    # Skipping, failed to amplify at default threhold or even 50.
+    # Skipping, failed to amplify at default threshold or even 50.
     # Drop to -a 10 and you get a modest number of sequences.
 
     # Universal animal DNA barcodes and mini-barcodes - Mini-cyt-b

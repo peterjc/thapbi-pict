@@ -25,7 +25,7 @@ import sys
 import tempfile
 
 if len(sys.argv) == 1 or not os.path.isfile(sys.argv[1]):
-    sys.exit("ERROR: Requires one or more RST filesnames as input.")
+    sys.exit("ERROR: Requires one or more RST filenames as input.")
 
 
 def scan_rst(filename):

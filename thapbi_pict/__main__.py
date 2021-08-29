@@ -775,7 +775,7 @@ ARG_METAGROUPS = dict(  # noqa: C408
     help="If using metadata, which column values should be used for applying "
     "background color bands.  All samples with the same metadata value must "
     "be grouped together after sorting, as the colors are reused. "
-    "Zero (default) is interpretted as the first column requested as metadata "
+    "Zero (default) is interpreted as the first column requested as metadata "
     "output (the primary sorting key, ensuring all members of the same group "
     "will be together).",
 )
@@ -1052,7 +1052,7 @@ def main(args=None):
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE * 10),
         help=(
-            "Mininum abundance to require before importing a sequence, "
+            "Minimum abundance to require before importing a sequence, "
             "over-and-above whatever was used to prepare the FASTA file. "
             f"Default here is {DEFAULT_MIN_ABUNDANCE * 10}, ten times the default "
             f" of {DEFAULT_MIN_ABUNDANCE} used for the classification pipeline - "
@@ -1225,7 +1225,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=0,
-        help="Mininum abundance to require before outputing a sequence. "
+        help="Minimum abundance to require before outputting a sequence. "
         "Default no minimum.",
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
@@ -1248,7 +1248,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=0,
-        help="Mininum abundance applied to unique marker sequences in each "
+        help="Minimum abundance applied to unique marker sequences in each "
         "FASTA sample file, default 0 (classify all).",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
@@ -1322,7 +1322,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default="1",
-        help="Mininum abundance to require before considering a classification. "
+        help="Minimum abundance to require before considering a classification. "
         "Default is one meaning look at everything, but rather than re-running "
         "the classifier with a stricter minimum abundance you can apply it here.",
     )
@@ -1400,7 +1400,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance to require for the report. "
+        help="Minimum sample level abundance to require for the report. "
         f"Default {DEFAULT_MIN_ABUNDANCE} reflects default in prepare-reads. "
         "Rather than re-running the prepare or classifier steps with a stricter "
         "minimum abundance you can apply it here. Use zero or one to look at "
@@ -1455,7 +1455,7 @@ def main(args=None):
         "--abundance",
         type=int,
         default=str(DEFAULT_MIN_ABUNDANCE),
-        help="Mininum sample level abundance for FASTA sequences. "
+        help="Minimum sample level abundance for FASTA sequences. "
         f"Default {DEFAULT_MIN_ABUNDANCE} reflects default in prepare-reads.",
     )
     subcommand_parser.add_argument(
@@ -1463,7 +1463,7 @@ def main(args=None):
         "--total",
         type=int,
         default="0",
-        help="Mininum total abundance for FASTA sequences. "
+        help="Minimum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
     )

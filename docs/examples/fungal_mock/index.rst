@@ -12,8 +12,8 @@ This example is based on the two amplicon sequencing libraries from this paper:
     experiments.
     https://doi.org/10.1111/1755-0998.12760
 
-The first library used a single primer set targetting ITS1, while the second
-library used two sets of primers targetting a different region of ITS1, and
+The first library used a single primer set targeting ITS1, while the second
+library used two sets of primers targeting a different region of ITS1, and
 ITS2.
 
 .. toctree::

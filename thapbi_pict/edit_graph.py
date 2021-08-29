@@ -212,7 +212,7 @@ def main(
     of unique sequences as nodes, with short edit distances as edges.
 
     Graph node size is scaled by sample count (number of FASTA files that it
-    appears in), and colored by asigned species (from a classifier TSV file).
+    appears in), and colored by assigned species (from a classifier TSV file).
     """
     if inputs is None:
         inputs = []
@@ -351,7 +351,7 @@ def main(
             )
         # Sorting for reproducibility
         view = view.order_by(SeqSource.id)
-        # TODO - Copy genus/species filtering behvaiour from dump command?
+        # TODO - Copy genus/species filtering behaviour from dump command?
 
         for seq_source in view:
             md5 = seq_source.marker_seq.md5

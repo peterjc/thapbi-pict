@@ -61,7 +61,7 @@ def check_tools(names, debug):
 def version_blast(cmd="blastn"):
     """Return the version of the NCBI BLAST+ suite's blastn (as a short string).
 
-    In the absense of a built in version switch like ``-v``, this works by
+    In the absence of a built in version switch like ``-v``, this works by
     parsing the short help output with ``-h`` (which does vary between the
     tools in the suite)::
 

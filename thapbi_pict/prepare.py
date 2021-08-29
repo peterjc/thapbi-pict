@@ -201,7 +201,7 @@ def run_cutadapt(
     Returns FASTA count before and after cutadapt.
     """
     assert "{name}" in out_template
-    # Currently at least, cannot set these at the adatper level...
+    # Currently at least, cannot set these at the adapter level...
     min_len = min(_["min_length"] for _ in marker_definitions.values())
     max_len = max(_["max_length"] for _ in marker_definitions.values())
 
@@ -271,7 +271,7 @@ assert (
 
 
 def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
-    """Run FLASH on a pair of trimmed FASTQ files to merge overlaping pairs.
+    """Run FLASH on a pair of trimmed FASTQ files to merge overlapping pairs.
 
     Returns two integers, FASTQ pair count for input and output files.
     """
@@ -308,7 +308,7 @@ def save_nr_fasta(
 
     Returns the total and number of unique sequences accepted (above any
     minimum abundance specified), and a dict of max spike abundances
-    (incuding non-spikes under the empty string).
+    (including non-spikes under the empty string).
 
     Use output_fasta='-' for standard out.
     """

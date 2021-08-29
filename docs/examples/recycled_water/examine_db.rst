@@ -143,7 +143,7 @@ isolated sequences (over 3bp edits away from anything else). The remaining
 five hundred plus give us an interesting edit distance graph.
 
 Opening this in CytoScape the first thing that struck me was the largest two
-components are both for *Pythium regulare* - suggesting if these are truely
+components are both for *Pythium regulare* - suggesting if these are truly
 all from one species that it has at least two distinct ITS1 markers in the
 genome?
 

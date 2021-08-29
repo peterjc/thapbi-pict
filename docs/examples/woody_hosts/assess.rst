@@ -105,7 +105,7 @@ The positive controls from the second plate had a different mix of ten
 - *Phytophthora rubi*
 - *Phytophthora siskiyouensis*
 
-Again refering to the sample summary report from running with default settings,
+Again referring to the sample summary report from running with default settings,
 for ``DNA10MIX_undiluted`` and ``DNA10MIX_diluted25x`` we got:
 
 - *Phytophthora agathidicida* (uncertain/ambiguous)
