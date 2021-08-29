@@ -9,7 +9,7 @@ My main conclusion from the figures below is that the THAPBI PICT default
 ``onebp`` classifier is reasonable for these fungal communities markers.
 However, for the ITS1 marker *Fusarium* needs closer examination, and there
 should be even more database entries for *Rhizomucor irregularis*. You would
-of couse also need to expand the database beyond the 19 species in the mock
+of course also need to expand the database beyond the 19 species in the mock
 community to use these ITS1 or ITS2 fungal markers more generally.
 
 Image generation
@@ -101,7 +101,7 @@ presence/absence patterns are different. Also there are more variants of the
 
 Now, using the actual primer pair, ITS1f/ITS2, which give a longer ITS1
 fragment. Note that the sequences are extended so the checksums are different
-to those in the preceeding images, but again broadly the same picture as the
+to those in the preceding images, but again broadly the same picture as the
 two images above:
 
 .. image:: ../../images/amp_lib_two.ITS1f_ITS2.edit-graph.a75.svg
