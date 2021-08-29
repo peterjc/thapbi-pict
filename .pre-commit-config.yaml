@@ -72,3 +72,9 @@ repos:
     rev: v2.6.0
     hooks:
     -   id: reorder-python-imports
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+    -   id: codespell
+        files: \.(py|sh|rst|yml|yaml)$
+        args: ['-L', 'sintax,nin']
