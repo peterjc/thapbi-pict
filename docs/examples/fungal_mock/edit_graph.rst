@@ -9,7 +9,7 @@ My main conclusion from the figures below is that the THAPBI PICT default
 ``onebp`` classifier is reasonable for these fungal communities markers.
 However, for the ITS1 marker *Fusarium* needs closer examination, and there
 should be even more database entries for *Rhizomucor irregularis*. You would
-of couse also need to expand the database beyound the 19 species in the mock
+of couse also need to expand the database beyond the 19 species in the mock
 community to use these ITS1 or ITS2 fungal markers more generally.
 
 Image generation
@@ -34,7 +34,7 @@ a much noiser picture (see the :ref:`halo_effect` discussed earlier).
 Additionally this used ``-k`` (or ``--marker``) to force including all of the
 database sequences (dark red nodes), as some did not appear in the samples
 (shown as the smallest dark red dots, typically the bottom row of the image).
-And, it used ``-m -`` (or ``--method -``) to deliberatly not label the nodes
+And, it used ``-m -`` (or ``--method -``) to deliberately not label the nodes
 with the classifier output - only the data entries get a species label.
 
 The XGMML files were loaded, automatically laid out using the "Perfuse Force
@@ -60,7 +60,7 @@ database was constructed to match the mock community, we would hope to see all
 the database entries represented in the samples. Some are missing at this
 abundance threshold (four bottom row entries *Saccharomyces cerevisiae*,
 *Ustilago maydis*, *Rhizomucor miehei* and *Chytriomyces hyalinus*, plus the
-four *Rhizomucor irregularis* entries shown accross the middle.
+four *Rhizomucor irregularis* entries shown across the middle.
 
 The large red nodes are the well represented community members, starting with
 *Naganishia albida* shown top left, which has four different 1bp variants some
@@ -95,7 +95,7 @@ This is from file ``AL2.BITS_B58S3.edit-graph.a75.xgmml`` created by
 ``run.sh``.
 
 Broadly the same as from amplicon library one, but notice the
-presence/absense patterns are different. Also there are more variants of the
+presence/absence patterns are different. Also there are more variants of the
 ``bb28f2`` *Fusarium*, and a pair of unexpected grey nodes 3bp apart
 (``e055cb`` and ``ee5482``, middle left, discussed below).
 
@@ -128,7 +128,7 @@ with the first primer set::
     ATGTAACTTCTGAGTAAAACCATAAATAAATCAAAACTTTCAACAACGGATCTCTTGGTTCTG
 
 Using an NCBI BLAST search, this exact sequence has been published from over a
-dozen different *Fusarium* species incuding *Fusarium oxysporum*, but not at
+dozen different *Fusarium* species including *Fusarium oxysporum*, but not at
 the time of writing from *Fusarium verticillioides*.
 
 The small pair of grey nodes 3bp apart (long diagonal line, middle left),
@@ -149,7 +149,7 @@ ITS2:
 This is from file ``AL2.ITS3-KYO2_ITS4-KYO3.edit-graph.a75.xgmml``
 created by ``run.sh``.
 
-Some more noteworthy changes to presence/absense, including much more
+Some more noteworthy changes to presence/absence, including much more
 *Saccharomyces cerevisiae* (still drawn bottom left). Also there are no
 unexpected grey nodes, and perhaps most interestingly from a species
 classification point of view, now the three *Fusarium* species fall into

@@ -13,7 +13,7 @@ This is not run as part of the pipeline command, but must be run separately:
     $ thapbi_pict edit-graph -h
     ...
 
-This command does not use metdata, but can optionally use the intermediate
+This command does not use metadata, but can optionally use the intermediate
 TSV files. It requires the FASTA files:
 
 .. code:: console

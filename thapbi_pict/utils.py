@@ -96,7 +96,7 @@ def onebp_substitutions(seq):
     variants = set()
     for i in range(len(seq)):
         for s in "ACGT":
-            # One base substitions
+            # One base substitutions
             variants.add(seq[:i] + s + seq[i + 1 :])
     variants.remove(seq)
     return variants
@@ -145,7 +145,7 @@ def onebp_variants(seq):
         # One base deletion
         variants.add(seq[:i] + seq[i + 1 :])
         for s in "ACGT":
-            # One base substitions
+            # One base substitutions
             variants.add(seq[:i] + s + seq[i + 1 :])
             # One base insertions
             variants.add(seq[:i] + s + seq[i:])

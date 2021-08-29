@@ -8,7 +8,7 @@ for ACC in `grep ^SRR PRJNA638011.tsv | cut -f 1`; do
     # Column 4 should have two URLs (R1 and R2), semi-colon separated:
     for URL in `grep ^$ACC PRJNA638011.tsv | cut -f 3 | sed "s/;/ /g"`; do
         FILE=raw_data/${URL##*/}
-        # Avoiding leaving partial FASTQ if wget is interupted
+        # Avoiding leaving partial FASTQ if wget is interrupted
         rm -rf $FILE.tmp
         if [ -f $FILE ]; then
             echo "Already have $FILE"

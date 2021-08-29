@@ -46,7 +46,7 @@ def main(
             output = os.path.join(output, os.path.basename((inputs + revcomp)[0]))
             if debug:
                 sys.stderr.write(
-                    "DEBUG: Single input with directory as ouput,"
+                    "DEBUG: Single input with directory as output,"
                     f" writing to {output}\n"
                 )
         else:

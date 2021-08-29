@@ -16,7 +16,7 @@ for ACC in `grep ^ERR PRJEB27581.tsv | cut -f 1`; do
     for URL in `grep ^$ACC PRJEB27581.tsv | cut -f 4 | sed "s/;/ /g"` ; do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
-        # Avoiding leaving partial FASTQ if wget is interupted
+        # Avoiding leaving partial FASTQ if wget is interrupted
         rm -rf $FILE.tmp
         if [ -f $FILE ]; then
             echo "Already have $FILE"

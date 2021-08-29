@@ -73,7 +73,7 @@ def sp_in_tsv(classifier_file, min_abundance):
 
 
 def tally_files(expected_file, predicted_file, min_abundance=0):
-    """Make dictionary tally confusion matrix of species assignements.
+    """Make dictionary tally confusion matrix of species assignments.
 
     Rather than the values simply being an integer count, they are
     the set of MD5 identifiers (take the length for the count).
@@ -264,12 +264,12 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
 
 
 def extract_binary_tally(class_name, tally):
-    """Extact single-class TP, FP, FN, TN from multi-class confusion tally.
+    """Extract single-class TP, FP, FN, TN from multi-class confusion tally.
 
     Reduces the mutli-class expectation/prediction to binary - did they
     include the class of interest, or not?
 
-    Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
+    Returns a 4-tuple of values, True Positives (TP), False Positives (FP),
     False Negatives (FN), True Negatives (TN), which sum to the tally total.
     """
     bt = Counter()
@@ -284,10 +284,10 @@ def extract_global_tally(tally, sp_list):
     If the input data has no negative controls, all there will be no
     true negatives (TN).
 
-    Returns a 4-tuple of values, True Positives (TP), False Positves (FP),
+    Returns a 4-tuple of values, True Positives (TP), False Positives (FP),
     False Negatives (FN), True Negatives (TN).
 
-    These values are analagous to the classical binary classifier approach,
+    These values are analogous to the classical binary classifier approach,
     but are NOT the same. Even if applied to single class expected and
     predicted values, results differ:
 

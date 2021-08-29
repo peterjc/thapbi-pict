@@ -21,7 +21,7 @@ for ACC in `grep ERR PRJEB18620.tsv | cut -f 1`; do
             # Rename EM_* files as really *zipped* FASTQ, not *gzipped*
             FILE=raw_download/${NAME%.gz}.zip
         fi
-        # Avoiding leaving partial FASTQ if wget is interupted
+        # Avoiding leaving partial FASTQ if wget is interrupted
         rm -rf $FILE.tmp
         if [ -f $FILE ]; then
             echo "Already have $FILE"
