@@ -145,7 +145,7 @@ def pool(
         line = handle.readline().rstrip("\n")
         if not line.startswith("#") or "\t" not in line:
             sys.exit("ERROR: Invalid TSV input file.")
-        header = line.split("\t")
+        header = [_.rstrip() for _ in line.split("\t")]
         try:
             sample_col = header.index("Sequencing sample")
             count_col = header.index("Read count")
@@ -162,7 +162,7 @@ def pool(
         meta_headers = [header[_] for _ in value_cols]
 
         for line in handle:
-            parts = line.rstrip("\n").split("\t")
+            parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
             if len(parts) != len(header):
                 sys.exit("ERROR: Inconsistent field counts")
             meta = tuple(parts[_] for _ in value_cols)
