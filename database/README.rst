@@ -44,7 +44,7 @@ Additionally:
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2021-01-01, which means we rejected some
+- This used the NCBI taxonomy as of 2021-10-01, which means we rejected some
   of the curated FASTA file entries, or just used them at genus level.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
