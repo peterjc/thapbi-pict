@@ -618,7 +618,7 @@ ARG_MARKER = dict(  # noqa: C408
     help="Unique marker name for a barcode, linked to a PCR primer pair for "
     "a diagnostic amplicon. e.g. ITS1, COI, 12S. If not already in the DB, "
     "it will be added but this requires both left and right primers, and min "
-    "and max product length are recommended. Required unless DB as exactly "
+    "and max product length are recommended. Required unless DB has exactly "
     "one marker already defined in it.",
 )
 ARG_MARKER_PICK = dict(  # noqa: C408
