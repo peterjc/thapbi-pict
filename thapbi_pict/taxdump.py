@@ -16,11 +16,14 @@ from .db_orm import Synonym
 from .db_orm import Taxonomy
 
 
-def load_nodes(nodes_dmp):
+def load_nodes(nodes_dmp, wanted_ranks=None):
     """Load the NCBI taxdump nodes.dmp file.
 
     Returns two dicts, the parent/child relationships, and the ranks (values
     are lists of taxids).
+
+    Default is all ranks, can provide a possibly empty list/set of ranks of
+    interest.
     """
     tree = {}
     ranks = {}  # keys are rank names, values are lists of ids
@@ -31,10 +34,11 @@ def load_nodes(nodes_dmp):
             parent = int(parts[1].strip())
             rank = parts[2].strip()
             tree[taxid] = parent
-            try:
-                ranks[rank].append(taxid)
-            except KeyError:
-                ranks[rank] = [taxid]
+            if wanted_ranks is None or rank in wanted_ranks:
+                try:
+                    ranks[rank].append(taxid)
+                except KeyError:
+                    ranks[rank] = [taxid]
     return tree, ranks
 
 
@@ -120,11 +124,6 @@ def get_children(children, taxid):
 
 def synonyms_and_variants(children, ranks, names, synonyms, species_taxid):
     """Return all scientific names and synonyms of any variants etc under species."""
-    assert (
-        species_taxid in ranks["species"]
-        or species_taxid in ranks["species group"]
-        or species_taxid in ranks["no rank"]
-    ), species_taxid
     variants = set(synonyms.get(species_taxid, []))  # include own synonyms
     for taxid in get_children(children, species_taxid):
         variants.add(names[taxid])
@@ -211,7 +210,9 @@ def main(tax, db_url, ancestors, debug=True):
     except ValueError:
         sys.exit(f"ERROR: Invalid ancestors argument: {ancestors!r}\n")
 
-    tree, ranks = load_nodes(os.path.join(tax, "nodes.dmp"))
+    tree, ranks = load_nodes(
+        os.path.join(tax, "nodes.dmp"), ("genus", "subgenus", "species")
+    )
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
     tree, ranks = filter_tree(tree, ranks, ancestors)
