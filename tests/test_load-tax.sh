@@ -32,6 +32,16 @@ export `grep ^TAX= database/build_ITS1_DB.sh`
 if [ ! -f "${TAX}.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/${TAX}.zip"; fi
 if [ ! -d "database/${TAX}" ]; then unzip ${TAX}.zip nodes.dmp names.dmp -d database/${TAX}; fi
 
+# 2025987 = Nothophytophthora
+export DB=$TMP/Nothophytophthora.sqlite
+thapbi_pict load-tax -d $DB -t "database/${TAX}" -a 2025987
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "0" ]; then echo "Wrong data_source count"; false; fi
+# 1 genus plus 6 accepted species:
+if [ `sqlite3 $DB "SELECT COUNT(*) FROM taxonomy;"` -ne 7 ]; then echo "Wrong taxonomy count"; false; fi
+# 4 unclassified species as synonyms of the genus:
+if [ `sqlite3 $DB "SELECT COUNT(*) FROM synonym;"` -ne 4 ]; then echo "Wrong synonym count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(synonym.id) FROM synonym JOIN taxonomy ON synonym.taxonomy_id==taxonomy.id WHERE taxonomy.genus='Nothophytophthora' AND taxonomy.species='';"` -ne 4 ]; then echo "Wrong synonym target"; false; fi
+
 # Defaults to all Oomycetes
 thapbi_pict load-tax -d "sqlite:///:memory:" -t "database/${TAX}"
 
