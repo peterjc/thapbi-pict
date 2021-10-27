@@ -177,7 +177,7 @@ def top_level_species(children, ranks, names, genus_list):
                 yield taxid, names[genus_taxid], name
 
 
-def not_top_species(top_species, children, ranks, names, genus_list):
+def not_top_species(top_species, children, ranks, names, synonyms, genus_list):
     """Find all 'minor' species, takes set of species taxid to ignore.
 
     Intended usage is to map minor-species as genus aliases, for
@@ -191,9 +191,14 @@ def not_top_species(top_species, children, ranks, names, genus_list):
             if taxid in ranks["species"]:
                 if taxid not in top_species:
                     yield genus_taxid, names[taxid]
+                    if taxid in synonyms:
+                        for name in synonyms[taxid]:
+                            yield genus_taxid, name
             if taxid in children:
                 # recurse...
-                for _ in not_top_species(top_species, children, ranks, names, [taxid]):
+                for _ in not_top_species(
+                    top_species, children, ranks, names, synonyms, [taxid]
+                ):
                     yield genus_taxid, _[1]
 
 
@@ -261,7 +266,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     minor_species = sorted(
         not_top_species(
-            {_[0] for _ in genus_species}, children, ranks, names, genus_list
+            {_[0] for _ in genus_species}, children, ranks, names, synonyms, genus_list
         )
     )
     if debug:
