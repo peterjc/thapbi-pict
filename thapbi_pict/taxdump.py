@@ -221,6 +221,12 @@ def main(tax, db_url, ancestors, debug=True):
     genus_list = sorted(ranks["genus"])
     if not genus_list:
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
+    tree, ranks = filter_tree(tree, ranks, genus_list)
+    if debug:
+        sys.stderr.write(
+            f"Reduced to {len(tree)} nodes under {len(genus_list)} genera\n"
+        )
+    assert genus_list == sorted(ranks["genus"])
 
     names, synonyms = load_names(os.path.join(tax, "names.dmp"), tree)
     if debug:
