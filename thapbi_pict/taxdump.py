@@ -136,9 +136,8 @@ def top_level_species(children, ranks, names, genus_list):
 
     Rather than just taking all taxids with rank species, we
     are taking all the immediate children of the genus - this
-    is specifically to treat "unclassified Phytophthora"
-    (taxid 211524), which has no rank, as a species level ID
-    AND to ignore all the species rank entries under it.
+    is specifically to ignore the species rank entries under
+    no rank entry "unclassified Phytophthora" (taxid 211524).
     """
     for genus_taxid in genus_list:
         assert genus_taxid in ranks["genus"] or genus_taxid in ranks["subgenus"]
@@ -152,6 +151,12 @@ def top_level_species(children, ranks, names, genus_list):
             name = names[taxid]
             if taxid in ranks["species"]:
                 yield taxid, names[genus_taxid], name
+            elif taxid in ranks["species group"]:
+                # e.g. Hyaloperonospora parasitica species group
+                sys.stderr.write(
+                    f"WARNING: Treating '{name}' (txid{taxid}) as a species.\n"
+                )
+                yield taxid, names[genus_taxid], name
             elif taxid in ranks["subgenus"]:
                 if taxid in children:
                     sys.stderr.write(
@@ -163,18 +168,6 @@ def top_level_species(children, ranks, names, genus_list):
                     sys.stderr.write(
                         f"WARNING: Ignoring sub-genus {name} with no children\n"
                     )
-            else:
-                if name.split(None, 1)[0].lower() in ("unclassified", "unidentified"):
-                    # Not worth including, nor giving a warning about
-                    continue
-                if name.lower() in ("environmental samples"):
-                    # Again silently ignore
-                    continue
-                # e.g. Hyaloperonospora parasitica species group
-                sys.stderr.write(
-                    f"WARNING: Treating '{name}' (txid{taxid}) as a species.\n"
-                )
-                yield taxid, names[genus_taxid], name
 
 
 def not_top_species(top_species, children, ranks, names, synonyms, genus_list):
@@ -202,6 +195,14 @@ def not_top_species(top_species, children, ranks, names, synonyms, genus_list):
                     yield genus_taxid, _[1]
 
 
+def reject_name(species):
+    """Species name be rejected, and not recorded in the DB."""
+    return (
+        species.split(None, 1)[0] in ("unclassified", "uncultured", "unidentified")
+        or species == "environmental samples"
+    )
+
+
 def main(tax, db_url, ancestors, debug=True):
     """Load an NCBI taxdump into a database."""
     if not os.path.isdir(tax):
@@ -216,7 +217,8 @@ def main(tax, db_url, ancestors, debug=True):
         sys.exit(f"ERROR: Invalid ancestors argument: {ancestors!r}\n")
 
     tree, ranks = load_nodes(
-        os.path.join(tax, "nodes.dmp"), ("genus", "subgenus", "species")
+        os.path.join(tax, "nodes.dmp"),
+        ("genus", "subgenus", "species group", "species"),
     )
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
@@ -316,7 +318,9 @@ def main(tax, db_url, ancestors, debug=True):
     for taxid, genus, species in genus_species:
         aliases = []
 
-        if species.split(" ", 1)[0] == genus:
+        first_word = species.split(" ", 1)[0]
+        assert not reject_name(species), species
+        if first_word == genus:
             # We are storing "Phytophthora infestans" as
             # genus="Phytophthora", species="infestans"
             species = species.split(" ", 1)[1]
@@ -327,10 +331,6 @@ def main(tax, db_url, ancestors, debug=True):
             # species just "medicaginis x cryptogea" (as in older NCBI taxonomy)
             aliases.append(genus + " " + species)
             species = species.replace(f" x {genus} ", " x ")
-
-        if species == "unclassified " + genus:
-            # Another special case
-            species = "unclassified"
 
         # Is species already there? e.g. prior import
         taxonomy = (
@@ -357,6 +357,8 @@ def main(tax, db_url, ancestors, debug=True):
         for name in (
             synonyms_and_variants(children, ranks, names, synonyms, taxid) + aliases
         ):
+            if reject_name(name):
+                continue
             # Is it already there?
             synonym = session.query(Synonym).filter_by(name=name).one_or_none()
             if synonym is None:
@@ -374,7 +376,7 @@ def main(tax, db_url, ancestors, debug=True):
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
     for genus_taxid, name in minor_species:
         # Would this actually be useful? i.e. Does first word differ...
-        if name.split(None, 1)[0] == names[genus_taxid]:
+        if reject_name(name) or name.split(None, 1)[0] == names[genus_taxid]:
             continue
         # Is it already there?
         taxonomy = (
