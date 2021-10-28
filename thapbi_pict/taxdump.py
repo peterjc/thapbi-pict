@@ -317,26 +317,18 @@ def main(tax, db_url, ancestors, debug=True):
             old += 1
 
         for name in sorted(aliases):
-            # Is it already there?
-            synonym = session.query(Synonym).filter_by(name=name).one_or_none()
-            if synonym is None:
-                synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
-                session.add(synonym)
-                s_new += 1
-            else:
-                s_old += 1
+            minor_species.append((taxid, name))
 
     del genus_species, ranks
 
+    # Record aliases/synonyms
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
-    for genus_taxid, name in minor_species:
-        # Would this actually be useful? i.e. Does first word differ...
-        if reject_name(name) or name.split(None, 1)[0] == names[genus_taxid]:
+    for taxid, name in sorted(minor_species):
+        # Would this actually be useful? e.g. genus matches first word
+        if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
             continue
-        # Is genus already there?
-        taxonomy = (
-            session.query(Taxonomy).filter_by(ncbi_taxid=genus_taxid).one_or_none()
-        )
+        # Is target already there?
+        taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
         assert taxonomy is not None
         assert taxonomy.id is not None, taxonomy
         synonym = session.query(Synonym).filter_by(name=name).one_or_none()
