@@ -5,10 +5,8 @@
 # file that should have been included as part of this package.
 """Shared code for THAPBI PICT to import FASTA into our database.
 
-This code is used both for importing NCBI formatted FASTA files, and also
-importing our curated ITS1 sequence FASTA file databases - see ``ncbi.py``
-and ``curated.py`` which contain specific meta-data handling code for the
-different naming conventions.
+This code is used for importing NCBI formatted FASTA files, our curated ITS1
+sequence FASTA file databases, and other other FASTA naming conventions.
 """
 import os
 import sys
