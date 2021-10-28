@@ -44,8 +44,8 @@ thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
 thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT --minlen 100 --maxlen 250 \
     -i database/Phytophthora_ITS1_curated.fasta -s ";"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "218" ]; then echo "Wrong sequence_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "193" ]; then echo "Wrong marker_sequence count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "232" ]; then echo "Wrong sequence_source count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "205" ]; then echo "Wrong marker_sequence count"; false; fi
 
 echo "With duplicated sequences (and multi-entry records using Ctrl+A)"
 # Note this file uses Ctrl+A separator:
