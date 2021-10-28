@@ -113,86 +113,64 @@ def filter_tree(tree, ranks, ancestors):
     }
 
 
-def get_children(children, taxid):
-    """Return all taxid descended from given entry."""
-    answer = set()
-    for child in children.get(taxid, []):
-        answer.add(child)
-        answer.update(get_children(children, child))  # recurse!
-    return answer
+def get_ancestor(taxid, tree, stop_nodes):
+    """Walk up tree until reach a stop node, or root."""
+    t = taxid
+    while True:
+        if t in stop_nodes:
+            return t
+        elif not t or t == tree[t]:
+            return t  # root
+        else:
+            t = tree[t]
 
 
-def synonyms_and_variants(children, ranks, names, synonyms, species_taxid):
-    """Return all scientific names and synonyms of any variants etc under species."""
-    variants = set(synonyms.get(species_taxid, []))  # include own synonyms
-    for taxid in get_children(children, species_taxid):
-        variants.add(names[taxid])
-        variants.update(synonyms.get(taxid, []))  # values are already names
-    return sorted(variants)
-
-
-def top_level_species(children, ranks, names, genus_list):
+def top_level_species(tree, ranks, names):
     """Find taxids for species under the genus_list.
 
-    Rather than just taking all taxids with rank species, we
-    are taking all the immediate children of the genus - this
-    is specifically to ignore the species rank entries under
-    no rank entry "unclassified Phytophthora" (taxid 211524).
+    Our "genus" list matches the NCBI rank "genus", and includes child nodes
+    as aliases (unless they fall on our "species" list or reject list of
+    "environmental samples" or "unclassified <genus>").
+
+    However, our "species" list are either NCBI rank "species" or "species
+    group", where the parent is "genus" or "subgenus".
+
+    This is to exclude NCBI rank "species" elements under "no rank" nodes like
+    "environmental samples" or "unclassified Phytophthora" (taxid 211524),
+    which we want to treat as genus aliases.
+
+    Yields (species taxid, genus taxid) tuples.
     """
-    for genus_taxid in genus_list:
-        assert genus_taxid in ranks["genus"] or genus_taxid in ranks["subgenus"]
-        if genus_taxid not in children:
-            sys.stderr.write(
-                f"WARNING: Genus {names[genus_taxid]} ({genus_taxid})"
-                " has no children\n"
-            )
-            continue
-        for taxid in children[genus_taxid]:
-            name = names[taxid]
-            if taxid in ranks["species"]:
-                yield taxid, names[genus_taxid], name
-            elif taxid in ranks["species group"]:
-                # e.g. Hyaloperonospora parasitica species group
-                sys.stderr.write(
-                    f"WARNING: Treating '{name}' (txid{taxid}) as a species.\n"
-                )
-                yield taxid, names[genus_taxid], name
-            elif taxid in ranks["subgenus"]:
-                if taxid in children:
-                    sys.stderr.write(
-                        f"WARNING: Collapsing sub-genus {name} into parent\n"
-                    )
-                    for _ in top_level_species(children, ranks, names, [taxid]):
-                        yield _
-                else:
-                    sys.stderr.write(
-                        f"WARNING: Ignoring sub-genus {name} with no children\n"
-                    )
+    genus_list = set(ranks["genus"])
+    species_or_spgroup = set(ranks["species"] + ranks["species group"])
+    genus_or_subgenus = set(ranks["genus"] + ranks["subgenus"])
+    for taxid in tree:
+        if taxid in species_or_spgroup and tree[taxid] in genus_or_subgenus:
+            # Want this as a "species"
+            assert taxid not in genus_or_subgenus
+            genus_taxid = get_ancestor(taxid, tree, genus_list)
+            yield taxid, genus_taxid
 
 
-def not_top_species(top_species, children, ranks, names, synonyms, genus_list):
+def not_top_species(tree, ranks, names, synonyms, top_species):
     """Find all 'minor' species, takes set of species taxid to ignore.
 
     Intended usage is to map minor-species as genus aliases, for
     example all the species under unclassified Phytophthora will
     be treated as synonyms of the genus Phytophthora.
+
+    Yields (genus taxid, node name, node taxid) tuples.
     """
-    for genus_taxid in genus_list:
-        if genus_taxid not in children:
+    stop_nodes = set(top_species).union(ranks["genus"])
+    for taxid in tree:
+        if taxid in stop_nodes:
             continue
-        for taxid in children[genus_taxid]:
-            if taxid in ranks["species"]:
-                if taxid not in top_species:
-                    yield genus_taxid, names[taxid]
-                    if taxid in synonyms:
-                        for name in synonyms[taxid]:
-                            yield genus_taxid, name
-            if taxid in children:
-                # recurse...
-                for _ in not_top_species(
-                    top_species, children, ranks, names, synonyms, [taxid]
-                ):
-                    yield genus_taxid, _[1]
+        parent = get_ancestor(taxid, tree, stop_nodes)
+        if taxid != parent:
+            yield parent, names[taxid]
+            if taxid in synonyms:
+                for name in synonyms[taxid]:
+                    yield parent, name
 
 
 def reject_name(species):
@@ -239,41 +217,22 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
-    # Turn parent/child tree into a dict of immediate children (will need more RAM)
-    children = {}
-    while tree:
-        taxid, parent = tree.popitem()
-        if taxid == parent:
-            continue
-        try:
-            children[parent].add(taxid)
-        except KeyError:
-            children[parent] = {taxid}
-    assert not tree
-    del tree
-
-    # Convert lists to sets (AFTER we dropped the tree to free RAM)
-    # as willing to use more RAM now for lookup speed
-    ranks = {rank: set(_) for rank, _ in ranks.items()}
-
     if debug:
         sys.stderr.write(
             f"Identified {len(genus_list)} genera under specified ancestor node:"
             f" {', '.join(sorted(names[_] for _ in genus_list))}\n"
         )
 
-    genus_species = sorted(top_level_species(children, ranks, names, genus_list))
+    genus_species = sorted(top_level_species(tree, ranks, names))
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
-    minor_species = set(
-        not_top_species(
-            {_[0] for _ in genus_species}, children, ranks, names, synonyms, genus_list
-        )
+    synonym_entries = set(
+        not_top_species(tree, ranks, names, synonyms, {_[0] for _ in genus_species})
     )
     if debug:
         sys.stderr.write(
-            f"Treating {len(minor_species)} minor species names as genus aliases\n"
+            f"Treating {len(synonym_entries)} minor species names as genus aliases\n"
         )
 
     # Connect to the DB,
@@ -315,8 +274,10 @@ def main(tax, db_url, ancestors, debug=True):
     new = 0
     s_old = 0
     s_new = 0
-    for taxid, genus, species in genus_species:
-        aliases = []
+    for taxid, genus_taxid in genus_species:
+        genus = names[genus_taxid]
+        species = names[taxid]
+        aliases = set(synonyms.get(taxid, []))
 
         first_word = species.split(" ", 1)[0]
         assert not reject_name(species), species
@@ -329,7 +290,7 @@ def main(tax, db_url, ancestors, debug=True):
             # Want to turn "Phytophthora medicaginis x Phytophthora cryptogea"
             # into "Phytophthora medicaginis x cryptogea", and then take as the
             # species just "medicaginis x cryptogea" (as in older NCBI taxonomy)
-            aliases.append(genus + " " + species)
+            aliases.add(genus + " " + species)
             species = species.replace(f" x {genus} ", " x ")
 
         # Is species already there? e.g. prior import
@@ -354,38 +315,29 @@ def main(tax, db_url, ancestors, debug=True):
         else:
             old += 1
 
-        for name in (
-            synonyms_and_variants(children, ranks, names, synonyms, taxid) + aliases
-        ):
-            if reject_name(name):
-                continue
+        for name in sorted(aliases):
             # Is it already there?
             synonym = session.query(Synonym).filter_by(name=name).one_or_none()
             if synonym is None:
                 synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
                 session.add(synonym)
                 s_new += 1
-            elif name in aliases:
-                # Don't double count it
-                pass
             else:
                 s_old += 1
 
-    del children, genus_species, ranks, synonyms
+    del genus_species, ranks
 
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
-    for genus_taxid, name in sorted(minor_species):
+    for taxid, name in sorted(synonym_entries):
         # Would this actually be useful? i.e. Does first word differ...
-        if reject_name(name) or name.split(None, 1)[0] == names[genus_taxid]:
+        if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
             if debug:
                 sys.stderr.write(
-                    f"DEBUG: Ignoring {name} as synonym of {names[genus_taxid]}\n"
+                    f"DEBUG: Ignoring {name} as synonym of {names[taxid]}\n"
                 )
             continue
-        # Is it already there?
-        taxonomy = (
-            session.query(Taxonomy).filter_by(ncbi_taxid=genus_taxid).one_or_none()
-        )
+        # Is genus already there?
+        taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
         assert taxonomy is not None
         assert taxonomy.id is not None, taxonomy
         synonym = session.query(Synonym).filter_by(name=name).one_or_none()
@@ -393,18 +345,17 @@ def main(tax, db_url, ancestors, debug=True):
             synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
             session.add(synonym)
             s_new += 1
-        elif name in aliases:
-            # Don't double count it
-            pass
         else:
             if debug:
                 # See this with Hyaloperonospora parasitica species group,
                 # treated as a species with entries under it already set as aliases
                 sys.stderr.write(
-                    f"Minor species {name!r} -> NCBI {genus_taxid},"
+                    f"Minor species {name!r} -> NCBI {taxid},"
                     f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
                 )
             s_old += 1
+
+    del names, synonyms
 
     session.commit()
 
