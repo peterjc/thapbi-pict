@@ -915,9 +915,9 @@ def main(args=None):
         "Supports multiple entries in a single record using a FASTA title "
         "line of identifier1, space, species1, separator, identifier2, "
         "space, species2, etc. By default verifies species names against a "
-        "pre-loaded taxonomy, non-matching entries are rejected. With NCBI "
-        "heuristics enabled, tries to split the species and any following "
-        "free text.",
+        "pre-loaded taxonomy, failing that a matching genus, otherwise "
+        "rejected. With NCBI heuristics enabled, tries to split the species "
+        "and any following free text.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
