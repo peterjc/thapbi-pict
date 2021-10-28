@@ -64,7 +64,7 @@ def parse_ncbi_fasta_entry(text, known_species=None):
         while name and " ".join(name) not in known_species:
             name.pop()  # discard last word
         if len(name) > 1:
-            # Found a perfect match
+            # Found a perfect match (even if it could be genus only)
             return 0, " ".join(name)
 
     # Heuristics
@@ -411,6 +411,7 @@ def import_fasta_file(
     entry_count = 0
     bad_entries = 0
     bad_sp_entries = 0
+    downgraded_entries = 0  # unknown species --> genus only
     good_entries = 0
     idn_set = set()
 
@@ -494,6 +495,18 @@ def import_fasta_file(
                     taxonomy = lookup_genus(session, name)
                 else:
                     taxonomy = lookup_species(session, name)
+                    if not taxonomy and preloaded_taxonomy:
+                        taxonomy = lookup_genus(session, name.split(None, 1)[0])
+                        if taxonomy:
+                            # This branch is not expected to be triggered by
+                            # the NCBI input (as would have already done this)
+                            downgraded_entries += 1
+                            if debug and name not in bad_species:
+                                sys.stderr.write(
+                                    f"WARNING: Taking genus only from {name!r}\n"
+                                )
+                            bad_species.add(name)  # To avoid repeat warnings
+                            name = name.split(None, 1)[0]
                 if not taxonomy:
                     if preloaded_taxonomy and debug and name not in bad_species:
                         sys.stderr.write(
@@ -565,6 +578,11 @@ def import_fasta_file(
             f"Of {entry_count} potential entries, {bad_entries} unparsable,"
             f" {bad_sp_entries} failed sp. validation, {good_entries} OK.\n"
         )
+        if downgraded_entries:
+            # Won't happen on the NCBI import due to how name validation done
+            sys.stderr.write(
+                f"(Includes {downgraded_entries} downgraded to genus only).\n"
+            )
         assert entry_count == good_entries + bad_entries + bad_sp_entries
     else:
         sys.stderr.write(
@@ -574,6 +592,7 @@ def import_fasta_file(
         assert (
             entry_count == good_entries + bad_entries + bad_sp_entries
         ), f"{entry_count} != {good_entries} + {bad_entries} + {bad_sp_entries}"
+        assert downgraded_entries == 0, downgraded_entries
 
     if bad_species and (validate_species or debug):
         sys.stderr.write(
