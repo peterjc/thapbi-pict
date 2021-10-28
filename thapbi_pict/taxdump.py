@@ -152,14 +152,14 @@ def top_level_species(tree, ranks, names):
             yield taxid, genus_taxid
 
 
-def not_top_species(tree, ranks, names, top_species):
+def not_top_species(tree, ranks, names, synonyms, top_species):
     """Find all 'minor' species, takes set of species taxid to ignore.
 
     Intended usage is to map minor-species as genus aliases, for
     example all the species under unclassified Phytophthora will
     be treated as synonyms of the genus Phytophthora.
 
-    Yields (genus taxid, node name, node taxid) tuples.
+    Yields (genus taxid, alias name) tuples.
     """
     stop_nodes = set(top_species).union(ranks["genus"])
     for taxid in tree:
@@ -167,7 +167,11 @@ def not_top_species(tree, ranks, names, top_species):
             continue
         parent = get_ancestor(taxid, tree, stop_nodes)
         if taxid != parent:
-            yield parent, names[taxid], taxid
+            aliases = {names[taxid]}
+            if taxid in synonyms:
+                aliases.update(synonyms[taxid])
+            for name in sorted(aliases):
+                yield parent, name
 
 
 def reject_name(species):
@@ -225,7 +229,7 @@ def main(tax, db_url, ancestors, debug=True):
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
     minor_species = sorted(
-        not_top_species(tree, ranks, names, {_[0] for _ in genus_species})
+        not_top_species(tree, ranks, names, synonyms, {_[0] for _ in genus_species})
     )
     if debug:
         sys.stderr.write(
@@ -325,9 +329,9 @@ def main(tax, db_url, ancestors, debug=True):
     del genus_species, ranks
 
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
-    for genus_taxid, species, taxid in minor_species:
+    for genus_taxid, name in minor_species:
         # Would this actually be useful? i.e. Does first word differ...
-        if reject_name(species) or species.split(None, 1)[0] == names[genus_taxid]:
+        if reject_name(name) or name.split(None, 1)[0] == names[genus_taxid]:
             continue
         # Is genus already there?
         taxonomy = (
@@ -335,24 +339,20 @@ def main(tax, db_url, ancestors, debug=True):
         )
         assert taxonomy is not None
         assert taxonomy.id is not None, taxonomy
-        aliases = {species}
-        if taxid in synonyms:
-            aliases.update(synonyms[taxid])
-        for name in sorted(aliases):
-            synonym = session.query(Synonym).filter_by(name=name).one_or_none()
-            if synonym is None:
-                synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
-                session.add(synonym)
-                s_new += 1
-            else:
-                if debug:
-                    # See this with Hyaloperonospora parasitica species group,
-                    # treated as a species with entries under it already set as aliases
-                    sys.stderr.write(
-                        f"Minor species {name!r} -> NCBI {genus_taxid},"
-                        f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
-                    )
-                s_old += 1
+        synonym = session.query(Synonym).filter_by(name=name).one_or_none()
+        if synonym is None:
+            synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
+            session.add(synonym)
+            s_new += 1
+        else:
+            if debug:
+                # See this with Hyaloperonospora parasitica species group,
+                # treated as a species with entries under it already set as aliases
+                sys.stderr.write(
+                    f"Minor species {name!r} -> NCBI {genus_taxid},"
+                    f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
+                )
+            s_old += 1
 
     del names, synonyms
 
