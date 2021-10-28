@@ -369,10 +369,13 @@ def main(tax, db_url, ancestors, debug=True):
             else:
                 s_old += 1
 
-    del children, genus_species, names, ranks, synonyms
+    del children, genus_species, ranks, synonyms
 
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
     for genus_taxid, name in minor_species:
+        # Would this actually be useful? i.e. Does first word differ...
+        if name.split(None, 1)[0] == names[genus_taxid]:
+            continue
         # Is it already there?
         taxonomy = (
             session.query(Taxonomy).filter_by(ncbi_taxid=genus_taxid).one_or_none()
