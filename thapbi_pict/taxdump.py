@@ -10,6 +10,7 @@ The code is needed initially for loading an NCBI taxdump folder (files
 """
 import os
 import sys
+from collections import defaultdict
 
 from .db_orm import connect_to_db
 from .db_orm import Synonym
@@ -227,9 +228,12 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
-    synonym_entries = set(
-        not_top_species(tree, ranks, names, synonyms, {_[0] for _ in genus_species})
-    )
+    synonym_entries = defaultdict(set)
+    for taxid, name in not_top_species(
+        tree, ranks, names, synonyms, {_[0] for _ in genus_species}
+    ):
+        synonym_entries[taxid].add(name)
+
     if debug:
         sys.stderr.write(
             f"Treating {len(synonym_entries)} minor species names as genus aliases\n"
@@ -328,32 +332,33 @@ def main(tax, db_url, ancestors, debug=True):
     del genus_species, ranks
 
     # Treat species under 'unclassified GenusX' as aliases for 'GenusX'
-    for taxid, name in sorted(synonym_entries):
-        # Would this actually be useful? i.e. Does first word differ...
-        if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Ignoring {name} as synonym of {names[taxid]}\n"
-                )
-            continue
+    for taxid, aliases in sorted(synonym_entries.items()):
         # Is genus already there?
         taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
         assert taxonomy is not None
         assert taxonomy.id is not None, taxonomy
-        synonym = session.query(Synonym).filter_by(name=name).one_or_none()
-        if synonym is None:
-            synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
-            session.add(synonym)
-            s_new += 1
-        else:
-            if debug:
-                # See this with Hyaloperonospora parasitica species group,
-                # treated as a species with entries under it already set as aliases
-                sys.stderr.write(
-                    f"Minor species {name!r} -> NCBI {taxid},"
-                    f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
-                )
-            s_old += 1
+        for name in sorted(aliases):
+            # Would this actually be useful? i.e. Does first word differ...
+            if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Ignoring {name} as synonym of {names[taxid]}\n"
+                    )
+                continue
+            synonym = session.query(Synonym).filter_by(name=name).one_or_none()
+            if synonym is None:
+                synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
+                session.add(synonym)
+                s_new += 1
+            else:
+                if debug:
+                    # See this with Hyaloperonospora parasitica species group,
+                    # treated as a species with entries under it already set as aliases
+                    sys.stderr.write(
+                        f"Minor species {name!r} -> NCBI {taxid},"
+                        f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
+                    )
+                s_old += 1
 
     del names, synonyms
 
