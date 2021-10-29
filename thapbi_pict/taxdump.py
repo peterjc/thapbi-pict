@@ -319,15 +319,7 @@ def main(tax, db_url, ancestors, debug=True):
         else:
             old += 1
 
-        for name in sorted(aliases):
-            # Is it already there?
-            synonym = session.query(Synonym).filter_by(name=name).one_or_none()
-            if synonym is None:
-                synonym = Synonym(taxonomy_id=taxonomy.id, name=name)
-                session.add(synonym)
-                s_new += 1
-            else:
-                s_old += 1
+        synonym_entries[taxid].update(aliases)
 
     del genus_species, ranks
 
@@ -338,7 +330,8 @@ def main(tax, db_url, ancestors, debug=True):
         assert taxonomy is not None
         assert taxonomy.id is not None, taxonomy
         for name in sorted(aliases):
-            # Would this actually be useful? i.e. Does first word differ...
+            # Would this actually be useful?
+            # If a genus alias, does first word differ?
             if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
                 if debug:
                     sys.stderr.write(
@@ -351,14 +344,14 @@ def main(tax, db_url, ancestors, debug=True):
                 session.add(synonym)
                 s_new += 1
             else:
-                if debug:
-                    # See this with Hyaloperonospora parasitica species group,
-                    # treated as a species with entries under it already set as aliases
-                    sys.stderr.write(
-                        f"Minor species {name!r} -> NCBI {taxid},"
-                        f" table {taxonomy.id} pre-existing -> {synonym.taxonomy_id}\n"
-                    )
                 s_old += 1
+                if synonym.taxonomy_id != taxonomy.id:
+                    # Must update old alias...
+                    sys.stderr.write(
+                        f"WARNING: Updating existing synonym entry for {name}\n"
+                    )
+                    synonym.taxonomy_id = taxonomy.id
+                    session.add(synonym)
 
     del names, synonyms
 
