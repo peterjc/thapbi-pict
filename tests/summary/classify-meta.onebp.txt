@@ -24,5 +24,6 @@ Sequencing sample: hmm_trim
  - Phytophthora cinnamomi
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Phytophthora (unknown species)
  - Unknown
 
