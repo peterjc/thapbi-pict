@@ -12,9 +12,8 @@ hmm_trim
  - Phytophthora cactorum(*)
  - Phytophthora cambivora(*)
  - Phytophthora cinnamomi
- - Phytophthora cryptogea(*)
- - Phytophthora pseudocryptogea(*)
  - Phytophthora ramorum
  - Phytophthora x cambivora(*)
+ - Phytophthora (unknown species)
  - Unknown
 
