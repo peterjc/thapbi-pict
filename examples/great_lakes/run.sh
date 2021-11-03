@@ -61,7 +61,9 @@ for NAME in MOL16S SPH16S; do
         -i expected/$NAME/ intermediate/$NAME \
            summary/$NAME.all_reads.onebp.tsv \
         -o summary/$NAME.assess.onebp.tsv
+done
 
+for NAME in MOL16S SPH16S; do
     # Run an edit graph at the default -a 100 setting,
     # without showing the DB entries
     thapbi_pict edit-graph -d pooled.sqlite \
