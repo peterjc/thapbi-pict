@@ -495,11 +495,14 @@ def import_fasta_file(
                     taxonomy = lookup_genus(session, name)
                 else:
                     taxonomy = lookup_species(session, name)
-                    if not taxonomy and preloaded_taxonomy:
+                    if not taxonomy and validate_species:
+                        # In validate mode when have unknown species,
+                        # will still take the genus if matches.
                         taxonomy = lookup_genus(session, name.split(None, 1)[0])
                         if taxonomy:
                             # This branch is not expected to be triggered by
-                            # the NCBI input (as would have already done this)
+                            # the NCBI input (as would have already done this
+                            # as part of breaking up the FASTA line)
                             downgraded_entries += 1
                             if debug and name not in bad_species:
                                 sys.stderr.write(
