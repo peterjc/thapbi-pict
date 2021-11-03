@@ -6,6 +6,17 @@ set -euo pipefail
 
 # Only look at documented examples, and run them in that order:
 for example in `grep "/index" ../docs/examples/index.rst | cut -f 1 -d "/" | cut -c 4-`; do
+    if [ -d $example/sample_out/ ]; then
+        echo "================================="
+        echo "Comparing output for $example"
+        echo "================================="
+        cd $example/sample_out
+        for f in *.tsv; do
+            echo "Checking $example/sample_out/$f"
+            diff $f ../summary/$f
+        done
+        cd ../..
+    fi
     echo "================================="
     echo "Checking docs for $example"
     echo "================================="
