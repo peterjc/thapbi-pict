@@ -126,29 +126,33 @@ def get_ancestor(taxid, tree, stop_nodes):
             t = tree[t]
 
 
-def top_level_species(tree, ranks, names):
-    """Find taxids for species under the genus_list.
+def species_or_species_groups(tree, ranks, names):
+    """Find taxids for species or species groups under the genus_list.
 
     Our "genus" list matches the NCBI rank "genus", and includes child nodes
     as aliases (unless they fall on our "species" list or reject list of
     "environmental samples" or "unclassified <genus>").
 
     However, our "species" list are either NCBI rank "species" or "species
-    group", where the parent is "genus" or "subgenus".
+    group" (in the later case child species are taken as aliases).
 
-    This is to exclude NCBI rank "species" elements under "no rank" nodes like
-    "environmental samples" or "unclassified Phytophthora" (taxid 211524),
-    which we want to treat as genus aliases.
+    Does not distinguish between "top level" species, or those under "no rank"
+    nodes like "environmental samples" or "unclassified Phytophthora" (taxid
+    211524),
 
     Yields (species taxid, genus taxid) tuples.
     """
     genus_list = set(ranks["genus"])
-    species_or_spgroup = set(ranks["species"] + ranks["species group"])
-    genus_or_subgenus = set(ranks["genus"] + ranks["subgenus"])
+    spgroup = set(ranks["species group"])
+    species_or_spgroup = spgroup.union(ranks["species"])
     for taxid in tree:
-        if taxid in species_or_spgroup and tree[taxid] in genus_or_subgenus:
+        if taxid in species_or_spgroup and tree[taxid] not in spgroup:
             # Want this as a "species"
-            assert taxid not in genus_or_subgenus
+            assert taxid not in genus_list
+            if reject_name(names[taxid]):
+                # Strange, but happens for "uncultured Hyaloperonospora"
+                # taxid 660915 which currently has rank "species"
+                continue
             genus_taxid = get_ancestor(taxid, tree, genus_list)
             yield taxid, genus_taxid
 
@@ -197,7 +201,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     tree, ranks = load_nodes(
         os.path.join(tax, "nodes.dmp"),
-        ("genus", "subgenus", "species group", "species"),
+        ("genus", "species group", "species"),
     )
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
@@ -224,7 +228,7 @@ def main(tax, db_url, ancestors, debug=True):
             f" {', '.join(sorted(names[_] for _ in genus_list))}\n"
         )
 
-    genus_species = sorted(top_level_species(tree, ranks, names))
+    genus_species = sorted(species_or_species_groups(tree, ranks, names))
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
