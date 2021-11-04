@@ -1,0 +1,12 @@
+# Python dependencies for building the documentation with Sphinx.
+# These are used in .readthedocs.yaml but can be used manually with pip:
+#
+# $ pip install -r requirements.txt
+#
+# or if using conda,
+#
+# $ conda install --file requirements.txt
+#
+
+sphinx==4.2.0
+sphinx_rtd_theme==1.0.0
