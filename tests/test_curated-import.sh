@@ -110,7 +110,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_definition;"` -ne "1" ]; then ec
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "1451" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "838" ]; then echo "Wrong marker_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "1415" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne "1415" ]; then echo "Wrong species count"; false; fi
+if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "3008" ]; then echo "Wrong taxonomy count"; false; fi
+if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne "3008" ]; then echo "Wrong species count"; false; fi
 
 echo "$0 - test_curated-import.sh passed"
