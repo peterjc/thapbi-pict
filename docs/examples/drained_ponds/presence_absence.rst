@@ -13,10 +13,8 @@ Quoting the Muri *et al.* (2020) paper:
     blanks and PCR negatives, a second arbitrary threshold was applied and all
     records occurring with less than 50 reads assigned were removed.
 
-THAPBI PICT initially only implemented an absolute minimum read abundance
-threshold, and setting this to at least 10 excludes low-frequency noise. We
-have used ``-a 50`` for an absolute threshold of 50, and ``-f 0.001`` for a
-0.1% sample specific factional threshold to match the paper.
+To match the paper, this example uses ``-a 50`` for an absolute threshold of
+50, and ``-f 0.001`` for a 0.1% sample specific factional threshold.
 
 At this threshold, the 4 cichlid "positive" samples, 6 PCR "negative", and 8
 "blank" controls are perfect - as far as the fish go. We do see unexpected
