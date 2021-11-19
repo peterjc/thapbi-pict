@@ -28,7 +28,7 @@ Provided database
 
 THAPBI provides a default database which is used when the command line ``-d``
 or ``--database`` setting is omitted. This is intended for use with a
-*Phytophthora* ITS1 target regio, and is used in the first
+*Phytophthora* ITS1 target region, and is used in the first
 :ref:`worked example <woody_hosts>`.
 
 The default database is compiled from the following sets of sequences:
