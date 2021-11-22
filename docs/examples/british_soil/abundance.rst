@@ -75,7 +75,7 @@ As a table,
 ========================== == == == ===
 #Species                   TP FP FN TN
 ========================== == == == ===
-OVERALL                    26 7  4  958
+OVERALL                    26 7  4  988
 Phytophthora agathidicida  0  3  0  2
 Phytophthora boehmeriae    0  0  3  2
 Phytophthora capsici       3  0  0  2
@@ -89,7 +89,7 @@ Phytophthora plurivora     3  0  0  2
 Phytophthora rubi          3  0  0  2
 Phytophthora siskiyouensis 3  0  0  2
 Phytophthora syringae      0  1  0  4
-OTHER 186 SPECIES IN DB    0  0  0  930
+OTHER 192 SPECIES IN DB    0  0  0  960
 ========================== == == == ===
 
 False positives
@@ -124,8 +124,9 @@ unique sequences, none seen more than ten times:
 
 .. code:: console
 
-    $ cat tmp_merged/SRR13393813.fasta.gz | gunzip \
-      | grep -B 1 "TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATCATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACAAACT" \
+    $ export SEQ=TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATCATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACAAACT ; \
+      cat tmp_merged/SRR13393813.fasta.gz | gunzip \
+      | grep -B 1 "${SEQ}" \
       | grep "^>" | head
     >590e14c00cacf04bc580415ad7cca33f_10
     >85570853bb0a4f6ff59a2dc0cf1535e6_10
@@ -145,7 +146,8 @@ are using a regular expression wildcard in place of the ambiguous bases:
 
 .. code:: console
 
-    $ cat tmp_merged/SRR13393813.fasta.gz | gunzip \
+    $ export SEQ=TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATCATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTAATTACTGAACAAACT ; \
+      cat tmp_merged/SRR13393813.fasta.gz | gunzip \
       | grep -B 1 "GAAGGTGAAGTCGTAACAAGG${SEQ}G..GGGACGAAAGTC..TGC" \
       | grep "^>" | head
     >590e14c00cacf04bc580415ad7cca33f_10
