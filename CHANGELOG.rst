@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.10.4 *Pending*  Updates to default curated DB, including newer NCBI taxonomy.
 v0.10.3 2021-11-19 New ``-f`` / ``--abundance-fraction`` setting, off by default.
 v0.10.2 2021-11-05 Updates to default curated DB, and small changes to NCBI taxonomy loading.
 v0.10.1 2021-07-28 Fix for using SQLAlchemy v1.3 (previous release needed v1.4).
