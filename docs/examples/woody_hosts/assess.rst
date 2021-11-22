@@ -273,9 +273,9 @@ OTHER 189 SPECIES IN DB     0  0  0  189 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 1 false
-positives, 7 false negatives, and 160 true negatives. The final number needs a
-little explanation. First, 8+1+7+183 = 199, which is the number of species in
-the database. With only one sample being considered, 176 is the number of other
+positives, 7 false negatives, and 189 true negatives. The final number needs a
+little explanation. First, 8+1+7+189 = 205, which is the number of species in
+the database. With only one sample being considered, 189 is the number of other
 species in the database which the tool correctly says are not present.
 
 Following this we get one line per species, considering this species in
@@ -334,8 +334,8 @@ Phytophthora syringae       0  0  1  3   0.00 1.000
 OTHER 181 SPECIES IN DB     0  0  0  724 0.00 0.000
 =========================== == == == === ==== ===========
 
-This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 744 TN.
-Their total, 32+7+13+744 = 796 = 4 * 199, is the number of samples times the
+This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 768 TN.
+Their total, 32+7+13+768 = 724 = 4 * 205, is the number of samples times the
 number of species in the database.
 
 This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
