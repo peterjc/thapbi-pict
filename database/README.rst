@@ -17,7 +17,7 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
-  4458 entries in file ``database/2021-05-20-ITS_Oomycota_w32.fasta``
+  4458 entries in file ``database/2021-10-21-ITS_Oomycota_w32.fasta``
   extracted from 32958 downloaded from an NCBI Entrez search on 2021-10-21::
 
       (Peronosporales[organism] OR Pythiales[organism])
