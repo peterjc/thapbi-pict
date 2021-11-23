@@ -17,7 +17,7 @@ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
 
 echo "Pipeline with metadata & assess classifier..."
 # Reuses the intermediate files (prepared FASTA files)
-# Giving report name stem (so not to over-write reports without metadata)
+# Giving different report name stem (so not to over-write reports without metadata)
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
         -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
         -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
