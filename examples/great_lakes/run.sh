@@ -44,7 +44,7 @@ echo ================
 # so currently cannot use assess via pipeline...
 mkdir -p intermediate/ summary/
 thapbi_pict pipeline -d pooled.sqlite -y "" \
-    -i raw_data/ -a 10 \
+    -i raw_data/ -a 10 -f 0 \
     --merged-cache tmp_merged/ \
     -s intermediate/ -o summary/ \
     -t metadata.tsv -x 1 -c 4,5,3,2

@@ -14,8 +14,9 @@ You could do this automatically within THAPBI PICT via the ``-n`` or
 will discard most of the data.
 
 In order to examine an appropriate minimum abundance threshold, the ``run.sh``
-script provided uses ``-a 10`` to accept any unique sequence seen in sample at
-least ten times. This *does* allow unwanted noise though to the reports.
+script provided uses ``-a 10 -f 0`` to accept any unique sequence seen in
+sample at least ten times (regardless the fraction of the sample read total).
+This *does* allow unwanted noise though to the reports.
 
 SPH16S
 ------
