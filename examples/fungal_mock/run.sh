@@ -22,7 +22,7 @@ function import_marker {
 # Takes arguments via variable names
 function analyse {
     echo "Running analysis with minimum abundance threshold ten"
-    # No threshold (-a 0 or -a 1) gives 450k total unique entries over samples
+    # No threshold (-a 0 or -a 1 with -f 0) gives 450k total unique entries over samples
     # Using minimum of 2 gives 75k unique, 5 gives 22k, and 10 gives 8.8k unique.
     # Using minimum of 100 (default) gives under 800 unique over samples.
     # [Counts were over both amplicons using the actual primer pairs, 3 runs]
@@ -31,7 +31,7 @@ function analyse {
         thapbi_pict pipeline -d $DB -m $METHOD \
                     -i raw_data/$LIBRARY/ expected/$LIBRARY/ \
                     -s intermediate/${LIBRARY}/ \
-                    -o summary/${LIBRARY} -a 10 \
+                    -o summary/${LIBRARY} -a 10 -f 0 \
                     -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     echo "$LIBRARY done"
