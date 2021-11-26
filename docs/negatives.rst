@@ -10,7 +10,8 @@ On a typical 96-well plate of PCR products which will go on to be multiplexed
 for Illumina MiSeq sequencing, most of the samples are biological - but some
 should be negative controls (e.g. PCR blanks, or synthetic sequences).
 The presence of biological sequence reads in the negative control samples is
-indicative of some kind of cross contamination.
+indicative of some kind of cross contamination. Likewise, any reads from your
+synthetic sequences in the biological samples are a warning sign.
 
 Minimum Abundance Threshold
 ---------------------------
@@ -31,6 +32,9 @@ the threshold for the non-control samples in that folder is raised to 136.
 If you have no spike-in controls, then any sequences in the negative controls
 can raise the threshold - regardless of what they may or may not match in the
 reference database.
+
+Currently the controls are not used to adjust the percentage abundance
+threshold, only the absolite abundance threshold.
 
 Spike-in Controls
 -----------------
