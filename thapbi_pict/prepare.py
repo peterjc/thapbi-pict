@@ -1004,7 +1004,7 @@ def main(
             " no non-control reads!\n"
         )
 
-    if not os.path.isdir(out_dir):
+    if out_dir and not os.path.isdir(out_dir):
         sys.stderr.write(f"Making output directory {out_dir!r}\n")
         os.mkdir(out_dir)
 
