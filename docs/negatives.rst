@@ -62,5 +62,5 @@ therefore relaxed, currently based on *k*-mer content.
 
 Conversely, the presence of the synthetic controls in any of the biological
 samples is also problematic. Since our synthetic control sequences are in
-the default database, they and can be matched by the chosen classifier, and
+the default database, they can be matched by the chosen classifier, and
 appear in the reports.
