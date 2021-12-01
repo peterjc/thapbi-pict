@@ -598,7 +598,7 @@ def prepare_sample(
         sys.stderr.write(
             f"DEBUG: Starting to prepare {'control' if control else 'sample'}"
             f" {fasta_name} (min abundance set to {min_abundance};"
-            f" fraction abundance set to {min_abundance_fraction*100}%%)\n"
+            f" fraction abundance set to {min_abundance_fraction*100}%)\n"
         )
 
     # count_raw = _header["raw_fastq"]
