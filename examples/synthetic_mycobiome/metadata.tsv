@@ -1,0 +1,42 @@
+run_accession	library_name	plate_name	sample_alias	group
+SRR7109326	m6-stds	m6	BioMockStds	Biological Mock
+SRR7109327	m6-301-1	m6	301-1	Environment
+SRR7109328	m6-mock3-32000b	m6	BioMock	Biological Mock
+SRR7109329	m6-766-1	m6	766-1	Environment
+SRR7109330	m6-744-2	m6	744-2	Environment
+SRR7109331	m6-500-1	m6	500-1	Environment
+SRR7109341	m6-712-2	m6	712-2	Environment
+SRR7109342	m6-500-2	m6	500-2	Environment
+SRR7109343	m6-757-1	m6	757-1	Environment
+SRR7109344	m6-757-2	m6	757-2	Environment
+SRR7109345	m6-mock3-16000	m6	BioMock	Biological Mock
+SRR7109406	m6-712-1	m6	712-1	Environment
+SRR7109408	m6-744-1	m6	744-1	Environment
+SRR7109409	m6-mock3-32000a	m6	BioMock	Biological Mock
+SRR7109411	m6-766-2	m6	766-2	Environment
+SRR7109412	m6-755-1	m6	755-1	Environment
+SRR7109414	m6-736-1	m6	736-1	Environment
+SRR7109415	m6-301-2	m6	301-2	Environment
+SRR7109417	m6-755-2	m6	755-2	Environment
+SRR7109418	m6-736-2	m6	736-2	Environment
+SRR7109420	m6-SynMock	m6	SynMock	Synthetic Mock
+SRR7109334	m4A-301-1	m4A	301-1	Environment
+SRR7109346	m4A-mock3-32000b	m4A	BioMock	Biological Mock
+SRR7109347	m4A-766-2	m4A	766-2	Environment
+SRR7109348	m4A-mock3-32000am4A	m4A	BioMock	Biological Mock
+SRR7109349	m4A-mock3-16000m4A	m4A	BioMock	Biological Mock
+SRR7109350	m4A-766-1	m4A	766-1	Environment
+SRR7109352	m4A-744-2	m4A	744-2	Environment
+SRR7109353	m4A-301-2	m4A	301-2	Environment
+SRR7109355	m4A-757-2	m4A	757-2	Environment
+SRR7109358	m4A-stds	m4A	BioMockStds	Biological Mock
+SRR7109377	m4A-736-1	m4A	736-1	Environment
+SRR7109379	m4A-500-1	m4A	500-1	Environment
+SRR7109380	m4A-757-1	m4A	757-1	Environment
+SRR7109382	m4A-755-2	m4A	755-2	Environment
+SRR7109383	m4A-500-2	m4A	500-2	Environment
+SRR7109384	m4A-744-1	m4A	744-1	Environment
+SRR7109385	m4A-736-2	m4A	736-2	Environment
+SRR7109386	m4A-712-2	m4A	712-2	Environment
+SRR7109387	m4A-712-1	m4A	712-1	Environment
+SRR7109388	m4A-755-1	m4A	755-1	Environment
