@@ -7,9 +7,9 @@ This example is based on the following paper from earlier in the THAPBI
 Phyto-Threats project, where the original analysis used the precursor pipeline
 ``metapy``:
 
-* Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
-  host-associated *Phytophthora* spp. in soils at public gardens and amenity
-  woodlands in Britain. https://doi.org/10.7717/peerj.6931
+    Riddell *et al.* (2019) Metabarcoding reveals a high diversity of woody
+    host-associated *Phytophthora* spp. in soils at public gardens and amenity
+    woodlands in Britain. https://doi.org/10.7717/peerj.6931
 
 Importantly, they used the same PCR primers, and therefore analysis with this
 tool's default settings including the provided database is appropriate.
