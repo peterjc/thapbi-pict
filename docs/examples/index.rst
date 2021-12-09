@@ -21,6 +21,7 @@ been mock communities with known species composition.
    fungal_mock/index
    great_lakes/index
    fecal_sequel/index
+   synthetic_mycobiome/index
    soil_nematodes/index
    endangered_species/index
 
@@ -66,6 +67,13 @@ been mock communities with known species composition.
     Walker *et al.* (2019) A fecal sequel: Testing the limits of a genetic
     assay for bat species identification.
     https://doi.org/10.1371/journal.pone.0224969
+
+* :ref:`synthetic_mycobiome` - A single marker example in fungi, with mock
+  biological communities *and* synthetic control sequences. Based on:
+
+    Palmer *et al.* (2018) Non-biological synthetic spike-in controls and the
+    AMPtk software pipeline improve mycobiome data.
+    https://doi.org/10.7717/peerj.4925
 
 * :ref:`soil_nematodes` - Four markers (sequenced separately) in a soil nematode
   mock community. Based on:
