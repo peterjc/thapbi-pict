@@ -85,7 +85,7 @@ Our default primers for *Phytophthora* can amplify related genera, not just
 runs into two main problems. First, with less published sequences available,
 the default strict classifier may fail to match many sequences to a published
 sequence. Second, with past renaming and splitting of some genera, the
-taxonomic annotation can becomes less consistent,
+taxonomic annotation can becomes less consistent.
 
 The ``thapbi_pict conflicts`` subcommand can be used to report any conflicts
 at species or genus level.
