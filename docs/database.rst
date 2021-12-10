@@ -44,8 +44,8 @@ The default database is compiled from the following sets of sequences:
 - Four G-BLOCK synthetic controls in a FASTA file, imported using the
   ``thapbi_pict import`` command.
 
-These are vetted against the NCBI taxonomy, which rejects some entries (e.g.
-unknown species, or currently listed under unclassified *Phytophthora*).
+These are vetted against the NCBI taxonomy, which downgrades unknown species
+to genus only entries.
 
 For further details see the ``database/README.rst`` file in the source code,
 and script ``database/build_ITS1_DB.sh`` which automates this.
