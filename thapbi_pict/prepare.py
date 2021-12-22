@@ -461,54 +461,6 @@ def make_nr_fasta(
     )
 
 
-def annotate_fasta_with_spike_and_header(
-    input_fasta,
-    output_fasta,
-    stem,
-    shared_tmp_dir,
-    spikes=None,
-    header_dict=None,
-    debug=False,
-):
-    """Annotate FASTA file with header and any spike-in matches.
-
-    Assumes you have already applied trimming.
-
-    Assumes the SWARM naming convention.
-
-    Returns the number of unique sequences (integer), total read count
-    (integer) and maximum abundance (dict keyed by spike name).
-    """
-    if not spikes:
-        spikes = []
-
-    max_spike_abundance = Counter()
-    # This could be generalised if need something else, e.g.
-    # >name;size=6; for VSEARCH.
-    count = 0
-    total = 0
-    with open(output_fasta, "w") as out_handle:
-        if header_dict:
-            for key, value in header_dict.items():
-                out_handle.write(f"#{key}:{value}\n")
-        with open(input_fasta) as handle:
-            for title, full_seq in SimpleFastaParser(handle):
-                spike_name = is_spike_in(full_seq, spikes)
-                if spike_name:
-                    out_handle.write(f">{title} {spike_name}\n{full_seq}\n")
-                else:
-                    out_handle.write(f">{title}\n{full_seq}\n")
-                count += 1
-                abundance = abundance_from_read_name(title.split(None, 1)[0])
-                total += abundance
-                max_spike_abundance[spike_name] = max(
-                    max_spike_abundance[spike_name],
-                    abundance,
-                )
-
-    return count, total, max_spike_abundance
-
-
 def merge_paired_reads(
     raw_R1,
     raw_R2,
