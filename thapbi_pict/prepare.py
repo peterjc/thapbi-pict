@@ -512,6 +512,7 @@ def merge_paired_reads(
 def prepare_sample(
     fasta_name,
     trimmed_fasta,
+    marker,
     left_primer,
     right_primer,
     min_len,
@@ -600,6 +601,7 @@ def prepare_sample(
         gzipped=False,
         spikes=spikes,
         header_dict={
+            "marker": marker,
             "left_primer": left_primer,
             "right_primer": right_primer,
             "raw_fastq": count_raw,
@@ -754,6 +756,7 @@ def marker_cut(
             uniq_count, total, max_abundance_by_spike, min_a = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
+                marker,
                 marker_values["left_primer"],
                 marker_values["right_primer"],
                 marker_values["min_length"],
