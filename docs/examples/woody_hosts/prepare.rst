@@ -82,7 +82,8 @@ the paired FASTQ files, down to just 4180 after processing.
 
 .. code:: console
 
-    $ head -n 9 intermediate/ITS1/Site_1_sample_1.fasta
+    $ head -n 10 intermediate/ITS1/Site_1_sample_1.fasta
+    #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:6136

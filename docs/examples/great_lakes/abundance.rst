@@ -125,6 +125,7 @@ read report - or look directly at the intermediate FASTA files:
 .. code:: console
 
     $ cat intermediate/MOL16S/SRR5534986.fasta
+    #marker:MOL16S
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:2433
@@ -173,6 +174,7 @@ read report, or at the command line:
 .. code:: console
 
     $ cat intermediate/MOL16S/SRR5534980.fasta
+    #marker:MOL16S
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
     #raw_fastq:410780

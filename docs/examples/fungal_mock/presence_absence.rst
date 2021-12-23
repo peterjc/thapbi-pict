@@ -83,6 +83,7 @@ sequences. At the command line:
 .. code:: console
 
     $ cat intermediate/AL1/BITS-B58S3/SRR5314317.fasta
+    #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:12564
@@ -103,6 +104,7 @@ Using a minimum of 10 has excluded lots of singletons etc here.
 .. code:: console
 
     $ cat intermediate/AL1/BITS-B58S3/SRR5314316.fasta
+    #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:16297
@@ -136,6 +138,7 @@ a pale blue background in the Excel reports). Working at the terminal:
 .. code:: console
 
     $ cat intermediate/AL1/BITS-B58S3/SRR5314315.fasta
+    #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:19406
@@ -152,6 +155,7 @@ The minimum abundance excluded lots of singletons etc.
 .. code:: console
 
     $ cat intermediate/AL1/BITS-B58S3/SRR5314314.fasta
+    #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
     #raw_fastq:7285
