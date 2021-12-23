@@ -33,8 +33,8 @@ About
 THAPBI PICT is a sequence based diagnostic/profiling tool from the UK funded
 Tree Health and Plant Biosecurity Initiative (THAPBI) `Phyto-Threats project
 <https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/>`_,
-focused on identifying *Phytophthora* species present in Illumina sequenced
-environmental samples.
+initially focused on identifying *Phytophthora* species present in Illumina
+sequenced environmental samples.
 
 *Phytophthora* (from Greek meaning plant-destroyer) species are economically
 important plant pathogens, in both agriculture and forestry. ITS1 is short for
