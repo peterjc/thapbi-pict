@@ -43,6 +43,13 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
     $ sudo apt-get install ncbi-blast+ swarm
 
+If you are on Windows, and do not wish to or cannot use the Windows Subsystem
+for Linux (WSL), using the tool should still be possible although not all the
+command line dependencies are available on Conda. You can install Flash using
+the pre-compiled binary from https://ccb.jhu.edu/software/FLASH/ and BLAST
+(if required) from the NCBI, and there are alternatives to ``unzip`` and
+``md5sum`` for following the worked examples.
+
 If you want to install the very latest unreleased code, you must download the
 source code from the `repository on GitHub
 <https://github.com/peterjc/thapbi-pict>`_ - see the ``CONTRIBUTING.rst`` file
