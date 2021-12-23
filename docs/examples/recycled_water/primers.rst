@@ -67,6 +67,7 @@ a reservoir. Here is with the default primer trimming:
 .. code:: console
 
     $ cat intermediate_defaults/ITS1/SRR6303586.fasta
+    #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
     #raw_fastq:70396
@@ -101,6 +102,7 @@ header, we again get four sequences passing the abundance threshold:
 .. code:: console
 
     $ cat intermediate_long/ITS1-long/SRR6303586.fasta
+    #marker:ITS1-long
     #left_primer:GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
     #right_primer:AGCGTTCTTCATCGATGTGC
     #raw_fastq:70396
