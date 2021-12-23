@@ -13,9 +13,6 @@ We recommend installing this tool on Linux or macOS using the `Conda
 
     $ conda install thapbi_pict
 
-The availability of all the command line dependencies likely rules out
-using Windows.
-
 Alternatively, since the software is on the `Python Package Index (PyPI)
 <https://pypi.python.org/>`__, the following command will install it along
 with its Python dependencies:
@@ -26,8 +23,8 @@ with its Python dependencies:
 
 However, in this case you will still need to install at least the command line
 tool ``flash`` (for merging Illumina paired reads), and optionally others used
-for some classifier methods (like ``blast`` and ``swarm``). If you have
-BioConda setup, use the following:
+for some classifier methods (like ``blast``). If you have BioConda setup, use
+the following:
 
 .. code:: console
 
@@ -41,7 +38,7 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
 
 .. code:: console
 
-    $ sudo apt-get install ncbi-blast+ swarm
+    $ sudo apt-get install ncbi-blast+
 
 If you are on Windows, and do not wish to or cannot use the Windows Subsystem
 for Linux (WSL), using the tool should still be possible although not all the
