@@ -78,13 +78,13 @@ threshold. This was strange, however easily explained - quoting the paper:
    for mini-rbcL, and 10 nt for the trnL (P6 loop) marker.
 
 Therefore in ``run.sh`` we have changed the THAPBI PICT minimum length from
-100 (our default) to 10 for this marker - and now get lots, and nearly two
-hundred unique sequences:
+100 (our default) to 10 for this marker - and now get lots, over a hundred
+unique sequences:
 
 .. code:: console
 
     $ grep -c ">" summary/trnL-P6-loop.all_reads.fasta
-    174
+    134
 
 We find this dominated by *Brassica oleracea* in most samples. However, at
 our default abundance threshold we do not find *Cycas revoluta* which is
