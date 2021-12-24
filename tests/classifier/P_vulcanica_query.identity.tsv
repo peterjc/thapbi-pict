@@ -1,4 +1,4 @@
-#sequence-name	taxid	genus-species
+#ITS1/sequence-name	taxid	genus-species
 reference_species	0	Phytophthora vulcanica
 ref_genusA_1bp_from_sp	0	Phytophthora
 ref_genusB_2bp_from_sp	0	Phytophthora

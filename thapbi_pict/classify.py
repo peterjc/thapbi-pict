@@ -829,9 +829,11 @@ def main(
 
         # Could write one column per db_sp_list entry, but would be very sparse.
         if debug:
-            pred_handle.write("#sequence-name\ttaxid\tgenus-species\tnote\n")
+            pred_handle.write(
+                f"#{marker_name}/sequence-name\ttaxid\tgenus-species\tnote\n"
+            )
         else:
-            pred_handle.write("#sequence-name\ttaxid\tgenus-species\n")
+            pred_handle.write(f"#{marker_name}/sequence-name\ttaxid\tgenus-species\n")
         # Will get empty dict for empty file
         headers = load_fasta_header(filename)
         if not headers or headers["abundance"]:

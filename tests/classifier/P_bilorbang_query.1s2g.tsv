@@ -1,4 +1,4 @@
-#sequence-name	taxid	genus-species
+#ITS1/sequence-name	taxid	genus-species
 reference_species	0	Phytophthora bilorbang
 with_A_in_db_genus	0	Phytophthora bilorbang
 with_G	0	Phytophthora bilorbang
