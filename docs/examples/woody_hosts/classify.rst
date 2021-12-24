@@ -65,7 +65,7 @@ Viewing it like this is not ideal, although there are command line tools which
 help. You could open the file in R, Excel, etc:
 
 ======================================= ============= ===============================================
-#sequence-name                          taxid         genus-species
+#ITS1/sequence-name                     taxid         genus-species
 ======================================= ============= ===============================================
 2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518        Phytophthora pseudosyringae
 d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361        Phytophthora austrocedri
