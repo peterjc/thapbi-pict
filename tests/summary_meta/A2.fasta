@@ -1,3 +1,4 @@
+#marker:ITS1
 #raw_fastq:60000
 #trimmomatic:59000
 #flash:58000
