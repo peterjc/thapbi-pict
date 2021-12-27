@@ -28,7 +28,7 @@ from .utils import split_read_name_abundance
 def load_pooled_tsv(classifier_file, min_abundance):
     """Return dict mapping MD5 to semi-colon separated species string."""
     md5_species = {}
-    for name, _taxid, sp in parse_species_tsv(
+    for _marker, name, _taxid, sp in parse_species_tsv(
         classifier_file, min_abundance, req_species_level=True, allow_wildcard=False
     ):
         if "_" not in name:
@@ -65,7 +65,7 @@ def sp_in_tsv(classifier_file, min_abundance):
     Will ignore genus level predictions.
     """
     species = set()
-    for _name, _taxid, sp in parse_species_tsv(
+    for _marker, _name, _taxid, sp in parse_species_tsv(
         classifier_file, min_abundance, req_species_level=True, allow_wildcard=True
     ):
         species.update(sp.split(";"))
@@ -88,32 +88,32 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
             sorted(parse_species_tsv(expected_file, req_species_level=True)),
             sorted(parse_species_tsv(predicted_file, req_species_level=True)),
         ):
-            if not expt[0] == pred[0]:
+            if not expt[1] == pred[1]:
                 sys.exit(
                     f"ERROR: Sequence name mismatch in {expected_file} vs"
-                    f" {predicted_file}, {expt[0]} vs {pred[0]}\n"
+                    f" {predicted_file}, {expt[1]} vs {pred[1]}\n"
                 )
-            md5, abundance = split_read_name_abundance(expt[0])
+            md5, abundance = split_read_name_abundance(expt[1])
             if min_abundance > 1 and abundance < min_abundance:
                 continue
             # TODO: Look at taxid?
             # Should now have (possibly empty) string of genus-species;...
-            for sp in expt[2].split(";"):
+            for sp in expt[3].split(";"):
                 if sp:
                     assert species_level(sp), (
-                        f"Expectation {expt[2]} is not all species level from"
+                        f"Expectation {expt[3]} is not all species level from"
                         f" {expected_file}"
                     )
-            for sp in pred[2].split(";"):
+            for sp in pred[3].split(";"):
                 if sp:
                     assert species_level(sp), (
-                        f"Prediction {pred[2]} is not all species level from"
+                        f"Prediction {pred[3]} is not all species level from"
                         f" {predicted_file}"
                     )
             try:
-                counter[expt[2], pred[2]].add(md5)
+                counter[expt[3], pred[3]].add(md5)
             except KeyError:
-                counter[expt[2], pred[2]] = {md5}
+                counter[expt[3], pred[3]] = {md5}
     except ValueError as e:
         # This is used for single sample controls,
         # where all reads are expected to be from species X.
@@ -128,13 +128,13 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
         for pred in parse_species_tsv(
             predicted_file, min_abundance, req_species_level=True
         ):
-            md5, abundance = split_read_name_abundance(pred[0])
+            md5, abundance = split_read_name_abundance(pred[1])
             if min_abundance > 1 and abundance < min_abundance:
                 continue
             try:
-                counter[expt_sp_genus, pred[2]].add(md5)
+                counter[expt_sp_genus, pred[3]].add(md5)
             except KeyError:
-                counter[expt_sp_genus, pred[2]] = {md5}
+                counter[expt_sp_genus, pred[3]] = {md5}
     return counter
 
 

@@ -290,7 +290,9 @@ def main(
                     continue
                 # Record any assigned species
                 # Does min_abundance make sense for all_reads file?
-                for name, _, sp in parse_species_tsv(tsv_file, min_abundance):
+                for _marker, name, _taxid, sp in parse_species_tsv(
+                    tsv_file, min_abundance
+                ):
                     md5, abundance = split_read_name_abundance(name)
                     if md5 not in md5_to_seq:
                         sys.exit(

@@ -764,7 +764,9 @@ def main(
     for sample, predicted_file in tsv_files.items():
         # Get MD5 to species mapping from the TSV only
         assert sample.endswith(".all_reads") or sample in stem_to_meta, sample
-        for name, _, sp_list in parse_species_tsv(predicted_file, min_abundance):
+        for _marker, name, _taxid, sp_list in parse_species_tsv(
+            predicted_file, min_abundance
+        ):
             md5, abundance = split_read_name_abundance(name)
             if min_abundance > 1 and abundance < min_abundance:
                 continue
