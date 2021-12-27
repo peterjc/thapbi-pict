@@ -80,7 +80,7 @@ def main(
         wild_genus_species = None  # get from TSV
         dict_genus_species = {}  # get from TSV
         try:
-            for idn, _, genus_species in parse_species_tsv(tsv_file):
+            for _marker, idn, _taxid, genus_species in parse_species_tsv(tsv_file):
                 if idn in dict_genus_species:
                     sys.exit(f"ERROR: Duplicated identifier {idn!r} in {tsv_file!r}")
                 dict_genus_species[idn] = genus_species

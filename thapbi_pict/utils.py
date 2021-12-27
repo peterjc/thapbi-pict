@@ -566,10 +566,18 @@ def find_paired_files(
 def parse_species_tsv(
     tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
 ):
-    """Parse file of species assignments/predictions by sequence."""
+    """Parse file of species assignments/predictions by sequence.
+
+    Yields tuples of marker name (from the file header line), sequence name,
+    taxid, and genus_species.
+    """
+    marker = None
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):
+                parts = line[1:].split("\t")
+                if parts[0].endswith("/sequence-name") and parts[1] == "taxid":
+                    marker = parts[0][:-14]
                 continue
             if line.count("\t") == 2:
                 name, taxid, genus_species = line.rstrip("\n").split("\t", 3)
@@ -603,7 +611,7 @@ def parse_species_tsv(
                     genus_species = ";".join(
                         s for s in genus_species.split(";") if species_level(s)
                     )
-            yield name, taxid, genus_species
+            yield marker, name, taxid, genus_species
 
 
 def load_metadata(
