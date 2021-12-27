@@ -308,7 +308,6 @@ def summary(args=None):
     return main(
         inputs=args.input,
         report_stem=args.output,
-        marker_name=None,  # Must infer this from TSV headers
         method=args.method,
         min_abundance=args.abundance,
         metadata_file=args.metadata,
@@ -453,7 +452,6 @@ def pipeline(args=None):
         return_code = summary(
             inputs=fasta_files + classified_files,
             report_stem=stem,
-            marker_name=marker,
             method=args.method,
             min_abundance=args.abundance,
             metadata_file=args.metadata,
