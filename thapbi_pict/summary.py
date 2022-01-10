@@ -610,7 +610,8 @@ def read_summary(
                 "\t".join(str(_) for _ in sample_counts),
             )
         )
-        worksheet.write_string(current_row, 0, marker)
+        # TODO: Drop this if/else, marker ought to be defined
+        worksheet.write_string(current_row, 0, marker if marker else "???")
         worksheet.write_string(current_row, 1, md5)
         worksheet.write_string(current_row, 2, sp)
         worksheet.write_string(current_row, 3, seq)
