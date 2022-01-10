@@ -204,7 +204,7 @@ find this in the main reports, or at the command line:
 
 .. code:: console
 
-    $ grep "Pseudorasbora parva" summary/drained_ponds.12S.reads.onebp.tsv  | cut -f 1-2
+    $ grep "Pseudorasbora parva" summary/drained_ponds.12S.reads.onebp.tsv  | cut -f 2,3
     e819f3c222d6493572534fb6a5b7cda7  Pseudorasbora parva
     $ grep e819f3c222d6493572534fb6a5b7cda7 intermediate/12S/*.fasta
     intermediate/12S/SRR11949854.fasta:>e819f3c222d6493572534fb6a5b7cda7_323
@@ -229,7 +229,7 @@ mossulensis*, and *Squalidus gracilis*:
 
 .. code:: console
 
-    $ grep "Alburnus mossulensis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    $ grep "Alburnus mossulensis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
     916da937dccfd5d29502e83713e5d998  Abramis brama;Alburnus mossulensis
     $ grep 916da937dccfd5d29502e83713e5d998 intermediate/12S/*.fasta
     intermediate/12S/SRR11949859.fasta:>916da937dccfd5d29502e83713e5d998_98
@@ -239,7 +239,7 @@ This sequence is ambiguous with equally good matches to expected species
 
 .. code:: console
 
-    $ grep "Squalidus gracilis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    $ grep "Squalidus gracilis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
     c0d532d1c6f8ffff9c72ac4a1873151c  Squalidus gracilis
     $ grep c0d532d1c6f8ffff9c72ac4a1873151c intermediate/12S/*.fasta
     intermediate/12S/SRR11949871.fasta:>c0d532d1c6f8ffff9c72ac4a1873151c_82
@@ -269,7 +269,7 @@ We found *Scardinius erythrophthalmus* in six samples:
 
 .. code:: console
 
-    $ grep "Scardinius erythrophthalmus" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 1-2
+    $ grep "Scardinius erythrophthalmus" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
     2a53392fe4add5780f959b56407423d0  Scardinius erythrophthalmus
     $ grep 2a53392fe4add5780f959b56407423d0 intermediate/12S/*.fasta
     intermediate/12S/SRR11949852.fasta:>2a53392fe4add5780f959b56407423d0_126
