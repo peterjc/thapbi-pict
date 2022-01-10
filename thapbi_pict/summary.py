@@ -376,6 +376,7 @@ def sample_summary(
 
 
 def read_summary(
+    marker,
     md5_to_seq,
     md5_species,
     md5_abundance,
@@ -401,7 +402,7 @@ def read_summary(
 
     # Excel setup
     # -----------
-    LEADING_COLS = 6
+    LEADING_COLS = 7
     workbook = xlsxwriter.Workbook(excel)
     worksheet = workbook.add_worksheet("Sequence vs samples")
     cell_rightalign_format = workbook.add_format({"align": "right"})
@@ -489,12 +490,12 @@ def read_summary(
     # TSV main header
     # ---------------
     handle.write(
-        "#Marker-MD5\t%s-predictions\tMarker-sequence\tSample-count"
+        "#Marker\tMD5\t%s-predictions\tMarker-sequence\tSample-count"
         "\tMax-sample-abundance\tTotal-abundance\t%s\n"
         % (method, "\t".join(stem_to_meta))
     )
     handle.write(
-        "TOTAL or MAX\t-\t-\t%i\t%i\t%i\t%s\n"
+        "TOTAL or MAX\t-\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             max(
                 sum(
@@ -528,12 +529,13 @@ def read_summary(
 
     # Excel main header
     # -----------------
-    worksheet.write_string(current_row, 0, "Marker-MD5")
-    worksheet.write_string(current_row, 1, method + "-predictions")
-    worksheet.write_string(current_row, 2, "Marker-Sequence")
-    worksheet.write_string(current_row, 3, "Sample-count")
-    worksheet.write_string(current_row, 4, "Max-sample-abundance")
-    worksheet.write_string(current_row, 5, "Total-abundance")
+    worksheet.write_string(current_row, 0, "Marker")
+    worksheet.write_string(current_row, 1, "MD5")
+    worksheet.write_string(current_row, 2, method + "-predictions")
+    worksheet.write_string(current_row, 3, "Marker-Sequence")
+    worksheet.write_string(current_row, 4, "Sample-count")
+    worksheet.write_string(current_row, 5, "Max-sample-abundance")
+    worksheet.write_string(current_row, 6, "Total-abundance")
     for s, sample in enumerate(stem_to_meta):
         worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
     current_row += 1
@@ -541,9 +543,10 @@ def read_summary(
     worksheet.write_string(current_row, 0, "TOTAL or MAX")
     worksheet.write_string(current_row, 1, "-")
     worksheet.write_string(current_row, 2, "-")
+    worksheet.write_string(current_row, 3, "-")
     worksheet.write_number(
         current_row,
-        3,
+        4,
         max(
             sum(1 for sample in stem_to_meta if (md5, sample) in abundance_by_samples)
             for md5 in md5_to_seq
@@ -553,7 +556,7 @@ def read_summary(
     )
     worksheet.write_number(
         current_row,
-        4,
+        5,
         max(
             (
                 abundance_by_samples.get((md5, sample), 0)
@@ -563,7 +566,7 @@ def read_summary(
             default=0,
         ),
     )
-    worksheet.write_number(current_row, 5, sum(md5_abundance.values()))
+    worksheet.write_number(current_row, 6, sum(md5_abundance.values()))
     for s, sample in enumerate(stem_to_meta):
         worksheet.write_number(
             current_row,
@@ -588,15 +591,16 @@ def read_summary(
         ]
         for md5, total_abundance in md5_abundance.items()
     ]
-    # Sort on species prediction (with blank last, sorting as tilde);
+    # Sort on marker, species prediction (with blank last, sorting as tilde);
     # number of samples (decreasing), total abundance (decreasing), md5
     data.sort(key=lambda row: (row[1] if row[1] else "~", -row[3], -row[4], row[0]))
     for md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
         sample_counts = [abundance_by_samples.get((md5, _), 0) for _ in stem_to_meta]
         assert sample_counts, f"{md5} sample counts: {sample_counts!r}"
         handle.write(
-            "%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
+            "%s\t%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
+                marker,
                 md5,
                 sp,
                 seq,
@@ -606,12 +610,13 @@ def read_summary(
                 "\t".join(str(_) for _ in sample_counts),
             )
         )
-        worksheet.write_string(current_row, 0, md5)
-        worksheet.write_string(current_row, 1, sp)
-        worksheet.write_string(current_row, 2, seq)
-        worksheet.write_number(current_row, 3, md5_in_xxx_samples)
-        worksheet.write_number(current_row, 4, max(sample_counts))
-        worksheet.write_number(current_row, 5, total_abundance)
+        worksheet.write_string(current_row, 0, marker)
+        worksheet.write_string(current_row, 1, md5)
+        worksheet.write_string(current_row, 2, sp)
+        worksheet.write_string(current_row, 3, seq)
+        worksheet.write_number(current_row, 4, md5_in_xxx_samples)
+        worksheet.write_number(current_row, 5, max(sample_counts))
+        worksheet.write_number(current_row, 6, total_abundance)
         for s, count in enumerate(sample_counts):
             worksheet.write_number(
                 current_row, LEADING_COLS + s, count, sample_formats[s]
@@ -639,6 +644,7 @@ def read_summary(
 def main(
     inputs,
     report_stem,
+    marker_name,
     method,
     min_abundance=1,
     metadata_file=None,
@@ -765,7 +771,7 @@ def main(
     for sample, predicted_file in tsv_files.items():
         # Get MD5 to species mapping from the TSV only
         assert sample.endswith(".all_reads") or sample in stem_to_meta, sample
-        for _marker, name, _taxid, sp_list in parse_species_tsv(
+        for marker, name, _taxid, sp_list in parse_species_tsv(
             predicted_file, min_abundance
         ):
             md5, abundance = split_read_name_abundance(name)
@@ -775,6 +781,10 @@ def main(
                 md5_species[md5].update(sp_list.split(";"))
             else:
                 md5_species[md5] = set(sp_list.split(";"))
+            if not marker_name:
+                marker_name = marker
+            elif marker_name != marker:
+                sys.exit(f"ERROR: Inconsistent markers, {marker_name} vs {marker}")
 
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
@@ -824,6 +834,7 @@ def main(
     sys.stderr.write(f"Wrote {report_stem}.samples.{method}.*\n")
 
     read_summary(
+        marker_name,
         md5_to_seq,
         md5_species,
         md5_abundance,
