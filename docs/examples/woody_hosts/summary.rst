@@ -182,13 +182,13 @@ versus sequenced samples (columns), with read abundance counts. There are
 additional columns with sequence information, and when :ref:`metadata` is
 present, extra rows at the start with sample information.
 
-This read report has a row for each unique sequence. The first columns are
-the unique sequence MD5 checksum, any species prediction, the sequence itself,
-the number of samples it was detected in above the threshold, the maximum
-number of reads with this sequence in any one sample, and the total number of
-reads (from samples where it was above the threshold). Then the main columns
-(one per sample) list the abundance of each unique sequence in that sample (if
-above the threshold).
+This read report has a row for each unique sequence. The first columns are the
+marker name (here always "ITS1"), the unique sequence MD5 checksum, any
+species prediction, the sequence itself, the number of samples it was detected
+in above the threshold, the maximum number of reads with this sequence in any
+one sample, and the total number of reads (from samples where it was above the
+threshold). Then the main columns (one per sample) list the abundance of each
+unique sequence in that sample (if above the threshold).
 
 In the Excel version, conditional formatting is used to highlight the non-zero
 counts with a red background. Furthermore, with metadata it will attempt to
