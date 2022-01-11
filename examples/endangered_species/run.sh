@@ -116,43 +116,6 @@ thapbi_pict pipeline -d references/pooled.sqlite --synthetic "" \
             -i raw_data/ expected/ -s intermediate/ --merged-cache tmp_merged/ \
             -o summary/ -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
-echo ===============
-echo Pooling markers
-echo ===============
-
-
-# This is a hack to make up for limited functionality within
-# THAPBI PICT itself; we may add a 'pool' command to the tool
-# to do this directly.
-rm -rf intermediate_pool/*
-echo "Pooling intermediate FASTA files..."
-# Excluding primer specific header lines with grep,
-# only want a single header
-for S in `cut -f 4 PRJEB18620.tsv | grep -v "sample_alias"`; do
-    echo "#marker:Pooled" > intermediate_pool/$S.fasta
-    grep "^#" intermediate/16S/$S.fasta | grep -v -E "(marker|_primer|cutadapt|abundance)" >> intermediate_pool/$S.fasta
-    cat intermediate/*/$S.fasta | grep -v "^#" >> intermediate_pool/$S.fasta
-done
-
-echo "Computing species list for combined header..."
-# Quick and dirty pooling by concatenating the intermediate per-marker TSV
-echo "Pooling intermediate onebp classifications..."
-rm -rf summary/pooled.all_reads.onebp.tsv
-echo -e "#Pooled/sequence-name\ttaxid\tgenus-species\tnote" > pooled.tmp
-cat summary/*.all_reads.onebp.tsv | grep -v "^#" >> pooled.tmp
-mv pooled.tmp summary/pooled.all_reads.onebp.tsv
-
-echo "Generating pooled reports for onebp classifier."
-# Now the reports:
-thapbi_pict summary -m onebp \
-    -i intermediate_pool/ summary/pooled.all_reads.onebp.tsv \
-    -o summary/pooled -t metadata.tsv -c 3,4,5 -x 2 -g 4
-
-# assessment... as of v0.8.1 need a DB giving possible species
-thapbi_pict assess -m onebp \
-    -i expected/ intermediate_pool/ summary/pooled.all_reads.onebp.tsv \
-    -d references/pooled.sqlite -o summary/pooled.assess.onebp.tsv
-
 echo ====
 echo Done
 echo ====
