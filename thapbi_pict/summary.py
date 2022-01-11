@@ -572,7 +572,8 @@ def read_summary(
             sample_formats[s],
         )
     current_row += 1
-    worksheet.freeze_panes(current_row, LEADING_COLS)  # keep total line in view plus headers
+    # keep total line in view plus headers:
+    worksheet.freeze_panes(current_row, LEADING_COLS)
 
     # Main body
     # ---------
