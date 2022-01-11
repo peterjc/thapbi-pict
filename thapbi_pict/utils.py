@@ -34,7 +34,10 @@ def valid_marker_name(text):
     May want to relax this later, thus defining this central function.
     """
     return (
-        text.replace("-", "").isalnum() and not iskeyword(text) and not text.isdigit()
+        text.replace("-", "").isalnum()
+        and not iskeyword(text)
+        and not text.isdigit()
+        and text != "pooled"
     )
 
 
