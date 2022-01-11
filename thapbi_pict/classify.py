@@ -26,6 +26,7 @@ from .utils import abundance_from_read_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import load_fasta_header
+from .utils import md5seq_16b
 from .utils import onebp_variants
 from .utils import run
 from .utils import species_level
@@ -33,6 +34,7 @@ from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
+use_fuzzy_only = False  # global variable for onebp classifier
 fuzzy_matches = None  # global variable for onebp classifier
 db_seqs = None  # global variable for onebp and 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
@@ -256,6 +258,7 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     Also setup dict of any entries in the DB with a single ambiguous base.
     """
     global db_seqs
+    global use_fuzzy_only
     global fuzzy_matches
 
     db_seqs = {
@@ -267,21 +270,45 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
         .distinct()
     }
 
-    unambiguous = set("ACGT")
     fuzzy_matches = {}
-    count = 0
-    for seq in db_seqs:
-        bad = [_ for _ in seq if _ not in unambiguous]
-        if len(bad) == 1:
-            # This has a chance to be matched with the onebp classifier
-            count += 1
-            for letter in unambiguous:
-                fuzzy_matches[seq.replace(bad[0], letter)] = seq
-    if debug and fuzzy_matches:
+    if len(db_seqs) <= 1000:
+        # Build a cloud, likely to be faster until being run on a trivial
+        # sample set. Will be much faster on an tiny ad-hoc DB.
+        use_fuzzy_only = True
+        for marker_seq in db_seqs:
+            for variant in onebp_variants(marker_seq):
+                md5_16b = md5seq_16b(variant)
+                try:
+                    # This variant is 1bp different to multiple DB entries...
+                    fuzzy_matches[md5_16b].append(marker_seq)
+                except KeyError:
+                    # Thus far this variant is only next to one DB entry:
+                    fuzzy_matches[md5_16b] = [marker_seq]
         sys.stderr.write(
-            f"DEBUG: Cloud of {len(fuzzy_matches)} from {count} DB entries"
-            " with one ambiguity\n"
+            f"Expanded {len(db_seqs)} marker sequences from DB into cloud of"
+            f" {len(fuzzy_matches)} 1bp different variants\n"
         )
+    else:
+        unambiguous = set("ACGT")
+        count = 0
+        for seq in db_seqs:
+            bad = [_ for _ in seq if _ not in unambiguous]
+            if len(bad) == 1:
+                # This has a chance to be matched with the onebp classifier
+                count += 1
+                for letter in unambiguous:
+                    md5_16b = md5seq_16b(seq.replace(bad[0], letter))
+                    try:
+                        # There must be another similar bad sequence
+                        # e.g. ACGTwACGT and ACGTnACGT
+                        fuzzy_matches[md5_16b].append(seq)
+                    except KeyError:
+                        fuzzy_matches[md5_16b] = [seq]
+        if debug and fuzzy_matches:
+            sys.stderr.write(
+                f"DEBUG: Cloud of {len(fuzzy_matches)} from {count} DB entries"
+                " with one ambiguity\n"
+            )
 
 
 def method_onebp(
@@ -330,12 +357,12 @@ def onebp_match_in_db(session, marker_name, seq, debug=False):
 
     # No species level exact matches, so do we have 1bp off match(es)?
     assert db_seqs
-    # Checking variants of the query sequence,
-    # the query sequence itself (not included in the above),
-    # any 1bp variants of DB entries with a single ambiguous base:
-    variants = onebp_variants(seq).union([seq])
-    if seq in fuzzy_matches:
-        variants.update([fuzzy_matches[seq]])
+    variants = set(fuzzy_matches.get(md5seq_16b(seq), [])).union([seq])
+    if not use_fuzzy_only:
+        # Checking variants of the query sequence, in addition to the query
+        # sequence itself and any 1bp variants of DB entries with a single
+        # ambiguous base:
+        variants.update(onebp_variants(seq))
     taxid, genus_species, _ = taxid_and_sp_lists(
         session.query(Taxonomy)
         .join(SeqSource)
