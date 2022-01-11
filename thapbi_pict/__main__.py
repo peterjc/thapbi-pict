@@ -401,6 +401,15 @@ def pipeline(args=None):
             sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
             sys.exit(return_code)
 
+    # TODO - Support known setting...
+    # TODO - Can we specify different expected results from diff markers?
+    known_files = find_requested_files(
+        args.input,
+        ".known.tsv",
+        ignore_prefixes=tuple(args.ignore_prefixes),
+        debug=args.verbose,
+    )
+
     all_classified_files = []
     for marker in markers:
         if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
@@ -470,14 +479,6 @@ def pipeline(args=None):
             session.close()
             sys.exit(return_code)
 
-        # TODO - Support known setting...
-        # TODO - Can we specify different expected results from diff markers?
-        known_files = find_requested_files(
-            args.input,
-            ".known.tsv",
-            ignore_prefixes=tuple(args.ignore_prefixes),
-            debug=args.verbose,
-        )
         if known_files:
             sys.stderr.write(f"Assessing {marker} classification...\n")
             return_code = assess(
@@ -497,9 +498,57 @@ def pipeline(args=None):
                 sys.stderr.write("ERROR: Pipeline aborted during assess\n")
                 session.close()
                 sys.exit(return_code)
-            sys.stderr.write(f"Wrote {stem}.assess*.{method}.*\n")
+            sys.stderr.write(f"Wrote {stem}.assess.*.{method}.*\n")
 
-    # TODO - pooled reports
+    if len(markers) > 1:
+        # Pooled marker report
+        if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
+            # Just a directory
+            stem = os.path.join(args.output, "pooled")
+        else:
+            # Have a filename stem (possibly with a directory)
+            stem = f"{args.output}.pooled"
+        return_code = summary(
+            inputs=all_fasta_files + all_classified_files,
+            report_stem=stem,
+            method=args.method,
+            min_abundance=args.abundance,
+            metadata_file=args.metadata,
+            metadata_encoding=args.metaencoding,
+            metadata_cols=args.metacols,
+            metadata_groups=args.metagroups,
+            metadata_fieldnames=args.metafields,
+            metadata_index=args.metaindex,
+            require_metadata=args.requiremeta,
+            show_unsequenced=args.unsequenced,
+            ignore_prefixes=tuple(args.ignore_prefixes),
+            debug=args.verbose,
+        )
+        if return_code:
+            sys.stderr.write("ERROR: Pipeline aborted during pooled marker summary\n")
+            session.close()
+            sys.exit(return_code)
+
+        if known_files:
+            sys.stderr.write("Assessing pooled classification...\n")
+            return_code = assess(
+                inputs=known_files + all_fasta_files + all_classified_files,
+                known="known",  # =args.known,
+                db_url=db,
+                marker=None,  # all of them!
+                method=args.method,
+                min_abundance=args.abundance,
+                assess_output=f"{stem}.assess.{method}.tsv",
+                map_output=f"{stem}.assess.tally.{method}.tsv",
+                confusion_output=f"{stem}.assess.confusion.{method}.tsv",
+                ignore_prefixes=tuple(args.ignore_prefixes),
+                debug=args.verbose,
+            )
+            if return_code:
+                sys.stderr.write("ERROR: Pipeline aborted during pooled assess\n")
+                session.close()
+                sys.exit(return_code)
+            sys.stderr.write(f"Wrote {stem}.assess.*.{method}.*\n")
 
     session.close()
 
