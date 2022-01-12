@@ -33,9 +33,9 @@ The 177 sequenced samples are made up of 17 experimental mixtures (including
 only two with replicates, 1.1GB) and 160 inter-laboratory trials (16 samples
 repeated in 10 laboratories, 5.4GB).
 
-This first downloads files from the ENA under ``raw_downloads/`` (a mix of
-``*.zip`` and ``*.fastq.gz`` files), and then sets up consistently named and
-compressed entries under ``raw_data/*.fastq.gz`` instead.
+This script first downloads files from the ENA under ``raw_downloads/`` (a mix
+of ``*.zip`` and ``*.fastq.gz`` files), and then sets up consistently named
+and compressed entries under ``raw_data/*.fastq.gz`` instead.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the files
 downloaded correctly:
@@ -52,10 +52,9 @@ There is no need to decompress the files.
 Amplicon primers & reference sequences
 --------------------------------------
 
-All the samples were all amplified with a dozen primers (see Table 1), meaning
-we need to run THAPBI PICT many times - which is not ideal. Also, to run this
-properly you would need a well curated database for each marker - FASTA files
-are provided to build rudimentary databases.
+All the samples were all amplified with a dozen primers (see Table 1). To
+interpret the data properly you would need a well curated database for each
+marker - FASTA files are provided to build a rudimentary database.
 
 Files ``references/*.fasta`` were compiled by hand on an *ad hoc* basis to
 use for pre-trimmed reference databases. They *should not* be used as is in
@@ -104,7 +103,7 @@ Note we have a single row for each set of replicates (two cases in the initial
 "Interlaboratory trial" samples), cross referenced to the individual runs
 with semi-colon separated lists in columns 1 (accession) and 2 (filename).
 
-When calling THAPBI PICT, the meta data commands are given as follows:
+When calling THAPBI PICT, the metadata commands are given as follows:
 
 .. code:: console
 
