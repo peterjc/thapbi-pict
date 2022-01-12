@@ -3,9 +3,7 @@ Pooled animal and plant DNA barcodes
 
 We have very briefly reviewed the output of each of the animal and plant
 markers, noting some have no sequences at the THAPBI PICT default minimum
-abundance threshold. Now we discuss the pooled results produced by the
-``run.sh`` shell script (which literally pooled the markers for each sample
-by concatenating the intermediate files together).
+abundance threshold. Now we discuss the pooled results.
 
 Sample report
 -------------
@@ -16,18 +14,18 @@ out you should have something like this:
 .. image:: https://user-images.githubusercontent.com/63959/118682572-7c4b1580-b7f8-11eb-8973-15f1b50543f9.png
    :alt: Excel screenshot showing summary/pooled.samples.onebp.xlsx
 
-Column H is the read count (non-zero for all the samples). The final column is
-the unknowns - and even at this zoom it is possible to see a solid red region
-for the two traditional medicine samples (wide green background bands).
+The final column is the unknowns - and even at this zoom it is possible to see
+a solid red region for the two traditional medicine samples (wide green
+background bands).
 
 Read report
 -----------
 
-To look at the unknown reads see ``summary/pooled.reads.onebp.xlsx``. Zoomed
-out should show something like this where the top half of the rows are those
-sequences with a species prediction in column B. It is clear that the majority
-of the unknown sequences are from the two traditional medicine samples (wide
-green bands):
+To look at the unknown reads see ``summary/pooled.reads.onebp.xlsx``. Sorting
+be the species prediction and zooming out should show something like this
+where the top half of the rows are those sequences with a species prediction.
+It is clear that the majority of the unknown sequences are from the two
+traditional medicine samples (wide green bands):
 
 .. image:: https://user-images.githubusercontent.com/63959/118682235-29715e00-b7f8-11eb-8dfb-bf18153a1ffa.png
    :alt: Excel screenshot showing pooled.reads.onebp.xlsx
@@ -139,3 +137,6 @@ lower bound.
 There also appear to be marker sequences in these control samples which have
 not yet been published, which would help by filling in gaps in the reference
 set used for classification.
+
+Also note we did not look at the multi-primer COI long marker, and perhaps the
+default ``onebp`` classifier is not appropriate for the Mini-rbcL marker.
