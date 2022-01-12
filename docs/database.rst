@@ -44,8 +44,8 @@ The default database is compiled from the following sets of sequences:
 - Four G-BLOCK synthetic controls in a FASTA file, imported using the
   ``thapbi_pict import`` command.
 
-These are vetted against the NCBI taxonomy, which downgrades unknown species
-to genus only entries.
+These are vetted against the NCBI taxonomy, meaning species not (yet) defined
+in the NCBI taxonomy are downgraded to unknown species.
 
 For further details see the ``database/README.rst`` file in the source code,
 and script ``database/build_ITS1_DB.sh`` which automates this.
@@ -54,9 +54,9 @@ Ambiguous bases in database
 ---------------------------
 
 Ideally all the reference sequences in your database will have unambiguous
-sequences only (A, C, G and T). However, some published species sequences will
-contain IUPAC ambiguity codes, especially if capillary sequenced. How this is
-handled will depend on the classifier algorithm used.
+sequences only (``A``, ``C``, ``G`` and ``T``). However, some published
+species sequences will contain IUPAC ambiguity codes, especially if capillary
+sequenced. How this is handled will depend on the classifier algorithm used.
 
 For example *Phytophthora condilina* accession ``KJ372262`` has a single ``W``
 meaning ``A`` or ``T``. In this case for *P. condilina* in our curated set, we
