@@ -776,6 +776,10 @@ def main(
     blank_stats = [-1] * len(stats_fields)
     sample_stats = {}
 
+    if not markers:
+        # Corner case of zero sequences in all markers?
+        assert not marker_md5_species
+
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
     for sample, fasta_files in fasta_files.items():
@@ -786,7 +790,6 @@ def main(
             fasta_header = load_fasta_header(fasta_file)
             assert "marker" in fasta_header, f"{fasta_file} gave {fasta_header}"
             marker = fasta_header["marker"]
-            assert marker in markers, fasta_file
 
             sample_stats[sample] = values = [
                 fasta_header.get(_, -1) for _ in stats_headers
@@ -800,8 +803,9 @@ def main(
             del values
 
             with open(fasta_file) as handle:
-                # TODO - get marker name here too
                 for title, seq in SimpleFastaParser(handle):
+                    # Note: marker might not be in markers if FASTA has no seqs
+                    assert marker in markers, fasta_file
                     md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
                     if min_abundance > 1 and abundance < min_abundance:
                         continue
