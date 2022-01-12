@@ -69,8 +69,8 @@ Classification output
 ---------------------
 
 The classifier output is at unique sequence level, reporting zero or more
-species matches (or genus matches if sequences in the database are recorded
-at genus leve only).
+species matches (or genus matches from some classifiers, or if sequences in
+the database are recorded at genus leve only).
 
 For example, an ITS1 sequence from a known *Phytophthora infestans* single
 isolate control can in addition to this expected result also perfectly match
@@ -102,7 +102,7 @@ formatted Excel spreadsheets).
 - **Read report**. Table of unique sequences as rows, and samples as columns,
   with read counts (sequence abundance) as values. Includes any species
   classification and the sequences themselves as additional columns. Can
-  include sample metadata as additional rows.
+  include sample metadata as additional header rows.
 - **Edit graph**. Represents all the unique sequences in the sample (plus
   optionally all those in the reference database) as nodes with edges between
   them for edit distance (solid black lines for 1bp, dashed grey for 2bp, and
