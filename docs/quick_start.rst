@@ -5,7 +5,7 @@ Quick Start
 
 Here we describe a simplified use of the THAPBI PICT tool to assess a single
 Illumina MiSeq sequencing run. The input data is a set of paired FASTQ files
-(one for each sample), perhaps barcoded samples from a 96-well plate.
+(one pair for each sample), perhaps barcoded samples from a 96-well plate.
 
 .. image:: images/pipeline.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
@@ -100,9 +100,10 @@ Intermediate FASTA files
 The first stage of the pipeline can be run separately as the
 ``thapbi_pict prepare`` command. Here each pair of FASTQ files named something
 like ``<sample_name>_R1.fastq.gz`` and ``<sample_name>_R2.fastq.gz`` is
-processed to give a much smaller FASTA format file ``<sample_name>.fasta``
-containing all the unique sequences from that sample which have the expected
-primers (so here should resemble an ITS1 sequence or our synthetic controls).
+processed to give a much smaller FASTA format files
+``<marker_name>/<sample_name>.fasta`` for each marker, containing all the
+unique sequences from that sample which have the expected primers (so here
+should resemble an ITS1 sequence or our synthetic controls).
 
 In these FASTA files, each sequence is named as ``<checksum>_<abundance>``
 where the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_ of the
@@ -110,12 +111,13 @@ sequence and is used as a unique shorthand - a 32 character string of the
 digits ``0`` to ``9`` and lower cases letters ``a`` to ``f`` inclusive.
 These MD5 checksums are used later in the pipeline, including in some reports.
 
-Unusually the intermediate FASTA files start with a header made of multiple
-lines starting with ``#``, which record information about the sample for use
-in reporting. This includes how many raw reads the FASTQ files had, how many
-were left after quality trimming, pair merging, primer trimming, and finally
-the abundance threshold. Many tools will accept these files as FASTA without
-complaint, but some tools require the header be removed.
+The intermediate FASTA files start with a header made of multiple lines
+starting with ``#``, which record information about the sample for use in
+reporting. This includes which marker this was and the primers, how many raw
+reads the FASTQ files had, how many were left after pair merging, primer
+trimming, and finally the abundance threshold. Many tools will accept these
+files as FASTA without complaint, but some tools require the header be
+removed.
 
 The second stage of the pipeline can be run separately as the ``thapbi_pict
 fasta-nr`` command. This produces a pooled non-redundant FASTA file with all
@@ -173,9 +175,9 @@ filenames from the above example:
 This read report has a row for each unique sequence. The first columns are the
 unique sequence MD5 checksum, any species prediction, the sequence itself, the
 number of samples it was detected in above the threshold, and the total number
-of times this was seen (in samples where it was above the threshold). Then
-the main columns (one per sample) list the abundance of each unique sequence
-in that sample (if above the threshold).
+of times this was seen (in samples where it was above the threshold). Then the
+main columns (one per sample) list the abundance of each unique sequence in
+that sample (if above the threshold).
 
 In the Excel version, conditional formatting is used to highlight the non-zero
 counts with a red background.
