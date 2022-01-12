@@ -40,25 +40,25 @@ if [ -d tests/woody_hosts/raw_data/ ]; then
     echo "================================="
     mkdir $TMP/intermediate_new
     time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
-    for f in $TMP/intermediate/*.fasta; do
+    for f in $TMP/intermediate/ITS1/*.fasta; do
         echo diff $f $TMP/intermediate_new/ITS1/${f##*/}
         diff $f $TMP/intermediate_new/ITS1/${f##*/}
     done
 else
     echo "To check how much tests/woody_hosts/intermediate.tar.bz2 is out of date,"
     echo 'use: $ ln -s $PWD/examples/woody_hosts/raw_data tests/woody_hosts/'
-    echo "(and then re-run tests/test_woody_hosts.sh)"
+    echo "and then re-run tests/test_woody_hosts.sh which will report first diff."
+    echo "Replace the old FASTA files, then in the updated intermediate folder run:"
+    echo '$ tar -cvjf intermediate.tar.bz2 intermediate/ITS1/*.fasta'
 fi
 
 echo "======================================="
 echo "Running woody hosts fasta-nr & classify"
 echo "======================================="
-thapbi_pict fasta-nr -i $TMP/intermediate/*.fasta -o $TMP/woody_hosts.all_reads.fasta
+thapbi_pict fasta-nr -i $TMP/intermediate/ITS1/*.fasta -o $TMP/woody_hosts.all_reads.fasta
+echo diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
 diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
 for M in onebp identity blast; do
-    # Writing to stdout to set a single filename.
-    # Discarding the comment column, and the header,
-    # leaving the most stable core part of the output
     thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -m $M
     echo diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
@@ -73,7 +73,7 @@ ls $TMP/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
-time thapbi_pict summary -i $TMP/intermediate/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
+time thapbi_pict summary -i $TMP/intermediate/ITS1/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/with-metadata \
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
