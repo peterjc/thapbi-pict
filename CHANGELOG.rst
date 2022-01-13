@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.11.0 *Pending*  Multi-marker reports.
+v0.11.0 2022-01-13 Multi-marker reports, pooling predictions from each marker..
 v0.10.6 2022-01-12 Fixed slow-down in v0.10.0 on large datasets with small DB.
 v0.10.5 2021-12-23 Default for ``-f`` / ``--abundance-fraction`` is now 0.001, meaning 0.1%.
 v0.10.4 2021-11-24 Updates to default curated DB, including newer NCBI taxonomy.
