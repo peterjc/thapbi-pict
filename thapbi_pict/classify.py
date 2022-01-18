@@ -15,7 +15,7 @@ from collections import Counter
 from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Levenshtein import distance as levenshtein
+from rapidfuzz.string_metric import levenshtein
 
 from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
