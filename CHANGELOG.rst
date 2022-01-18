@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.11.1 2022-01-18 Using ``rapidfuzz`` rather than ``python-Levenshtein``.
 v0.11.0 2022-01-13 Multi-marker reports, pooling predictions from each marker.
 v0.10.6 2022-01-12 Fixed slow-down in v0.10.0 on large datasets with small DB.
 v0.10.5 2021-12-23 Default for ``-f`` / ``--abundance-fraction`` is now 0.001, meaning 0.1%.

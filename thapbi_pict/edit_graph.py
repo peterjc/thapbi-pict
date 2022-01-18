@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Levenshtein import distance as levenshtein
+from rapidfuzz.string_metric import levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
