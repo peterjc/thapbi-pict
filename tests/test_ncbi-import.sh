@@ -48,7 +48,7 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "3003" ]; then echo "Wr
 # NCBI import at genus level only, as used in bundled ITS1_DB.sqlite
 # 5 sequences all with multiple HMM matches, but after primer trimming most become single HMM entries.
 cutadapt --quiet -g $LEFT tests/ncbi-import/multiple_hmm.fasta \
-| cutadapt --quiet -a $RIGHT_RC -o $TMP/multiple_hmm.fasta /dev/stdin
+| cutadapt --quiet -a $RIGHT_RC -o $TMP/multiple_hmm.fasta -
 thapbi_pict import -k ITS1 -l $LEFT -r $RIGHT -c ncbi -d $DB -g -i $TMP/multiple_hmm.fasta \
             -n "NCBI examples with multiple HMM matches"
 # WARNING: 2 HMM matches in MF095142.1
@@ -71,11 +71,11 @@ if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM marker_sequence;"` -ne "217
 # When importing NCBI files, we no longer assume P. is Phytophthora:
 rm -rf $TMP/20th_Century_ITS1.fasta $TMP/20th_Century_ITS1_Peronosporaceae.fasta
 cat tests/ncbi-import/20th_Century_ITS1.fasta | sed "s/ P\./ Phytophthora /g" \
-| cutadapt --quiet -g $LEFT /dev/stdin \
-| cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1.fasta /dev/stdin
+| cutadapt --quiet -g $LEFT - \
+| cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1.fasta -
 cat tests/ncbi-import/20th_Century_ITS1_Peronosporaceae.fasta | sed "s/ P\./ Phytophthora /g" \
-| cutadapt --quiet -g $LEFT /dev/stdin \
-| cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1_Peronosporaceae.fasta /dev/stdin
+| cutadapt --quiet -g $LEFT - \
+| cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1_Peronosporaceae.fasta -
 
 export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
