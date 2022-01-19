@@ -1,0 +1,68 @@
+skip_tags: true
+clone_depth: 1
+
+os: Visual Studio 2022
+
+# Convert line endings for Windows (wanted test output)
+init:
+  - git config --global core.autocrlf true
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python310-x64"
+    # - PYTHON: "C:\\Python310"
+
+matrix:
+  fast_finish: true
+
+install:
+  # If there's a newer build queued for the same PR, cancel this one
+  - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
+        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
+        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
+        throw "There are newer queued builds for this pull request, failing early." }
+
+  # Prepend preferred Python to the PATH to make it the default
+  # Will stick random binary tools there too
+  - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+  # Check that we have the expected version and architecture for Python
+  - python --version
+  - python -m pip install -U pip setuptools virtualenv wheel
+  #- python -m pip install -r requirements.txt
+  - echo "Installing sqlite3"
+  - curl -O "https://www3.sqlite.org/2022/sqlite-tools-win32-x86-3370200.zip"
+  - unzip sqlite-tools-win32-x86-3370200.zip
+  - mv sqlite-tools-win32-x86-3370200/sqlite3.exe %PYTHON%\\
+  - echo "Installing flash"
+  - curl -O "https://ccb.jhu.edu/software/FLASH/FLASH-1.2.11-windows-bin.zip"
+  - unzip FLASH-1.2.11-windows-bin.zip
+  - mv flash.exe %PYTHON%\\
+
+build_script:
+  # Build wheel
+  - git checkout %BUILD_COMMIT%
+  - rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
+  - sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+  - chmod a-w thapbi_pict/ITS1_DB.sqlite
+  - python setup.py sdist --formats=gztar
+  - python setup.py bdist_wheel
+  - echo "Installing our wheel..."
+  - cd dist
+  - for %%w in (*.whl) do pip install %%w
+  - cd ..
+  - echo "THAPBI PICT should now be installed"
+  - thapbi_pict -v
+
+test_script:
+  # Change into an clean new directory:
+  - mkdir for_testing
+  - cd for_testing
+  # extract test files (etc) from tar ball, run them:
+  - for %%f in (../dist/thapbi_pict-*.tar.gz) do tar -zxvf ../dist/%%f
+  - for /D %%d in (thapbi_pict-*) do cd %%d
+  # Run the tests (and confirm the tar-ball is complete)
+  - bash -c tests/run_tests.sh
+  - cd ../..
+
+artifacts:
+  - path: "dist\\*"
