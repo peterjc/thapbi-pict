@@ -10,6 +10,9 @@
 .. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=CI&logo=CircleCI
    :alt: CircleCI status
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
+.. image:: https://img.shields.io/appveyor/ci/peterjc/thapbi-pict/master.svg?logo=appveyor
+   :alt: AppVeyor status
+   :target: https://ci.appveyor.com/project/peterjc/thapbi-pict/history
 .. image:: https://img.shields.io/readthedocs/thapbi-pict.svg?label=RTD&logo=read-the-docs
    :alt: Documentation Status
    :target: https://readthedocs.org/projects/thapbi-pict/builds/
