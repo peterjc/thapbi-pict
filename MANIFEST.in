@@ -76,18 +76,6 @@ include examples/fungal_mock/metadata_AL2.tsv
 include examples/fungal_mock/raw_data/AL2/MD5SUM.txt
 include examples/fungal_mock/raw_data/AL2/MD5SUM.txt
 
-include examples/microalgal_mock/README.rst
-include examples/microalgal_mock/PRJNA314977.tsv
-include examples/microalgal_mock/mock_community.fasta
-include examples/microalgal_mock/mock_community.known.tsv
-include examples/microalgal_mock/mock_freshwater.known.tsv
-include examples/microalgal_mock/mock_marine.known.tsv
-include examples/microalgal_mock/setup.sh
-include examples/microalgal_mock/run.sh
-include examples/microalgal_mock/metadata.tsv
-include examples/microalgal_mock/raw_data/V4/MD5SUM.txt
-include examples/microalgal_mock/raw_data/V8V9/MD5SUM.txt
-
 include examples/great_lakes/README.rst
 include examples/great_lakes/PRJNA379165.tsv
 include examples/great_lakes/setup.sh
