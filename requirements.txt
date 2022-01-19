@@ -6,6 +6,7 @@
 #
 # $ conda install --file requirements.txt
 #
+# We assume you have the default channel, conda-forge, and bioconda.
 
 biopython
 cutadapt >= 3.4

@@ -2,6 +2,7 @@
 #
 # $ conda install --file requirements-ext.txt
 #
+# We assume you have the default channel, conda-forge, and bioconda.
 
 blast
 flash
