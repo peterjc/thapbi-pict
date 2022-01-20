@@ -44,16 +44,9 @@ continuous integration services:
 Dependencies
 ------------
 
-For end users on Linux of macOS, we recommend installing using the
-`Conda <https://conda.io/>`__ packaging system, via the
-`BioConda <https://bioconda.github.io/>`__ channel, which will handle
-*all* the dependencies:
-
-https://anaconda.org/bioconda/thapbi-pict
-
-You can install all the dependencies using conda, or opt to install the
-Python dependencies from `PyPI <https://pypi.python.org/>`__ with ``pip``
-(via the declarations in our ``setup.py``). Either should be fine.
+See the main installation instructions for end users. For developement we need
+Python, a bash shell, git, and various other command line dependencies.
+Installing THAPBI PICT from source (see below), will fetch Python dependencies.
 
 The two requirements files (``requirements.txt`` for Python dependencies, and
 ``requirements-ext.txt`` for external command line bioinformatics tools) are
@@ -61,8 +54,18 @@ used in the continuous integration testing. These files can contain exact
 pinned dependency versions, allowing us to define a more reproducible
 environment for running this software if needed.
 
-On Windows, you can install the Python dependencies with ``pip``, but few
-of the command line tools are on conda and so must be setup manually.
+On Linux or macOS, you should have the bash shell and standard Unix tools like
+``grep`` already installed. We recommend installing our specific command line
+tool dependencies with  `Conda <https://conda.io/>`__ packaging system, via
+the `BioConda <https://bioconda.github.io/>`__ channel:
+
+.. code:: console
+
+    $ conda install --file requirements-ext.txt
+
+On Windows, few of the dependencies are available via Conda. The `Git For Windows
+<https://gitforwindows.org>`_ installer will provide ``git``, ``bash``, ``grep``,
+etc. You will also need to manually install sqlite3, flash, and NCBI BLAST.
 
 Installing from source
 ----------------------
