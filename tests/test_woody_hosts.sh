@@ -58,7 +58,7 @@ echo "======================================="
 thapbi_pict fasta-nr -i $TMP/intermediate/ITS1/*.fasta -o $TMP/woody_hosts.all_reads.fasta
 echo diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
 diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
-for M in onebp identity blast; do
+for M in onebp identity; do
     thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -m $M
     echo diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
