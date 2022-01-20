@@ -38,13 +38,13 @@ Continuous Integration
 Currently this is setup to do automated testing under Linux using free
 continuous integration services:
 
-* CircleCI: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
-
+* CircleCI (Linux): https://circleci.com/gh/peterjc/thapbi-pict/tree/master
+* AppVeyor (Windows): https://ci.appveyor.com/project/peterjc/thapbi-pict/history
 
 Dependencies
 ------------
 
-For end users, we recommend installing using the
+For end users on Linux of macOS, we recommend installing using the
 `Conda <https://conda.io/>`__ packaging system, via the
 `BioConda <https://bioconda.github.io/>`__ channel, which will handle
 *all* the dependencies:
@@ -60,6 +60,9 @@ The two requirements files (``requirements.txt`` for Python dependencies, and
 used in the continuous integration testing. These files can contain exact
 pinned dependency versions, allowing us to define a more reproducible
 environment for running this software if needed.
+
+On Windows, you can install the Python dependencies with ``pip``, but few
+of the command line tools are on conda and so must be setup manually.
 
 Installing from source
 ----------------------
