@@ -8,7 +8,11 @@ thapbi_pict.egg-info
 #Ignore the distribution directory
 dist
 
-#Sphinx output
+#Sphinx temp files and output
+docs/api/Makefile
+docs/api/conf.py
+docs/api/make.bat
+docs/api/thapbi_pict.*.rst
 docs/_build
 docs/_static
 docs/_templates
