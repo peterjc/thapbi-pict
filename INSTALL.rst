@@ -22,8 +22,8 @@ with its Python dependencies:
     $ pip install thapbi_pict
 
 However, in this case you will still need to install at least the command line
-tool ``flash`` (for merging Illumina paired reads), and optionally others used
-for some classifier methods (like ``blast``). If you have BioConda setup, use
+tool ``flash`` (for merging Illumina paired reads), and optionally others like
+NCBI BLAST+ (used for one classifier methods). If you have BioConda setup, use
 the following:
 
 .. code:: console
@@ -41,11 +41,12 @@ On Debian (with the efforts of DebianMed), or Ubuntu Linux, try:
     $ sudo apt-get install ncbi-blast+
 
 If you are on Windows, and do not wish to or cannot use the Windows Subsystem
-for Linux (WSL), using the tool should still be possible although not all the
-command line dependencies are available on Conda. You can install Flash using
-the pre-compiled binary from https://ccb.jhu.edu/software/FLASH/ and BLAST
-(if required) from the NCBI, and there are alternatives to ``unzip`` and
-``md5sum`` for following the worked examples.
+for Linux (WSL), the tool can be installed with ``pip``, but you will have to
+manually install the command line dependencies. Download a pre-compiled binary
+from https://ccb.jhu.edu/software/FLASH/ and BLAST+ (if required) from the
+NCBI, and ensure they are on the system PATH. To run the test suite and worked
+example scripts, you will also need a bash shell with basic Unix tools like
+grep.
 
 If you want to install the very latest unreleased code, you must download the
 source code from the `repository on GitHub
