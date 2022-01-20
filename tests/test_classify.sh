@@ -58,20 +58,26 @@ if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
-for M in identity onebp substr blast 1s3g; do
+methods=(identity onebp substr 1s3g)
+if [ -x "$(command -v blastn)" ]; then methods+=(blast); fi
+for M in "${methods[@]}"; do
     echo "Checking single isolate control with $M"
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
 done
 
 rm -rf $TMP/hmm_trim.*.tsv
-for M in identity onebp blast 1s3g; do
+methods=(identity onebp 1s3g)
+if [ -x "$(command -v blastn)" ]; then methods+=(blast); fi
+for M in "${methods[@]}"; do
     echo "Checking HMM trim corner cases with $M"
     thapbi_pict classify -d $DB -i tests/classify/hmm_trim.fasta -o $TMP/ -m $M -a 50
     diff $TMP/hmm_trim.$M.tsv tests/classify/hmm_trim.$M.tsv
 done
 
-for M in identity onebp blast 1s2g 1s3g 1s4g 1s5g; do
+methods=(identity onebp 1s2g 1s3g 1s4g 1s5g)
+if [ -x "$(command -v blastn)" ]; then methods+=(blast); fi
+for M in "${methods[@]}"; do
     # Using default DB
     echo "Checking genus corner cases with $M"
     thapbi_pict classify -i tests/classifier/corner_cases_query.fasta -o $TMP/ -m $M -k ITS1
