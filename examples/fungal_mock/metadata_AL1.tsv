@@ -1,6 +1,6 @@
 Accession	MiSeq-name	Condition	Replicate	Sample-type	Group	Protocol
 SRR5314337	FMockE.HC_S190	MockE_HC	1	fungal mock community	even	high PCR cycle number
-SRR5314339	FMockE.HC1_S178	MockE_HC	1	fungal mock community	even	high PCR cycle number
+SRR5314339	FMockE.HC1_S178	MockE_HC	2	fungal mock community	even	high PCR cycle number
 SRR5314338	FMockE.HC3_S107	MockE_HC	3	fungal mock community	even	high PCR cycle number
 SRR5314336	FMockE.LE1_S165	MockE_LE	1	fungal mock community	even	long PCR extension time
 SRR5314335	FMockE.LE2_S177	MockE_LE	2	fungal mock community	even	long PCR extension time
