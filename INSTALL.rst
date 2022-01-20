@@ -23,7 +23,7 @@ with its Python dependencies:
 
 However, in this case you will still need to install at least the command line
 tool ``flash`` (for merging Illumina paired reads), and optionally others like
-NCBI BLAST+ (used for one classifier methods). If you have BioConda setup, use
+NCBI BLAST+ (used for one classifier method). If you have BioConda setup, use
 the following:
 
 .. code:: console
