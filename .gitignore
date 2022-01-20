@@ -30,12 +30,9 @@ database/new_taxdump_20*
 examples/*/expected/
 examples/*/taxdmp_20*
 examples/*/tmp_merged/
-examples/*/intermediate/
+examples/*/intermediate*/
 examples/*/summary/
 #Misc special cases:
-examples/fungal_mock/amp_lib_*/expected/
-examples/fungal_mock/amp_lib_*/intermediate/
-examples/fungal_mock/amp_lib_*/summary/
 examples/recycled_water/Redekar_et_al_2019_sup_table_3.xgmml
 examples/fecal_sequel/COI_430_bats.fasta
 
