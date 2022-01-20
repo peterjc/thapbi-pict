@@ -44,7 +44,7 @@ continuous integration services:
 Dependencies
 ------------
 
-See the main installation instructions for end users. For developement we need
+See the main installation instructions for end users. For development we need
 Python, a bash shell, git, and various other command line dependencies.
 Installing THAPBI PICT from source (see below), will fetch Python dependencies.
 
