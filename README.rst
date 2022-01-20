@@ -68,21 +68,17 @@ We recommend installing this tool on Linux or macOS using the
 
    $ conda install thapbi_pict
 
-Alternatively, since `the software is on the Python Package Index (PyPI)
-<https://pypi.org/project/thapbi-pict/>`__, the following command will install
-it along with its Python dependencies:
+Alternatively or on Windows, since `the software is on the Python Package
+Index (PyPI) <https://pypi.org/project/thapbi-pict/>`__, the following command
+will install it along with its Python dependencies:
 
 .. code:: console
 
    $ pip install thapbi_pict
 
 However, in this case you will still need to install various external command
-line tools. See ``INSTALL.rst`` for more details, and if you want to modify
-the software read ``CONTRIBUTING.rst`` as well.
-
-If you are on Windows, and do not wish to or cannot use the Windows Subsystem
-for Linux (WSL), using the tool should still be possible. See ``INSTALL.rst``
-for more details.
+line tools. See ``INSTALL.rst`` for more details (especially for Windows),
+and if you want to modify the software read ``CONTRIBUTING.rst`` as well.
 
 Quick Start
 -----------
