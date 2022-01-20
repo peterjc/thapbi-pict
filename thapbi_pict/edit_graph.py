@@ -64,7 +64,7 @@ genus_color = {
 }
 
 
-def write_pdf(G, filename):
+def write_pdf(G, handle):
     """Render NetworkX graph to PDF using GraphViz fdp."""
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
     default = G.graph["node_default"]["color"]
@@ -97,95 +97,96 @@ def write_pdf(G, filename):
     )
     nx.draw_networkx_labels(G, placement, node_labels, font_size=4)
     plt.axis("off")
-    if filename in ["-", "/dev/stdout"]:
-        plt.savefig(sys.stdout.buffer, format="pdf")
-    else:
-        plt.savefig(filename, format="pdf")
+    plt.savefig(handle, format="pdf")
 
 
-def write_xgmml(G, filename, name="THAPBI PICT edit-graph"):
+def write_xgmml(G, handle, name="THAPBI PICT edit-graph"):
     """Save graph in XGMML format suitable for Cytoscape import."""
     # Not currently supported in NetworkX, and third party
     # package networkxgmml is not up to date (Python 3,
     # setting graphical properties on edges). So, DIY time!
-    with open(filename, "w") as handle:
-        handle.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
+    handle.write(b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
+    handle.write(
+        b'<graph directed="0"  xmlns:dc="http://purl.org/dc/elements/1.1/" '
+        b'xmlns:xlink="http://www.w3.org/1999/xlink" '
+        b'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
+        b'xmlns="http://www.cs.rpi.edu/XGMML">\n'
+    )
+    for n in G:
+        node = G.nodes[n]
+        try:
+            label = node["label"].replace("\n", ";")  # Undo newline for Graphviz
+        except KeyError:
+            label = None
+        if not label:
+            label = "{%a}" % n[:6]  # start of MD5, prefixed for sorting
+        # weight = node["weight"]
+        handle.write(b'  <node id="{%a}" label="{%a}">\n' % (n, label))
+        color = node["color"]
+        # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
+        # Rescale to use range 5 to 50.
+        size = (node["size"] * 0.45) + 5.0
         handle.write(
-            '<graph directed="0"  xmlns:dc="http://purl.org/dc/elements/1.1/" '
-            'xmlns:xlink="http://www.w3.org/1999/xlink" '
-            'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
-            'xmlns="http://www.cs.rpi.edu/XGMML">\n'
+            b'    <graphics type="CIRCLE" fill="{%a}" outline="#000000" '
+            b'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
         )
-        for n in G:
-            node = G.nodes[n]
-            try:
-                label = node["label"].replace("\n", ";")  # Undo newline for Graphviz
-            except KeyError:
-                label = None
-            if not label:
-                label = "{%s}" % n[:6]  # start of MD5, prefixed for sorting
-            # weight = node["weight"]
-            handle.write(f'  <node id="{n}" label="{label}">\n')
-            color = node["color"]
-            # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
-            # Rescale to use range 5 to 50.
-            size = (node["size"] * 0.45) + 5.0
+        # Cytoscape hides the node ID (presumably assumes not usually user facing):
+        handle.write(b'    <att type="string" name="MD5" value="{%a}"/>\n' % n)
+        handle.write(
+            b'    <att type="integer" name="Total-abundance" value="%i"/>\n'
+            % node.get("total_abundance", 0)
+        )
+        handle.write(
+            b'    <att type="integer" name="Max-sample-abundance" value="%i"/>\n'
+            % node.get("max_sample_abundance", 0)
+        )
+        handle.write(
+            b'    <att type="integer" name="Sample-count" value="%i"/>\n'
+            % node.get("sample_count", 0)
+        )
+        handle.write(
+            b'    <att type="integer" name="in-db" value="%i"/>\n'
+            % (1 if node.get("in_db", False) else 0)
+        )
+        if node["genus"]:
+            # Are there any non-ASCII genus names?
             handle.write(
-                f'    <graphics type="CIRCLE" fill="{color}" outline="#000000" '
-                'h="%0.2f" w="%0.2f"/>\n' % (size, size)
+                b'    <att type="string" name="Genus" value="%a"/>\n' % node["genus"]
             )
-            # Cytoscape hides the node ID (presumably assumes not usually user facing):
-            handle.write(f'    <att type="string" name="MD5" value="{n}"/>\n')
+        if node["taxonomy"]:
+            # TODO - how to encode any non-ASCII species names?
+            # e.g. For hybrids the NCBI avoids the multiplication sign
+            # "×" in favour of the letter "x".
+            # https://doi.org/10.1093/database/baaa062
             handle.write(
-                '    <att type="integer" name="Total-abundance" value="%i"/>\n'
-                % node.get("total_abundance", 0)
+                b'    <att type="string" name="Taxonomy" value="%a"/>\n'
+                % node["taxonomy"]
             )
+        handle.write(b"  </node>\n")
+    for n1, n2 in G.edges():
+        edge = G.edges[n1, n2]
+        handle.write(
+            b'  <edge source="%a" target="%a" weight="%0.2f">\n'
+            % (n1, n2, edge["weight"])
+        )
+        # edge["style"]  # Not in XGMML?
+        handle.write(
+            b'    <graphics fill="%a" width="%0.1f"/>\n'
+            % (edge["color"], edge["width"])
+        )
+        if "edit_dist" in edge:
             handle.write(
-                '    <att type="integer" name="Max-sample-abundance" value="%i"/>\n'
-                % node.get("max_sample_abundance", 0)
+                b'    <att type="integer" name="Edit-distance" value="%i"/>\n'
+                % edge["edit_dist"]
             )
-            handle.write(
-                '    <att type="integer" name="Sample-count" value="%i"/>\n'
-                % node.get("sample_count", 0)
-            )
-            handle.write(
-                '    <att type="integer" name="in-db" value="%i"/>\n'
-                % (1 if node.get("in_db", False) else 0)
-            )
-            if node["genus"]:
-                handle.write(
-                    '    <att type="string" name="Genus" value="%s"/>\n' % node["genus"]
-                )
-            if node["taxonomy"]:
-                handle.write(
-                    '    <att type="string" name="Taxonomy" value="%s"/>\n'
-                    % node["taxonomy"]
-                )
-            handle.write("  </node>\n")
-        for n1, n2 in G.edges():
-            edge = G.edges[n1, n2]
-            handle.write(
-                '  <edge source="%s" target="%s" weight="%0.2f">\n'
-                % (n1, n2, edge["weight"])
-            )
-            # edge["style"]  # Not in XGMML?
-            handle.write(
-                '    <graphics fill="%s" width="%0.1f"/>\n'
-                % (edge["color"], edge["width"])
-            )
-            if "edit_dist" in edge:
-                handle.write(
-                    '    <att type="integer" name="Edit-distance" value="%i"/>\n'
-                    % edge["edit_dist"]
-                )
-            # Seems Cytoscape does not expose the weight attribute above
-            # in the user-facing edge table, so doing it again here:
-            handle.write(
-                '    <att type="integer" name="Edit-distance-weight" value="%i"/>\n'
-                % edge["weight"]
-            )
-            handle.write("  </edge>\n")
-        handle.write("</graph>\n")
+        # Seems Cytoscape does not expose the weight attribute above
+        # in the user-facing edge table, so doing it again here:
+        handle.write(
+            b'    <att type="integer" name="Edit-distance-weight" value="%i"/>\n'
+            % edge["weight"]
+        )
+        handle.write(b"  </edge>\n")
+    handle.write(b"</graph>\n")
 
 
 def main(
@@ -444,7 +445,7 @@ def main(
         )
 
     if graph_format == "matrix":
-        if graph_output == "-":
+        if graph_output in ("-", "/dev/stdout"):
             handle = sys.stdout
         else:
             handle = open(graph_output, "w")
@@ -619,6 +620,11 @@ def main(
         # Typically this would be caught in __main__.py
         sys.exit(f"ERROR: Unexpected graph output format: {graph_format}")
 
-    write_fn(G, "/dev/stdout" if graph_output == "-" else graph_output)
+    # Output is in bytes (following NetworkX functions):
+    if graph_output in ("-", "/dev/stdout"):
+        write_fn(G, sys.stdout.buffer)
+    else:
+        with open(graph_output, "wb") as handle:
+            write_fn(G, handle)
 
     return 0
