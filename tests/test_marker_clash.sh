@@ -48,7 +48,7 @@ thapbi_pict conflicts -d $DB -o $TMP/conflicts.tsv | true
 set -o pipefail
 diff $TMP/conflicts.tsv tests/marker_clash/conflicts.tsv
 
-for M in identity onebp substr 1s2g 1s3g 1s4g 1s5g blast; do
+for M in identity onebp substr 1s5g; do
     # This should work, making it explicit to use ITS1:
     rm -rf $TMP/*.tsv
     thapbi_pict classify -m $M  -d $DB -i tests/marker_clash/GBLOCK-example.fasta -o $TMP/ -k ITS1

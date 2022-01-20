@@ -39,16 +39,13 @@ if [ "`grep -c -v '^#' $TMP/input/Phytophthora_ITS1_curated.identity.tsv`" -ne "
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
-rm -rf $TMP/thapbi_blast
 rm -rf $TMP/thapbi_1s3g
 mkdir -p $TMP/thapbi_onebp
-mkdir -p $TMP/thapbi_blast
 mkdir -p $TMP/thapbi_1s3g
 
 # Explicitly setting output directory, would be here anyway:
 thapbi_pict classify -m identity -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
 thapbi_pict classify -m onebp -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_onebp
-thapbi_pict classify -m blast -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/thapbi_blast
 thapbi_pict classify -m 1s3g -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/1s3g
 
 # Passing one directory name (should get all 2 FASTA files):
