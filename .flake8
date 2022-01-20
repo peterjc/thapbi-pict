@@ -10,6 +10,8 @@ extend-ignore =
     SFS301,
     # Still have a few string percent formatting lines,
     SFS101,
+    # Can't use f-strings for bytes, so percent is OK
+    SFS102,
 
 # =====================
 # flake-quote settings:
