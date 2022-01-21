@@ -621,14 +621,15 @@ def prepare_sample(
         )
     assert bool(sum(max_spike_abundance.values())) == bool(accepted_uniq_count)
     if debug:
-        sys.stderr.write(
-            "DEBUG:"
-            f" FASTQ pairs {count_raw}; flash -> {count_flash};"
-            f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
-            f" min abundance {min_abundance} -> {accepted_total}"
-            f" [{accepted_uniq_count} unique]"
-            f", or {accepted_total*100.0/count_raw:0.1f}%\n"
-        )
+        if count_raw:
+            sys.stderr.write(
+                "DEBUG:"
+                f" FASTQ pairs {count_raw}; flash -> {count_flash};"
+                f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
+                f" min abundance {min_abundance} -> {accepted_total}"
+                f" [{accepted_uniq_count} unique]"
+                f", or {accepted_total*100.0/count_raw:0.1f}%\n"
+            )
         if accepted_uniq_count:
             sys.stderr.write(
                 f"From {count_raw} paired FASTQ reads,"
