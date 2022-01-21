@@ -719,19 +719,29 @@ def marker_cut(
             )
             time_flash += time() - start
 
-            # Run cutadapt to cut primers (giving one output per marker)
-            start = time()
-            unique_merged_, unique_cutadapt_ = run_cutadapt(
-                merged_fasta_gz,
-                os.path.join(
-                    tmp, stem + ".{name}.fasta"
-                ),  # template - leave {name} as is!
-                marker_definitions,
-                flip=flip,
-                debug=debug,
-                cpu=cpu,
-            )
-            time_cutadapt += time() - start
+            if count_flash:
+                # Run cutadapt to cut primers (giving one output per marker)
+                start = time()
+                unique_merged_, unique_cutadapt_ = run_cutadapt(
+                    merged_fasta_gz,
+                    # Here {name} is the cutadapt filename template:
+                    os.path.join(tmp, stem + ".{name}.fasta"),
+                    marker_definitions,
+                    flip=flip,
+                    debug=debug,
+                    cpu=cpu,
+                )
+                time_cutadapt += time() - start
+            else:
+                # More fiddly, but could skip the abundance code below too?
+                # Just make an empty file for prepare_sample to parse.
+                if debug:
+                    sys.stderr.write("DEBUG: Skipping cutadapt as no reads\n")
+                for marker in marker_definitions:
+                    with open(
+                        os.path.join(tmp, f"{stem}.{marker}.fasta"), "w"
+                    ) as handle:
+                        handle.write("#Nothing\n")
 
         # Apply abundance thresholds
         start = time()
