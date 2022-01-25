@@ -528,25 +528,28 @@ def prepare_sample(
     debug=False,
     cpu=0,
 ):
-    """Create specified FASTA file for sample from paired FASTQ.
+    """Create marker-specific FASTA file for sample from paired FASTQ.
 
     Does spike-in detection, abundance threshold, and min/max length.
 
-    Returns accepted unique sequence count, accepted total read count, a dict
-    of max abundance (keyed by spike-in name), and the absolute abundance
-    threshold used.
+    Returns pre-threshold total read count, accepted unique sequence count,
+    accepted total read count, a dict of max abundance (keyed by spike-in
+    name), and the absolute abundance threshold used (higher of the given
+    absolute threshold or the given fractional threshold).
     """
     if debug:
         sys.stderr.write(f"DEBUG: prepare_sample {trimmed_fasta} --> {fasta_name}\n")
     if os.path.isfile(fasta_name):
         if control:
+            # Parse header for the pre-threshold cutadapt total
+            count_cutadapt = load_fasta_header(fasta_name)["cutadapt"]
             uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
                 fasta_name
             )
-            return uniq_count, total, max_spike_abundance, -1
+            return count_cutadapt, uniq_count, total, max_spike_abundance, -1
         else:
             # Don't actually need the max abundance
-            return None, None, {}, -1
+            return None, None, None, {}, -1
 
     if debug:
         sys.stderr.write(
@@ -561,14 +564,6 @@ def prepare_sample(
     if not os.path.isfile(trimmed_fasta):
         sys.exit(f"ERROR: Expected file {trimmed_fasta!r} from cutadapt\n")
 
-    # cutadapt worked on the merged NR reads, so count_cutadapt
-    # is currently the unique read count.
-    # _unique, _total, _max = abundance_values_in_fasta(merged_fasta_gz, gzipped=True)
-    # if _unique != count_tmp:
-    #     sys.exit(
-    #         f"ERROR: Gave it {_unique} unique sequences, "
-    #         f"but cutadapt says saw {count_cutadapt} unique sequences."
-    #     )
     _unique, _total, _max = abundance_values_in_fasta(trimmed_fasta)
     count_cutadapt = _total
     del _unique, _total, _max
@@ -655,7 +650,13 @@ def prepare_sample(
 
     if accepted_uniq_count or accepted_total:
         assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
-    return accepted_uniq_count, accepted_total, max_spike_abundance, min_abundance
+    return (
+        count_cutadapt,
+        accepted_uniq_count,
+        accepted_total,
+        max_spike_abundance,
+        min_abundance,
+    )
 
 
 def marker_cut(
@@ -770,7 +771,13 @@ def marker_cut(
                     f"DEBUG: Control sample so keeping {min_a} as min abundance\n"
                 )
             # Will parse pre-existing control file, skips pre-existing samples
-            uniq_count, accepted_total, max_abundance_by_spike, min_a = prepare_sample(
+            (
+                marker_total,
+                uniq_count,
+                accepted_total,
+                max_abundance_by_spike,
+                min_a,
+            ) = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
                 {
@@ -805,9 +812,9 @@ def marker_cut(
                 if debug or max_non_spike_abundance > min_abundance:
                     sys.stderr.write(
                         f"Control {stem} max {marker} abundance"
-                        f" {max_non_spike_abundance} ({uniq_count} unique"
-                        f" sequences, {accepted_total} reads, over default"
-                        f" threshold {min_abundance})\n"
+                        f" {max_non_spike_abundance} (accepted {uniq_count} unique"
+                        f" sequences, {accepted_total}/{marker_total} reads"
+                        f" over default threshold {min_abundance})\n"
                     )
                 if max_non_spike_abundance > pool_worst_abs_control.get(pool_key, -1):
                     # Record even if zero, nice to have for summary later
@@ -831,7 +838,8 @@ def marker_cut(
             else:
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" {accepted_total} reads, over abundance threshold {min_a}"
+                    f" or {accepted_total}/{marker_total}"
+                    f" reads over abundance threshold {min_a}"
                     f" (max marker abundance {max_non_spike_abundance})\n"
                 )
         time_abundance += time() - start
