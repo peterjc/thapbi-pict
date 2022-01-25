@@ -620,7 +620,7 @@ def prepare_sample(
                 f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
                 f" min abundance {min_abundance} -> {accepted_total}"
                 f" [{accepted_uniq_count} unique]"
-                f", or {accepted_total*100.0/count_raw:0.4f}%\n"
+                f", or {accepted_total*100.0/count_raw:.4f}%\n"
             )
         if accepted_uniq_count:
             sys.stderr.write(
@@ -684,12 +684,16 @@ def marker_cut(
                 sys.stderr.write(f"Making {marker} output sub-directory\n")
             os.mkdir(os.path.join(out_dir, marker))
 
-    # (marker, folder) as key, max absolute abundance as value
+    # (marker, folder) as key, max absolute abundance as value:
     pool_worst_abs_control = {}
+    # (marker, folder) as key, max fractional abundance as value:
+    pool_worst_fraction_control = {}
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
 
-    for control, stem, raw_R1, raw_R2 in file_pairs:
+    # Assumes controls before samples in input file list!
+    for fraction_control, absolute_control, stem, raw_R1, raw_R2 in file_pairs:
+        control = fraction_control or absolute_control
         if debug:
             sys.stderr.write(f"Preparing {'control' if control else 'sample'} {stem}\n")
 
@@ -759,17 +763,6 @@ def marker_cut(
             if fasta_name in fasta_files_prepared:
                 sys.exit(f"ERROR: Multiple files named {fasta_name}")
             pool_key = (marker, pool_path)
-            # Assumes controls before samples in input file list!
-            min_a = (
-                min_abundance
-                if control
-                else max(min_abundance, pool_worst_abs_control.get(pool_key, 0))
-            )
-            if debug and control:
-                assert min_a == min_abundance
-                sys.stderr.write(
-                    f"DEBUG: Control sample so keeping {min_a} as min abundance\n"
-                )
             # Will parse pre-existing control file, skips pre-existing samples
             (
                 marker_total,
@@ -792,10 +785,14 @@ def marker_cut(
                 marker_values["min_length"],
                 marker_values["max_length"],
                 marker_values["spike_kmers"],
-                min_a,
+                min_abundance
+                if control
+                else max(min_abundance, pool_worst_abs_control.get(pool_key, 0)),
                 0  # Not applied to negative controls
                 if control
-                else min_abundance_fraction,
+                else max(
+                    min_abundance_fraction, pool_worst_fraction_control.get(pool_key, 0)
+                ),
                 control,
                 tmp,
                 debug=debug,
@@ -803,22 +800,28 @@ def marker_cut(
             )
             fasta_files_prepared.append(fasta_name)
             if uniq_count:
+                assert accepted_total <= marker_total, (accepted_total, marker_total)
                 assert (
                     max_abundance_by_spike
                 ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
             # Any spike-in is assumed to be a synthetic control, rest assumed biological
             max_non_spike_abundance = max_abundance_by_spike.get("", 0)
             if control:
-                if debug or max_non_spike_abundance > min_abundance:
+                if (
+                    debug
+                    or max_non_spike_abundance > min_abundance
+                    or max_non_spike_abundance / marker_total > min_abundance_fraction
+                ):
+                    assert marker_total, (marker_total, accepted_total)
                     sys.stderr.write(
                         f"Control {stem} max {marker} abundance"
-                        f" {max_non_spike_abundance} (accepted {uniq_count} unique"
-                        f" sequences, {accepted_total}/{marker_total} reads"
-                        f" over default threshold {min_abundance})\n"
+                        f" {max_non_spike_abundance}"
+                        f" ({max_non_spike_abundance*100/marker_total:.4f}%)"
+                        f" ({uniq_count} unique sequences,"
+                        f" {marker_total} reads, over default"
+                        f" threshold {min_abundance}"
+                        f" / {min_abundance_fraction*100:.4f}%)\n"
                     )
-                if max_non_spike_abundance > pool_worst_abs_control.get(pool_key, -1):
-                    # Record even if zero, nice to have for summary later
-                    pool_worst_abs_control[pool_key] = max_non_spike_abundance
                 if debug:
                     sys.stderr.write(
                         "Control %s max %s abundance breakdown %s\n"
@@ -830,6 +833,22 @@ def marker_cut(
                                 for k, v in sorted(max_abundance_by_spike.items())
                             ),
                         )
+                    )
+                if (
+                    absolute_control
+                    and max_non_spike_abundance
+                    > pool_worst_abs_control.get(pool_key, -1)
+                ):
+                    # Record even if zero, nice to have for summary later
+                    pool_worst_abs_control[pool_key] = max_non_spike_abundance
+                if (
+                    fraction_control
+                    and max_non_spike_abundance / marker_total
+                    > pool_worst_fraction_control.get(pool_key, -1)
+                ):
+                    # Record even if zero, nice to have for summary later
+                    pool_worst_fraction_control[pool_key] = (
+                        max_non_spike_abundance / marker_total
                     )
             elif uniq_count is None:
                 skipped_samples.add(stem)
@@ -898,7 +917,9 @@ def main(
     """Implement the ``thapbi_pict prepare-reads`` command.
 
     If there are controls, they will be used to potentially increase the
-    minimum abundance threshold used for the non-control files.
+    minimum abundance threshold used for the non-control files. The synthetic
+    controls increase the percentage threshold. The negative controls increase
+    the absolute threshold. A control FASTQ pair can be listed on both.
 
     For use in the pipeline command, returns a filename listing of the FASTA
     files created.
@@ -921,6 +942,10 @@ def main(
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -i "" or -i "-" when only have negatives?
         fastq = [_ for _ in fastq if _ and _ != "-"]
+    if synthetic_controls:
+        # Possible in a pipeline setting may need to pass a null value,
+        # e.g. -n "" or -n "-"
+        synthetic_controls = [_ for _ in synthetic_controls if _ and _ != "-"]
     if negative_controls:
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -n "" or -n "-"
@@ -940,21 +965,31 @@ def main(
     spike_genus = sorted(tmp_genus_set)
     del tmp_genus_set
 
+    if synthetic_controls:
+        syn_control_file_pairs = find_fastq_pairs(
+            synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
+        )
+    else:
+        syn_control_file_pairs = []
     if negative_controls:
-        control_file_pairs = find_fastq_pairs(
+        neg_control_file_pairs = find_fastq_pairs(
             negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
         )
     else:
-        control_file_pairs = []
+        neg_control_file_pairs = []
 
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
     )
-    fastq_file_pairs = [_ for _ in fastq_file_pairs if _ not in control_file_pairs]
+    fastq_file_pairs = [
+        _
+        for _ in fastq_file_pairs
+        if _ not in neg_control_file_pairs and _ not in syn_control_file_pairs
+    ]
 
     if min_abundance < 2:
         # Warning only if on a single file, or on negative controls only
-        if len(control_file_pairs) > 1:
+        if neg_control_file_pairs or syn_control_file_pairs:
             sys.exit(
                 "ERROR: Singletons should never be accepted"
                 " (except perhaps for debugging controls)"
@@ -983,19 +1018,31 @@ def main(
     elif 0.1 < min_abundance_fraction:
         sys.stderr.write("WARNING: Minimum abundance fraction should be small\n")
 
-    # Make a unified file list, with control flag
+    # Make a unified file list, with control flags
+    # Want all the controls FIRST, with the non-controls LAST
+    # Note a FASTQ entry can be in both control lists!
     file_pairs = [
-        (True, stem, raw_R1, raw_R2) for stem, raw_R1, raw_R2 in control_file_pairs
-    ] + [(False, stem, raw_R1, raw_R2) for stem, raw_R1, raw_R2 in fastq_file_pairs]
+        (
+            (stem, raw_R1, raw_R2) in syn_control_file_pairs,
+            (stem, raw_R1, raw_R2) in neg_control_file_pairs,
+            stem,
+            raw_R1,
+            raw_R2,
+        )
+        for stem, raw_R1, raw_R2 in (
+            sorted(set(neg_control_file_pairs + syn_control_file_pairs))
+            + fastq_file_pairs
+        )
+    ]
 
     if debug:
         sys.stderr.write(
             f"Preparing {len(fastq_file_pairs)} data FASTQ pairs,"
-            f" and {len(control_file_pairs)} control FASTQ pairs\n"
+            f" and {len(file_pairs) - len(fastq_file_pairs)} control FASTQ pairs\n"
         )
-    if control_file_pairs and not fastq_file_pairs:
+    if not fastq_file_pairs:
         sys.stderr.write(
-            f"WARNING: {len(control_file_pairs)} control FASTQ pairs,"
+            f"WARNING: All {len(file_pairs)} FASTQ pairs are controls,"
             " no non-control reads!\n"
         )
 
