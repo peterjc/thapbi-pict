@@ -881,6 +881,7 @@ def marker_cut(
 
 def main(
     fastq,
+    synthetic_controls,
     negative_controls,
     out_dir,
     session,
