@@ -199,6 +199,7 @@ def prepare_reads(args=None):
 
     return_code = main(
         fastq=args.input,
+        synthetic_controls=args.synctrls,
         negative_controls=args.negctrls,
         out_dir=args.output,
         session=session,
@@ -381,6 +382,7 @@ def pipeline(args=None):
     # This will do all the markers itself
     all_fasta_files = prepare(
         fastq=args.input,
+        synthetic_controls=args.synctrls,
         negative_controls=args.negctrls,
         out_dir=intermediate_dir,
         session=session,
@@ -734,15 +736,6 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
 )
 
-# "-y", "--synthetic",
-ARG_SYNTHETIC_SPIKE = dict(  # noqa: C408
-    type=str,
-    default="synthetic",
-    metavar="GENUS",
-    help="Comma separated genus list of any spike-in sequences in the "
-    "negative controls, used with the database setting. Default 'synthetic'.",
-)
-
 # Common pipeline arguments
 # =========================
 
@@ -751,18 +744,45 @@ ARG_INPUT_FASTQ = dict(  # noqa: C408
     type=str,
     required=True,
     nargs="+",
+    metavar="FASTQ",
     help="One or more paired FASTQ filenames or folder names "
     "(containing files named *.fastq or *.fastq.gz).",
 )
 
-# "-n", "--negctrls",
-ARG_CONTROLS = dict(  # noqa: C408
+
+# "--synthetic",
+ARG_SYNTHETIC_SPIKE = dict(  # noqa: C408
+    type=str,
+    default="synthetic",
+    metavar="GENUS",
+    help="Comma separated genus list of any spike-in sequences in the "
+    "negative controls, used with the database synthetic controls settings. "
+    "Default 'synthetic'.",
+)
+
+# "-y", "--synctrls",
+ARG_SYN_CONTROLS = dict(  # noqa: C408
     type=str,
     nargs="+",
-    # Does accept folder names, but kind of pointless...
+    metavar="FASTQ",
+    # Does accept folder names, but kind of pointless
+    # (as would be applied only to that folder)
+    help="One or more synthetic control paired FASTQ filenames "
+    "(may also appear in the inputs). High non-synthetic marker levels "
+    "will increase the percentage abundance threshold of other "
+    "FASTQ files in the same folder. Can use '-' for none.",
+)
+
+# "-n", "--negctrls",
+ARG_NEG_CONTROLS = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    metavar="FASTQ",
+    # Does accept folder names, but kind of pointless
+    # (as would be applied only to that folder)
     help="One or more negative control paired FASTQ filenames "
-    "(may also appear in the inputs). High marker levels "
-    "will increase the minimum abundance threshold of other "
+    "(may also appear in the inputs). High non-synthetic levels "
+    "will increase the absolute minimum abundance threshold of other "
     "FASTQ files in the same folder. Can use '-' for none.",
 )
 
@@ -904,7 +924,8 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
+    subcommand_parser.add_argument("-y", "--synctrls", **ARG_SYN_CONTROLS)
+    subcommand_parser.add_argument("-n", "--negctrls", **ARG_NEG_CONTROLS)
     subcommand_parser.add_argument(
         "-o",
         "--output",
@@ -925,7 +946,7 @@ def main(args=None):
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
-    subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
+    subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
@@ -1226,7 +1247,8 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument("-n", "--negctrls", **ARG_CONTROLS)
+    subcommand_parser.add_argument("-y", "--synctrls", **ARG_SYN_CONTROLS)
+    subcommand_parser.add_argument("-n", "--negctrls", **ARG_NEG_CONTROLS)
     subcommand_parser.add_argument(
         "-o",
         "--output",
@@ -1237,7 +1259,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
-    subcommand_parser.add_argument("-y", "--synthetic", **ARG_SYNTHETIC_SPIKE)
+    subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)

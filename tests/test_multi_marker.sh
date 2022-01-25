@@ -105,7 +105,7 @@ echo "====================="
 thapbi_pict prepare-reads \
     -i tests/multi_marker/raw_data/ \
     -o $TMP/intermediate \
-    -d $DB -a 10 -y ''
+    -d $DB -a 10 --synthetic ''
 
 for f in tests/multi_marker/intermediate/*/EM_1_sample.fasta; do
     m=${f%/*}
@@ -122,7 +122,7 @@ echo "================"
 thapbi_pict pipeline \
     -i tests/multi_marker/raw_data/ \
     -s $TMP/intermediate -o $TMP/summary/ \
-    -d $DB -a 10 -y ''
+    -d $DB -a 10 --synthetic ''
 
 for f in tests/multi_marker/summary/*.tsv; do
     f=${f##*/}
