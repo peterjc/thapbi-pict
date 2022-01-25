@@ -938,7 +938,7 @@ def main(
     elif min_abundance < 10:
         sys.stderr.write(
             "STRONG WARNING: Setting the minimum abundance threshold below 10"
-            " is not  advised. You will accept many erroneous reads, and also"
+            " is not advised. You will accept many erroneous reads, and also"
             " slow down the pipeline.\n"
         )
     elif min_abundance < 50 and not min_abundance_fraction:
