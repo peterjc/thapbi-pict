@@ -765,7 +765,7 @@ def marker_cut(
                     f"DEBUG: Control sample so keeping {min_a} as min abundance\n"
                 )
             # Will parse pre-existing control file, skips pre-existing samples
-            uniq_count, total, max_abundance_by_spike, min_a = prepare_sample(
+            uniq_count, accepted_total, max_abundance_by_spike, min_a = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
                 marker,
@@ -797,7 +797,7 @@ def marker_cut(
                     sys.stderr.write(
                         f"Control {stem} max {marker} abundance"
                         f" {max_non_spike_abundance} ({uniq_count} unique"
-                        f" sequences, {total} reads, over default"
+                        f" sequences, {accepted_total} reads, over default"
                         f" threshold {min_abundance})\n"
                     )
                 if max_non_spike_abundance > pool_worst_abs_control.get(pool_key, -1):
@@ -822,7 +822,7 @@ def marker_cut(
             else:
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" {total} reads, over abundance threshold {min_a}"
+                    f" {accepted_total} reads, over abundance threshold {min_a}"
                     f" (max marker abundance {max_non_spike_abundance})\n"
                 )
         time_abundance += time() - start
