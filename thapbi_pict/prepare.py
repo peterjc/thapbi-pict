@@ -686,7 +686,8 @@ def marker_cut(
                 sys.stderr.write(f"Making {marker} output sub-directory\n")
             os.mkdir(os.path.join(out_dir, marker))
 
-    pool_worst_control = {}  # (marker, folder) as key, max abundance as value
+    # (marker, folder) as key, max absolute abundance as value
+    pool_worst_abs_control = {}
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
 
@@ -756,7 +757,7 @@ def marker_cut(
             min_a = (
                 min_abundance
                 if control
-                else max(min_abundance, pool_worst_control.get(pool_key, 0))
+                else max(min_abundance, pool_worst_abs_control.get(pool_key, 0))
             )
             if debug and control:
                 assert min_a == min_abundance
@@ -764,7 +765,7 @@ def marker_cut(
                     f"DEBUG: Control sample so keeping {min_a} as min abundance\n"
                 )
             # Will parse pre-existing control file, skips pre-existing samples
-            uniq_count, total, max_abundance_by_spike, min_a = prepare_sample(
+            uniq_count, accepted_total, max_abundance_by_spike, min_a = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
                 marker,
@@ -796,12 +797,12 @@ def marker_cut(
                     sys.stderr.write(
                         f"Control {stem} max {marker} abundance"
                         f" {max_non_spike_abundance} ({uniq_count} unique"
-                        f" sequences, {total} reads, over default"
+                        f" sequences, {accepted_total} reads, over default"
                         f" threshold {min_abundance})\n"
                     )
-                if max_non_spike_abundance > pool_worst_control.get(pool_key, -1):
+                if max_non_spike_abundance > pool_worst_abs_control.get(pool_key, -1):
                     # Record even if zero, nice to have for summary later
-                    pool_worst_control[pool_key] = max_non_spike_abundance
+                    pool_worst_abs_control[pool_key] = max_non_spike_abundance
                 if debug:
                     sys.stderr.write(
                         "Control %s max %s abundance breakdown %s\n"
@@ -821,7 +822,7 @@ def marker_cut(
             else:
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" {total} reads, over abundance threshold {min_a}"
+                    f" {accepted_total} reads, over abundance threshold {min_a}"
                     f" (max marker abundance {max_non_spike_abundance})\n"
                 )
         time_abundance += time() - start
@@ -837,7 +838,7 @@ def marker_cut(
         sys.stderr.write(
             f"Skipped {len(skipped_samples)} previously prepared {marker} samples\n"
         )
-    for (marker, pool_path), a in sorted(pool_worst_control.items()):
+    for (marker, pool_path), a in sorted(pool_worst_abs_control.items()):
         if a > min_abundance:
             sys.stderr.write(
                 (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
