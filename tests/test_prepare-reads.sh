@@ -86,8 +86,9 @@ diff $TMP/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100 --synthetic ''
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
-# Should be identical but without the HMM names in the FASTA title lines:
-diff <(grep -v ">" $TMP/ITS1/DNAMIX_S95_L001.fasta) <(grep -v "^>" tests/prepare-reads/DNAMIX_S95_L001.fasta)
+# Should be identical but without the spike counts in the header,
+# and spike names in the FASTA title lines:
+diff <(grep -v ">" $TMP/ITS1/DNAMIX_S95_L001.fasta | grep -v spike) <(grep -v "^>" tests/prepare-reads/DNAMIX_S95_L001.fasta | grep -v spike)
 
 # Testing primers (default)
 rm -rf $TMP/ITS1

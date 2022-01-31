@@ -9116,6 +9116,6 @@ INSERT INTO sequence_source VALUES(3618,'DQ297391.X',85,1265,1,691);
 INSERT INTO sequence_source VALUES(3619,'MG542998.X',85,1266,1,2960);
 INSERT INTO sequence_source VALUES(3620,'KP208464.1',85,1267,1,5);
 INSERT INTO sequence_source VALUES(3621,'MK163944.1',85,916,1,2983);
-CREATE UNIQUE INDEX genus_species ON taxonomy (genus, species);
 CREATE UNIQUE INDEX taxid_genus_species ON taxonomy (ncbi_taxid, genus, species);
+CREATE UNIQUE INDEX genus_species ON taxonomy (genus, species);
 COMMIT;
