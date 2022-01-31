@@ -313,9 +313,6 @@ def save_nr_fasta(
 
     Use output_fasta='-' for standard out.
     """
-    accepted_total = 0
-    accepted_count = 0
-    max_spike_abundance = {"": 0}
     if not spikes:
         spikes = []
     values = sorted(
@@ -327,6 +324,14 @@ def save_nr_fasta(
         # put the highest abundance entries first:
         key=lambda x: (-x[0], x[1:]),
     )
+    accepted_total = sum(_[0] for _ in values)
+    # Could use max in place of next, but sorted with largest entry first:
+    max_spike_abundance = {"": next((_[0] for _ in values if _[1] == ""), 0)}
+    for spike_name, _, _ in spikes:
+        max_spike_abundance[spike_name] = next(
+            (_[0] for _ in values if _[1] == spike_name), 0
+        )
+
     if output_fasta == "-":
         if gzipped:
             raise ValueError("Does not support gzipped output to stdout.")
@@ -340,25 +345,17 @@ def save_nr_fasta(
         assert "threshold" not in header_dict
         for key, value in header_dict.items():
             out_handle.write(f"#{key}:{value}\n")
-        out_handle.write(f"#abundance:{sum(_[0] for _ in values)}\n")
+        out_handle.write(f"#abundance:{accepted_total}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
-    for spike_name, _, _ in spikes:
-        max_spike_abundance[spike_name] = 0
     for count, spike_name, seq in values:
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
         else:
             out_handle.write(f">{md5seq(seq)}_{count}\n{seq}\n")
-        accepted_total += count
-        accepted_count += 1
-        max_spike_abundance[spike_name] = max(
-            max_spike_abundance[spike_name],
-            count,
-        )
     if output_fasta != "-":
         out_handle.close()
-    assert accepted_total >= 0 and accepted_count >= 0
-    return accepted_total, accepted_count, max_spike_abundance
+    assert accepted_total >= 0
+    return accepted_total, len(values), max_spike_abundance
 
 
 def kmers(sequence, k=KMER_LENGTH):
