@@ -318,10 +318,14 @@ def save_nr_fasta(
     max_spike_abundance = {"": 0}
     if not spikes:
         spikes = []
-    # Storing negative count for decreasing sort, then alphabetic sort
-    # Could alternatively have used a key function to achieve this
     values = sorted(
-        (-count, seq) for seq, count in counts.items() if count >= min_abundance
+        (
+            (count, is_spike_in(seq, spikes), seq)
+            for seq, count in counts.items()
+            if count >= min_abundance
+        ),
+        # put the highest abundance entries first:
+        key=lambda x: (-x[0], x[1:]),
     )
     if output_fasta == "-":
         if gzipped:
@@ -336,14 +340,11 @@ def save_nr_fasta(
         assert "threshold" not in header_dict
         for key, value in header_dict.items():
             out_handle.write(f"#{key}:{value}\n")
-        # Note counts currently negative for sorting requirement
-        out_handle.write(f"#abundance:{sum(-count for count, _ in values)}\n")
+        out_handle.write(f"#abundance:{sum(_[0] for _ in values)}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
     for spike_name, _, _ in spikes:
         max_spike_abundance[spike_name] = 0
-    for count, seq in values:
-        count = -count  # was negative for decreasing sorting
-        spike_name = is_spike_in(seq, spikes)
+    for count, spike_name, seq in values:
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
         else:
