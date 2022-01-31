@@ -90,17 +90,14 @@ assert consoliate_and_sort_taxonomy([("Genie", "alpha", 101), ("Genie", "", 100)
 assert consoliate_and_sort_taxonomy([("Genie", "", 100), ("Genie", "", 0)]) == [
     ("Genie", "", 100)
 ]
-assert (
-    consoliate_and_sort_taxonomy(
-        [
-            ("Genie", "alpha", 0),
-            ("Genie", "", 0),
-            ("Genie", "", 100),
-            ("Genie", "alpha", 101),
-        ]
-    )
-    == [("Genie", "alpha", 101)]
-)
+assert consoliate_and_sort_taxonomy(
+    [
+        ("Genie", "alpha", 0),
+        ("Genie", "", 0),
+        ("Genie", "", 100),
+        ("Genie", "alpha", 101),
+    ]
+) == [("Genie", "alpha", 101)]
 
 
 def taxid_and_sp_lists(taxon_entries):
