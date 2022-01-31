@@ -78,11 +78,12 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
    accept this as valid FASTA format.
 
 For example, here the header tells us this sample started with 6136 reads in
-the paired FASTQ files, down to just 4180 after processing.
+the paired FASTQ files, down to just 4180 after processing (with the final
+step being the abundance threshold).
 
 .. code:: console
 
-    $ head -n 10 intermediate/ITS1/Site_1_sample_1.fasta
+    $ head -n 12 intermediate/ITS1/Site_1_sample_1.fasta
     #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
@@ -91,6 +92,8 @@ the paired FASTQ files, down to just 4180 after processing.
     #cutadapt:5886
     #abundance:4180
     #threshold:100
+    #max_non-spike:2269
+    #max_spike-in:0
     >2e4f0ed53888ed39a2aee6d6d8e02206_2269
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
     GGGTCTTGTTTGGCGTGCGGCTGCTTCGGTAGCTGCTGCTAGGCGAGCCCTATCACGGCGAGCGTTTGGACTTCGGTCTG
@@ -106,10 +109,16 @@ an integer, the number of paired reads which after processing had this unique
 sequence.
 
 Any description entry in the FASTA records after the identifier is the name of
-the synthetic spike-in sequence in the database that is was matched to using
-*k*-mer counting.
+the synthetic spike-in sequence in the database that was matched to using
+*k*-mer counting (so ``2e4f0ed53888ed39a2aee6d6d8e02206_2269`` was not a
+spike-in sequence).
 
-Finally, the sequence in the FASTA file is written as a single line in upper
+The order of the FASTA sequences is in decreasing abundance, so the first
+sequence shown ``2e4f0ed53888ed39a2aee6d6d8e02206_2269`` is the most common,
+and so that read count 2269 also appears in the headers as the maximum
+non-spike-in abundance (with no spike-in reads in this sample).
+
+Note the sequence in the FASTA file is written as a single line in upper
 case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
 sequences would need a few lines each. However, they are still short enough
 that having them on one line without line breaks is no hardship - and it is

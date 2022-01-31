@@ -331,6 +331,9 @@ def save_nr_fasta(
         max_spike_abundance[spike_name] = next(
             (_[0] for _ in values if _[1] == spike_name), 0
         )
+    max_spike = max(
+        (max_spike_abundance[spike_name] for spike_name, _, _ in spikes), default=0
+    )
 
     if output_fasta == "-":
         if gzipped:
@@ -347,6 +350,9 @@ def save_nr_fasta(
             out_handle.write(f"#{key}:{value}\n")
         out_handle.write(f"#abundance:{accepted_total}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
+        if spikes:
+            out_handle.write(f"#max_non-spike:{max_spike_abundance['']}\n")
+            out_handle.write(f"#max_spike-in:{max_spike}\n")
     for count, spike_name, seq in values:
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
@@ -998,11 +1004,7 @@ def main(
 
         # Spike-in negative controls are marker specific
         spikes = []
-        if negative_controls and spike_genus:
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Loading any {reference_marker.name} spike-in controls.\n"
-                )
+        if spike_genus:
             # Doing a join to pull in the marker and taxonomy tables too:
             cur_tax = aliased(Taxonomy)
             marker_seq = aliased(MarkerSeq)

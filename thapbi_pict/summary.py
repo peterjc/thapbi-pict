@@ -768,7 +768,14 @@ def main(
         # Count should match the Seq-count column, but will not if running
         # report with higher abundance threshold - simpler to exclude.
         # For the threshold we have to update this if the report is stricter...
-        stats_fields = ("Raw FASTQ", "Flash", "Cutadapt", "Threshold")
+        stats_fields = (
+            "Raw FASTQ",
+            "Flash",
+            "Cutadapt",
+            "Threshold",
+            "Max non-spike",
+            "Max spike-in",
+        )
     else:
         # TODO: How best to show the cutadapt and threshold values (per marker)?
         stats_fields = ("Raw FASTQ", "Flash")
@@ -838,7 +845,8 @@ def main(
     for i, field in enumerate(stats_fields):
         if -1 in (_[i] for _ in sample_stats.values()):
             bad_fields.append(i)
-            sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
+            if debug:
+                sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
         elif field == "Threshold" and len({_[i] for _ in sample_stats.values()}) == 1:
             bad_fields.append(i)
             if debug:
