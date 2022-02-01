@@ -365,7 +365,7 @@ def kmers(sequence, k=KMER_LENGTH):
     return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
 
 
-def has_enough_kmers(sequence, kmers, threshold=70, k=KMER_LENGTH):
+def has_enough_kmers(sequence, kmers, threshold, k=KMER_LENGTH):
     """Check if given sequence shares at least this many kmers."""
     count = 0
     for i in range(len(sequence) - k + 1):
@@ -384,7 +384,7 @@ def is_spike_in(sequence, spikes):
         # This will not work when len(spike) <~ kmer length
         # (fail gracefully with an impossible to meet value of 10)
         threshold = min((len(spike_seq) - KMER_LENGTH) / 3, 10)
-        if has_enough_kmers(sequence, spike_kmers, threshold):
+        if has_enough_kmers(sequence, spike_kmers, threshold, KMER_LENGTH):
             return spike_name
     return ""
 
