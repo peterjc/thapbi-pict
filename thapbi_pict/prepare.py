@@ -383,7 +383,7 @@ def is_spike_in(sequence, spikes):
             return spike_name
         # This will not work when len(spike) <~ kmer length
         # (fail gracefully with an impossible to meet value of 10)
-        threshold = min((len(spike_seq) - KMER_LENGTH) / 3, 10)
+        threshold = max((len(spike_seq) - KMER_LENGTH) / 3, 10)
         if has_enough_kmers(sequence, spike_kmers, threshold, KMER_LENGTH):
             return spike_name
     return ""
