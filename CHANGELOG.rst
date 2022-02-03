@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.11.4 *Pending*  Updates to default curated DB.
 v0.11.3 2022-02-01 Fix dynamic *k*-mer threshold for synthetic spike-in control sequences.
 v0.11.2 2022-01-20 Windows testing on AppVeyor, with minor Windows specific fixes.
 v0.11.1 2022-01-18 Using ``rapidfuzz`` rather than ``python-Levenshtein``.
