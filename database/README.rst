@@ -44,7 +44,7 @@ Additionally:
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2021-10-01, which means a handful of
+- This used the NCBI taxonomy as of 2022-02-01, which means a handful of
   unrecognised species are imported at just genus level.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
