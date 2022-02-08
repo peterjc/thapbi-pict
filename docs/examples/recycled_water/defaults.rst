@@ -24,7 +24,7 @@ as follows, and you should get six output report files:
       -s intermediate_defaults/ \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 2122626 of 2598567 sequences from 1 files
+    onebp classifier assigned species/genus to 2122760 of 2598567 sequences from 1 files
     Wrote summary/recycled-water-defaults.ITS1.samples.onebp.*
     Wrote summary/recycled-water-defaults.ITS1.reads.onebp.*
     ...
@@ -45,7 +45,7 @@ earlier -- this is perhaps an idealised example in that ``metadata.tsv`` was
 created so that we add the first six columns the table (sorted in that order),
 where ``-x 7`` means index to the accession (filename prefix) in column seven.
 
-Notice the output reported a taxonomic assignment for 2122626 of 2598567
+Notice the output reported a taxonomic assignment for 2122760 of 2598567
 reads - that's 82%.
 
 Results
