@@ -306,9 +306,10 @@ New table ``thabpi-pict.ITS1.assess.tsv`` is similar:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     32 7  13 792 0.76 0.385
+OVERALL                     32 8  13 791 0.75 0.396
 Phytophthora agathidicida   0  3  0  1   0.00 1.000
 Phytophthora aleatoria      0  1  0  3   0.00 1.000
+Phytophthora alpina         0  1  0  3   0.00 1.000
 Phytophthora austrocedri    1  0  0  3   1.00 0.000
 Phytophthora boehmeriae     0  0  4  0   0.00 1.000
 Phytophthora cactorum       1  0  3  0   0.40 0.750
@@ -331,7 +332,7 @@ Phytophthora ramorum        1  0  0  3   1.00 0.000
 Phytophthora rubi           3  0  0  1   1.00 0.000
 Phytophthora siskiyouensis  3  0  0  1   1.00 0.000
 Phytophthora syringae       0  0  1  3   0.00 1.000
-OTHER 187 SPECIES IN DB     0  0  0  748 0.00 0.000
+OTHER 186 SPECIES IN DB     0  0  0  744 0.00 0.000
 =========================== == == == === ==== ===========
 
 This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 792 TN.

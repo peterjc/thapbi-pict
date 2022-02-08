@@ -64,19 +64,19 @@ These files are not really intended for human use, but are readable:
 Viewing it like this is not ideal, although there are command line tools which
 help. You could open the file in R, Excel, etc:
 
-======================================= ============= ===============================================
-#ITS1/sequence-name                     taxid         genus-species
-======================================= ============= ===============================================
-2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518        Phytophthora pseudosyringae
-d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361        Phytophthora austrocedri
-32159de6cbb6df37d084e31c37c30e7b_28976  67594         Phytophthora syringae
-ed15fefb7a3655147115fc28a8d6d671_28786  78237         Phytophthora gonapodyides
-972db44c016a166de86a2bacab3f4226_28515  53983;2056922 Phytophthora cambivora;Phytophthora x cambivora
-c1a720b2005f101a9858107545726123_20400  78237         Phytophthora gonapodyides
-96e0e2f0475bd1617a4b05e778bb04c9_17392  78237         Phytophthora gonapodyides
-f27df8e8755049e831b1ea4521ad6eb3_16369  2496075;29920 Phytophthora aleatoria;Phytophthora cactorum
-21d6308d89d74b8ed493d73a2cb4adb5_16169  53983         Phytophthora cambivora
-======================================= ============= ===============================================
+======================================= ===================== ================================================================
+#ITS1/sequence-name                     taxid                 genus-species
+======================================= ===================== ================================================================
+2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518                Phytophthora pseudosyringae
+d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361                Phytophthora austrocedri
+32159de6cbb6df37d084e31c37c30e7b_28976  67594                 Phytophthora syringae
+ed15fefb7a3655147115fc28a8d6d671_28786  78237                 Phytophthora gonapodyides
+972db44c016a166de86a2bacab3f4226_28515  53983;2056922         Phytophthora cambivora;Phytophthora x cambivora
+c1a720b2005f101a9858107545726123_20400  78237                 Phytophthora gonapodyides
+96e0e2f0475bd1617a4b05e778bb04c9_17392  78237                 Phytophthora gonapodyides
+f27df8e8755049e831b1ea4521ad6eb3_16369  2496075;2897317;29920 Phytophthora aleatoria;Phytophthora alpina;Phytophthora cactorum
+21d6308d89d74b8ed493d73a2cb4adb5_16169  53983                 Phytophthora cambivora
+======================================= ===================== ================================================================
 
 The first entry says the most abundance sequence with MD5 checksum
 ``2e4f0ed53888ed39a2aee6d6d8e02206`` was seen in a total of 163094 reads, and
