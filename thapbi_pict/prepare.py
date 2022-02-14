@@ -19,6 +19,7 @@ from time import time
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
@@ -883,11 +884,13 @@ def main(
 ):
     """Implement the ``thapbi_pict prepare-reads`` command.
 
-    If there are controls, they will be used to potentially increase
-    the minimum abundance threshold used for the non-control files.
+    If there are controls, they will be used to potentially increase the
+    minimum abundance threshold used for the non-control files.
 
-    For use in the pipeline command, returns a filename listing of the
-    FASTA files created.
+    For use in the pipeline command, returns a filename listing of the FASTA
+    files created.
+
+    Comma separated string argument spike_genus is treated case insensitively.
     """
     assert isinstance(fastq, list)
 
@@ -910,11 +913,19 @@ def main(
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
 
-    # Split on commas, strip white spaces
-    spike_genus = [_.strip() for _ in spike_genus.strip().split(",") if _.strip()]
-    for x in spike_genus:
-        if not session.query(Taxonomy).filter_by(genus=x).count():
-            sys.stderr.write(f"WARNING: Spike-in genus {x!r} not in database\n")
+    tmp_genus_set = set()
+    # Split on commas, strip white spaces,
+    for x in {_.strip() for _ in spike_genus.strip().split(",") if _.strip()}:
+        view = session.query(Taxonomy).filter(func.lower(Taxonomy.genus) == x.lower())
+        if not view.count():
+            sys.stderr.write(
+                f"WARNING: Spike-in genus {x!r} not in database (case insensitive)\n"
+            )
+        else:
+            for taxonomy in view:
+                tmp_genus_set.add(taxonomy.genus)  # record case as used in DB
+    spike_genus = sorted(tmp_genus_set)
+    del tmp_genus_set
 
     if negative_controls:
         control_file_pairs = find_fastq_pairs(

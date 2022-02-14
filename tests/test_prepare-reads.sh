@@ -50,7 +50,7 @@ if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 5 -d $DB --synthetic synthetic --database '-'
+    -a 5 -d $DB --synthetic SYNtheTIC --database '-'
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/ITS1
