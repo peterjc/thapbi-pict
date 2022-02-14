@@ -767,7 +767,7 @@ def main(
         # Not loading the post-abundance-threshold count,
         # Count should match the Seq-count column, but will not if running
         # report with higher abundance threshold - simpler to exclude.
-        # For the threshold we have to update this is the report is stricter...
+        # For the threshold we have to update this if the report is stricter...
         stats_fields = ("Raw FASTQ", "Flash", "Cutadapt", "Threshold")
     else:
         # TODO: How best to show the cutadapt and threshold values (per marker)?
