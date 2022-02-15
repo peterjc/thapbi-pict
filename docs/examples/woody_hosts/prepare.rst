@@ -67,7 +67,7 @@ FASTQ pair we get a single *much* smaller FASTA file ``<sample_name>.fasta``.
 
 .. WARNING::
 
-   The intermediate FASTA files can legitimately be empty when no sequences
+   The intermediate FASTA files can legitimately have no sequences which
    passed the thresholds. This can happen when a PCR failed, and is expected
    to happen on blank negative controls.
 
