@@ -107,7 +107,7 @@ sequence.
 
 The description entry in the FASTA file is currently just the name of any HMM
 it matched, allowing us to distinguish biological marker sequences (no match)
-from the synthetic controls (HMM match).
+from the synthetic controls (if present in the database).
 
 Finally, the sequence in the FASTA file is written as a single line in upper
 case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
