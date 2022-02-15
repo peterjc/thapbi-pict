@@ -105,9 +105,9 @@ used later in the pipeline, including in reports. The ``<abundance>`` is just
 an integer, the number of paired reads which after processing had this unique
 sequence.
 
-The description entry in the FASTA file is currently just the name of any HMM
-it matched, allowing us to distinguish biological marker sequences (no match)
-from the synthetic controls (if present in the database).
+Any description entry in the FASTA records after the identifier is the name of
+the synthetic spike-in sequence in the database that is was matched to using
+*k*-mer counting.
 
 Finally, the sequence in the FASTA file is written as a single line in upper
 case. With standard FASTA line wrapping at 60 or 80 characters, the ITS1
