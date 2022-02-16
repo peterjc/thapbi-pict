@@ -1,6 +1,7 @@
 #marker:rbcL
 #left_primer:ATGTCACCACAAACAGAGACTAAAGC
 #right_primer:GTAAAATCAAGTCCACCRCG
+#threshold_pool:tests/multi_marker/raw_data
 #raw_fastq:264
 #flash:186
 #cutadapt:1

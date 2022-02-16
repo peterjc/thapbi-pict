@@ -149,15 +149,19 @@ thapbi_pict prepare-reads -d - -a 75 \
 
 echo "Checking spike-in controls..."
 
-# Should all be same as above:
+# Should all be same as above (except for the #threshold_pool: path)
 for PLATE in A B C D; do
-    diff $TMP/single_plate/prepared/ITS1/spike-in-${PLATE}.fasta $TMP/mock_plates/prepared/ITS1/spike-in-${PLATE}.fasta
+    diff \
+      <(grep -v "^#threshold_pool:" $TMP/single_plate/prepared/ITS1/spike-in-${PLATE}.fasta) \
+      <(grep -v "^#threshold_pool:" $TMP/mock_plates/prepared/ITS1/spike-in-${PLATE}.fasta)
 done
 
 echo "Checking the mock sample and threshold used..."
 
 # Should be same as plate D above since that had the highest threshold:
-diff $TMP/single_plate/prepared/ITS1/sample.fasta $TMP/mock_plates/prepared/ITS1/sample-D.fasta
+diff \
+  <(grep -v "^#threshold_pool:" $TMP/single_plate/prepared/ITS1/sample.fasta) \
+  <(grep -v "^#threshold_pool:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta)
 
 echo "===="
 echo "Done"
