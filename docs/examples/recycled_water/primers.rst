@@ -70,6 +70,7 @@ a reservoir. Here is with the default primer trimming:
     #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
+    #threshold_pool:raw_data
     #raw_fastq:70396
     #flash:67870
     #cutadapt:66985
