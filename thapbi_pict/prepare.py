@@ -616,8 +616,8 @@ def prepare_sample(
         )
     assert bool(sum(max_spike_abundance.values())) == bool(accepted_uniq_count)
     if debug:
-        count_raw = headers["count_raw"]
-        count_flash = headers["count_flash"]
+        count_raw = headers["raw_fastq"]
+        count_flash = headers["flash"]
         if count_raw:
             sys.stderr.write(
                 "DEBUG:"
@@ -696,6 +696,14 @@ def marker_cut(
         sys.stderr.flush()
 
         pool_path = os.path.abspath(os.path.split(stem)[0])
+        # Use relative path if under the current directory
+        try:
+            _ = os.path.relpath(pool_path)
+            if not _.startswith(".."):
+                pool_path = _
+        except ValueError:
+            # Will fail on Windows if using different drives
+            pass
         stem = os.path.split(stem)[1]
         if merged_cache:
             merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
@@ -769,6 +777,7 @@ def marker_cut(
                     "marker": marker,
                     "left_primer": marker_values["left_primer"],
                     "right_primer": marker_values["right_primer"],
+                    "threshold_pool": pool_path,
                     "raw_fastq": count_raw,
                     "flash": count_flash,
                 },
