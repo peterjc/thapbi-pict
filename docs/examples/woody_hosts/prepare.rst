@@ -83,10 +83,11 @@ step being the abundance threshold).
 
 .. code:: console
 
-    $ head -n 12 intermediate/ITS1/Site_1_sample_1.fasta
+    $ head -n 13 intermediate/ITS1/Site_1_sample_1.fasta
     #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
+    #threshold_pool:raw_data
     #raw_fastq:6136
     #flash:5900
     #cutadapt:5886
