@@ -777,7 +777,8 @@ def marker_cut(
                     "marker": marker,
                     "left_primer": marker_values["left_primer"],
                     "right_primer": marker_values["right_primer"],
-                    "threshold_pool": pool_path,
+                    # Convert Windows style path separators:
+                    "threshold_pool": pool_path.replace("\\", "/"),
                     "raw_fastq": count_raw,
                     "flash": count_flash,
                 },
