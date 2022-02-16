@@ -1,6 +1,7 @@
 #marker:ITS1
 #left_primer:GAAGGTGAAGTCGTAACAAGG
 #right_primer:GCARRGACTTTCGTCCCYRC
+#threshold_pool:tests/reads
 #raw_fastq:5159
 #flash:4962
 #cutadapt:4955

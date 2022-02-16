@@ -1,6 +1,7 @@
 #marker:Nema
 #left_primer:CTGCTGCTGGATCATTACCC
 #right_primer:CGCCAGCACAGCCGTTAG
+#threshold_pool:tests/nematodes
 #raw_fastq:50
 #flash:22
 #cutadapt:21
