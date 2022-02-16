@@ -517,17 +517,13 @@ def merge_paired_reads(
 def prepare_sample(
     fasta_name,
     trimmed_fasta,
-    marker,
-    left_primer,
-    right_primer,
+    headers,
     min_len,
     max_len,
     spikes,
     min_abundance,
     min_abundance_fraction,
     control,
-    count_raw,
-    count_flash,
     tmp,
     debug=False,
     cpu=0,
@@ -587,6 +583,9 @@ def prepare_sample(
     # Using ceiling not floor, as will then take greater-than-or-equal
     min_abundance = max(min_abundance, ceil(min_abundance_fraction * count_cutadapt))
 
+    header_dict = dict(headers)  # take a copy
+    header_dict["cutadapt"] = count_cutadapt
+
     # deduplicate and apply minimum abundance threshold
     # and tag sequences if they look like spike-ins
     dedup = os.path.join(tmp, "dedup_trimmed.fasta")
@@ -605,16 +604,7 @@ def prepare_sample(
         weighted_input=True,
         gzipped=False,
         spikes=spikes,
-        header_dict={
-            "marker": marker,
-            "left_primer": left_primer,
-            "right_primer": right_primer,
-            "raw_fastq": count_raw,
-            "flash": count_flash,
-            "cutadapt": count_cutadapt,
-            # "abundance": accepted_total,
-            # "threshold": min_abundance,
-        },
+        header_dict=header_dict,
         debug=debug,
     )
     if accepted_total or accepted_uniq_count:
@@ -626,6 +616,8 @@ def prepare_sample(
         )
     assert bool(sum(max_spike_abundance.values())) == bool(accepted_uniq_count)
     if debug:
+        count_raw = headers["count_raw"]
+        count_flash = headers["count_flash"]
         if count_raw:
             sys.stderr.write(
                 "DEBUG:"
@@ -773,9 +765,13 @@ def marker_cut(
             uniq_count, accepted_total, max_abundance_by_spike, min_a = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
-                marker,
-                marker_values["left_primer"],
-                marker_values["right_primer"],
+                {
+                    "marker": marker,
+                    "left_primer": marker_values["left_primer"],
+                    "right_primer": marker_values["right_primer"],
+                    "raw_fastq": count_raw,
+                    "flash": count_flash,
+                },
                 marker_values["min_length"],
                 marker_values["max_length"],
                 marker_values["spike_kmers"],
@@ -784,8 +780,6 @@ def marker_cut(
                 if control
                 else min_abundance_fraction,
                 control,
-                count_raw,
-                count_flash,
                 tmp,
                 debug=debug,
                 cpu=cpu,
