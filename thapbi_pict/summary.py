@@ -717,7 +717,7 @@ def main(
                 meta_to_stem[meta_default].append(sample)
             else:
                 meta_to_stem[meta_default] = [sample]
-            if debug:
+            if debug and metadata_file:
                 sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
         fasta_files[sample].append(fasta_file)
     for tsv_file in find_requested_files(
