@@ -331,12 +331,21 @@ def sample_summary(
                 current_row, len(meta_names) + 1, ", ".join(human_sp_list), cell_format
             )
             for offset, _ in enumerate(stats_fields):
-                worksheet.write_number(
-                    current_row,
-                    len(meta_names) + 2 + offset,
-                    sample_stats[sample][offset],
-                    cell_format,
-                )
+                # Currently all the statistics are integers, or strings
+                if isinstance(sample_stats[sample][offset], int):
+                    worksheet.write_number(
+                        current_row,
+                        len(meta_names) + 2 + offset,
+                        sample_stats[sample][offset],
+                        cell_format,
+                    )
+                else:
+                    worksheet.write_string(
+                        current_row,
+                        len(meta_names) + 2 + offset,
+                        sample_stats[sample][offset],
+                        cell_format,
+                    )
             worksheet.write_number(
                 current_row,
                 col_offset,
@@ -485,12 +494,20 @@ def read_summary(
                 current_row + i, LEADING_COLS - 1, name, cell_rightalign_format
             )
             for s, value in enumerate(meta):
-                worksheet.write_number(
-                    current_row + i,
-                    LEADING_COLS + s,
-                    value[i],
-                    sample_formats[s],
-                )
+                if isinstance(value[i], int):
+                    worksheet.write_number(
+                        current_row + i,
+                        LEADING_COLS + s,
+                        value[i],
+                        sample_formats[s],
+                    )
+                else:
+                    worksheet.write_string(
+                        current_row + i,
+                        LEADING_COLS + s,
+                        value[i],
+                        sample_formats[s],
+                    )
         current_row += len(stats_fields)
 
     # TSV main header
@@ -772,6 +789,7 @@ def main(
             "Raw FASTQ",
             "Flash",
             "Cutadapt",
+            "Threshold pool",
             "Threshold",
             "Max non-spike",
             "Max spike-in",
@@ -856,6 +874,30 @@ def main(
             sample_stats[key] = [_ for i, _ in enumerate(value) if i not in bad_fields]
         stats_fields = [_ for i, _ in enumerate(stats_fields) if i not in bad_fields]
     del bad_fields
+
+    if "Threshold pool" in stats_fields:
+        # Try to remove any common folder prefix like raw_data/
+        i = stats_fields.index("Threshold pool")
+        paths = {_[i] for _ in sample_stats.values()}
+        if len(paths) == 1:
+            # Boring, drop the column
+            stats_fields = stats_fields[:i] + stats_fields[i + 1 :]
+            for values in sample_stats.values():
+                values.pop(i)
+        else:
+            common = os.path.commonpath(paths)
+            if common:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
+                    )
+                for values in sample_stats.values():
+                    values[i] = values[i][len(common) + 1 :]
+
+    if debug:
+        sys.stderr.write(
+            f"DEBUG: Have the following stats fields:{';'.join(stats_fields)}\n"
+        )
 
     sample_summary(
         sample_species_counts,
