@@ -121,6 +121,17 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta` != "#ab
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
+thapbi_pict pipeline -d - -a 75 \
+            -i $TMP/mock_plates/plate-* \
+            -n $TMP/mock_plates/plate-*/spike-in-* \
+            --merged-cache $TMP/mock_plates/merged/ \
+            -s $TMP/mock_plates/prepared/ \
+            -m 1s3g -o $TMP/mock_plates/report
+
+for f in tests/synthetic_controls/report.*.tsv; do
+    diff $TMP/mock_plates/${f##*/} $f
+done
+
 echo "--------------------"
 echo "Single plate example"
 echo "--------------------"
