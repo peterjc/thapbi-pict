@@ -794,7 +794,7 @@ ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     help="Minimum abundance applied to unique marker sequences in each sample"
     " (i.e. each FASTQ pair). Default {DEFAULT_MIN_ABUNDANCE}."
     " May be increased based on negative controls."
-    " Not applied to synthetic controls.",
+    " Half this value is applied to synthetic controls.",
 )
 # "-f", "--abundance-fraction",
 ARG_FASTQ_NOISE_PERC = dict(  # noqa: C408
@@ -804,7 +804,7 @@ ARG_FASTQ_NOISE_PERC = dict(  # noqa: C408
     help="Minimum abundance fraction, low frequency noise threshold applied"
     " to unique marker sequences in each sample. Default 0.001 meaning 0.1%%."
     " May be increased based on synthetic controls."
-    " Not applied to negative controls.",
+    " Half this value is applied to negative controls.",
 )
 
 # Common metadata arguments
