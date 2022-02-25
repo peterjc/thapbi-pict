@@ -86,6 +86,7 @@ sequences. At the command line:
     #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
+    #threshold_pool:raw_data/AL1
     #raw_fastq:12564
     #flash:11641
     #cutadapt:112
@@ -107,6 +108,7 @@ Using a minimum of 10 has excluded lots of singletons etc here.
     #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
+    #threshold_pool:raw_data/AL1
     #raw_fastq:16297
     #flash:15829
     #cutadapt:131
@@ -141,6 +143,7 @@ a pale blue background in the Excel reports). Working at the terminal:
     #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
+    #threshold_pool:raw_data/AL1
     #raw_fastq:19406
     #flash:12140
     #cutadapt:1153
@@ -158,6 +161,7 @@ The minimum abundance excluded lots of singletons etc.
     #marker:BITS-B58S3
     #left_primer:ACCTGCGGARGGATC
     #right_primer:GAGATCCRTTGYTRAAAGTT
+    #threshold_pool:raw_data/AL1
     #raw_fastq:7285
     #flash:6128
     #cutadapt:4340
