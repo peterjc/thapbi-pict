@@ -108,6 +108,7 @@ header, we again get four sequences passing the abundance threshold:
     #marker:ITS1-long
     #left_primer:GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA
     #right_primer:AGCGTTCTTCATCGATGTGC
+    #threshold_pool:raw_data
     #raw_fastq:70396
     #flash:67870
     #cutadapt:67173
