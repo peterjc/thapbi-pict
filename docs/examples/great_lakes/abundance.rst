@@ -128,6 +128,7 @@ read report - or look directly at the intermediate FASTA files:
     #marker:MOL16S
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
+    #threshold_pool:raw_data
     #raw_fastq:2433
     #flash:1963
     #cutadapt:1010
@@ -177,6 +178,7 @@ read report, or at the command line:
     #marker:MOL16S
     #left_primer:RRWRGACRAGAAGACCCT
     #right_primer:ARTCCAACATCGAGGT
+    #threshold_pool:raw_data
     #raw_fastq:410780
     #flash:375539
     #cutadapt:420
