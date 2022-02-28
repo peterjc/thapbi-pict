@@ -8,6 +8,7 @@
 
 IFS=$'\n\t'
 set -euo pipefail
+# Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp/thapbi_pict}/synthetic_controls
 rm -rf $TMP
@@ -16,6 +17,13 @@ mkdir -p $TMP
 echo "=============================================="
 echo "Checking prepare-reads with synthetic controls"
 echo "=============================================="
+
+mkdir $TMP/warning
+thapbi_pict prepare-reads \
+    -i tests/reads/DNAMIX_S95_L001_R?_001.fastq.gz \
+    -y tests/reads/DNAMIX_S95_L001_R?_001.fastq.gz \
+    -o $TMP/warning \
+    2>&1 | grep "WARNING: Control DNAMIX_S95_L001 suggests overly high fractional abundance threshold 23.6"
 
 echo "------------------"
 echo "Four plate example"

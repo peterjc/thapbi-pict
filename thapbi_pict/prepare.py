@@ -812,7 +812,7 @@ def marker_cut(
                 if (
                     debug
                     or max_non_spike_abundance > min_abundance
-                    or max_non_spike_abundance / marker_total > min_abundance_fraction
+                    or max_non_spike_abundance > min_abundance_fraction * marker_total
                 ):
                     assert marker_total, (marker_total, accepted_total)
                     sys.stderr.write(
@@ -845,13 +845,25 @@ def marker_cut(
                     pool_worst_abs_control[pool_key] = max_non_spike_abundance
                 if (
                     fraction_control
-                    and max_non_spike_abundance / marker_total
-                    > pool_worst_fraction_control.get(pool_key, -1)
+                    and max_non_spike_abundance
+                    > pool_worst_fraction_control.get(pool_key, -1) * marker_total
                 ):
                     # Record even if zero, nice to have for summary later
                     pool_worst_fraction_control[pool_key] = (
                         max_non_spike_abundance / marker_total
                     )
+                    if max_non_spike_abundance / marker_total > 0.5:
+                        sys.exit(
+                            f"ERROR: Control {stem} suggests extremely high"
+                            " fractional abundance threshold"
+                            f" {max_non_spike_abundance*100/marker_total:.1f}%\n"
+                        )
+                    elif max_non_spike_abundance / marker_total > 0.1:
+                        sys.stderr.write(
+                            f"WARNING: Control {stem} suggests overly high"
+                            " fractional abundance threshold"
+                            f" {max_non_spike_abundance*100/marker_total:.1f}%\n"
+                        )
             elif uniq_count is None:
                 skipped_samples.add(stem)
                 if debug:
