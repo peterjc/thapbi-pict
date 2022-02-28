@@ -129,6 +129,7 @@ thapbi_pict pipeline -d - -a 75 \
             -m 1s3g -o $TMP/mock_plates/report
 
 for f in tests/synthetic_controls/report.*.tsv; do
+    echo diff $TMP/mock_plates/${f##*/} $f
     diff $TMP/mock_plates/${f##*/} $f
 done
 
