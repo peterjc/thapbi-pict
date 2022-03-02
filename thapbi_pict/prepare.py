@@ -868,7 +868,7 @@ def marker_cut(
                             " fractional abundance threshold"
                             f" {max_non_spike_abundance*100/marker_total:.1f}%\n"
                         )
-                    elif max_non_spike_abundance / marker_total > 0.1:
+                    elif max_non_spike_abundance / marker_total > 0.05:
                         sys.stderr.write(
                             f"WARNING: Control {stem} suggests overly high"
                             " fractional abundance threshold"
