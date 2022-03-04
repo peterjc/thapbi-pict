@@ -50,8 +50,9 @@ mkdir -p intermediate_a5/
 # or -y raw_data/m6/SRR7109420_*.fastq.gz
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/m6/ expected/ --merged-cache tmp_merged/ \
-    -s intermediate_a5/ -o summary/a5 -a 5 -f 0 -m identity \
-    -t metadata.tsv -x 1 -c 3,4,5
+    -s intermediate_a5/ -o summary/a5 -a 5 -f 0
+# NOT using metadata (extra rows break this currently)
+#    -t metadata.tsv -x 1 -c 3,4,5
 
 exit
 

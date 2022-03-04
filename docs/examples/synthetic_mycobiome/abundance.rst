@@ -101,3 +101,51 @@ So, the ``run.sh`` example starts by running the pipeline on the m6 dataset with
 threshold of 5 reads. This first analysis does *not* use the synthetic control
 to raise the threshold on the rest of the samples - we want to see any low level
 mixing. We then can compare our sample report against Figure 6.
+
+Look at ``summary/a5.ITS2.samples.onebp.xlsx`` or working at the command line
+with the TSV file:
+
+
+.. code:: console
+
+    $ cut -f 1,3-8 summary/a5.ITS2.samples.onebp.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+================== ========= ======= ======== ============= ============ ==========
+#Sequencing sample Raw FASTQ Flash   Cutadapt Max non-spike Max spike-in Read count
+================== ========= ======= ======== ============= ============ ==========
+SRR7109326         817764    740627  736334   35300         0            602782
+SRR7109327         890561    812674  807956   348111        0            667575
+SRR7109328         943839    872263  866253   56120         0            721272
+SRR7109329         840068    794475  792260   526536        0            699349
+SRR7109330         704173    654661  651528   136471        0            552216
+SRR7109331         911793    823392  819469   289230        0            666624
+SRR7109341         872265    800475  796363   299243        0            660047
+SRR7109342         879762    817277  813470   214155        0            679563
+SRR7109343         903886    839105  835431   281533        0            705159
+SRR7109344         1210627   1105530 1099959  224635        0            927042
+SRR7109345         922440    859262  846519   65686         0            711511
+SRR7109406         897159    823034  820146   131937        0            675482
+SRR7109408         778090    710762  706659   358092        0            602283
+SRR7109409         1125275   1047383 1023234  84748         0            861570
+SRR7109411         785776    714894  711176   251097        0            589576
+SRR7109412         957067    891942  887650   462496        15           760868
+SRR7109414         998817    948348  943426   349965        15           813439
+SRR7109415         1181567   1113606 1108129  457441        0            955977
+SRR7109417         1071829   987280  982087   589121        0            830400
+SRR7109418         919363    858915  854919   282133        0            740813
+SRR7109420         1299238   1204532 1199806  187           103014       1028751
+================== ========= ======= ======== ============= ============ ==========
+
+Here ``SRR7109420`` is the synthetic control, and it has some non-spike-in
+reads present, the most abundant at 187 copies. Conversely, samples
+``SRR7109412`` aka ``m6-755-1`` and ``SRR7109414`` aka ``m6-736-1`` have trace
+levels of unwanted synthetic spike-in reads, the most abundant at 15 copies.
+The counts differ, but these are the same samples highlighted in Figure 6
+(sharing the same Illumina i7 index for multiplexing).
+
+As percentages, 187/1199806 gives 0.015% which is nearly ten times lower than
+our default of 0.1%. The numbers the other way round are even lower,
+15/462496 gives 0.003% and 15/349965 gives 0.004%.
