@@ -35,68 +35,29 @@ echo ================
 echo Running analysis
 echo ================
 
-# Using defaults -a 100 -f 0.001 (defaults) with sample counts after cutadapt
-# from 221k to 1199k reads, gives thresholds 221 to 1199 (all above -a value).
-#mkdir -p intermediate
-#thapbi_pict pipeline -d references.sqlite \
-#    -i raw_data/ expected/ \
-#    --merged-cache tmp_merged/ \
-#    -s intermediate/ -o summary/f4k \
-#    -t metadata.tsv -x 1 -c 3,4,5 -v
-
-echo "Running m6 plate with -f 0 -a 5 to compare with Figure 6"
-mkdir -p intermediate_a5/
-# NOT using negative controls, -n raw_data/SRR7109420_*.fastq.gz
-# or -y raw_data/m6/SRR7109420_*.fastq.gz
-thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/m6/ expected/ --merged-cache tmp_merged/ \
-    -s intermediate_a5/ -o summary/a5 -a 5 -f 0
-# NOT using metadata (extra rows break this currently)
-#    -t metadata.tsv -x 1 -c 3,4,5
-
-exit
-
-# Using -a 50 -f 0.00025 (1/4000) with sample counts after cutadapt
-# from 221k to 1199k reads, gives thresholds 55 to 300 (all above -a value).
-#mkdir -p intermediate_f4k
-#thapbi_pict pipeline -d references.sqlite \
-#    -i raw_data/ expected/ -a 50 -f 0.00025 \
-#    --merged-cache tmp_merged/ \
-#    -s intermediate_f4k/ -o summary/f4k \
-#    -t metadata.tsv -x 1 -c 3,4,5 -v
-
-#mkdir -p intermediate_nc/
-#
-# Using defaults with negative controls, not -a 5 -f 0
-#thapbi_pict pipeline -d references.sqlite \
-#    -i raw_data/ expected/ -n raw_data/SRR7109420_*.fastq.gz \
-#    --merged-cache tmp_merged/ \
-#    -s intermediate_nc/ -o summary/negctrl \
-#    -t metadata.tsv -x 1 -c 3,4,5 -v
-
-mkdir -p intermediate_a5/ intermediate_p01/
-
-# NOT using negative controls, -n raw_data/SRR7109420_*.fastq.gz
+echo "Running m6 plate excluding only singletons to compare with Figure 6"
+mkdir -p intermediate_a2/
+# NOT using negative controls YET, -n raw_data/SRR7109420_*.fastq.gz
 # or -y raw_data/m6/SRR7109420_*.fastq.gz
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -s intermediate_a5/ -o summary/a5 -a 5 -f 0 -m identity \
-    -t metadata.tsv -x 1 -c 3,4,5
+    -s intermediate_a2/ -o summary/a2 -a 2 -f 0 \
+    -t metadata.tsv -x 1 -c 3,4
 
-# Now using the control for m6 plate to set fractional abundance threshold,
-# and sensible initial value -f 0.0001 (i.e. 0.01%) so m4A also clean:
+mkdir -p intermediate_ctrl/
+
+echo "Running m6 plate using synthetic control for percentage abundance threshold"
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -y raw_data/m6/SRR7109420_*.fastq.gz \
-    -s intermediate_p01/ -o summary/p01 -a 100 -f 0.0001 -m identity \
-    -t metadata.tsv -x 1 -c 3,4,5
-
+    -y raw_data/SRR7109420_*.fastq.gz \
+    -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
+    -t metadata.tsv -x 1 -c 3,4
 
 # Dataset has a single synthetic negative control SRR7109420, on the m6 run.
 # This has 1199806 reads after cutadapt, and highest non-synthetic-spike-in
 # sequence is seen 187 times, suggesting using an absolute threshold -a 187
-# (via -n raw_data/m6/SRR7109420_*.fastq.gz), or a fractional threshold (via
-# -y raw_data/m6/SRR7109420_*.fastq.gz) of 0.0115%, or -f 0.000115019, which
+# (via -n raw_data/SRR7109420_*.fastq.gz), or a fractional threshold (via
+# -y raw_data/SRR7109420_*.fastq.gz) of 0.0115%, or -f 0.000115019, which
 # is 187/1199806.
 #
 # This means while default absolute threshold -a 100 is not high enough (since

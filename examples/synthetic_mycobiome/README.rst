@@ -7,5 +7,5 @@ This example is based on:
     https://doi.org/10.7717/peerj.4925
     https://www.ebi.ac.uk/ena/data/view/PRJNA305924
 
-It downloads a subset of the data (Illumina MiSeq plates m4A and m6), 82 FASTQ
-files (41 pairs) of ITS2 data taking about 6.0GB on disk.
+It downloads a subset of the data (Illumina MiSeq plate m6), 42 FASTQ files
+(21 pairs) of ITS2 data taking about 4.8GB on disk.

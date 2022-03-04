@@ -21,20 +21,17 @@ Script ``setup.sh`` will download the raw FASTQ files for two of the Illumina
 MiSeq runs described in Palmer *et al.* (2018)
 from https://www.ebi.ac.uk/ena/data/view/PRJNA305924
 
-It will download 82 raw FASTQ files (41 pairs), taking about 6.0 GB on disk.
+It will download 42 raw FASTQ files (21 pairs), taking about 4.8 GB on disk.
 
 If you have the ``md5sum`` tool installed (standard on Linux), verify the
 FASTQ files downloaded correctly:
 
 .. code:: console
 
-    $ cd raw_data/m4A
+    $ cd ..
     $ md5sum -c MD5SUM.txt
     ...
-    $ cd ../m6
-    $ md5sum -c MD5SUM.txt
-    ...
-    $ cd ../..
+    $ cd ..
 
 There is no need to decompress the files.
 
@@ -62,22 +59,20 @@ four columns:
 
 1. run_accession, assigned by the public archive, e.g. "SRR7109326"
 2. library_name, with sequencing run as a prefix, e.g. "m6-stds" or "m6-301-1"
-3. plate_name, the sequencing run, one of "m4A" or "m6"
-4. sample_alias, as used in the paper, e.g. "BioMockStds" or "301-1"
+3. sample_alias, as used in the paper, e.g. "BioMockStds" or "301-1"
+4. group, human readable sample type, e.g. "Biological Mock" or "Environment"
 5. read_count, the number of read pairs in the FASTQ files
-6. group, human readable sample type, e.g. "Biological Mock" or "Environment"
 
 When calling THAPBI PICT, the meta data commands are given as follows:
 
 .. code:: console
 
-    $ thapbi_pict ... -t metadata.tsv -x 1 -c 3,4,6
+    $ thapbi_pict ... -t metadata.tsv -x 1 -c 3,4
 
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
-Argument ``-c 3,4,6`` says which columns to display and sort by. This means
-plate name, sample alias, then group. This sorts first by the sequencing run.
-Column 2, library name, is omitted as this is larglely redundant.
+Argument ``-c 3,4`` says which columns to display and sort by. This means
+sample alias, then group.
 
 Argument ``-x 1`` (default, so not needed) indicates the filename stem can be
 found in column 1, run accession.
