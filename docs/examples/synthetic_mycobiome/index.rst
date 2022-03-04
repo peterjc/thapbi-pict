@@ -19,3 +19,4 @@ biological ITS2 sequences.
    :maxdepth: 1
 
    sample_data
+   abundance
