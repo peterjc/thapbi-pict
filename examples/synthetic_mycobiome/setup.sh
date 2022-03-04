@@ -33,6 +33,7 @@ for PLATE in m6 m4A; do
 done
 
 # BioMock mixtures
+mkdir -p expected
 echo "Setting up positive controls"
 for EXPT in BioMockStds BioMock SynMock; do
     for PLATE in m6 m4A; do
