@@ -15,8 +15,8 @@ for PLATE in m6 m4A; do
     # Only want the specific Illumina plates (using library prefix)
     for ACC in `grep "Illumina MiSeq\t${PLATE}-" PRJNA305924.tsv | cut -f 1`; do
         # echo "Downloading $ACC"
-        # Column 4 should have two URLs (R1 and R2), semi-colon separated:
-        for URL in `grep ^$ACC PRJNA305924.tsv | cut -f 5 | sed "s/;/ /g"` ; do
+        # Column 6 should have two URLs (R1 and R2), semi-colon separated:
+        for URL in `grep ^$ACC PRJNA305924.tsv | cut -f 6 | sed "s/;/ /g"` ; do
             NAME=${URL##*/}
             FILE=raw_data/$PLATE/$NAME
             # Avoiding leaving partial FASTQ if wget is interrupted

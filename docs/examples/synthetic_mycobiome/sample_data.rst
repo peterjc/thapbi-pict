@@ -64,17 +64,18 @@ four columns:
 2. library_name, with sequencing run as a prefix, e.g. "m6-stds" or "m6-301-1"
 3. plate_name, the sequencing run, one of "m4A" or "m6"
 4. sample_alias, as used in the paper, e.g. "BioMockStds" or "301-1"
-5. group, human readable sample type, e.g. "Biological Mock" or "Environment"
+5. read_count, the number of read pairs in the FASTQ files
+6. group, human readable sample type, e.g. "Biological Mock" or "Environment"
 
 When calling THAPBI PICT, the meta data commands are given as follows:
 
 .. code:: console
 
-    $ thapbi_pict ... -t metadata.tsv -x 1 -c 3,4,5
+    $ thapbi_pict ... -t metadata.tsv -x 1 -c 3,4,6
 
 Argument ``-t metadata.tsv`` says to use this file for the metadata.
 
-Argument ``-c 3,4,5`` says which columns to display and sort by. This means
+Argument ``-c 3,4,6`` says which columns to display and sort by. This means
 plate name, sample alias, then group. This sorts first by the sequencing run.
 Column 2, library name, is omitted as this is larglely redundant.
 

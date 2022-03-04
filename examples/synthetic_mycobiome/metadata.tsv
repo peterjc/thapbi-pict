@@ -1,42 +1,42 @@
-run_accession	library_name	plate_name	sample_alias	group
-SRR7109326	m6-stds	m6	BioMockStds	Biological Mock
-SRR7109327	m6-301-1	m6	301-1	Environment
-SRR7109328	m6-mock3-32000b	m6	BioMock	Biological Mock
-SRR7109329	m6-766-1	m6	766-1	Environment
-SRR7109330	m6-744-2	m6	744-2	Environment
-SRR7109331	m6-500-1	m6	500-1	Environment
-SRR7109341	m6-712-2	m6	712-2	Environment
-SRR7109342	m6-500-2	m6	500-2	Environment
-SRR7109343	m6-757-1	m6	757-1	Environment
-SRR7109344	m6-757-2	m6	757-2	Environment
-SRR7109345	m6-mock3-16000	m6	BioMock	Biological Mock
-SRR7109406	m6-712-1	m6	712-1	Environment
-SRR7109408	m6-744-1	m6	744-1	Environment
-SRR7109409	m6-mock3-32000a	m6	BioMock	Biological Mock
-SRR7109411	m6-766-2	m6	766-2	Environment
-SRR7109412	m6-755-1	m6	755-1	Environment
-SRR7109414	m6-736-1	m6	736-1	Environment
-SRR7109415	m6-301-2	m6	301-2	Environment
-SRR7109417	m6-755-2	m6	755-2	Environment
-SRR7109418	m6-736-2	m6	736-2	Environment
-SRR7109420	m6-SynMock	m6	SynMock	Synthetic Mock
-SRR7109334	m4A-301-1	m4A	301-1	Environment
-SRR7109346	m4A-mock3-32000b	m4A	BioMock	Biological Mock
-SRR7109347	m4A-766-2	m4A	766-2	Environment
-SRR7109348	m4A-mock3-32000am4A	m4A	BioMock	Biological Mock
-SRR7109349	m4A-mock3-16000m4A	m4A	BioMock	Biological Mock
-SRR7109350	m4A-766-1	m4A	766-1	Environment
-SRR7109352	m4A-744-2	m4A	744-2	Environment
-SRR7109353	m4A-301-2	m4A	301-2	Environment
-SRR7109355	m4A-757-2	m4A	757-2	Environment
-SRR7109358	m4A-stds	m4A	BioMockStds	Biological Mock
-SRR7109377	m4A-736-1	m4A	736-1	Environment
-SRR7109379	m4A-500-1	m4A	500-1	Environment
-SRR7109380	m4A-757-1	m4A	757-1	Environment
-SRR7109382	m4A-755-2	m4A	755-2	Environment
-SRR7109383	m4A-500-2	m4A	500-2	Environment
-SRR7109384	m4A-744-1	m4A	744-1	Environment
-SRR7109385	m4A-736-2	m4A	736-2	Environment
-SRR7109386	m4A-712-2	m4A	712-2	Environment
-SRR7109387	m4A-712-1	m4A	712-1	Environment
-SRR7109388	m4A-755-1	m4A	755-1	Environment
+run_accession	library_name	plate_name	read_count	sample_alias	group
+SRR7109326	m6-stds	m6	817764	BioMockStds	Biological Mock
+SRR7109327	m6-301-1	m6	890561	301-1	Environment
+SRR7109328	m6-mock3-32000b	m6	943839	BioMock	Biological Mock
+SRR7109329	m6-766-1	m6	840068	766-1	Environment
+SRR7109330	m6-744-2	m6	704173	744-2	Environment
+SRR7109331	m6-500-1	m6	911793	500-1	Environment
+SRR7109341	m6-712-2	m6	872265	712-2	Environment
+SRR7109342	m6-500-2	m6	879762	500-2	Environment
+SRR7109343	m6-757-1	m6	903886	757-1	Environment
+SRR7109344	m6-757-2	m6	1210627	757-2	Environment
+SRR7109345	m6-mock3-16000	m6	922440	BioMock	Biological Mock
+SRR7109406	m6-712-1	m6	897159	712-1	Environment
+SRR7109408	m6-744-1	m6	778090	744-1	Environment
+SRR7109409	m6-mock3-32000a	m6	1125275	BioMock	Biological Mock
+SRR7109411	m6-766-2	m6	785776	766-2	Environment
+SRR7109412	m6-755-1	m6	957067	755-1	Environment
+SRR7109414	m6-736-1	m6	998817	736-1	Environment
+SRR7109415	m6-301-2	m6	1181567	301-2	Environment
+SRR7109417	m6-755-2	m6	1071829	755-2	Environment
+SRR7109418	m6-736-2	m6	919363	736-2	Environment
+SRR7109420	m6-SynMock	m6	1299238	SynMock	Synthetic Mock
+SRR7109334	m4A-301-1	m4A	270478	301-1	Environment
+SRR7109346	m4A-mock3-32000b	m4A	290925	BioMock	Biological Mock
+SRR7109347	m4A-766-2	m4A	324127	766-2	Environment
+SRR7109348	m4A-mock3-32000am4A	m4A	296832	BioMock	Biological Mock
+SRR7109349	m4A-mock3-16000m4A	m4A	284316	BioMock	Biological Mock
+SRR7109350	m4A-766-1	m4A	302345	766-1	Environment
+SRR7109352	m4A-744-2	m4A	258138	744-2	Environment
+SRR7109353	m4A-301-2	m4A	296226	301-2	Environment
+SRR7109355	m4A-757-2	m4A	277106	757-2	Environment
+SRR7109358	m4A-stds	m4A	237351	BioMockStds	Biological Mock
+SRR7109377	m4A-736-1	m4A	279896	736-1	Environment
+SRR7109379	m4A-500-1	m4A	334852	500-1	Environment
+SRR7109380	m4A-757-1	m4A	282080	757-1	Environment
+SRR7109382	m4A-755-2	m4A	296389	755-2	Environment
+SRR7109383	m4A-500-2	m4A	275990	500-2	Environment
+SRR7109384	m4A-744-1	m4A	284153	744-1	Environment
+SRR7109385	m4A-736-2	m4A	264055	736-2	Environment
+SRR7109386	m4A-712-2	m4A	242161	712-2	Environment
+SRR7109387	m4A-712-1	m4A	265985	712-1	Environment
+SRR7109388	m4A-755-1	m4A	305617	755-1	Environment
