@@ -87,4 +87,17 @@ In this dataset there is a single synthetic control for m6 sequencing run,
 library ``SynMock`` aka ``SRR7109420``. We can tell THAPBI PICT at the command
 line to use this to set the fractional abundance threshold via ``-y`` or
 ``--synctrls``, or set the absolute abundance threshold via ``-n`` or
-``--negctrls`` (with a list of control file names).
+``--negctrls`` (with a list of control file names). It turns out however that
+with the default thresholds the control is clean (no unwanted non-synthetic ITS2
+reads).
+
+So, there is scope to lower the default thresholds - but how low? We will start
+by reproducing the Illumina part of Figure 6, which was based on the m6 MiSeq
+sequencing run. This figure explores tag-switching in the demultiplexing, and
+in the authors analysis goes as low as 5 reads.
+
+So, the ``run.sh`` example starts by running the pipeline on the m6 dataset with
+``-f 0 -a 5`` meaning no fractional threshold and the very low absolute
+threshold of 5 reads. This first analysis does *not* use the synthetic control
+to raise the threshold on the rest of the samples - we want to see any low level
+mixing. We then can compare our sample report against Figure 6.

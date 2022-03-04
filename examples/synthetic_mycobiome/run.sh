@@ -44,6 +44,17 @@ echo ================
 #    -s intermediate/ -o summary/f4k \
 #    -t metadata.tsv -x 1 -c 3,4,5 -v
 
+echo "Running m6 plate with -f 0 -a 5 to compare with Figure 6"
+mkdir -p intermediate_a5/
+# NOT using negative controls, -n raw_data/SRR7109420_*.fastq.gz
+# or -y raw_data/m6/SRR7109420_*.fastq.gz
+thapbi_pict pipeline -d references.sqlite \
+    -i raw_data/m6/ expected/ --merged-cache tmp_merged/ \
+    -s intermediate_a5/ -o summary/a5 -a 5 -f 0 -m identity \
+    -t metadata.tsv -x 1 -c 3,4,5
+
+exit
+
 # Using -a 50 -f 0.00025 (1/4000) with sample counts after cutadapt
 # from 221k to 1199k reads, gives thresholds 55 to 300 (all above -a value).
 #mkdir -p intermediate_f4k
