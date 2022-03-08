@@ -29,6 +29,9 @@ from .utils import load_metadata
 from .utils import parse_species_tsv
 from .utils import split_read_name_abundance
 
+MISSING_META = ""
+MISSING_DATA = "-"
+
 
 def load_fasta_headers(sample_to_filenames, fields, default=""):
     """Load requested fields from FASTA headers.
@@ -129,6 +132,8 @@ def sample_summary(
                 )
 
     species_predictions = sorted(species_predictions, key=_sp_sort_key)
+
+    missing_stats = [MISSING_DATA] * len(stats_fields)
 
     # Open files and write headers
     # ============================
@@ -250,7 +255,7 @@ def sample_summary(
             # Missing data in TSV:
             blanks = len(stats_fields) + 3 + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
-            handle.write("\t".join(metadata) + ("\t-") * blanks + "\n")
+            handle.write("\t".join(metadata) + ("\t" + MISSING_DATA) * blanks + "\n")
             # Missing data in Excel:
             try:
                 cell_format = sample_formats[current_row]  # sample number
@@ -265,7 +270,7 @@ def sample_summary(
                 # Using formula "=NA()" or value "#N/A" work with our
                 # original simpler conditional formatting color rule
                 worksheet.write_string(
-                    current_row, len(meta_names) + offset, "-", cell_format
+                    current_row, len(meta_names) + offset, MISSING_DATA, cell_format
                 )
 
         # Now do the samples in this batch
@@ -303,17 +308,28 @@ def sample_summary(
                 handle.write("\t".join(metadata) + "\t")
             handle.write(sample + "\t" + ", ".join(human_sp_list) + "\t")
             if stats_fields:
-                handle.write("\t".join(str(_) for _ in sample_stats[sample]) + "\t")
-            handle.write(
-                "%i\t%s\n"
-                % (
-                    sum(sample_species_counts[sample].values()),
-                    "\t".join(
-                        str(sample_species_counts[sample][sp])
-                        for sp in species_predictions
-                    ),
+                handle.write(
+                    "\t".join(str(_) for _ in sample_stats.get(sample, missing_stats))
+                    + "\t"
                 )
-            )
+            if sample in sample_species_counts:
+                handle.write(
+                    "%i\t%s\n"
+                    % (
+                        sum(sample_species_counts[sample].values()),
+                        "\t".join(
+                            str(sample_species_counts[sample][sp])
+                            for sp in species_predictions
+                        ),
+                    )
+                )
+            else:
+                # e.g. unsequenced sample, use "-" for missing data
+                handle.write(
+                    MISSING_DATA
+                    + ("\t" + MISSING_DATA) * len(species_predictions)
+                    + "\n"
+                )
 
             # Excel
             # -----
@@ -332,7 +348,8 @@ def sample_summary(
             )
             for offset, _ in enumerate(stats_fields):
                 # Currently all the statistics are integers, or strings
-                if isinstance(sample_stats[sample][offset], int):
+                v = sample_stats.get(sample, missing_stats)[offset]
+                if isinstance(v, int):
                     worksheet.write_number(
                         current_row,
                         len(meta_names) + 2 + offset,
@@ -343,22 +360,31 @@ def sample_summary(
                     worksheet.write_string(
                         current_row,
                         len(meta_names) + 2 + offset,
-                        sample_stats[sample][offset],
+                        v,
                         cell_format,
                     )
-            worksheet.write_number(
-                current_row,
-                col_offset,
-                sum(sample_species_counts[sample].values()),
-                cell_format,
-            )
-            for offset, sp in enumerate(species_predictions):
+            if sample in sample_species_counts:
                 worksheet.write_number(
                     current_row,
-                    col_offset + 1 + offset,
-                    sample_species_counts[sample][sp],
+                    col_offset,
+                    sum(sample_species_counts[sample].values()),
                     cell_format,
                 )
+                for offset, sp in enumerate(species_predictions):
+                    worksheet.write_number(
+                        current_row,
+                        col_offset + 1 + offset,
+                        sample_species_counts[sample][sp],
+                        cell_format,
+                    )
+            else:
+                for offset in range(1 + len(species_predictions)):
+                    worksheet.write_string(
+                        current_row,
+                        col_offset + offset,
+                        MISSING_DATA,
+                        cell_format,
+                    )
 
     # Defined first, but takes priority over later conditional rules:
     worksheet.conditional_format(
@@ -369,7 +395,7 @@ def sample_summary(
         {
             "type": "cell",
             "criteria": "equal to",
-            "value": '"-"',
+            "value": f'"{MISSING_DATA}"',
             "format": grey_conditional_format,
         },
     )
@@ -483,7 +509,10 @@ def read_summary(
     if stats_fields:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
-        meta = [sample_stats[sample] for sample in stem_to_meta]
+        meta = [
+            sample_stats.get(sample, [MISSING_DATA] * len(stats_fields))
+            for sample in stem_to_meta
+        ]
         for i, name in enumerate(stats_fields):
             handle.write(
                 "#%s%s\t%s\n"
@@ -715,7 +744,7 @@ def main(
         debug=debug,
     )
 
-    meta_default = tuple([""] * len(meta_names))
+    meta_default = tuple([MISSING_META] * len(meta_names))
     fasta_files = defaultdict(list)
     tsv_files = defaultdict(list)
     markers = set()
