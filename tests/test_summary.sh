@@ -57,12 +57,13 @@ thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
 thapbi_pict summary \
     --input tests/classify/P-infestans-T30-4.fasta tests/classify/P-infestans-T30-4.onebp.tsv \
     -o $TMP/summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
-diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
+diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.reads.tsv
 
 # Now require metadata, but give entire folder as input
 thapbi_pict summary --input tests/classify/ -o $TMP/summary -q \
     -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -e latin1
-diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.summary.tsv
+diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.reads.tsv
+diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-T30-4.samples.tsv
 
 
 # Passing filename, default method, explicit min abundance

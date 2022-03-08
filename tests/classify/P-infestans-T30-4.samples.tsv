@@ -1,0 +1,2 @@
+#TaxID	Species	Description	Date	Sequencing sample	Classification summary	Raw FASTQ	Flash	Cutadapt	Read count	Phytophthora andina;Phytophthora infestans;Phytophthora ipomoeae	Unknown
+4787	Phytophthora infestans	Single isolate positive control	2018	P-infestans-T30-4	Phytophthora andina(*), Phytophthora infestans(*), Phytophthora ipomoeae(*), Unknown	70000	68000	65000	63000	62500	500
