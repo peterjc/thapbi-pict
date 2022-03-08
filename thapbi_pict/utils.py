@@ -753,11 +753,21 @@ def load_metadata(
                 f"DEBUG: Grouping on {names[group_col]} for colour bands\n"
             )
 
-    # Remove header lines,
-    lines = [_ for _ in lines[metadata_name_row:] if not _.startswith("#")]
+    # Remove header lines, and empty lines
+    lines = [
+        _ for _ in lines[metadata_name_row:] if _.strip() and not _.startswith("#")
+    ]
 
     # Break up line into fields
     lines = [dequote_line(_.rstrip("\n").split("\t")) for _ in lines]
+
+    for _ in lines:
+        if len(_) <= sample_col:
+            sys.exit(f"ERROR: Missing sample column {sample_col+1} in metadata")
+        if len(_) <= max(value_cols):
+            sys.exit(
+                f"ERROR: Missing column {max(value_cols)+1} for sample {_[sample_col]}"
+            )
 
     # Select columns of interest
     meta_plus_idx = [[_[i].strip() for i in value_cols + [sample_col]] for _ in lines]
