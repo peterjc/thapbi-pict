@@ -60,10 +60,19 @@ thapbi_pict summary \
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.reads.tsv
 
 # Now require metadata, but give entire folder as input
+# i.e. expect "P-infestans-T30-4" but exclude sample "hmm_trim"
 thapbi_pict summary --input tests/classify/ -o $TMP/summary -q \
     -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5 -e latin1
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.reads.tsv
 diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-T30-4.samples.tsv
+
+# With extra metadata (unsequenced samples):
+# i.e. Again expect "P-infestans-T30-4" and exclude sample "hmm_trim",
+# but now also show unsequenced sample "P-infestans-2020"
+thapbi_pict summary --input tests/classify/ -o $TMP/summary \
+    -t tests/classify/P-infestans-etc.meta.tsv -x 1 -c 2,3,4,5 -e latin1
+diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-etc.reads.tsv
+diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-etc.samples.tsv
 
 
 # Passing filename, default method, explicit min abundance
