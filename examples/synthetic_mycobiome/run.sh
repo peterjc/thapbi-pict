@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "NOTE: Expected first time run time is XXX"
-echo "(or about XXX minutes from the merged reads cache),"
-echo "repeat runs take seconds just to regenerate reports."
+echo "NOTE: Expected first time run time is just over 20 minutes"
+echo "(or about 8 minutes from the merged reads cache),"
+echo "repeat runs about a minute to regenerate reports."
 echo
 
 mkdir -p tmp_merged/ intermediate/ summary/
@@ -25,33 +25,14 @@ if [ ! -f references.sqlite ]; then
     echo Creating database
     echo =================
 
-    NAME=ITS2
     thapbi_pict import -d references.sqlite \
         -i references.fasta environment.fasta -s ";" -x \
-        -k $NAME --left $LEFT --right $RIGHT -v
+        -k ITS2 --left $LEFT --right $RIGHT
 fi
 
-echo ================
-echo Running analysis
-echo ================
-
-echo "Running m6 plate excluding only singletons to compare with Figure 6"
-mkdir -p intermediate_a2/
-# NOT using negative controls YET, -n raw_data/SRR7109420_*.fastq.gz
-# or -y raw_data/m6/SRR7109420_*.fastq.gz
-thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -s intermediate_a2/ -o summary/a2 -a 2 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4
-
-mkdir -p intermediate_ctrl/
-
-echo "Running m6 plate using synthetic control for percentage abundance threshold"
-thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -y raw_data/SRR7109420_*.fastq.gz \
-    -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4
+echo ==========================================
+echo Running analysis excluding only singletons
+echo ==========================================
 
 # Dataset has a single synthetic negative control SRR7109420, on the m6 run.
 # This has 1199806 reads after cutadapt, and highest non-synthetic-spike-in
@@ -71,31 +52,27 @@ thapbi_pict pipeline -d references.sqlite \
 # non-synthetic entries which are consistent with but about 10x higher than
 # the worst Illumina tag-swapping in the other direction (synthetics appearing
 # in bioligical samples; see Figure 6).
-#
-# Negative control highest non-synthetics are:
-#
-# >2ead414a3fc878d2ba5f9f4d3ca2ad80_187
-# AACGCACCTTGCGCCCCTCGGTCATCCGAGGAGCACGCCCGTTCGAGTATCACGTTAACCTCTTGCTTACTGTAGTAATACGGTCTGCGAGGACTTGGGTGCTGCCGGCCCTGCGTCGGCTCGCCTCGAAATGCATTAGTGGGGACCTGCCCTGCGCGGTGTTGATAATTGTCTACGTCGTGTCGGTGTTGGCTCTTTGCTTCGAACTTCCCTAGGGAAACTTTTCAAAGTTTGATCTCGAATCGGGTGGGACTACCCGCTGAACTTAA
-#
-# This is 1bp away from OU498434.1 uncultured fungus.
-#
-# It is most common in m6-755-1 aka SRR7109412, and m6-736-2 aka SRR7109418
-#
-# Next is something which is perhaps synthetic in origin(?):
-#
-# >4271381c66214c66c3f2c86e04c09566_139
-# AACGCACCTTGCGCTCCTTGGTATTCCGAGGAGCATGCCTGTTTGAGTGTCGTGAAATTATCAACTCTCTTACTTTATTGTAAGATGAGCTTGGACTTGGGGATTGCTGGTGTAAATCAGCTTCTCTTGAATGCATTAGCTGGAATTTAGTTCGCAGCATATATGCGGTGTGATAATGTCGTCACTGTGTAGCTCGAATTGTCTGGCTTCTAATCGTCCTTCACGGGACAATTTGATCATTTTGACCTCAAATCAGGTAGGACTACCCGCTGAACTTAA
-#
-# This is most common in m6-736-1 aka SRR7109414
-#
-# Third is another biological sample (fungi):
-#
-# >bd8a1a5a44bd54b26fa22eb962638777_34
-# AACGCACCTTGCGCTCCTTGGTATTCCGAGGAGCATGCCTGTTTGAGTGTCGTGAAATTATCAACTCCCATTCTTTGTTGATTGGTGAGCTTGGACTTGGGGACTGCTGGTGCAAATCAGCTTCCTTTGAATGAATTAGCTGGAATTTGATTCGCAGCATATATGCGGTGTGATAATGTCGTCACTGTGTAGCTCGGATTGTCTGGCTTCTAATCGTCCTTCACGGACAACTTGATCTTTTGACCTCAAATCAGGTAGGACTACCCGCTGAACTTAA
-#
-# This is 1bp away from MT595066.1 Hyphodontia tropica.
-#
-# This is most common in m6-736-1 aka SRR7109414
+
+echo "Very low threshold (excluding only singletons) to compare with Figure 6"
+mkdir -p intermediate_a2/
+# NOT using negative controls YET, -n raw_data/SRR7109420_*.fastq.gz
+# or -y raw_data/m6/SRR7109420_*.fastq.gz
+thapbi_pict pipeline -d references.sqlite \
+    -i raw_data/ expected/ --merged-cache tmp_merged/ \
+    -s intermediate_a2/ -o summary/a2 -a 2 -f 0 \
+    -t metadata.tsv -x 1 -c 3,4
+
+echo ========================================
+echo Running analysis using synthetic control
+echo ========================================
+
+echo "Running m6 plate using synthetic control for percentage abundance threshold"
+mkdir -p intermediate_ctrl/
+thapbi_pict pipeline -d references.sqlite \
+    -i raw_data/ expected/ --merged-cache tmp_merged/ \
+    -y raw_data/SRR7109420_*.fastq.gz \
+    -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
+    -t metadata.tsv -x 1 -c 3,4
 
 echo ====
 echo Done
