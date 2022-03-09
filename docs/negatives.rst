@@ -32,10 +32,9 @@ we wanted to make as few assumptions as possible) from the synthetic ones
 
 The spike-in controls are assumed to be in the database, by default under
 the synthetic "genus" but that is configurable. Similar sequences in the
-samples are considered to be spike-ins and ignored in the threshold
-calculations above. While the PCR noise is typically just a few base pair
-changes, we also found large deletions relatively common. The matching is
-therefore relaxed, currently based on *k*-mer content.
+samples are considered to be spike-ins. While the PCR noise is typically just
+a few base pair changes, we also found large deletions relatively common. The
+matching is therefore relaxed, currently based on *k*-mer content.
 
 Conversely, the presence of the synthetic controls in any of the biological
 samples is also problematic. Since our synthetic control sequences are in
