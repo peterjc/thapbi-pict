@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.11.6 2022-03-09 Fix regression on reports including unsequenced samples.
 v0.11.5 2022-02-18 Reporting enhancements when using spike-in (synthetic) controls.
 v0.11.4 2022-02-08 Updates to default curated DB, adding several more *Phytophthora* species.
 v0.11.3 2022-02-01 Fix dynamic *k*-mer threshold for synthetic spike-in control sequences.
