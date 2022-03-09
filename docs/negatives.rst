@@ -13,29 +13,6 @@ The presence of biological sequence reads in the negative control samples is
 indicative of some kind of cross contamination. Likewise, any reads from your
 synthetic sequences in the biological samples are a warning sign.
 
-Minimum Abundance Threshold
----------------------------
-
-During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
-the filename stems of any negative controls. For example, with a consistent
-prefix you might use something like ``-n CTRL*.fastq.gz`` for this. Negative
-control samples are processed first, and if any non-spike-in sequences are
-found above the minimum abundance threshold, the threshold is raised to that
-level for the other samples on that plate. This assumes if you have multiple
-96-well plates, or other logical groups, their raw FASTQ files are separated
-into a separate sub-folder per plate.
-
-For example, if running with the default minimum abundance threshold of 100,
-and a negative control contains a biological sequence at abundance 136, then
-the threshold for the non-control samples in that folder is raised to 136.
-
-If you have no spike-in controls, then any sequences in the negative controls
-can raise the threshold - regardless of what they may or may not match in the
-reference database.
-
-Currently the controls are not used to adjust the percentage abundance
-threshold, only the absolite abundance threshold.
-
 Spike-in Controls
 -----------------
 
@@ -64,3 +41,41 @@ Conversely, the presence of the synthetic controls in any of the biological
 samples is also problematic. Since our synthetic control sequences are in
 the default database, they can be matched by the chosen classifier, and
 appear in the reports.
+
+
+Minimum Absolute Abundance Threshold
+------------------------------------
+
+The initial absolute abundance threshold is set at the command line with
+``-a`` or ``--abundance`` giving an integer value. If your samples have
+dramatically different read coverage, then the fractional abundance threshold
+may be more appropriate.
+
+During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
+the filename stems of any negative controls. For example, with a consistent
+prefix you might use something like ``-n CTRL*.fastq.gz`` for this. Control
+samples are processed first, and if any non-spike-in sequences are found above
+the minimum absolute abundance threshold, the threshold is raised to that
+level for the other samples on that plate. This assumes if you have multiple
+96-well plates, or other logical groups, their raw FASTQ files are separated
+into a separate sub-folder per plate.
+
+For example, if running with the default minimum abundance threshold of 100,
+and a negative control contains a biological sequence at abundance 136, then
+the threshold for the non-control samples in that folder is raised to 136.
+
+If you have no spike-in controls, then any sequences in the negative controls
+can raise the threshold - regardless of what they may or may not match in the
+reference database.
+
+Minimum Fractional Abundance Threshold
+--------------------------------------
+
+The initial fractional abundance threshold is set at the command line with
+``-f`` or ``--abundance-fraction`` to an floating point number between zero
+and one, thus ``-f 0.001`` means 0.1%. This is a percentage of the reads
+identified for each marker after merging the overlapping pairs and primer
+matching.
+
+Currently the controls are not used to adjust the percentage abundance
+threshold, only the absolute abundance threshold (see above).
