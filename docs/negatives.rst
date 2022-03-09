@@ -10,8 +10,8 @@ On a typical 96-well plate of PCR products which will go on to be multiplexed
 for Illumina MiSeq sequencing, most of the samples are biological - but some
 should be negative controls (e.g. PCR blanks, or synthetic sequences).
 The presence of biological sequence reads in the negative control samples is
-indicative of some kind of cross contamination. Likewise, any reads from your
-synthetic sequences in the biological samples are a warning sign.
+indicative of some kind of cross contamination. Likewise, synthetic sequences
+in the biological samples are a warning sign.
 
 Spike-in Controls
 -----------------
@@ -51,21 +51,10 @@ dramatically different read coverage, then the fractional abundance threshold
 may be more appropriate.
 
 During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
-the filename stems of any negative controls. For example, with a consistent
-prefix you might use something like ``-n CTRL*.fastq.gz`` for this. Control
-samples are processed first, and if any non-spike-in sequences are found above
-the minimum absolute abundance threshold, the threshold is raised to that
-level for the other samples on that plate. This assumes if you have multiple
-96-well plates, or other logical groups, their raw FASTQ files are separated
-into a separate sub-folder per plate.
-
-For example, if running with the default minimum abundance threshold of 100,
-and a negative control contains a biological sequence at abundance 136, then
-the threshold for the non-control samples in that folder is raised to 136.
-
-If you have no spike-in controls, then any sequences in the negative controls
-can raise the threshold - regardless of what they may or may not match in the
-reference database.
+the filename stems of any negative controls to use to potentially increase
+the absolute abundance threshold. If you have no spike-in controls, then any
+sequences in these negative controls can raise the threshold - regardless of
+what they may or may not match in the reference database.
 
 Minimum Fractional Abundance Threshold
 --------------------------------------
@@ -76,5 +65,47 @@ and one, thus ``-f 0.001`` means 0.1%. This is a percentage of the reads
 identified for each marker after merging the overlapping pairs and primer
 matching.
 
-Currently the controls are not used to adjust the percentage abundance
-threshold, only the absolute abundance threshold (see above).
+During the read preparation step, the ``-y`` or ``--synctrls`` argument gives
+the filename stems of any synthetic controls to use to potentially increase
+the absolute abundance threshold. This setting works in conjunction with the
+database which must include the spike-in sequences (by default under the
+synthetic "genus").
+
+Note that the default thresholds are considered, which should mean if any of
+your spike-in samples fail sequencing they should be left with zero read.
+Otherwise you could have a situation where noise levels of non-spike-in reads
+gave a spurious high fractional abundance. That problem would occur if you
+accidentally use ``-y`` on a sample without spike-in controls (the resulting
+overly high fractional threshould would trigger a warning message).
+
+Automatic thresholds
+--------------------
+
+Any control samples are processed first, before the biological samples, and
+high read counts can raise the threshold to that level for the other samples
+in that folder. This assumes if you have multiple 96-well plates, or other
+logical groups, their raw FASTQ files are separated into a sub-folder per
+plate.
+
+Control sample given via ``-n`` can raise the absolute abundance threshold
+(any synthetic spike-in reads are ignored for this), while controls given via
+``-y`` can raise the fractional abundance threshold (but must have synthetic
+spike-in reads in order to give a meaningful fraction).
+
+For example, if running with the default minimum abundance threshold of 100
+(set via ``-a 100``), and a negative control (set via
+``-n raw_data/CTRL*.fastq.gz``) contains a non-spike-in (and thus presumably
+biological) sequence at abundance 136, then the threshold for the non-control
+samples in that folder is raised to 136.
+
+Alternatively, you might have synthetic spike-in controls listed with
+``-y raw_data/SPIKES*.fastq.gz`` and use ``-f 0.001`` to set a default
+fractional abundance threshold of 0.1%. Suppose a control had 100,000 reads
+for a marker passing the overlap merging and primer matching, of which 99,800
+matched the spike-ins leaving 200 unwanted presumably biological reads, of
+which the most abundant was at 176 copies. Then the fractional abundance
+threshold would be raised slightly to 176 / 100000 = 0.00176 or 0.176%.
+
+Note that a control sample can be used with *both* ``-n`` and ``-y``, so in
+this second example that would *also* raise the absolute abundance threshold
+to 176 reads.
