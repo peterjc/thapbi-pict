@@ -1,7 +1,7 @@
 .. _negative_controls:
 
-Negative Controls
-=================
+Abundance & Negative Controls
+=============================
 
 Any negative control sample is not expected to contain any of the target
 sequences (although it may contain spike-in synthetic control sequences).
@@ -12,6 +12,14 @@ should be negative controls (e.g. PCR blanks, or synthetic sequences).
 The presence of biological sequence reads in the negative control samples is
 indicative of some kind of cross contamination. Likewise, synthetic sequences
 in the biological samples are a warning sign.
+
+The tool implements both absolute and fractional abundance thresholds, which
+can be specified at the command line.  Moreover, control samples can be used
+to automatically raise the threshold for batches of samples. Simple negative
+controls can be used to set an absolute abundance threshold, but to set the
+fractional abundance threshold we need to be able to distinguish expected
+sequences from unwanted ones. For this we require known spike-in control
+sequences, which are clearly distinct from the biological markers.
 
 Spike-in Controls
 -----------------
@@ -52,9 +60,10 @@ may be more appropriate.
 
 During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
 the filename stems of any negative controls to use to potentially increase
-the absolute abundance threshold. If you have no spike-in controls, then any
-sequences in these negative controls can raise the threshold - regardless of
-what they may or may not match in the reference database.
+the absolute abundance threshold (see below). If you have no spike-in
+controls, then any sequences in these negative controls can raise the
+threshold - regardless of what they may or may not match in the reference
+database.
 
 Minimum Fractional Abundance Threshold
 --------------------------------------
@@ -68,11 +77,11 @@ matching.
 During the read preparation step, the ``-y`` or ``--synctrls`` argument gives
 the filename stems of any synthetic controls to use to potentially increase
 the absolute abundance threshold. This setting works in conjunction with the
-database which must include the spike-in sequences (by default under the
-synthetic "genus").
+database which must include the spike-in sequences under the genera specified
+at the command lines with ``--synthetic`` (by default "synthetic").
 
 Note that the default thresholds are considered, which should mean if any of
-your spike-in samples fail sequencing they should be left with zero read.
+your spike-in samples fail sequencing they should be left with zero reads.
 Otherwise you could have a situation where noise levels of non-spike-in reads
 gave a spurious high fractional abundance. That problem would occur if you
 accidentally use ``-y`` on a sample without spike-in controls (the resulting
@@ -87,7 +96,7 @@ in that folder. This assumes if you have multiple 96-well plates, or other
 logical groups, their raw FASTQ files are separated into a sub-folder per
 plate.
 
-Control sample given via ``-n`` can raise the absolute abundance threshold
+Control samples given via ``-n`` can raise the absolute abundance threshold
 (any synthetic spike-in reads are ignored for this), while controls given via
 ``-y`` can raise the fractional abundance threshold (but must have synthetic
 spike-in reads in order to give a meaningful fraction).
