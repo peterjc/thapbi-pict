@@ -83,9 +83,9 @@ at the command lines with ``--synthetic`` (by default "synthetic").
 Note that the default thresholds are considered, which should mean if any of
 your spike-in samples fail sequencing they should be left with zero reads.
 Otherwise you could have a situation where noise levels of non-spike-in reads
-gave a spurious high fractional abundance. That problem would occur if you
-accidentally use ``-y`` on a sample without spike-in controls (the resulting
-overly high fractional threshould would trigger a warning message).
+gave a spurious high fractional abundance. A similar problem would occur if
+you accidentally use ``-y`` on a sample without spike-in controls (the
+resulting overly high fractional threshould would trigger a warning message).
 
 Automatic thresholds
 --------------------
