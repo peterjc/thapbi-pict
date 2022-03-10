@@ -59,7 +59,7 @@ dramatically different read coverage, then the fractional abundance threshold
 may be more appropriate.
 
 During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
-the filename stems of any negative controls to use to potentially increase
+the FASTQ filenames of any negative controls to use to potentially increase
 the absolute abundance threshold (see below). If you have no spike-in
 controls, then any sequences in these negative controls can raise the
 threshold - regardless of what they may or may not match in the reference
@@ -75,7 +75,7 @@ identified for each marker after merging the overlapping pairs and primer
 matching.
 
 During the read preparation step, the ``-y`` or ``--synctrls`` argument gives
-the filename stems of any synthetic controls to use to potentially increase
+the FASTQ filenames of any synthetic controls to use to potentially increase
 the absolute abundance threshold. This setting works in conjunction with the
 database which must include the spike-in sequences under the genera specified
 at the command lines with ``--synthetic`` (by default "synthetic").
