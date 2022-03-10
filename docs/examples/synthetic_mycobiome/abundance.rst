@@ -119,14 +119,16 @@ our default of 0.1%. The numbers the other way round are all even lower,
 
 Finally the ``run.sh`` example uses the ``SynMock`` synthetic control to
 automatically raise the fractional abundance threshold to 0.015% by including
-``-y raw_data/SRR7109420_*.fastq.gz`` in the command line.
+``-y raw_data/SRR7109420_*.fastq.gz`` in the command line. This brings down
+the unique sequence count enough to allow use of a slower but more lenient
+classifier as well.
 
-Look at ``summary/ctrl.ITS2.samples.onebp.xlsx`` or working at the command line
+Look at ``summary/ctrl.ITS2.samples.1s5g.xlsx`` or working at the command line
 with the TSV file:
 
 .. code:: console
 
-    $ cut -f 1,3,7-11 summary/ctrl.ITS2.samples.onebp.tsv
+    $ cut -f 1,3,7-11 summary/ctrl.ITS2.samples.1s5g.tsv
     <SEE TABLE BELOW>
 
 Note we now get a threshold column showing the absolute threshold applied to
@@ -165,3 +167,9 @@ all the samples (given in the same sub-folder as input, so you can separate
 your MiSeq runs, or your PCR plates, or just apply a global threshold). It is
 clear from this example that they had lower background PCR contamination to
 deal with - we find this masks any worries about the Illumina tag-switching.
+
+In fact, looking at the read report ``summary/ctrl.ITS2.reads.1s5g.tsv`` it is
+clear that while this threshold may have excluded Illumina tag-switching, it
+has *not* excluded PCR noise - there are hundreds of low abundance sequences
+unique to a single sample. To address that we might want to double the
+threshold (say to 0.03% using ``-f 0.0003``)?

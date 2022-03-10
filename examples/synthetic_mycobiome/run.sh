@@ -53,7 +53,7 @@ echo ==========================================
 # the worst Illumina tag-swapping in the other direction (synthetics appearing
 # in bioligical samples; see Figure 6).
 
-echo "Very low threshold (excluding only singletons) to compare with Figure 6"
+echo "Very low threshold (excluding only singletons) to compare with Figure 6."
 mkdir -p intermediate_a2/
 # NOT using negative controls YET, -n raw_data/SRR7109420_*.fastq.gz
 # or -y raw_data/m6/SRR7109420_*.fastq.gz
@@ -66,13 +66,14 @@ echo ========================================
 echo Running analysis using synthetic control
 echo ========================================
 
-echo "Running m6 plate using synthetic control for percentage abundance threshold"
+echo "Running m6 plate using synthetic control for percentage abundance threshold."
+echo "Less unique sequences, so can use more relaxed but slower classifier."
 mkdir -p intermediate_ctrl/
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
     -y raw_data/SRR7109420_*.fastq.gz \
     -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4
+    -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 echo ====
 echo Done
