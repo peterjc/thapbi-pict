@@ -7,5 +7,6 @@
 #cutadapt:25
 #abundance:24
 #threshold:10
+#singletons:1
 >7efade5aeb4841ea5509d33c6629f1da_24
 ATCACGTTTTCCGAAAACAAACAACGGTTCAGAAAGCGAAAATCAAAAAG
