@@ -7,3 +7,4 @@
 #cutadapt:15
 #abundance:0
 #threshold:10
+#singletons:4
