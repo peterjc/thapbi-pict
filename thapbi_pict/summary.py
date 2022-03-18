@@ -822,6 +822,7 @@ def main(
             "Threshold",
             "Max non-spike",
             "Max spike-in",
+            "Singletons",
         )
     else:
         # TODO: How best to show the cutadapt and threshold values (per marker)?

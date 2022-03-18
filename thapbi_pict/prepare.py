@@ -298,6 +298,9 @@ def save_nr_fasta(
 ):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
+    Writes a FASTA file with header lines starting # (which not all tools will
+    accept as valid FASTA format).
+
     The output FASTA records are named ``>MD5_abundance\n``, which is the
     default style used in SWARM. This could in future be generalised,
     for example ``>MD5;size=abundance;\n`` for the VSEARCH default.
@@ -314,6 +317,7 @@ def save_nr_fasta(
 
     Use output_fasta='-' for standard out.
     """
+    singletons = sum(1 for seq, count in counts.items() if count == 1)
     if not spikes:
         spikes = []
     values = sorted(
@@ -347,6 +351,7 @@ def save_nr_fasta(
     if header_dict:
         assert "abundance" not in header_dict
         assert "threshold" not in header_dict
+        assert "singletons" not in header_dict
         for key, value in header_dict.items():
             out_handle.write(f"#{key}:{value}\n")
         out_handle.write(f"#abundance:{accepted_total}\n")
@@ -354,6 +359,7 @@ def save_nr_fasta(
         if spikes:
             out_handle.write(f"#max_non-spike:{max_spike_abundance['']}\n")
             out_handle.write(f"#max_spike-in:{max_spike}\n")
+        out_handle.write(f"#singletons:{singletons}\n")
     for count, spike_name, seq in values:
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
