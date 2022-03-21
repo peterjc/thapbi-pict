@@ -837,11 +837,11 @@ def main(
 
     if debug:
         sys.stderr.write("Loading FASTA sequences and abundances\n")
-    for sample, fasta_files in fasta_files.items():
+    for sample, fasta_list in fasta_files.items():
         assert sample in stem_to_meta, sample
         assert not sample.endswith(".all_fasta")
         sample_species_counts[sample] = Counter()
-        for fasta_file in fasta_files:
+        for fasta_file in fasta_list:
             fasta_header = load_fasta_header(fasta_file)
             assert "marker" in fasta_header, f"{fasta_file} gave {fasta_header}"
             marker = fasta_header["marker"]
