@@ -1,10 +1,11 @@
 Minimum Abundance Threshold
 ===========================
 
-THAPBI PICT has a default minimum abundance threshold of 100 reads per sample
-before accepting any unique sequence. Background contamination and PCR noise
-levels will vary, so having multiple :ref:`negative_controls` will help set
-this objectively.
+THAPBI PICT has a default minimum absolute abundance threshold of 100 reads
+per marker per sample, and 0.1% of the reads per marker per sample, before
+accepting any unique sequence. Background contamination and PCR noise levels
+will vary, so having multiple :ref:`negative_controls` will help set this
+objectively.
 
 In this dataset there is a single negative control for the MOL16S marker,
 library ``BIM8M`` aka ``SRR5534986``. However, we can also treat all the
