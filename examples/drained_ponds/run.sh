@@ -30,7 +30,7 @@ echo "Running the pipeline"
 mkdir -p intermediate/ summary/
 # Fraction 0.001 means 0.1%
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
-            -o summary/drained_ponds -y '' -a 50 -f 0.001 -d NCBI_12S.sqlite \
+            -o summary/drained_ponds --synthetic '' -a 50 -f 0.001 -d NCBI_12S.sqlite \
             -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,2,3
 
 echo "Done"
