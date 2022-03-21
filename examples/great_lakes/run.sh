@@ -43,7 +43,7 @@ echo ================
 # We have different expected/$NAME/*.known.tsv files
 # so currently cannot use assess via pipeline...
 mkdir -p intermediate/ summary/
-thapbi_pict pipeline -d pooled.sqlite -y "" \
+thapbi_pict pipeline -d pooled.sqlite --synthetic "" \
     -i raw_data/ -a 10 -f 0 \
     --merged-cache tmp_merged/ \
     -s intermediate/ -o summary/ \
