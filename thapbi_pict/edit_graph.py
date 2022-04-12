@@ -119,19 +119,24 @@ def write_xgmml(G, handle, name="THAPBI PICT edit-graph"):
         except KeyError:
             label = None
         if not label:
-            label = "{%a}" % n[:6]  # start of MD5, prefixed for sorting
+            label = "{%s}" % n[:6]  # start of MD5, prefixed for sorting
         # weight = node["weight"]
-        handle.write(b'  <node id="{%a}" label="{%a}">\n' % (n, label))
+        handle.write(
+            b'  <node id="%b" label="%b">\n'
+            % (n.encode("ascii"), label.encode("ascii"))
+        )
         color = node["color"]
         # Size 1 to 100 works fine in PDF output, not so good in Cytoscape!
         # Rescale to use range 5 to 50.
         size = (node["size"] * 0.45) + 5.0
         handle.write(
-            b'    <graphics type="CIRCLE" fill="{%a}" outline="#000000" '
-            b'h="%0.2f" w="%0.2f"/>\n' % (color, size, size)
+            b'    <graphics type="CIRCLE" fill="%b" outline="#000000" '
+            b'h="%0.2f" w="%0.2f"/>\n' % (color.encode("ascii"), size, size)
         )
         # Cytoscape hides the node ID (presumably assumes not usually user facing):
-        handle.write(b'    <att type="string" name="MD5" value="{%a}"/>\n' % n)
+        handle.write(
+            b'    <att type="string" name="MD5" value="%b"/>\n' % n.encode("ascii")
+        )
         handle.write(
             b'    <att type="integer" name="Total-abundance" value="%i"/>\n'
             % node.get("total_abundance", 0)
