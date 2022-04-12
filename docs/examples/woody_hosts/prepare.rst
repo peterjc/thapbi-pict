@@ -163,9 +163,13 @@ Abundance thresholds
 --------------------
 
 As you might gather from reading the command line help, there are two settings
-to do with the minimum read abundance threshold, ``-a`` or ``--abundance``
-(default 100), and ``-n`` or ``--negctrls`` for specifying negative controls
-(default none).
+to do with the minimum read absolute abundance threshold, ``-a`` or
+``--abundance`` (default 100), and ``-n`` or ``--negctrls`` for specifying
+negative controls (default none).
+
+(See also :ref:`negative_controls` which discusses the use of the fractional
+abundance threshold ``-f`` or ``--abundance-fraction`` and how to set this
+dynamically with synthetic control samples with ``-y`` or ``--synthetic``.)
 
 If any negative controls are specified, those paired FASTQ files are processed
 *first*, using the specified minimum abundance (default 100). If any of these
