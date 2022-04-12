@@ -56,6 +56,7 @@ Key links:
    examples/index
    database
    negatives
+   assess
    commands
    api/index
    release_history
