@@ -93,6 +93,11 @@ def scan_rst(filename):
                             )
                         while line.strip():
                             block.append(line)
+                            if not lines:
+                                sys.exit(
+                                    "ERROR: End of file during table"
+                                    f" in {filename}:\n{line!r}"
+                                )
                             line = lines.pop(0)
                         lines.insert(0, line)  # Put the blank line back
                     else:
