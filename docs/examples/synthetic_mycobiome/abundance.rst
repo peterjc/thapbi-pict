@@ -78,9 +78,9 @@ with the TSV file:
 
 As a table:
 
-============= ================= ========= ======= ======== ============= ============ ==========
-#sample_alias Sequencing sample Raw FASTQ Flash   Cutadapt Max non-spike Max spike-in Read count
-============= ================= ========= ======= ======== ============= ============ ==========
+============= ================= ========= ======= ======== ============= ============ ========
+#sample_alias Sequencing sample Raw FASTQ Flash   Cutadapt Max non-spike Max spike-in Accepted
+============= ================= ========= ======= ======== ============= ============ ========
 301-1         SRR7109327        890561    812674  807956   348111        0            687951
 301-2         SRR7109415        1181567   1113606 1108129  457441        0            977004
 500-1         SRR7109331        911793    823392  819469   289230        0            689176
@@ -102,7 +102,7 @@ BioMock       SRR7109345        922440    859262  846519   65686         0      
 BioMock       SRR7109409        1125275   1047383 1023234  84748         3            884515
 BioMockStds   SRR7109326        817764    740627  736334   35300         0            628576
 SynMock       SRR7109420        1299238   1204532 1199806  187           103014       1043533
-============= ================= ========= ======= ======== ============= ============ ==========
+============= ================= ========= ======= ======== ============= ============ ========
 
 Here ``SynMock`` (``SRR7109420``) is the synthetic control, and it has some
 non-spike-in reads present, the most abundant at 187 copies. Conversely,
@@ -135,9 +135,9 @@ Note we now get a threshold column showing the absolute threshold applied to
 each sample (using the inferred percentage), all above the absolute default of
 100, and you can see the total read count has dropped:
 
-============= ================= ======== ========= ============= ============ ==========
-#sample_alias Sequencing sample Cutadapt Threshold Max non-spike Max spike-in Read count
-============= ================= ======== ========= ============= ============ ==========
+============= ================= ======== ========= ============= ============ ========
+#sample_alias Sequencing sample Cutadapt Threshold Max non-spike Max spike-in Accepted
+============= ================= ======== ========= ============= ============ ========
 301-1         SRR7109327        807956   126       348111        0            579503
 301-2         SRR7109415        1108129  173       457441        0            829871
 500-1         SRR7109331        819469   128       289230        0            568338
@@ -159,7 +159,7 @@ BioMock       SRR7109345        846519   132       65686         0            60
 BioMock       SRR7109409        1023234  160       84748         0            718661
 BioMockStds   SRR7109326        736334   115       35300         0            526317
 SynMock       SRR7109420        1199806  100       187           103014       885058
-============= ================= ======== ========= ============= ============ ==========
+============= ================= ======== ========= ============= ============ ========
 
 Note that Palmer *et al.* (2018) apply a threshold to unique sequences, but
 the thresholding strategy in THAPBI PICT applies the fractional threshold to
