@@ -73,7 +73,7 @@ with the TSV file:
 
 .. code:: console
 
-    $ cut -f 1,3,5-10 summary/a2.ITS2.samples.onebp.tsv
+    $ cut -f 1,3,5-9,11 summary/a2.ITS2.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 As a table:
@@ -128,7 +128,7 @@ with the TSV file:
 
 .. code:: console
 
-    $ cut -f 1,3,7-11 summary/ctrl.ITS2.samples.1s5g.tsv
+    $ cut -f 1,3,7-10,12 summary/ctrl.ITS2.samples.1s5g.tsv
     <SEE TABLE BELOW>
 
 Note we now get a threshold column showing the absolute threshold applied to
