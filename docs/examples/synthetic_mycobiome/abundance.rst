@@ -160,16 +160,13 @@ BioMock       SRR7109409        1023234  160       84748         0            71
 BioMockStds   SRR7109326        736334   115       35300         0            526317
 SynMock       SRR7109420        1199806  100       187           103014       885058
 ============= ================= ======== ========= ============= ============ ==========
-
 Note that Palmer *et al.* (2018) apply a threshold to unique sequences, but
 the thresholding strategy in THAPBI PICT applies the fractional threshold to
 all the samples (given in the same sub-folder as input, so you can separate
-your MiSeq runs, or your PCR plates, or just apply a global threshold). It is
-clear from this example that they had lower background PCR contamination to
-deal with - we find this masks any worries about the Illumina tag-switching.
+your MiSeq runs, or your PCR plates, or just apply a global threshold).
 
 In fact, looking at the read report ``summary/ctrl.ITS2.reads.1s5g.tsv`` it is
 clear that while this threshold may have excluded Illumina tag-switching, it
 has *not* excluded PCR noise - there are hundreds of low abundance sequences
-unique to a single sample. To address that we might want to double the
-threshold (say to 0.03% using ``-f 0.0003``)?
+unique to a single sample. To address that we have to use a considerably
+higher threshold, and the default 0.1% is a reasonable choice here.
