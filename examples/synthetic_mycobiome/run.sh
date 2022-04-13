@@ -38,18 +38,18 @@ echo ==========================================
 # This has 1199806 reads after cutadapt, and highest non-synthetic-spike-in
 # sequence is seen 187 times, suggesting using an absolute threshold -a 187
 # (via -n raw_data/SRR7109420_*.fastq.gz), or a fractional threshold (via
-# -y raw_data/SRR7109420_*.fastq.gz) of 0.0115%, or -f 0.000115019, which
-# is 187/1199806.
+# -y raw_data/SRR7109420_*.fastq.gz) of 0.0115%, or -f 0.000115, given by
+# 187/1199806.
 #
 # This means while default absolute threshold -a 100 is not high enough (since
 # this dataset is very high coverage), the default fractional threshold 0.1%
-# via -f 0.001 would be 1200 reads on this sample, neadly x10 higher than it
+# via -f 0.001 would be 1200 reads on this sample, nearly x10 higher than it
 # needs to be to exclude all the apparent Illumina tag switching to/from
 # biological to synthetic samples.
 #
-# Even using 0.01% as the fractional threshold would give a threshold of 120
+# Note using 0.01% as the fractional threshold would give a threshold of 120
 # reads on the control, which is not quite enough to discard the top to
-# non-synthetic entries which are consistent with but about 10x higher than
+# non-synthetic entries - which are consistent with but about 10x higher than
 # the worst Illumina tag-swapping in the other direction (synthetics appearing
 # in bioligical samples; see Figure 6).
 
