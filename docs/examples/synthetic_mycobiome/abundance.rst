@@ -160,6 +160,7 @@ BioMock       SRR7109409        1023234  160       84748         0            71
 BioMockStds   SRR7109326        736334   115       35300         0            526317
 SynMock       SRR7109420        1199806  100       187           103014       885058
 ============= ================= ======== ========= ============= ============ ==========
+
 Note that Palmer *et al.* (2018) apply a threshold to unique sequences, but
 the thresholding strategy in THAPBI PICT applies the fractional threshold to
 all the samples (given in the same sub-folder as input, so you can separate
