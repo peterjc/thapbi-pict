@@ -172,3 +172,78 @@ clear that while this threshold may have excluded Illumina tag-switching, it
 has *not* excluded PCR noise - there are hundreds of low abundance sequences
 unique to a single sample. To address that we have to use a considerably
 higher threshold, and the default 0.1% is a reasonable choice here.
+
+Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
+line with the TSV file:
+
+.. code:: console
+
+    $ cut -f 1,7-10,12-13 summary/defaults.ITS2.samples.1s5g.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+============= ======== ========= ============= ============ ======== ======
+#sample_alias Cutadapt Threshold Max non-spike Max spike-in Accepted Unique
+============= ======== ========= ============= ============ ======== ======
+301-1         807956   808       348111        0            528958   10
+301-2         1108129  1109      457441        0            778851   10
+500-1         819469   820       289230        0            516476   8
+500-2         813470   814       214155        0            529967   7
+712-1         820146   821       131937        0            533310   13
+712-2         796363   797       299243        0            520294   11
+736-1         943426   944       349965        0            669563   12
+736-2         854919   855       282133        0            609026   4
+744-1         706659   707       358092        0            493212   6
+744-2         651528   652       136471        0            452421   11
+755-1         887650   888       462496        0            616326   6
+755-2         982087   983       589121        0            669603   5
+757-1         835431   836       281533        0            578199   9
+757-2         1099959  1100      224635        0            742541   8
+766-1         792260   793       526536        0            583644   7
+766-2         711176   712       251097        0            469397   7
+BioMock       866253   867       56120         0            591947   19
+BioMock       846519   847       65686         0            585717   19
+BioMock       1023234  1024      84748         0            698171   18
+BioMockStds   736334   737       35300         0            521693   24
+SynMock       1199806  1200      0             103014       862957   14
+============= ======== ========= ============= ============ ======== ======
+
+The accepted read counts have gone done a little further, as have the number
+of unique sequences accepted for each sample. Looking at the mock community
+controls, this may have gone a little too far...
+
+Here are the classifier assessment values using the lower inferred threshold
+which allows a lot of PCR noise:
+
+.. code:: console
+
+    $ head -n 2 summary/ctrl.ITS2.assess.1s5g.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+======== === == == === =========== =========== ========= ==== ============ ===========
+#Species TP  FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
+======== === == == === =========== =========== ========= ==== ============ ===========
+OVERALL  102 11 1  181 0.99        0.94        0.90      0.94 0.0407       0.105
+======== === == == === =========== =========== ========= ==== ============ ===========
+
+Versus the stricter higher default abundance fraction which excludes most of
+the PCR noise:
+
+.. code:: console
+
+    $ head -n 2 summary/defaults.ITS2.assess.1s5g.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+======== == == == === =========== =========== ========= ==== ============ ===========
+#Species TP FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
+======== == == == === =========== =========== ========= ==== ============ ===========
+OVERALL  92 8  11 184 0.89        0.96        0.92      0.91 0.0644       0.171
+======== == == == === =========== =========== ========= ==== ============ ===========
+
+You could use the assessment metrics to help decide on your preferred
+threshold, depending on the best tradeoff for your use-case.

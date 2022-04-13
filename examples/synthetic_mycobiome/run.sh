@@ -75,6 +75,19 @@ thapbi_pict pipeline -d references.sqlite \
     -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
+echo =======================================
+echo Running analysis using default settings
+echo =======================================
+
+echo "Running m6 page using synthetic control and defaults"
+echo "(which results in an even higher threshold)"
+mkdir -p intermediate/
+thapbi_pict pipeline -d references.sqlite \
+    -i raw_data/ expected/ --merged-cache tmp_merged/ \
+    -y raw_data/SRR7109420_*.fastq.gz \
+    -s intermediate/ -o summary/defaults \
+    -t metadata.tsv -x 1 -c 3,4 -m 1s5g
+
 echo ====
 echo Done
 echo ====
