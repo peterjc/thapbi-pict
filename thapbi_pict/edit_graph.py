@@ -156,7 +156,8 @@ def write_xgmml(G, handle, name="THAPBI PICT edit-graph"):
         if node["genus"]:
             # Are there any non-ASCII genus names?
             handle.write(
-                b'    <att type="string" name="Genus" value="%a"/>\n' % node["genus"]
+                b'    <att type="string" name="Genus" value="%b"/>\n'
+                % node["genus"].encode("ascii")
             )
         if node["taxonomy"]:
             # TODO - how to encode any non-ASCII species names?
@@ -164,20 +165,20 @@ def write_xgmml(G, handle, name="THAPBI PICT edit-graph"):
             # "×" in favour of the letter "x".
             # https://doi.org/10.1093/database/baaa062
             handle.write(
-                b'    <att type="string" name="Taxonomy" value="%a"/>\n'
-                % node["taxonomy"]
+                b'    <att type="string" name="Taxonomy" value="%b"/>\n'
+                % node["taxonomy"].encode("ascii")
             )
         handle.write(b"  </node>\n")
     for n1, n2 in G.edges():
         edge = G.edges[n1, n2]
         handle.write(
-            b'  <edge source="%a" target="%a" weight="%0.2f">\n'
-            % (n1, n2, edge["weight"])
+            b'  <edge source="%b" target="%b" weight="%0.2f">\n'
+            % (n1.encode("ascii"), n2.encode("ascii"), edge["weight"])
         )
         # edge["style"]  # Not in XGMML?
         handle.write(
-            b'    <graphics fill="%a" width="%0.1f"/>\n'
-            % (edge["color"], edge["width"])
+            b'    <graphics fill="%b" width="%0.1f"/>\n'
+            % (edge["color"].encode("ascii"), edge["width"])
         )
         if "edit_dist" in edge:
             handle.write(
