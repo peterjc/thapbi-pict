@@ -9,7 +9,7 @@
 # We assume you have the default channel, conda-forge, and bioconda.
 
 biopython
-cutadapt >= 3.4
+cutadapt == 3.7
 matplotlib
 networkx >= 2.4
 pydot

@@ -109,7 +109,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "biopython",
-        "cutadapt >=3.0",
+        "cutadapt ==3.7",
         "matplotlib",
         "networkx",
         "pydot",
