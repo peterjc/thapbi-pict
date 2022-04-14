@@ -52,11 +52,11 @@ MOL16S  Mock Community SC3PRO5      480606    13       0
 MOL16S  River          BIM6M        821849    0        0
 MOL16S  River          BIM2M        1119271   0        0
 MOL16S  River          BIM4M        709472    40       19
-SPH16S  Aquarium       BIR2S        498926    251148   209401
-SPH16S  Aquarium       BIR6S        240360    226012   191446
-SPH16S  Mock Community SPSC3PRO1    425271    317961   224690
-SPH16S  Mock Community SPSC3PRO2    341476    282516   204248
-SPH16S  Mock Community SPSC3PRO4    410780    303957   197505
+SPH16S  Aquarium       BIR2S        498926    251148   209402
+SPH16S  Aquarium       BIR6S        240360    226012   191456
+SPH16S  Mock Community SPSC3PRO1    425271    317960   224689
+SPH16S  Mock Community SPSC3PRO2    341476    282516   204249
+SPH16S  Mock Community SPSC3PRO4    410780    303957   197507
 ======= ============== ============ ========= ======== ========
 
 Things to note:
@@ -91,19 +91,19 @@ columns, you should see:
 ======= ============== ============ ========= ======== ========
 #Marker Group          Library-name Raw FASTQ Cutadapt Accepted
 ======= ============== ============ ========= ======== ========
-MOL16S  Aquarium       BIR2M        306311    297656   256386
-MOL16S  Aquarium       BIR6M        291954    286427   256471
-MOL16S  Control        BIM8M        2433      1010     551
-MOL16S  Mock Community SC3PRO1      689712    656660   550295
-MOL16S  Mock Community SC3PRO2      405048    377024   297877
-MOL16S  Mock Community SC3PRO3      402219    380345   304629
-MOL16S  Mock Community NFSC3PRO3    349590    328952   262964
-MOL16S  Mock Community SC3PRO4      671241    628640   494270
-MOL16S  Mock Community NFSC3PRO4    420015    364229   262727
-MOL16S  Mock Community SC3PRO5      480606    458894   383868
-MOL16S  River          BIM6M        821849    799333   703594
-MOL16S  River          BIM2M        1119271   954520   823795
-MOL16S  River          BIM4M        709472    367468   317366
+MOL16S  Aquarium       BIR2M        306311    297657   256386
+MOL16S  Aquarium       BIR6M        291954    286427   256470
+MOL16S  Control        BIM8M        2433      1014     551
+MOL16S  Mock Community SC3PRO1      689712    656661   550293
+MOL16S  Mock Community SC3PRO2      405048    377026   297877
+MOL16S  Mock Community SC3PRO3      402219    380347   304626
+MOL16S  Mock Community NFSC3PRO3    349590    328956   262963
+MOL16S  Mock Community SC3PRO4      671241    628644   494257
+MOL16S  Mock Community NFSC3PRO4    420015    364233   262726
+MOL16S  Mock Community SC3PRO5      480606    458896   383865
+MOL16S  River          BIM6M        821849    799349   703578
+MOL16S  River          BIM2M        1119271   954787   823782
+MOL16S  River          BIM4M        709472    367539   317363
 SPH16S  Aquarium       BIR2S        498926    25       0
 SPH16S  Aquarium       BIR6S        240360    27       0
 SPH16S  Mock Community SPSC3PRO1    425271    35       0
@@ -132,10 +132,10 @@ read report - or look directly at the intermediate FASTA files:
     #threshold_pool:raw_data
     #raw_fastq:2433
     #flash:1963
-    #cutadapt:1010
+    #cutadapt:1014
     #abundance:551
     #threshold:10
-    #singletons:253
+    #singletons:258
     >20c0669e4c6f8436c9d42736df727c83_478
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
