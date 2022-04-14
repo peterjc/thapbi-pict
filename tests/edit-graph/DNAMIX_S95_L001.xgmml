@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<graph directed="0"  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.cs.rpi.edu/XGMML">
+  <node id="29de890989becddc5e0b10ecbbc11b1a" label="{29de89}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="29de890989becddc5e0b10ecbbc11b1a"/>
+    <att type="integer" name="Total-abundance" value="298"/>
+    <att type="integer" name="Max-sample-abundance" value="298"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="468dc60921568e6ca5c197d04032eb44" label="{468dc6}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="468dc60921568e6ca5c197d04032eb44"/>
+    <att type="integer" name="Total-abundance" value="299"/>
+    <att type="integer" name="Max-sample-abundance" value="299"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="6e847180a4da6eed316e1fb98b21218f" label="{6e8471}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="6e847180a4da6eed316e1fb98b21218f"/>
+    <att type="integer" name="Total-abundance" value="1170"/>
+    <att type="integer" name="Max-sample-abundance" value="1170"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="7f3b213656cc5541bdcdf4692a3ed5bb" label="{7f3b21}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="7f3b213656cc5541bdcdf4692a3ed5bb"/>
+    <att type="integer" name="Total-abundance" value="259"/>
+    <att type="integer" name="Max-sample-abundance" value="259"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="af3282a9797a70b6922e29e68c0b2bdc" label="{af3282}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="af3282a9797a70b6922e29e68c0b2bdc"/>
+    <att type="integer" name="Total-abundance" value="390"/>
+    <att type="integer" name="Max-sample-abundance" value="390"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="c50b7fc6de0f1405b4388e95bdb01b4c" label="{c50b7f}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="c50b7fc6de0f1405b4388e95bdb01b4c"/>
+    <att type="integer" name="Total-abundance" value="356"/>
+    <att type="integer" name="Max-sample-abundance" value="356"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <node id="d8613e80b8803b13f7ea5d097f8fe46f" label="{d8613e}">
+    <graphics type="CIRCLE" fill="#808080" outline="#000000" h="50.00" w="50.00"/>
+    <att type="string" name="MD5" value="d8613e80b8803b13f7ea5d097f8fe46f"/>
+    <att type="integer" name="Total-abundance" value="813"/>
+    <att type="integer" name="Max-sample-abundance" value="813"/>
+    <att type="integer" name="Sample-count" value="1"/>
+    <att type="integer" name="in-db" value="0"/>
+  </node>
+  <edge source="468dc60921568e6ca5c197d04032eb44" target="af3282a9797a70b6922e29e68c0b2bdc" weight="3.00">
+    <graphics fill="#404040" width="1.0"/>
+    <att type="integer" name="Edit-distance" value="1"/>
+    <att type="integer" name="Edit-distance-weight" value="3"/>
+  </edge>
+</graph>
