@@ -33,14 +33,14 @@ rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 0 -f 0 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "826" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "822" ]; then echo "Wrong FASTA output count"; false; fi
 
 # In this case, --flip makes no difference, as does -n ""
 # Using merged cache also should make no difference
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --flip -n "" --merged-cache $TMP/merged_cache/ -a 0 -f 0 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "826" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "822" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/ITS1
 # Reusing the pre-primer-trim pre-abundance cache here:
