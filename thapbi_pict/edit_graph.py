@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from rapidfuzz.process import cdist
 from rapidfuzz.string_metric import levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
@@ -408,47 +409,18 @@ def main(
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
     # or for environmental sequences at high abundance)
+    n = len(md5_to_seq)
     md5_list = sorted(md5_to_seq)
-    wanted = set()
-    n = len(md5_list)
-    todo = n * (n - 1) // 2
-    done = 0
-    distances = np.zeros((n, n), np.uint)
-    for i, check1 in enumerate(md5_list):
-        seq1 = md5_to_seq[check1]
-        for j, check2 in enumerate(md5_list):
-            if i < j:
-                seq2 = md5_to_seq[check2]
-                distances[i, j] = distances[j, i] = d = levenshtein(seq1, seq2)
-                done += 1
-                if debug and done % 100000 == 0:
-                    print(
-                        f"DEBUG: Computed {done} of {todo} Levenshtein edit distances"
-                        f"({int(done * 100.0 / todo)}%)"
-                    )
-                if d and d <= max_edit_dist:
-                    wanted.add(check1)
-                    wanted.add(check2)
-    assert done == todo, f"{done!r} vs {todo}"
-    sys.stderr.write(
-        f"Computed {done} Levenshtein edit distances between {n} sequences.\n"
+    seqs = [md5_to_seq[_] for _ in md5_list]
+    # Will get values 0, 1, ..., max_edit_dist, or -1 if distance is higher
+    distances = cdist(
+        seqs,
+        seqs,
+        scorer=levenshtein,
+        dtype=np.int8,
+        score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
-    sys.stderr.write(
-        f"Will draw {len(wanted)} nodes with at least one edge"
-        f" ({n - len(wanted)} are isolated sequences).\n"
-    )
-    del done, todo
-
-    for md5 in md5_list:
-        if md5 not in wanted:
-            # Will include high abundance singletons too
-            if total_min_abundance <= md5_abundance.get(md5, 0):
-                wanted.add(md5)
-    if inputs:
-        sys.stderr.write(
-            "Including high abundance isolated sequences,"
-            f" will draw {len(wanted)} nodes.\n"
-        )
+    sys.stderr.write(f"Computed Levenshtein edit distances between {n} sequences.\n")
 
     if graph_format == "matrix":
         # Report all nodes, even if isolated and low abundance
@@ -468,6 +440,23 @@ def main(
         if graph_output != "-":
             handle.close()
         return 0
+
+    # Isolated node's distances will be 0 (self) and (n-1) * (-1)
+    wanted = {md5 for i, md5 in enumerate(md5_list) if distances[i].sum() > 1 - n}
+    sys.stderr.write(
+        f"Will draw {len(wanted)} nodes with at least one edge"
+        f" ({n - len(wanted)} are isolated sequences).\n"
+    )
+    for md5 in md5_list:
+        if md5 not in wanted:
+            # Will include high abundance singletons too
+            if total_min_abundance <= md5_abundance.get(md5, 0):
+                wanted.add(md5)
+    if inputs:
+        sys.stderr.write(
+            "Including high abundance isolated sequences,"
+            f" will draw {len(wanted)} nodes.\n"
+        )
 
     # Matrix computation of multi-step paths vs edit distances, e.g.
     # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
@@ -542,7 +531,10 @@ def main(
             if i < j and check2 in wanted:
                 # seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
-                dist = distances[i, j]
+                dist = int(distances[i, j])  # casting to drop numpy dtype
+                if dist > max_edit_dist or dist == -1:
+                    continue
+
                 # Some graph layout algorithms can use weight attr; some want int
                 # Larger weight makes it closer to the requested length.
                 # fdp default length is 0.3, neato is 1.0
@@ -552,8 +544,6 @@ def main(
                 # i.e. edit distance 1, 2, 3 get weights 3, 2, 1
                 edge_weight = max_edit_dist - dist + 1
 
-                if dist > max_edit_dist:
-                    continue
                 if (dist == 2 and two_step[i, j]) or (dist == 3 and three_step[i, j]):
                     # Redundant edge, if dist=2, two 1bp edges exist
                     # Or, if dist=3, three 1bp edges exist, or 1bp+2bp
