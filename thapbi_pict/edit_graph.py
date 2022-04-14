@@ -451,23 +451,19 @@ def main(
         )
 
     if graph_format == "matrix":
+        # Report all nodes, even if isolated and low abundance
+        # i.e. ignores the wanted list used for plotting
         if graph_output in ("-", "/dev/stdout"):
             handle = sys.stdout
         else:
             handle = open(graph_output, "w")
-        cols = "\t".join(check2 for check2 in md5_list if check2 in wanted)
+        cols = "\t".join(md5_list)
         handle.write(f"MD5\tSpecies\t{cols}\n")
         del cols
-        for i, check1 in enumerate(md5_list):
-            if check1 not in wanted:
-                continue
-            sp = ",".join(sorted(md5_species.get(check1, [])))
-            dists = "\t".join(
-                str(distances[i, j])
-                for j, check2 in enumerate(md5_list)
-                if check2 in wanted
-            )
-            handle.write(f"{check1}\t{sp}\t{dists}\n")
+        for i, md5 in enumerate(md5_list):
+            sp = ",".join(sorted(md5_species.get(md5, [])))
+            dists = "\t".join(str(_) for _ in distances[i])
+            handle.write(f"{md5}\t{sp}\t{dists}\n")
             del sp, dists
         if graph_output != "-":
             handle.close()
