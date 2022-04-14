@@ -48,7 +48,7 @@ negative SRR11949837       (Off-target) Homo sapiens                            
 positive SRR11949836       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39748
 positive SRR11949835       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39244
 positive SRR11949906       Astatotilapia calliptera(*), Maylandia zebra(*)                             65        62249
-positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        24567
+positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        24566
 ======== ================= =========================================================================== ========= ========
 
 Only in one sample (``SRR11949906``, a positive control) was the percentage
