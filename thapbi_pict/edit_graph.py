@@ -458,16 +458,6 @@ def main(
             f" will draw {len(wanted)} nodes.\n"
         )
 
-    # Matrix computation of multi-step paths vs edit distances, e.g.
-    # will use fact A-B is 1bp and B-C is 2bp to skip drawing A-C of 3bp.
-    one_bp = distances == 1  # boolean
-    two_step = np.dot(one_bp, one_bp)  # matrix multiply
-    two_bp = (distances == 2) | two_step
-    three_step = (
-        np.dot(one_bp, two_bp) | np.dot(two_bp, one_bp) | np.dot(one_bp, one_bp, one_bp)
-    )
-    del one_bp, two_bp
-
     if md5_sample_count:
         # scaling factor
         SIZE = 100.0 / max(md5_sample_count.values())
@@ -544,16 +534,21 @@ def main(
                 # i.e. edit distance 1, 2, 3 get weights 3, 2, 1
                 edge_weight = max_edit_dist - dist + 1
 
-                if (dist == 2 and two_step[i, j]) or (dist == 3 and three_step[i, j]):
-                    # Redundant edge, if dist=2, two 1bp edges exist
-                    # Or, if dist=3, three 1bp edges exist, or 1bp+2bp
+                if (
+                    dist == 2
+                    and np.logical_and(distances[i, :] == 1, distances[:, j] == 1).any()
+                ):
+                    # Redundant edge dist=2 with a path with two 1bp edges
                     redundant += 1
-                    # edge_style = "invis"
-                    # ValueError: Unrecognized linestyle: invis
-                    edge_style = "dotted"
-                    edge_width = 0.1
-                    edge_color = "#0000FF9F"  # transparent blue for debug
-                    # edge_color = "#000000FF"  # fully transparent
+                    continue
+                elif dist == 3 and (
+                    np.logical_and(distances[i, :] == 1, distances[:, j] == 2).any()
+                    or np.logical_and(distances[i, :] == 2, distances[:, j] == 1).any()
+                ):
+                    # Redundant edge dist=3 where there is a path of 1bp and 2bp edges
+                    # (if there is a path of 1bp, 1bp, 1bp, then there are also two
+                    # routes of 1bp, 2bp and 2bp, 1bp as well which we'll find)
+                    redundant += 1
                     continue
                 else:
                     # Some graph layout algorithms can use weight attr; some want int
