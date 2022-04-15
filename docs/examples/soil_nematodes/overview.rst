@@ -17,15 +17,15 @@ at the command line or in Excel.
 
 .. code:: console
 
-    $ cut -f 1,2,5-9 summary/NF1-18Sr2b.samples.onebp.tsv
+    $ cut -f 1,2,5-8,10 summary/NF1-18Sr2b.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open the Excel version ``summary/NF1-18Sr2b.samples.onebp.xlsx``, and focus
 on those early columns:
 
-============= ====== ========= ======= ======== ========= ==========
-#marker       sample Raw FASTQ Flash   Cutadapt Threshold Read count
-============= ====== ========= ======= ======== ========= ==========
+============= ====== ========= ======= ======== ========= ========
+#marker       sample Raw FASTQ Flash   Cutadapt Threshold Accepted
+============= ====== ========= ======= ======== ========= ========
 D3Af-D3Br     Blank  1193593   1039205 0        25        0
 D3Af-D3Br     MC1    3897994   3317661 0        25        0
 D3Af-D3Br     MC2    4228233   3685150 0        25        0
@@ -42,7 +42,7 @@ SSUF04-SSUR22 Blank  57199     46879   0        25        0
 SSUF04-SSUR22 MC1    3162379   2633321 77       25        0
 SSUF04-SSUR22 MC2    2790363   2370732 280      25        0
 SSUF04-SSUR22 MC3    1953138   1640045 52       25        0
-============= ====== ========= ======= ======== ========= ==========
+============= ====== ========= ======= ======== ========= ========
 
 You should find the raw FASTQ numbers match the author's Table 5, although
 that omits the blanks - which happily are all much lower.
