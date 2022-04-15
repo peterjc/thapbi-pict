@@ -23,14 +23,14 @@ in the field "blanks":
 
 .. code:: console
 
-    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15-16
+    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15,17
     <SEE TABLE BELOW>
 
 Or, filter/search ``summary/drained_ponds.12S.samples.onebp.tsv`` in Excel:
 
-======== ================= =========================================================================== ========= ==========
-control  Sequencing sample Classification summary                                                      Threshold Read count
-======== ================= =========================================================================== ========= ==========
+======== ================= =========================================================================== ========= ========
+control  Sequencing sample Classification summary                                                      Threshold Accepted
+======== ================= =========================================================================== ========= ========
 blank    SRR11949861       -                                                                           50        0
 blank    SRR11949885       -                                                                           50        0
 blank    SRR11949884       (Off-target) Homo sapiens, (Off-target) Sus scrofa                          50        544
@@ -48,8 +48,8 @@ negative SRR11949837       (Off-target) Homo sapiens                            
 positive SRR11949836       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39748
 positive SRR11949835       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        39244
 positive SRR11949906       Astatotilapia calliptera(*), Maylandia zebra(*)                             65        62249
-positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        24567
-======== ================= =========================================================================== ========= ==========
+positive SRR11949849       Astatotilapia calliptera(*), Maylandia zebra(*)                             50        24566
+======== ================= =========================================================================== ========= ========
 
 Only in one sample (``SRR11949906``, a positive control) was the percentage
 based abundance threshold stricter than the absolute threshold (65 not 50),
