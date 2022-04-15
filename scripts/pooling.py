@@ -76,7 +76,7 @@ parser.add_option(
     "--boolean",
     default=False,
     action="store_true",
-    help="Replace read counts with boolean (Y and N entries).",
+    help="Replace accepted read counts with boolean (Y and N entries).",
 )
 parser.add_option(
     "-z",
@@ -148,16 +148,26 @@ def pool(
         header = [_.rstrip() for _ in line.split("\t")]
         try:
             sample_col = header.index("Sequencing sample")
-            count_col = header.index("Read count")
         except IndexError:
             sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
+        try:
+            count_col = header.index("Accepted")
+            assert count_col + 1 == header.index("Unique")
+            first_sp_col = count_col + 2
+        except IndexError:
+            try:
+                # Prior to v0.12.0 this was called "Read count",
+                count_col = header.index("Read count")
+                first_sp_col = count_col + 1
+            except IndexError:
+                sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
         if max(value_cols) >= min(sample_col, count_col):
             sys.exit(
                 f"ERROR: Requested column {max(value_cols)+1} not in metadata range."
             )
         if column_pending is not None and column_pending >= min(sample_col, count_col):
             sys.exit("ERROR: Pending column not in metadata range.")
-        sp_headers = header[count_col + 1 :]
+        sp_headers = header[first_sp_col:]
         sp_null = ["-"] * len(sp_headers)
         meta_headers = [header[_] for _ in value_cols]
 
@@ -174,7 +184,7 @@ def pool(
                 meta_pending.add(meta)
             samples = [_ for _ in parts[sample_col].split(";") if _ != "-"]
 
-            sp_counts = parts[count_col + 1 :]
+            sp_counts = parts[first_sp_col:]
             if sp_counts == sp_null:
                 # Was not sequenced
                 if meta in meta_samples:
