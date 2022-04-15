@@ -252,10 +252,10 @@ as *Brevilegnia gracilis*:
 .. code:: console
 
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
-      | cut -f 3-6 | grep 9bb2ab5b9f88256516f2ae618c16a62e | sort | uniq -c
-    Wrote 1451 txt format entries
-          1 Brevilegnia      gracilis  944588   9bb2ab5b9f88256516f2ae618c16a62e
-         42 Globisporangium  ultimum   2052682  9bb2ab5b9f88256516f2ae618c16a62e
+      | cut -f 3-6 | grep 9bb2ab5b9f88256516f2ae618c16a62e \
+      | sort | uniq -c | sed 's/^ *//g'
+    1 Brevilegnia       gracilis  944588   9bb2ab5b9f88256516f2ae618c16a62e
+    42 Globisporangium  ultimum   2052682  9bb2ab5b9f88256516f2ae618c16a62e
 
 Checking the current NCBI annotation of these accessions does not suggest
 problems with recent taxonomy changes like *Phytopythium* vs *Pythium*.
