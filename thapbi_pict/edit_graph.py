@@ -386,10 +386,12 @@ def main(
                     md5_species[md5].remove(genus)
         if show_db_marker:
             sys.stderr.write(
-                f"Loaded {len(md5_in_db)} unique {show_db_marker} sequences from DB\n"
+                f"Loaded {len(md5_in_db)} unique {show_db_marker} sequences from DB.\n"
             )
         else:
-            sys.stderr.write(f"Matched {len(md5_in_db)} unique sequences in database\n")
+            sys.stderr.write(
+                f"Matched {len(md5_in_db)} unique sequences in database.\n"
+            )
 
     if db_url and inputs and show_db_marker:
         sys.stderr.write(
@@ -420,7 +422,7 @@ def main(
         dtype=np.int8,
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
-    sys.stderr.write(f"Computed Levenshtein edit distances between {n} sequences.\n")
+    sys.stderr.write("Computed Levenshtein edit distances.\n")
 
     if graph_format == "matrix":
         # Report all nodes, even if isolated and low abundance

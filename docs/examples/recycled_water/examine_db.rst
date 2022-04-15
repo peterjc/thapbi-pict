@@ -134,8 +134,8 @@ the samples. It can also be run on a database alone provided you include the
     $ thapbi_pict edit-graph -k ITS1-long \
       -d Redekar_et_al_2019_sup_table_3.sqlite \
       -o Redekar_et_al_2019_sup_table_3.xgmml
-    Loaded 838 unique ITS1-long sequences from DB
-    Computed 350703 Levenshtein edit distances between 838 sequences.
+    Loaded 838 unique ITS1-long sequences from DB.
+    Computed Levenshtein edit distances.
     Will draw 533 nodes with at least one edge (305 are isolated sequences).
 
 Of the 838 unique sequences in the database, just over three hundred are
