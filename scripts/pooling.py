@@ -148,18 +148,18 @@ def pool(
         header = [_.rstrip() for _ in line.split("\t")]
         try:
             sample_col = header.index("Sequencing sample")
-        except IndexError:
+        except ValueError:
             sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
         try:
             count_col = header.index("Accepted")
             assert count_col + 1 == header.index("Unique")
             first_sp_col = count_col + 2
-        except IndexError:
+        except ValueError:
             try:
                 # Prior to v0.12.0 this was called "Read count",
                 count_col = header.index("Read count")
                 first_sp_col = count_col + 1
-            except IndexError:
+            except ValueError:
                 sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
         if max(value_cols) >= min(sample_col, count_col):
             sys.exit(

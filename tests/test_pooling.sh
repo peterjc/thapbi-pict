@@ -18,7 +18,7 @@ echo "==================="
 echo "Checking pooling.py"
 echo "==================="
 set -x
-python scripts/pooling.py -h 2>&1 | grep "Replace read counts with boolean"
+python scripts/pooling.py -h 2>&1 | grep "Replace accepted read counts with boolean"
 set -o pipefail
 
 python scripts/pooling.py -i tests/pooling/example.samples.onebp.tsv -c 2,3,4,5 --pcr -z -p 6 -o $TMP/example
