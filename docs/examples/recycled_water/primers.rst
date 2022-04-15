@@ -21,7 +21,8 @@ Now we will change the primer settings. Using the actual right primer will
 extend the *Phytophthora* FASTA sequences about 60bp (and accept many more
 non-*Phytophthora*), while treating the conserved 32bp fragment
 ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` as if it were part of the left primer
-will trim the start of the sequences.
+will trim the start of the sequences. That will match the Redekar *et al.*
+(2019) analysis.
 
 The up-shot is by cropping about 32bp off the start, and adding about 60bp
 at the end, we will no longer get any matches against the default database
@@ -146,8 +147,8 @@ less trimming we tend to get lower counts.
 You can verify by NCBI BLAST online that the first and third (the
 ``C`` form) give perfect full length matches to published *Phytophthora
 chlamydospora*, while an exact match to the ``T`` forms has not been
-published at the time of writing (yet they occurs at good abundance in
-many of these samples).
+published at the time of writing (yet this occurs at good abundance in many of
+these samples).
 
 Losing sequences
 ----------------
