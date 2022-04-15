@@ -30,15 +30,15 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,11 summary/SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand
 columns, you should see:
 
-======= ============== ============ ========= ======== ==========
-#Marker Group          Library-name Raw FASTQ Cutadapt Read count
-======= ============== ============ ========= ======== ==========
+======= ============== ============ ========= ======== ========
+#Marker Group          Library-name Raw FASTQ Cutadapt Accepted
+======= ============== ============ ========= ======== ========
 MOL16S  Aquarium       BIR2M        306311    2        0
 MOL16S  Aquarium       BIR6M        291954    14       0
 MOL16S  Control        BIM8M        2433      0        0
@@ -57,7 +57,7 @@ SPH16S  Aquarium       BIR6S        240360    226012   191446
 SPH16S  Mock Community SPSC3PRO1    425271    317961   224690
 SPH16S  Mock Community SPSC3PRO2    341476    282516   204248
 SPH16S  Mock Community SPSC3PRO4    410780    303957   197505
-======= ============== ============ ========= ======== ==========
+======= ============== ============ ========= ======== ========
 
 Things to note:
 
@@ -82,15 +82,15 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9-10 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,11 summary/MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand
 columns, you should see:
 
-======= ============== ============ ========= ======== ==========
-#Marker Group          Library-name Raw FASTQ Cutadapt Read count
-======= ============== ============ ========= ======== ==========
+======= ============== ============ ========= ======== ========
+#Marker Group          Library-name Raw FASTQ Cutadapt Accepted
+======= ============== ============ ========= ======== ========
 MOL16S  Aquarium       BIR2M        306311    297656   256386
 MOL16S  Aquarium       BIR6M        291954    286427   256471
 MOL16S  Control        BIM8M        2433      1010     551
@@ -109,7 +109,7 @@ SPH16S  Aquarium       BIR6S        240360    27       0
 SPH16S  Mock Community SPSC3PRO1    425271    35       0
 SPH16S  Mock Community SPSC3PRO2    341476    168      27
 SPH16S  Mock Community SPSC3PRO4    410780    420      108
-======= ============== ============ ========= ======== ==========
+======= ============== ============ ========= ======== ========
 
 Looking at the same points, I see two problems:
 
@@ -135,6 +135,7 @@ read report - or look directly at the intermediate FASTA files:
     #cutadapt:1010
     #abundance:551
     #threshold:10
+    #singletons:253
     >20c0669e4c6f8436c9d42736df727c83_478
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
@@ -185,6 +186,7 @@ read report, or at the command line:
     #cutadapt:420
     #abundance:108
     #threshold:10
+    #singletons:272
     >20c0669e4c6f8436c9d42736df727c83_46
     ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
     TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
