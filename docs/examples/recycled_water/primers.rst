@@ -139,8 +139,8 @@ Again four very similar sequences, each as before but with the starting
 ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` removed, and instead extended by
 ``GTGGGGACGAAAGTCTCTGCTTTTAACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC``.
 
-The abundances are similar but slightly lower - there would have been
-some minor variants timmed regions which would have been pooled, so with
+The abundances are similar but slightly lower - there would have been some
+minor variation in trimmed regions which would have been pooled, so with
 less trimming we tend to get lower counts.
 
 You can verify by NCBI BLAST online that the first and third (the
