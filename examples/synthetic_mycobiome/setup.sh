@@ -33,7 +33,10 @@ done
 mkdir -p expected
 echo "Setting up positive controls"
 for EXPT in BioMockStds BioMock SynMock; do
-    for ACC in `grep "Illumina MiSeq\tm6-" PRJNA305924.tsv | grep "\t$EXPT$" | cut -f 1`; do
+    # Linux: GNU grep needs -P to respect \t for tab
+    # maxOS: BSD grep understands \t but rejects -P
+    # Solution: Use the $'\t' trick here:
+    for ACC in `grep "Illumina MiSeq"$'\t'"m6-" PRJNA305924.tsv | grep "$EXPT$" | cut -f 1`; do
         FILE=expected/$ACC.known.tsv
         if [ -f $FILE ]; then
             echo "Already have $FILE"
