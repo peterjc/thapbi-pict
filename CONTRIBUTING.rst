@@ -137,7 +137,8 @@ update it using the plain text dump which is under version control:
     sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
     chmod a-w thapbi_pict/ITS1_DB.sqlite
 
-Then actually do the build:
+Next confirm the ``CHANGELOG.rst`` file is up to date, including using today's
+date for the new version. Then actually do the build:
 
 .. code:: bash
 
