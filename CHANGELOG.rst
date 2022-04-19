@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.12.0 *Pending*  Can use synthetic spike-in controls to set fractional abundance threshold.
+v0.12.0 *Pending*  Synthetic spike-ins can set fractional abundance threshold. Cutadapt v4.0+.
 v0.11.6 2022-03-09 Fix regression on reports including unsequenced samples.
 v0.11.5 2022-02-18 Reporting enhancements when using spike-in (synthetic) controls.
 v0.11.4 2022-02-08 Updates to default curated DB, adding several more *Phytophthora* species.
