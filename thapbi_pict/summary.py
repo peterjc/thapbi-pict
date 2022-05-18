@@ -254,7 +254,7 @@ def sample_summary(
         if not sample_batch and show_unsequenced:
             human.write("Has not been sequenced.\n\n")
             # Missing data in TSV:
-            blanks = len(stats_fields) + 3 + len(species_predictions)
+            blanks = len(stats_fields) + 4 + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
             handle.write("\t".join(metadata) + ("\t" + MISSING_DATA) * blanks + "\n")
             # Missing data in Excel:
