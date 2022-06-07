@@ -59,7 +59,8 @@ repos:
     -   id: rstcheck
         args: [
             --report-level=warning,
-            --ignore-directives=automodule,
+            --ignore-roles=ref,
+            "--ignore-directives=automodule,toctree",
             --ignore-substitutions=version
         ]
 -   repo: https://github.com/PyCQA/doc8
