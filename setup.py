@@ -111,7 +111,7 @@ setup(
         "biopython",
         "cutadapt >=4.0",
         "matplotlib",
-        "networkx",
+        "networkx >=2.4,!=2.8.3",
         "pydot",
         "rapidfuzz",
         "sqlalchemy",
