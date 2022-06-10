@@ -93,7 +93,7 @@ INSERT INTO data_source VALUES(81,'Import of WL54_S128_L001.fasta','single_isola
 INSERT INTO data_source VALUES(82,'Import of WL77_S152_L001.fasta','single_isolates/WL77_S152_L001.fasta','8793ff33cef54442371a8943b666df7c','ITS1 imported with thapbi_pict v0.12.2');
 INSERT INTO data_source VALUES(83,'Import of 2021-11-22-ITS_Oomycota_w32.fasta','2021-11-22-ITS_Oomycota_w32.fasta','ac238166983895c4d8ef1160657450b6','ITS1 imported with thapbi_pict v0.12.2');
 INSERT INTO data_source VALUES(84,'Import of Nothophytophthora_ITS1_curated.fasta','Nothophytophthora_ITS1_curated.fasta','56c413fcbcada47a914b7adb2c58fba0','ITS1 imported with thapbi_pict v0.12.2');
-INSERT INTO data_source VALUES(85,'Import of Phytophthora_ITS1_curated.fasta','Phytophthora_ITS1_curated.fasta','7d52defff6ba8a95c37242b2423d1886','ITS1 imported with thapbi_pict v0.12.2');
+INSERT INTO data_source VALUES(85,'Import of Phytophthora_ITS1_curated.fasta','Phytophthora_ITS1_curated.fasta','2d19222bbfb58c77636d355ade141b8b','ITS1 imported with thapbi_pict v0.12.2');
 CREATE TABLE taxonomy (
 	id INTEGER NOT NULL, 
 	ncbi_taxid INTEGER, 
@@ -9089,7 +9089,7 @@ INSERT INTO sequence_source VALUES(3591,'KC855181.X',85,1242,1,2124);
 INSERT INTO sequence_source VALUES(3592,'AY659739.XXX',85,1243,1,1238);
 INSERT INTO sequence_source VALUES(3593,'AY659737.X',85,1244,1,1238);
 INSERT INTO sequence_source VALUES(3594,'KC295544.X',85,1245,1,2233);
-INSERT INTO sequence_source VALUES(3595,'EF437222.X',85,1246,1,5);
+INSERT INTO sequence_source VALUES(3595,'EF437222.X',85,1246,1,953);
 INSERT INTO sequence_source VALUES(3596,'KC249960.X',85,496,1,2092);
 INSERT INTO sequence_source VALUES(3597,'AY659736.X',85,627,1,1238);
 INSERT INTO sequence_source VALUES(3598,'EU583793.X',85,627,1,1260);
