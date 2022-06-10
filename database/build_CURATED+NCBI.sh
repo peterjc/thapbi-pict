@@ -51,7 +51,10 @@ sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN $BAD
 # =================
 # Curated sequences
 # =================
-thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450 -s ";"
+
+# Using lax mode (-x) since we have some entries not
+# in the NCBI taxonomy, like putative novel species.
+thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450 -s ";" -x
 
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
