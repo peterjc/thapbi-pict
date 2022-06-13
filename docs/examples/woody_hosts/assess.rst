@@ -216,9 +216,9 @@ five columns:
 
     $ thapbi_pict classify -i intermediate/ITS1/DNA15MIX.fasta -o .
     $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv | cut -f 1-5
-    Assessed onebp vs known in 1 files (211 species)
+    Assessed onebp vs known in 1 files (230 species)
     #Species                     TP  FP  FN  TN
-    OVERALL                      8   1   7   195
+    OVERALL                      8   1   7   214
     Phytophthora aleatoria       0   1   0   0
     Phytophthora austrocedri     1   0   0   0
     Phytophthora boehmeriae      0   0   1   0
@@ -235,14 +235,14 @@ five columns:
     Phytophthora pseudosyringae  1   0   0   0
     Phytophthora ramorum         1   0   0   0
     Phytophthora syringae        0   0   1   0
-    OTHER 195 SPECIES IN DB      0   0   0   195
+    OTHER 214 SPECIES IN DB      0   0   0   214
 
 More usually, you would output to a named file, and look at that:
 
 .. code:: console
 
     $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv -o DNA15MIX.assess.tsv
-    Assessed onebp vs known in 1 files (211 species)
+    Assessed onebp vs known in 1 files (230 species)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -252,7 +252,7 @@ and focus on the same column selection:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     8  1  7  195 0.67 0.500
+OVERALL                     8  1  7  214 0.67 0.500
 Phytophthora aleatoria      0  1  0  0   0.00 1.000
 Phytophthora austrocedri    1  0  0  0   1.00 0.000
 Phytophthora boehmeriae     0  0  1  0   0.00 1.000
@@ -269,14 +269,14 @@ Phytophthora plurivora      0  0  1  0   0.00 1.000
 Phytophthora pseudosyringae 1  0  0  0   1.00 0.000
 Phytophthora ramorum        1  0  0  0   1.00 0.000
 Phytophthora syringae       0  0  1  0   0.00 1.000
-OTHER 195 SPECIES IN DB     0  0  0  195 0.00 0.000
+OTHER 214 SPECIES IN DB     0  0  0  214 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 1 false
-positives, 7 false negatives, and 195 true negatives. The final number needs a
-little explanation. First, 8+1+7+195 = 211, which is the number of species in
-the database. With only one sample being considered, 195 is the number of other
-species in the database which the tool correctly says are not present.
+positives, 7 false negatives, and 214 true negatives. The final number needs a
+little explanation. First, 8+1+7+214 = 230, which is the number of species in
+the database. With only one sample being considered, 214 is the number of
+other species in the database which the tool correctly says are not present.
 
 Following this we get one line per species, considering this species in
 isolation (making this a traditional and simpler to interpret classification
@@ -297,7 +297,7 @@ by giving the input directory names (it will work out the common filenames):
 
     $ thapbi_pict assess -i expected/ intermediate/ITS1/ \
       summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o thabpi-pict.ITS1.assess.tsv
-    Assessed onebp vs known in 4 files (211 species)
+    Assessed onebp vs known in 4 files (230 species)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
@@ -306,7 +306,7 @@ New table ``thabpi-pict.ITS1.assess.tsv`` is similar:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     32 8  13 791 0.75 0.396
+OVERALL                     32 8  13 867 0.75 0.396
 Phytophthora agathidicida   0  3  0  1   0.00 1.000
 Phytophthora aleatoria      0  1  0  3   0.00 1.000
 Phytophthora alpina         0  1  0  3   0.00 1.000
@@ -332,11 +332,11 @@ Phytophthora ramorum        1  0  0  3   1.00 0.000
 Phytophthora rubi           3  0  0  1   1.00 0.000
 Phytophthora siskiyouensis  3  0  0  1   1.00 0.000
 Phytophthora syringae       0  0  1  3   0.00 1.000
-OTHER 186 SPECIES IN DB     0  0  0  744 0.00 0.000
+OTHER 205 SPECIES IN DB     0  0  0  820 0.00 0.000
 =========================== == == == === ==== ===========
 
-This time the ``OVERALL`` line says we had 32 TP, 7 FP, 13 FN and 792 TN.
-Their total, 32+7+13+792 = 844 = 4 * 211, is the number of samples times the
+This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 867 TN.
+Their total, 32+8+13+867 = 920 = 4 * 230, is the number of samples times the
 number of species in the database.
 
 This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
