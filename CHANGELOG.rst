@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.12.2 *Pending*  Updates to the curated entries in the default DB.
+v0.12.2 2022-06-15 Updates to the curated entries in the default *Phytophthora* ITS1 DB.
 v0.12.1 2022-05-18 Fix missing field regression on reports including unsequenced samples.
 v0.12.0 2022-04-19 Synthetic spike-ins can set fractional abundance threshold. Cutadapt v4.0+.
 v0.11.6 2022-03-09 Fix regression on reports including unsequenced samples.
