@@ -30,15 +30,11 @@ if [ ! -f references.sqlite ]; then
         -k ITS2 --left $LEFT --right $RIGHT
 fi
 
-echo ==========================================
-echo Running analysis excluding only singletons
-echo ==========================================
-
 # Dataset has a single synthetic negative control SRR7109420, on the m6 run.
 # This has 1199806 reads after cutadapt, and highest non-synthetic-spike-in
 # sequence is seen 187 times, suggesting using an absolute threshold -a 187
 # (via -n raw_data/SRR7109420_*.fastq.gz), or a fractional threshold (via
-# -y raw_data/SRR7109420_*.fastq.gz) of 0.0115%, or -f 0.000115, given by
+# -y raw_data/SRR7109420_*.fastq.gz) of 0.0156%, or -f 0.000156, given by
 # 187/1199806.
 #
 # This means while default absolute threshold -a 100 is not high enough (since
@@ -52,6 +48,10 @@ echo ==========================================
 # non-synthetic entries - which are consistent with but about 10x higher than
 # the worst Illumina tag-swapping in the other direction (synthetics appearing
 # in bioligical samples; see Figure 6).
+
+echo ==========================================
+echo Running analysis excluding only singletons
+echo ==========================================
 
 echo "Very low threshold (excluding only singletons) to compare with Figure 6."
 mkdir -p intermediate_a2/
@@ -75,6 +75,10 @@ thapbi_pict pipeline -d references.sqlite \
     -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
+thapbi_pict edit-graph -d references.sqlite -m 1s5g \
+    -i summary/ctrl.ITS2.all_reads.1s5g.tsv intermediate_ctrl/ \
+    -o summary/ctrl.ITS2.edit-graph.1s5g.xgmml
+
 echo =======================================
 echo Running analysis using default settings
 echo =======================================
@@ -87,6 +91,10 @@ thapbi_pict pipeline -d references.sqlite \
     -y raw_data/SRR7109420_*.fastq.gz \
     -s intermediate/ -o summary/defaults \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
+
+thapbi_pict edit-graph -d references.sqlite -m 1s5g \
+    -i summary/defaults.ITS2.all_reads.1s5g.tsv intermediate/ \
+    -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
 echo ====
 echo Done

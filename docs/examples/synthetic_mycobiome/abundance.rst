@@ -116,7 +116,7 @@ counts differ, but these are all samples highlighted in Figure 6 (sharing the
 same Illumina i7 or i5 index for multiplexing). We don't see this in the other
 BioMock samples, but our pipeline appears slightly more stringent.
 
-As percentages, 187/1199806 gives 0.015% which is nearly ten times lower than
+As percentages, 187/1199806 gives 0.0156% which is nearly ten times lower than
 our default of 0.1%. The numbers the other way round are all even lower,
 15/462496 gives 0.003%, 15/349965 gives 0.004%, and 3/1023234 gives 0.003%.
 
@@ -229,7 +229,7 @@ Threshold selection
 -------------------
 
 Excluding only singletons is too lienent, but how does the default (0.1%)
-compare to the synthetic control infered threshold (0.015%)?
+compare to the synthetic control inferred threshold (0.0156%)?
 
 Here are the classifier assessment values using the lower inferred threshold
 which allows a lot of PCR noise:
