@@ -265,3 +265,21 @@ OVERALL  92 8  11 189 0.89        0.96        0.92      0.91 0.0633       0.171
 
 You could use the assessment metrics to help decide on your preferred
 threshold, depending on the best tradeoff for your use-case.
+
+Personally, of the these two I would pick the higher default threshold
+since it appears to exclude lots of PCR noise as seen in the edit graphs.
+With the default 0.1% threshold:
+
+.. image:: ../../images/synthetic_controls.default.png
+   :target: https://user-images.githubusercontent.com/63959/175536233-1036c5f9-ba94-4382-9843-973885b6960f.svg
+   :alt: Sequence edit-graph, with default $0.1\%$ abundance threshold, showing 360 ASVs.
+
+Using the lower threshold there are roughly ten times as many ASVs.
+The more common ASV nodes become the centre of a halo of 1bp variants,
+typically each seen in a single sample, which we attribute to PCR noise:
+
+.. image:: ../../images/synthetic_controls.ctrl.png
+   :target: https://user-images.githubusercontent.com/63959/175536267-b77fc035-d366-453d-b064-28ce63f11bcd.svg
+   :alt: Sequence edit-graph, with synthetic control inferred $0.0156\%$ abundance threshold, showing 3097 ASVs.
+
+The best choice of threshold may lie somewhere in between?
