@@ -110,7 +110,7 @@ samples ``755-1`` (``SRR7109412``), ``736-1`` (``SRR7109414``), and one of the
 BioMock samples (``SRR7109409``) have trace levels of unwanted synthetic
 spike-in reads, the most abundant at 15, 15 and 3 copies respectively. The
 counts differ, but these are all samples highlighted in Figure 6 (sharing the
-same Illumina i7 or i5 index for multiplexing). We don't see this in a second
+same Illumina i7 or i5 index for multiplexing). We don't see this in the other
 BioMock samples, but our pipeline appears slightly more stringent.
 
 As percentages, 187/1199806 gives 0.015% which is nearly ten times lower than
