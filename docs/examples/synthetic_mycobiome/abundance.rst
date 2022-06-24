@@ -60,6 +60,9 @@ by reproducing the Illumina part of Figure 6, which was based on the m6 MiSeq
 sequencing run. This figure explores tag-switching in the demultiplexing, and
 in the authors' analysis goes as low as 5 reads.
 
+Excluding only singletons
+-------------------------
+
 The ``run.sh`` example starts by running the pipeline on the m6 dataset with
 ``-f 0 -a 2`` to accept everything except singletons (sequences which are only
 seen once in a sample; including them gives about ten times as many unique
@@ -117,7 +120,10 @@ As percentages, 187/1199806 gives 0.015% which is nearly ten times lower than
 our default of 0.1%. The numbers the other way round are all even lower,
 15/462496 gives 0.003%, 15/349965 gives 0.004%, and 3/1023234 gives 0.003%.
 
-Finally the ``run.sh`` example uses the ``SynMock`` synthetic control to
+Using the synthetic control
+---------------------------
+
+Next the ``run.sh`` example uses the ``SynMock`` synthetic control to
 automatically raise the fractional abundance threshold to 0.015% by including
 ``-y raw_data/SRR7109420_*.fastq.gz`` in the command line. This brings down
 the unique sequence count enough to allow use of a slower but more lenient
@@ -173,6 +179,12 @@ has *not* excluded PCR noise - there are hundreds of low abundance sequences
 unique to a single sample. To address that we have to use a considerably
 higher threshold, and the default 0.1% is a reasonable choice here.
 
+Using the defaults
+------------------
+
+The final step in ``run.sh`` is to run the pipeline with the default abundance
+thresholds (sticter than the two analyses above).
+
 Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
 line with the TSV file:
 
@@ -212,6 +224,12 @@ SynMock       1199806  1200      0             103014       862950   14
 The accepted read counts have gone done a little further, as have the number
 of unique sequences accepted for each sample. Looking at the mock community
 controls, this may have gone a little too far...
+
+Threshold selection
+-------------------
+
+Excluding only singletons is too lienent, but how does the default (0.1%)
+compare to the synthetic control infered threshold (0.015%)?
 
 Here are the classifier assessment values using the lower inferred threshold
 which allows a lot of PCR noise:
