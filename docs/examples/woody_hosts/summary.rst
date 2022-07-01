@@ -37,7 +37,7 @@ Linux command prompt (or include it in a copy and paste), or just enter this
 as one very long command.
 
 The computer readable TSV and equivalent Excel file will include the metadata
-as additional leading columns, and also differ in the line order.
+and use it for sample sorting.
 
 We next focus on the sample report, and how including metadata changes it.
 
@@ -91,9 +91,9 @@ cases with a caveat. The file starts with a tiny explanation:
     equally well. For example, Phytophthora andina, P. infestans, and
     P. ipomoeae, share an identical ITS1 marker.
 
-In this case, as you may recall from when we looked at the classifier output
-file ``intermediate/Site_1_sample_1.onebp.tsv``, one of the sequences matched
-both *Phytophthora cambivora* and *Phytophthora x cambivora*.
+In this case, as you may recall from when we looked at the "raw" classifier
+output file ``summary/thapbi-pict.ITS1.all_reads.onebp.tsv``, one of the
+sequences matched both *Phytophthora cambivora* and *Phytophthora x cambivora*.
 
 In comparison, with the metadata provided in file
 ``summary/with-metadata.samples.onebp.txt``, all the samples matched to a
