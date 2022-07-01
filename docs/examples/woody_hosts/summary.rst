@@ -19,7 +19,8 @@ To mimic what the pipeline command would do, run the following:
 .. code:: console
 
     $ thapbi_pict summary -i intermediate/ \
-      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o summary/thapbi-pict
+      summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      -o summary/thapbi-pict.ITS1
     ...
 
 Note the trailing slash ``\`` at the end of the first line indicates the
@@ -34,20 +35,57 @@ numbers):
 .. code:: console
 
     $ thapbi_pict summary -i intermediate/ \
-      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o summary/with-metadata \
+      summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      -o summary/with-metadata.ITS1 \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
 
-We first focus on the sample report, and how including metadata changes it.
+Both the read report and sample report are tables, produced as both
+computer-friendly plain text tab-separated variable (TSV), and human-friendly
+Excel (with colors and conditional formatting).
+
+Read Report
+-----------
+
+The heart of the read report is a large table, of unique sequences (ASVs rows)
+versus sequenced samples (columns), with read abundance counts. There are
+additional columns with sequence information, and when :ref:`metadata` is
+present, extra rows at the start with sample information.
+
+This read report has a row for each unique sequence. The first columns are the
+marker name (here always "ITS1"), the unique sequence MD5 checksum, any
+species prediction, the sequence itself, the number of samples it was detected
+in above the threshold, the maximum number of reads with this sequence in any
+one sample, and the total number of reads (from samples where it was above the
+threshold). Then the main columns (one per sample) list the abundance of each
+unique sequence in that sample (if above the threshold).
+
+In the Excel version, conditional formatting is used to highlight the non-zero
+counts with a red background. Furthermore, with metadata it will attempt to
+assign repeated bands of background color to groups (pink, orange, yellow,
+green, blue). In this example, each sample site gets a new color:
+
+.. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
+   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.onebp.xlsx`` file.
+
+Typical sample naming schemes will result in replicates as neighbouring
+columns - meaning you should see very similar patterns of red (non-zero).
+Certainly in this dataset scanning horizontally we do see some sequences
+clearly show presence/absence patterns consistent with the samples.
+
+The default row sorting will result in a dominant sequence being followed by
+any close variants assigned to the same species. Many of these rows will
+represent PCR artefacts found in just one or two samples. This contributes
+to the "halo" effect seen in the :ref:`edit_graph` representation, discussed
+next.
 
 Sample Report
 -------------
 
-Here we will discuss the sample tabular report from ``thapbi_pict summary``,
-produced as both computer-friendly plain text tab-separated variable (TSV),
-and human-friendly Excel (with colors and conditional formatting). This
-report has one line per sample, with columns for metadata and species
-predictions.
+The heart of the sample report is a table of samples (rows) versus species
+predictions (columns), with read abundance counts. There are additional
+columns with sample read counts, and when :ref:`metadata` is present, extra
+columns at the start with sample information.
 
 Here is a screenshot of the ``summary/with-metadata.ITS1.samples.onebp.xlsx``
 file opened in Excel:
@@ -197,7 +235,7 @@ Site_1_sample_9-2 0                      0
 ================= ====================== ===============================================
 
 In this example, while ``Site_1_sample_7`` had sequences uniquely matching
-*Phytophthora cambivora*, while ``Site_1_sample_1``, ``Site_1_sample_1`` and
+*Phytophthora cambivora*, ``Site_1_sample_1``, ``Site_1_sample_1`` and
 ``Site_1_sample_4`` instead had sequences which could be either *Phytophthora
 cambivora* or *Phytophthora x cambivora*. These species are listed with a
 ``(*)`` suffix in the earlier classification summary column:
@@ -206,38 +244,3 @@ cambivora* or *Phytophthora x cambivora*. These species are listed with a
 
     $ grep Site_1_sample_4 summary/with-metadata.ITS1.samples.onebp.tsv | cut -f 16,17
     Site_1_sample_4  Phytophthora austrocedri, Phytophthora cambivora(*), Phytophthora gonapodyides, Phytophthora pseudosyringae, Phytophthora x cambivora(*)
-
-Read Report
------------
-
-The heart of the read report is a large table, of unique sequences (rows)
-versus sequenced samples (columns), with read abundance counts. There are
-additional columns with sequence information, and when :ref:`metadata` is
-present, extra rows at the start with sample information.
-
-This read report has a row for each unique sequence. The first columns are the
-marker name (here always "ITS1"), the unique sequence MD5 checksum, any
-species prediction, the sequence itself, the number of samples it was detected
-in above the threshold, the maximum number of reads with this sequence in any
-one sample, and the total number of reads (from samples where it was above the
-threshold). Then the main columns (one per sample) list the abundance of each
-unique sequence in that sample (if above the threshold).
-
-In the Excel version, conditional formatting is used to highlight the non-zero
-counts with a red background. Furthermore, with metadata it will attempt to
-assign repeated bands of background color to groups (pink, orange, yellow,
-green, blue). In this example, each sample site gets a new color:
-
-.. image:: https://user-images.githubusercontent.com/63959/60735578-ebdcf200-9f4b-11e9-8856-1ab66bd1245b.png
-   :alt: Screenshot of Excel showing ``summary/with-metadata.samples.onebp.xlsx`` file.
-
-Typical sample naming schemes will result in replicates as neighbouring
-columns - meaning you should see very similar patterns of red (non-zero).
-Certainly in this dataset scanning horizontally we do see some sequences
-clearly show presence/absence patterns consistent with the samples.
-
-The default row sorting will result in a dominant sequence being followed by
-any close variants assigned to the same species. Many of these rows will
-represent PCR artefacts found in just one or two samples. This contributes
-to the "halo" effect seen in the :ref:`edit_graph` representation, discussed
-next.
