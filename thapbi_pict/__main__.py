@@ -1461,8 +1461,7 @@ def main(args=None):
         required=True,
         nargs="+",
         help="One or more prepared read files (*.fasta), prediction "
-        "files (*.method.tsv) or folder names. If passing folder names, "
-        "it expects to find paired files using these extensions. "
+        "files (*.method.tsv) or folder names. "
         "The classifier method extension can be set via -m / --method.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)

@@ -18,17 +18,8 @@ To mimic what the pipeline command would do, run the following:
 
 .. code:: console
 
-    $ thapbi_pict summary -i intermediate/ -o summary/thapbi-pict
-    ...
-
-We will look at the output in a moment, along side the equivalent reports
-generated with :ref:`metadata <metadata>` (see linked discussion about column
-numbers):
-
-.. code:: console
-
-    $ time thapbi_pict summary -i intermediate/ -o summary/with-metadata \
-      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
+    $ thapbi_pict summary -i intermediate/ \
+      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o summary/thapbi-pict
     ...
 
 Note the trailing slash ``\`` at the end of the first line indicates the
@@ -36,10 +27,18 @@ command continues on the next line. You can actually type this at the standard
 Linux command prompt (or include it in a copy and paste), or just enter this
 as one very long command.
 
-The computer readable TSV and equivalent Excel file will include the metadata
-and use it for sample sorting.
+We will look at the output in a moment, along side the equivalent reports
+generated with :ref:`metadata <metadata>` (see linked discussion about column
+numbers):
 
-We next focus on the sample report, and how including metadata changes it.
+.. code:: console
+
+    $ thapbi_pict summary -i intermediate/ \
+      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o summary/with-metadata \
+      -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
+    ...
+
+We first focus on the sample report, and how including metadata changes it.
 
 Sample Report
 -------------
