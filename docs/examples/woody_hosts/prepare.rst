@@ -173,8 +173,8 @@ abundance threshold ``-f`` or ``--abundance-fraction`` and how to set this
 dynamically with synthetic control samples with ``-y`` or ``--synthetic``.)
 
 If any negative controls are specified, those paired FASTQ files are processed
-*first*, using the specified minimum abundance (default 100). If any of these
-contained ITS1 sequences above the threshold, that higher number is used as
+*first*. If any of these contained ITS1 sequences above the specified minimum
+absolute abundance threshold (default 100), that higher number is used as
 the minimum abundance threshold for the non-control samples. For example, say
 one control had several ITS1 sequences with a maximum abundance of 124, and
 another control had a maximum ITS1 abundance of 217, while the remaining
