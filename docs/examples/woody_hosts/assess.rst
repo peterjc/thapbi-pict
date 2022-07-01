@@ -139,12 +139,14 @@ etc) made little difference.
 Leaving aside the ambiguous qualifier, there are ten species predictions, but
 only nine are correct (9 TP: *P. capsici*, *P. castaneae*, *P. fallax*,
 *P. foliorum*, *P. obscura*, *P. plurivora*, *P. rubi*, *P. siskiyouensis*),
-with one wrong guess (1 FP: *P. agathidicida*), and one missing prediction
-(1 FN: *P. boehmeriae*).
+with two wrong guesses (2 FP: *P. agathidicida* and *P. glovera*), and two
+missing predictions (2 FN: *P. boehmeriae* and *P. cactorum*).
 
 As noted above, the woody hosts paper concluded the failure to detect
 *P. boehmeriae* in either DNA mix was due to inefficient primer annealing
 in a species mixture.
+
+Why no *P. cactorum* though?
 
 The uncertain/ambiguous prediction of *Phytophthora agathidicida* is easily
 explained, it comes from a sequence present in all three samples with MD5
@@ -165,12 +167,7 @@ grep to show all lines with this species name:
     intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
     intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
 
-The same applies to *Phytophthora capsici* and *Phytophthora glovera*,
-although in this case both were in the mixture.
-
-Overall, given the uniqueness limitations of the ITS1 marker, the tool has
-done a faultless job on these three positive control samples from the ten
-species mix.
+The same applies to *Phytophthora capsici* and *Phytophthora glovera*.
 
 Running thapbi_pict assess
 --------------------------
@@ -289,6 +286,38 @@ provisionally called *Ad hoc loss* which is a modification of the Hamming loss
 without using the true negative count (which we expect to always be very large
 as the database will contain many species, while a community might contain
 only ten).
+
+Now, let's look at the three 10 species mix samples:
+
+.. code:: console
+
+    $ thapbi_pict assess -i expected/DNA10MIX_*.known.tsv intermediate/ITS1/DNA10MIX_*.fasta summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o DNA10MIX.assess.tsv
+    Assessed onebp vs known in 3 files (230 species)
+    $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
+    <SEE TABLE BELOW>
+
+New table ``DNA10MIX.assess.tsv`` is similar, but the species rows add up to 3:
+
+========================== == == == === ==== ===========
+#Species                   TP FP FN TN  F1   Ad-hoc-loss
+========================== == == == === ==== ===========
+OVERALL                    24 6  6  654 0.80 0.333
+Phytophthora agathidicida  0  3  0  0   0.00 1.000
+Phytophthora boehmeriae    0  0  3  0   0.00 1.000
+Phytophthora cactorum      0  0  3  0   0.00 1.000
+Phytophthora capsici       3  0  0  0   1.00 0.000
+Phytophthora castaneae     3  0  0  0   1.00 0.000
+Phytophthora fallax        3  0  0  0   1.00 0.000
+Phytophthora foliorum      3  0  0  0   1.00 0.000
+Phytophthora glovera       0  3  0  0   0.00 1.000
+Phytophthora obscura       3  0  0  0   1.00 0.000
+Phytophthora plurivora     3  0  0  0   1.00 0.000
+Phytophthora rubi          3  0  0  0   1.00 0.000
+Phytophthora siskiyouensis 3  0  0  0   1.00 0.000
+OTHER 218 SPECIES IN DB    0  0  0  654 0.00 0.000
+========================== == == == === ==== ===========
+
+As discussed above 3 FP for *Phytophthora agathidicida* (indistinguishable from *P. castaneae*), 3 FP for *Phytophthora glovera* (indistinguishable from *P. capsici*), 3 FN for *Phytophthora boehmeriae* (primer mismatching), and 3 FN for *Phytophthora cactorum*.
 
 Next, let's run the assess command on all four positive control samples, just
 by giving the input directory names (it will work out the common filenames):
