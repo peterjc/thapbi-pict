@@ -108,7 +108,6 @@ def sample_summary(
     show_unsequenced,
     output,
     excel,
-    human_output,
     method,
     min_abundance=1,
     debug=False,
@@ -118,7 +117,7 @@ def sample_summary(
     The expectation is that the inputs represent all the samples from
     a meaningful group, likely from multiple sequencing runs (plates).
     """
-    if not (output or human_output):
+    if not output:
         sys.exit("ERROR: No output file specified.\n")
 
     species_predictions = set()  # includes A;B;C ambiguous entries
@@ -223,15 +222,6 @@ def sample_summary(
         worksheet.write_string(current_row, col_offset + 2 + offset, _sp_display(sp))
     worksheet.freeze_panes(current_row + 1, col_offset + 2)
 
-    # Human header
-    # -------------
-    human = open(human_output, "w")
-    human.write(
-        "NOTE: Species listed with (*) are where sequences matched multiple "
-        "species equally well. For example, Phytophthora andina, P. infestans, "
-        "and P. ipomoeae, share an identical ITS1 marker.\n\n"
-    )
-
     # Main body
     # =========
     # Note already sorted on metadata values, discarded the order in the table
@@ -239,20 +229,7 @@ def sample_summary(
         if not sample_batch and not show_unsequenced:
             # Nothing sequenced for this metadata entry,don't report it
             continue
-        # Write the human readable metadata header
-        if meta_names:
-            human.write("-" * 60 + "\n\n")
-            if any(metadata):
-                for name, value in zip(meta_names, metadata):
-                    if value:
-                        human.write(f"{name}: {value}\n")
-                human.write("\n")
-            else:
-                # Could report, but redundant with "Sequencing sample: ..."
-                # human.write("Missing metadata\n\n")
-                pass
         if not sample_batch and show_unsequenced:
-            human.write("Has not been sequenced.\n\n")
             # Missing data in TSV:
             blanks = len(stats_fields) + 4 + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
@@ -276,8 +253,6 @@ def sample_summary(
 
         # Now do the samples in this batch
         for sample in sample_batch:
-            # Human report
-            # ------------
             all_sp = set()
             unambig_sp = set()
             if sample in sample_species_counts:
@@ -287,21 +262,12 @@ def sample_summary(
                         all_sp.update(sp_list)
                         if len(sp_list) == 1:
                             unambig_sp.add(sp_list[0])
-            if meta_names:
-                human.write(f"Sequencing sample: {sample}\n\n")
-            else:
-                human.write(f"{sample}\n\n")
             human_sp_list = [
                 _sp_display(sp) if sp in unambig_sp else sp + "(*)"
                 for sp in sorted(all_sp, key=_sp_sort_key)
             ]
-            for sp in human_sp_list:
-                human.write(f" - {sp}\n")
             if not all_sp:
-                human.write(" - No data\n")
                 human_sp_list = ["-"]  # To match other fields, not using N/A
-            human.write("\n")
-            del all_sp, unambig_sp
 
             # TSV
             # ---
@@ -421,7 +387,6 @@ def sample_summary(
     )
     workbook.close()
     handle.close()
-    human.close()
 
 
 def read_summary(
@@ -948,7 +913,6 @@ def main(
         show_unsequenced=show_unsequenced,
         output=f"{report_stem}.samples.{method}.tsv",
         excel=f"{report_stem}.samples.{method}.xlsx",
-        human_output=f"{report_stem}.samples.{method}.txt",
         method=method,
         min_abundance=min_abundance,
         debug=debug,

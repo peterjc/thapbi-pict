@@ -26,25 +26,21 @@ thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2
 diff $TMP/summary.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv
 diff $TMP/summary.samples.1s3g.tsv tests/summary_meta/summary.samples.1s3g.tsv
-diff $TMP/summary.samples.1s3g.txt tests/summary_meta/summary.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-u \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -u
 diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv  # no change
 diff $TMP/summary-u.samples.1s3g.tsv tests/summary_meta/summary-u.samples.1s3g.tsv
-diff $TMP/summary-u.samples.1s3g.txt tests/summary_meta/summary-u.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-q \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q
 diff $TMP/summary-q.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv
 diff $TMP/summary-q.samples.1s3g.tsv tests/summary_meta/summary-q.samples.1s3g.tsv
-diff $TMP/summary-q.samples.1s3g.txt tests/summary_meta/summary-q.samples.1s3g.txt
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-qu \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -u
 diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # no change
 diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
-diff $TMP/summary-qu.samples.1s3g.txt tests/summary_meta/summary-qu.samples.1s3g.txt
 
 # This was originally created in test_classify.sh
 if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then
@@ -92,26 +88,22 @@ diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-etc.samples.tsv
 rm -rf $TMP/human.txt $TMP/test-case.tsv $TMP/test-case.xlsx
 thapbi_pict summary -m identity -a 99 -o $TMP/test-case \
     -i tests/classify/*.fasta tests/classify/*.identity.tsv
-diff $TMP/test-case.samples.identity.txt tests/summary/classify.identity.txt
 diff $TMP/test-case.samples.identity.tsv tests/summary/classify.identity.tsv
 
 # Passing a folder, trying different methods
 for M in identity onebp blast; do
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
     thapbi_pict summary -m $M -a 99 --output $TMP/test-case --input tests/classify/
-    diff $TMP/test-case.samples.$M.txt tests/summary/classify.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify.$M.tsv
     # And again, but with metadata
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
-    diff $TMP/test-case.samples.$M.txt tests/summary/classify-meta.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta.$M.tsv
     # Now require metadata...
     rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ -q \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
-    diff $TMP/test-case.samples.$M.txt tests/summary/classify-meta-req.$M.txt
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta-req.$M.tsv
 done
 
