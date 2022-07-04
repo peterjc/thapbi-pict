@@ -286,10 +286,10 @@ Phytophthora syringae       0  0  1  0   0.00 1.000
 OTHER 213 SPECIES IN DB     0  0  0  213 0.00 0.000
 =========================== == == == === ==== ===========
 
-The ``OVERALL`` line tells us that there were 8 true positives, 1 false
-positives, 7 false negatives, and 214 true negatives. The final number needs a
-little explanation. First, 8+1+7+214 = 230, which is the number of species in
-the database. With only one sample being considered, 214 is the number of
+The ``OVERALL`` line tells us that there were 8 true positives, 2 false
+positives, 7 false negatives, and 213 true negatives. The final number needs a
+little explanation. First, 8+2+7+213 = 230, which is the number of species in
+the database. With only one sample being considered, 213 is the number of
 other species in the database which the tool correctly says are not present.
 
 Following this we get one line per species, considering this species in
