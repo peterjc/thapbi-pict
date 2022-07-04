@@ -37,7 +37,15 @@ plate, a set of 15 *Phytophthora* species (listed here alphabetically):
 Quoting from the :ref:`sample summary report <summary_reports>`, using the
 default settings for classification of ``DNA15MIX``, we got:
 
+.. code:: console
+
+    $ grep DNA15MIX summary/thapbi-pict.ITS1.samples.onebp.tsv | cut -f 2
+    Phytophthora aleatoria(*), Phytophthora alpina(*), Phytophthora austrocedri, Phytophthora cactorum(*), Phytophthora gonapodyides, Phytophthora ilicis, Phytophthora kernoviae, Phytophthora obscura, Phytophthora pseudosyringae, Phytophthora ramorum
+
+Or, as a list:
+
 - *Phytophthora aleatoria* (uncertain/ambiguous)
+- *Phytophthora alpina* (uncertain/ambiguous)
 - *Phytophthora austrocedri*
 - *Phytophthora cactorum* (uncertain/ambiguous)
 - *Phytophthora gonapodyides*
@@ -48,9 +56,15 @@ default settings for classification of ``DNA15MIX``, we got:
 - *Phytophthora ramorum*
 
 The good news is that eight are correct classifications (eight true
-positives, 8 TP, and one false positive, 1 FP). That false positive
-*Phytophthora aleatoria* was indistinguishable from *P. cactorum*
-(a similar example is discussed below in more detail).
+positives, 8 TP), but two false positives (2 FP). Those false positives
+*Phytophthora alpina* and *P. aleatoria* are indistinguishable from
+*P. cactorum*, reported via the ``conflicts`` command:
+
+.. code:: console
+
+    $ thapbi_pict conflicts | grep cactorum
+    Loaded taxonomy for 1266 sequences from DB
+    f27df8e8755049e831b1ea4521ad6eb3  species  Phytophthora aleatoria;Phytophthora alpina;Phytophthora cactorum
 
 The bad news is we are missing seven expected species (seven false
 negatives, 7 FN):
@@ -211,12 +225,14 @@ five columns:
 
 .. code:: console
 
+    $ rm -rf DNA15MIX.onebp.tsv
     $ thapbi_pict classify -i intermediate/ITS1/DNA15MIX.fasta -o .
     $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv | cut -f 1-5
     Assessed onebp vs known in 1 files (230 species)
     #Species                     TP  FP  FN  TN
-    OVERALL                      8   1   7   214
+    OVERALL                      8   2   7   213
     Phytophthora aleatoria       0   1   0   0
+    Phytophthora alpina          0   1   0   0
     Phytophthora austrocedri     1   0   0   0
     Phytophthora boehmeriae      0   0   1   0
     Phytophthora cactorum        1   0   0   0
@@ -232,7 +248,7 @@ five columns:
     Phytophthora pseudosyringae  1   0   0   0
     Phytophthora ramorum         1   0   0   0
     Phytophthora syringae        0   0   1   0
-    OTHER 214 SPECIES IN DB      0   0   0   214
+    OTHER 213 SPECIES IN DB      0   0   0   213
 
 More usually, you would output to a named file, and look at that:
 
@@ -249,8 +265,9 @@ and focus on the same column selection:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     8  1  7  214 0.67 0.500
+OVERALL                     8  2  7  213 0.64 0.529
 Phytophthora aleatoria      0  1  0  0   0.00 1.000
+Phytophthora alpina         0  1  0  0   0.00 1.000
 Phytophthora austrocedri    1  0  0  0   1.00 0.000
 Phytophthora boehmeriae     0  0  1  0   0.00 1.000
 Phytophthora cactorum       1  0  0  0   1.00 0.000
@@ -266,7 +283,7 @@ Phytophthora plurivora      0  0  1  0   0.00 1.000
 Phytophthora pseudosyringae 1  0  0  0   1.00 0.000
 Phytophthora ramorum        1  0  0  0   1.00 0.000
 Phytophthora syringae       0  0  1  0   0.00 1.000
-OTHER 214 SPECIES IN DB     0  0  0  214 0.00 0.000
+OTHER 213 SPECIES IN DB     0  0  0  213 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 1 false

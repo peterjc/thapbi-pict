@@ -56,6 +56,9 @@ examples/*/*.pdf
 #Downloads:
 examples/woody_hosts/raw_data.tar.gz
 #Misc special cases:
+examples/recycled_water/DNA15MIX.onebp.tsv
+examples/recycled_water/DNA15MIX.assess.tsv
+examples/recycled_water/DNA10MIX.assess.tsv
 examples/recycled_water/Redekar_et_al_2019_sup_table_3.xgmml
 examples/fecal_sequel/COI_430_bats.fasta
 
