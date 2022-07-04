@@ -26,7 +26,6 @@ mkdir $TMP/intermediate $TMP/output
 thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output/thapbi-pict -i tests/reads/
 diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/thapbi-pict.ITS1.all_reads.fasta tests/pipeline/thapbi-pict.all_reads.fasta
-diff $TMP/output/thapbi-pict.ITS1.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 
@@ -41,7 +40,6 @@ touch $TMP/intermediate/ITS1/ignore-me.onebp.tsv
 rm -rf $TMP/output/*
 thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output/report -m onebp -a 250 -d - --flip --metaencoding UTF-8
 diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
-diff $TMP/output/report.ITS1.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/report.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/report.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 
@@ -53,7 +51,6 @@ for F in $TMP/intermediate_with_cache/ITS1/*.fasta; do
     diff $F $TMP/intermediate/ITS1/${F##*/}
 done
 diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
-diff $TMP/output/thapbi-pict.ITS1.samples.onebp.txt tests/pipeline/thapbi-pict.samples.onebp.txt
 diff $TMP/output/thapbi-pict.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 

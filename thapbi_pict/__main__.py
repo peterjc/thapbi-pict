@@ -1461,7 +1461,7 @@ def main(args=None):
         "unique sequence (as trimmed by the prepare-reads step, can be "
         "thousands of rows) and one column per sample (typically 96 samples "
         "per plate). The sample tables have one row per sample, and one "
-        "column per genus and species. Plus a plain text sample report.",
+        "column per genus and species.",
     )
     subcommand_parser.add_argument(
         "-i",
