@@ -213,7 +213,7 @@ in the sample, this can be simplified to a single wildcard ``*`` line
 followed by all the NCBI taxids and species names using semi-colon separators.
 
 Looking at the 15 species mixture, we want to assess the classification in the
-file ``intermediate/DNA15MIX.onebp.tsv`` so we will need a file named
+file ``DNA15MIX.onebp.tsv`` so we will need a file named
 ``DNA15MIX.known.tsv``. This can be in any folder, but the convention we use
 is another folder ``expected/`` for all the ``*.known.tsv`` files.
 See :ref:`sample data setup <sample_data>` for where to get this file.
