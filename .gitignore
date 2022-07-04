@@ -55,10 +55,14 @@ examples/*/NOTES.txt
 examples/*/*.pdf
 #Downloads:
 examples/woody_hosts/raw_data.tar.gz
-#Misc special cases:
+#Misc special cases from the worked examples etc:
 examples/woody_hosts/DNA15MIX.onebp.tsv
 examples/woody_hosts/DNA15MIX.assess.tsv
 examples/woody_hosts/DNA10MIX.assess.tsv
+examples/recycled_water/P_fallax.fasta
+examples/recycled_water/P_fallax.tsv
+examples/recycled_water/P_fallax_minimal.fasta
+examples/recycled_water/conflicts.tsv
 examples/recycled_water/Redekar_et_al_2019_sup_table_3.xgmml
 examples/fecal_sequel/COI_430_bats.fasta
 
