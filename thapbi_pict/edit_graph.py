@@ -419,7 +419,7 @@ def main(
         seqs,
         seqs,
         scorer=levenshtein,
-        dtype=np.int8,
+        dtype=np.int16 if graph_format == "matrix" else np.int8,
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
     sys.stderr.write("Computed Levenshtein edit distances.\n")
@@ -436,6 +436,9 @@ def main(
         del cols
         for i, md5 in enumerate(md5_list):
             sp = ",".join(sorted(md5_species.get(md5, [])))
+            assert (
+                min(distances[i]) >= 0
+            ), f"Negative distance {min(distances[i])} for {md5} - likely int overflow"
             dists = "\t".join(str(_) for _ in distances[i])
             handle.write(f"{md5}\t{sp}\t{dists}\n")
             del sp, dists
