@@ -66,6 +66,9 @@ examples/recycled_water/conflicts.tsv
 examples/recycled_water/Redekar_et_al_2019_sup_table_3.xgmml
 examples/fecal_sequel/COI_430_bats.fasta
 
+#Slurm cluster logs,
+slurm-*.out
+
 #Ignore backup files from some editors,
 *~
 *.swp
