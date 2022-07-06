@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import cdist
-from rapidfuzz.string_metric import levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
@@ -419,7 +419,7 @@ def main(
     distances = cdist(
         seqs,
         seqs,
-        scorer=levenshtein,
+        scorer=Levenshtein.distance,
         dtype=np.int16 if graph_format == "matrix" else np.int8,
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
