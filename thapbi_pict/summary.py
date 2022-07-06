@@ -868,10 +868,6 @@ def main(
             bad_fields.append(i)
             if debug:
                 sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
-        elif field == "Threshold" and len({_[i] for _ in sample_stats.values()}) == 1:
-            bad_fields.append(i)
-            if debug:
-                sys.stderr.write("DEBUG: Dropping abundance threshold as all same\n")
     if bad_fields:
         for key, value in sample_stats.items():
             sample_stats[key] = [_ for i, _ in enumerate(value) if i not in bad_fields]
@@ -882,20 +878,14 @@ def main(
         # Try to remove any common folder prefix like raw_data/
         i = stats_fields.index("Threshold pool")
         paths = {_[i] for _ in sample_stats.values()}
-        if len(paths) == 1:
-            # Boring, drop the column
-            stats_fields = stats_fields[:i] + stats_fields[i + 1 :]
+        common = os.path.commonpath(paths)
+        if len(paths) > 1 and common:
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Dropping threshold pool common prefix {common}\n"
+                )
             for values in sample_stats.values():
-                values.pop(i)
-        else:
-            common = os.path.commonpath(paths)
-            if common:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
-                    )
-                for values in sample_stats.values():
-                    values[i] = values[i][len(common) + 1 :]
+                values[i] = values[i][len(common) + 1 :]
 
     if debug:
         sys.stderr.write(
