@@ -38,7 +38,7 @@ touch $TMP/intermediate/ITS1/ignore-me.onebp.tsv
 # Run again with some explicit options set (shouldn't change output)
 # Using --flip will have no effect as already have the intermediate files
 rm -rf $TMP/output/*
-thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output/report -m onebp -a 250 -d - --flip --metaencoding UTF-8
+thapbi_pict pipeline -i tests/reads/ -s $TMP/intermediate -o $TMP/output/report -m onebp -f 0 -a 100 -d - --flip --metaencoding UTF-8
 diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/report.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/report.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
