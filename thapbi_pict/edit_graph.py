@@ -414,7 +414,8 @@ def main(
     n = len(md5_to_seq)
     md5_list = sorted(md5_to_seq)
     seqs = [md5_to_seq[_] for _ in md5_list]
-    # Will get values 0, 1, ..., max_edit_dist, or -1 if distance is higher
+    # Will get values 0, 1, ..., max_edit_dist, or
+    # max_edit_dist+1 if distance is higher (was -1 prior to rapidfuzz v2.0.0)
     distances = cdist(
         seqs,
         seqs,
@@ -423,6 +424,9 @@ def main(
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
     sys.stderr.write("Computed Levenshtein edit distances.\n")
+    assert (
+        min(min(_) for _ in distances) == 0
+    ), f"Possible overflow, min distance {min(min(_) for _ in distances)} not zero."
 
     if graph_format == "matrix":
         # Report all nodes, even if isolated and low abundance
@@ -436,9 +440,6 @@ def main(
         del cols
         for i, md5 in enumerate(md5_list):
             sp = ",".join(sorted(md5_species.get(md5, [])))
-            assert (
-                min(distances[i]) >= 0
-            ), f"Negative distance {min(distances[i])} for {md5} - likely int overflow"
             dists = "\t".join(str(_) for _ in distances[i])
             handle.write(f"{md5}\t{sp}\t{dists}\n")
             del sp, dists
@@ -446,8 +447,12 @@ def main(
             handle.close()
         return 0
 
-    # Isolated node's distances will be 0 (self) and (n-1) * (-1)
-    wanted = {md5 for i, md5 in enumerate(md5_list) if distances[i].sum() > 1 - n}
+    # Isolated node's distances will be a single 0 (self) and (n-1) of (max_edit_dist+1)
+    wanted = {
+        md5
+        for i, md5 in enumerate(md5_list)
+        if set(distances[i]) != {0, max_edit_dist + 1}
+    }
     sys.stderr.write(
         f"Will draw {len(wanted)} nodes with at least one edge"
         f" ({n - len(wanted)} are isolated sequences).\n"
