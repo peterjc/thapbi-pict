@@ -15,7 +15,7 @@ import networkx as nx
 import numpy as np
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.process import cdist
-from rapidfuzz.string_metric import levenshtein
+from rapidfuzz.distance import Levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
@@ -419,7 +419,7 @@ def main(
     distances = cdist(
         seqs,
         seqs,
-        scorer=levenshtein,
+        scorer=Levenshtein.distance,
         dtype=np.int16 if graph_format == "matrix" else np.int8,
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
@@ -532,7 +532,7 @@ def main(
                 # seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = int(distances[i, j])  # casting to drop numpy dtype
-                if dist > max_edit_dist or dist == -1:
+                if dist > max_edit_dist:
                     continue
 
                 # Some graph layout algorithms can use weight attr; some want int
