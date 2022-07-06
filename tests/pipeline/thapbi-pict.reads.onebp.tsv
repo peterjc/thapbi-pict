@@ -1,6 +1,8 @@
 #						Raw FASTQ	1	5159	238
 #						Flash	1	4962	229
 #						Cutadapt	1	4955	15
+#						Threshold pool	tests/reads	tests/reads	tests/reads
+#						Threshold	100	100	100
 #						Max non-spike	0	1170	0
 #						Max spike-in	0	0	0
 #						Singletons	1	679	7
