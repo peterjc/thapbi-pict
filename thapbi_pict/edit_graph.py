@@ -532,7 +532,7 @@ def main(
                 # seq2 = md5_to_seq[check2]
                 # dist = levenshtein(seq1, seq2)
                 dist = int(distances[i, j])  # casting to drop numpy dtype
-                if dist > max_edit_dist or dist == -1:
+                if dist > max_edit_dist:
                     continue
 
                 # Some graph layout algorithms can use weight attr; some want int
