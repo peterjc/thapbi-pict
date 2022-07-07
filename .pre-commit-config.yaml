@@ -73,6 +73,16 @@ repos:
     rev: v3.3.0
     hooks:
     -   id: reorder-python-imports
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.34.0
+    hooks:
+    -   id: pyupgrade
+        # Still would like setup to run under Python 2 (and fail nicely)
+        exclude: setup.py
+        args: [
+           --py37-plus,
+           --keep-percent-format,
+        ]
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:
