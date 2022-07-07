@@ -28,7 +28,7 @@ thapbi_pict import -c ncbi -d sqlite:///:memory: --input tests/ncbi-import/20th_
 set -o pipefail
 
 if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
-if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip nodes.dmp names.dmp -d new_taxdump_2019-09-01; fi
+if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip nodes.dmp names.dmp merged.dmp -d new_taxdump_2019-09-01; fi
 
 
 # Check hybrid like "Phytophthora humicola x Phytophthora inundata"
