@@ -6,7 +6,7 @@
 """Code for THAPBI PICT to deal with NCBI taxonomy dumps.
 
 The code is needed initially for loading an NCBI taxdump folder (files
-``names.dmp``, ``nodes.dmp`` etc) into a marker database.
+``names.dmp``, ``nodes.dmp``, ``merged.dmp`` etc) into a marker database.
 """
 import os
 import sys
@@ -43,10 +43,25 @@ def load_nodes(nodes_dmp, wanted_ranks=None):
     return tree, ranks
 
 
+def load_merged(merged_dmp, wanted=None):
+    """Load mapping of merged taxids of interest from NCBI taxdump merged.dmp file."""
+    merged = {}
+    with open(merged_dmp) as handle:
+        for line in handle:
+            parts = line.split("|", 3)
+            alias = int(parts[0].strip())
+            taxid = int(parts[1].strip())
+            assert alias != taxid, line
+            if wanted and taxid not in wanted:
+                continue
+            merged[alias] = taxid
+    return merged
+
+
 def load_names(names_dmp, wanted=None):
     """Load scientific names of species from NCBI taxdump names.dmp file."""
     names = {}
-    synonym = {}
+    synonym = defaultdict(list)
     with open(names_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -61,10 +76,7 @@ def load_names(names_dmp, wanted=None):
             ):
                 # e.g. Phytophthora aquimorbida 'includes' Phytophthora sp. CCH-2009b
                 # which we want to treat like a synonym
-                try:
-                    synonym[taxid].append(name)
-                except KeyError:
-                    synonym[taxid] = [name]
+                synonym[taxid].append(name)
     return names, synonym
 
 
@@ -249,6 +261,14 @@ def main(tax, db_url, ancestors, debug=True):
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
+    merged = load_merged(os.path.join(tax, "merged.dmp"), tree)
+    if debug:
+        sys.stderr.write(f"Loaded {len(merged)} relevant aliases from merged.dmp\n")
+    # Treat the merged nodes like aliases
+    for alias, taxid in merged.items():
+        synonyms[taxid].append(f"NCBI:taxid{alias}")
+    del merged
+
     synonym_entries = defaultdict(set)
     for taxid, name in not_top_species(
         tree, ranks, names, synonyms, {_[0] for _ in genus_species}
@@ -348,7 +368,7 @@ def main(tax, db_url, ancestors, debug=True):
     for taxid, aliases in sorted(synonym_entries.items()):
         # Is genus already there?
         taxonomy = session.query(Taxonomy).filter_by(ncbi_taxid=taxid).one_or_none()
-        assert taxonomy is not None
+        assert taxonomy is not None, f"ERROR for taxid {taxid} with {aliases}"
         assert taxonomy.id is not None, taxonomy
         for name in sorted(aliases):
             # Would this actually be useful?
