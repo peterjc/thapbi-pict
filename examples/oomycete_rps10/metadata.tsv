@@ -1,0 +1,49 @@
+run_accession	tax_id	scientific_name	library_name	experiment_title	Marker	Source
+SRR13658667	410658	soil metagenome	C5	Illumina MiSeq sequencing; ITS1 sequences of agricultural soil	ITS1	Agricultural soil
+SRR13658679	410658	soil metagenome	C1	Illumina MiSeq sequencing; rps10 sequences of agricultural soil	rps10	Agricultural soil
+SRR13658678	410658	soil metagenome	C3	Illumina MiSeq sequencing; rps10 sequences of agricultural soil	rps10_Felipe	Agricultural soil
+SRR13658676	1169740	aquatic metagenome	D5	Illumina MiSeq sequencing; ITS1 sequences of canopy drip	ITS1	Canopy drip
+SRR13658673	1169740	aquatic metagenome	E5	Illumina MiSeq sequencing; ITS1 sequences of canopy drip	ITS1	Canopy drip
+SRR13658633	1169740	aquatic metagenome	F5	Illumina MiSeq sequencing; ITS1 sequences of canopy drip	ITS1	Canopy drip
+SRR13658632	1169740	aquatic metagenome	D1	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10	Canopy drip
+SRR13658677	1169740	aquatic metagenome	D3	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10_Felipe	Canopy drip
+SRR13658675	1169740	aquatic metagenome	E1	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10	Canopy drip
+SRR13658674	1169740	aquatic metagenome	E3	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10_Felipe	Canopy drip
+SRR13658635	1169740	aquatic metagenome	F1	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10	Canopy drip
+SRR13658634	1169740	aquatic metagenome	F3	Illumina MiSeq sequencing; rps10 sequences of canopy drip	rps10_Felipe	Canopy drip
+SRR13658660	1235509	synthetic metagenome	A5	Illumina MiSeq sequencing; ITS1 sequences of mock community 1	ITS1	Mock community 1
+SRR13658662	1235509	synthetic metagenome	A1	Illumina MiSeq sequencing; rps10 sequences of mock community 1	rps10	Mock community 1
+SRR13658661	1235509	synthetic metagenome	A3	Illumina MiSeq sequencing; rps10 sequences of mock community 1	rps10_Felipe	Mock community 1
+SRR13658657	1235509	synthetic metagenome	B5	Illumina MiSeq sequencing; ITS1 sequences of mock community 2	ITS1	Mock community 2
+SRR13658659	1235509	synthetic metagenome	B1	Illumina MiSeq sequencing; rps10 sequences of mock community 2	rps10	Mock community 2
+SRR13658658	1235509	synthetic metagenome	B3	Illumina MiSeq sequencing; rps10 sequences of mock community 2	rps10_Felipe	Mock community 2
+SRR13658663	1297885	plant metagenome	A6	Illumina MiSeq sequencing; ITS1 sequences of needle/leaf	ITS1	Needle/leaf
+SRR13658670	1297885	plant metagenome	G5	Illumina MiSeq sequencing; ITS1 sequences of needle/leaf	ITS1	Needle/leaf
+SRR13658666	1297885	plant metagenome	H5	Illumina MiSeq sequencing; ITS1 sequences of needle/leaf	ITS1	Needle/leaf
+SRR13658665	1297885	plant metagenome	A2	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10	Needle/leaf
+SRR13658664	1297885	plant metagenome	A4	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10_Felipe	Needle/leaf
+SRR13658672	1297885	plant metagenome	G1	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10	Needle/leaf
+SRR13658671	1297885	plant metagenome	G3	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10_Felipe	Needle/leaf
+SRR13658669	1297885	plant metagenome	H1	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10	Needle/leaf
+SRR13658668	1297885	plant metagenome	H3	Illumina MiSeq sequencing; rps10 sequences of needle/leaf	rps10_Felipe	Needle/leaf
+SRR13658656	1169740	aquatic metagenome	H2	Illumina MiSeq sequencing; negative water control	ITS1	Negative water control
+SRR13658645	1169740	aquatic metagenome	H4	Illumina MiSeq sequencing; negative water control	rps10_Felipe	Negative water control
+SRR13658636	1169740	aquatic metagenome	H6	Illumina MiSeq sequencing; negative water control	rps10	Negative water control
+SRR13658653	410658	soil metagenome	E6	Illumina MiSeq sequencing; ITS1 sequences of Panama forest soil	ITS1	Panama forest soil
+SRR13658650	410658	soil metagenome	F6	Illumina MiSeq sequencing; ITS1 sequences of Panama forest soil	ITS1	Panama forest soil
+SRR13658647	410658	soil metagenome	G6	Illumina MiSeq sequencing; ITS1 sequences of Panama forest soil	ITS1	Panama forest soil
+SRR13658655	410658	soil metagenome	E2	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10	Panama forest soil
+SRR13658654	410658	soil metagenome	E4	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10_Felipe	Panama forest soil
+SRR13658652	410658	soil metagenome	F2	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10	Panama forest soil
+SRR13658651	410658	soil metagenome	F4	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10_Felipe	Panama forest soil
+SRR13658649	410658	soil metagenome	G2	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10	Panama forest soil
+SRR13658648	410658	soil metagenome	G4	Illumina MiSeq sequencing; rps10 sequences of Panama forest soil	rps10_Felipe	Panama forest soil
+SRR13658640	410658	soil metagenome	B6	Illumina MiSeq sequencing; ITS1 sequences of Wind River forest soil	ITS1	Wind River forest soil
+SRR13658637	410658	soil metagenome	C6	Illumina MiSeq sequencing; ITS1 sequences of Wind River forest soil	ITS1	Wind River forest soil
+SRR13658643	410658	soil metagenome	D6	Illumina MiSeq sequencing; ITS1 sequences of Wind River forest soil	ITS1	Wind River forest soil
+SRR13658642	410658	soil metagenome	B2	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10	Wind River forest soil
+SRR13658641	410658	soil metagenome	B4	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10_Felipe	Wind River forest soil
+SRR13658639	410658	soil metagenome	C2	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10	Wind River forest soil
+SRR13658638	410658	soil metagenome	C4	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10_Felipe	Wind River forest soil
+SRR13658646	410658	soil metagenome	D2	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10	Wind River forest soil
+SRR13658644	410658	soil metagenome	D4	Illumina MiSeq sequencing; rps10 sequences of Wind River forest soil	rps10_Felipe	Wind River forest soil
