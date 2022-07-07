@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Pool THAPBI PICT sample report using metadata."""
-from __future__ import print_function
-
 import argparse
 import sys
 
