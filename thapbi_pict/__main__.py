@@ -1001,8 +1001,12 @@ def main(args=None):
         "line of identifier1, space, species1, separator, identifier2, "
         "space, species2, etc. By default verifies species names against a "
         "pre-loaded taxonomy, failing that a matching genus, otherwise "
-        "rejected. With NCBI heuristics enabled, tries to split the species "
-        "and any following free text.",
+        "rejected.\n\nThe default mode assumes an accesion followed by an "
+        "exact species name only. With NCBI heuristics enabled, tries to "
+        "split the species and any following free text using the taxonomy "
+        "in the DB. For SINTAX and ObiTools formats, only the genus and "
+        "species are used. For the NCBI taxonomy mode, looks for entries "
+        "like taxid=123456 and takes the genus/species from the DB.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
