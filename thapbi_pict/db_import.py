@@ -1,4 +1,4 @@
-# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2022 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -9,6 +9,7 @@ This code is used for importing NCBI formatted FASTA files, our curated ITS1
 sequence FASTA file databases, and other other FASTA naming conventions.
 """
 import os
+import re
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -31,6 +32,8 @@ from .utils import valid_marker_name
 
 DEF_MIN_LENGTH = 100
 DEF_MAX_LENGTH = 1000
+
+taxid_regex = re.compile(r"(ncbi|[ _:;({\[\-\t])taxid=\d+")
 
 
 def parse_ncbi_fasta_entry(text, known_species=None):
@@ -110,6 +113,40 @@ assert parse_ncbi_fasta_entry(
 assert parse_ncbi_fasta_entry(
     "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
 ) == (0, "Phytophthora humicola x inundata")
+
+
+def parse_ncbi_taxid_entry(text, know_species=None):
+    """Find any NCBI taxid as a pattern in the text.
+
+    Returns a two-tuple of taxid (zero if not found), and an
+    empty string (use the taxonomy table in the DB to get the
+    genus-species).
+
+    Uses a regular expression based on taxid=<digits>, and
+    only considers the first match:
+
+    >>> parse_ncbi_taxid_entry('HQ013219 Phytophthora arenaria [taxid=]')
+    (0, '')
+    >>> parse_ncbi_taxid_entry('HQ013219 Phytophthora arenaria [taxid=123] [taxid=456]')
+    (123, '')
+    """
+    match = taxid_regex.search(text)
+    if match:
+        return int(match.group().split("=", 1)[1]), ""
+    return 0, ""
+
+
+assert parse_ncbi_taxid_entry("HQ013219 Phytophthora arenaria") == (0, "")
+assert parse_ncbi_taxid_entry(
+    "HQ013219 Phytophthora arenaria [taxid=123] [taxid=456]"
+) == (123, "")
+assert parse_ncbi_taxid_entry(
+    "HQ013219 Phytophthora arenaria [taxid=NA] [taxid=456]"
+) == (456, "")
+assert parse_ncbi_taxid_entry(
+    "HQ013219 Phytophthora arenaria [key=value;taxid=456;key=value]"
+) == (456, "")
+assert parse_ncbi_taxid_entry("HQ013219:Phytophthora_arenaria:taxid=456") == (456, "")
 
 
 def parse_curated_fasta_entry(text, known_species=None):
@@ -233,6 +270,7 @@ fasta_parsing_function = {
     "simple": parse_curated_fasta_entry,
     "ncbi": parse_ncbi_fasta_entry,
     "sintax": parse_sintax_fasta_entry,
+    "taxid": parse_ncbi_taxid_entry,
     "obitools": parse_obitools_fasta_entry,
 }
 
@@ -471,6 +509,16 @@ def import_fasta_file(
                         % (entry if len(entry) < 60 else entry[:67] + "...")
                     )
                     continue
+
+                if taxid and not name:
+                    # Attempt to lookup the taxid to get the species name
+                    taxonomy = (
+                        session.query(Taxonomy)
+                        .filter_by(ncbi_taxid=taxid)
+                        .one_or_none()
+                    )
+                    if taxonomy:
+                        name = genus_species_name(taxonomy.genus, taxonomy.species)
 
                 if not taxid and not name:
                     bad_sp_entries += 1
