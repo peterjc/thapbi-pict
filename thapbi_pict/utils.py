@@ -347,18 +347,16 @@ def run(cmd, debug=False, attempts=1):
             if isinstance(cmd, list):
                 return subprocess.run(
                     cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
+                    capture_output=True,
+                    text=True,
                     check=True,
                 )
             else:
                 return subprocess.run(
                     cmd,
                     shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
+                    capture_output=True,
+                    text=True,
                     check=True,
                 )
         except subprocess.CalledProcessError as e:
