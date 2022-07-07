@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.12.4 2022-07-07 Updated edit-graph code to work with RapidFuzz v2.0.0 or later.
 v0.12.3 2022-07-06 Updated NCBI taxonomy and bulk imported genus-only entries in default DB.
 v0.12.2 2022-06-15 Updates to the curated entries in the default *Phytophthora* ITS1 DB.
 v0.12.1 2022-05-18 Fix missing field regression on reports including unsequenced samples.
