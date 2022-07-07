@@ -129,7 +129,7 @@ def main(
                 md5_sp[md5].add(seq_source.taxonomy)
             else:
                 md5_seq[md5] = seq_source.marker_seq.sequence
-                md5_sp[md5] = set([seq_source.taxonomy])  # noqa: C405
+                md5_sp[md5] = {seq_source.taxonomy}
         # TODO - Cannot key on MD5 with multiple markers
         for md5, seq in md5_seq.items():
             _, genus_species, _ = taxid_and_sp_lists(list(md5_sp[md5]))
