@@ -2,8 +2,8 @@
 """Pool THAPBI PICT sample report using metadata."""
 from __future__ import print_function
 
+import argparse
 import sys
-from optparse import OptionParser
 
 import numpy as np
 import xlsxwriter
@@ -11,22 +11,25 @@ import xlsxwriter
 # from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.2")
+    print("v0.0.3")
     sys.exit(0)
 
 # Parse Command Line
-usage = """Example usage:
-
-$ python pooling.py -i input.tsv -o pooled -c 1,2,5
-
+usage = """\
 The input file should be a THAPBI PICT sample summary report as
 a plain text tab separated variable (TSV) file. Give a filename
 stem as the output argument (will make TSV and Excel files). The
-column argument is which metadata to retain and group by.
+column argument is which metadata to retain and group by. e.g.
+
+$ python pooling.py -i input.tsv -o pooled -c 1,2,5
 """
 
-parser = OptionParser(usage=usage)
-parser.add_option(
+parser = argparse.ArgumentParser(
+    prog="pooling.py",
+    description="Pooling the THAPBI PICT sample report (e.g. by replicate).",
+    epilog=usage,
+)
+parser.add_argument(
     "-i",
     "--input",
     dest="input",
@@ -34,7 +37,7 @@ parser.add_option(
     metavar="FILE",
     help="Input TSV filename, default stdin.",
 )
-parser.add_option(
+parser.add_argument(
     "-c",
     "--columns",
     type=str,
@@ -43,7 +46,7 @@ parser.add_option(
     help="Comma separated list (e.g, '1,3,5') of metadata columns from the "
     "input table to retain and pool on.",
 )
-parser.add_option(
+parser.add_argument(
     "-p",
     "--pending",
     type=str,
@@ -53,7 +56,7 @@ parser.add_option(
     "where further sequencing is pending. Such entries will get a row of ??? "
     "(in addition to a row of values if any were non-zero).",
 )
-parser.add_option(
+parser.add_argument(
     "-g",
     "--first-genus",
     type=str,
@@ -62,7 +65,7 @@ parser.add_option(
     help="Optional semi-colon separated list of genera to list first "
     "(overriding existing column order). e.g. Unknown;Phytophthora",
 )
-parser.add_option(
+parser.add_argument(
     "-G",
     "--last-genus",
     type=str,
@@ -71,21 +74,21 @@ parser.add_option(
     help="Optional semi-colon separated list of genera to list last "
     "(overriding existing column order). e.g. Synthetic;Unknown",
 )
-parser.add_option(
+parser.add_argument(
     "-b",
     "--boolean",
     default=False,
     action="store_true",
     help="Replace accepted read counts with boolean (Y and N entries).",
 )
-parser.add_option(
+parser.add_argument(
     "-z",
     "--hide-zeros",
     default=False,
     action="store_true",
     help="Hide zero count columns (e.g. from using filtered input data).",
 )
-parser.add_option(
+parser.add_argument(
     "--pcr",
     default=False,
     action="store_true",
@@ -93,7 +96,7 @@ parser.add_option(
     "using with the -p / --pending setting otherwise no Illumina data is "
     "taken to imply PCR was negative.",
 )
-parser.add_option(
+parser.add_argument(
     "-o",
     "--output",
     dest="output",
@@ -102,9 +105,9 @@ parser.add_option(
     help="Output filename stem (defaults to '-' meaning TSV only to stdout)",
 )
 
-options, args = parser.parse_args()
-if args:
+if len(sys.argv) == 1:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
+options = parser.parse_args()
 
 
 def pool(
