@@ -517,8 +517,20 @@ def import_fasta_file(
                         .filter_by(ncbi_taxid=taxid)
                         .one_or_none()
                     )
+                    if not taxonomy:
+                        # Might be in merged.dmp, try our synonym entries
+                        taxonomy = (
+                            session.query(Taxonomy)
+                            .join(Synonym)
+                            .filter(Synonym.name == f"NCBI:taxid{taxid}")
+                            .one_or_none()
+                        )
                     if taxonomy:
                         name = genus_species_name(taxonomy.genus, taxonomy.species)
+                    else:
+                        sys.stderr.write(
+                            f"WARNING: No species information from NCBI:taxid{taxid}\n"
+                        )
 
                 if not taxid and not name:
                     bad_sp_entries += 1
