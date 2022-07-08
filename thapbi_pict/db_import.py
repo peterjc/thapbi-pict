@@ -510,7 +510,7 @@ def import_fasta_file(
                     )
                     continue
 
-                if taxid and not name:
+                if taxid:
                     # Attempt to lookup the taxid to get the species name
                     taxonomy = (
                         session.query(Taxonomy)

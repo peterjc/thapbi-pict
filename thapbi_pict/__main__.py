@@ -1004,9 +1004,11 @@ def main(args=None):
         "rejected.\n\nThe default mode assumes an accesion followed by an "
         "exact species name only. With NCBI heuristics enabled, tries to "
         "split the species and any following free text using the taxonomy "
-        "in the DB. For SINTAX and ObiTools formats, only the genus and "
-        "species are used. For the NCBI taxonomy mode, looks for entries "
-        "like taxid=123456 and takes the genus/species from the DB.",
+        "in the DB. For SINTAX format only the genus and species are used. "
+        "For ObiTools the NCBI taxonomy is used (if in the DB), falling back "
+        "on the genus and species given. For the NCBI taxonomy mode, looks "
+        "for text like taxid=123456 and takes genus/species from the DB.\n\n"
+        "See also the 'load-tax' command.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
