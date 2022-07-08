@@ -648,7 +648,9 @@ def main(
             """Treat all FASTA entries as singletons."""
             return [text]
 
-    fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
+    fasta_files = find_requested_files(
+        fasta, (".fasta", ".fa"), ignore_prefixes, debug=debug
+    )
     if debug:
         sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
 
