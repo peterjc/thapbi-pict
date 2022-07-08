@@ -32,7 +32,7 @@ if [ ! -f pooled.sqlite ]; then
       | cutadapt --quiet -a AGTTCRARTCTTTCTARRYAT /dev/stdin \
       | ./rename_fasta.py > rps10.fasta
     thapbi_pict import -d pooled.sqlite \
-        -i rps10.fasta -x \
+        -i rps10.fasta -c obitools -x \
         -k rps10 --left GTTGGTTAGAGYARAAGACT --right ATRYYTAGAAAGAYTYGAACT
 
     # Note we are ignoring the samples for the alternative Felipe rps10 primers,
