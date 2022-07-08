@@ -6,6 +6,7 @@
 """Explore conflicts at species and genus level."""
 import sys
 
+from Levenshtein import distance as levenshtein
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
@@ -104,5 +105,74 @@ def main(db_url, output_filename, debug=False):
     if debug:
         sys.stderr.write(f"{marker_conflicts} marker level conflicts\n")
         sys.stderr.write(f"{genus_conflicts} genus level conflicts\n")
+
+    if genus_conflicts:
+        # Abort
+        return marker_conflicts + genus_conflicts  # non-zero error
+
+    MIN_LEN = 100
+    MAX_LEN = 350
+    BETWEEN_GENUS_THRESHOLD = 3
+    LIMIT = 600
+    EXCLUDE = {
+        "5f5b7d4fc028c587fca2d4b37a06e935",  # Probably Phytophthora not Pythium
+    }
+
+    distances = set()
+    distances_in_genus = {}
+    distances_between_genus = set()
+    for i, (md5_A, seq_A) in enumerate(md5_to_seq.items()):
+        if debug and i % 100 == 0:
+            sys.stderr.write("%s %i\n" % (md5_A, i))
+        if md5_A in EXCLUDE:
+            continue
+        if len(seq) < MIN_LEN or MAX_LEN < len(seq):
+            sys.stderr.write(
+                "WARNING: Excluding %s as length %i\n" % (md5_A, len(seq_A))
+            )
+            continue
+        genus_A = md5_to_genus[md5_A]
+        assert len(genus_A) == 1
+        genus_A = list(genus_A)[0]
+        for md5_B, seq_B in md5_to_seq.items():
+            if md5_B < md5_A or md5_B in EXCLUDE:
+                continue
+            if len(seq_B) < MIN_LEN or MAX_LEN < len(seq_B):
+                continue
+            genus_B = md5_to_genus[md5_B]
+            assert len(genus_B) == 1
+            genus_B = list(genus_B)[0]
+            dist = levenshtein(seq_A, seq_B)
+            distances.add(dist)
+            # print(md5_A, md5_B, dist, genus_A, genus_B)
+            if genus_A == genus_B:
+                try:
+                    distances_in_genus[genus_A].add(dist)
+                except KeyError:
+                    distances_in_genus[genus_A] = {dist}
+            else:
+                distances_between_genus.add(dist)
+                if dist < BETWEEN_GENUS_THRESHOLD:
+                    sys.stderr.write(
+                        "WARNING: %s (%s) vs %s (%s) different genus, but distance %i\n"
+                        % (md5_A, genus_A, md5_B, genus_B, dist)
+                    )
+            if dist > LIMIT:
+                sys.stderr.write(
+                    "WARNING: %s (%s) vs %s (%s) distance %i\n"
+                    % (md5_A, genus_A, md5_B, genus_B, dist)
+                )
+    sys.stderr.write(
+        "Edit distances range from %i to %i\n" % (min(distances), max(distances))
+    )
+    sys.stderr.write(
+        "Edit distances between genus range from %i to %i\n"
+        % (min(distances_between_genus), max(distances_between_genus))
+    )
+    for genus in sorted(distances_in_genus):
+        sys.stderr.write(
+            "Edit distances in %s range from %i to %i\n"
+            % (genus, min(distances_in_genus[genus]), max(distances_in_genus[genus]))
+        )
 
     return marker_conflicts + genus_conflicts  # non-zero error
