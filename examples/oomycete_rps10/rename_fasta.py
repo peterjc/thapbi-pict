@@ -13,6 +13,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 for title, seq in SimpleFastaParser(sys.stdin):
     species = title.rstrip().rsplit(";")[-1].replace("_", " ")
+    species = species.replace(".", ". ").replace("  ", " ").strip()
     idn = title[title.index("|oodb_id=") :].split("|", 2)[1]
     taxid = title[title.index("|ncbi_taxid=") + 12 :].split("|", 1)[0]
     sys.stdout.write(f">{idn} species_name={species}; taxid={taxid};\n{seq}\n")
