@@ -160,9 +160,26 @@ def species_or_species_groups(tree, ranks, names):
 def not_top_species(tree, ranks, names, synonyms, top_species):
     """Find all 'minor' species, takes set of species taxid to ignore.
 
-    Intended usage is to map minor-species as genus aliases, for
-    example all the species under unclassified Phytophthora will
-    be treated as synonyms of the genus Phytophthora.
+    Will map assorted sub-species (i.e. any nodes under top_species) to the
+    parent species, e.g. varietas 'Phytophthora nicotianae var. parasitica'
+    NCBI:txid4791 will be mapped to species 'Phytophthora nicotianae'
+    NCBI:txid4790 instead.
+
+    Will map anything else to the parent genus, although genererally it will
+    be skipped via the reject_name(...) function, e.g.
+
+    * no-rank entry 'unclassified Pythium' NCBI:txid228096 would be mapped to
+      Pythium NCBI:txid4797 - although we'd not interested in importing any
+      unclassified entries.
+    * no-rank entry 'environmental samples' NCBI:txid660914 would be mapped to
+      genus 'Hyaloperonospora' NCBI:txid184462 - but we skip this.
+    * entry 'uncultured Hyaloperonospora' NCBI:txid660915 would be mapped to
+      genus 'Hyaloperonospora' NCBI:txid184462 - but we skip uncultured.
+
+    However, if you wanted to import this part of the tree:
+
+    * clade entry 'Skeletonema marinoi-dohrnii complex' NCBI:txid1171708 would
+      be mapped to genus 'Skeletonema' NCBI:txid2842
 
     Yields (genus taxid, node name, node taxid) tuples.
     """
@@ -171,7 +188,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
         if taxid in stop_nodes:
             continue
         parent = get_ancestor(taxid, tree, stop_nodes)
-        if taxid != parent:
+        if taxid != parent and not reject_name(names[taxid]):
             yield parent, names[taxid]
             if taxid in synonyms:
                 for name in synonyms[taxid]:
