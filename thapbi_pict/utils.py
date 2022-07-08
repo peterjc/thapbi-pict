@@ -472,7 +472,7 @@ def find_requested_files(
     for x in filenames_or_folders:
         if os.path.isdir(x):
             if debug:
-                sys.stderr.write(f"Walking directory {x!r}\n")
+                sys.stderr.write(f"DEBUG: Walking directory {x}\n")
             for root, _, files in os.walk(x, followlinks=True):
                 for f in files:
                     if f.endswith(ext):
@@ -488,9 +488,11 @@ def find_requested_files(
             if x.endswith(ext):
                 if ignore_prefixes and x.startswith(ignore_prefixes):
                     if debug:
-                        sys.stderr.write("DEBUG: Ignoring %s\n" % os.path.join(root, x))
+                        sys.stderr.write(f"DEBUG: Due to prefix ignoring {x}\n")
                     continue
                 answer.append(x)
+            elif debug:
+                sys.stderr.write(f"DEBUG: Due to extension ignoring {x}\n")
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?
