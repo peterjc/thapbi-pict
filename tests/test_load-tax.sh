@@ -45,7 +45,7 @@ if [ `sqlite3 $DB "SELECT COUNT(*) FROM synonym;"` -ne 0 ]; then echo "Wrong syn
 export DB=$TMP/Oomycetes.sqlite
 thapbi_pict load-tax -d $DB -t "database/${TAX}"
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Hyaloperonospora' AND species='parasitica species group'"` -ne 1 ]; then echo "Missing species entry for Hyaloperonospora parasitica species group"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'"` -ne 16 ]; then echo "Wrong synonym count for Hyaloperonospora parasitica species group";false; fi
+if [ `sqlite3 $DB "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'"` -ne 25 ]; then echo "Wrong synonym count for Hyaloperonospora parasitica species group";false; fi
 
 # Request Phytophthora and Peronospora
 thapbi_pict load-tax -d sqlite:///:memory: -t "database/${TAX}" -a 4783,70742
