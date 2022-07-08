@@ -205,6 +205,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
             if taxid in synonyms:
                 for name in synonyms[taxid]:
                     yield parent, name
+            yield parent, f"NCBI:taxid{taxid}"
 
 
 def reject_name(species):
