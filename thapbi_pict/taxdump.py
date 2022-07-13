@@ -15,6 +15,7 @@ from collections import defaultdict
 from .db_orm import connect_to_db
 from .db_orm import Synonym
 from .db_orm import Taxonomy
+from .utils import reject_species_name
 
 
 def load_nodes(nodes_dmp, wanted_ranks=None):
@@ -161,7 +162,7 @@ def species_or_species_groups(tree, ranks, names):
         if taxid in species_or_spgroup and tree[taxid] not in spgroup:
             # Want this as a "species"
             assert taxid not in genus_list
-            if reject_name(names[taxid]):
+            if reject_species_name(names[taxid]):
                 # Strange, but happens for "uncultured Hyaloperonospora"
                 # taxid 660915 which currently has rank "species"
                 continue
@@ -178,7 +179,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
     NCBI:txid4790 instead.
 
     Will map anything else to the parent genus, although genererally it will
-    be skipped via the reject_name(...) function, e.g.
+    be skipped via the reject_species_name(...) function, e.g.
 
     * no-rank entry 'unclassified Pythium' NCBI:txid228096 would be mapped to
       Pythium NCBI:txid4797 - although we'd not interested in importing any
@@ -200,20 +201,12 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
         if taxid in stop_nodes:
             continue
         parent = get_ancestor(taxid, tree, stop_nodes)
-        if taxid != parent and not reject_name(names[taxid]):
+        if taxid != parent and not reject_species_name(names[taxid]):
             yield parent, names[taxid]
             if taxid in synonyms:
                 for name in synonyms[taxid]:
                     yield parent, name
             yield parent, f"NCBI:taxid{taxid}"
-
-
-def reject_name(species):
-    """Species name be rejected, and not recorded in the DB."""
-    return (
-        species.split(None, 1)[0] in ("unclassified", "uncultured", "unidentified")
-        or species == "environmental samples"
-    )
 
 
 def main(tax, db_url, ancestors, debug=True):
@@ -326,7 +319,7 @@ def main(tax, db_url, ancestors, debug=True):
         aliases = set(synonyms.get(taxid, []))
 
         first_word = species.split(" ", 1)[0]
-        assert not reject_name(species), species
+        assert not reject_species_name(species), species
         if first_word == genus:
             # We are storing "Phytophthora infestans" as
             # genus="Phytophthora", species="infestans"
@@ -374,7 +367,7 @@ def main(tax, db_url, ancestors, debug=True):
         for name in sorted(aliases):
             # Would this actually be useful?
             # If a genus alias, does first word differ?
-            if reject_name(name) or name.split(None, 1)[0] == names[taxid]:
+            if reject_species_name(name) or name.split(None, 1)[0] == names[taxid]:
                 if debug:
                     sys.stderr.write(
                         f"DEBUG: Ignoring {name} as synonym of {names[taxid]}\n"

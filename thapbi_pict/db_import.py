@@ -27,8 +27,8 @@ from .utils import genus_species_name
 from .utils import genus_species_split
 from .utils import md5_hexdigest
 from .utils import md5seq
+from .utils import reject_species_name
 from .utils import valid_marker_name
-
 
 DEF_MIN_LENGTH = 100
 DEF_MAX_LENGTH = 1000
@@ -502,10 +502,10 @@ def import_fasta_file(
 
                 assert isinstance(name, str), name
 
-                if name.lower().startswith("uncultured "):
+                if reject_species_name(name):
                     bad_sp_entries += 1
                     sys.stderr.write(
-                        "WARNING: Uncultured, so ignoring %r\n"
+                        "WARNING: Ignoring %r\n"
                         % (entry if len(entry) < 60 else entry[:67] + "...")
                     )
                     continue
