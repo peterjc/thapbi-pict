@@ -55,6 +55,15 @@ def primer_clean(primer):
     return primer.upper().replace("I", "N")
 
 
+def reject_species_name(species):
+    """Reject species names like 'environmental samples' or 'uncultured ...'."""
+    return (
+        not species
+        or species.split(None, 1)[0] in ("unclassified", "uncultured", "unidentified")
+        or species == "environmental samples"
+    )
+
+
 def genus_species_name(genus, species):
     """Return name, genus with species if present.
 
