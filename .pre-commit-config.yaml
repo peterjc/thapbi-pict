@@ -30,7 +30,6 @@ repos:
     rev: 22.6.0
     hooks:
     -   id: black
-        args: [--check]
 -   repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
     hooks:
