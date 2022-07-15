@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.12.6 *Pending*  Extend curated DB where missing expected 32bp leader has been observed.
 v0.12.5 2022-07-08 Merged/child NCBI taxid entries kept as synonyms. Import FASTA with taxid.
 v0.12.4 2022-07-07 Updated edit-graph code to work with RapidFuzz v2.0.0 or later.
 v0.12.3 2022-07-06 Updated NCBI taxonomy and bulk imported genus-only entries in default DB.
