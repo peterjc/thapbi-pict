@@ -190,7 +190,7 @@ classifier result, with the number of reads. Picking out some examples:
 
 .. code:: console
 
-    $ cut -f 16,28,40,60 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,28,40,61 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
