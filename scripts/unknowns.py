@@ -87,11 +87,14 @@ def filter_unclassifed(input_filename, output_fasta, abundance, samples):
                     continue
                 if int(parts[abundance_col]) < abundance:
                     continue
-                if parts[predictions_col] in ("", "-"):
-                    output.write(
-                        f">{parts[md5_col]}_{parts[abundance_col]} "
-                        f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"
-                    )
+                if parts[seq_col] in ("", "-"):
+                    continue
+                if parts[predictions_col] not in ("", "-"):
+                    continue
+                output.write(
+                    f">{parts[md5_col]}_{parts[abundance_col]} "
+                    f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"
+                )
 
 
 filter_unclassifed(options.input, options.output, options.abundance, options.samples)
