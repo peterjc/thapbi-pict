@@ -5,6 +5,8 @@ import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+from thapbi_pict.utils import abundance_from_read_name
+
 # from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
@@ -50,13 +52,25 @@ parser.add_argument(
     metavar="FASTA",
     help="Output FASTA filename (defaults to stdout)",
 )
+parser.add_argument(
+    "-a",
+    "--abundance",
+    type=int,
+    default=1000,
+    help=(
+        "Minimum abundance to require before importing a sequence, "
+        "over-and-above whatever was used to prepare the FASTA file. "
+        "Default here is 100, ten times the default used for the "
+        "classification pipeline - be cautious what goes in your marker DB."
+    ),
+)
 
 if len(sys.argv) == 1:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
 options = parser.parse_args()
 
 
-def filter_unclassifed(input_filename, input_fasta, output_fasta):
+def filter_unclassifed(input_filename, input_fasta, output_fasta, abundance):
     """Extract FASTA file of unknown sequences."""
     wanted = set()
     with open(input_filename) as handle:
@@ -77,6 +91,8 @@ def filter_unclassifed(input_filename, input_fasta, output_fasta):
             parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
             if len(parts) != len(header):
                 sys.exit("ERROR: Inconsistent field counts")
+            if abundance_from_read_name(parts[0]) < abundance:
+                continue
             if not parts[2]:
                 wanted.add(parts[0])
                 # sys.stderr.write(f"DEBUG: {parts[0]} is unknown\n")
@@ -92,4 +108,4 @@ def filter_unclassifed(input_filename, input_fasta, output_fasta):
                     output.write(f">{title}\n{seq}\n")
 
 
-filter_unclassifed(options.input, options.fasta, options.output)
+filter_unclassifed(options.input, options.fasta, options.output, options.abundance)
