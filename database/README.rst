@@ -17,8 +17,8 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
-  4713 entries in file ``2022-07-05_ITS1_Oomycota_w32.fasta``
-  extracted from 34111 downloaded from an NCBI Entrez search on 2022-05-07::
+  in two files extracted from 34111 sequences downloaded from an NCBI Entrez
+  search on 2022-05-07::
 
       (Peronosporales[organism] OR Pythiales[organism])
       AND ((internal AND transcribed AND spacer) OR its1)
@@ -31,6 +31,16 @@ sets of biological sequences (subject to taxonomy filtering):
         --quiet | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
         | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
         --discard-untrimmed --quiet /dev/stdin -o 2022-07-05_ITS1_Oomycota_w32.fasta
+
+  Then to catch useful references without the typical 32bp leader in full,
+  where observed in at least 10 of our samples::
+
+      $ ../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \
+        -a 1000 -s 10 -o unknowns.fasta
+      $ ../scripts/missed_refs.py -i unknowns.fasta \
+        -f 2022-07-05_ITS1_Oomycota_34111.fasta \
+        -x 2022-07-05_ITS1_Oomycota_w32.fasta \
+        -o 2022-07-05_ITS1_Oomycota_obs.fasta
 
   Note the import command discards uncultured entries.
 
