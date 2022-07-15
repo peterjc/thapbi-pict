@@ -3,26 +3,15 @@
 import argparse
 import sys
 
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-
-from thapbi_pict.utils import abundance_from_read_name
-
-# from collections import Counter
-
 if "-v" in sys.argv or "--version" in sys.argv:
     print("v0.0.1")
     sys.exit(0)
 
 # Parse Command Line
 usage = """\
-The input file should be a THAPBI PICT 'intermediate' TSV file
-with at least three columns:
-
-1. Sequence name in format <MD5>_<count>
-2. List of classified NCBI taxids
-3. List of classified species names
-
-and a matching FASTA file using the same sequence names.
+The input file should be a THAPBI PICT 'read' report TSV file with columns
+including MD5, <method>-predictions, Marker-sequence, Sample-count, and
+Total-abundance.
 """
 
 parser = argparse.ArgumentParser(
@@ -34,15 +23,8 @@ parser.add_argument(
     "-i",
     "--input",
     default="/dev/stdin",
-    metavar="FILE",
-    help="Input TSV filename, default stdin.",
-)
-parser.add_argument(
-    "-f",
-    "--fasta",
-    required=True,
-    metavar="FILE",
-    help="Input FASTA file. Required.",
+    metavar="TSV",
+    help="Input TSV read report filename, default stdin.",
 )
 parser.add_argument(
     "-o",
@@ -50,12 +32,24 @@ parser.add_argument(
     dest="output",
     default="/dev/stdout",
     metavar="FASTA",
-    help="Output FASTA filename (defaults to stdout)",
+    help="Output FASTA filename, defaults stdout.",
+)
+parser.add_argument(
+    "-s",
+    "--samples",
+    type=int,
+    metavar="INTEGER",
+    default=10,
+    help=(
+        "Minimum number of samples to require before using an unknown "
+        "sequence. Default 10."
+    ),
 )
 parser.add_argument(
     "-a",
     "--abundance",
     type=int,
+    metavar="INTEGER",
     default=1000,
     help=(
         "Minimum abundance to require before importing a sequence, "
@@ -70,42 +64,34 @@ if len(sys.argv) == 1:
 options = parser.parse_args()
 
 
-def filter_unclassifed(input_filename, input_fasta, output_fasta, abundance):
+def filter_unclassifed(input_filename, output_fasta, abundance, samples):
     """Extract FASTA file of unknown sequences."""
-    wanted = set()
     with open(input_filename) as handle:
-        line = handle.readline().rstrip("\n")
-        if not line.startswith("#") or "\t" not in line:
-            sys.exit("ERROR: Invalid TSV input file.")
-        header = [_.rstrip() for _ in line.split("\t")]
-        # e.g.
-        # #ITS1/sequence-name (tab) taxid (tab) genus-species
-        if (
-            not header[0].endswith("/sequence-name")
-            or not header[1] == "taxid"
-            or not header[2] == "genus-species"
-        ):
-            sys.exit("ERROR: Header does not match THAPBI PICT classifier TSV output.")
-
-        for line in handle:
-            parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
-            if len(parts) != len(header):
-                sys.exit("ERROR: Inconsistent field counts")
-            if abundance_from_read_name(parts[0]) < abundance:
-                continue
-            if not parts[2]:
-                wanted.add(parts[0])
-                # sys.stderr.write(f"DEBUG: {parts[0]} is unknown\n")
-
-    sys.stderr.write(
-        f"Found {len(wanted)} entries without a species from the classifier\n"
-    )
-
-    with open(input_fasta) as handle:
         with open(output_fasta, "w") as output:
-            for title, seq in SimpleFastaParser(handle):
-                if title.split(None, 1)[0] in wanted:
-                    output.write(f">{title}\n{seq}\n")
+            line = handle.readline().rstrip("\n")
+            while line.startswith("#\t"):
+                line = handle.readline().rstrip("\n")
+            if not line.startswith("#Marker\tMD5\t"):
+                sys.exit("ERROR: Invalid TSV input file.")
+            header = [_.rstrip() for _ in line.split("\t")]
+            md5_col = 1
+            predictions_col = 2
+            seq_col = header.index("Marker-sequence")
+            samples_col = header.index("Sample-count")
+            abundance_col = header.index("Total-abundance")
+            for line in handle:
+                parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
+                if len(parts) != len(header):
+                    sys.exit("ERROR: Inconsistent field counts")
+                if int(parts[samples_col]) < samples:
+                    continue
+                if int(parts[abundance_col]) < abundance:
+                    continue
+                if parts[predictions_col] in ("", "-"):
+                    output.write(
+                        f">{parts[md5_col]}_{parts[abundance_col]} "
+                        f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"
+                    )
 
 
-filter_unclassifed(options.input, options.fasta, options.output, options.abundance)
+filter_unclassifed(options.input, options.output, options.abundance, options.samples)
