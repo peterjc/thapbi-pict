@@ -63,7 +63,7 @@ positives, 8 TP), but two false positives (2 FP). Those false positives
 .. code:: console
 
     $ thapbi_pict conflicts | grep cactorum
-    Loaded taxonomy for 1329 sequences from DB
+    Loaded taxonomy for 1352 sequences from DB
     f27df8e8755049e831b1ea4521ad6eb3  species  Phytophthora aleatoria;Phytophthora alpina;Phytophthora cactorum
     $ grep f27df8e8755049e831b1ea4521ad6eb3 intermediate/ITS1/DNA15MIX.fasta
     >f27df8e8755049e831b1ea4521ad6eb3_981
@@ -269,7 +269,7 @@ grep to show all lines with this species name:
     intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
     intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
     $ thapbi_pict conflicts | grep 29de890989becddc5e0b10ecbbc11b1a
-    Loaded taxonomy for 1329 sequences from DB
+    Loaded taxonomy for 1352 sequences from DB
     29de890989becddc5e0b10ecbbc11b1a  species  Phytophthora agathidicida;Phytophthora castaneae
 
 The same applies to *Phytophthora capsici* and *Phytophthora glovera*.
