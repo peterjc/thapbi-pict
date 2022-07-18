@@ -36,7 +36,7 @@ sets of biological sequences (subject to taxonomy filtering):
   where observed in at least 10 of our samples::
 
       $ ../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \
-        -a 1000 -s 10 -o unknowns.fasta
+        -a 1000 -s 5 -o unknowns.fasta
       $ ../scripts/missed_refs.py -i unknowns.fasta \
         -f 2022-07-05_ITS1_Oomycota_34111.fasta \
         -x 2022-07-05_ITS1_Oomycota_w32.fasta \

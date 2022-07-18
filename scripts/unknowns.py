@@ -39,10 +39,10 @@ parser.add_argument(
     "--samples",
     type=int,
     metavar="INTEGER",
-    default=10,
+    default=5,
     help=(
         "Minimum number of samples to require before using an unknown "
-        "sequence. Default 10."
+        "sequence. Default 5."
     ),
 )
 parser.add_argument(
