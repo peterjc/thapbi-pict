@@ -82,6 +82,74 @@ The bad news is we are missing seven expected species (seven false negatives,
 We will return to interpretation after showing how to get the tool to compute
 these FP, FP and FN values.
 
+The positive controls from the second plate had a different mix of ten
+*Phytophthora* species, again listed alphabetically:
+
+- *Phytophthora boehmeriae*
+- *Phytophthora cactorum*
+- *Phytophthora capsici*
+- *Phytophthora castaneae*
+- *Phytophthora fallax*
+- *Phytophthora foliorum*
+- *Phytophthora obscura*
+- *Phytophthora plurivora*
+- *Phytophthora rubi*
+- *Phytophthora siskiyouensis*
+
+Again referring to the sample summary report from running with default settings,
+for ``DNA10MIX_undiluted`` and ``DNA10MIX_diluted25x`` we got:
+
+- *Phytophthora agathidicida* (uncertain/ambiguous)
+- *Phytophthora capsici*
+- *Phytophthora castaneae* (uncertain/ambiguous)
+- *Phytophthora fallax*
+- *Phytophthora foliorum*
+- *Phytophthora glovera* (uncertain/ambiguous)
+- *Phytophthora obscura*
+- *Phytophthora plurivora*
+- *Phytophthora rubi*
+- *Phytophthora siskiyouensis*
+
+Plus the results from ``DNA10MIX_bycopynumber`` were almost the same - but this
+time there wasn't a sequence only matched to *P. capsici*, so that was also
+flagged as "(uncertain/ambiguous)".
+
+Leaving aside the ambiguous qualifier, there are ten species predictions, but
+only nine are correct (9 TP: *P. capsici*, *P. castaneae*, *P. fallax*,
+*P. foliorum*, *P. obscura*, *P. plurivora*, *P. rubi*, *P. siskiyouensis*),
+with two wrong guesses (2 FP: *P. agathidicida* and *P. glovera*), and two
+missing predictions (2 FN: *P. boehmeriae* and *P. cactorum*).
+
+The uncertain/ambiguous prediction of *Phytophthora agathidicida* is easily
+explained, it comes from a sequence present in all three samples with MD5
+checksum ``5122dde24762f8e3d6a54e3f79077254``, and this exact sequence is in
+the database with entries for both *Phytophthora castaneae* (which was in the
+DNA control mixture) and also *Phytophthora agathidicida* (e.g. accession
+KP295308).
+
+You can confirm this by looking at the intermediate TSV files, e.g. using
+grep to show all lines with this species name:
+
+.. code:: console
+
+    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/ITS1/*.fasta
+    intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
+    intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
+    intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
+    $ thapbi_pict conflicts | grep 29de890989becddc5e0b10ecbbc11b1a
+    Loaded taxonomy for 1352 sequences from DB
+    29de890989becddc5e0b10ecbbc11b1a  species  Phytophthora agathidicida;Phytophthora castaneae
+
+The same applies to *Phytophthora capsici* and *Phytophthora glovera*.
+i.e. These false positives are unavoidable.
+
+As noted above, the woody hosts paper concluded the failure to detect
+*P. boehmeriae* in either DNA mix was due to inefficient primer annealing
+in a species mixture. We have an unexpected FN for *P. cactorum* though.
+
+
 Running thapbi_pict assess for one sample
 -----------------------------------------
 
@@ -109,7 +177,7 @@ separators.
 
 The assess command will default to printing its tabular output to screen -
 shown here abridged after piping through the ``cut`` command to pull out just
-the first five columns:
+the first five columns from the 15 species mix:
 
 .. code:: console
 
@@ -196,132 +264,46 @@ without using the true negative count (which we expect to always be very large
 as the database will contain many species, while a community might contain
 only ten).
 
-Positive Control - 10 species mix
----------------------------------
-
-The positive controls from the second plate had a different mix of ten
-*Phytophthora* species, again listed alphabetically:
-
-- *Phytophthora boehmeriae*
-- *Phytophthora cactorum*
-- *Phytophthora capsici*
-- *Phytophthora castaneae*
-- *Phytophthora fallax*
-- *Phytophthora foliorum*
-- *Phytophthora obscura*
-- *Phytophthora plurivora*
-- *Phytophthora rubi*
-- *Phytophthora siskiyouensis*
-
-Again referring to the sample summary report from running with default settings,
-for ``DNA10MIX_undiluted`` and ``DNA10MIX_diluted25x`` we got:
-
-- *Phytophthora agathidicida* (uncertain/ambiguous)
-- *Phytophthora capsici*
-- *Phytophthora castaneae* (uncertain/ambiguous)
-- *Phytophthora fallax*
-- *Phytophthora foliorum*
-- *Phytophthora glovera* (uncertain/ambiguous)
-- *Phytophthora obscura*
-- *Phytophthora plurivora*
-- *Phytophthora rubi*
-- *Phytophthora siskiyouensis*
-
-Plus the results from ``DNA10MIX_bycopynumber`` were almost the same - but this
-time there wasn't a sequence only matched to *P. capsici*, giving:
-
-- *Phytophthora agathidicida* (uncertain/ambiguous)
-- *Phytophthora capsici* (uncertain/ambiguous)
-- *Phytophthora castaneae* (uncertain/ambiguous)
-- *Phytophthora fallax*
-- *Phytophthora foliorum*
-- *Phytophthora glovera* (uncertain/ambiguous)
-- *Phytophthora obscura*
-- *Phytophthora plurivora*
-- *Phytophthora rubi*
-- *Phytophthora siskiyouensis*
-
-The exact preparation of the 10 species mixture (with and without dilution,
-etc) made little difference.
-
-Leaving aside the ambiguous qualifier, there are ten species predictions, but
-only nine are correct (9 TP: *P. capsici*, *P. castaneae*, *P. fallax*,
-*P. foliorum*, *P. obscura*, *P. plurivora*, *P. rubi*, *P. siskiyouensis*),
-with two wrong guesses (2 FP: *P. agathidicida* and *P. glovera*), and two
-missing predictions (2 FN: *P. boehmeriae* and *P. cactorum*).
-
-The uncertain/ambiguous prediction of *Phytophthora agathidicida* is easily
-explained, it comes from a sequence present in all three samples with MD5
-checksum ``5122dde24762f8e3d6a54e3f79077254``, and this exact sequence is in
-the database with entries for both *Phytophthora castaneae* (which was in the
-DNA control mixture) and also *Phytophthora agathidicida* (e.g. accession
-KP295308).
-
-You can confirm this by looking at the intermediate TSV files, e.g. using
-grep to show all lines with this species name:
-
-.. code:: console
-
-    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
-    29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/ITS1/*.fasta
-    intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
-    intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
-    intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
-    $ thapbi_pict conflicts | grep 29de890989becddc5e0b10ecbbc11b1a
-    Loaded taxonomy for 1352 sequences from DB
-    29de890989becddc5e0b10ecbbc11b1a  species  Phytophthora agathidicida;Phytophthora castaneae
-
-The same applies to *Phytophthora capsici* and *Phytophthora glovera*.
-
-As noted above, the woody hosts paper concluded the failure to detect
-*P. boehmeriae* in either DNA mix was due to inefficient primer annealing
-in a species mixture. We have an unexpected FN for *P. cactorum* though.
-
-Assessing multiple samples
---------------------------
-
 When we ran the assess command earlier on a sample sample, we provided pairs
 of ``<sample_name>.<method>.tsv`` and ``<sample_name>.known.tsv``, but you
 can instead provide the intermediate ``<sample_name>.fasta`` files(s) and the
-pooled classifier output.
+pooled classifier output. Doing that for one of the 10 species mixtures:
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/DNA10MIX_*.known.tsv intermediate/ITS1/DNA10MIX_*.fasta summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o DNA10MIX.assess.tsv
-    Assessed onebp vs known in 3 files (230 species)
+    $ thapbi_pict assess -i expected/DNA10MIX_undiluted.known.tsv intermediate/ITS1/DNA10MIX_undiluted.fasta \
+                  summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o DNA10MIX.assess.tsv
+    Assessed onebp vs known in 1 files (230 species)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
-New table ``DNA10MIX.assess.tsv`` is similar to what we had before for the
-single 15 species sample, but here with three samples the species rows add up
-to 3:
+As this is still only one sample, new table ``DNA10MIX.assess.tsv`` is very similar
+to what we had before:
 
 ========================== == == == === ==== ===========
 #Species                   TP FP FN TN  F1   Ad-hoc-loss
 ========================== == == == === ==== ===========
-OVERALL                    24 6  6  654 0.80 0.333
-Phytophthora agathidicida  0  3  0  0   0.00 1.000
-Phytophthora boehmeriae    0  0  3  0   0.00 1.000
-Phytophthora cactorum      0  0  3  0   0.00 1.000
-Phytophthora capsici       3  0  0  0   1.00 0.000
-Phytophthora castaneae     3  0  0  0   1.00 0.000
-Phytophthora fallax        3  0  0  0   1.00 0.000
-Phytophthora foliorum      3  0  0  0   1.00 0.000
-Phytophthora glovera       0  3  0  0   0.00 1.000
-Phytophthora obscura       3  0  0  0   1.00 0.000
-Phytophthora plurivora     3  0  0  0   1.00 0.000
-Phytophthora rubi          3  0  0  0   1.00 0.000
-Phytophthora siskiyouensis 3  0  0  0   1.00 0.000
-OTHER 218 SPECIES IN DB    0  0  0  654 0.00 0.000
+OVERALL                    8  2  2  218 0.80 0.333
+Phytophthora agathidicida  0  1  0  0   0.00 1.000
+Phytophthora boehmeriae    0  0  1  0   0.00 1.000
+Phytophthora cactorum      0  0  1  0   0.00 1.000
+Phytophthora capsici       1  0  0  0   1.00 0.000
+Phytophthora castaneae     1  0  0  0   1.00 0.000
+Phytophthora fallax        1  0  0  0   1.00 0.000
+Phytophthora foliorum      1  0  0  0   1.00 0.000
+Phytophthora glovera       0  1  0  0   0.00 1.000
+Phytophthora obscura       1  0  0  0   1.00 0.000
+Phytophthora plurivora     1  0  0  0   1.00 0.000
+Phytophthora rubi          1  0  0  0   1.00 0.000
+Phytophthora siskiyouensis 1  0  0  0   1.00 0.000
+OTHER 218 SPECIES IN DB    0  0  0  218 0.00 0.000
 ========================== == == == === ==== ===========
 
-We have 3 FP for *Phytophthora agathidicida* (indistinguishable from
-*P. castaneae*), 3 FP for *Phytophthora glovera* (indistinguishable from
-*P. capsici*), making 6 FP (two per sample).
+It is clear from the metrics that the classifier is performing better on the
+second 10 species mock community.
 
-We have 3 FN for *Phytophthora boehmeriae* (primer mismatching as before), and
-and 3 FN for *Phytophthora cactorum*.
+Assessing multiple samples
+--------------------------
 
 Next, let's run the assess command on all four positive control samples, just
 by giving the input directory names (it will work out the common filenames,
@@ -335,7 +317,8 @@ just like doing this via the pipeline command - see below):
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
-New table ``thabpi-pict.ITS1.assess.tsv`` is similar:
+New table ``thabpi-pict.ITS1.assess.tsv`` is similar, but notice all the
+per-species lines have TP+FP+FN+TN=4 as there were 4 samples:
 
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
@@ -372,9 +355,6 @@ OTHER 205 SPECIES IN DB     0  0  0  820 0.00 0.000
 This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 867 TN.
 Their total, 32+8+13+867 = 920 = 4 * 230, is the number of samples times the
 number of species in the database.
-
-This time notice all the per-species lines have TP+FP+FN+TN=4 as there were 4
-samples.
 
 Running assessment as part of pipeline
 --------------------------------------
