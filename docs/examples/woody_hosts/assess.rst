@@ -423,8 +423,8 @@ to make direct comparison more straight forward:
 
 We can recover most of the missing species (the FN) by dropping the minimum
 abundance thresholds (which requires deleting the intermediate FASTA files,
-and re-running with lower settings for ``-a`` and ``-f``), at the cost of more
-FP.
+or using a different intermediate folder, and re-running with lower settings
+for ``-a`` and ``-f``), at the cost of more FP.
 
 For instance, we find traces of *P. syringae* with less than 10 reads in
 the 15 species mix (consistent with Table 2), and even *P. boehmeriae* with
@@ -440,6 +440,36 @@ Again even excluding only singletons, we didn't find any matches to
 *P. plurivora* in the 15 species mix (Table 2 in the original paper suggests
 present with only 2 reads).
 
-Optimising on maximising the F1 score and minimising ad-hoc-loss, the
-optimal absolute abundance threshold is in the region of 65 to 80 reads,
-giving 34 TP, 9 FP, and 11 FN for an F1 of 0.77 and ad-hoc-loss of 0.370.
+We can optimise the threshold by maximising the F1 score and minimising
+ad-hoc-loss for these two samples. This is done at the end of the ``run.sh``
+script with a simple parameter sweep of the absolute threshold (``-a``)
+with the fractional threshold unused (``-f 0``). This produces a simple table:
+
+.. code:: console
+
+    $ cut -f 1-5,9,11 summary/mocks_a2.assess-vs-abundance.tsv
+    <SEE TABLE BELOW>
+
+Open the table in Excel if you prefer, the columns of particular interest:
+
+========== == == == === ==== ===========
+#Threshold TP FP FN TN  F1   Ad-hoc-loss
+========== == == == === ==== ===========
+A=2        22 18 3  417 0.68 0.488
+A=10       20 10 5  425 0.73 0.429
+A=20       20 9  5  426 0.74 0.412
+A=30       19 8  6  427 0.73 0.424
+A=40       19 6  6  429 0.76 0.387
+A=50       19 5  6  430 0.78 0.367
+A=60       18 5  7  430 0.75 0.400
+A=70       18 5  7  430 0.75 0.400
+A=80       18 5  7  430 0.75 0.400
+A=90       16 4  9  431 0.71 0.448
+A=100      16 4  9  431 0.71 0.448
+========== == == == === ==== ===========
+
+This suggests the optimal absolute abundance threshold for these two samples
+is in the region of 50 reads, giving 19 TP, 5 FP, and 6 FN for an F1 of 0.78
+and ad-hoc-loss of 0.367. If we run the optimisation on all four samples (one
+with 15 species, three with 10 species), this suggests somewhere in between
+this and the default of 100.

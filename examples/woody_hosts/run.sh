@@ -22,6 +22,34 @@ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
         -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
         -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
 
+echo =============================
+echo Exploring threshold for mocks
+echo =============================
+
+# Using separate folder as would not overwrite intermediate/ output above
+mkdir -p intermediate_a2
+
+# Not bothering the metadata here:
+thapbi_pict pipeline -a 2 -f 0 -i expected \
+        raw_data/DNA15MIX_R?.fastq.gz \
+        raw_data/DNA10MIX_undiluted_R?.fastq.gz \
+        -s intermediate_a2 -o summary/mocks_a2
+
+# Crude parameter sweep of the abundance threshold (-a) with -f 0 assumed.
+echo -e "#Threshold\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\tHamming-loss\tAd-hoc-loss" > summary/mocks_a2.assess-vs-abundance.tsv
+for A in 2 10 20 30 40 50 60 70 80 90 100; do
+    # Name intermediate files explicitly in case intermediate_a2/ITS1/ has others
+    # Name known files explicitly to avoid warnings about unused entries
+    thapbi_pict assess -i summary/mocks_a2.ITS1.all_reads.onebp.tsv \
+            intermediate_a2/ITS1/DNA15MIX.fasta \
+            intermediate_a2/ITS1/DNA10MIX_undiluted.fasta \
+            expected/DNA15MIX.known.tsv \
+            expected/DNA10MIX_undiluted.known.tsv \
+            -a $A | grep OVERALL | sed "s/OVERALL/A=$A/g" \
+            >> summary/mocks_a2.assess-vs-abundance.tsv
+done
+cut -f 1-5,9,11 summary/mocks_a2.assess-vs-abundance.tsv
+
 echo ====
 echo Done
 echo ====
