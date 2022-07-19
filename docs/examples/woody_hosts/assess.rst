@@ -271,8 +271,10 @@ pooled classifier output. Doing that for one of the 10 species mixtures:
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/DNA10MIX_undiluted.known.tsv intermediate/ITS1/DNA10MIX_undiluted.fasta \
-                  summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o DNA10MIX.assess.tsv
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+                  expected/DNA10MIX_undiluted.known.tsv \
+                  intermediate/ITS1/DNA10MIX_undiluted.fasta \
+                  -o DNA10MIX.assess.tsv
     Assessed onebp vs known in 1 files (230 species)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
@@ -406,6 +408,21 @@ singletons.
 Attempting to compare the results in their Table 1 with our own numbers is
 complicated since it appears to show just one of the 10 species mixes (so the
 TP count is out of 10) while we used all three (for a TP count out of 30).
+
+We can therefore pick a single representative sample for the 10 species mix,
+to make direct comparison more straight forward:
+
+.. code:: console
+
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+                  expected/DNA15MIX.known.tsv \
+                  intermediate/ITS1/DNA15MIX.fasta \
+                  expected/DNA10MIX_undiluted.known.tsv \
+                  intermediate/ITS1/DNA10MIX_undiluted.fasta \
+                  | head -n 2 | cut -f 1-5,9,11
+    Assessed onebp vs known in 2 files (230 species)
+    #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
+    OVERALL   16  4   9   431  0.71  0.448
 
 We can recover most of the missing species (the FN) by dropping the minimum
 abundance thresholds (which requires deleting the intermediate FASTA files,
