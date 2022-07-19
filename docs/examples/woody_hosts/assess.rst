@@ -272,9 +272,8 @@ pooled classifier output. Doing that for one of the 10 species mixtures:
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
-                  expected/DNA10MIX_undiluted.known.tsv \
-                  intermediate/ITS1/DNA10MIX_undiluted.fasta \
-                  -o DNA10MIX.assess.tsv
+      expected/DNA10MIX_undiluted.known.tsv intermediate/ITS1/DNA10MIX_undiluted.fasta \
+      -o DNA10MIX.assess.tsv
     Assessed onebp vs known in 1 files (230 species)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
@@ -313,8 +312,8 @@ just like doing this via the pipeline command - see below):
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/ intermediate/ITS1/ \
-      summary/thapbi-pict.ITS1.all_reads.onebp.tsv -o thabpi-pict.ITS1.assess.tsv
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      expected/ intermediate/ITS1/ -o thabpi-pict.ITS1.assess.tsv
     Assessed onebp vs known in 4 files (230 species)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
@@ -415,11 +414,9 @@ to make direct comparison more straight forward:
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
-                  expected/DNA15MIX.known.tsv \
-                  intermediate/ITS1/DNA15MIX.fasta \
-                  expected/DNA10MIX_undiluted.known.tsv \
-                  intermediate/ITS1/DNA10MIX_undiluted.fasta \
-                  | head -n 2 | cut -f 1-5,9,11
+      expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
+      intermediate/ITS1/DNA15MIX.fasta intermediate/ITS1/DNA10MIX_undiluted.fasta \
+      | head -n 2 | cut -f 1-5,9,11
     Assessed onebp vs known in 2 files (230 species)
     #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
     OVERALL   16  4   9   431  0.71  0.448
