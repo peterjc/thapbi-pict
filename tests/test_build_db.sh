@@ -29,6 +29,7 @@ sqlite3 $DB.sqlite < database/ITS1_DB.sql
 
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
+thapbi_pict dump -d "$DB.sqlite" -o "$DB.tsv"
 
 set +x
 echo "========================="
@@ -49,6 +50,7 @@ set -x
 
 diff "$DB.fasta" database/ITS1_DB.fasta
 diff "$DB.txt" database/ITS1_DB.txt
+diff "$DB.tsv" database/ITS1_DB.tsv
 # git diff database/ITS1_DB.sql
 
 echo "$0 - test_build_db.sh passed"

@@ -63,6 +63,11 @@ sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN $BAD
 # in the NCBI taxonomy, like putative novel species.
 thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450 -s ";" -x
 
+# ======
+# Export
+# ======
+
+thapbi_pict dump -d "$DB.sqlite" -o "$DB.tsv"
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
 thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
 
@@ -70,6 +75,7 @@ sqlite3 "$DB.sqlite" .dump > "$DB.sql"
 
 cp "$DB.sqlite" "$DB-$VERSION.sqlite"
 cp "$DB.sql" "$DB-$VERSION.sql"
+cp "$DB.tsv" "$DB-$VERSION.tsv"
 cp "$DB.txt" "$DB-$VERSION.txt"
 cp "$DB.fasta" "$DB-$VERSION.fasta"
 
