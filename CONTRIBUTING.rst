@@ -128,17 +128,8 @@ If there have been changes requiring the DB be rebuilt, do this:
 
     cd database
     ./build_ITS1_DB.sh
-    git commit ITS1_DB.sql -m "Rebuilt DB"
+    git commit ITS1_DB.tsv -m "Rebuilt DB"
     cd ..
-
-If the DB has changed, and this was not done locally, we can alternatively
-update it using the plain text dump which is under version control:
-
-.. code:: bash
-
-    rm -rf thapbi_pict/ITS1_DB.sqlite
-    sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
-    chmod a-w thapbi_pict/ITS1_DB.sqlite
 
 Next confirm the ``CHANGELOG.rst`` file is up to date, including using today's
 date for the new version. Then actually do the build:

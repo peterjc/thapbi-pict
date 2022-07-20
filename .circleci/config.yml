@@ -32,9 +32,16 @@ jobs:
           name: Installation
           command: |
             source activate testing
+            echo "Bootstrapping to build DB"
+            python -m pip install -e .
             rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
-            sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+            cd database
+            bash build_ITS1_DB.sh
+            cd ..
+            cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
             chmod a-w thapbi_pict/ITS1_DB.sqlite
+            python -m pip uninstall --yes thapbi_pict
+            echo "Building tar-ball and then wheel"
             python setup.py sdist --formats=gztar
             python setup.py bdist_wheel
             echo "Installing our wheel..."
