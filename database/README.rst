@@ -33,7 +33,7 @@ sets of biological sequences (subject to taxonomy filtering):
         --discard-untrimmed --quiet /dev/stdin -o 2022-07-05_ITS1_Oomycota_w32.fasta
 
   Then to catch useful references without the typical 32bp leader in full,
-  where observed in at least 10 of our samples::
+  where observed in at least five of our samples::
 
       $ ../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \
         -a 1000 -s 5 -o unknowns.fasta
