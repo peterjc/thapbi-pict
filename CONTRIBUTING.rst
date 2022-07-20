@@ -85,7 +85,10 @@ prevent accidental edits:
 
 .. code:: console
 
-    $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
+    $ cd database
+    $ ./build_all.sh
+    $ cd ..
+    $ cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
     $ chmod a-w thapbi_pict/ITS1_DB.sqlite
 
 Assuming your default Python is at least version 3.6, to install the tool and
