@@ -69,8 +69,10 @@ def main(
         .options(contains_eager(SeqSource.marker_definition, alias=marker_def))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
-    # Sorting for reproducibility
-    view = view.order_by(marker_def.name, marker_seq.sequence, SeqSource.id)
+    # Sorting for reproducibility (avoiding autonumber id fields)
+    view = view.order_by(
+        marker_def.name, marker_seq.sequence, SeqSource.source_accession
+    )
     if marker:
         # TODO - Check this is actually in the DB?
         view = view.filter(marker_def.name == marker)
