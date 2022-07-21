@@ -19,7 +19,13 @@ if [ ! -f tests/run_tests.sh ]; then
 fi
 
 time tests/test_pooling.sh
-time tests/test_build_db.sh
+
+if [ -z "${CI:-}" ]; then
+    # Want to skip this test on CI as already bootstrapped the DB
+    # https://www.appveyor.com/docs/environment-variables/
+    # https://circleci.com/docs/env-vars
+    time tests/test_build_db.sh
+fi
 
 time tests/test_woody_hosts.sh
 
