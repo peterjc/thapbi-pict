@@ -13,11 +13,6 @@ export TMP=${TMP:-/tmp/thapbi_pict}/build_db
 rm -rf $TMP
 mkdir -p $TMP
 
-export `grep ^TAX= database/build_ITS1_DB.sh`
-
-if [ ! -f "${TAX}.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/${TAX}.zip"; fi
-if [ ! -d "database/${TAX}" ]; then unzip ${TAX}.zip nodes.dmp names.dmp merged.dmp -d database/${TAX}; fi
-
 echo "===================================================="
 echo "Loading expected DB and exporting as table and FASTA"
 echo "===================================================="

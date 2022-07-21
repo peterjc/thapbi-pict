@@ -6,6 +6,12 @@ TAX=taxdmp_2022-07-01
 DB=CURATED
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
+# ========
+# Taxonomy
+# ========
+if [ ! -f "${TAX}.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/${TAX}.zip"; fi
+if [ ! -d "${TAX}/" ]; then unzip ${TAX}.zip nodes.dmp names.dmp merged.dmp -d ${TAX}/; fi
+
 # 4762 = Oomycetes
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX" -a 4762
 
