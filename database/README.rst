@@ -68,13 +68,6 @@ The database is created with the ``database/build_ITS1_DB.sh`` script:
 
 We include the binary SQLite3 file as ``thapbi_pict/ITS1_DB.sqlite`` in the
 software releases, but that binary SQLite3 database file itself is not under
-version control. Instead, we track a plain text dump of the database as
-``database/ITS1_DB.sql`` giving a meaningful change history.
-
-As an alternative to regenerating the database, the text dump can be converted
-into a binary SQLite3 database file as follows:
-
-.. code:: console
-
-   $ sqlite3 thapbi_pict/ITS1_DB.sqlite < database/ITS1_DB.sql
-   $ chmod a-w thapbi_pict/ITS1_DB.sqlite
+version control. Instead, we track a plain text FASTA dump of the database as
+``database/ITS1_DB.fasta`` giving a meaningful change history (we initially
+tracked this as a plain text SQL dump, ``database/ITS1_DB.sql``).
