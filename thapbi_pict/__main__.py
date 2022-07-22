@@ -1183,7 +1183,7 @@ def main(args=None):
         "--minimal",
         action="store_true",
         help="Minimal output, one record per trimmed sequence with MD5 and species "
-        "list - rather than all entries with original ID and full sequence.",
+        "list - rather than all entries with original ID, species, and taxid.",
     )
     subcommand_parser.add_argument(
         "-f",
