@@ -13,18 +13,14 @@ export TMP=${TMP:-/tmp/thapbi_pict}/build_db
 rm -rf $TMP
 mkdir -p $TMP
 
-echo "===================================================="
-echo "Loading expected DB and exporting as table and FASTA"
-echo "===================================================="
+echo "==================================="
+echo "Dumping current DB as TSV and FASTA"
+echo "==================================="
 set -x
 
-export DB=$TMP/expected_ITS1_DB
-rm -rf $DB.*
-sqlite3 $DB.sqlite < database/ITS1_DB.sql
-
-thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
-thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
-thapbi_pict dump -d "$DB.sqlite" -o "$DB.tsv"
+thapbi_pict dump -f fasta -o "$TMP/old.fasta"
+thapbi_pict dump -m -o "$TMP/old.txt"
+thapbi_pict dump -o "$TMP/old.tsv"
 
 set +x
 echo "========================="
@@ -43,9 +39,9 @@ echo "Checking rebuilt DB matches expectations"
 echo "========================================"
 set -x
 
-diff "$DB.fasta" database/ITS1_DB.fasta
-diff "$DB.txt" database/ITS1_DB.txt
-diff "$DB.tsv" database/ITS1_DB.tsv
+diff "$TMP/old.fasta" database/ITS1_DB.fasta
+diff "$TMP/old.txt" database/ITS1_DB.txt
+diff "$TMP/old.tsv" database/ITS1_DB.tsv
 # git diff database/ITS1_DB.sql
 
 echo "$0 - test_build_db.sh passed"
