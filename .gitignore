@@ -32,8 +32,9 @@ database/CURATED+NCBI.fasta
 database/CURATED+NCBI.sql
 database/CURATED+NCBI.txt
 database/CURATED+NCBI-v*
-database/ITS1_DB.fasta
-# database/ITS1_DB.sql
+# database/ITS1_DB.fasta
+database/ITS1_DB.sqlite
+database/ITS1_DB.sql
 database/ITS1_DB.txt
 database/ITS1_DB-v*
 database/taxdmp_20*
