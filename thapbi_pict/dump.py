@@ -1,4 +1,4 @@
-# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2022 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -152,10 +152,12 @@ def main(
         seq_entry = {}
         for seq_source in view:
             seq = seq_source.marker_seq.sequence
-            entry = genus_species_name(
+            genus_species = genus_species_name(
                 seq_source.taxonomy.genus, seq_source.taxonomy.species
             )
-            entry = f"{seq_source.source_accession} {entry}"
+            entry = f"{seq_source.source_accession} {genus_species}"
+            if seq_source.taxonomy.ncbi_taxid:
+                entry += f" taxid={seq_source.taxonomy.ncbi_taxid}"
             if seq in seq_entry:
                 seq_entry[seq].add(entry)
             else:
