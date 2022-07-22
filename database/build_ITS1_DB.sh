@@ -75,7 +75,7 @@ thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophyto
 
 thapbi_pict dump -d "$DB.sqlite" -o "$DB.tsv"
 thapbi_pict dump -m -d "$DB.sqlite" -o "$DB.txt"
-thapbi_pict dump -m -f fasta -d "$DB.sqlite" -o "$DB.fasta"
+thapbi_pict dump -f fasta -d "$DB.sqlite" -o "$DB.fasta"
 
 sqlite3 "$DB.sqlite" .dump > "$DB.sql"
 
