@@ -152,16 +152,29 @@ assert parse_ncbi_taxid_entry("HQ013219:Phytophthora_arenaria:taxid=456") == (45
 def parse_curated_fasta_entry(text, known_species=None):
     """Split an entry of "Accession genus species etc" into fields.
 
-    Returns a two-tuple of taxid (always zero), genus-species.
+    Does not use the optional known_species argument.
+
+    Returns a two-tuple of taxid (0 unless taxid=... entry found), genus-species.
 
     >>> parse_curated_fasta_entry('HQ013219 Phytophthora arenaria')
     (0, 'Phytophthora arenaria')
 
-    >>> parse_curated_fasta_entry('P13660 Phytophthora aff infestans')
-    (0, 'Phytophthora aff infestans')
+    Will look for an NCBI taxid after the species name (and ignore anything
+    following that, such as other key=value entries):
+
+    >>> parse_curated_fasta_entry('P13660 Phytophthora aff infestans taxid=907744 etc')
+    (907744, 'Phytophthora aff infestans')
+
+    In this example we expect the NCBI taxid will be matched to a pre-loaded
+    species name to be used in preference (i.e. 'Phytophthora aff. infestans'
+    with a dot in it).
     """
     acc, sp = text.split(None, 1)
     taxid = 0
+    match = taxid_regex.search(sp)
+    if match:
+        taxid = int(match.group().split("=", 1)[1])
+        sp = sp[: match.start()]
     # if sp not in known_species:
     #     sys.stderr.write(f"WARNING: Unexpected species name {sp}\n")
     while "  " in sp:
@@ -175,6 +188,24 @@ assert parse_curated_fasta_entry("HQ013219 Phytophthora arenaria") == (
 )
 assert parse_curated_fasta_entry("P13660 Phytophthora aff infestans") == (
     0,
+    "Phytophthora aff infestans",
+)
+assert parse_curated_fasta_entry(
+    "P13660 Phytophthora aff infestans taxid=907744 ignored text"
+) == (
+    907744,
+    "Phytophthora aff infestans",
+)
+assert parse_curated_fasta_entry(
+    "P13660 Phytophthora aff infestans ncbitaxid=907744 ignored text"
+) == (
+    907744,
+    "Phytophthora aff infestans",
+)
+assert parse_curated_fasta_entry(
+    "P13660 Phytophthora aff infestans [taxid=907744] ignored text"
+) == (
+    907744,
     "Phytophthora aff infestans",
 )
 
