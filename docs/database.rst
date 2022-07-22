@@ -31,22 +31,6 @@ or ``--database`` setting is omitted. This is intended for use with a
 *Phytophthora* ITS1 target region, and is used in the first
 :ref:`worked example <woody_hosts>`.
 
-The default database is compiled from the following sets of sequences:
-
-- Curated *Phytophthora* ITS1 sequences (at species level) in a FASTA file,
-  imported using the ``thapbi_pict curated-import`` command.
-- NCBI *Peronosporales* (including *Phytophthora*) at genus level, using the
-  ``thapbi_pict import`` command with NCBI heuristics and primer trimming.
-  i.e. We discard the author provided species information as we found too many
-  were misclassified, keeping only the stated genus.
-- Observed ITS1 sequences from single isolate positive controls run on a MiSeq
-  plate, using the ``thapbi_pict seq-import`` command.
-- Four G-BLOCK synthetic controls in a FASTA file, imported using the
-  ``thapbi_pict import`` command.
-
-These are vetted against the NCBI taxonomy, meaning species not (yet) defined
-in the NCBI taxonomy are downgraded to unknown species.
-
 For further details see the ``database/README.rst`` file in the source code,
 and script ``database/build_ITS1_DB.sh`` which automates this.
 
