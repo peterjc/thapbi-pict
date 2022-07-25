@@ -459,8 +459,7 @@ def dist_in_db(session, marker_name, seq, debug=False):
                 .filter(Taxonomy.species == "")
                 .one_or_none()
             )
-            if query and query.ncbi_taxid:
-                genus_taxid[g] = query.ncbi_taxid
+            genus_taxid[g] = query.ncbi_taxid if query else 0
     return (
         ";".join(str(genus_taxid.get(g, 0)) for g in sorted(genus)),
         ";".join(sorted(genus)),
