@@ -38,6 +38,7 @@ use_fuzzy_only = False  # global variable for onebp classifier
 fuzzy_matches = None  # global variable for onebp classifier
 db_seqs = None  # global variable for onebp and 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
+genus_taxid = {}  # global variable to cache taxids for genus names
 
 
 def unique_or_separated(values, sep=";"):
@@ -406,6 +407,7 @@ def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 def dist_in_db(session, marker_name, seq, debug=False):
     """Species up to 1bp, genus up to given distance away."""
     global db_seqs
+    global genus_taxid
     assert seq and db_seqs
     # If seq in db_seqs might be genus only, and
     # we'd prefer a species level match 1bp away:
@@ -448,8 +450,21 @@ def dist_in_db(session, marker_name, seq, debug=False):
         .distinct()
     }
     assert genus
-    # TODO - look up genus taxid
-    return 0, ";".join(sorted(genus)), note
+    # Update the genus to taxid cache as needed:
+    for g in genus:
+        if g not in genus_taxid:
+            query = (
+                session.query(Taxonomy.ncbi_taxid)
+                .filter(Taxonomy.genus == g)
+                .filter(Taxonomy.species == "")
+                .one_or_none()
+            )
+            genus_taxid[g] = query.ncbi_taxid if query else 0
+    return (
+        ";".join(str(genus_taxid.get(g, 0)) for g in sorted(genus)),
+        ";".join(sorted(genus)),
+        note,
+    )
 
 
 def method_dist(
@@ -684,6 +699,7 @@ def main(
     abundance - this acts as an additional filter useful if exploring the best
     threshold.
     """
+    global genus_taxid
     assert isinstance(fasta, list)
 
     if method not in method_classify_file:
@@ -707,6 +723,7 @@ def main(
         sys.stderr.write(f"Taxonomy table contains {count} distinct species.\n")
     if not count:
         sys.exit("ERROR: Taxonomy table empty, cannot classify anything.\n")
+    genus_taxid = {}  # reset any values from a previous DB
 
     if not marker_name:
         view = session.query(MarkerDef)
