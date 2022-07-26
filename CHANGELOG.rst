@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.12.8 *Pending*  Minor DB update.
+v0.12.8 *Pending*  Treat NCBI taxonomy 'equivalent name' as a synonym. Minor DB update.
 v0.12.7 2022-07-26 Report NCBI taxid in genus-only fallback classifier output. Minor DB update.
 v0.12.6 2022-07-25 Changes to how NCBI sequences are trimmed for use in the default DB.
 v0.12.5 2022-07-08 Merged/child NCBI taxid entries kept as synonyms. Import FASTA with taxid.
