@@ -214,7 +214,6 @@ Let's run this on the custom database, with output to a file:
 .. code:: console
 
     $ thapbi_pict conflicts -d Redekar_et_al_2019_sup_table_3.sqlite -o conflicts.tsv; echo "(Return code $?)"
-    Loaded taxonomy for 838 sequences from DB
     (Return code 3)
 
 Command line tools use a non-zero return code by convention to indicate an
