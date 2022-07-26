@@ -31,7 +31,8 @@ sets of biological sequences (subject to taxonomy filtering):
         --discard-untrimmed -e 0.2 --quiet \
         | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
         | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
-        --discard-untrimmed --quiet /dev/stdin -o 2022-07-05_ITS1_Oomycota_w32.fasta
+        --discard-untrimmed -M 450 --quiet /dev/stdin \
+        -o 2022-07-05_ITS1_Oomycota_w32.fasta
 
   Then to catch useful references without the typical 32bp leader in full,
   where observed in at least five of our samples::
