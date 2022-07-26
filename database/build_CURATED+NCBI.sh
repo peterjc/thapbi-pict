@@ -49,10 +49,11 @@ thapbi_pict import -d "$DB.sqlite" -i controls.fasta \
 # NCBI at genus level
 # ===================
 # These are multi-entries per FASTA sequence, using semi-colon:
-thapbi_pict import -d "$DB.sqlite" -s ";" -g --minlen 150 --maxlen 450 \
-            -i 2022-07-05_ITS1_Oomycota_obs.fasta -s ";"
+thapbi_pict import -d "$DB.sqlite" -s ";" -g -s ";" \
+            -i 2022-07-05_ITS1_Oomycota_obs.fasta
 
-# Single entry per FASTA sequence, where semi-colon may appear in free text:
+# Single entry per FASTA sequence, where semi-colon may appear in free text.
+# Length limits deliberately more cautious than the pipeline settings above.
 thapbi_pict import -d "$DB.sqlite" -c ncbi -g --minlen 150 --maxlen 450 \
             -i 2022-07-05_ITS1_Oomycota_w32.fasta
 
