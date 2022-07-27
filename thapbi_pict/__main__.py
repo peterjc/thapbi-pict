@@ -343,6 +343,7 @@ def edit_graph(args=None):
         min_abundance=args.abundance,
         total_min_abundance=args.total,
         show_db_marker=args.marker,
+        genus=args.genus,
         max_edit_dist=args.editdist,
         ignore_prefixes=tuple(args.ignore_prefixes),
         debug=args.verbose,
@@ -684,6 +685,17 @@ ARG_MARKER_PICK = dict(  # noqa: C408
 # "-d", "--database",
 ARG_DB_WRITE = dict(  # noqa: C408
     type=str, required=True, help="Which database to write to (or create)."
+)
+
+# Common export arguments
+# =======================
+
+# "-g", "--genus",
+ARG_GENUS_FILTER = dict(  # noqa: C408
+    type=str,
+    default="",
+    help="Which genus (or genera) to export (comma separated list). "
+    "Default is not to filter by genus.",
 )
 
 # Prepare reads arguments
@@ -1072,14 +1084,7 @@ def main(args=None):
         action="store_true",
         help="Accept species names without pre-loaded taxonomy.",
     )
-    subcommand_parser.add_argument(
-        "-g",
-        "--genus",
-        default=False,
-        action="store_true",
-        help="Record at genus level only (and only validate at genus level, "
-        "unless using -x / --lax in which case any word is accepted as a genus).",
-    )
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_FILTER)
     subcommand_parser.add_argument(
         "-c",
         "--convention",
@@ -1570,6 +1575,7 @@ def main(args=None):
         help="Show DB entries from this marker, regardless of their abundance"
         " in the FASTA inputs. Required if only drawing DB entries.",
     )
+    subcommand_parser.add_argument("-g", "--genus", **ARG_GENUS_FILTER)
     subcommand_parser.add_argument(
         "-e",
         "--editdist",

@@ -205,6 +205,7 @@ def main(
     min_abundance=100,
     show_db_marker=None,
     total_min_abundance=0,
+    genus="",
     max_edit_dist=3,
     ignore_prefixes=None,
     debug=False,
@@ -247,7 +248,16 @@ def main(
             "If not using -i / --input argument, require -k / --marker to use DB only."
         )
 
+    # Split on commas, strip white spaces
+    genus_list = (
+        {_.strip() for _ in genus.strip().split(",")} if genus.strip() else set()
+    )
+
     if inputs:
+        if genus_list:
+            sys.exit(
+                "ERROR: Genus option currently only works with DB, not FASTA files."
+            )
         if debug:
             sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
         for fasta_file in find_requested_files(
@@ -341,6 +351,10 @@ def main(
         Session = connect_to_db(db_url, echo=False)  # echo=debug
         session = Session()
 
+        for x in genus_list:
+            if not session.query(Taxonomy).filter_by(genus=x).count():
+                sys.stderr.write(f"WARNING: Genus {x!r} not in database\n")
+
         # Doing a join to pull in the marker and taxonomy tables too:
         cur_tax = aliased(Taxonomy)
         marker_seq = aliased(MarkerSeq)
@@ -351,6 +365,8 @@ def main(
             .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
             .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
         )
+        if genus_list:
+            view = view.filter(cur_tax.genus.in_(genus_list))
         if show_db_marker:
             # TODO - Check this marker is actually in the DB?
             # Note if marker not specified, will use all the DB entries to
@@ -361,7 +377,6 @@ def main(
             )
         # Sorting for reproducibility
         view = view.order_by(SeqSource.id)
-        # TODO - Copy genus/species filtering behaviour from dump command?
 
         for seq_source in view:
             md5 = seq_source.marker_seq.md5
