@@ -57,8 +57,15 @@ thapbi_pict import -d "$DB.sqlite" -s ";" -g -s ";" \
 thapbi_pict import -d "$DB.sqlite" -c ncbi -g --minlen 150 --maxlen 450 \
             -i 2022-07-05_ITS1_Oomycota_w32.fasta
 
-# Add hoc fix for some accessions apparently with wrong genus
-BAD="('MN128447.1', 'MK794853.1', 'MK794848.1', 'MK795051.1', 'HQ237483.1', 'KP183959.1', 'KY785380.1', 'KY785381.1', 'KU715054.1', 'GQ149496.1', 'JF916542.1', 'MK794725.1', 'MK794726.1', 'ON394668.1', 'ON394667.1', 'ON394669.1', 'KY986679.X', 'KU210557.1', 'ON075205.1', 'MZ799354.1', 'MZ799355.1', 'LC684551.1', 'LC684552.1', 'LC684554.1', 'ON394664.1', 'ON394670.1', 'KY785379.1', 'KU715059.1', 'MK794740.1', 'MK794746.1', 'ON394673.1')"
+# Add hoc fixes for some accessions apparently with wrong genus
+# MN128447.1 probably not Phytopythium vexans, but Phytophthora
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('MN128447.1');"
+# GQ149496/JF916542 probably not Phytophthora, but budding yeast
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('GQ149496.1', 'JF916542.1');"
+# KY986679 probably not Peronospora erucastri, but Hyaloperonospora
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('KY986679.X');"
+# Assorted entries, mostly Pythium which probably should be Globisporangium or Phytopythium etc
+BAD="('MK794853.1', 'MK794848.1', 'MK795051.1', 'HQ237483.1', 'KP183959.1', 'KY785380.1', 'KY785381.1', 'KU715054.1', 'MK794725.1', 'MK794726.1', 'ON394668.1', 'ON394667.1', 'ON394669.1', 'KU210557.1', 'ON075205.1', 'MZ799354.1', 'MZ799355.1', 'LC684551.1', 'LC684552.1', 'LC684554.1', 'ON394664.1', 'ON394670.1', 'KY785379.1', 'KU715059.1', 'MK794740.1', 'MK794746.1', 'ON394673.1')"
 sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN $BAD;"
 
 # =================
