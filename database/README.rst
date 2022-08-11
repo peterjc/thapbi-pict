@@ -30,7 +30,7 @@ sets of biological sequences (subject to taxonomy filtering):
       $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2022-07-05_ITS1_Oomycota_34111.fasta \
         --discard-untrimmed -e 0.2 --quiet \
         | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
-        | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 30 --action retain \
+        | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 31 --action retain \
         --discard-untrimmed -M 450 --quiet /dev/stdin \
         -o 2022-07-05_ITS1_Oomycota_w32.fasta
 
