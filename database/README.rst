@@ -24,11 +24,15 @@ sets of biological sequences (subject to taxonomy filtering):
       AND ((internal AND transcribed AND spacer) OR its1)
       AND 150:10000[sequence length]
 
-  Require and remove the right primer, remove any left primer if present, and
-  require and trim the start to the expected 32bp leader as follows::
+  Require and remove the right primer, add missing T or TT (in lower case) if
+  the accession otherwise starts with the expected 32bp leader, remove any
+  left primer if present, and require and trim the start to the expected 32bp
+  leader as follows::
 
       $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2022-07-05_ITS1_Oomycota_34111.fasta \
         --discard-untrimmed -e 0.2 --quiet \
+        | sed "s/^TTCCGTAGGTGAACCTGCGGAAGGATCATTA/tTTCCGTAGGTGAACCTGCGGAAGGATCATTA/" \
+        | sed "s/^TCCGTAGGTGAACCTGCGGAAGGATCATTA/ttTCCGTAGGTGAACCTGCGGAAGGATCATTA/"  \
         | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
         | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 31 --action retain \
         --discard-untrimmed -M 450 --quiet /dev/stdin \
