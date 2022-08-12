@@ -24,7 +24,7 @@ as follows, and you should get six output report files:
       -s intermediate_defaults/ \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 2122757 of 2598566 sequences from 1 files
+    onebp classifier assigned species/genus to 2165894 of 2598566 sequences from 1 files
     Wrote summary/recycled-water-defaults.ITS1.samples.onebp.*
     Wrote summary/recycled-water-defaults.ITS1.reads.onebp.*
     ...
