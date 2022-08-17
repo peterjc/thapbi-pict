@@ -18,7 +18,7 @@ sets of biological sequences (subject to taxonomy filtering):
   extended with the assumed 32bp leader.
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
   in two files extracted from 34111 sequences downloaded from an NCBI Entrez
-  search on 2022-05-07::
+  search on 2022-07-05::
 
       (Peronosporales[organism] OR Pythiales[organism])
       AND ((internal AND transcribed AND spacer) OR its1)
