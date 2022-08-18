@@ -62,4 +62,5 @@ jobs:
             tar --wildcards '*/database/*' -zxvf dist/thapbi_pict-*.tar.gz
             cd thapbi_pict-*/
             # Run the tests (and confirm the tar-ball is complete)
+            ls -1 database/????-??-??_ITS1_Oomycota_*.fasta
             tests/run_tests.sh
