@@ -1,5 +1,5 @@
 #Species	TP	FP	FN	TN	sensitivity	specificity	precision	F1	Hamming-loss	Ad-hoc-loss
-OVERALL	32	8	13	867	0.71	0.99	0.80	0.75	0.0228	0.396
+OVERALL	32	8	13	923	0.71	0.99	0.80	0.75	0.0215	0.396
 Phytophthora agathidicida	0	3	0	1	0.00	0.25	0.00	0.00	0.7500	1.000
 Phytophthora aleatoria	0	1	0	3	0.00	0.75	0.00	0.00	0.2500	1.000
 Phytophthora alpina	0	1	0	3	0.00	0.75	0.00	0.00	0.2500	1.000
@@ -25,4 +25,4 @@ Phytophthora ramorum	1	0	0	3	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora rubi	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora siskiyouensis	3	0	0	1	1.00	1.00	1.00	1.00	0.0000	0.000
 Phytophthora syringae	0	0	1	3	0.00	1.00	0.00	0.00	0.2500	1.000
-OTHER 205 SPECIES IN DB	0	0	0	820	0.00	1.00	0.00	0.00	0.0000	0.000
+OTHER 219 SPECIES IN DB	0	0	0	876	0.00	1.00	0.00	0.00	0.0000	0.000
