@@ -25,8 +25,8 @@ include database/build_ITS1_DB.sh
 include database/controls.fasta
 include database/Phytophthora_ITS1_curated.fasta
 include database/Nothophytophthora_ITS1_curated.fasta
-include database/2022-07-05_ITS1_Oomycota_w32.fasta
-include database/2022-07-05_ITS1_Oomycota_obs.fasta
+include database/2022-08-17_ITS1_Oomycota_w32.fasta
+include database/2022-08-17_ITS1_Oomycota_obs.fasta
 include database/single_isolates/*.fasta
 
 # The following is better than a blanket include wildcard * but
