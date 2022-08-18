@@ -69,7 +69,6 @@ test_script:
   - for %%f in (../dist/thapbi_pict-*.tar.gz) do tar -zxvf ../dist/%%f
   - for /D %%d in (thapbi_pict-*) do cd %%d
   # Run the tests (and confirm the tar-ball is complete)
-  - dir /b database/????-??-??_ITS1_Oomycota_*.fasta
   - bash -c tests/run_tests.sh
   - cd ../..
 
