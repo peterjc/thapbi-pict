@@ -991,7 +991,7 @@ def main(args=None):
     ),
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=load_tax)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # import
     subcommand_parser = subparsers.add_parser(
@@ -1101,7 +1101,7 @@ def main(args=None):
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=db_import)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # curated-seq
     subcommand_parser = subparsers.add_parser(
@@ -1156,7 +1156,7 @@ def main(args=None):
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=curated_seq)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # dump
     subcommand_parser = subparsers.add_parser(
@@ -1222,7 +1222,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=dump)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # conflicts
     subcommand_parser = subparsers.add_parser(
@@ -1278,7 +1278,7 @@ def main(args=None):
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.set_defaults(func=prepare_reads)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     subcommand_parser = subparsers.add_parser(
         "fasta-nr",
@@ -1363,7 +1363,7 @@ def main(args=None):
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.set_defaults(func=classify)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # assess-classification
     subcommand_parser = subparsers.add_parser(
@@ -1449,7 +1449,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=assess_classification)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # summary
     subcommand_parser = subparsers.add_parser(
@@ -1512,7 +1512,7 @@ def main(args=None):
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=summary)
-    del subcommand_parser  # To prevent acidentally adding more
+    del subcommand_parser  # To prevent accidentally adding more
 
     # edit-graph
     subcommand_parser = subparsers.add_parser(

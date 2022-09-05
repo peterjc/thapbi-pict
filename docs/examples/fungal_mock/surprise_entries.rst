@@ -54,7 +54,7 @@ at low levels in multiple samples, this was the dominant sequence in
 ``SRR5314339`` aka ``FMockE.HC1_S178``, which was a *high PCR cycle number*
 replicate of the even mixture. Perhaps this was a stray fragment of
 *Epicoccum* which by chance was amplified early in the PCR? This example was
-not highlighed in the original paper, but is exactly the kind of thing you
+not highlighted in the original paper, but is exactly the kind of thing you
 should worry about with a high PCR cycle number.
 
 Next ``ee5382b80607f0f052a3ad3c4e87d0ce`` and the less abundant sequence
