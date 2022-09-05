@@ -72,7 +72,7 @@ region in the genomes of these community members?
 The (sometimes large) grey nodes not connected to a red node represent unwanted
 reads, likely contaminations discussed later.
 
-In general each species is reprented by a single connected component. The
+In general each species is represented by a single connected component. The
 exceptions are *Rhizomucor irregularis* (multiple distantly related entries)
 and the *Fusarium*. The expected sequence for *Fusarium verticillioides* was
 not seen at all, however there are a great many copies one base away from

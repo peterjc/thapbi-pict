@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "NOTE: Expected first time run time is about 5 minues,"
+echo "NOTE: Expected first time run time is about 5 minutes,"
 echo "repeat runs under a minute just to regenerate reports."
 echo
 echo ==================

@@ -70,7 +70,7 @@ Classification output
 
 The classifier output is at unique sequence level, reporting zero or more
 species matches (or genus matches from some classifiers, or if sequences in
-the database are recorded at genus leve only).
+the database are recorded at genus level only).
 
 For example, an ITS1 sequence from a known *Phytophthora infestans* single
 isolate control can in addition to this expected result also perfectly match
@@ -83,7 +83,7 @@ If additionally the query sequence matched genus level only *Phytophthora*
 entries in the database, that would be redundant information, and not reported
 in this example.
 
-Niether in this raw classification output, nor the provided reports, does
+Neither in this raw classification output, nor the provided reports, does
 THAPBI PICT currently attempt any simiplification like last reporting the
 common ancestor of a complex result. For the initial use case focused on
 *Phytophthora*, this is simply not needed.

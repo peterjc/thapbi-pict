@@ -4,7 +4,7 @@ Drained fish ponds 12S
 ======================
 
 This example uses a single 12S marker applied to fishing ponds which were
-later drained allowing identification of all the inidividual fish present:
+later drained allowing identification of all the individual fish present:
 
     Muri *et al.* (2020) Read counts from environmental DNA (eDNA)
     metabarcoding reflect fish abundance and biomass in drained ponds.
