@@ -113,7 +113,7 @@ setup(
         "matplotlib",
         "networkx >=2.4,!=2.8.3,!=2.8.4",
         "pydot",
-        "rapidfuzz >=2.0.0",
+        "rapidfuzz >=2.4.0",
         "sqlalchemy",
         "xlsxwriter",
     ],
