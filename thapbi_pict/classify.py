@@ -15,7 +15,7 @@ from collections import Counter
 from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from rapidfuzz.string_metric import levenshtein
+from rapidfuzz.distance import Levenshtein
 
 from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
@@ -422,7 +422,7 @@ def dist_in_db(session, marker_name, seq, debug=False):
     # Any matches are at least 2bp away, will take genus only.
     # Fall back on brute force! But only on a minority of cases
     for db_seq in db_seqs:
-        dist = levenshtein(seq, db_seq)
+        dist = Levenshtein.distance(seq, db_seq)
         if dist > max_dist_genus:
             pass
         elif dist == min_dist:
