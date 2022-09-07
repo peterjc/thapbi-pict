@@ -15,6 +15,7 @@ from collections import Counter
 from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from numpy import int8
 from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import cdist
 
@@ -422,12 +423,13 @@ def dist_in_db(session, marker_name, seq, debug=False):
     best = set()
     # Any matches are at least 2bp away, will take genus only.
     # Fall back on brute force! But only on a minority of cases
+    assert max_dist_genus >= 2, max_dist_genus
     dists = cdist(
         [seq],
         db_seqs,
         scorer=Levenshtein.distance,
-        # dtype=int8,
-        # score_cutoff=max_dist_genus + 1,
+        dtype=int8,
+        score_cutoff=max_dist_genus,
     )[0, :]
     min_dist = min(dists)
     assert min_dist > 1  # Should have caught via onebp_match_in_db!
