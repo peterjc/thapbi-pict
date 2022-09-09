@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.13.0 *Pending*  Sped up distance based classifiers by better use of RapidFuzz library.
 v0.12.9 2022-08-19 Updates default DB with new curated species and improved left trimming.
 v0.12.8 2022-08-08 Treat NCBI taxonomy 'equivalent name' as a synonym. Minor DB update.
 v0.12.7 2022-07-26 Report NCBI taxid in genus-only fallback classifier output. Minor DB update.
