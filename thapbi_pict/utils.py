@@ -144,108 +144,6 @@ def onebp_inserts(seq):
     return variants
 
 
-def onebp_variants(seq):
-    """Generate all 1bp variants of the sequence (substitution, deletion or insertion).
-
-    Assumes unambiguous IUPAC codes A, C, G, T only.
-
-    Will not return the input sequence!
-    """
-    seq = seq.upper()
-    variants = set()
-    for i in range(len(seq)):
-        # One base deletion
-        variants.add(seq[:i] + seq[i + 1 :])
-        for s in "ACGT":
-            # One base substitutions
-            variants.add(seq[:i] + s + seq[i + 1 :])
-            # One base insertions
-            variants.add(seq[:i] + s + seq[i:])
-    for s in "ACGT":
-        # One base "insertion" at the end
-        variants.add(seq + s)
-    try:
-        variants.remove(seq)
-    except KeyError:
-        pass
-    return variants
-
-
-assert set(onebp_variants("A")) == {
-    "",
-    "C",
-    "G",
-    "T",
-    "AA",
-    "CA",
-    "GA",
-    "TA",
-    "AC",
-    "AG",
-    "AT",
-}
-
-assert set(onebp_variants("Y")) == {
-    "",
-    "A",
-    "C",
-    "G",
-    "T",
-    "AY",
-    "CY",
-    "GY",
-    "TY",
-    "YA",
-    "YC",
-    "YG",
-    "YT",
-}
-
-assert set(onebp_variants("AA")) == {
-    "A",
-    "CA",
-    "GA",
-    "TA",
-    "AC",
-    "AG",
-    "AT",
-    "AAA",
-    "CAA",
-    "GAA",
-    "TAA",
-    "ACA",
-    "AGA",
-    "ATA",
-    "AAC",
-    "AAG",
-    "AAT",
-}
-
-
-assert set(onebp_variants("AY")) == {
-    "A",
-    "Y",
-    "CY",
-    "GY",
-    "TY",
-    "AA",
-    "AC",
-    "AG",
-    "AT",
-    "AAY",
-    "CAY",
-    "GAY",
-    "TAY",
-    "ACY",
-    "AGY",
-    "ATY",
-    "AYA",
-    "AYC",
-    "AYG",
-    "AYT",
-}
-
-
 def expand_IUPAC_ambiguity_codes(seq):
     """Convert to upper case and iterate over possible unabmigous interpretations.
 
@@ -289,16 +187,6 @@ assert sorted(expand_IUPAC_ambiguity_codes("GYRGGGACGAAAGTCYYTGC")) == [
     "GTGGGGACGAAAGTCTCTGC",
     "GTGGGGACGAAAGTCTTTGC",
 ]
-
-
-def md5seq_16b(seq):
-    r"""Return MD5 16-byte digest hash of the (upper case) sequence.
-
-    >>> md5seq_16b("ACGT")
-    b'\xf1\xf8\xf4\xbfA;\x16\xad\x13W"\xaaE\x91\x04>'
-
-    """
-    return hashlib.md5(seq.upper().encode("ascii")).digest()
 
 
 def md5seq(seq):
