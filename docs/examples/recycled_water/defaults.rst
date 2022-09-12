@@ -62,10 +62,10 @@ file in Excel:
 
     $ cut -f 6,7,8 summary/recycled-water-defaults.ITS1.samples.onebp.tsv \
       | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
-    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora x stagnum(*), Unknown
-    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora x stagnum(*)
-    OSU536.s203 SRR6303948 Phytophthora ramorum
-    OSU121      SRR6303596 Phytopythium (unknown species)
+    OSU482       SRR6303588  Phytophthora chlamydospora, Phytophthora x stagnum(*), Unknown
+    OSU483       SRR6303586  Phytophthora chlamydospora, Phytophthora x stagnum(*)
+    OSU536.s203  SRR6303948  Phytophthora ramorum
+    OSU121       SRR6303596  Phytopythium (unknown species)
 
 Three of these four have *Phytophthora* (and one with an unknown), while
 the fourth has *Phytopythium*. However, this is discarding all the reads

@@ -84,32 +84,32 @@ Previously with the default DB and default ``onebp`` classifier:
 
     $ cut -f 6,7,8 summary/recycled-water-defaults.ITS1.samples.onebp.tsv \
       | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
-    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora x stagnum(*), Unknown
-    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora x stagnum(*)
-    OSU536.s203 SRR6303948 Phytophthora ramorum
-    OSU121      SRR6303596 Phytopythium (unknown species)
+    OSU482       SRR6303588  Phytophthora chlamydospora, Phytophthora x stagnum(*), Unknown
+    OSU483       SRR6303586  Phytophthora chlamydospora, Phytophthora x stagnum(*)
+    OSU536.s203  SRR6303948  Phytophthora ramorum
+    OSU121       SRR6303596  Phytopythium (unknown species)
 
 With the custom DB:
 
 .. code:: console
 
     $ cut -f 6,7,8 summary/recycled-water-custom.ITS1-long.samples.onebp.tsv \
-      | grep -E "(Sample|SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
-    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
-    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
-    OSU536.s203 SRR6303948 Phytophthora ramorum, Unknown
-    OSU121      SRR6303596 Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
+      | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
+    OSU482       SRR6303588  Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU483       SRR6303586  Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU536.s203  SRR6303948  Phytophthora ramorum, Unknown
+    OSU121       SRR6303596  Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
 
 We get the same using the top BLAST hit:
 
 .. code:: console
 
     $ cut -f 6,7,8 summary/recycled-water-custom.ITS1-long.samples.blast.tsv \
-      | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)" | tsv
-    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
-    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
-    OSU536.s203 SRR6303948 Phytophthora ramorum, Unknown
-    OSU121      SRR6303596 Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
+      | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
+    OSU482       SRR6303588  Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU483       SRR6303586  Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU536.s203  SRR6303948  Phytophthora ramorum, Unknown
+    OSU121       SRR6303596  Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
 
 On this subset using ``onebp`` versus ``blast`` seems not to matter.
 The sample report does not go down to the sequences in each sample,
