@@ -17,7 +17,7 @@ at the command line or in Excel.
 
 .. code:: console
 
-    $ cut -f 1,2,5-8,10 summary/NF1-18Sr2b.samples.onebp.tsv
+    $ cut -f 1,2,5-7,9,11 summary/NF1-18Sr2b.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open the Excel version ``summary/NF1-18Sr2b.samples.onebp.xlsx``, and focus

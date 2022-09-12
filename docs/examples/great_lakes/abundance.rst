@@ -30,7 +30,7 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9,11 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,13 summary/SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand
@@ -82,7 +82,7 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9,11 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,13 summary/MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand

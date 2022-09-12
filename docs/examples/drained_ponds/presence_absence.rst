@@ -23,7 +23,7 @@ in the field "blanks":
 
 .. code:: console
 
-    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,15,17
+    $ grep -E "(^#|positive|negative|blank)" summary/drained_ponds.12S.samples.onebp.tsv | cut -f 5,10-11,16,18
     <SEE TABLE BELOW>
 
 Or, filter/search ``summary/drained_ponds.12S.samples.onebp.tsv`` in Excel:
