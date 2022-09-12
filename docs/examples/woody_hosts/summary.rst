@@ -159,6 +159,7 @@ andina*, *P. infestans*, and *P. ipomoeae*, share an identical ITS1 marker.
 
 The next columns are derived from the data itself, reads counts in the samples
 as raw FASTQ, after read merging with Flash, primer trimming with Cutadapt,
+information about the abundance thresholds used (omitted below),
 the maximum ASV read count for non-spike-in or spike-in sequences, number of
 singletons, total number of reads for the accepted ASVs (i.e. passing the
 abundance threshold), and the number of unique ASVs accepted.
@@ -166,7 +167,7 @@ It may be easier to look at this in Excel, but at the command line:
 
 .. code:: console
 
-    $ cut -f 16,18-25 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,18-20,23-27 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
@@ -190,7 +191,7 @@ classifier result, with the number of reads. Picking out some examples:
 
 .. code:: console
 
-    $ cut -f 16,28,40,61 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,30,42,63 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
@@ -215,7 +216,7 @@ is shared between species, both are reported:
 
 .. code:: console
 
-    $ cut -f 16,29,30 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,31,32 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
