@@ -22,6 +22,27 @@ import sys
 from subprocess import getoutput
 
 
+def check_rapidfuzz():
+    """Check can import rapidfuzz and confirm recent enough."""
+    try:
+        import rapidfuzz
+    except ImportError:
+        sys.exit("ERROR: Missing Python library rapidfuzz")
+    try:
+        version = rapidfuzz.__version__
+    except AttributeError:
+        sys.exit("ERROR: Could not check rapidfuzz.__version__")
+    try:
+        major_minor = tuple(int(_) for _ in version.split(".")[:2])
+    except ValueError:
+        sys.exit(
+            f"ERROR: Could not parse rapidfuzz.__version__ {rapidfuzz.__version__}"
+        )
+    if major_minor < (2, 4):
+        sys.exit(f"ERROR: Need at least rapidfuzz v2.4, have {rapidfuzz.__version__}")
+    return version
+
+
 def check_tools(names, debug):
     """Verify the named tools are present, log versions if debug=True.
 
