@@ -30,6 +30,7 @@ from .utils import genus_species_name
 from .utils import load_fasta_header
 from .utils import run
 from .utils import species_level
+from .versions import check_rapidfuzz
 from .versions import check_tools
 
 MIN_BLAST_COVERAGE = 0.85  # percentage of query length
@@ -257,6 +258,8 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     global max_dist_genus
     max_dist_genus = 1
 
+    check_rapidfuzz()
+
     db_seqs = {}
     for source in (
         session.query(SeqSource)
@@ -354,7 +357,9 @@ def method_dist(
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
         if min_dist == 0:
-            assert seq in db_seqs
+            assert (
+                seq in db_seqs
+            ), f"Expected {idn} to be in DB as min dist zero:\n{seq}"
             # If seq in db_seqs might be genus only, and
             # we'd prefer a species level match 1bp away:
             taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)

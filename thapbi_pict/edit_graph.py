@@ -31,6 +31,7 @@ from .utils import md5seq
 from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
+from .versions import check_rapidfuzz
 
 
 genus_color = {
@@ -411,6 +412,7 @@ def main(
     # For drawing performance reasons, calculate the distances, and then may
     # drop nodes with no edges (unless for example DB entry at species level,
     # or for environmental sequences at high abundance)
+    check_rapidfuzz()
     n = len(md5_to_seq)
     md5_list = sorted(md5_to_seq)
     seqs = [md5_to_seq[_] for _ in md5_list]
