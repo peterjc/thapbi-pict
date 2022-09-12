@@ -28,7 +28,6 @@ Compared to the original worked example, we must specify our custom database
     summary/recycled-water-custom.ITS1-long.reads.onebp.tsv
     summary/recycled-water-custom.ITS1-long.reads.onebp.xlsx
     summary/recycled-water-custom.ITS1-long.samples.onebp.tsv
-    summary/recycled-water-custom.ITS1-long.samples.onebp.txt
     summary/recycled-water-custom.ITS1-long.samples.onebp.xlsx
 
 Note the classifier method was set explicitly with ``-m`` (or ``--method``),
@@ -62,7 +61,6 @@ more matches:
     summary/recycled-water-custom.ITS1-long.reads.blast.tsv
     summary/recycled-water-custom.ITS1-long.reads.blast.xlsx
     summary/recycled-water-custom.ITS1-long.samples.blast.tsv
-    summary/recycled-water-custom.ITS1-long.samples.blast.txt
     summary/recycled-water-custom.ITS1-long.samples.blast.xlsx
 
 Better, in that we are up to 39% of the reads with a taxonomic assignment
@@ -79,71 +77,50 @@ Results
 
 We will focus on the same four low diversity samples for a brief comparison
 of the defaults, custom DB with ``onebp``, and custom DB with ``blast``.
-This information is extracted from the sample reports (new files
-``summary/recycled-water-custom.samples.onebp.txt`` and
-``summary/recycled-water-custom.samples.blast.txt``).
 
-``SRR6303586`` aka ``OSU483``:
+Previously with the default DB and default ``onebp`` classifier:
 
-- With defaults:
+.. code:: console
 
-  - *Phytophthora chlamydospora*
+    $ cut -f 6,7,8 summary/recycled-water-defaults.ITS1.samples.onebp.tsv \
+      | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
+    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora x stagnum(*), Unknown
+    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora x stagnum(*)
+    OSU536.s203 SRR6303948 Phytophthora ramorum
+    OSU121      SRR6303596 Phytopythium (unknown species)
 
-- With custom DB and ``onebp`` or ``blast``:
+With the custom DB:
 
-  - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
-  - *Phytophthora chlamydospora*
+.. code:: console
 
-``SRR6303588`` aka ``OSU482``:
+    $ cut -f 6,7,8 summary/recycled-water-custom.ITS1-long.samples.onebp.tsv \
+      | grep -E "(Sample|SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)"
+    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU536.s203 SRR6303948 Phytophthora ramorum, Unknown
+    OSU121      SRR6303596 Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
 
-- With defaults:
+We get the same using the top BLAST hit:
 
-  - Unknown
-  - *Phytophthora chlamydospora*
+.. code:: console
 
-- With custom DB and ``onebp`` or ``blast``:
+    $ cut -f 6,7,8 summary/recycled-water-custom.ITS1-long.samples.blast.tsv \
+      | grep -E "(SRR6303586|SRR6303586|SRR6303588|SRR6303596|SRR6303948)" | tsv
+    OSU482      SRR6303588 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU483      SRR6303586 Phytophthora chlamydospora, Phytophthora sp. CAL-2011b(*)
+    OSU536.s203 SRR6303948 Phytophthora ramorum, Unknown
+    OSU121      SRR6303596 Phytopythium litorale, Pythium aff. diclinum(*), Pythium aff. dictyosporum(*), Pythium aff. dissotocum(*), Pythium cf. dictyosporum(*), Pythium coloratum(*), Pythium diclinum(*), Pythium dissotocum(*), Pythium lutarium, Pythium sp. CAL-2011f(*), Pythium sp. group F(*)
 
-  - *Phytophthora sp.* CAL-2011b (uncertain/ambiguous)
-  - *Phytophthora chlamydospora*
+On this subset using ``onebp`` versus ``blast`` seems not to matter.
+The sample report does not go down to the sequences in each sample,
+for that you can use the reads report, or look at the intermediate
+FASTA files as discussed in the previous :ref:`primers
+<custom_database_primers>` section.
 
-``SRR6303596`` aka ``OSU121``:
-
-- With defaults:
-
-  - Unknown
-
-- With custom DB and ``onebp`` or ``blast``:
-
-  - *Phytopythium litorale*
-  - *Pythium aff. diclinum* (uncertain/ambiguous)
-  - *Pythium aff. dictyosporum* (uncertain/ambiguous)
-  - *Pythium aff. dissotocum* (uncertain/ambiguous)
-  - *Pythium cf. dictyosporum* (uncertain/ambiguous)
-  - *Pythium coloratum* (uncertain/ambiguous)
-  - *Pythium diclinum* (uncertain/ambiguous)
-  - *Pythium dissotocum* (uncertain/ambiguous)
-  - *Pythium lutarium*
-  - *Pythium sp.* CAL-2011f (uncertain/ambiguous)
-  - *Pythium sp.* group F (uncertain/ambiguous)
-
-``SRR6303948`` aka ``OSU536.s203``:
-
-- With defaults:
-
-  - *Phytophthora ramorum*
-
-- With custom DB and ``onebp`` or ``blast``:
-
-  - Unknown
-  - *Phytophthora ramorum*
-
-So, not too dramatic - and on this subset using ``onebp`` versus ``blast``
-seems not to matter.
-
-Interestingly the two databases differ on exactly which *Phytophthora* are
-present. The main change is with these settings and the new database
-``SRR6303596`` aka ``OSU121`` has multiple *Pythium* results (why this
-example was selected) plus *Phytopythium litorale* (originally known as
-*Pythium litoralis*), and ``SRR6303948`` has some unknown *Oomycete(s)* (as
-discussed earlier at the end of the :ref:`primers <custom_database_primers>`
-section).
+The first two example differ due to the DB curation about exactly
+which *Phytophthora* is present. Sample ``OSU121`` aka ``SRR6303596``
+went from one *Phytopythium litorale* sequence to being joined
+by a much more numerous *Pythium coloratum/dissotocum* sequence
+(plus some lower abundance variants of it). Likewise,
+``OSU536.s203`` aka ``SRR6303948`` had one sequence for
+*Phytophthora ramorum*, but now has multiple unknown sequences.

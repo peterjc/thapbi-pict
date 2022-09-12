@@ -378,7 +378,6 @@ reports:
     summary/with-metadata.ITS1.reads.onebp.tsv
     summary/with-metadata.ITS1.reads.onebp.xlsx
     summary/with-metadata.ITS1.samples.onebp.tsv
-    summary/with-metadata.ITS1.samples.onebp.txt
     summary/with-metadata.ITS1.samples.onebp.xlsx
     $ diff summary/with-metadata.ITS1.assess.onebp.tsv \
       thabpi-pict.ITS1.assess.tsv

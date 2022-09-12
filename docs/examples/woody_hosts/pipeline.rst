@@ -26,7 +26,6 @@ command as follows, and should get multiple output report files:
     summary/thapbi-pict.ITS1.reads.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.xlsx
     summary/thapbi-pict.ITS1.samples.onebp.tsv
-    summary/thapbi-pict.ITS1.samples.onebp.txt
     summary/thapbi-pict.ITS1.samples.onebp.xlsx
     summary/thapbi-pict.edit-graph.onebp.pdf
     summary/thapbi-pict.edit-graph.onebp.xgmml
@@ -69,7 +68,6 @@ against any expected sample species classifications:
     summary/with-metadata.ITS1.reads.onebp.tsv
     summary/with-metadata.ITS1.reads.onebp.xlsx
     summary/with-metadata.ITS1.samples.onebp.tsv
-    summary/with-metadata.ITS1.samples.onebp.txt
     summary/with-metadata.ITS1.samples.onebp.xlsx
 
 Here we also used ``-o`` (or ``--output``) to specify a different stem for the
