@@ -627,30 +627,29 @@ def import_fasta_file(
 
                 assert taxonomy is not None
 
-                if True:
-                    # marker_seq_count += 1
-                    marker_md5 = md5seq(seq)
+                # marker_seq_count += 1
+                marker_md5 = md5seq(seq)
 
-                    # Is sequence already there? e.g. duplicate sequences in FASTA file
-                    marker_seq = (
-                        session.query(MarkerSeq)
-                        .filter_by(md5=marker_md5, sequence=seq)
-                        .one_or_none()
+                # Is sequence already there? e.g. duplicate sequences in FASTA file
+                marker_seq = (
+                    session.query(MarkerSeq)
+                    .filter_by(md5=marker_md5, sequence=seq)
+                    .one_or_none()
+                )
+                if marker_seq is None:
+                    marker_seq = MarkerSeq(
+                        md5=marker_md5,
+                        sequence=seq,
                     )
-                    if marker_seq is None:
-                        marker_seq = MarkerSeq(
-                            md5=marker_md5,
-                            sequence=seq,
-                        )
-                        session.add(marker_seq)
-                    record_entry = SeqSource(
-                        source_accession=entry.split(None, 1)[0],
-                        source=db_source,
-                        marker_seq=marker_seq,
-                        marker_definition=reference_marker,
-                        taxonomy=taxonomy,
-                    )
-                    session.add(record_entry)
+                    session.add(marker_seq)
+                record_entry = SeqSource(
+                    source_accession=entry.split(None, 1)[0],
+                    source=db_source,
+                    marker_seq=marker_seq,
+                    marker_definition=reference_marker,
+                    taxonomy=taxonomy,
+                )
+                session.add(record_entry)
                 good_entries += 1  # count once?
                 accepted = True
             if accepted:
