@@ -647,9 +647,9 @@ def import_fasta_file(
                     {
                         "source_accession": entry.split(None, 1)[0],
                         "source": db_source,
-                        "marker_seq": marker_seq,
-                        "marker_definition": reference_marker,
-                        "taxonomy": taxonomy,
+                        "marker_seq_id": marker_seq.id,
+                        "marker_definition_id": reference_marker.id,
+                        "taxonomy_id": taxonomy.id,
                     }
                 )
                 good_entries += 1  # count once?
