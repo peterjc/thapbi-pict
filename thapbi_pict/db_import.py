@@ -624,6 +624,7 @@ def import_fasta_file(
                             ncbi_taxid=0,
                         )
                         session.add(taxonomy)
+                        session.flush()
                         additional_taxonomy[name] = taxonomy
 
                 assert taxonomy is not None
@@ -643,10 +644,13 @@ def import_fasta_file(
                         sequence=seq,
                     )
                     session.add(marker_seq)
+                    session.flush()
+                assert marker_seq.id is not None
+                assert taxonomy.id is not None
                 record_entries.append(
                     {
                         "source_accession": entry.split(None, 1)[0],
-                        "source": db_source,
+                        "source_id": db_source.id,
                         "marker_seq_id": marker_seq.id,
                         "marker_definition_id": reference_marker.id,
                         "taxonomy_id": taxonomy.id,
@@ -657,6 +661,7 @@ def import_fasta_file(
             if accepted:
                 good_seq_count += 1
 
+    session.flush()
     session.bulk_insert_mappings(SeqSource, record_entries, return_defaults=False)
     del record_entries
     session.commit()
