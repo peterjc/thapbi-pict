@@ -644,20 +644,21 @@ def import_fasta_file(
                     )
                     session.add(marker_seq)
                 record_entries.append(
-                    SeqSource(
-                        source_accession=entry.split(None, 1)[0],
-                        source=db_source,
-                        marker_seq=marker_seq,
-                        marker_definition=reference_marker,
-                        taxonomy=taxonomy,
-                    )
+                    {
+                        "source_accession": entry.split(None, 1)[0],
+                        "source": db_source,
+                        "marker_seq": marker_seq,
+                        "marker_definition": reference_marker,
+                        "taxonomy": taxonomy,
+                    }
                 )
                 good_entries += 1  # count once?
                 accepted = True
             if accepted:
                 good_seq_count += 1
 
-    session.bulk_save_objects(record_entries, return_defaults=False)
+    session.bulk_insert_mappings(SeqSource, record_entries, return_defaults=False)
+    del record_entries
     session.commit()
     sys.stderr.write(
         f"File {fasta_file} had {seq_count} sequences, "
