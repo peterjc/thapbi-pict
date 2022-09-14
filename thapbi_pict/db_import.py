@@ -486,6 +486,7 @@ def import_fasta_file(
 
     valid_letters = set("GATCRYWSMKHBVDN")
 
+    record_entries = []
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
             if "-" in seq:
@@ -623,6 +624,7 @@ def import_fasta_file(
                             ncbi_taxid=0,
                         )
                         session.add(taxonomy)
+                        session.flush()
                         additional_taxonomy[name] = taxonomy
 
                 assert taxonomy is not None
@@ -642,19 +644,26 @@ def import_fasta_file(
                         sequence=seq,
                     )
                     session.add(marker_seq)
-                record_entry = SeqSource(
-                    source_accession=entry.split(None, 1)[0],
-                    source=db_source,
-                    marker_seq=marker_seq,
-                    marker_definition=reference_marker,
-                    taxonomy=taxonomy,
+                    session.flush()
+                assert marker_seq.id is not None
+                assert taxonomy.id is not None
+                record_entries.append(
+                    {
+                        "source_accession": entry.split(None, 1)[0],
+                        "source_id": db_source.id,
+                        "marker_seq_id": marker_seq.id,
+                        "marker_definition_id": reference_marker.id,
+                        "taxonomy_id": taxonomy.id,
+                    }
                 )
-                session.add(record_entry)
                 good_entries += 1  # count once?
                 accepted = True
             if accepted:
                 good_seq_count += 1
 
+    session.flush()
+    session.bulk_insert_mappings(SeqSource, record_entries, return_defaults=False)
+    del record_entries
     session.commit()
     sys.stderr.write(
         f"File {fasta_file} had {seq_count} sequences, "
