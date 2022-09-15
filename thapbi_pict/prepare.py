@@ -39,7 +39,10 @@ KMER_LENGTH = 31
 
 
 def find_fastq_pairs(
-    filenames_or_folders, ext=(".fastq", ".fastq.gz"), ignore_prefixes=None, debug=False
+    filenames_or_folders,
+    ext=(".fastq", ".fastq.gz", ".fq", ".fq.gz"),
+    ignore_prefixes=None,
+    debug=False,
 ):
     """Interpret a list of filenames and/or foldernames.
 
