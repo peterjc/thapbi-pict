@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-mkdir -p raw_data/ expected/ tmp_merged/ intermediate/ intermediate_pool/ summary/
+mkdir -p raw_data/ expected/ tmp_merged/ intermediate/ summary/
 if [ ! -f raw_download/MD5SUM.txt ]; then
     echo "ERROR: Missing raw_download/MD5SUM.txt"
     false
