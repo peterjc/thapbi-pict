@@ -281,9 +281,8 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
     # Also, some of our samples are mostly 'outies' rather than 'innies', so -O
     cmd = ["flash", "-O", "-M", "300"]
     if cpu:
-        cmd += ["--threads", str(cpu)]
-    else:
-        cmd += ["-t", "1"]  # Default is all CPUs
+        # Default is all CPUs
+        cmd += ["-t", str(cpu)]
     cmd += ["-d", output_dir, "-o", output_prefix, trimmed_R1, trimmed_R2]
     return parse_flash_stdout(run(cmd, debug=debug).stdout)
 

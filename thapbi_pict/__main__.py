@@ -36,6 +36,25 @@ IGNORE_PREFIXES = ("Undetermined_", "unknown_")
 # =============================
 
 
+def check_cpu(cpu):
+    """If zero use all available CPUs, otherwise cap the given value."""
+    try:
+        # Don't need to check $SLURM_CPUS_PER_TASK,
+        # probably don't need to check $NSLOTS on SGE either
+        available = len(os.sched_getaffinity(0))
+    except AttributeError:
+        # Unavailable on macOS or Windows
+        available = os.cpu_count()
+    if not cpu:
+        return available
+    elif cpu > 0:
+        return min(available, cpu)  # cap requested number
+    else:
+        sys.exit(
+            f"ERROR: CPU argument {cpu} should be positive, or zero for all available."
+        )
+
+
 def check_input_file(filename):
     """Command line validation of an input filename."""
     if not os.path.isfile(filename):
@@ -211,7 +230,7 @@ def prepare_reads(args=None):
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
         debug=args.verbose,
-        cpu=args.cpu,
+        cpu=check_cpu(args.cpu),
     )
 
     session.close()
@@ -265,7 +284,7 @@ def classify(args=None):
         min_abundance=args.abundance,
         tmp_dir=args.temp,
         debug=args.verbose,
-        cpu=args.cpu,
+        cpu=check_cpu(args.cpu),
     )
 
     session.close()
@@ -394,7 +413,7 @@ def pipeline(args=None):
         merged_cache=args.merged_cache,
         tmp_dir=args.temp,
         debug=args.verbose,
-        cpu=args.cpu,
+        cpu=check_cpu(args.cpu),
     )
     if isinstance(all_fasta_files, int):
         return_code = all_fasta_files
@@ -449,7 +468,7 @@ def pipeline(args=None):
             min_abundance=args.abundance,
             tmp_dir=args.temp,
             debug=args.verbose,
-            cpu=args.cpu,
+            cpu=check_cpu(args.cpu),
         )
         if isinstance(classified_files, int):
             return_code = classified_files
@@ -659,7 +678,10 @@ ARG_VERBOSE = dict(action="store_true", help="Verbose logging.")  # noqa: C408
 
 # "--cpu",
 ARG_CPU = dict(  # noqa: C408
-    type=int, default=0, help="Number of parallel threads to use in called tools."
+    type=int,
+    default=0,
+    help="Number of parallel threads to use in called tools. "
+    "Default zero is use all available.",
 )
 
 # Common import arguments
