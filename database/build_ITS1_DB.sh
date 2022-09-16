@@ -50,12 +50,12 @@ thapbi_pict import -d "$DB.sqlite" -i single_isolates/*.fasta
 # ===================
 # These are multi-entries per FASTA sequence, using semi-colon:
 thapbi_pict import -d "$DB.sqlite" -s ";" -g -s ";" \
-            -i 2022-08-17_ITS1_Oomycota_obs.fasta
+            -i 2022-09-16_ITS1_Oomycota_obs.fasta
 
 # Single entry per FASTA sequence, where semi-colon may appear in free text.
 # Length limits deliberately more cautious than the pipeline settings above.
 thapbi_pict import -d "$DB.sqlite" -c ncbi -g --minlen 150 --maxlen 450 \
-            -i 2022-08-17_ITS1_Oomycota_w32.fasta
+            -i 2022-09-16_ITS1_Oomycota_w32.fasta
 
 # Add hoc fixes for some accessions apparently with wrong genus
 # MN128447.1 probably not Phytopythium vexans, but Phytophthora
