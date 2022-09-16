@@ -659,9 +659,9 @@ ARG_MERGED_CACHE = dict(  # noqa: C408
     type=str,
     required=False,
     metavar="DIRNAME",
-    help="Advanced option. Cache directory for temporary sample FASTA files after "
-    "trimming and merging, but before primer trimming and abundance threshold. "
-    "Intended for multi-primer analyses from a pooled sequencing run.",
+    help="Advanced option. Cache directory for temporary per-sample FASTA "
+    "file after overlap merging (usually the slowest step), but before "
+    "primer trimming and abundance threshold.",
 )
 
 # "-t", "--temp",
