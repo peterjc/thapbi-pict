@@ -85,23 +85,23 @@ diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-etc.samples.tsv
 #    >62e52211a6661fb05ae292808d79a4a3_75
 #    >330d9e67a26944344219464449fed619_68
 #
-rm -rf $TMP/human.txt $TMP/test-case.tsv $TMP/test-case.xlsx
+rm -rf $TMP/test-case.tsv $TMP/test-case.xlsx
 thapbi_pict summary -m identity -a 99 -o $TMP/test-case \
     -i tests/classify/*.fasta tests/classify/*.identity.tsv
 diff $TMP/test-case.samples.identity.tsv tests/summary/classify.identity.tsv
 
 # Passing a folder, trying different methods
 for M in identity onebp blast; do
-    rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
+    rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 --output $TMP/test-case --input tests/classify/
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify.$M.tsv
     # And again, but with metadata
-    rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
+    rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta.$M.tsv
     # Now require metadata...
-    rm -rf $TMP/test-case.samples.$M.txt $TMP/test-case.samples.$M.tsv
+    rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ -q \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta-req.$M.tsv
