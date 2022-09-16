@@ -679,9 +679,9 @@ ARG_VERBOSE = dict(action="store_true", help="Verbose logging.")  # noqa: C408
 # "--cpu",
 ARG_CPU = dict(  # noqa: C408
     type=int,
-    default=4,
+    default=1,
     help="Number of parallel threads to use in called tools. "
-    "Use zero for all available. Default 4.",
+    "Use zero for all available. Default 1.",
 )
 
 # Common import arguments
