@@ -78,8 +78,6 @@ time thapbi_pict summary -i $TMP/intermediate/ITS1/*.fasta $TMP/woody_hosts.all_
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
 ls $TMP/summary/with-metadata.*
-if [ `grep -c "^Site: " "$TMP/summary/with-metadata.samples.onebp.txt"` -ne 17 ]; then echo "Wrong site count"; false; fi
-if [ `grep -c "^Sequencing sample: " "$TMP/summary/with-metadata.samples.onebp.txt"` -ne 122 ]; then echo "Wrong sample count"; false; fi
 
 # Should be identical apart from row order if discard extra leading columns
 # Discarding the header row as only one will still have hash at start
