@@ -376,7 +376,6 @@ def import_fasta_file(
     Session = connect_to_db(db_url, echo=False)  # echo=debug
     session = Session()
 
-    additional_taxonomy = {}  # any entries added this session
     preloaded_taxonomy = load_taxonomy(session)
     if validate_species and not preloaded_taxonomy:
         sys.exit("ERROR: Taxonomy table empty, cannot validate species.\n")
@@ -486,6 +485,8 @@ def import_fasta_file(
 
     valid_letters = set("GATCRYWSMKHBVDN")
 
+    additional_taxonomy = {}
+    additional_sequences = {}
     record_entries = []
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
@@ -623,46 +624,61 @@ def import_fasta_file(
                             species="" if genus_only else species,
                             ncbi_taxid=0,
                         )
-                        session.add(taxonomy)
-                        session.flush()
                         additional_taxonomy[name] = taxonomy
 
                 assert taxonomy is not None
 
-                # marker_seq_count += 1
-                marker_md5 = md5seq(seq)
+                if seq in additional_sequences:
+                    marker_seq = additional_sequences[seq]
+                else:
+                    # marker_seq_count += 1
+                    marker_md5 = md5seq(seq)
 
-                # Is sequence already there? e.g. duplicate sequences in FASTA file
-                marker_seq = (
-                    session.query(MarkerSeq)
-                    .filter_by(md5=marker_md5, sequence=seq)
-                    .one_or_none()
-                )
-                if marker_seq is None:
-                    marker_seq = MarkerSeq(
-                        md5=marker_md5,
-                        sequence=seq,
+                    # Is sequence already there? e.g. duplicate sequences in FASTA file
+                    marker_seq = (
+                        session.query(MarkerSeq)
+                        .filter_by(md5=marker_md5, sequence=seq)
+                        .one_or_none()
                     )
-                    session.add(marker_seq)
-                    session.flush()
-                assert marker_seq.id is not None
-                assert taxonomy.id is not None
+                    if marker_seq is None:
+                        marker_seq = MarkerSeq(
+                            md5=marker_md5,
+                            sequence=seq,
+                        )
+                        additional_sequences[seq] = marker_seq
                 record_entries.append(
-                    {
-                        "source_accession": entry.split(None, 1)[0],
-                        "source_id": db_source.id,
-                        "marker_seq_id": marker_seq.id,
-                        "marker_definition_id": reference_marker.id,
-                        "taxonomy_id": taxonomy.id,
-                    }
+                    (
+                        entry.split(None, 1)[0],
+                        marker_seq,
+                        taxonomy,
+                    )
                 )
                 good_entries += 1  # count once?
                 accepted = True
             if accepted:
                 good_seq_count += 1
 
+    # First import Taxonomy and MarkerSeq, will need the new entries' IDs:
+    session.bulk_save_objects(additional_taxonomy.values(), return_defaults=True)
+    del additional_taxonomy
+    session.bulk_save_objects(additional_sequences.values(), return_defaults=True)
+    del additional_sequences
     session.flush()
-    session.bulk_insert_mappings(SeqSource, record_entries, return_defaults=False)
+    # Should now be able to access marker_seq.id and taxonomy.id properties
+    session.bulk_insert_mappings(
+        SeqSource,
+        (
+            {
+                "source_accession": a,
+                "source_id": db_source.id,
+                "marker_seq_id": s.id,
+                "marker_definition_id": reference_marker.id,
+                "taxonomy_id": t.id,
+            }
+            for a, s, t in record_entries
+        ),
+        return_defaults=False,
+    )
     del record_entries
     session.commit()
     sys.stderr.write(
