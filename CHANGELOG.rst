@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.13.1 *Pending*  Minor update to default DB. Caps ``--cpu`` argument by available CPUs.
+v0.13.1 *Pending*  Minor default DB update. Cap ``--cpu`` by available CPUs. Faster DB import.
 v0.13.0 2022-09-14 Sped up distance based classifiers by better use of RapidFuzz library.
 v0.12.9 2022-08-19 Updates default DB with new curated species and improved left trimming.
 v0.12.8 2022-08-08 Treat NCBI taxonomy 'equivalent name' as a synonym. Minor DB update.
