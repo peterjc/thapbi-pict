@@ -585,13 +585,13 @@ def import_fasta_file(
 
                 assert not name.startswith("P."), title
 
-                if genus_only:
-                    taxonomy = lookup_genus(session, name)
-                elif name in existing_taxonomy:
+                if name in existing_taxonomy:
                     taxonomy = existing_taxonomy[name]
                 elif name in additional_taxonomy:
                     # Appeared earlier in this import
                     taxonomy = additional_taxonomy[name]
+                elif genus_only:
+                    taxonomy = lookup_genus(session, name)
                 else:
                     taxonomy = lookup_species(session, name)
                     if not taxonomy and validate_species:
@@ -637,35 +637,22 @@ def import_fasta_file(
                 elif seq in additional_sequences:
                     marker_seq = additional_sequences[seq]
                 else:
-                    # marker_seq_count += 1
-                    marker_md5 = md5seq(seq)
-
                     # Is sequence already there? e.g. duplicate sequences in FASTA file
                     marker_seq = (
-                        session.query(MarkerSeq)
-                        .filter_by(md5=marker_md5, sequence=seq)
-                        .one_or_none()
+                        session.query(MarkerSeq).filter_by(sequence=seq).one_or_none()
                     )
                     if marker_seq:
                         existing_sequences[seq] = marker_seq
                     else:
-                        marker_seq = MarkerSeq(
-                            md5=marker_md5,
-                            sequence=seq,
-                        )
+                        marker_seq = MarkerSeq(md5=md5seq(seq), sequence=seq)
                         additional_sequences[seq] = marker_seq
-                record_entries.append(
-                    (
-                        entry.split(None, 1)[0],
-                        marker_seq,
-                        taxonomy,
-                    )
-                )
+                record_entries.append((entry.split(None, 1)[0], marker_seq, taxonomy))
                 good_entries += 1  # count once?
                 accepted = True
             if accepted:
                 good_seq_count += 1
 
+    del existing_taxonomy, existing_sequences
     # First import Taxonomy and MarkerSeq, will need the new entries' IDs:
     session.bulk_save_objects(additional_taxonomy.values(), return_defaults=True)
     del additional_taxonomy
@@ -673,20 +660,17 @@ def import_fasta_file(
     del additional_sequences
     session.flush()
     # Should now be able to access marker_seq.id and taxonomy.id properties
-    session.bulk_insert_mappings(
-        SeqSource,
-        (
-            {
-                "source_accession": a,
-                "source_id": db_source.id,
-                "marker_seq_id": s.id,
-                "marker_definition_id": reference_marker.id,
-                "taxonomy_id": t.id,
-            }
-            for a, s, t in record_entries
-        ),
-        return_defaults=False,
-    )
+    record_entries = [
+        {
+            "source_accession": a,
+            "source_id": db_source.id,
+            "marker_seq_id": s.id,
+            "marker_definition_id": reference_marker.id,
+            "taxonomy_id": t.id,
+        }
+        for a, s, t in record_entries
+    ]
+    session.bulk_insert_mappings(SeqSource, record_entries, return_defaults=False)
     del record_entries
     session.commit()
     sys.stderr.write(
