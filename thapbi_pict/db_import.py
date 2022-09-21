@@ -485,6 +485,8 @@ def import_fasta_file(
 
     valid_letters = set("GATCRYWSMKHBVDN")
 
+    existing_taxonomy = {}
+    existing_sequences = {}
     additional_taxonomy = {}
     additional_sequences = {}
     record_entries = []
@@ -564,8 +566,7 @@ def import_fasta_file(
                         sys.stderr.write(
                             f"WARNING: No species information from NCBI:taxid{taxid}\n"
                         )
-
-                if not taxid and not name:
+                elif not name:
                     bad_sp_entries += 1
                     sys.stderr.write(f"WARNING: No species information: {idn!r}\n")
                     continue
@@ -586,6 +587,11 @@ def import_fasta_file(
 
                 if genus_only:
                     taxonomy = lookup_genus(session, name)
+                elif name in existing_taxonomy:
+                    taxonomy = existing_taxonomy[name]
+                elif name in additional_taxonomy:
+                    # Appeared earlier in this import
+                    taxonomy = additional_taxonomy[name]
                 else:
                     taxonomy = lookup_species(session, name)
                     if not taxonomy and validate_species:
@@ -613,22 +619,22 @@ def import_fasta_file(
                     if validate_species:
                         bad_sp_entries += 1
                         continue
-                    if name in additional_taxonomy:
-                        # Appeared earlier in this import
-                        taxonomy = additional_taxonomy[name]
-                    else:
-                        # Must add this now
-                        genus, species = genus_species_split(name)
-                        taxonomy = Taxonomy(
-                            genus=genus,
-                            species="" if genus_only else species,
-                            ncbi_taxid=0,
-                        )
-                        additional_taxonomy[name] = taxonomy
+                    assert name not in existing_taxonomy, name
+                    assert name not in additional_taxonomy, name
+                    # Must add this now
+                    genus, species = genus_species_split(name)
+                    taxonomy = Taxonomy(
+                        genus=genus,
+                        species="" if genus_only else species,
+                        ncbi_taxid=0,
+                    )
+                    additional_taxonomy[name] = taxonomy
 
                 assert taxonomy is not None
 
-                if seq in additional_sequences:
+                if seq in existing_sequences:
+                    marker_seq = existing_sequences[seq]
+                elif seq in additional_sequences:
                     marker_seq = additional_sequences[seq]
                 else:
                     # marker_seq_count += 1
@@ -640,7 +646,9 @@ def import_fasta_file(
                         .filter_by(md5=marker_md5, sequence=seq)
                         .one_or_none()
                     )
-                    if marker_seq is None:
+                    if marker_seq:
+                        existing_sequences[seq] = marker_seq
+                    else:
                         marker_seq = MarkerSeq(
                             md5=marker_md5,
                             sequence=seq,
