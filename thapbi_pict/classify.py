@@ -252,7 +252,8 @@ def method_substr(
 def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all the DB marker sequences as upper case strings.
 
-    Also setup dict of any entries in the DB with a single ambiguous base.
+    Also setup dict of sequences in the DB to genus, and dict of genus
+    to NCBI taxid.
     """
     global db_seqs
     global max_dist_genus
