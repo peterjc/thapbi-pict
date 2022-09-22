@@ -249,17 +249,14 @@ def method_substr(
     )
 
 
-def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all the DB marker sequences as upper case strings.
 
     Also setup dict of sequences in the DB to genus, and dict of genus
     to NCBI taxid.
     """
     global db_seqs
-    global max_dist_genus
-    max_dist_genus = 1
-
-    check_rapidfuzz()
+    global genus_taxid
 
     db_seqs = {}
     for source in (
@@ -288,31 +285,43 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
                 genus_taxid[g] = query.ncbi_taxid if query else 0
 
 
+def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all the DB marker sequences; set dist to 1."""
+    global max_dist_genus
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    max_dist_genus = 1
+
+
 def setup_dist2(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 2."""
     global max_dist_genus
-    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
     max_dist_genus = 2
 
 
 def setup_dist3(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 3."""
     global max_dist_genus
-    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
     max_dist_genus = 3
 
 
 def setup_dist4(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 4."""
     global max_dist_genus
-    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
     max_dist_genus = 4
 
 
 def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all DB marker sequences; set dist to 5."""
     global max_dist_genus
-    setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
     max_dist_genus = 5
 
 
