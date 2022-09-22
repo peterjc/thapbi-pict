@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.13.2 *Pending*  Sped up ``substr`` classifier, especially with larger databases.
 v0.13.1 2022-09-21 Minor default DB update. Cap ``--cpu`` by available CPUs. Faster DB import.
 v0.13.0 2022-09-14 Sped up distance based classifiers by better use of RapidFuzz library.
 v0.12.9 2022-08-19 Updates default DB with new curated species and improved left trimming.
