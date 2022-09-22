@@ -150,14 +150,21 @@ def perfect_substr_in_db(session, marker_name, seq, debug=False):
     If the matches containing the sequence as a substring give multiple species,
     then taxid and genus_species will be semi-colon separated strings.
     """
+    global db_seqs
     assert seq == seq.upper(), seq
+    matches = set()
+    for db_seq in db_seqs:
+        if seq in db_seq:
+            matches.add(db_seq)
+    if not matches:
+        return 0, "", ""
     return taxid_and_sp_lists(
         session.query(Taxonomy)
         .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
         .join(MarkerSeq)
-        .filter(MarkerSeq.sequence.like("%" + seq + "%"))
+        .filter(MarkerSeq.sequence.in_(matches))
         .distinct()
     )
 
@@ -611,6 +618,7 @@ method_setup = {
     "1s3g": setup_dist3,
     "1s4g": setup_dist4,
     "1s5g": setup_dist5,
+    "substr": setup_seqs,
 }
 
 
