@@ -259,37 +259,27 @@ def method_substr(
 def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     """Prepare a set of all the DB marker sequences as upper case strings.
 
-    Also setup dict of sequences in the DB to genus, and dict of genus
-    to NCBI taxid.
+    Also setup set of sequences in the DB, and dict of genus to NCBI taxid.
     """
     global db_seqs
     global genus_taxid
 
-    db_seqs = {}
-    for source in (
-        session.query(SeqSource)
+    db_seqs = {
+        marker.sequence.upper()
+        for marker in session.query(MarkerSeq.sequence)
+        .join(SeqSource)
         .join(MarkerDef, SeqSource.marker_definition)
         .filter(MarkerDef.name == marker_name)
-    ):
-        seq = source.marker_seq.sequence.upper()
-        genus = source.taxonomy.genus
-        assert seq and genus, source
-        try:
-            db_seqs[seq].add(genus)
-        except KeyError:
-            db_seqs[seq] = {genus}
+        .distinct()
+    }
 
-    # Update the genus to taxid cache as needed:
-    for genus in db_seqs.values():
-        for g in genus:
-            if g not in genus_taxid:
-                query = (
-                    session.query(Taxonomy.ncbi_taxid)
-                    .filter(Taxonomy.genus == g)
-                    .filter(Taxonomy.species == "")
-                    .one_or_none()
-                )
-                genus_taxid[g] = query.ncbi_taxid if query else 0
+    # Cache all genus to taxid mappings
+    genus_taxid = {
+        _.genus: _.ncbi_taxid
+        for _ in session.query(Taxonomy)
+        .filter(Taxonomy.species == "")
+        .filter(Taxonomy.ncbi_taxid != 0)
+    }
 
 
 def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
@@ -363,7 +353,7 @@ def method_dist(
     # Compute all the query vs DB distances in one call
     all_dists = cdist(
         seqs.values(),
-        db_seqs.keys(),
+        db_seqs,
         scorer=Levenshtein.distance,
         dtype=int8,
         score_cutoff=max_dist_genus,
@@ -410,13 +400,22 @@ def method_dist(
             matches = {s for (s, d) in zip(db_seqs, dists) if d <= min_dist}
             assert matches
             note = f"{len(matches)} matches at distance {min_dist}"
-            genus = {g for s in matches for g in db_seqs[s]}
-            # genus = {g for ((s, g_set), d) in zip(db_seqs.items(), dists)
-            #          if d==min_dist for g in g_set}
+            genus = sorted(
+                {
+                    _.genus
+                    for _ in session.query(Taxonomy.genus)
+                    .join(SeqSource)
+                    .join(MarkerDef, SeqSource.marker_definition)
+                    .filter(MarkerDef.name == marker_name)
+                    .join(MarkerSeq)
+                    .filter(MarkerSeq.sequence.in_(matches))
+                    .distinct()
+                }
+            )
             assert genus
             results[idn] = (
-                ";".join(str(genus_taxid.get(g, 0)) for g in sorted(genus)),
-                ";".join(sorted(genus)),
+                ";".join(str(genus_taxid.get(g, 0)) for g in genus),
+                ";".join(genus),
                 note,
             )
         assert results[idn]
