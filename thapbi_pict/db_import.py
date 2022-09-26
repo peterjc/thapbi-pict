@@ -562,7 +562,7 @@ def import_fasta_file(
                         )
                     if taxonomy:
                         name = genus_species_name(taxonomy.genus, taxonomy.species)
-                    else:
+                    elif not name:
                         sys.stderr.write(
                             f"WARNING: No species information from NCBI:taxid{taxid}\n"
                         )
