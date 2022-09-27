@@ -54,7 +54,7 @@ parser.add_argument(
     help=(
         "Minimum abundance to require before importing a sequence, "
         "over-and-above whatever was used to prepare the FASTA file. "
-        "Default here is 100, ten times the default used for the "
+        "Default here is 1000, ten times the default used for the "
         "classification pipeline - be cautious what goes in your marker DB."
     ),
 )
