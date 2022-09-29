@@ -36,10 +36,8 @@ There is no need to decompress the files.
 Amplicon primers & reference sequences
 --------------------------------------
 
-There four separate markers used here, as shown in the paper's Table 2
+There were four separate markers used here, as shown in the paper's Table 2
 together with the shared Illumina adaptors used.
-
-This means we need to run THAPBI PICT four times (for each primer pair used).
 
 The authors do not provide copies of their reference sequence databases with
 the paper. Instead, files ``NF1-18Sr2b.fasta``, ``SSUF04-SSUR22.fasta``,
