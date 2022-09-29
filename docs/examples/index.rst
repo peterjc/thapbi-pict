@@ -23,6 +23,7 @@ been mock communities with known species composition.
    fecal_sequel/index
    synthetic_mycobiome/index
    soil_nematodes/index
+   pest_insects/index
    endangered_species/index
 
 * :ref:`woody_hosts` - A simple example using the default primers and
@@ -82,6 +83,13 @@ been mock communities with known species composition.
     taxonomic coverage and availability of reference sequences in choosing
     suitable marker(s)
     https://doi.org/10.3897/mbmg.3.36408
+
+* :ref:`pest_insects` - Three markers (sequenced together) in insect mock
+  communities. Based on:
+
+    Batovska *et al.* (2021) Developing a non-destructive metabarcoding
+    protocol for detection of pest insects in bulk trap catches
+    https://doi.org/10.1038/s41598-021-85855-6
 
 * :ref:`endangered_species` - A dozen markers in animals and plants (sequenced
   together). Based on:
