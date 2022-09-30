@@ -7,11 +7,14 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
     #false
 fi
 
+# This FASTA file is also available via https://zenodo.org/record/3557020
 wget -nc "https://github.com/alexpiper/HemipteraMetabarcodingMS/raw/440e08ef8c0ec357fe130a2116144bc1453dc00a/reference/merged_arthropoda_rdp_species.fa.gz"
 
 echo "=========================="
 echo "Downloading reads from ENA"
 echo "=========================="
+# The original FASTQ files are also available in data.rar from
+# https://zenodo.org/record/5171623
 for ACC in `grep ^SRR PRJNA716058.tsv | cut -f 1`; do
     # echo "Downloading $ACC"
     # Column 6 should have two URLs (R1 and R2), semi-colon separated:
