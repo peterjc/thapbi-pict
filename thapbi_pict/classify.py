@@ -350,6 +350,10 @@ def method_dist(
             count += abundance
             seqs[idn] = seq.upper()
 
+    if not seqs:
+        # Shortcut
+        return {}
+
     # Compute all the query vs DB distances in one call
     all_dists = cdist(
         seqs.values(),
