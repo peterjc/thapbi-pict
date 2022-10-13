@@ -78,6 +78,27 @@ thapbi_pict pipeline --cpu 4 \
     -o summary/
 # -t PRJNA716058.tsv -c 7 -x 1 \
 
+echo ==============
+echo Making figures
+echo ==============
+
+# First redraw with original data
+if [ -f figure3.tsv ]; then
+    echo "Recreating original Figure 3 with Batovska et al. (2021) data"
+    ./recreate_figure3.py -i figure3.tsv -o figure3.png
+    ./recreate_figure3.py -i figure3.tsv -o figure3.pdf
+else
+    # We provide the TSV file, so shouldn't need to do this...
+    echo "Missing figure3.tsv data file. Using RStudio run Batovska et al."
+    echo "(2021)'s R code to generate Figure 3, then run our figure3.R script"
+    echo "to export the figure's data."
+fi
+
+# Now draw with our data
+./figure3reproduction.py
+./recreate_figure3.py -i figure3reproduction.tsv -o figure3reproduction.png
+./recreate_figure3.py -i figure3reproduction.tsv -o figure3reproduction.pdf
+
 echo ====
 echo Done
 echo ====
