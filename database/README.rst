@@ -16,6 +16,7 @@ sets of biological sequences (subject to taxonomy filtering):
 - Curated *Nothophytophthora* ITS1 sequences (mostly at species level) from
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
+
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
   in two files extracted from 34201 sequences downloaded from an NCBI Entrez
   search on 2022-08-17::
@@ -60,7 +61,7 @@ Additionally:
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2022-07-01, which means a handful of
+- This used the NCBI taxonomy as of 2022-09-01, which means a handful of
   unrecognised curated entries are imported without an NCBI taxid.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
