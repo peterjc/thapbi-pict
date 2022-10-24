@@ -260,8 +260,8 @@ Ustilago maydis          0   0  27  4
 
 Or, open this plain text tab separated Excel.
 
-Five expected species were never found (zero true positives) at the 10 reads
-abundance threshold: *Chytriomyces hyalinus*, *Fusarium verticillioides*,
+Five expected species were never found (FN with zero true positives) at the 10
+reads abundance threshold: *Chytriomyces hyalinus*, *Fusarium verticillioides*,
 *Rhizomucor miehei*, *Saccharomyces cerevisiae* and *Ustilago maydis*.
 
 The author wrote:
