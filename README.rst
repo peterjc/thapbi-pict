@@ -127,6 +127,8 @@ Euphresco project:
   Funded by DEFRA as part of the Future Proofing Plant Health project in
   support of Euphresco ID-PHYT.
 
+Work from 2022 to 2027 was partly funded by the Rural & Environment Science
+& Analytical Services (RESAS) Division of the Scottish Government.
 
 Background
 ----------
