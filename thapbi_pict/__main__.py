@@ -259,6 +259,20 @@ def fasta_nr(args=None):
     )
 
 
+def sample_tally(args=None):
+    """Subcommand to tally per-sample FASTA files using MD5 naming."""
+    from .sample_tally import main
+
+    return main(
+        inputs=args.input,
+        output=args.output,
+        min_abundance=args.abundance,
+        min_length=args.minlen,
+        max_length=args.maxlen,
+        debug=args.verbose,
+    )
+
+
 def classify(args=None):
     """Subcommand to classify FASTA sequences using a database."""
     from .classify import main
@@ -372,6 +386,7 @@ def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
     from .fasta_nr import main as fasta_nr
+    from .sample_tally import main as sample_tally
     from .classify import main as classify
     from .summary import main as summary
     from .assess import main as assess
@@ -453,6 +468,15 @@ def pipeline(args=None):
             inputs=fasta_files,
             revcomp=None,
             output=all_fasta,
+            min_abundance=args.abundance,
+            # min_length=args.minlen,
+            # max_length=args.maxlen,
+            debug=args.verbose,
+        )
+        all_sequences = f"{stem}.tally.tsv"
+        sample_tally(
+            inputs=fasta_files,
+            output=all_sequences,
             min_abundance=args.abundance,
             # min_length=args.minlen,
             # max_length=args.maxlen,
@@ -1352,6 +1376,57 @@ def main(args=None):
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=fasta_nr)
+
+    subcommand_parser = subparsers.add_parser(
+        "sample-tally",
+        description="Prepare ASV x sample TSV sequence file using MD5 naming.",
+        epilog="Each unique sequence will be named <MD5>_<count> using the "
+        "MD5 checksum of the upper case sequence and its total abundance. "
+        "Per-sample input FASTA files should use <prefix>_<count> naming. "
+        "Output is a plain text tab-separated table with one line per unique "
+        "sequence (ASV), named in the first column, then one column per "
+        "sample, and the uppercase sequence as the final column. The ASV vs "
+        "sample values are the counts from the input FASTA files.",
+    )
+    # subcommand_parser.add_argument(
+    #     "-k",
+    #     "--marker",
+    #     type=str,
+    #     default=None,
+    #     help="Which amplicon marker are these for? Used for column header.",
+    # )
+    subcommand_parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=True,
+        nargs="+",
+        metavar="INPUT",
+        help="One or more per-sample FASTA files.",
+    )
+    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="Single output filename, '-' for stdout (default). The pipeline "
+        "will use the .tally.tsv extension which is assumed for the assess "
+        "and summary commands.",
+    )
+    subcommand_parser.add_argument(
+        "-a",
+        "--abundance",
+        type=int,
+        default=0,
+        help="Minimum abundance to require before outputting a sequence. "
+        "Default no minimum.",
+    )
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=sample_tally)
 
     # classify
     subcommand_parser = subparsers.add_parser(
