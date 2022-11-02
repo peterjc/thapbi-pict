@@ -27,7 +27,6 @@ from .utils import abundance_filter_fasta
 from .utils import abundance_from_read_name
 from .utils import find_requested_files
 from .utils import genus_species_name
-from .utils import load_fasta_header
 from .utils import run
 from .utils import species_level
 from .versions import check_rapidfuzz
@@ -806,29 +805,18 @@ def main(
             )
         else:
             pred_handle.write(f"#{marker_name}/sequence-name\ttaxid\tgenus-species\n")
-        # Will get empty dict for empty file
-        headers = load_fasta_header(filename)
-        if not headers or headers["abundance"]:
-            # There are sequences to classify
-            assert os.path.isdir(tmp), tmp
-            tax_counts = classify_file_fn(
-                filename,
-                session,
-                marker_name,
-                pred_handle,
-                tmp,
-                shared_tmp,
-                min_abundance=min_abundance,
-                debug=debug,
-                cpu=cpu,
-            )
-        else:
-            sys.stderr.write(
-                f"WARNING: Skipping {method} classifier on {filename}"
-                " as zero sequences\n"
-            )
-            tax_counts = Counter()
-            pred_handle.write("#(no sequences to classify)\n")
+        assert os.path.isdir(tmp), tmp
+        tax_counts = classify_file_fn(
+            filename,
+            session,
+            marker_name,
+            pred_handle,
+            tmp,
+            shared_tmp,
+            min_abundance=min_abundance,
+            debug=debug,
+            cpu=cpu,
+        )
 
         # Record the taxonomy counts
         count = sum(tax_counts.values())
