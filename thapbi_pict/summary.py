@@ -33,34 +33,6 @@ MISSING_META = ""
 MISSING_DATA = "-"
 
 
-def load_fasta_headers(sample_to_filenames, fields, default=""):
-    """Load requested fields from FASTA headers.
-
-    Argument sample_to_filenames is a dict of sample names as keys, with lists
-    of filenames as values. Arguments fields is a list of field names. Default
-    is a single value marker.
-
-    WARNING: Currently looks at the first file for each sample only.
-
-    Returns a dict with sample names as keys, and a list of the requested
-    fields as values.
-
-    If all the values are missing and/or match the default, raises a KeyError
-    for that sample.
-    """
-    answer = {}
-    blanks = [default] * len(fields)
-    for sample, filenames in sample_to_filenames.items():
-        if filenames:
-            filename = filenames[0]  # TODO: Ignores multiple FASTA files!
-            headers = load_fasta_header(filename)
-            values = [headers.get(_, default) for _ in fields]
-            if values == blanks:
-                raise KeyError(filename)
-            answer[sample] = values
-    return answer
-
-
 def _sp_display(species):
     """Format species classification for reports, see also _sp_sort_key."""
     if " " in species:
