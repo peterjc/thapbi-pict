@@ -769,27 +769,6 @@ def main(
 
         classifier_output.append(output_name)
 
-        if output_name is not None and os.path.isfile(output_name):
-            skipped_samples.add(output_name)
-            if debug:
-                sys.stderr.write(f"Skipping {output_name} as already done\n")
-            # Count the number of sequences and matches
-            with open(output_name) as handle:
-                for line in handle:
-                    if line.startswith("#"):
-                        continue
-                    parts = line.rstrip("\n").split("\t")
-                    # MD5_abundance, taxids, species, notes
-                    a = abundance_from_read_name(parts[0])
-                    if min_abundance and a < min_abundance:
-                        del a
-                        continue
-                    seq_count += a
-                    if parts[2].strip():
-                        match_count += a
-                    del a, parts
-            continue
-
         if setup_fn:
             # There are some files still to process, do setup now (once only)
             setup_fn(session, marker_name, shared_tmp, debug, cpu)
