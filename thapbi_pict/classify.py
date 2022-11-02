@@ -767,6 +767,11 @@ def main(
         else:
             output_name = os.path.join(out_dir, f"{stem}.{method}.tsv")
 
+        if output_name in classifier_output:
+            sys.exit(
+                f"ERROR: Filename stem clash, multiple outputs named {output_name}"
+            )
+
         classifier_output.append(output_name)
 
         if setup_fn:
