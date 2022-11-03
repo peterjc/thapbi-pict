@@ -17,7 +17,7 @@ Compared to the original worked example, we must specify our custom database
       -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    onebp classifier assigned species/genus to 3568700 of 10933576 sequences from 1 files
+    onebp classifier assigned species/genus to 529 of 3053 unique sequences from 1 files
     Wrote summary/recycled-water-custom.ITS1-long.samples.onebp.*
     Wrote summary/recycled-water-custom.ITS1-long.reads.onebp.*
     ...
@@ -37,7 +37,8 @@ Recall running with the *Phytophthora* defaults gave a taxonomic assignment
 for 2122757 of 2598566 reads - which was 82% of 2.6 million reads.
 
 Here with our relatively sparse database, the ``onebp`` method is perhaps
-overly strict - only 33% of the reads were matched (3568700 of 10933576).
+overly strict - only 17% of the unique sequences matched (529 of 3053 ASVs),
+although it is more like a third if we count the number of reads matched.
 However, with the different primer settings, we are examining over ten
 million reads (nearly four times as many), so we're doing about twice as well
 in terms of number of raw reads with a classification.
@@ -52,7 +53,7 @@ more matches:
       -d Redekar_et_al_2019_sup_table_3.sqlite -m blast \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
-    blast classifier assigned species/genus to 4261277 of 10933576 sequences from 1 files
+    blast classifier assigned species/genus to 1036 of 3053 unique sequences from 1 files
     Wrote summary/recycled-water-custom.ITS1-long.samples.blast.*
     Wrote summary/recycled-water-custom.ITS1-long.reads.blast.*
     ...
@@ -63,10 +64,11 @@ more matches:
     summary/recycled-water-custom.ITS1-long.samples.blast.tsv
     summary/recycled-water-custom.ITS1-long.samples.blast.xlsx
 
-Better, in that we are up to 39% of the reads with a taxonomic assignment
-(4261277 of 10933576 reads). But how many of these are false positives? Sadly,
-we don't have any controls for this dataset in order to objectively assess the
-classifier performance of the various algorithm and database combinations.
+Better, in that we are up to 34% of the unique sequences with a taxonomic
+assignment (1036 of 3053 ASVs). But how many of these are false positives?
+Sadly, we don't have any controls for this dataset in order to objectively
+assess the classifier performance of the various algorithm and database
+combinations.
 
 However we can say that this database and indeed the published *Oomycetes*
 ITS1 sequences in general is relatively sparse outside *Phytophthora* (and
