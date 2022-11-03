@@ -477,7 +477,7 @@ def pipeline(args=None):
                 sys.exit(return_code)
         if 1 != len(classified_files):
             sys.exit(
-                f"ERROR: {len(classified_files)} classifier output files, expected only one"
+                f"ERROR: {len(classified_files)} classifier output files, expected one"
             )
         all_classified_files.extend(classified_files)
 
