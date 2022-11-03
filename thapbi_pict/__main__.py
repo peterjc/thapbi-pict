@@ -476,7 +476,9 @@ def pipeline(args=None):
                 sys.stderr.write(f"ERROR: Pipeline aborted during {marker} classify\n")
                 sys.exit(return_code)
         if 1 != len(classified_files):
-            sys.exit(f"ERROR: {len(fasta_files)} FASTA files expected only one")
+            sys.exit(
+                f"ERROR: {len(classified_files)} classifier output files, expected only one"
+            )
         all_classified_files.extend(classified_files)
 
         return_code = summary(
