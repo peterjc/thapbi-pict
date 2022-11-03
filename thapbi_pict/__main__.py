@@ -280,6 +280,7 @@ def sample_tally(args=None):
         total_min_abundance=args.total,
         min_length=args.minlen,
         max_length=args.maxlen,
+        denoise=args.denoise,
         debug=args.verbose,
     )
 
@@ -513,6 +514,7 @@ def pipeline(args=None):
             total_min_abundance=args.abundance,
             # min_length=args.minlen,
             # max_length=args.maxlen,
+            denoise=args.denoise,
             debug=args.verbose,
         )
         all_tally_files.append(tally_seqs_file)
@@ -1068,6 +1070,12 @@ def main(args=None):
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
+    subcommand_parser.add_argument(
+        "--denoise",
+        default=False,
+        action="store_true",
+        help="Apply UNOISE2 error correction algorithm.",
+    )
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
@@ -1508,6 +1516,12 @@ def main(args=None):
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument(
+        "--denoise",
+        default=False,
+        action="store_true",
+        help="Apply UNOISE2 error correction algorithm.",
+    )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=sample_tally)
 

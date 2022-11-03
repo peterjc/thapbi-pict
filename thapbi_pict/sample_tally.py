@@ -15,6 +15,9 @@ from collections import defaultdict
 from math import ceil
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
+from rapidfuzz.distance import Levenshtein
+from rapidfuzz.process import extract
+from rapidfuzz.process import extract_iter
 
 from .prepare import load_fasta_header
 from .prepare import load_marker_defs
@@ -22,6 +25,63 @@ from .utils import abundance_from_read_name
 from .utils import file_to_sample_name
 from .utils import is_spike_in
 from .utils import md5seq
+
+
+def unoise(counts, unoise_alpha=2.0, abundance_based=True, debug=False):
+    """Apply UNOISE2 algorithm.
+
+    Argument counts is an (unsorted) dict of sequences (for the same amplicon
+    marker) as keys, with their total abundance counts as values.
+    """
+    if abundance_based:
+        # size ordered abundance-based greedy clustering (AGC),
+        # where choices are sorted by decreasing abundance.
+        # Don't need to calculate all the distances:
+        search_function = extract_iter
+    else:
+        # distance-based greedy clustering (DGC), must compute all distances
+        # in order to sort on them. Can't use ``extractOne`` as the single
+        # entry it picks may not pass the dynamic threshold.
+        search_function = extract
+
+    # Start by sorting sequences by abundance, largest first
+    centroids = defaultdict(set)
+    for a, query in sorted(
+        ((a, seq) for (seq, a) in counts.items()),
+        key=lambda x: (-x[0], x[1]),
+    ):
+        # if debug:
+        #    sys.stderr.write(
+        #        f"DEBUG: Any of {len(centroids)} clusters "
+        #        f"<-- Q:{md5seq(query)}_{a}?\n"
+        #    )
+        # All the larger abundances have been processed already
+        # TODO - Compute upper bound on d
+        for choice, dist, _index in search_function(
+            query,
+            centroids.keys(),
+            scorer=Levenshtein.distance,
+            score_cutoff=10,
+        ):
+            if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
+                centroids[choice].add(query)
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: unoise C:{md5seq(choice)}_{counts[choice]} "
+                        f"<-- Q:{md5seq(query)}_{a} dist {dist}\n"
+                    )
+                break
+        else:
+            # New centroid
+            centroids[query].add(query)
+            # print(query, "new")
+
+    corrections = {}
+    for seq, choices in centroids.items():
+        for _ in choices:
+            corrections[_] = seq
+        assert corrections[seq] == seq, "Centroid missing"
+    return corrections
 
 
 def main(
@@ -38,6 +98,7 @@ def main(
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
+    denoise=False,
     gzipped=False,  # output
     debug=False,
 ):
@@ -46,12 +107,13 @@ def main(
     Arguments min_length and max_length are applied while loading the input
     per-sample FASTA files.
 
-    Arguments min_abundance and min_abundance_fraction are applied per-sample,
-    increased by pool if negative or synthetic controls are given respectively.
-    Comma separated string argument spike_genus is treated case insensitively.
+    Set argument denoise=True for our reimplementation of the UNOISE2 read
+    correction / denoising algorithm.
 
-    Results are for a single marker, sorted by decreasing abundance then
-    alphabetically by sequence.
+    Arguments min_abundance and min_abundance_fraction are applied per-sample
+    (after denoising if being used), increased by pool if negative or
+    synthetic controls are given respectively. Comma separated string argument
+    spike_genus is treated case insensitively.
     """
     if isinstance(inputs, str):
         inputs = [inputs]
@@ -134,6 +196,32 @@ def main(
         )
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
+
+    if denoise:
+        if debug:
+            sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
+        unoise_gamma = 4
+        corrections = unoise(
+            {seq: a for seq, a in totals.items() if a >= unoise_gamma},
+            debug=False,
+        )
+        new_counts = defaultdict(int)
+        new_totals = defaultdict(int)
+        for (seq, sample), a in counts.items():
+            if totals[seq] < unoise_gamma:
+                # Ignoring as per UNOISE algorithm
+                assert seq not in corrections
+                continue
+            seq = corrections[seq]
+            new_counts[seq, sample] += a
+            new_totals[seq] += a
+        sys.stderr.write(
+            f"UNOISE reduced unique ASVs from {len(totals)} to "
+            f"{len(new_totals)}, max abundance now {max(new_totals.values())}\n"
+        )
+        counts = new_counts
+        totals = new_totals
+        del new_totals, new_counts, corrections
 
     pool_absolute_threshold = {}
     pool_fraction_threshold = {}
