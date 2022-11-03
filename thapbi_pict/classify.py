@@ -11,7 +11,6 @@ import os
 import shutil
 import sys
 import tempfile
-from collections import Counter
 from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -178,26 +177,16 @@ def apply_method_to_file(
     debug=False,
 ):
     """Call given method on each sequence in the FASTA file."""
-    count = 0
-    tax_counts = Counter()
-
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
             idn = title.split(None, 1)[0]
             abundance = abundance_from_read_name(idn)
             if min_abundance and abundance < min_abundance:
                 continue
-            count += abundance
             taxid, genus_species, note = method_fn(
                 session, marker_name, seq.upper(), debug=debug
             )
-            tax_counts[genus_species] += abundance
-            if debug:
-                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
-            else:
-                read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
-    assert count == sum(tax_counts.values())
-    return tax_counts
+            yield idn, str(taxid), genus_species, note
 
 
 def method_identity(
@@ -423,17 +412,9 @@ def method_dist(
             )
         assert results[idn]
 
-    tax_counts = Counter()
     for idn in seqs:
         taxid, genus_species, note = results[idn]
-        # TODO - avoid calling abundance_from_read_name twice
-        tax_counts[genus_species] += abundance_from_read_name(idn)
-        if debug:
-            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
-        else:
-            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
-    assert count == sum(tax_counts.values())
-    return tax_counts
+        yield idn, str(taxid), genus_species, note
 
 
 def setup_blast(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
@@ -549,7 +530,6 @@ def method_blast(
                 # Tied hit
                 blast_hits[idn].append(parts[1])
 
-    tax_counts = Counter()
     for idn in query_length:
         abundance = abundance_from_read_name(idn)
         if min_abundance:
@@ -571,12 +551,7 @@ def method_blast(
             taxid = 0
             genus_species = ""
             note = "No DB match"
-        if debug:
-            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
-        else:
-            read_report.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
-        tax_counts[genus_species] += abundance
-    return tax_counts
+        yield idn, str(taxid), genus_species, note
 
 
 def method_cleanup():
@@ -806,7 +781,7 @@ def main(
         else:
             pred_handle.write(f"#{marker_name}/sequence-name\ttaxid\tgenus-species\n")
         assert os.path.isdir(tmp), tmp
-        tax_counts = classify_file_fn(
+        for idn, taxid, genus_species, note in classify_file_fn(
             filename,
             session,
             marker_name,
@@ -816,12 +791,14 @@ def main(
             min_abundance=min_abundance,
             debug=debug,
             cpu=cpu,
-        )
-
-        # Record the taxonomy counts
-        count = sum(tax_counts.values())
-        seq_count += count
-        match_count += count - tax_counts.get("", 0)
+        ):
+            if debug:
+                pred_handle.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+            else:
+                pred_handle.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
+            seq_count += 1
+            if genus_species:
+                match_count += 1
 
         if output_name is not None:
             pred_handle.close()
@@ -844,7 +821,7 @@ def main(
 
     sys.stderr.write(
         f"{method} classifier assigned species/genus to {match_count}"
-        f" of {seq_count} sequences from {len(fasta_files)} files\n"
+        f" of {seq_count} unique sequences from {len(fasta_files)} files\n"
     )
 
     sys.stdout.flush()
