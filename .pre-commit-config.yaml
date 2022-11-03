@@ -87,7 +87,7 @@ repos:
     hooks:
     -   id: codespell
         files: \.(py|sh|rst|yml|yaml)$
-        args: ['-L', 'sintax,nin']
+        args: ['-L', 'sintax,nin,otu']
 ci:
     # Settings for the https://pre-commit.ci/ continuous integration service
     autofix_prs: true
