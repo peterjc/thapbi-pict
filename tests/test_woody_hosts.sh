@@ -52,6 +52,13 @@ else
     echo '$ tar -cvjf intermediate.tar.bz2 intermediate/ITS1/*.fasta'
 fi
 
+echo "================================"
+echo "Running woody hosts sample-tally"
+echo "================================"
+thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta -o $TMP/woody_hosts.tally.tsv
+echo diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
+diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
+
 echo "======================================="
 echo "Running woody hosts fasta-nr & classify"
 echo "======================================="
