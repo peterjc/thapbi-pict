@@ -4,6 +4,7 @@
 #
 # We assume you have the default channel, conda-forge, and bioconda.
 
+biom-format
 blast
 flash
 graphviz
