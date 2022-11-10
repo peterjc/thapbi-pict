@@ -26,6 +26,7 @@ mkdir $TMP/intermediate $TMP/output
 thapbi_pict pipeline -s $TMP/intermediate -o $TMP/output/thapbi-pict -i tests/reads/
 diff $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 diff $TMP/output/thapbi-pict.ITS1.all_reads.fasta tests/pipeline/thapbi-pict.all_reads.fasta
+diff $TMP/output/thapbi-pict.ITS1.tally.tsv tests/pipeline/thapbi-pict.tally.tsv
 diff $TMP/output/thapbi-pict.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
 
