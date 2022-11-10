@@ -1380,14 +1380,15 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "sample-tally",
         description="Prepare ASV x sample TSV sequence file using MD5 naming.",
-        epilog="Each unique sequence will be named <MD5>_<count> using the "
-        "MD5 checksum of the upper case sequence and its total abundance. "
+        epilog="Each unique sequence will be named <Marker>/<MD5>_<count> "
+        "using the upper case sequence MD5 checksum, and its total abundance. "
         "Per-sample input FASTA files should use <prefix>_<count> naming. "
         "Output is a plain text tab-separated table with one line per unique "
         "sequence (ASV), named in the first column, then one column per "
         "sample, and the uppercase sequence as the final column. The ASV vs "
         "sample values are the counts from the input FASTA files.",
     )
+    # Currently get marker name FASTA headers... that could be optional if given here?
     # subcommand_parser.add_argument(
     #     "-k",
     #     "--marker",

@@ -59,14 +59,15 @@ def main(
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
+        marker = sample_headers[sample]["marker"]
         assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 seq = seq.upper()
                 if min_length <= len(seq) <= max_length:
                     a = abundance_from_read_name(_.split(None, 1)[0])
-                    totals[seq] += a
-                    counts[seq, sample] += a
+                    totals[marker, seq] += a
+                    counts[marker, seq, sample] += a
 
     if totals:
         sys.stderr.write(
@@ -78,9 +79,13 @@ def main(
 
     samples = sorted(samples)
     values = sorted(
-        ((count, seq) for seq, count in totals.items() if count >= min_abundance),
-        # put the highest abundance entries first:
-        key=lambda x: (-x[0], x[1:]),
+        (
+            (marker, count, seq)
+            for (marker, seq), count in totals.items()
+            if count >= min_abundance
+        ),
+        # sort by marker, then put the highest abundance entries first:
+        key=lambda x: (x[0], -x[1], x[2:]),
     )
     del totals
 
@@ -88,7 +93,6 @@ def main(
     stats_fields = (
         "Raw FASTQ",
         "Flash",
-        "Marker",
         "Cutadapt",
         "Threshold pool",
         "Threshold",
@@ -126,9 +130,9 @@ def main(
             )
         )
         del stat_values
-    out_handle.write("\t".join(["#MD5_abundance"] + samples + ["Sequence\n"]))
-    for count, seq in values:
-        data = "\t".join(str(counts[seq, sample]) for sample in samples)
-        out_handle.write(f"{md5seq(seq)}_{count}\t{data}\t{seq}\n")
+    out_handle.write("\t".join(["#Marker/MD5_abundance"] + samples + ["Sequence\n"]))
+    for marker, count, seq in values:
+        data = "\t".join(str(counts[marker, seq, sample]) for sample in samples)
+        out_handle.write(f"{marker}/{md5seq(seq)}_{count}\t{data}\t{seq}\n")
     if output != "-":
         out_handle.close()
