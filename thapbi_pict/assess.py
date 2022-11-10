@@ -376,7 +376,7 @@ def main(
 
     * To know what species are expected for example sample, we need one known
       TSV per sample (which can use wildcards), or a multi-sample known TSV
-      which much use full per-sequence entries.
+      which must use full per-sequence entries.
     * To know which sequences are in which samples, we need one FASTA file per
       sample per marker.
     * To know what species were predicted for each sequence, we need TSV files
