@@ -35,6 +35,7 @@ the results, and these are described in the first :ref:`worked example
 
 * ``prepare`` - turn paired FASTQ input files for each sample, giving
   de-duplicated FASTA files
+* ``fasta-nr`` and ``sample-tally`` pooling intermediate files for analysis
 * ``classify`` - produce genus/species level predictions as
   tab-separated-variable TSV files
 * ``summary`` - summarise a set of predictions by sample (with human readable
