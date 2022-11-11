@@ -266,7 +266,7 @@ def sample_tally(args=None):
     return main(
         inputs=args.input,
         output=args.output,
-        min_abundance=args.abundance,
+        fasta=args.fasta,
         min_length=args.minlen,
         max_length=args.maxlen,
         debug=args.verbose,
@@ -385,7 +385,6 @@ def edit_graph(args=None):
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
     from .prepare import main as prepare
-    from .fasta_nr import main as fasta_nr
     from .sample_tally import main as sample_tally
     from .classify import main as classify
     from .summary import main as summary
@@ -465,20 +464,11 @@ def pipeline(args=None):
             sys.stderr.write(f"Processesing {marker}\n")
             sys.stderr.write("\n")
         all_fasta = f"{stem}.all_reads.fasta"
-        fasta_nr(
-            inputs=fasta_files,
-            revcomp=None,
-            output=all_fasta,
-            min_abundance=args.abundance,
-            # min_length=args.minlen,
-            # max_length=args.maxlen,
-            debug=args.verbose,
-        )
         tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
             inputs=fasta_files,
             output=tally_seqs_file,
-            min_abundance=args.abundance,
+            fasta=all_fasta,
             # min_length=args.minlen,
             # max_length=args.maxlen,
             debug=args.verbose,
@@ -1419,12 +1409,10 @@ def main(args=None):
         "and summary commands.",
     )
     subcommand_parser.add_argument(
-        "-a",
-        "--abundance",
-        type=int,
-        default=0,
-        help="Minimum abundance to require before outputting a sequence. "
-        "Default no minimum.",
+        "--fasta",
+        type=str,
+        metavar="FILENAME",
+        help="Optional output FASTA filename, '-' for stdout. ",
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
