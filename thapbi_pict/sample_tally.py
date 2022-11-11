@@ -24,7 +24,7 @@ from .utils import md5seq
 def main(
     inputs,
     output,
-    min_abundance=0,
+    fasta=None,
     min_length=0,
     max_length=sys.maxsize,
     gzipped=False,  # output
@@ -34,10 +34,6 @@ def main(
 
     Arguments min_length and max_length are applied while loading the input
     per-sample FASTA files.
-
-    Argument min_abundance is applied to the output using the total per ASV
-    (not to the per-sample abundance in individual input files).
-
     """
     if isinstance(inputs, str):
         inputs = [inputs]
@@ -79,11 +75,7 @@ def main(
 
     samples = sorted(samples)
     values = sorted(
-        (
-            (marker, count, seq)
-            for (marker, seq), count in totals.items()
-            if count >= min_abundance
-        ),
+        ((marker, count, seq) for (marker, seq), count in totals.items()),
         # sort by marker, then put the highest abundance entries first:
         key=lambda x: (x[0], -x[1], x[2:]),
     )
@@ -102,6 +94,8 @@ def main(
     )
 
     if output == "-":
+        if fasta == "-":
+            sys.exit("ERROR: Don't use stdout for both TSV and FASTA output.")
         if gzipped:
             raise ValueError("Does not support gzipped output to stdout.")
         out_handle = sys.stdout
@@ -131,8 +125,26 @@ def main(
         )
         del stat_values
     out_handle.write("\t".join(["#Marker/MD5_abundance"] + samples + ["Sequence\n"]))
+
+    if fasta == "-":
+        if gzipped:
+            raise ValueError("Does not support gzipped output to stdout.")
+        fasta_handle = sys.stdout
+    elif fasta and gzipped:
+        fasta_handle = gzip.open(fasta, "wt")
+    elif fasta:
+        fasta_handle = open(fasta, "w")
+    else:
+        fasta_handle = None
     for marker, count, seq in values:
         data = "\t".join(str(counts[marker, seq, sample]) for sample in samples)
-        out_handle.write(f"{marker}/{md5seq(seq)}_{count}\t{data}\t{seq}\n")
+        md5 = md5seq(seq)
+        out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\n")
+        if fasta_handle:
+            # Does not export per-sample counts
+            # TODO - Include the marker? Older fasta-nr command did not.
+            fasta_handle.write(f">{md5}_{count}\n{seq}\n")
     if output != "-":
         out_handle.close()
+    if fasta and fasta != "-":
+        fasta_handle.close()
