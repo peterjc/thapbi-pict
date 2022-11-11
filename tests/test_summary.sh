@@ -42,16 +42,9 @@ thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-qu \
 diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # no change
 diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
 
-# This was originally created in test_classify.sh
-if [ ! -f $TMP/DNAMIX_S95_L001.identity.tsv ]; then
-    thapbi_pict classify -m identity -i tests/prepare-reads/DNAMIX_S95_L001.fasta -o $TMP/
-fi
-thapbi_pict summary -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
-    $TMP/DNAMIX_S95_L001.identity.tsv -m identity -o $TMP/summary
-
 # With metadata, using default method, -m onebp
 thapbi_pict summary \
-    --input tests/classify/P-infestans-T30-4.fasta tests/classify/P-infestans-T30-4.onebp.tsv \
+    --input tests/classify/P-infestans-T30-4.tally.tsv tests/classify/P-infestans-T30-4.onebp.tsv \
     -o $TMP/summary -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-T30-4.reads.tsv
 
@@ -87,7 +80,7 @@ diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-etc.samples.tsv
 #
 rm -rf $TMP/test-case.tsv $TMP/test-case.xlsx
 thapbi_pict summary -m identity -a 99 -o $TMP/test-case \
-    -i tests/classify/*.fasta tests/classify/*.identity.tsv
+    -i tests/classify/*.tally.tsv tests/classify/*.identity.tsv
 diff $TMP/test-case.samples.identity.tsv tests/summary/classify.identity.tsv
 
 # Passing a folder, trying different methods

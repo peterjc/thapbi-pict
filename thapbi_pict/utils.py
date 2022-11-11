@@ -461,6 +461,51 @@ def find_paired_files(
     return input_list
 
 
+def parse_sample_tsv(tabular_file, debug=False):
+    """Parse file of sample abundances and sequence.
+
+    Supports the optional sample metadata header.
+    """
+    header_lines = []
+    samples = []
+    counts = {}
+    seqs = {}
+    with open(tabular_file) as handle:
+        for line in handle:
+            parts = line.rstrip("\n").split("\t")
+            if parts[0] == "#Marker/MD5_abundance" and parts[-1] == "Sequence":
+                samples = parts[1:-1]
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: {len(samples)} samples in {tabular_file}\n"
+                    )
+            elif line.startswith("#"):
+                header_lines.append(parts)
+                if debug:
+                    sys.stderr.write(f"DEBUG: Header {parts[0]} in {tabular_file}\n")
+            elif samples:
+                seq_idn = parts[0]
+                for sample, value in zip(samples, parts[1:-1]):
+                    try:
+                        counts[seq_idn, sample] = int(value)
+                    except ValueError:
+                        raise ValueError(
+                            f"ERROR: Non-integer count for {seq_idn} vs {sample}"
+                        )
+                seqs[seq_idn] = parts[-1]
+            else:
+                raise ValueError(
+                    "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
+                )
+    # TODO: Turn counts into an array?
+    sample_headers = {sample: {} for sample in samples}
+    for parts in header_lines:
+        name = parts[0][1:]  # Drop the leading "#"
+        for sample, value in zip(samples, parts[1:-1]):
+            sample_headers[sample][name] = value
+    return seqs, sample_headers, counts
+
+
 def parse_species_tsv(
     tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
 ):

@@ -446,6 +446,7 @@ def pipeline(args=None):
         debug=args.verbose,
     )
 
+    all_tally_files = []
     all_classified_files = []
     for marker in markers:
         if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
@@ -473,15 +474,16 @@ def pipeline(args=None):
             # max_length=args.maxlen,
             debug=args.verbose,
         )
-        all_sequences = f"{stem}.tally.tsv"
+        tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
             inputs=fasta_files,
-            output=all_sequences,
+            output=tally_seqs_file,
             min_abundance=args.abundance,
             # min_length=args.minlen,
             # max_length=args.maxlen,
             debug=args.verbose,
         )
+        all_tally_files.append(tally_seqs_file)
         classified_files = classify(
             fasta=[all_fasta],
             session=session,
@@ -506,7 +508,7 @@ def pipeline(args=None):
         all_classified_files.extend(classified_files)
 
         return_code = summary(
-            inputs=fasta_files + classified_files,
+            inputs=[tally_seqs_file] + classified_files,
             report_stem=stem,
             method=args.method,
             min_abundance=args.abundance,
@@ -556,7 +558,7 @@ def pipeline(args=None):
             # Have a filename stem (possibly with a directory)
             stem = f"{args.output}.pooled"
         return_code = summary(
-            inputs=all_fasta_files + all_classified_files,
+            inputs=all_tally_files + all_classified_files,
             report_stem=stem,
             method=args.method,
             min_abundance=args.abundance,
@@ -1555,13 +1557,13 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "summary",
         description="Sample and sequence summary reports on classifier output.",
-        epilog="Assumes you've run prepare-reads and classify, and have "
-        "folders with XXX.fasta and XXX.method.tsv files from your plate(s). "
+        epilog="Assumes you've run prepare-reads, sample-tally and classify "
+        "giving tally-file XXX.tsv (with sequences counts per sample), and "
+        "classifier output XXX.method.tsv (for the same sequences). "
         "The output is two sets of tables. The read tables have one row per "
-        "unique sequence (as trimmed by the prepare-reads step, can be "
-        "thousands of rows) and one column per sample (typically 96 samples "
-        "per plate). The sample tables have one row per sample, and one "
-        "column per genus and species.",
+        "unique sequence (can be thousands of rows) and one column per sample "
+        "(often hundreds, typically 96 samples per plate). The sample tables "
+        "have one row per sample, and one column per genus and species.",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1569,8 +1571,8 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="One or more prepared read files (*.fasta), prediction "
-        "files (*.method.tsv) or folder names. "
+        help="Sample tally file (*.tally.tsv) and matching classifier output "
+        "file (*.method.tsv), or folder name(s). "
         "The classifier method extension can be set via -m / --method.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
@@ -1599,8 +1601,7 @@ def main(args=None):
         f"Default {DEFAULT_MIN_ABUNDANCE} reflects default in prepare-reads. "
         "Rather than re-running the prepare or classifier steps with a stricter "
         "minimum abundance you can apply it here. Use zero or one to look at "
-        "everything (but beware that negative control samples will include low "
-        "abundance entries).",
+        "everything in your input files.",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)

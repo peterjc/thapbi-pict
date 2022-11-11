@@ -16,16 +16,14 @@ files (via header lines in the intermediate FASTA files).
 import os
 import sys
 from collections import Counter
-from collections import defaultdict
 
 import xlsxwriter
-from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .prepare import load_fasta_header
 from .utils import color_bands
-from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import load_metadata
+from .utils import md5seq
+from .utils import parse_sample_tsv
 from .utils import parse_species_tsv
 from .utils import split_read_name_abundance
 
@@ -494,16 +492,18 @@ def read_summary(
     handle.write(
         "TOTAL or MAX\t-\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
+            # max Sample-count
             max(
                 sum(
                     1
                     for sample in stem_to_meta
-                    if (marker, md5, sample) in abundance_by_samples
+                    if abundance_by_samples.get((marker, md5, sample), 0)
                 )
                 for (marker, md5) in marker_md5_to_seq
             )
             if marker_md5_to_seq
             else 0,
+            # max of Max-sample-abundance
             max(
                 (
                     abundance_by_samples.get((marker, md5, sample), 0)
@@ -545,11 +545,12 @@ def read_summary(
     worksheet.write_number(
         current_row,
         4,
+        # max Sample-count:
         max(
             sum(
                 1
                 for sample in stem_to_meta
-                if (marker, md5, sample) in abundance_by_samples
+                if abundance_by_samples.get((marker, md5, sample), 0)
             )
             for (marker, md5) in marker_md5_to_seq
         )
@@ -559,6 +560,7 @@ def read_summary(
     worksheet.write_number(
         current_row,
         5,
+        # max Max-sample-abundance
         max(
             (
                 abundance_by_samples.get((marker, md5, sample), 0)
@@ -592,7 +594,11 @@ def read_summary(
             md5,
             ";".join(sorted(marker_md5_species[marker, md5])),
             marker_md5_to_seq[marker, md5],
-            sum(1 for _ in stem_to_meta if (marker, md5, _) in abundance_by_samples),
+            sum(
+                1
+                for sample in stem_to_meta
+                if abundance_by_samples.get((marker, md5, sample), 0)
+            ),
             total_abundance,
         ]
         for (marker, md5), total_abundance in marker_md5_abundance.items()
@@ -604,9 +610,10 @@ def read_summary(
     )
     for marker, md5, sp, seq, md5_in_xxx_samples, total_abundance in data:
         sample_counts = [
-            abundance_by_samples.get((marker, md5, _), 0) for _ in stem_to_meta
+            abundance_by_samples.get((marker, md5, sample), 0)
+            for sample in stem_to_meta
         ]
-        assert sample_counts, f"{marker} {md5} sample counts: {sample_counts!r}"
+        assert sum(sample_counts), f"{marker} {md5} sample counts: {sample_counts!r}"
         handle.write(
             "%s\t%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
@@ -690,44 +697,36 @@ def main(
     )
 
     meta_default = tuple([MISSING_META] * len(meta_names))
-    fasta_files = defaultdict(list)
-    tsv_files = defaultdict(list)
     markers = set()
 
-    for fasta_file in find_requested_files(inputs, ".fasta", ignore_prefixes, debug):
-        sample = file_to_sample_name(fasta_file)
-        if sample not in stem_to_meta:
-            if require_metadata:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Missing required metadata for {fasta_file}\n"
-                    )
-                continue
-            stem_to_meta[sample] = meta_default
-            if meta_default in meta_to_stem:
-                meta_to_stem[meta_default].append(sample)
-            else:
-                meta_to_stem[meta_default] = [sample]
-            if debug and metadata_file:
-                sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
-        fasta_files[sample].append(fasta_file)
-    for tsv_file in find_requested_files(
-        inputs, f".{method}.tsv", ignore_prefixes, debug
-    ):
-        sample = file_to_sample_name(tsv_file)
-        if sample.endswith(".all_reads") or sample in fasta_files:
-            tsv_files[sample].append(tsv_file)
-        elif debug:
-            sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
+    samples_tsv = find_requested_files(inputs, ".tally.tsv", ignore_prefixes, debug)
+    if not samples_tsv:
+        sys.exit("ERROR: No sample-tally files matching *.tally.tsv")
+    stems = tuple(
+        {os.path.basename(filename).rsplit(".", 2)[0] for filename in samples_tsv}
+    )
+    classifications_tsv = [
+        filename
+        for filename in find_requested_files(
+            inputs, f".{method}.tsv", ignore_prefixes, debug
+        )
+        if os.path.basename(filename).startswith(stems)
+    ]
+    del stems
+
+    # TODO - Drop this restriction? e.g. concatenating inputs
+    if len(samples_tsv) != len(classifications_tsv):
+        sys.exit(
+            "ERROR: Sample and classification files not paired "
+            f"{samples_tsv} vs {classifications_tsv} from {inputs}"
+        )
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Have metadata for {len(stem_to_meta)} samples, found"
-            f" {sum(len(_) for _ in fasta_files.values())} FASTA files, and"
-            f" {sum(len(_) for _ in tsv_files.values())} TSV for method {method}\n"
+            f"DEBUG: Have metadata for {len(stem_to_meta)} samples, found "
+            f"{len(samples_tsv)} sample tally files and "
+            f"{len(classifications_tsv)} classifier files\n"
         )
-    if not tsv_files:
-        sys.exit("ERROR: No input FASTA and/or TSV files found")
 
     marker_md5_abundance = Counter()
     abundance_by_samples = {}
@@ -736,23 +735,21 @@ def main(
     sample_species_counts = {}  # 2nd key is sp list with semi-colons
 
     if debug:
-        sys.stderr.write(f"Loading predictions for {method}\n")
-    for sample, predicted_files in tsv_files.items():
-        # Get MD5 to species mapping from the TSV only
-        assert sample.endswith(".all_reads") or sample in stem_to_meta, sample
-        for predicted_file in predicted_files:
-            for marker, name, _taxid, sp_list in parse_species_tsv(
-                predicted_file, min_abundance
-            ):
-                assert marker, predicted_file
-                markers.add(marker)
-                md5, abundance = split_read_name_abundance(name)
-                if min_abundance > 1 and abundance < min_abundance:
-                    continue
-                if (marker, md5) in marker_md5_species:
-                    marker_md5_species[marker, md5].update(sp_list.split(";"))
-                else:
-                    marker_md5_species[marker, md5] = set(sp_list.split(";"))
+        sys.stderr.write(
+            f"DEBUG: Loading sequence classifications from {classifications_tsv}\n"
+        )
+
+    for filename in classifications_tsv:
+        for marker, name, _taxid, sp_list in parse_species_tsv(filename, min_abundance):
+            assert marker, filename
+            markers.add(marker)
+            md5, abundance = split_read_name_abundance(name)
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
+            if (marker, md5) in marker_md5_species:
+                marker_md5_species[marker, md5].update(sp_list.split(";"))
+            else:
+                marker_md5_species[marker, md5] = set(sp_list.split(";"))
 
     if len(markers) == 1:
         # Not loading the post-abundance-threshold count,
@@ -772,7 +769,6 @@ def main(
     else:
         # TODO: How best to show the cutadapt and threshold values (per marker)?
         stats_fields = ("Raw FASTQ", "Flash")
-    stats_headers = [_.lower().replace(" ", "_") for _ in stats_fields]
     blank_stats = [-1] * len(stats_fields)
     sample_stats = {}
 
@@ -781,57 +777,76 @@ def main(
         assert not marker_md5_species
 
     if debug:
-        sys.stderr.write("Loading FASTA sequences and abundances\n")
-    for sample, fasta_list in fasta_files.items():
-        assert sample in stem_to_meta, sample
-        assert not sample.endswith(".all_fasta")
-        sample_species_counts[sample] = Counter()
-        for fasta_file in fasta_list:
-            fasta_header = load_fasta_header(fasta_file)
-            assert "marker" in fasta_header, f"{fasta_file} gave {fasta_header}"
-            marker = fasta_header["marker"]
+        sys.stderr.write(
+            f"DEBUG: Loading samples sequences and abundances from {samples_tsv}\n"
+        )
 
+    for filename in samples_tsv:
+        seqs, sample_headers, counts = parse_sample_tsv(filename, debug=debug)
+        for sample, fasta_header in sample_headers.items():
+            if sample not in stem_to_meta:
+                if require_metadata:
+                    if debug:
+                        sys.stderr.write(
+                            f"DEBUG: Missing required metadata for {sample}\n"
+                        )
+                    continue
+                stem_to_meta[sample] = meta_default
+                if meta_default in meta_to_stem:
+                    meta_to_stem[meta_default].append(sample)
+                else:
+                    meta_to_stem[meta_default] = [sample]
+                if debug and metadata_file:
+                    sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
+            if sample not in sample_species_counts:
+                sample_species_counts[sample] = Counter()
             sample_stats[sample] = values = [
-                fasta_header.get(_, -1) for _ in stats_headers
+                fasta_header.get(_, -1) for _ in stats_fields
             ]
             if values == blank_stats:
-                sys.stderr.write(
-                    f"WARNING: Missing header in FASTA file(s): {fasta_file}\n"
-                )
+                sys.stderr.write(f"WARNING: Missing stats header for {sample}\n")
+                if debug:
+                    sys.stderr.write(f"DEBUG: Wanted {';'.join(stats_fields)}\n")
+                    sys.stderr.write(f"DEBUG: Had {';'.join(fasta_header)}\n")
                 stats_fields = []
                 sample_stats = {}
             del values
 
-            with open(fasta_file) as handle:
-                for title, seq in SimpleFastaParser(handle):
-                    # Note: marker might not be in markers if FASTA has no seqs
-                    assert marker in markers, fasta_file
-                    md5, abundance = split_read_name_abundance(title.split(None, 1)[0])
-                    if min_abundance > 1 and abundance < min_abundance:
-                        continue
-                    if (marker, md5) not in marker_md5_species:
-                        if len(tsv_files) == 1:
-                            sys.exit(
-                                f"ERROR: {marker} {md5} from {fasta_file} "
-                                f"not in {list(tsv_files.values())[0]}"
-                            )
-                        else:
-                            sys.exit(
-                                f"ERROR: {marker} {md5} from {fasta_file} "
-                                f"not in {len(tsv_files)} TSV files"
-                            )
-                    abundance_by_samples[marker, md5, sample] = abundance
-                    marker_md5_abundance[marker, md5] += abundance
-                    marker_md5_to_seq[marker, md5] = seq
-                    sample_species_counts[sample][
-                        ";".join(sorted(marker_md5_species[marker, md5]))
-                    ] += abundance
+        for title, seq in seqs.items():
+            # We're applying this threshold at the total level:
+            marker, rest = title.split("/", 1)
+            assert (
+                marker in markers
+            ), f"Unexpected marker {marker} in {filename}, expected {markers}"
+            md5, abundance = split_read_name_abundance(rest.split(None, 1)[0])
+            if min_abundance > 1 and abundance < min_abundance:
+                continue
+            assert md5 == md5seq(seq), title
+            marker_md5_to_seq[marker, md5] = seq
+            for sample in sample_headers:
+                if require_metadata and sample not in stem_to_meta:
+                    continue
+                abundance = counts[title, sample]
+                assert (marker, md5, sample) not in abundance_by_samples
+                abundance_by_samples[marker, md5, sample] = abundance
+                marker_md5_abundance[marker, md5] += abundance
+                assert sample in sample_species_counts, sorted(
+                    sample_species_counts.keys()
+                )
+                sample_species_counts[sample][
+                    ";".join(sorted(marker_md5_species[marker, md5]))
+                ] += abundance
+
+    if debug:
+        sys.stderr.write(
+            f"DEBUG: Loaded sample counts for {len(sample_species_counts)} sequences\n"
+        )
 
     if "Threshold" in stats_fields:
         # Apply any over-ride min_abundance for the reports
         i = stats_fields.index("Threshold")
         for _ in sample_stats:
-            if sample_stats[_][i] < min_abundance:
+            if int(sample_stats[_][i]) < min_abundance:
                 sample_stats[_][i] = min_abundance
 
     bad_fields = []
@@ -859,10 +874,11 @@ def main(
             for values in sample_stats.values():
                 values[i] = values[i][len(common) + 1 :]
 
-    if debug:
-        sys.stderr.write(
-            f"DEBUG: Have the following stats fields:{';'.join(stats_fields)}\n"
-        )
+    if require_metadata:
+        assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
+    else:
+        assert set(sample_stats) == set(sample_species_counts)
+        assert len(sample_stats) <= len(stem_to_meta)
 
     sample_summary(
         sample_species_counts,
