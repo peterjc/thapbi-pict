@@ -61,8 +61,8 @@ Additionally:
 
 - Four G-BLOCKS synthetic controls in file ``database/controls.fasta``
 
-- This used the NCBI taxonomy as of 2022-10-01, which means a handful of
-  unrecognised curated entries are imported without an NCBI taxid.
+- This used the NCBI taxonomy as of 2022-11-01, which means a handful of
+  unrecognised curated entries may be imported without an NCBI taxid.
 
 The database is created with the ``database/build_ITS1_DB.sh`` script:
 
