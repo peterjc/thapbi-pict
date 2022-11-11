@@ -74,13 +74,13 @@ done
 echo "==========================="
 echo "Running woody hosts summary"
 echo "==========================="
-time thapbi_pict summary -i $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv \
+time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/no-metadata
 ls $TMP/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
-time thapbi_pict summary -i $TMP/intermediate/ITS1/*.fasta $TMP/woody_hosts.all_reads.onebp.tsv \
+time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv \
     -o $TMP/summary/with-metadata \
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
