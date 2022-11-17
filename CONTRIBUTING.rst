@@ -114,7 +114,12 @@ Release process
 ---------------
 
 For a release, start from a clean git checkout (to reduce the chance of
-bundling any stray local files despite a cautious ``MANIFEST.in``).
+bundling any stray local files despite a cautious ``MANIFEST.in``). You will
+need some python tools:
+
+.. code:: console
+
+    $ pip install -U pip twine build
 
 First confirm if the DB at ``thapbi_pict/ITS1_DB.sqlite`` is up to date:
 
@@ -137,7 +142,7 @@ date for the new version. Then actually do the build:
 .. code:: bash
 
     rm -rf build/
-    python setup.py sdist --formats=gztar && python setup.py bdist_wheel
+    python -m build
     git tag vX.Y.Z
     git push origin master --tags
     twine upload dist/thapbi_pict-X.Y.Z*
