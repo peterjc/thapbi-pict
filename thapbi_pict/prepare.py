@@ -907,6 +907,69 @@ def marker_cut(
     return fasta_files_prepared, sythetic_prepared, negative_prepared
 
 
+def load_marker_defs(session, spike_genus):
+    """Load marker definitions and any spike-in sequences from the DB."""
+    tmp_genus_set = set()
+    # Split on commas, strip white spaces,
+    for x in {_.strip() for _ in spike_genus.strip().split(",") if _.strip()}:
+        view = session.query(Taxonomy).filter(func.lower(Taxonomy.genus) == x.lower())
+        if not view.count():
+            sys.stderr.write(
+                f"WARNING: Spike-in genus {x!r} not in database (case insensitive)\n"
+            )
+        else:
+            for taxonomy in view:
+                tmp_genus_set.add(taxonomy.genus)  # record case as used in DB
+    spike_genus = sorted(tmp_genus_set)
+    del tmp_genus_set
+
+    marker_definitions = {}
+    for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
+        if not reference_marker.left_primer or not reference_marker.right_primer:
+            # TODO - ERROR if more than one marker? Always an error?
+            sys.exit(f"ERROR: Missing primer(s) for {reference_marker.name}")
+        if reference_marker.min_length > reference_marker.max_length:
+            sys.exit(
+                f"ERROR: Marker {reference_marker.name}"
+                f" min length {reference_marker.min_length}"
+                f" but max length {reference_marker.max_length}"
+            )
+
+        # Spike-in negative controls are marker specific
+        spikes = []
+        if spike_genus:
+            # Doing a join to pull in the marker and taxonomy tables too:
+            cur_tax = aliased(Taxonomy)
+            marker_seq = aliased(MarkerSeq)
+            for seq_source in (
+                session.query(SeqSource)
+                .join(marker_seq, SeqSource.marker_seq)
+                .join(cur_tax, SeqSource.taxonomy)
+                .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
+                .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
+                .filter(SeqSource.marker_definition_id == reference_marker.id)
+                .order_by(marker_seq.sequence, SeqSource.id)
+                .filter(cur_tax.genus.in_(spike_genus))
+            ):
+                spikes.append(
+                    (
+                        seq_source.source_accession,
+                        seq_source.marker_seq.sequence,
+                        kmers(seq_source.marker_seq.sequence),
+                    )
+                )
+            sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
+
+        marker_definitions[reference_marker.name] = {
+            "left_primer": reference_marker.left_primer,
+            "right_primer": reference_marker.right_primer,
+            "min_length": reference_marker.min_length,
+            "max_length": reference_marker.max_length,
+            "spike_kmers": spikes,
+        }
+    return marker_definitions
+
+
 def main(
     fastq,
     synthetic_controls,
@@ -947,6 +1010,8 @@ def main(
 
     check_tools(["flash", "cutadapt"], debug)
 
+    marker_definitions = load_marker_defs(session, spike_genus)
+
     if fastq:
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -i "" or -i "-" when only have negatives?
@@ -959,20 +1024,6 @@ def main(
         # Possible in a pipeline setting may need to pass a null value,
         # e.g. -n "" or -n "-"
         negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
-
-    tmp_genus_set = set()
-    # Split on commas, strip white spaces,
-    for x in {_.strip() for _ in spike_genus.strip().split(",") if _.strip()}:
-        view = session.query(Taxonomy).filter(func.lower(Taxonomy.genus) == x.lower())
-        if not view.count():
-            sys.stderr.write(
-                f"WARNING: Spike-in genus {x!r} not in database (case insensitive)\n"
-            )
-        else:
-            for taxonomy in view:
-                tmp_genus_set.add(taxonomy.genus)  # record case as used in DB
-    spike_genus = sorted(tmp_genus_set)
-    del tmp_genus_set
 
     if synthetic_controls:
         syn_control_file_pairs = find_fastq_pairs(
@@ -1069,51 +1120,6 @@ def main(
 
     if debug:
         sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
-
-    marker_definitions = {}
-    for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
-        if not reference_marker.left_primer or not reference_marker.right_primer:
-            # TODO - ERROR if more than one marker? Always an error?
-            sys.exit(f"ERROR: Missing primer(s) for {reference_marker.name}")
-        if reference_marker.min_length > reference_marker.max_length:
-            sys.exit(
-                f"ERROR: Marker {reference_marker.name}"
-                f" min length {reference_marker.min_length}"
-                f" but max length {reference_marker.max_length}"
-            )
-
-        # Spike-in negative controls are marker specific
-        spikes = []
-        if spike_genus:
-            # Doing a join to pull in the marker and taxonomy tables too:
-            cur_tax = aliased(Taxonomy)
-            marker_seq = aliased(MarkerSeq)
-            for seq_source in (
-                session.query(SeqSource)
-                .join(marker_seq, SeqSource.marker_seq)
-                .join(cur_tax, SeqSource.taxonomy)
-                .options(contains_eager(SeqSource.marker_seq, alias=marker_seq))
-                .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
-                .filter(SeqSource.marker_definition_id == reference_marker.id)
-                .order_by(marker_seq.sequence, SeqSource.id)
-                .filter(cur_tax.genus.in_(spike_genus))
-            ):
-                spikes.append(
-                    (
-                        seq_source.source_accession,
-                        seq_source.marker_seq.sequence,
-                        kmers(seq_source.marker_seq.sequence),
-                    )
-                )
-            sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
-
-        marker_definitions[reference_marker.name] = {
-            "left_primer": reference_marker.left_primer,
-            "right_primer": reference_marker.right_primer,
-            "min_length": reference_marker.min_length,
-            "max_length": reference_marker.max_length,
-            "spike_kmers": spikes,
-        }
 
     # Run flash & cutadapt (once doing demultiplexing), apply abundance thresholds
     fasta_files_prepared, sythetic_prepared, negative_prepared = marker_cut(
