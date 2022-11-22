@@ -17,6 +17,9 @@ from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 
+KMER_LENGTH = 31
+
+
 def valid_marker_name(text):
     """Check the proposed string valid for use as a marker name.
 
@@ -804,3 +807,32 @@ def load_fasta_header(fasta_file, gzipped=False):
         else:
             sys.exit(f"ERROR: Unexpected line in headered FASTA file {fasta_file}")
     return answer
+
+
+def kmers(sequence, k=KMER_LENGTH):
+    """Make set of all kmers in the given sequence."""
+    return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
+
+
+def has_enough_kmers(sequence, kmers, threshold, k=KMER_LENGTH):
+    """Check if given sequence shares at least this many kmers."""
+    count = 0
+    for i in range(len(sequence) - k + 1):
+        if sequence[i : i + k] in kmers:
+            count += 1
+            if count >= threshold:
+                return True
+    return False
+
+
+def is_spike_in(sequence, spikes):
+    """Return spike-in name if sequence matches, else empty string."""
+    for spike_name, spike_seq, spike_kmers in spikes:
+        if sequence == spike_seq:
+            return spike_name
+        # This will not work when len(spike) <~ kmer length
+        # (fail gracefully with an impossible to meet value of 10)
+        threshold = max((len(spike_seq) - KMER_LENGTH) / 3, 10)
+        if has_enough_kmers(sequence, spike_kmers, threshold, KMER_LENGTH):
+            return spike_name
+    return ""
