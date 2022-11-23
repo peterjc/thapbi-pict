@@ -34,7 +34,7 @@ mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared
 
 for PLATE in A B C D; do
     # Making mock plates, each with a sample pair and a control pair
-    mkdir -p -p $TMP/mock_plates/plate-${PLATE}
+    mkdir -p $TMP/mock_plates/plate-${PLATE}
     # Setup the biological sample pair
     cp tests/reads/DNAMIX_S95_L001_R1_001.fastq.gz \
        $TMP/mock_plates/plate-${PLATE}/sample-${PLATE}_R1.fastq.gz
@@ -58,6 +58,9 @@ thapbi_pict prepare-reads -d - -a 75 \
 echo "Checking spike-in controls..."
 
 # A:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in spike-in-A.fasta"; false
+fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` -ne "12" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-A.fasta"; false
 fi
@@ -65,6 +68,12 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` != "#
     echo "Wrong count accepted after abundance threshold in spike-in-A.fasta"; false
 fi
 # B:
+# Used -n to adjust absolute threshold only (not -z to adjust fractional control)
+# So, will use -a 75 as it is, but reduce default -f 0.001 to half that, 0.0005
+# i.e. Given cutadapt count of 84805, rather than implied threshold of 85, get 43/
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in spike-in-B.fasta"; false
+fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` -ne "8" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-B.fasta"; false
 fi
@@ -72,6 +81,9 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` != "#
     echo "Wrong count accepted after abundance threshold in spike-in-B.fasta"; false
 fi
 # C:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-C.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in spike-in-C.fasta"; false
+fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-C.fasta` -ne "7" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-C.fasta"; false
 fi
@@ -79,6 +91,9 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-C.fasta` != "#
     echo "Wrong count accepted after abundance threshold in spike-in-C.fasta"; false
 fi
 # D:
+if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-D.fasta` != "#threshold:75" ]; then
+    echo "Wrong abundance threshold in spike-in-D.fasta"; false
+fi
 if [ `grep -c "^>" $TMP/mock_plates/prepared/ITS1/spike-in-D.fasta` -ne "6" ]; then
     echo "Wrong unique count after abundance threshold in spike-in-D.fasta"; false
 fi
