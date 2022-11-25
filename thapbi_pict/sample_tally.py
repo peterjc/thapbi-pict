@@ -284,6 +284,16 @@ def main(
                 sys.stderr.write(
                     f"WARNING: Missing some {stat} values in FASTA headers\n"
                 )
+        if stat == "Threshold pool":
+            # Try to remove any common folder prefix like raw_data/
+            # or C:/Users/... or /tmp/...
+            common = os.path.commonpath(set(stat_values))
+            if len(set(stat_values)) > 1 and common:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
+                    )
+                stat_values = [_[len(common) + 1 :] for _ in stat_values]
         # Using "-" as missing value to match default in summary reports
         out_handle.write(
             "\t".join(
