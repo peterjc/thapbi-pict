@@ -24,11 +24,11 @@ jobs:
             conda create -q -n testing python=3.7 mamba
             source activate testing
             python --version
-            python -m pip install -U pip setuptools wheel build
             # For installing the Python requirements either conda or pip should work,
             # but conda preferable if there are packages with C code but no wheel
             # python -m pip install -r requirements.txt
             mamba install curl --file requirements.txt --file requirements-ext.txt
+            python -m pip install -U pip setuptools wheel build
       - run:
           name: Installation
           command: |
