@@ -12,19 +12,28 @@ import os
 import sys
 from collections import Counter
 from collections import defaultdict
+from math import ceil
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .prepare import load_fasta_header
+from .prepare import load_marker_defs
 from .utils import abundance_from_read_name
 from .utils import file_to_sample_name
+from .utils import is_spike_in
 from .utils import md5seq
 
 
 def main(
     inputs,
+    synthetic_controls,
+    negative_controls,
     output,
+    session,
+    spike_genus,
     fasta=None,
+    min_abundance=100,
+    min_abundance_fraction=0.001,
     min_length=0,
     max_length=sys.maxsize,
     gzipped=False,  # output
@@ -34,29 +43,63 @@ def main(
 
     Arguments min_length and max_length are applied while loading the input
     per-sample FASTA files.
+
+    Arguments min_abundance and min_abundance_fraction are applied per-sample,
+    increased by pool if negative or synthetic controls are given respectively.
+    Comma separated string argument spike_genus is treated case insensitively.
     """
     if isinstance(inputs, str):
         inputs = [inputs]
     assert isinstance(inputs, list)
     assert inputs
 
+    if synthetic_controls:
+        # Possible in a pipeline setting may need to pass a null value,
+        # e.g. -n "" or -n "-"
+        synthetic_controls = [_ for _ in synthetic_controls if _ and _ != "-"]
+    else:
+        synthetic_controls = []
+    if negative_controls:
+        # Possible in a pipeline setting may need to pass a null value,
+        # e.g. -n "" or -n "-"
+        negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
+    else:
+        negative_controls = []
+    for filename in synthetic_controls + negative_controls:
+        if filename not in inputs:
+            inputs.append(filename)
+    synthetic_controls = [file_to_sample_name(_) for _ in synthetic_controls]
+    negative_controls = [file_to_sample_name(_) for _ in negative_controls]
+    controls = set(negative_controls + synthetic_controls)
+    if debug and not controls:
+        sys.stderr.write("DEBUG: No control samples\n")
+
     if os.path.isdir(output):
         sys.exit("ERROR: Output directory given, want a filename.")
 
+    marker_definitions = load_marker_defs(session, spike_genus)
+
     totals = Counter()
     counts = defaultdict(int)
+    sample_counts = defaultdict(int)
+    sample_marker_cutadapt = {}  # before any thresholds
     samples = set()
+    sample_pool = {}
     sample_headers = {}
     for filename in inputs:
         # Assuming FASTA for now
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
+        # Assuming just one marker for now:
         sample = file_to_sample_name(filename)
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
         marker = sample_headers[sample]["marker"]
+        assert marker in marker_definitions, f"ERROR: Marker {marker} not in DB"
         assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
+        sample_marker_cutadapt[sample, marker] = int(sample_headers[sample]["cutadapt"])
+        sample_pool[sample] = sample_headers[sample].get("threshold_pool", "default")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 seq = seq.upper()
@@ -64,6 +107,7 @@ def main(
                     a = abundance_from_read_name(_.split(None, 1)[0])
                     totals[marker, seq] += a
                     counts[marker, seq, sample] += a
+                    sample_counts[marker, sample] += a
 
     if totals:
         sys.stderr.write(
@@ -72,6 +116,116 @@ def main(
         )
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
+
+    pool_absolute_threshold = {}
+    pool_fraction_threshold = {}
+    max_spike_abundance = defaultdict(int)  # exporting in metadata
+    max_non_spike_abundance = defaultdict(int)  # exporting in metadata
+    for (marker, seq) in totals:
+        spikes = marker_definitions[marker]["spike_kmers"]
+        if is_spike_in(seq, spikes):
+            for sample in samples:
+                max_spike_abundance[sample] = max(
+                    max_spike_abundance[sample], counts[marker, seq, sample]
+                )
+        else:
+            for sample in samples:
+                max_non_spike_abundance[sample] = max(
+                    max_non_spike_abundance[sample], counts[marker, seq, sample]
+                )
+    if controls:
+        if debug:
+            sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
+        for sample in max_non_spike_abundance:
+            pool = sample_pool[sample]
+            a = max_non_spike_abundance[sample]
+            if sample in negative_controls and min_abundance < a:
+                pool_absolute_threshold[pool] = max(
+                    a, pool_absolute_threshold.get(pool, min_abundance)
+                )
+                if debug:
+                    sys.stderr.write(
+                        f"Negative control {sample} says increase {pool} "
+                        f"absolute abundance threshold from {min_abundance} to {a}\n"
+                    )
+            elif debug and sample in negative_controls:
+                sys.stderr.write(
+                    f"Negative control {sample} suggests drop {pool} absolute "
+                    f"abundance threshold from {min_abundance} to {a} (lower)\n"
+                )
+            if (
+                sample in synthetic_controls
+                and min_abundance_fraction * sample_marker_cutadapt[sample, marker] < a
+            ):
+                f = a / sample_marker_cutadapt[sample, marker]
+                pool_fraction_threshold[pool] = max(
+                    f, pool_fraction_threshold.get(pool, min_abundance_fraction)
+                )
+                if debug:
+                    sys.stderr.write(
+                        f"Synthetic control {sample} says increase {pool} "
+                        "fractional abundance threshold from "
+                        f"{min_abundance_fraction*100:.4f} to {f*100:.4f}%\n"
+                    )
+            elif debug and sample in synthetic_controls:
+                f = a / sample_marker_cutadapt[sample, marker]
+                sys.stderr.write(
+                    f"Synthetic control {sample} suggests drop {pool} fractional "
+                    f"abundance threshold from {min_abundance_fraction*100:.4f} "
+                    f"to {f*100:.4f}% (lower)\n"
+                )
+
+    # Check for any dynamic abundance threshold increases from controls:
+    sample_threshold = {}
+    for sample in samples:
+        if sample in controls:
+            # Not dynamic (respect FASTA header which could be more)
+            # Note complicated logic inherited from prepare-reads
+            threshold = max(
+                int(sample_headers[sample].get("threshold", 0)),
+                # use half for a synthetic (fractional) control:
+                ceil(min_abundance * 0.5)
+                if sample in synthetic_controls
+                else min_abundance,
+                # use half for a negative (absolute) control:
+                ceil(
+                    sample_counts[marker, sample]
+                    * min_abundance_fraction
+                    * (0.5 if sample in negative_controls else 1.0)
+                ),
+            )
+            sys.stderr.write(
+                f"DEBUG: Control {sample} in pool {pool} gets threshold {threshold}\n"
+            )
+        else:
+            # Apply dynamic pool threshold from controls
+            pool = sample_pool[sample]
+            threshold = max(
+                int(sample_headers[sample].get("threshold", 0)),
+                pool_absolute_threshold.get(pool, min_abundance),
+                ceil(
+                    sample_counts[marker, sample]
+                    * pool_fraction_threshold.get(pool, min_abundance_fraction)
+                ),
+            )
+            sys.stderr.write(
+                f"DEBUG: {sample} in pool {pool} gets dynamic threshold {threshold}\n"
+            )
+        sample_threshold[sample] = threshold
+
+    new_counts = defaultdict(int)
+    new_totals = defaultdict(int)
+    for (marker, seq, sample), a in counts.items():
+        if a >= sample_threshold[sample]:
+            new_counts[marker, seq, sample] = a
+            new_totals[marker, seq] += a
+    sys.stderr.write(
+        f"Abundance thresholds reduced unique ASVs from {len(totals)} to "
+        f"{len(new_totals)}.\n"
+    )
+    counts = new_counts
+    totals = new_totals
+    del new_totals, new_counts
 
     samples = sorted(samples)
     values = sorted(
@@ -105,16 +259,31 @@ def main(
         out_handle = open(output, "w")
     missing = [None] * len(samples)
     for stat in stats_fields:
-        stat_values = [
-            sample_headers[sample].get(stat.lower().replace(" ", "_"), None)
-            for sample in samples
-        ]
-        if stat_values == missing:
-            # Expected for "Max non-spike" and "Max spike-in" if no synthetic controls:
-            # sys.stderr.write(f"WARNING: Missing all {stat} values in FASTA headers\n")
-            continue
-        if None in stat_values:
-            sys.stderr.write(f"WARNING: Missing some {stat} values in FASTA headers\n")
+        if stat == "Max non-spike":
+            if not spike_genus:
+                continue
+            stat_values = [max_non_spike_abundance[sample] for sample in samples]
+        elif stat == "Max spike-in":
+            if not spike_genus:
+                continue
+            stat_values = [max_spike_abundance[sample] for sample in samples]
+        elif stat == "Threshold":
+            stat_values = [sample_threshold[sample] for sample in samples]
+        else:
+            # Get from FASTA headers
+            stat_values = [
+                sample_headers[sample].get(stat.lower().replace(" ", "_"), None)
+                for sample in samples
+            ]
+            if stat_values == missing:
+                sys.stderr.write(
+                    f"WARNING: Missing all {stat} values in FASTA headers\n"
+                )
+                continue
+            if None in stat_values:
+                sys.stderr.write(
+                    f"WARNING: Missing some {stat} values in FASTA headers\n"
+                )
         # Using "-" as missing value to match default in summary reports
         out_handle.write(
             "\t".join(

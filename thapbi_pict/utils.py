@@ -350,11 +350,11 @@ def abundance_filter_fasta(input_fasta, output_fasta, min_abundance):
 def file_to_sample_name(filename):
     """Given filename (with or without a directory name), return sample name only.
 
-    i.e. XXX.fasta --> and XXX.method.tsv --> XXX
+    i.e. XXX.fasta, XXX.fastq.gz, XXX.method.tsv --> XXX
     """
     if filename.endswith(".fasta"):
         return os.path.basename(filename).rsplit(".", 1)[0]
-    elif filename.endswith(".tsv"):
+    elif filename.endswith((".fasta.gz", ".tsv", ".fastq.gz")):
         return os.path.basename(filename).rsplit(".", 2)[0]
     else:
         raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
