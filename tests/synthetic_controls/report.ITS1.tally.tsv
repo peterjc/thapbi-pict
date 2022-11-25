@@ -1,7 +1,7 @@
 #Raw FASTQ	5159	5159	5159	5159	66252	135042	71661	39651	
 #Flash	4962	4962	4962	4962	61499	126373	68095	37882	
 #Cutadapt	4955	4955	4955	4955	38473	84805	44714	25276	
-#Threshold pool	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-A	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-B	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-C	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-D	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-A	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-B	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-C	/tmp/thapbi_pict/synthetic_controls/mock_plates/plate-D	
+#Threshold pool	plate-A	plate-B	plate-C	plate-D	plate-A	plate-B	plate-C	plate-D	
 #Threshold	75	75	75	107	75	75	75	75	
 #Max non-spike	1170	1170	1170	1170	0	0	0	107	
 #Max spike-in	0	0	0	0	27779	83756	28809	13630	
