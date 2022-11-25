@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.13.3 2022-11-25 Using new ``sample-tally`` command in pipeline, not ``fasta-nr``.
 v0.13.2 2022-11-11 Sped up ``substr`` classifier, especially with larger databases.
 v0.13.1 2022-09-21 Minor default DB update. Cap ``--cpu`` by available CPUs. Faster DB import.
 v0.13.0 2022-09-14 Sped up distance based classifiers by better use of RapidFuzz library.
