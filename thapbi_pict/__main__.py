@@ -263,10 +263,21 @@ def sample_tally(args=None):
     """Subcommand to tally per-sample FASTA files using MD5 naming."""
     from .sample_tally import main
 
+    # Connect to the DB,
+    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+    Session = connect_to_db(db)
+    session = Session()
+
     return main(
         inputs=args.input,
+        synthetic_controls=args.synctrls,
+        negative_controls=args.negctrls,
         output=args.output,
+        session=session,
+        spike_genus=args.synthetic,
         fasta=args.fasta,
+        min_abundance=args.abundance,
+        min_abundance_fraction=args.abundance_fraction,
         min_length=args.minlen,
         max_length=args.maxlen,
         debug=args.verbose,
@@ -466,8 +477,14 @@ def pipeline(args=None):
         tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
             inputs=fasta_files,
+            synthetic_controls=[_ for _ in fasta_files if _ in sythetic_prepared],
+            negative_controls=[_ for _ in fasta_files if _ in negative_prepared],
             output=tally_seqs_file,
+            session=session,
+            spike_genus=args.synthetic,
             fasta=all_fasta,
+            min_abundance=args.abundance,
+            min_abundance_fraction=args.abundance_fraction,
             # min_length=args.minlen,
             # max_length=args.maxlen,
             debug=args.verbose,
@@ -811,6 +828,15 @@ ARG_SYN_CONTROLS = dict(  # noqa: C408
     "will increase the fractional abundance threshold of other "
     "FASTQ files in the same folder. Can use '-' for none.",
 )
+ARG_SYN_CONTROLS_FASTA = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    metavar="FASTA",
+    help="One or more synthetic control FASTA filenames (may also appear in "
+    "inputs). High non-synthetic marker levels will increase the fractional "
+    "abundance threshold of other FASTA files from the same threshold pool "
+    "(set in FASTA header metadata). Can use '-' for none.",
+)
 
 # "-n", "--negctrls",
 ARG_NEG_CONTROLS = dict(  # noqa: C408
@@ -823,6 +849,15 @@ ARG_NEG_CONTROLS = dict(  # noqa: C408
     "(may also appear in the inputs). High non-synthetic levels "
     "will increase the absolute minimum abundance threshold of other "
     "FASTQ files in the same folder. Can use '-' for none.",
+)
+ARG_NEG_CONTROLS_FASTA = dict(  # noqa: C408
+    type=str,
+    nargs="+",
+    metavar="FASTA",
+    help="One or more synthetic control FASTA filenames (may also appear in "
+    "inputs). High non-synthetic marker levels will increase the absolute "
+    "abundance threshold of other FASTA files from the same threshold pool "
+    "(set in FASTA header metadata). Can use '-' for none.",
 )
 
 # "-a", "--abundance",
@@ -1377,7 +1412,8 @@ def main(args=None):
         "Output is a plain text tab-separated table with one line per unique "
         "sequence (ASV), named in the first column, then one column per "
         "sample, and the uppercase sequence as the final column. The ASV vs "
-        "sample values are the counts from the input FASTA files.",
+        "sample values are the counts from the input FASTA files (pooling any "
+        "read-corrected sequences if using denoising).",
     )
     # Currently get marker name FASTA headers... that could be optional if given here?
     # subcommand_parser.add_argument(
@@ -1397,6 +1433,8 @@ def main(args=None):
         help="One or more per-sample FASTA files.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument("-y", "--synctrls", **ARG_SYN_CONTROLS_FASTA)
+    subcommand_parser.add_argument("-n", "--negctrls", **ARG_NEG_CONTROLS_FASTA)
     subcommand_parser.add_argument(
         "-o",
         "--output",
@@ -1413,6 +1451,10 @@ def main(args=None):
         metavar="FILENAME",
         help="Optional output FASTA filename, '-' for stdout. ",
     )
+    subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
+    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
+    subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
