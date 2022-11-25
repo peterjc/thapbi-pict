@@ -669,6 +669,8 @@ def marker_cut(
     pool_worst_fraction_control = {}
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
+    sythetic_prepared = []  # return value
+    negative_prepared = []  # return value
 
     # Assumes controls before samples in input file list!
     for fraction_control, absolute_control, stem, raw_R1, raw_R2 in file_pairs:
@@ -790,6 +792,10 @@ def marker_cut(
                 cpu=cpu,
             )
             fasta_files_prepared.append(fasta_name)
+            if fraction_control:
+                sythetic_prepared.append(fasta_name)
+            if absolute_control:
+                negative_prepared.append(fasta_name)
             if uniq_count:
                 assert accepted_total <= marker_total, (accepted_total, marker_total)
                 assert (
@@ -898,7 +904,7 @@ def marker_cut(
     sys.stdout.flush()
     sys.stderr.flush()
 
-    return fasta_files_prepared
+    return fasta_files_prepared, sythetic_prepared, negative_prepared
 
 
 def main(
@@ -1110,7 +1116,7 @@ def main(
         }
 
     # Run flash & cutadapt (once doing demultiplexing), apply abundance thresholds
-    fasta_files_prepared = marker_cut(
+    fasta_files_prepared, sythetic_prepared, negative_prepared = marker_cut(
         marker_definitions,
         file_pairs,
         out_dir,
@@ -1134,4 +1140,4 @@ def main(
         sys.stderr.write(f"Prepared {len(fasta_files_prepared)} FASTA files\n")
     sys.stdout.flush()
     sys.stderr.flush()
-    return fasta_files_prepared
+    return fasta_files_prepared, sythetic_prepared, negative_prepared

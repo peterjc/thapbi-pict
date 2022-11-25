@@ -234,11 +234,11 @@ def prepare_reads(args=None):
     )
 
     session.close()
-    if isinstance(return_code, list):
-        # Should be a list of FASTA filenames
-        return 0
-    else:
+    if isinstance(return_code, int):
         return return_code
+    else:
+        # Should be lists of FASTA filenames
+        return 0
 
 
 def fasta_nr(args=None):
@@ -413,7 +413,7 @@ def pipeline(args=None):
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
     # This will do all the markers itself
-    all_fasta_files = prepare(
+    return_code = prepare(
         fastq=args.input,
         synthetic_controls=args.synctrls,
         negative_controls=args.negctrls,
@@ -429,13 +429,12 @@ def pipeline(args=None):
         debug=args.verbose,
         cpu=check_cpu(args.cpu),
     )
-    if isinstance(all_fasta_files, int):
-        return_code = all_fasta_files
-        if return_code:
-            session.close()
-            sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
-            sys.exit(return_code)
-
+    if isinstance(return_code, int):
+        session.close()
+        sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
+        sys.exit(return_code)
+    # If not an integer, should be a 3-tuple of filename lists:
+    all_fasta_files, sythetic_prepared, negative_prepared = return_code
     # TODO - Support known setting...
     # TODO - Can we specify different expected results from diff markers?
     known_files = find_requested_files(
