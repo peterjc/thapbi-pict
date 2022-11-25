@@ -496,6 +496,7 @@ def parse_sample_tsv(tabular_file, debug=False):
             else:
                 raise ValueError(
                     "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
+                    f" in {tabular_file}"
                 )
     # TODO: Turn counts into an array?
     sample_headers = {sample: {} for sample in samples}

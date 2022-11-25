@@ -33,7 +33,8 @@ for SAMPLE in ex1 ex2 ex3 ex4 unclassified fp; do
 done
 
 echo "Checking all classifier assessment outputs"
-thapbi_pict assess -i tests/assess/*.tsv -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -m identity -d $DB
+thapbi_pict assess -i tests/assess/*.known.tsv tests/assess/*.identity.tsv \
+    -o $TMP/assess.tsv -t $TMP/tally.tsv -c $TMP/confusion.tsv -m identity -d $DB
 diff $TMP/tally.tsv tests/assess/samples.tally.tsv
 diff $TMP/assess.tsv tests/assess/samples.assess.tsv
 diff $TMP/confusion.tsv tests/assess/samples.confusion.tsv
