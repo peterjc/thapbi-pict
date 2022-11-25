@@ -809,7 +809,7 @@ ARG_SYN_CONTROLS = dict(  # noqa: C408
     # (as would be applied only to that folder)
     help="One or more synthetic control paired FASTQ filenames "
     "(may also appear in the inputs). High non-synthetic marker levels "
-    "will increase the percentage abundance threshold of other "
+    "will increase the fractional abundance threshold of other "
     "FASTQ files in the same folder. Can use '-' for none.",
 )
 
