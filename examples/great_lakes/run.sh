@@ -58,7 +58,7 @@ for NAME in MOL16S SPH16S; do
     # Run the assess step per marker... can't do this in the pipeline
     # as need to pass in different expected files per marker.
     thapbi_pict assess -d pooled.sqlite --marker $NAME \
-        -i expected/$NAME/ intermediate/$NAME \
+        -i expected/$NAME/ summary/$NAME.tally.tsv \
            summary/$NAME.all_reads.onebp.tsv \
         -o summary/$NAME.assess.onebp.tsv
 done

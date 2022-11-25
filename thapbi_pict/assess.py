@@ -21,6 +21,7 @@ from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
+from .utils import parse_sample_tsv
 from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
@@ -374,83 +375,88 @@ def main(
 
     The inputs argument is a list of filenames and/or folders.
 
-    * To know what species are expected for example sample, we need one known
-      TSV per sample (which can use wildcards), or a multi-sample known TSV
-      which must use full per-sequence entries.
-    * To know which sequences are in which samples, we need one FASTA file per
-      sample per marker.
-    * To know what species were predicted for each sequence, we need TSV files
-      for each marker (this can be a combined file for all reads per marker
-      as produced by the pipeline command, or per sample).
+    Can provide:
+    * at least one per-sample <sample>.<method>.tsv files
+    * at least one per-sample <sample>.<known>.tsv file (matching stems)
+
+    Or:
+    * exactly one XXX.tally.tsv of sample counts
+    * one (matched) XXX.<method>.tsv with their classifications
+    * at least one per-sample <sample>.<known>.tsv file
     """
     assert isinstance(inputs, list), inputs
+    # TODO - Replace the *.known.tsv files with a single TSV?
+    # TODO - Merge the sample-tally and classification into one file?
 
-    # TODO - Rationalise this, too many ways to give the inputs!
+    filenames = find_requested_files(inputs, ".tally.tsv", ignore_prefixes, debug=debug)
+    if not filenames:
+        tally_file = None
+        samples = {}
+    else:
+        # Expect one tally-file per marker
+        samples = set()
+        seq_sample_counts = {}
+        for tally_file in filenames:
+            _, sample_headers, counts = parse_sample_tsv(tally_file, debug=debug)
+            seq_sample_counts.update(counts.items())
+            samples.update(set(sample_headers))
 
-    fasta_files = {}  # map sample name to list of FASTA filenames
-    for fasta_file in find_requested_files(
-        inputs, ".fasta", ignore_prefixes, debug=debug
-    ):
-        sample = file_to_sample_name(fasta_file)
-        if sample.endswith(".all_reads"):
-            sys.exit(f"ERROR: Need per sample FASTA files, not {fasta_file}")
-        try:
-            fasta_files[sample].append(fasta_file)
-        except KeyError:
-            fasta_files[sample] = [fasta_file]
-
+    known_files = find_requested_files(
+        inputs, f".{known}.tsv", ignore_prefixes, debug=debug
+    )
     known_tsv = {}
-    pooled_known = None
-    for tsv_file in find_requested_files(
-        inputs, f".{known}.tsv", ignore_prefixes, debug
-    ):
+    for tsv_file in known_files:
         sample = file_to_sample_name(tsv_file)
         if sample.endswith(".all_reads"):
-            if None in known:
-                sys.exit(f"ERROR: More than one pooled TSV for {method}")
-            load_tsv(pooled_known, tsv_file, min_abundance)
-        elif sample in fasta_files or not fasta_files:
+            sys.exit(f"ERROR: {tsv_file} unexpected")
+        elif tally_file and sample not in samples:
+            sys.stderr.write(f"WARNING: Ignoring {tsv_file} as not in {tally_file}\n")
+        # elif tally_file and sample not in method_tsv:
+        #    sys.exit(
+        #        f"ERROR: Sample {sample} from {tsv_file} not in *.{method}.tsv given"
+        #    )
+        else:
             try:
                 known_tsv[sample].append(tsv_file)
             except KeyError:
                 known_tsv[sample] = [tsv_file]
-        else:
-            sys.stderr.write(f"WARNING: Ignoring {tsv_file}\n")
-    if len(fasta_files) > 1 and len(known_tsv) == 1 and None not in known_tsv:
-        sys.exit("ERROR: Missing some {known} TSV files")
+    if not samples:
+        samples = set(known_tsv)
 
-    if pooled_known and known_tsv:
-        sys.exit(f"ERROR: Use either pooled {known} TSV, or per sample TSV")
-
-    if known_tsv and fasta_files:
-        samples = sorted(set(fasta_files).intersection(known_tsv))
-    elif known_tsv:
-        samples = sorted(known_tsv)
+    method_tsv = {}
+    pooled_method = {}  # keyed on marker, md5 -> species lists
+    filenames = find_requested_files(
+        inputs, f".{method}.tsv", ignore_prefixes, debug=debug
+    )
+    if not filenames:
+        sys.exit(f"ERROR: Need file(s) name *.{method}.tsv")
+    elif tally_file:
+        for method_tsv in filenames:
+            # Updates the dict in place:
+            load_tsv(pooled_method, method_tsv, min_abundance)
     else:
-        samples = sorted(fasta_files)
+        for tsv_file in filenames:
+            sample = file_to_sample_name(tsv_file)
+            assert not sample.endswith(".all_reads"), f"{tsv_file} from inputs {inputs}"
+            if sample in samples:
+                try:
+                    method_tsv[sample].append(tsv_file)
+                except KeyError:
+                    method_tsv[sample] = [tsv_file]
+            else:
+                sys.stderr.write(f"WARNING: Ignoring {tsv_file}\n")
+
+    if not samples:
+        sys.exit("ERROR: Could not determine a sample list")
+    if not known_tsv:
+        sys.exit("ERROR: No known TSV files found")
+    if not method_tsv and not tally_file:
+        sys.exit("ERROR: No classifier TSV files found")
+    samples = sorted(known_tsv)
     if not samples:
         sys.exit("ERROR: Could not determine a sample list")
     if debug:
         sys.stderr.write(f"Assessing {len(samples)} samples\n")
-
-    method_tsv = {}
-    pooled_method = {}
-    for tsv_file in find_requested_files(
-        inputs, f".{method}.tsv", ignore_prefixes, debug
-    ):
-        sample = file_to_sample_name(tsv_file)
-        if sample.endswith(".all_reads"):
-            load_tsv(pooled_method, tsv_file, min_abundance)
-        elif sample in samples:
-            try:
-                method_tsv[sample].append(tsv_file)
-            except KeyError:
-                method_tsv[sample] = [tsv_file]
-        else:
-            sys.stderr.write(f"WARNING: Ignoring {tsv_file}\n")
-
-    if pooled_method and method_tsv:
-        sys.exit(f"ERROR: Use either pooled {known} TSV, or per sample TSV")
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
@@ -477,14 +483,23 @@ def main(
 
     for sample in samples:
         file_count += 1
-        if sample in known_tsv:
-            expt = sp_in_tsv(known_tsv[sample], min_abundance)
-        elif pooled_known:
-            expt = sp_for_sample(fasta_files[sample], min_abundance, pooled_known)
-        else:
+
+        if sample not in known_tsv:
             sys.exit(f"ERROR: Missing {known} results for {sample}")
-        if sample in fasta_files:
-            pred = sp_for_sample(fasta_files[sample], min_abundance, pooled_method)
+        expt = sp_in_tsv(known_tsv[sample], min_abundance)
+
+        if tally_file:
+            if sample not in sample_headers:
+                sys.exit(f"ERROR: Missing sample-tally for {sample}")
+            pred = set()
+            for (seq_idn, alt_sample), count in seq_sample_counts.items():
+                if sample == alt_sample and count >= min_abundance and count > 0:
+                    marker, md5_total = seq_idn.split("/")
+                    md5, total = md5_total.split("_")
+                    pred.update(pooled_method[marker, md5].split(";"))
+            if "" in pred:
+                pred.remove("")
+            pred = ";".join(sorted(pred))
         else:
             pred = sp_in_tsv(method_tsv[sample], min_abundance)
         global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1

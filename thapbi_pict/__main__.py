@@ -537,7 +537,7 @@ def pipeline(args=None):
         if known_files:
             sys.stderr.write(f"Assessing {marker} classification...\n")
             return_code = assess(
-                inputs=known_files + fasta_files + classified_files,
+                inputs=known_files + [tally_seqs_file] + classified_files,
                 known="known",  # =args.known,
                 db_url=db,
                 marker=marker,
@@ -587,7 +587,7 @@ def pipeline(args=None):
         if known_files:
             sys.stderr.write("Assessing pooled classification...\n")
             return_code = assess(
-                inputs=known_files + all_fasta_files + all_classified_files,
+                inputs=known_files + all_tally_files + all_classified_files,
                 known="known",  # =args.known,
                 db_url=db,
                 marker=None,  # all of them!
@@ -1500,17 +1500,14 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "assess",
         description="Assess accuracy of marker sequence classification.",
-        epilog="Takes as input samples files XXX.fasta and predictions per "
-        "sample named XXX.method.tsv (or a single XXX.all_reads.method.tsv) "
-        "and matching expected classifications per sample in XXX.known.tsv "
-        "(which can be in different directories, or again a single TSV) to "
-        "produce a multi-species confusion matrix (output on request) and "
-        "classifier performance metrics (to stdout by default). "
-        "You can deliberately compare two prediction methods to "
-        "each other using this, but a known set of positive controls "
-        "is the expected benchmark. The assessment is at sample level "
-        "(taking the union of species predicted by all sequences from "
-        "each sample).",
+        epilog="Takes as input matching sample-tally and classification files "
+        "(<report>.tally.tsv and <report>.<method>.tsv), or multiple "
+        "per-sample <sample>.<method>.tsv files, to be assessed against "
+        "per-sample expected classification files (<sample>.known.tsv). "
+        "Produces a multi-species confusion matrix (output on request) and "
+        "classifier performance metrics (to stdout by default). Assessment is "
+        "at sample level (taking the union of species predicted by all "
+        "sequences from each sample).",
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1518,10 +1515,11 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="One or more sample FASTA and TSV prediction file or folder "
-        "names. Expects to find matching files *.method.tsv to be assessed "
-        "against *.known.tsv, where these filename suffixes can be set via "
-        "-m / --method and --known arguments. ",
+        help="TSV filenames or folders including either a pair named "
+        "*.tally.tsv and *.<method>.tsv, or one or more pre-sample "
+        "<sample>.<method>.tsv files; and one or more per-sample known "
+        "<sample>.<known>.tsv files. These filename suffixes "
+        "can be set via the -m / --method and --known arguments. ",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(

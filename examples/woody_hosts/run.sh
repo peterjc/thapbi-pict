@@ -38,11 +38,10 @@ thapbi_pict pipeline -a 2 -f 0 -i expected \
 # Crude parameter sweep of the abundance threshold (-a) with -f 0 assumed.
 echo -e "#Threshold\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\tHamming-loss\tAd-hoc-loss" > summary/mocks_a2.assess-vs-abundance.tsv
 for A in 2 10 20 30 40 50 60 70 80 90 100; do
-    # Name intermediate files explicitly in case intermediate_a2/ITS1/ has others
-    # Name known files explicitly to avoid warnings about unused entries
-    thapbi_pict assess -i summary/mocks_a2.ITS1.all_reads.onebp.tsv \
-            intermediate_a2/ITS1/DNA15MIX.fasta \
-            intermediate_a2/ITS1/DNA10MIX_undiluted.fasta \
+    # Name files explicitly to avoid warnings about unused entries
+    thapbi_pict assess -i \
+            summary/mocks_a2.ITS1.tally.tsv \
+            summary/mocks_a2.ITS1.all_reads.onebp.tsv \
             expected/DNA15MIX.known.tsv \
             expected/DNA10MIX_undiluted.known.tsv \
             -a $A | grep OVERALL | sed "s/OVERALL/A=$A/g" \

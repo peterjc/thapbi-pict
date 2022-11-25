@@ -103,7 +103,7 @@ if [ `grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then
 echo "=========================="
 echo "Running woody hosts assess"
 echo "=========================="
-time thapbi_pict assess -i $TMP/positive_controls/ $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/DNA_MIXES.assess.tsv
+time thapbi_pict assess -i $TMP/positive_controls/ $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/DNA_MIXES.assess.tsv
 echo diff $TMP/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 diff $TMP/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 
