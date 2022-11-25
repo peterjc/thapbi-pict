@@ -30,7 +30,7 @@ echo "Four plate example"
 echo "------------------"
 
 rm -rf $TMP/mock_plates/
-mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared
+mkdir -p $TMP/mock_plates/merged $TMP/mock_plates/prepared $TMP/mock_plates/intermediate_a2
 
 for PLATE in A B C D; do
     # Making mock plates, each with a sample pair and a control pair
@@ -49,13 +49,14 @@ for PLATE in A B C D; do
         | gzip > $TMP/mock_plates/merged/spike-in-${PLATE}.fasta.gz
 done
 
+echo "Checking spike-in controls used via prepare-reads:"
+
 thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
             -o $TMP/mock_plates/prepared/
 
-echo "Checking spike-in controls..."
 
 # A:
 if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` != "#threshold:75" ]; then
@@ -155,6 +156,21 @@ for f in tests/synthetic_controls/report.*.tsv; do
     echo diff $TMP/mock_plates/${f##*/} $f
     diff $TMP/mock_plates/${f##*/} $f
 done
+
+echo "Checking spike-in controls used via sample-tally:"
+
+thapbi_pict prepare-reads -d - -a 3 -f 0 \
+            -i $TMP/mock_plates/plate-* \
+            -n $TMP/mock_plates/plate-*/spike-in-* \
+            --merged-cache $TMP/mock_plates/merged/ \
+            -o $TMP/mock_plates/intermediate_a2/
+thapbi_pict sample-tally -d - -a 75 \
+            -i $TMP/mock_plates/intermediate_a2/ITS1/*.fasta \
+            -n $TMP/mock_plates/intermediate_a2/ITS1/spike-in-*.fasta \
+            -o $TMP/mock_plates/tally.tsv
+diff $TMP/mock_plates/tally.tsv tests/synthetic_controls/report.ITS1.tally.tsv
+# Effectively just did this:
+diff $TMP/mock_plates/tally.tsv $TMP/mock_plates/report.ITS1.tally.tsv
 
 echo "--------------------"
 echo "Single plate example"
