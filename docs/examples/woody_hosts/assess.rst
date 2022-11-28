@@ -126,17 +126,18 @@ the database with entries for both *Phytophthora castaneae* (which was in the
 DNA control mixture) and also *Phytophthora agathidicida* (e.g. accession
 KP295308).
 
-You can confirm this by looking at the intermediate TSV files, e.g. using
-grep to show all lines with this species name:
+You can confirm this by looking at the sample tally TSV files, e.g. using
+grep to find the unique sequence matched to this species, and the sample
+counts for that sequence:
 
 .. code:: console
 
     $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
     29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
-    $ grep 29de890989becddc5e0b10ecbbc11b1a intermediate/ITS1/*.fasta
-    intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>29de890989becddc5e0b10ecbbc11b1a_245
-    intermediate/ITS1/DNA10MIX_diluted25x.fasta:>29de890989becddc5e0b10ecbbc11b1a_655
-    intermediate/ITS1/DNA10MIX_undiluted.fasta:>29de890989becddc5e0b10ecbbc11b1a_624
+    $ grep -E "(Sequence|29de890989becddc5e0b10ecbbc11b1a)" \
+      summary/thapbi-pict.ITS1.tally.tsv | cut -f 2-5
+    DNA10MIX_bycopynumber  DNA10MIX_diluted25x  DNA10MIX_undiluted  DNA15MIX
+    245                    655                  624                 0
     $ thapbi_pict conflicts | grep 29de890989becddc5e0b10ecbbc11b1a
     29de890989becddc5e0b10ecbbc11b1a  species  Phytophthora agathidicida;Phytophthora castaneae
 
@@ -162,16 +163,23 @@ expected species in a particular format.
     $ thapbi_pict assess -h
     ...
 
-The simplest way to run the assess command is to tell it two TSV input
-filenames, named ``<sample_name>.known.tsv`` (the expected results) and
-``<sample_name>.<method>.tsv`` (from running `thapbi_pict classify`` on
-``<sample_name>.fasta``).
-
 The "known" file uses the same column based layout as the intermediate TSV
 files, but while you can provide the expected species for each unique sequence
 in the sample, this can be simplified to a single wildcard ``*`` line
 followed by all the NCBI taxids (optional), and species names using semi-colon
 separators.
+
+The simplest way to run the assess command is to tell it two TSV input
+filenames, named ``<sample_name>.known.tsv`` (the expected results) and
+``<sample_name>.<method>.tsv`` (from running `thapbi_pict classify`` on
+``<sample_name>.fasta``). However, although early versions of the pipeline
+did this, it has for a long time combined the samples for classification -
+partly for speed.
+
+Instead we typically pass the assess command the sample-tally TSV file listing
+how many of each unique sequence were found in each sample, the classifier TSV
+listing the species assigned to each sequence, and one or more per-sample
+``<sample_name>.known.tsv`` expected results files.
 
 The assess command will default to printing its tabular output to screen -
 shown here abridged after piping through the ``cut`` command to pull out just
@@ -179,9 +187,9 @@ the first five columns from the 15 species mix:
 
 .. code:: console
 
-    $ rm -rf DNA15MIX.onebp.tsv
-    $ thapbi_pict classify -i intermediate/ITS1/DNA15MIX.fasta -o .
-    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv | cut -f 1-5
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
+      | cut -f 1-5
     Assessed onebp vs known in 1 files (244 species)
     #Species                     TP  FP  FN  TN
     OVERALL                      8   2   7   227
@@ -208,7 +216,8 @@ More usually, you would output to a named file, and look at that:
 
 .. code:: console
 
-    $ thapbi_pict assess -i expected/DNA15MIX.known.tsv DNA15MIX.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
       -o DNA15MIX.assess.tsv
     Assessed onebp vs known in 1 files (244 species)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
@@ -262,22 +271,19 @@ without using the true negative count (which we expect to always be very large
 as the database will contain many species, while a community might contain
 only ten).
 
-When we ran the assess command earlier on a sample sample, we provided pairs
-of ``<sample_name>.<method>.tsv`` and ``<sample_name>.known.tsv``, but you
-can instead provide the intermediate ``<sample_name>.fasta`` files(s) and the
-pooled classifier output. Doing that for one of the 10 species mixtures:
+Doing that for one of the 10 species mixtures:
 
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
-      expected/DNA10MIX_undiluted.known.tsv intermediate/ITS1/DNA10MIX_undiluted.fasta \
+      summary/thapbi-pict.ITS1.tally.tsv expected/DNA10MIX_undiluted.known.tsv \
       -o DNA10MIX.assess.tsv
     Assessed onebp vs known in 1 files (244 species)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
-As this is still only one sample, new table ``DNA10MIX.assess.tsv`` is very similar
-to what we had before:
+As this is still only one sample, new table ``DNA10MIX.assess.tsv`` is very
+similar to what we had before:
 
 ========================== == == == === ==== ===========
 #Species                   TP FP FN TN  F1   Ad-hoc-loss
@@ -304,14 +310,13 @@ second 10 species mock community.
 Assessing multiple samples
 --------------------------
 
-Next, let's run the assess command on all four positive control samples, just
-by giving the input directory names (it will work out the common filenames,
-just like doing this via the pipeline command - see below):
+Next, let's run the assess command on all four positive control samples, by
+giving the combined intermediate filenames, and *all* the expected files:
 
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
-      expected/ intermediate/ITS1/ -o thabpi-pict.ITS1.assess.tsv
+      summary/thapbi-pict.ITS1.tally.tsv expected/ -o thabpi-pict.ITS1.assess.tsv
     Assessed onebp vs known in 4 files (244 species)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
@@ -411,9 +416,8 @@ to make direct comparison more straight forward:
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
-      expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
-      intermediate/ITS1/DNA15MIX.fasta intermediate/ITS1/DNA10MIX_undiluted.fasta \
-      | head -n 2 | cut -f 1-5,9,11
+      summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
+      expected/DNA10MIX_undiluted.known.tsv | head -n 2 | cut -f 1-5,9,11
     Assessed onebp vs known in 2 files (244 species)
     #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
     OVERALL   16  4   9   459  0.71  0.448
