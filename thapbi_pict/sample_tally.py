@@ -208,9 +208,10 @@ def main(
                     * pool_fraction_threshold.get(pool, min_abundance_fraction)
                 ),
             )
-            sys.stderr.write(
-                f"DEBUG: {sample} in pool {pool} gets dynamic threshold {threshold}\n"
-            )
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: {sample} in pool {pool} gets dynamic threshold {threshold}\n"
+                )
         sample_threshold[sample] = threshold
 
     new_counts = defaultdict(int)
