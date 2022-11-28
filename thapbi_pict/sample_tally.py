@@ -210,7 +210,7 @@ def main(
             )
             if debug:
                 sys.stderr.write(
-                    f"DEBUG: {sample} in pool {pool} gets dynamic threshold {threshold}\n"
+                    f"DEBUG: {sample} in pool {pool} gets threshold {threshold}\n"
                 )
         sample_threshold[sample] = threshold
 
