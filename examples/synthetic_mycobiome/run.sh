@@ -76,7 +76,7 @@ thapbi_pict pipeline -d references.sqlite \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/ctrl.ITS2.all_reads.1s5g.tsv intermediate_ctrl/ \
+    -i summary/ctrl.ITS2.all_reads.1s5g.tsv summary/ctrl.ITS2.tally.tsv \
     -o summary/ctrl.ITS2.edit-graph.1s5g.xgmml
 
 echo =======================================
@@ -93,7 +93,7 @@ thapbi_pict pipeline -d references.sqlite \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/defaults.ITS2.all_reads.1s5g.tsv intermediate/ \
+    -i summary/defaults.ITS2.all_reads.1s5g.tsv summary/defaults.ITS2.tally.tsv \
     -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
 echo ====

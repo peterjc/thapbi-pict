@@ -96,7 +96,7 @@ if [ `grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; the
 echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
-time thapbi_pict edit-graph -i $TMP/intermediate/ $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
+time thapbi_pict edit-graph -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
 if [ `grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 99 ]; then echo "Wrong node count"; false; fi
 if [ `grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then echo "Wrong edge count"; false; fi
 
