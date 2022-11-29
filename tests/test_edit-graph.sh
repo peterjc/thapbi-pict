@@ -19,7 +19,7 @@ thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --
 set -o pipefail
 
 # No database, small FASTA file, have to use explicit total abundance threshold
-diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.xgmml <(thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - )
+diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.xgmml <(thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - )
 # Loaded 7 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 200 left 7 sequences from FASTA files.
 # Computed 42 Levenshtein edit distances between 7 sequences.
@@ -28,12 +28,12 @@ diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.xgmml <(thapbi_pict ed
 # 1
 
 # Same example as above with default xgmml output, but here different output formats:
-diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.tsv <(thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f matrix)
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f graphml | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f gexf | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
-if [ `thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f gml | grep -c "  edge \["` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.tsv <(thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - -f matrix)
+if [ `thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - -f graphml | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - -f gexf | grep -c "<edge "` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
+if [ `thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - -f gml | grep -c "  edge \["` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 
 # Same example, but PDF output (more dependencies):
-thapbi_pict edit-graph -d '' -i tests/prepare-reads/DNAMIX_S95_L001.fasta -t 200 -m - -f pdf | grep "%PDF-1.4"
+thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -m - -f pdf | grep "%PDF-1.4"
 
 echo "$0 - test_edit-graph.sh passed"
