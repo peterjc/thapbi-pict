@@ -71,7 +71,7 @@ for NAME in MOL16S SPH16S; do
         -o summary/$NAME.edit-graph.a100.xgmml
 done
 
-# Edit graph of just the mock community samples:
+# Edit graph of just the 7 MOL16S mock community samples:
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i intermediate/MOL16S/SRR5534972.* \
        intermediate/MOL16S/SRR5534973.* \
@@ -82,12 +82,12 @@ thapbi_pict edit-graph -d pooled.sqlite -a 100 \
        intermediate/MOL16S/SRR5534979.* \
     -o summary/MOL16S.edit-graph.a100.mock.xgmml
 
-# Edit graph of just the mock community samples:
+# Edit graph of just the 3 SPH16S mock community samples:
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i intermediate/SPH16S/SRR5534978.* \
        intermediate/SPH16S/SRR5534980.* \
        intermediate/SPH16S/SRR5534981.* \
-    -o summary/MOL16S.edit-graph.a100.mock.xgmml
+    -o summary/SPH16S.edit-graph.a100.mock.xgmml
 
 echo ====
 echo Done
