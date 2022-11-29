@@ -459,7 +459,10 @@ def merge_paired_reads(
             sys.stderr.write(f"DEBUG: Reusing {merged_fasta_gz}\n")
         # Just unzip and read header:
         header = load_fasta_header(merged_fasta_gz, gzipped=True)
-        return header["raw_fastq"], header["flash"]
+        try:
+            return header["raw_fastq"], header["flash"]
+        except KeyError:
+            sys.exit(f"ERROR: Missing raw_fastq header in {merged_fasta_gz}")
     # flash
     merged_fastq = os.path.join(tmp, "flash.extendedFrags.fastq")
     count_raw, count_flash = run_flash(
