@@ -37,6 +37,7 @@ as follows, and you should get six output report files:
     summary/recycled-water-defaults.ITS1.reads.onebp.xlsx
     summary/recycled-water-defaults.ITS1.samples.onebp.tsv
     summary/recycled-water-defaults.ITS1.samples.onebp.xlsx
+    summary/recycled-water-defaults.ITS1.tally.tsv
 
 Here we used ``-r`` (or ``--report``) to specify a different stem for the
 report filenames. The :ref:`sample metadata options <metadata>` were described
