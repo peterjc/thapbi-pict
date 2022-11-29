@@ -13,7 +13,6 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import cdist
 from sqlalchemy.orm import aliased
@@ -28,6 +27,7 @@ from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
+from .utils import parse_sample_tsv
 from .utils import parse_species_tsv
 from .utils import species_level
 from .utils import split_read_name_abundance
@@ -213,8 +213,8 @@ def main(
     """Run the edit-graph command with arguments from the command line.
 
     This shows sequences from a database (possibly filtered with species/genus
-    limits) and/or selected FASTA files (possibly with classifier predictions,
-    and minimum abundance limits).
+    limits) and/or selected sample-tally TSV files (possibly with minimum
+    abundance limits).
 
     Computes a Levenshtein edit-distance matrix from the selected sequences,
     which can be exported as a matrix, but is usually converted into a graph
@@ -249,23 +249,32 @@ def main(
         )
 
     if inputs:
-        if debug:
-            sys.stderr.write("DEBUG: Loading FASTA sequences and abundances\n")
-        for fasta_file in find_requested_files(
-            inputs, ".fasta", ignore_prefixes, debug=debug
+        # TODO : Refactor this to work from the sample tally table input layout
+        for filename in find_requested_files(
+            inputs, ".tally.tsv", ignore_prefixes, debug=debug
         ):
-            sample = file_to_sample_name(fasta_file)
-            samples.add(sample)
-            with open(fasta_file) as handle:
-                md5_warn = False
-                for title, seq in SimpleFastaParser(handle):
-                    seq = seq.upper()
-                    idn, abundance = split_read_name_abundance(title.split(None, 1)[0])
-                    md5 = md5seq(seq)
-                    if idn != md5:
-                        md5_warn = True
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Loading sequences sample tallies from {filename}\n"
+                )
+            # sample = file_to_sample_name(filename)
+            # samples.add(sample)
+            seqs, sample_headers, counts = parse_sample_tsv(filename, debug=debug)
+            md5_warn = False
+            for title, seq in seqs.items():
+                marker, rest = title.split("/", 1)
+                # TODO - filter on marker?
+                md5, total = split_read_name_abundance(rest.split(None, 1)[0])
+                if md5 != md5seq(seq):
+                    md5_warn = True
+                for sample in sample_headers:
+                    samples.add(sample)
+                    abundance = counts[title, sample]
+                    if not abundance:
+                        continue
                     if min_abundance > 1 and abundance < min_abundance:
                         continue
+                    md5_to_seq[md5] = seq
                     md5_in_fasta.add(md5)
                     abundance_by_samples[md5, sample] = abundance
                     max_sample_abundance[md5] = max(
@@ -277,14 +286,14 @@ def main(
                         assert md5_to_seq[md5] == seq, f"{md5} vs {seq}"
                     else:
                         md5_to_seq[md5] = seq
-                if md5_warn:
-                    sys.stderr.write(
-                        f"WARNING: Sequence(s) in {fasta_file}"
-                        " not using MD5_abundance naming\n"
-                    )
+            if md5_warn:
+                sys.stderr.write(
+                    f"WARNING: Sequence(s) in {filename}"
+                    " not using MD5_abundance naming\n"
+                )
         sys.stderr.write(
             f"Loaded {len(md5_in_fasta)} unique sequences"
-            f" from {len(samples)} FASTA files.\n"
+            f" from {len(samples)} samples.\n"
         )
 
         if method and method != "-":
@@ -293,6 +302,8 @@ def main(
             for tsv_file in find_requested_files(
                 inputs, f".{method}.tsv", ignore_prefixes, debug
             ):
+                if debug:
+                    sys.stderr.write(f"DEBUG: Loading {method} TSV file {tsv_file}\n")
                 sample = file_to_sample_name(tsv_file)
                 if not sample.endswith(".all_reads") and sample not in samples:
                     sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
@@ -303,11 +314,8 @@ def main(
                     tsv_file, min_abundance
                 ):
                     md5, abundance = split_read_name_abundance(name)
-                    if md5 not in md5_to_seq:
-                        sys.exit(
-                            f"ERROR: {tsv_file} contained {md5} but not in FASTA files"
-                        )
-                    if sp:
+                    # May not pass our abundance threshold...
+                    if md5 in md5_to_seq and sp:
                         try:
                             md5_species[md5].update(sp.split(";"))
                         except KeyError:
