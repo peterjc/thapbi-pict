@@ -401,14 +401,14 @@ def pipeline(args=None):
     from .summary import main as summary
     from .assess import main as assess
 
-    out_dir = check_output_stem(args.output, dir_only_ok=True)
+    check_output_stem(args.output, dir_only_ok=True)
+    if args.temp:
+        check_output_directory(args.temp)
     if args.sampleout:
         check_output_directory(args.sampleout)
         intermediate_dir = args.sampleout
     else:
-        intermediate_dir = out_dir
-    if args.temp:
-        check_output_directory(args.temp)
+        intermediate_dir = ""
     if args.metadata:
         check_input_file(args.metadata)
         if not args.metacols:
@@ -692,6 +692,7 @@ ARG_METHOD_INPUT = dict(  # noqa: C408
 ARG_MERGED_CACHE = dict(  # noqa: C408
     type=str,
     required=False,
+    default="",
     metavar="DIRNAME",
     help="Advanced option. Cache directory for temporary per-sample FASTA "
     "file after overlap merging (usually the slowest step), but before "
@@ -1016,8 +1017,8 @@ def main(args=None):
         type=str,
         default="",
         metavar="DIRNAME",
-        help="Output directory for intermediate files for each sample "
-        "(FASTQ pair). Defaults to -o / --output.",
+        help="Advanced option. Cache directory for temporary per-sample FASTA "
+        "files after primer trimming.",
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)

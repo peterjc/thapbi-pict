@@ -691,13 +691,7 @@ def marker_cut(
             # Will fail on Windows if using different drives
             pass
         stem = os.path.split(stem)[1]
-        if merged_cache:
-            merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
-        else:
-            # Not told to keep it, just use a temp folder for the merged reads
-            if not os.path.isdir(os.path.join(tmp, "merged")):
-                os.mkdir(os.path.join(tmp, "merged"))
-            merged_fasta_gz = os.path.join(tmp, "merged", f"{stem}.fasta.gz")
+        merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
 
         count_raw = count_flash = None  # Won't need if just parsing a control
         if any(
@@ -1000,13 +994,38 @@ def main(
     """
     assert isinstance(fastq, list)
 
-    if merged_cache and not os.path.isdir(merged_cache):
+    if tmp_dir:
+        # Up to the user to remove the files
+        tmp_obj = None
+        shared_tmp = tmp_dir
+    else:
+        tmp_obj = tempfile.TemporaryDirectory()
+        shared_tmp = tmp_obj.name
+
+    if debug:
+        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
+
+    if not merged_cache:
+        # Not told to keep it, just use a temp folder for the merged reads
+        merged_cache = os.path.join(shared_tmp, "merged")
+        if not os.path.isdir(merged_cache):
+            os.mkdir(merged_cache)
+    elif not os.path.isdir(merged_cache):
         sys.exit(f"ERROR: {merged_cache} for merged cache is not a directory.")
 
     if out_dir == "-":
         # Can't put files next to FASTQ input when have multiple markers
         # (and mixing raw data with intermediates not a great idea anyway)
         sys.exit("ERROR: Use of output directory '-' no longer supported.")
+    elif not out_dir:
+        # Not told to keep it, just use a temp folder for the merged reads
+        out_dir = os.path.join(shared_tmp, "trimmed")
+        if not os.path.isdir(out_dir):
+            os.mkdir(out_dir)
+    elif not os.path.isdir(out_dir):
+        sys.stderr.write(f"Making output directory {out_dir!r}\n")
+        os.mkdir(out_dir)
+        # sys.exit(f"ERROR: {out_dir} for per-sample files is not a directory.")
 
     check_tools(["flash", "cutadapt"], debug)
 
@@ -1105,21 +1124,6 @@ def main(
             f"WARNING: All {len(file_pairs)} FASTQ pairs are controls,"
             " no non-control reads!\n"
         )
-
-    if out_dir and not os.path.isdir(out_dir):
-        sys.stderr.write(f"Making output directory {out_dir!r}\n")
-        os.mkdir(out_dir)
-
-    if tmp_dir:
-        # Up to the user to remove the files
-        tmp_obj = None
-        shared_tmp = tmp_dir
-    else:
-        tmp_obj = tempfile.TemporaryDirectory()
-        shared_tmp = tmp_obj.name
-
-    if debug:
-        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
 
     # Run flash & cutadapt (once doing demultiplexing), apply abundance thresholds
     fasta_files_prepared, sythetic_prepared, negative_prepared = marker_cut(
