@@ -45,7 +45,7 @@ function edit_graph {
     # Including relevant DB entries with -k / --marker argument
     # Do not show the classifier output using -m with "-"
     thapbi_pict edit-graph -d $DB -k $MARKER \
-                -i intermediate/${LIBRARY}/${MARKER}/ -a 75 -m - \
+                -i summary/${LIBRARY}.${MARKER}.tally.tsv -a 75 -m - \
                 -o summary/${LIBRARY}.${MARKER}.edit-graph.a75.xgmml
 }
 
@@ -84,7 +84,7 @@ LIBRARY=AL2
 analyse  # call function above
 
 MARKER=BITS-B58S3
-edit_graph  # call function abover
+edit_graph  # call function above
 
 DB=fungi_duo.sqlite
 if [ ! -f $DB ]; then

@@ -14,11 +14,12 @@ This is not run as part of the pipeline command, but must be run separately:
     ...
 
 This command does not use metadata, but can optionally use the intermediate
-TSV files. It requires the FASTA files:
+TSV files. It requires the sample tally file:
 
 .. code:: console
 
-    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.onebp.xgmml
+    $ thapbi_pict edit-graph -i summary/thapbi-pict.ITS1.tally.tsv \
+        -o summary/thapbi-pict.edit-graph.onebp.xgmml
     ...
 
 This will generate an XGMML (eXtensible Graph Markup and Modeling Language)
@@ -27,7 +28,8 @@ file by default, but you can also request other formats including PDF
 
 .. code:: console
 
-    $ thapbi_pict edit-graph -i intermediate/ -o summary/thapbi-pict.edit-graph.onebp.pdf -f pdf
+    $ thapbi_pict edit-graph -i summary/thapbi-pict.ITS1.tally.tsv \
+          -o summary/thapbi-pict.edit-graph.onebp.pdf -f pdf
     ...
 
 .. WARNING:

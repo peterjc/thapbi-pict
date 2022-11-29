@@ -38,8 +38,7 @@ thapbi_pict pipeline -d COI_430_bats.sqlite \
 # Default edit-graph has very few DB nodes, so run another edit-graph
 # including all DB marker entries too
 thapbi_pict edit-graph -d COI_430_bats.sqlite -k COI \
-    -i intermediate/COI/*.fasta \
-   summary/430_bats.COI.all_reads.onebp.tsv \
+    -i summary/430_bats.COI.tally.tsv summary/430_bats.COI.all_reads.onebp.tsv \
     -o summary/430_bats.COI.edit-graph.xgmml
 
 echo ---------------------------------------------------------------
