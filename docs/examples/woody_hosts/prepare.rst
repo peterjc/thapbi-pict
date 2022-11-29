@@ -23,8 +23,8 @@ Assuming you have the FASTQ files in ``raw_data/`` as described above:
 
 For each input FASTQ file pair ``raw_data/<sample_name>_R1.fastq.gz`` and
 ``raw_data/<sample_name>_R2.fastq.gz`` you should get a small FASTA file
-``intermediate/<sample_name>.fasta``. In this case, there are multiple
-replicates from each of 14 sample sites where the file name stem is
+``intermediate/<marker_name>/<sample_name>.fasta``. In this case, there are
+multiple replicates from each of 14 sample sites where the file name stem is
 ``Site_<N>_sample_<X>``, plus the controls.
 
 .. code:: console
@@ -35,7 +35,7 @@ replicates from each of 14 sample sites where the file name stem is
 Note this is robust to being interrupted and restarted (e.g. a job might time
 out on a cluster).
 
-You should find 122 small FASTA files in the ``intermediate/`` folder
+You should find 122 small FASTA files in the ``intermediate/ITS1/`` folder
 
 Note that four of these FASTA files are empty, ``Site_13_sample_7.fasta`` and
 ``Site_9_sample_4-3.fasta`` (nothing above the minimum threshold), and both
