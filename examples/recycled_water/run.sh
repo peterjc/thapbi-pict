@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is under an hour,"
-echo "repeat runs about 1 minute (mostly on the edit-graph)."
+echo "repeat runs about a minute."
 echo
 
 mkdir -p intermediate_defaults/ intermediate_long/ summary/ tmp_merged/
