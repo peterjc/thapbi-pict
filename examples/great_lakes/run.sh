@@ -80,14 +80,14 @@ thapbi_pict edit-graph -d pooled.sqlite -a 100 \
        intermediate/MOL16S/SRR5534976.* \
        intermediate/MOL16S/SRR5534977.* \
        intermediate/MOL16S/SRR5534979.* \
-    -o summary/MOL16S.edit-graph.a100.mock.xgmml
+    -o summary/MOL16S.mocks.edit-graph.a100.xgmml
 
 # Edit graph of just the 3 SPH16S mock community samples:
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i intermediate/SPH16S/SRR5534978.* \
        intermediate/SPH16S/SRR5534980.* \
        intermediate/SPH16S/SRR5534981.* \
-    -o summary/SPH16S.edit-graph.a100.mock.xgmml
+    -o summary/SPH16S.mocks.edit-graph.a100.xgmml
 
 echo ====
 echo Done
