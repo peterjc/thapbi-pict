@@ -96,7 +96,12 @@ def main(
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
         marker = sample_headers[sample]["marker"]
-        assert marker in marker_definitions, f"ERROR: Marker {marker} not in DB"
+        if marker not in marker_definitions:
+            # Probably using the default DB by mistake!
+            sys.exit(
+                f"ERROR: Marker {marker} not in DB, should be one of "
+                + ", ".join(marker_definitions)
+            )
         assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
         sample_marker_cutadapt[sample, marker] = int(sample_headers[sample]["cutadapt"])
         sample_pool[sample] = sample_headers[sample].get("threshold_pool", "default")
