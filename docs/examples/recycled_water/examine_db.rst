@@ -37,20 +37,17 @@ filtering at genus or species level, for example:
 
 This gives a short table, summarised as follows:
 
-========== ============ ======= ====== ================================ ======== ========
-Identifier Genus        Species TaxID  ITS1-MD5                         ITS1-seq Sequence
----------- ------------ ------- ------ -------------------------------- -------- --------
-DQ297398.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...   CCA...
-HQ261557.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...   CCA...
-HQ261558.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...   CCA...
-HQ261559.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...   CCA...
-DQ297392.1 Phytophthora fallax  360399 da7ff4ae11bdb6cc2b8c2aea3937481f CCA...   CCA...
-========== ============ ======= ====== ================================ ======== ========
+========= ========== ============ ======= ====== ================================ ========
+#Marker   Identifier Genus        Species TaxID  MD5.                             Sequence
+--------- ---------- ------------ ------- ------ -------------------------------- --------
+ITS1-long DQ297398.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
+ITS1-long HQ261557.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
+ITS1-long HQ261558.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
+ITS1-long HQ261559.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
+ITS1-long DQ297392.1 Phytophthora fallax  360399 da7ff4ae11bdb6cc2b8c2aea3937481f CCA...
+========= ========== ============ ======= ====== ================================ ========
 
-The final two columns give the marker sequence, and the full sequence it was
-extracted from using any primer trimming -- in this case, they match as the
-FASTA file used was pre-trimmed. The (shorter) marker sequence gives the MD5
-checksum column.
+The final columns give the amplicon marker sequence and its MD5 checksum.
 
 Adding ``-m`` or ``--minimal`` to the command gives instead:
 
@@ -60,7 +57,7 @@ Adding ``-m`` or ``--minimal`` to the command gives instead:
       -g Phytophthora -s fallax -o P_fallax.tsv -m
     Wrote 2 txt format entries to 'P_fallax.tsv'
 
-Now the table only has one data row per unique marker sequences:
+Now the table only has one data row per unique marker sequence:
 
 ================================ =================== ========
 MD5                              Species             Sequence
@@ -69,7 +66,7 @@ MD5                              Species             Sequence
 da7ff4ae11bdb6cc2b8c2aea3937481f Phytophthora fallax CCA...
 ================================ =================== ========
 
-Instead we can ask for FASTA output:
+Alternatively, we can ask for FASTA output:
 
 .. code:: console
 
@@ -118,7 +115,7 @@ Using the optional ``-m`` or ``--minimal`` switch changes the FASTA output to:
     ACTGAAAAACTGTGGGGACGAAAGTCCTTGCTTTTACTAGATAGCAACTTTCAGCAGTGGATGTCTAGGCTC
 
 This discards the original accessions and instead uses ``>``, MD5 checksum,
-space, semi-colon separated list of taxonomic assignments, new line, sequences,
+space, semi-colon separated list of taxonomic assignments, new line, sequence,
 new line. Again, there is deliberately no sequence line wrapping in the file
 itself.
 
