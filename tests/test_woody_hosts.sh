@@ -23,6 +23,7 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positi
 # Idea here is to mimic what "thapbi_pict pipeline" would do if we had
 # the FASTQ files here:
 # thapbi_pict pipeline -i sample_data/raw_data/ \
+#     -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz \
 #     -s $TMP/intermediate \
 #     -o $TMP/summary/woody-hosts \
 #     -t examples/woody_hosts/metadata.tsv \
@@ -55,7 +56,9 @@ fi
 echo "================================"
 echo "Running woody hosts sample-tally"
 echo "================================"
-thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta -o $TMP/woody_hosts.tally.tsv
+thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
+            -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+            -o $TMP/woody_hosts.tally.tsv
 echo diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 
