@@ -7,14 +7,14 @@ Running thapbi-pict pipeline
 ----------------------------
 
 First, we will run the THAPBI PICT pipeline command with largely default
-settings, other than including the metadata about the water samples. Note
-that this dataset has no blanks or negative controls, so must trust to the
-default minimum abundance threshold.
+settings (including the default database and primers), other than including
+the metadata about the water samples. Note that this dataset has no blanks or
+negative controls, so we must trust the default minimum abundance threshold.
 
 The key values which we will be changing later are the primers and database.
 
 Assuming you have the FASTQ files in ``raw_data/``, run the pipeline command
-as follows, and you should get six output report files:
+as follows, and you should get the listed output report files:
 
 .. code:: console
 
@@ -28,8 +28,6 @@ as follows, and you should get six output report files:
     Wrote summary/recycled-water-defaults.ITS1.samples.onebp.*
     Wrote summary/recycled-water-defaults.ITS1.reads.onebp.*
     ...
-    $ ls -1 intermediate_defaults/ITS1/SRR*.fasta | wc -l
-    384
     $ ls -1 summary/recycled-water-defaults.*
     summary/recycled-water-defaults.ITS1.all_reads.fasta
     summary/recycled-water-defaults.ITS1.all_reads.onebp.tsv
