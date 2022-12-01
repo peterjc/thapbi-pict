@@ -61,7 +61,7 @@ Adding ``-m`` or ``--minimal`` to the command gives instead:
     $ cut -c 1-56 P_fallax.tsv
     <SEE TABLE BELOW>
 
-Now the table only has one data row per unique marker sequence, gain showing
+Now the table only has one data row per unique marker sequence, again showing
 this with the sequence truncated:
 
 ================================ =================== ========
