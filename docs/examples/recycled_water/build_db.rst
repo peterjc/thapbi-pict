@@ -121,7 +121,7 @@ files:
     ...
     $ unzip -n -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
     ...
-    $ ls -1 taxdmp_2019-12-01/n*.dmp
+    $ ls -1 taxdmp_2019-12-01/*.dmp
     taxdmp_2019-12-01/citations.dmp
     taxdmp_2019-12-01/delnodes.dmp
     taxdmp_2019-12-01/division.dmp
