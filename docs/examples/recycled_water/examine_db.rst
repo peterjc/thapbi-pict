@@ -34,17 +34,19 @@ filtering at genus or species level, for example:
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
       -g Phytophthora -s fallax -o P_fallax.tsv
     Wrote 5 txt format entries to 'P_fallax.tsv'
+    $ cut -c 1-84 P_fallax.tsv
+    <SEE TABLE BELOW>
 
-This gives a short table, summarised as follows:
+This gives a short table, with the sequence truncated for display:
 
 ========= ========== ============ ======= ====== ================================ ========
-#Marker   Identifier Genus        Species TaxID  MD5.                             Sequence
---------- ---------- ------------ ------- ------ -------------------------------- --------
-ITS1-long DQ297398.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
-ITS1-long HQ261557.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
-ITS1-long HQ261558.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
-ITS1-long HQ261559.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA...
-ITS1-long DQ297392.1 Phytophthora fallax  360399 da7ff4ae11bdb6cc2b8c2aea3937481f CCA...
+#Marker   Identifier Genus        Species TaxID  MD5                              Sequence
+========= ========== ============ ======= ====== ================================ ========
+ITS1-long DQ297398.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA
+ITS1-long HQ261557.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA
+ITS1-long HQ261558.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA
+ITS1-long HQ261559.1 Phytophthora fallax  360399 693cf88b7f57bcc7a3532a6b7ff0268a CCA
+ITS1-long DQ297392.1 Phytophthora fallax  360399 da7ff4ae11bdb6cc2b8c2aea3937481f CCA
 ========= ========== ============ ======= ====== ================================ ========
 
 The final columns give the amplicon marker sequence and its MD5 checksum.
@@ -56,14 +58,17 @@ Adding ``-m`` or ``--minimal`` to the command gives instead:
     $ thapbi_pict dump -d Redekar_et_al_2019_sup_table_3.sqlite \
       -g Phytophthora -s fallax -o P_fallax.tsv -m
     Wrote 2 txt format entries to 'P_fallax.tsv'
+    $ cut -c 1-56 P_fallax.tsv
+    <SEE TABLE BELOW>
 
-Now the table only has one data row per unique marker sequence:
+Now the table only has one data row per unique marker sequence, gain showing
+this with the sequence truncated:
 
 ================================ =================== ========
-MD5                              Species             Sequence
--------------------------------- ------------------- --------
-693cf88b7f57bcc7a3532a6b7ff0268a Phytophthora fallax CCA...
-da7ff4ae11bdb6cc2b8c2aea3937481f Phytophthora fallax CCA...
+#MD5                             Species             Sequence
+================================ =================== ========
+693cf88b7f57bcc7a3532a6b7ff0268a Phytophthora fallax CCA
+da7ff4ae11bdb6cc2b8c2aea3937481f Phytophthora fallax CCA
 ================================ =================== ========
 
 Alternatively, we can ask for FASTA output:
