@@ -112,7 +112,8 @@ taxonomy files and running the ``thapbi-pict load-tax`` command.
 
 The NCBI currently provide their taxonomy dump in two formats, old and new.
 THAPBI PICT supports both, we'll use the old format as the download is half
-the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
+the size - we only need the ``names.dmp``, ``nodes.dmp`` and ``merged.dmp``
+files:
 
 .. code:: console
 
@@ -121,6 +122,11 @@ the size - we only need the ``names.dmp`` and ``nodes.dmp`` files:
     $ unzip -n -d taxdmp_2019-12-01 taxdmp_2019-12-01.zip
     ...
     $ ls -1 taxdmp_2019-12-01/n*.dmp
+    taxdmp_2019-12-01/citations.dmp
+    taxdmp_2019-12-01/delnodes.dmp
+    taxdmp_2019-12-01/division.dmp
+    taxdmp_2019-12-01/gencode.dmp
+    taxdmp_2019-12-01/merged.dmp
     taxdmp_2019-12-01/names.dmp
     taxdmp_2019-12-01/nodes.dmp
 
