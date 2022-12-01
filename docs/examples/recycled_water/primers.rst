@@ -17,24 +17,10 @@ We first ran the pipeline command with :ref:`default settings
     $ ls -1 intermediate_defaults/ITS1/SRR*.fasta | wc -l
     384
 
-Now we will change the primer settings. Using the actual right primer will
-extend the *Phytophthora* FASTA sequences about 60bp (and accept many more
-non-*Phytophthora*), while treating the conserved 32bp fragment
-``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` as if it were part of the left primer
-will trim the start of the sequences. That will match the Redekar *et al.*
-(2019) analysis.
-
-The up-shot is by cropping about 32bp off the start, and adding about 60bp
-at the end, we will no longer get any matches against the default database
-with the default classifier (it is too strict, the matches are too distant).
-This means before we can run the entire pipeline, we will need to build a
-custom database. We'll discuss the sequences which go into this database
-soon, but this will also use ``--marker ITS1-long`` to name this marker,
-and set ``--left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA``
-and ``--right AGCGTTCTTCATCGATGTGC`` to declare the primers.
-
-Again we assume you have setup the FASTQ files in ``raw_data/``, and just
-run the prepare-reads step:
+We then created a database from the Redekar *et al.* (2019) reference
+accessions with their primers. Now we can run the pipeline again with this,
+which will start by applying the prepare-reads step to the FASTQ files in
+``raw_data/``:
 
 .. code:: console
 

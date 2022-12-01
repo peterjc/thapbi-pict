@@ -22,7 +22,7 @@ as *Phytophthora*. This requires a new database of markers.
 
    sample_data
    defaults
-   primers
    build_db
+   primers
    examine_db
    pipeline

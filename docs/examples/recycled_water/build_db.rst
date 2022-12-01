@@ -1,7 +1,7 @@
 .. _custom_database_building:
 
-Building a custom database
-==========================
+Different primers
+=================
 
 This example is based on the following paper from another research group:
 
@@ -9,8 +9,34 @@ This example is based on the following paper from another research group:
   *Phytopythium* species in recycled irrigation water in a container nursery.
   https://doi.org/10.1094/PBIOMES-10-18-0043-R
 
-We will build a database using the same public sequences that they used,
-accessions given in Supplementary Table 3 in Excel format.
+The worked example starts by running the pipeline command with :ref:`default
+settings <custom_database_defaults>`, which uses the default *Phytophthora*
+centric database and primers. We can do that because the tool's default
+database defines primers which target a subset of the longer amplicon
+amplified in this example dataset.
+
+Now we will change the primer settings. Using the actual right primer will
+extend the *Phytophthora* FASTA sequences about 60bp (and accept many more
+non-*Phytophthora*). The left primer is actually the same, but to match the
+analysis in Redekar *et al.* (2019), we want to trim off the typically
+conserved 32bp fragment ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` from the start of
+each amplicon, which we can do by pretending this is part of the left primer.
+
+The up-shot is by cropping about 32bp off the start, and adding about 60bp
+at the end, we will no longer get any matches against the default database
+with the default classifier (it is too strict, the matches are too distant).
+
+This means before we can run the entire pipeline, we will need to build a
+custom database. We'll discuss the sequences which go into this database
+next, but this use ``--marker ITS1-long`` to name this alternative marker,
+and set ``--left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA``
+and ``--right AGCGTTCTTCATCGATGTGC`` to declare the primers.
+
+Building a custom database
+==========================
+
+We will build a database using the same public sequences as Redekar *et al.*
+(2019), using the accessions given in Supplementary Table 3 in Excel format.
 
 We have taken their list of accessions and species names (ignoring voucher or
 isolate numbers), edited some punctuation to match the NCBI taxonomy, added
@@ -18,7 +44,8 @@ some missing accession version suffixes, deduplicated, and made a simple
 tab-separated plain text table, with 1454 entries. In the setup instructions
 for this example you should have got a copy of this file, named
 ``Redekar_et_al_2019_sup_table_3.tsv``, and a matching FASTA file
-``Redekar_et_al_2019_sup_table_3.fasta`` which we use later.
+``Redekar_et_al_2019_sup_table_3.fasta`` which we will import into the new
+database.
 
 This table is sorted alphabetically by species then accession, and starts:
 
