@@ -121,48 +121,31 @@ Looking at the same points, I see two problems:
   to 108 with the minimum abundance threshold of 10.
 
 To see exactly what is in these two problematic samples, we can turn to the
-read report - or look directly at the intermediate FASTA files:
+read report ``summary/MOL16S.reads.onebp.xlsx`` in Excel, or the TSV version
+at the command line (using grep to drop the rows ending with a zero count):
 
 .. code:: console
 
-    $ cat intermediate/MOL16S/SRR5534986.fasta
-    #marker:MOL16S
-    #left_primer:RRWRGACRAGAAGACCCT
-    #right_primer:ARTCCAACATCGAGGT
-    #threshold_pool:raw_data
-    #raw_fastq:2433
-    #flash:1963
-    #cutadapt:1014
-    #abundance:551
-    #threshold:10
-    #singletons:258
-    >20c0669e4c6f8436c9d42736df727c83_478
-    ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
-    TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
-    AATTAAAGAGTTGGTTGCG
-    >a36d3f7291c173c4243f22c2afbd111e_49
-    ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
-    TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGATT
-    AATTAAAGAGTTGGTTGCG
-    >e1d838b4f39bffe88d8c0e79b52700f1_13
-    ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
-    TTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTA
-    ATTAAAGAGTTGGTTGCG
-    >778e3dace4b993135e11d450e6c559ff_11
-    ATCGAACTTAAATTATTTGTTTAAATTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTAT
-    TTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACTA
-    ATTAAAGAGTTGGTTGCG
+    $ cut -f 1,2,3,7,10 summary/MOL16S.reads.onebp.tsv | grep -v "[[:space:]]0$"
+    #                                                                  Marker           MOL16S
+    #                                                                  Group            Control
+    #                                                                  Sample           Blank MOL16S
+    #                                                                  Library-name     BIM8M
+    #                                                                  Raw FASTQ        2433
+    #                                                                  Flash            1963
+    #                                                                  Cutadapt         1014
+    #                                                                  Threshold pool   raw_data
+    #                                                                  Threshold        10
+    #                                                                  Singletons       258
+    #Marker       MD5                               onebp-predictions  Total-abundance  SRR5534986
+    TOTAL or MAX  -                                 -                  4914872          551
+    MOL16S        20c0669e4c6f8436c9d42736df727c83  Sphaerium simile   152924           478
+    MOL16S        e1d838b4f39bffe88d8c0e79b52700f1  Sphaerium simile   3215             13
+    MOL16S        778e3dace4b993135e11d450e6c559ff  Sphaerium simile   249              11
+    MOL16S        a36d3f7291c173c4243f22c2afbd111e  Sphaerium simile   147              49
 
 The unwanted sequences in the control sample are dominated by a single
-sequence (and variants of it; shown line wrapped at 80 characters), which was
-matched to *Sphaerium simile*:
-
-.. code:: console
-
-    $ grep 20c0669e4c6f8436c9d42736df727c83 summary/MOL16S.reads.onebp.tsv | cut -f 2,3
-    20c0669e4c6f8436c9d42736df727c83  Sphaerium simile
-
-Or look at this TSV or ``summary/MOL16S.reads.onebp.xlsx`` in Excel.
+sequence (and three variants of it), which were matched to *Sphaerium simile*.
 
 This is consistent with the original author's analysis - although our pipeline
 has produced higher read counts:
@@ -176,29 +159,27 @@ read report, or at the command line:
 
 .. code:: console
 
-    $ cat intermediate/MOL16S/SRR5534980.fasta
-    #marker:MOL16S
-    #left_primer:RRWRGACRAGAAGACCCT
-    #right_primer:ARTCCAACATCGAGGT
-    #threshold_pool:raw_data
-    #raw_fastq:410780
-    #flash:375539
-    #cutadapt:420
-    #abundance:108
-    #threshold:10
-    #singletons:272
-    >20c0669e4c6f8436c9d42736df727c83_46
-    ATCGAACTTAAATTATTTGTTTAAATTTTTAAATAGAAAAAGTTTAGTTGGGGAAACTTAAAGTAAAAGGTAACGCTTTA
-    TTTTTTTGTCAGGAGCCTGTAGTATGGAAAAATGAAAAAGTTACCGTAGGGATAACAGCGCTTTCTTCTCTGAGAGGACT
-    AATTAAAGAGTTGGTTGCG
-    >ecdaa082b70f5e268f76128693531760_45
-    ATCGAACTTAATCATTTTTAAAAGAACTCATTTAAAAAGAATTTTTACTGGGGCAGTAAGAAGAAAAAAATAACTCTTCC
-    TTATAAAAAAAAGATCCCTCAATGAGGAGAAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGATC
-    TAATCGAAGAAACGGTTTGCG
-    >98dc259e48de3e258cb93a34c38a9484_17
-    ATCGAACTTAATAGTTTTTAAGAGAAATAGCTTAGAAAGAAGTTTTACTGGGGCAGTAAGAAGAAAAAAATAATTCTTCC
-    TTGAAAAAAAGATCCCTTATTAAGGACAAAAGAAAAAGTTACCGTAGGGATAACAGCGTTATCGTTTTTAAGAGAACTAA
-    TCGAAGAAACGGTTTGCG
+    $ cut -f 1,2,7,25 summary/MOL16S.reads.onebp.tsv | grep -v "[[:space:]]0$"
+    #                                               Marker           SPH16S
+    #                                               Group            Mock Community
+    #                                               Sample           Mock Community 4 SPH16S
+    #                                               Library-name     SPSC3PRO4
+    #                                               Raw FASTQ        410780
+    #                                               Flash            375539
+    #                                               Cutadapt         420
+    #                                               Threshold pool   raw_data
+    #                                               Threshold        10
+    #                                               Singletons       272
+    #Marker       MD5                               Total-abundance  SRR5534980
+    TOTAL or MAX  -                                 4914872          108
+    MOL16S        ecdaa082b70f5e268f76128693531760  269109           45
+    MOL16S        98dc259e48de3e258cb93a34c38a9484  120026           17
+    MOL16S        20c0669e4c6f8436c9d42736df727c83  152924           46
+
+The species names are too long to include in the above, listing them directly:
+
+.. code:: console
+
     $ grep -E "(MD5|20c0669e4c6f8436c9d42736df727c83|ecdaa082b70f5e268f76128693531760|98dc259e48de3e258cb93a34c38a9484)" \
       summary/MOL16S.reads.onebp.tsv | cut -f 2,3
     <SEE TABLE BELOW>

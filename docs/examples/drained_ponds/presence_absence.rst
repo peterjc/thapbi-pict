@@ -200,15 +200,15 @@ This was based on the authors' choice:
 
 We see two samples containing *Pseudorasbora parva*, the invasive species
 which prompted these fish ponds to be drained as a control measure. You can
-find this in the main reports, or at the command line:
+find this in the read report, at the command line:
 
 .. code:: console
 
-    $ grep "Pseudorasbora parva" summary/drained_ponds.12S.reads.onebp.tsv  | cut -f 2,3
-    e819f3c222d6493572534fb6a5b7cda7  Pseudorasbora parva
-    $ grep e819f3c222d6493572534fb6a5b7cda7 intermediate/12S/*.fasta
-    intermediate/12S/SRR11949854.fasta:>e819f3c222d6493572534fb6a5b7cda7_323
-    intermediate/12S/SRR11949925.fasta:>e819f3c222d6493572534fb6a5b7cda7_197
+    $ grep -E "(Pseudorasbora parva|samples|predictions)" \
+      summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3,7,48,59
+                                                           samples          2LMB         3LMF
+    MD5                               onebp-predictions    Total-abundance  SRR11949854  SRR11949925
+    e819f3c222d6493572534fb6a5b7cda7  Pseudorasbora parva  520              323          197
 
 Specifically we saw 323 reads in ``SRR11949854`` aka ``2LMB`` and 197 reads in
 ``SRR11949925`` aka ``3LMF`` - both middle lake Sterivex (STX) samples.
@@ -229,20 +229,22 @@ mossulensis*, and *Squalidus gracilis*:
 
 .. code:: console
 
-    $ grep "Alburnus mossulensis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
-    916da937dccfd5d29502e83713e5d998  Abramis brama;Alburnus mossulensis
-    $ grep 916da937dccfd5d29502e83713e5d998 intermediate/12S/*.fasta
-    intermediate/12S/SRR11949859.fasta:>916da937dccfd5d29502e83713e5d998_98
+    $ grep -E "(Alburnus mossulensis|samples|predictions)" \
+      summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3,7,25
+                                                                          samples          M3-MF2
+    MD5                               onebp-predictions                   Total-abundance  SRR11949859
+    916da937dccfd5d29502e83713e5d998  Abramis brama;Alburnus mossulensis  98               98
 
 This sequence is ambiguous with equally good matches to expected species
 *Abramis brama*. Again, we might remove *Alburnus mossulensis* from the DB?
 
 .. code:: console
 
-    $ grep "Squalidus gracilis"  summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
-    c0d532d1c6f8ffff9c72ac4a1873151c  Squalidus gracilis
-    $ grep c0d532d1c6f8ffff9c72ac4a1873151c intermediate/12S/*.fasta
-    intermediate/12S/SRR11949871.fasta:>c0d532d1c6f8ffff9c72ac4a1873151c_82
+    $ grep -E "(Squalidus gracilis|samples|predictions)" \
+      summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3,7,20
+                                                          samples          M3-4F2
+    MD5                               onebp-predictions   Total-abundance  SRR11949871
+    c0d532d1c6f8ffff9c72ac4a1873151c  Squalidus gracilis  82               82
 
 This sequence match is with AP011393.1 in the provided reference set.
 
@@ -269,15 +271,11 @@ We found *Scardinius erythrophthalmus* in six samples:
 
 .. code:: console
 
-    $ grep "Scardinius erythrophthalmus" summary/drained_ponds.12S.reads.onebp.tsv | cut -f 2,3
-    2a53392fe4add5780f959b56407423d0  Scardinius erythrophthalmus
-    $ grep 2a53392fe4add5780f959b56407423d0 intermediate/12S/*.fasta
-    intermediate/12S/SRR11949852.fasta:>2a53392fe4add5780f959b56407423d0_126
-    intermediate/12S/SRR11949868.fasta:>2a53392fe4add5780f959b56407423d0_147
-    intermediate/12S/SRR11949870.fasta:>2a53392fe4add5780f959b56407423d0_120
-    intermediate/12S/SRR11949879.fasta:>2a53392fe4add5780f959b56407423d0_156
-    intermediate/12S/SRR11949886.fasta:>2a53392fe4add5780f959b56407423d0_76
-    intermediate/12S/SRR11949893.fasta:>2a53392fe4add5780f959b56407423d0_136
+    $ grep -E "(Scardinius erythrophthalmus|samples|predictions)" \
+      summary/drained_ponds.12S.reads.onebp.tsv | cut -f 7,8,12,13,83,84,85
+    samples          M3-1F1       M3-5F1       M3-6F1       7RNF         8RNF         MRNF
+    Total-abundance  SRR11949879  SRR11949870  SRR11949868  SRR11949893  SRR11949886  SRR11949852
+    761              156          120          147          136          76           126
 
 Quoting the original paper:
 
@@ -286,7 +284,7 @@ Quoting the original paper:
     applying the filter threshold
 
 In these cases at least, we are seeing much higher read counts. Given the
-supplementary data provided, it would be possible to plot the read counts from
+supplementary data provided, it could be possible to plot the read counts from
 the two methods against each other.
 
 Conclusion

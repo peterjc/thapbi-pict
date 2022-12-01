@@ -21,8 +21,6 @@ Compared to the original worked example, we must specify our custom database
     Wrote summary/recycled-water-custom.ITS1-long.samples.onebp.*
     Wrote summary/recycled-water-custom.ITS1-long.reads.onebp.*
     ...
-    $ ls -1 intermediate_long/ITS1-long/SRR*.fasta | wc -l
-    384
     $ ls -1 summary/recycled-water-custom.*.onebp.*
     summary/recycled-water-custom.ITS1-long.all_reads.onebp.tsv
     summary/recycled-water-custom.ITS1-long.reads.onebp.tsv

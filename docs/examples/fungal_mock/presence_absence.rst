@@ -78,117 +78,73 @@ while following along with this discussion.
 However, the levels in amplicon library one are cause for concern.
 Starting with the negative control from the DNA extraction (given a green
 background in the Excel reports), we see both replicates had two unwanted
-sequences. At the command line:
+sequences. Look at ``summary/AL1.BITS-B58S3.reads.onebp.xlsx`` in Excel, or
+the TSV version at the command line:
 
 .. code:: console
 
-    $ cat intermediate/AL1/BITS-B58S3/SRR5314317.fasta
-    #marker:BITS-B58S3
-    #left_primer:ACCTGCGGARGGATC
-    #right_primer:GAGATCCRTTGYTRAAAGTT
-    #threshold_pool:raw_data/AL1
-    #raw_fastq:12564
-    #flash:11641
-    #cutadapt:112
-    #abundance:98
-    #threshold:10
-    #singletons:14
-    >d51507f661ebee38a85bec35b70b7ee1_64
-    ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
-    GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
-    >daadc4126b5747c43511bd3be0ea2438_34
-    ATTAGTGATTAATTATTGAGTGTAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCAAG
-    CAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
+    $ cut -f 1,2,7,35,36 summary/AL1.BITS-B58S3.reads.onebp.tsv | grep -v "[[:space:]]0[[:space:]]0$"
+    #                                               Sample-type      negative control     negative control
+    #                                               Group            from DNA extraction  from DNA extraction
+    #                                               Protocol         standard workflow    standard workflow
+    #                                               Condition        Neg_DNA              Neg_DNA
+    #                                               Replicate        1                    2
+    #                                               MiSeq-name       NegDNAA_S163         NegDNAB_S175
+    #                                               Raw FASTQ        12564                16297
+    #                                               Flash            11641                15829
+    #                                               Cutadapt         112                  131
+    #                                               Threshold pool   raw_data/AL1         raw_data/AL1
+    #                                               Threshold        10                   10
+    #                                               Max non-spike    64                   100
+    #                                               Singletons       14                   17
+    #Marker       MD5                               Total-abundance  SRR5314317           SRR5314316
+    TOTAL or MAX  -                                 881219           98                   110
+    BITS-B58S3    d51507f661ebee38a85bec35b70b7ee1  47984            64                   100
+    BITS-B58S3    daadc4126b5747c43511bd3be0ea2438  34               34                   0
+    BITS-B58S3    e5b7a8b5dc0da33108cc8a881eb409f5  10               0                    10
 
 Using a minimum of 10 has excluded lots of singletons etc here.
 
-
-.. code:: console
-
-    $ cat intermediate/AL1/BITS-B58S3/SRR5314316.fasta
-    #marker:BITS-B58S3
-    #left_primer:ACCTGCGGARGGATC
-    #right_primer:GAGATCCRTTGYTRAAAGTT
-    #threshold_pool:raw_data/AL1
-    #raw_fastq:16297
-    #flash:15829
-    #cutadapt:131
-    #abundance:110
-    #threshold:10
-    #singletons:17
-    >d51507f661ebee38a85bec35b70b7ee1_100
-    ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
-    GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
-    >e5b7a8b5dc0da33108cc8a881eb409f5_10
-    ATTAGTGATTAATTATTGAGTGATAAAAAACTCATAATCTTCTACAAACCACTGTTTTAAAATGTTTACTAGAATGTCCA
-    AGCAGTTAAGCTGTTGAAATATTAAAAGTTTTATAA
-
-Using a minimum of 10 has again excluded lots of singletons.
-
-As elsewhere in the documentation, the FASTA sequences have been line
-wrapped at 80bp for display.
-
 Both have ``d51507f661ebee38a85bec35b70b7ee1`` as their more common unwanted
-sequence, a perfect match to *Fusarium graminearum* in the mock community.
+sequence, a perfect match to *Fusarium graminearum* in the mock community
+(classifier summary column omitted above for a  clearer layout).
 
 The lower abundance sequence ``daadc4126b5747c43511bd3be0ea2438`` gives
 perfect NCBI BLAST matches to several accessions of fungus *Wallemia muriae*,
 likewise ``e5b7a8b5dc0da33108cc8a881eb409f5`` gives perfect NCBI BLAST matches
-to *Wallemia muriae* and *Wallemia sebi*.
+to *Wallemia muriae* and *Wallemia sebi*. They have no match from the
+classifier.
 
 Moving on to the worst case, the negative control from the PCR reaction (given
-a pale blue background in the Excel reports). Working at the terminal:
+a pale blue background in the Excel reports). Again, look at the Excel file,
+or if working at the terminal:
 
 .. code:: console
 
-    $ cat intermediate/AL1/BITS-B58S3/SRR5314315.fasta
-    #marker:BITS-B58S3
-    #left_primer:ACCTGCGGARGGATC
-    #right_primer:GAGATCCRTTGYTRAAAGTT
-    #threshold_pool:raw_data/AL1
-    #raw_fastq:19406
-    #flash:12140
-    #cutadapt:1153
-    #abundance:1085
-    #threshold:10
-    #singletons:42
-    >d51507f661ebee38a85bec35b70b7ee1_1085
-    ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
-    GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
-
-The minimum abundance excluded lots of singletons etc.
-
-.. code:: console
-
-    $ cat intermediate/AL1/BITS-B58S3/SRR5314314.fasta
-    #marker:BITS-B58S3
-    #left_primer:ACCTGCGGARGGATC
-    #right_primer:GAGATCCRTTGYTRAAAGTT
-    #threshold_pool:raw_data/AL1
-    #raw_fastq:7285
-    #flash:6128
-    #cutadapt:4340
-    #abundance:4014
-    #threshold:10
-    #singletons:127
-    >d51507f661ebee38a85bec35b70b7ee1_3958
-    ATTACCGAGTTTACAACTCCCAAACCCCTGTGAACATACCTTATGTTGCCTCGGCGGATCAGCCCGCGCCCCGTAAAAAG
-    GGACGGCCCGCCGCAGGAACCCTAAACTCTGTTTTTAGTGGAACTTCTGAGTATAAAAAACAAATAAATCAA
-    >716f6111ac2ee192c23282e07d23078a_25
-    ATTCACAATGAGTGTTTTATGGCACTCTTTAAAAATCCATATCCACCTTGTGTGCAATGTTTGTTGGGAGAGAGGCAACT
-    CTTTCCCTTCACAAATATCAACCTATATCTTTAACAACATTCGTCTGATAACATATTATGAATATACTTAATTCAAAATA
-    T
-    >5194a4ae3a27d987892a8fee7b1669b9_17
-    ATTAGTGATTGCCTTTTATAAGGCTTTAAACTATATCCACTTACACCTGTGAACTGTTCTACTACTTGACGCAAGTCGAG
-    TATTTTTACAAACAATGTGTAATGAACGTCGTTTTATTATAACAAAATAA
-    >702929cef71042156acb3a28270d8831_14
-    ATTACTGATTTGCTTAATTGCACCACATGTGTTTTTTATTGAACAAATTTCTTTGGTGGCGGGAGCAATCCTACCGCCAG
-    AGGTTATAACTAAACCAAACTTTTTATTTACAGTCAAACTTGATTTATTATTACAATAGTCAA
+    $ cut -f 1,2,7,37,38 summary/AL1.BITS-B58S3.reads.onebp.tsv | grep -v "[[:space:]]0[[:space:]]0$"
+    #                                               Sample-type      negative control   negative control
+    #                                               Group            from PCR step      from PCR step
+    #                                               Protocol         standard workflow  standard workflow
+    #                                               Condition        Neg_PCR            Neg_PCR
+    #                                               Replicate        1                  2
+    #                                               MiSeq-name       NegPCRA_S187       NegPCRB_S104
+    #                                               Raw FASTQ        19406              7285
+    #                                               Flash            12140              6128
+    #                                               Cutadapt         1153               4340
+    #                                               Threshold pool   raw_data/AL1       raw_data/AL1
+    #                                               Threshold        10                 10
+    #                                               Max non-spike    1085               3958
+    #                                               Singletons       42                 127
+    #Marker       MD5                               Total-abundance  SRR5314315         SRR5314314
+    TOTAL or MAX  -                                 881219           1085               4014
+    BITS-B58S3    d51507f661ebee38a85bec35b70b7ee1  47984            1085               3958
+    BITS-B58S3    716f6111ac2ee192c23282e07d23078a  31294            0                  25
+    BITS-B58S3    5194a4ae3a27d987892a8fee7b1669b9  17               0                  17
+    BITS-B58S3    702929cef71042156acb3a28270d8831  14               0                  14
 
 The minimum abundance excluded lots of singletons etc. The vast majority of
-these are slight variants of the dominant sequence (you can call ``thapbi_pict
-edit-graph`` on this single sample to visualise this), and can thus be
-explained as PCR noise.
+those were slight variants of the dominant sequence, and can thus be explained
+as PCR noise.
 
 Again, both samples have ``d51507f661ebee38a85bec35b70b7ee1`` as their main
 (or only) unwanted sequence above the threshold, a perfect match to *Fusarium

@@ -161,8 +161,11 @@ def tsv_to_rst(text, with_header=True):
     cuts = []
     index = len(headers[0])
     for col_name in headers[1:]:
+        assert col_name, f"Blank entry in headers {headers[1:]}"
         index = first_line.index(col_name, index)
-        assert first_line[index] != " " and index > 0 and first_line[index - 1] == " "
+        assert (
+            first_line[index] != " " and index > 0 and first_line[index - 1] == " "
+        ), first_line
         cuts.append(index - 1)
     del index
 
