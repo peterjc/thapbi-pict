@@ -18,9 +18,10 @@ amplified in this example dataset.
 Now we will change the primer settings. Using the actual right primer will
 extend the *Phytophthora* FASTA sequences about 60bp (and accept many more
 non-*Phytophthora*). The left primer is actually the same, but to match the
-analysis in Redekar *et al.* (2019), we want to trim off the typically
-conserved 32bp fragment ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` from the start of
-each amplicon, which we can do by pretending this is part of the left primer.
+analysis and references from Redekar *et al.* (2019), we want to trim off the
+typically conserved 32bp fragment ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA`` from
+the start of each amplicon, which we can do by pretending this is part of the
+left primer.
 
 The up-shot is by cropping about 32bp off the start, and adding about 60bp
 at the end, we will no longer get any matches against the default database
