@@ -48,6 +48,9 @@ def main(
     Arguments min_abundance and min_abundance_fraction are applied per-sample,
     increased by pool if negative or synthetic controls are given respectively.
     Comma separated string argument spike_genus is treated case insensitively.
+
+    Results are sorted by marker, decreasing abundance then alphabetically by
+    sequence.
     """
     if isinstance(inputs, str):
         inputs = [inputs]
@@ -123,6 +126,7 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
+    # TODO - support for multiple markers?
     pool_absolute_threshold = {}
     pool_fraction_threshold = {}
     max_spike_abundance = defaultdict(int)  # exporting in metadata
@@ -256,7 +260,7 @@ def main(
     values = sorted(
         ((marker, count, seq) for (marker, seq), count in totals.items()),
         # sort by marker, then put the highest abundance entries first:
-        key=lambda x: (x[0], -x[1], x[2:]),
+        key=lambda x: (x[0], -x[1], x[2]),
     )
     del totals
 
