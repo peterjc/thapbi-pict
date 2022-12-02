@@ -142,6 +142,7 @@ def main(
     if controls:
         if debug:
             sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
+        # Samples with zero non-spike-ins can't raise the threshold:
         for sample in max_non_spike_abundance:
             pool = sample_pool[sample]
             a = max_non_spike_abundance[sample]
