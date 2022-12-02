@@ -34,6 +34,7 @@ def main(
     fasta=None,
     min_abundance=100,
     min_abundance_fraction=0.001,
+    total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
     gzipped=False,  # output
@@ -232,6 +233,21 @@ def main(
     counts = new_counts
     totals = new_totals
     del new_totals, new_counts
+
+    if total_min_abundance:
+        new_counts = defaultdict(int)
+        new_totals = defaultdict(int)
+        for (marker, seq, sample), a in counts.items():
+            if totals[marker, seq] >= total_min_abundance:
+                new_counts[marker, seq, sample] = a
+                new_totals[marker, seq] += a
+        sys.stderr.write(
+            f"Total abundance threshold {total_min_abundance} reduced unique "
+            f"ASVs from {len(totals)} to {len(new_totals)}.\n"
+        )
+        counts = new_counts
+        totals = new_totals
+        del new_totals, new_counts
 
     samples = sorted(samples)
     values = sorted(

@@ -278,6 +278,7 @@ def sample_tally(args=None):
         fasta=args.fasta,
         min_abundance=args.abundance,
         min_abundance_fraction=args.abundance_fraction,
+        total_min_abundance=args.total,
         min_length=args.minlen,
         max_length=args.maxlen,
         debug=args.verbose,
@@ -485,6 +486,8 @@ def pipeline(args=None):
             fasta=all_fasta,
             min_abundance=args.abundance,
             min_abundance_fraction=args.abundance_fraction,
+            # Historical behaviour, discards rare control-only ASVs:
+            total_min_abundance=args.abundance,
             # min_length=args.minlen,
             # max_length=args.maxlen,
             debug=args.verbose,
@@ -1456,6 +1459,14 @@ def main(args=None):
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
+    subcommand_parser.add_argument(
+        "-t",
+        "--total",
+        type=int,
+        default="0",
+        help="Minimum total abundance for sequences. "
+        "Applied after per-sample thresholds. Default 0 (not used).",
+    )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
