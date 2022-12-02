@@ -200,9 +200,11 @@ def main(
                     * (0.5 if sample in negative_controls else 1.0)
                 ),
             )
-            sys.stderr.write(
-                f"DEBUG: Control {sample} in pool {pool} gets threshold {threshold}\n"
-            )
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Control {sample} in pool {pool} gets "
+                    f"threshold {threshold}\n"
+                )
         else:
             # Apply dynamic pool threshold from controls
             pool = sample_pool[sample]
