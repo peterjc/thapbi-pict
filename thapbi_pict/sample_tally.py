@@ -94,7 +94,7 @@ def main(
         # Assuming FASTA for now
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
-        # Assuming just one marker for now:
+        # TODO - Assuming just one marker for now:
         sample = file_to_sample_name(filename)
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
         samples.add(sample)
@@ -135,14 +135,16 @@ def main(
         spikes = marker_definitions[marker]["spike_kmers"]
         if is_spike_in(seq, spikes):
             for sample in samples:
-                max_spike_abundance[sample] = max(
-                    max_spike_abundance[sample], counts[marker, seq, sample]
-                )
+                if counts[marker, seq, sample]:
+                    max_spike_abundance[sample] = max(
+                        max_spike_abundance[sample], counts[marker, seq, sample]
+                    )
         else:
             for sample in samples:
-                max_non_spike_abundance[sample] = max(
-                    max_non_spike_abundance[sample], counts[marker, seq, sample]
-                )
+                if counts[marker, seq, sample]:
+                    max_non_spike_abundance[sample] = max(
+                        max_non_spike_abundance[sample], counts[marker, seq, sample]
+                    )
     if controls:
         if debug:
             sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
