@@ -802,7 +802,7 @@ def marker_cut(
             max_non_spike_abundance = max_abundance_by_spike.get("", 0)
             if control:
                 if (
-                    debug
+                    (debug and marker_total)
                     or max_non_spike_abundance > min_abundance
                     or max_non_spike_abundance > min_abundance_fraction * marker_total
                 ):
