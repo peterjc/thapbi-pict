@@ -826,7 +826,7 @@ def main(
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
                     continue
-                abundance = counts[title, sample]
+                abundance = counts.pop((title, sample))  # empty the dict
                 assert (marker, md5, sample) not in abundance_by_samples
                 abundance_by_samples[marker, md5, sample] = abundance
                 marker_md5_abundance[marker, md5] += abundance
@@ -836,6 +836,7 @@ def main(
                 sample_species_counts[sample][
                     ";".join(sorted(marker_md5_species[marker, md5]))
                 ] += abundance
+        del seqs, sample_headers, counts
 
     if debug:
         sys.stderr.write(
@@ -896,6 +897,8 @@ def main(
         debug=debug,
     )
     sys.stderr.write(f"Wrote {report_stem}.samples.{method}.*\n")
+
+    del sample_species_counts, meta_to_stem
 
     read_summary(
         sorted(markers),
