@@ -486,6 +486,8 @@ def parse_sample_tsv(tabular_file, debug=False):
             elif samples:
                 seq_idn = parts[0]
                 for sample, value in zip(samples, parts[1:-1]):
+                    if value == "0":  # Don't bother with int("0")
+                        continue  # Don't store blank values!
                     try:
                         counts[seq_idn, sample] = int(value)
                     except ValueError:

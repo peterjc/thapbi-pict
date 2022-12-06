@@ -269,7 +269,7 @@ def main(
                     md5_warn = True
                 for sample in sample_headers:
                     samples.add(sample)
-                    abundance = counts[title, sample]
+                    abundance = counts.get((title, sample), 0)
                     if not abundance:
                         continue
                     if min_abundance > 1 and abundance < min_abundance:

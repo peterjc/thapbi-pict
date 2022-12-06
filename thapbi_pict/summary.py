@@ -826,7 +826,10 @@ def main(
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
                     continue
-                abundance = counts.pop((title, sample))  # empty the dict
+                try:
+                    abundance = counts.pop((title, sample))  # empty the dict
+                except KeyError:
+                    abundance = 0
                 assert (marker, md5, sample) not in abundance_by_samples
                 abundance_by_samples[marker, md5, sample] = abundance
                 marker_md5_abundance[marker, md5] += abundance
