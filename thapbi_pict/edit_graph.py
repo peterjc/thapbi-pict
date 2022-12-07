@@ -259,7 +259,9 @@ def main(
                 )
             # sample = file_to_sample_name(filename)
             # samples.add(sample)
-            seqs, sample_headers, counts = parse_sample_tsv(filename, debug=debug)
+            seqs, sample_headers, counts = parse_sample_tsv(
+                filename, min_abundance=min_abundance, debug=debug
+            )
             md5_warn = False
             for title, seq in seqs.items():
                 marker, rest = title.split("/", 1)
@@ -272,8 +274,7 @@ def main(
                     abundance = counts.get((title, sample), 0)
                     if not abundance:
                         continue
-                    if min_abundance > 1 and abundance < min_abundance:
-                        continue
+                    assert min_abundance <= abundance, (title, sample)
                     md5_to_seq[md5] = seq
                     md5_in_fasta.add(md5)
                     abundance_by_samples[md5, sample] = abundance

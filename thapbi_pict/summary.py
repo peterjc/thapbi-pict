@@ -613,7 +613,10 @@ def read_summary(
             abundance_by_samples.get((marker, md5, sample), 0)
             for sample in stem_to_meta
         ]
-        assert sum(sample_counts), f"{marker} {md5} sample counts: {sample_counts!r}"
+        if not sample_counts:
+            # Must have lost it due to abundance filter?
+            assert min_abundance, f"{marker} {md5} gave zero sample counts!"
+            continue
         handle.write(
             "%s\t%s\t%s\t%s\t%i\t%i\t%i\t%s\n"
             % (
@@ -782,7 +785,9 @@ def main(
         )
 
     for filename in samples_tsv:
-        seqs, sample_headers, counts = parse_sample_tsv(filename, debug=debug)
+        seqs, sample_headers, counts = parse_sample_tsv(
+            filename, min_abundance=min_abundance, debug=debug
+        )
         for sample, fasta_header in sample_headers.items():
             if sample not in stem_to_meta:
                 if require_metadata:
