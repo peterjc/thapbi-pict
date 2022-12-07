@@ -461,8 +461,11 @@ def find_paired_files(
     return input_list
 
 
-def parse_sample_tsv(tabular_file, debug=False):
+def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     """Parse file of sample abundances and sequence.
+
+    Optional argument min_abundance is applied to the per sequence per sample
+    values (i.e. the matrix elements, not the row/column totals).
 
     Supports the optional sample metadata header.
     """
@@ -485,16 +488,21 @@ def parse_sample_tsv(tabular_file, debug=False):
                     sys.stderr.write(f"DEBUG: Header {parts[0]} in {tabular_file}\n")
             elif samples:
                 seq_idn = parts[0]
+                above_threshold = False
                 for sample, value in zip(samples, parts[1:-1]):
                     if value == "0":  # Don't bother with int("0")
                         continue  # Don't store blank values!
                     try:
-                        counts[seq_idn, sample] = int(value)
+                        value = int(value)
                     except ValueError:
                         raise ValueError(
                             f"ERROR: Non-integer count for {seq_idn} vs {sample}"
                         )
-                seqs[seq_idn] = parts[-1]
+                    if min_abundance <= value:
+                        counts[seq_idn, sample] = value
+                        above_threshold = True
+                if above_threshold:
+                    seqs[seq_idn] = parts[-1]
             else:
                 raise ValueError(
                     "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"

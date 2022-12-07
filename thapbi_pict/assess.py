@@ -397,7 +397,9 @@ def main(
         samples = set()
         seq_sample_counts = {}
         for tally_file in filenames:
-            _, sample_headers, counts = parse_sample_tsv(tally_file, debug=debug)
+            _, sample_headers, counts = parse_sample_tsv(
+                tally_file, min_abundance=min_abundance, debug=debug
+            )
             seq_sample_counts.update(counts.items())
             samples.update(set(sample_headers))
 
