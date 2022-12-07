@@ -273,6 +273,7 @@ def main(
         "Cutadapt",
         "Threshold pool",
         "Threshold",
+        "Control",
         "Max non-spike",
         "Max spike-in",
         "Singletons",
@@ -298,6 +299,18 @@ def main(
             if not spike_genus:
                 continue
             stat_values = [max_spike_abundance[sample] for sample in samples]
+        elif stat == "Control":
+            terms = {
+                (True, True): "Neg/Synth",
+                (True, False): "Negative",
+                (False, True): "Synthetic",
+                (False, False): "Sample",
+            }
+            stat_values = [
+                terms[sample in negative_controls, sample in synthetic_controls]
+                for sample in samples
+            ]
+            del terms
         elif stat == "Threshold":
             stat_values = [sample_threshold[sample] for sample in samples]
         else:
