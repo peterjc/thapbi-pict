@@ -263,18 +263,16 @@ def main(
                 filename, min_abundance=min_abundance, debug=debug
             )
             md5_warn = False
-            for title, seq in seqs.items():
-                marker, rest = title.split("/", 1)
+            for (marker, md5), seq in seqs.items():
                 # TODO - filter on marker?
-                md5, total = split_read_name_abundance(rest.split(None, 1)[0])
                 if md5 != md5seq(seq):
                     md5_warn = True
                 for sample in sample_headers:
                     samples.add(sample)
-                    abundance = counts.get((title, sample), 0)
+                    abundance = counts.get((marker, md5, sample), 0)
                     if not abundance:
                         continue
-                    assert min_abundance <= abundance, (title, sample)
+                    assert min_abundance <= abundance, (marker, md5, sample)
                     md5_to_seq[md5] = seq
                     md5_in_fasta.add(md5)
                     abundance_by_samples[md5, sample] = abundance

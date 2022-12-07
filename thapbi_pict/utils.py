@@ -487,7 +487,8 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                 if debug:
                     sys.stderr.write(f"DEBUG: Header {parts[0]} in {tabular_file}\n")
             elif samples:
-                seq_idn = parts[0]
+                marker, idn = parts[0].split("/")
+                idn = idn.rsplit("_")[0]  # drop the total count
                 above_threshold = False
                 for sample, value in zip(samples, parts[1:-1]):
                     if value == "0":  # Don't bother with int("0")
@@ -496,13 +497,13 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                         value = int(value)
                     except ValueError:
                         raise ValueError(
-                            f"ERROR: Non-integer count for {seq_idn} vs {sample}"
+                            f"ERROR: Non-integer count for {parts[0]} vs {sample}"
                         )
                     if min_abundance <= value:
-                        counts[seq_idn, sample] = value
+                        counts[marker, idn, sample] = value
                         above_threshold = True
                 if above_threshold:
-                    seqs[seq_idn] = parts[-1]
+                    seqs[marker, idn] = parts[-1]
             else:
                 raise ValueError(
                     "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
