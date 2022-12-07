@@ -95,6 +95,7 @@ the TSV version at the command line:
     #                                               Cutadapt         112                  131
     #                                               Threshold pool   raw_data/AL1         raw_data/AL1
     #                                               Threshold        10                   10
+    #                                               Control          Sample               Sample
     #                                               Max non-spike    64                   100
     #                                               Singletons       14                   17
     #Marker       MD5                               Total-abundance  SRR5314317           SRR5314316
@@ -133,6 +134,7 @@ or if working at the terminal:
     #                                               Cutadapt         1153               4340
     #                                               Threshold pool   raw_data/AL1       raw_data/AL1
     #                                               Threshold        10                 10
+    #                                               Control          Sample             Sample
     #                                               Max non-spike    1085               3958
     #                                               Singletons       42                 127
     #Marker       MD5                               Total-abundance  SRR5314315         SRR5314314

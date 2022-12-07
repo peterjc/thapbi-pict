@@ -30,7 +30,7 @@ Looking at some key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9,13 summary/SPH16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,14 summary/SPH16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``SPH16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand
@@ -82,7 +82,7 @@ We'll initially looking at the same key columns in the sample report,
 
 .. code:: console
 
-    $ cut -f 1,2,4,7,9,13 summary/MOL16S.samples.onebp.tsv
+    $ cut -f 1,2,4,7,9,14 summary/MOL16S.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Or, open ``MOL16S.samples.onebp.xlsx`` in Excel. Focusing on the left hand
@@ -136,6 +136,7 @@ at the command line (using grep to drop the rows ending with a zero count):
     #                                                                  Cutadapt         1014
     #                                                                  Threshold pool   raw_data
     #                                                                  Threshold        10
+    #                                                                  Control          Sample
     #                                                                  Singletons       258
     #Marker       MD5                               onebp-predictions  Total-abundance  SRR5534986
     TOTAL or MAX  -                                 -                  4914872          551
@@ -169,6 +170,7 @@ read report, or at the command line:
     #                                               Cutadapt         420
     #                                               Threshold pool   raw_data
     #                                               Threshold        10
+    #                                               Control          Sample
     #                                               Singletons       272
     #Marker       MD5                               Total-abundance  SRR5534980
     TOTAL or MAX  -                                 4914872          108

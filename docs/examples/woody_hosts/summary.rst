@@ -167,7 +167,7 @@ It may be easier to look at this in Excel, but at the command line:
 
 .. code:: console
 
-    $ cut -f 16,18-20,23-27 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,18-20,24-28 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
@@ -191,7 +191,7 @@ classifier result, with the number of reads. Picking out some examples:
 
 .. code:: console
 
-    $ cut -f 16,30,42,63 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,31,43,64 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
@@ -216,7 +216,7 @@ is shared between species, both are reported:
 
 .. code:: console
 
-    $ cut -f 16,31,32 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,32,33 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
