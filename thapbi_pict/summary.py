@@ -765,13 +765,14 @@ def main(
             "Cutadapt",
             "Threshold pool",
             "Threshold",
+            "Control",
             "Max non-spike",
             "Max spike-in",
             "Singletons",
         )
     else:
         # TODO: How best to show the cutadapt and threshold values (per marker)?
-        stats_fields = ("Raw FASTQ", "Flash")
+        stats_fields = ("Raw FASTQ", "Flash", "Control")
     blank_stats = [-1] * len(stats_fields)
     sample_stats = {}
 
