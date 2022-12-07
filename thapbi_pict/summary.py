@@ -817,22 +817,17 @@ def main(
                 sample_stats = {}
             del values
 
-        for title, seq in seqs.items():
-            # We're applying this threshold at the total level:
-            marker, rest = title.split("/", 1)
+        for (marker, md5), seq in seqs.items():
             assert (
                 marker in markers
             ), f"Unexpected marker {marker} in {filename}, expected {markers}"
-            md5, abundance = split_read_name_abundance(rest.split(None, 1)[0])
-            if min_abundance > 1 and abundance < min_abundance:
-                continue
-            assert md5 == md5seq(seq), title
+            assert md5 == md5seq(seq), (marker, md5, filename)
             marker_md5_to_seq[marker, md5] = seq
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
                     continue
                 try:
-                    abundance = counts.pop((title, sample))  # empty the dict
+                    abundance = counts.pop((marker, md5, sample))  # empty the dict
                 except KeyError:
                     abundance = 0
                 assert (marker, md5, sample) not in abundance_by_samples

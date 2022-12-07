@@ -494,10 +494,8 @@ def main(
             if sample not in sample_headers:
                 sys.exit(f"ERROR: Missing sample-tally for {sample}")
             pred = set()
-            for (seq_idn, alt_sample), count in seq_sample_counts.items():
+            for (marker, md5, alt_sample), count in seq_sample_counts.items():
                 if sample == alt_sample and count >= min_abundance and count > 0:
-                    marker, md5_total = seq_idn.split("/")
-                    md5, total = md5_total.split("_")
                     pred.update(pooled_method[marker, md5].split(";"))
             if "" in pred:
                 pred.remove("")
