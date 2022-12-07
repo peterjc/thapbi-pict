@@ -3,6 +3,7 @@
 #						Cutadapt	1	4955	15
 #						Threshold pool	tests/reads	tests/reads	tests/reads
 #						Threshold	100	100	100
+#						Control	Sample	Sample	Sample
 #						Max non-spike	0	1170	0
 #						Max spike-in	0	0	0
 #						Singletons	1	679	7
