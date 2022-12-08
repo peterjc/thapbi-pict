@@ -5,9 +5,10 @@ Introduction
 
 THAPBI PICT is a tool designed to assess species content of metabarcode
 amplicons sequenced using an overlapping paired-end Illumina protocol.
-The input data is paired FASTQ files (one pair for each sample), from
-which unique sequences and their abundance are reported alongside one or
-more matching species or genus names.
+The input data is paired FASTQ files (one pair for each sample), from which
+unique sequences (commonly called unique amplicon sequence variants, ASVs)
+and their abundance are reported alongside one or more matching species or
+genus names.
 
 .. image:: images/pipeline.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports.
@@ -15,8 +16,7 @@ more matching species or genus names.
 In this illustrative flow chart of the default pipeline, the input paired
 FASTQ files are green, the intermediate per-sample FASTA and TSV files are
 yellow, and the output reports are in orange. The individual steps of the
-pipeline are dark blue boxes, and the ITS1 or other marker database is a
-pale blue cylinder.
+pipeline are dark blue boxes.
 
 Read preparation
 ----------------
@@ -94,11 +94,10 @@ Reporting
 There are currently three main reports produced (in multiple formats including
 formatted Excel spreadsheets).
 
-- **Sample report**. Provides both a high level human readable sample report
-  in text (including any sample metadata) and a tabular report. This has the
-  samples as rows, and genus and species as columns, with combined sequence
-  counts as values. Includes totals and unclassified counts as additional
-  rows. Can include sample metadata as additional columns.
+- **Sample report**. Table with samples as rows, and genus and species as
+  columns, with combined sequence counts as values. Includes a total row, and
+  unclassified counts as additional column. Can include sample metadata as
+  additional columns.
 - **Read report**. Table of unique sequences as rows, and samples as columns,
   with read counts (sequence abundance) as values. Includes any species
   classification and the sequences themselves as additional columns. Can
