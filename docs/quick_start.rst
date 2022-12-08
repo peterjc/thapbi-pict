@@ -13,7 +13,7 @@ Illumina MiSeq sequencing run. The input data is a set of paired FASTQ files
 In this illustrative flow chart of the default pipeline, the input paired
 FASTQ files are green, the intermediate per-sample FASTA and TSV files are
 yellow, and the output reports are in orange. The individual steps of the
-pipeline are dark blue boxes, and the ITS1 database is a pale blue cylinder.
+pipeline are dark blue boxes.
 
 We will now describe how to run the ``thapbi_pict pipeline`` command, which
 will process the samples, make classifications, and summary reports.
@@ -45,7 +45,7 @@ prepared FASTA files), and ``summary/`` for the folder level reports.
 
 .. code:: console
 
-    $ mkdir intermediate/ summary/
+    $ mkdir -p intermediate/ summary/
 
 Running
 -------
@@ -85,8 +85,8 @@ with the prefix ``summary/thapbi-pict.*`` given as follows:
     summary/thapbi-pict.ITS1.reads.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.xlsx
     summary/thapbi-pict.ITS1.samples.onebp.tsv
-    summary/thapbi-pict.ITS1.samples.onebp.txt
     summary/thapbi-pict.ITS1.samples.onebp.xlsx
+    summary/thapbi-pict.ITS1.tally.tsv
 
 .. WARNING::
 
@@ -109,20 +109,24 @@ In these FASTA files, each sequence is named as ``<checksum>_<abundance>``
 where the `MD5 checksum <https://en.wikipedia.org/wiki/MD5>`_ of the
 sequence and is used as a unique shorthand - a 32 character string of the
 digits ``0`` to ``9`` and lower cases letters ``a`` to ``f`` inclusive.
-These MD5 checksums are used later in the pipeline, including in some reports.
+These MD5 checksums are used later in the pipeline, including in the read
+reports.
 
 The intermediate FASTA files start with a header made of multiple lines
-starting with ``#``, which record information about the sample for use in
+starting with ``#``, which records information about the sample for use in
 reporting. This includes which marker this was and the primers, how many raw
-reads the FASTQ files had, how many were left after pair merging, primer
-trimming, and finally the abundance threshold. Many tools will accept these
-files as FASTA without complaint, but some tools require the header be
-removed.
+reads the FASTQ files had, how many were left after pair merging, and primer
+trimming. Many third-party tools will accept these files as FASTA without
+complaint, but some tools require the header be removed.
 
 The second stage of the pipeline can be run separately as the ``thapbi_pict
-fasta-nr`` command. This produces a pooled non-redundant FASTA file with all
-the observed marker sequences in it (and the total read abundance). This is
-file ``summary/thapbi-pict.ITS1.all_reads.fasta`` in the above example.
+sample-tally`` command. This produces a pooled non-redundant FASTA file with
+all the observed marker sequences in it (and the total read abundance). This
+is file ``summary/thapbi-pict.ITS1.all_reads.fasta`` in the above example.
+
+It also produces a sequence versus sample tally table as a tab-separated
+table (TSV file), with the sequences as the final column. This is file
+``summary/thapbi-pict.ITS1.tally.tsv`` in the above example.
 
 Intermediate TSV files
 ----------------------
@@ -140,18 +144,12 @@ Sample Reports
 The first set of reports from the pipeline or ``thapbi_pict summary`` command
 are the sample reports - using the filenames from the above example:
 
-* Human readable file ``summary/thapbi-pict.ITS1.samples.onebp.txt`` (plain
-  text).
 * Plain table ``summary/thapbi-pict.ITS1.samples.onebp.tsv`` (tab separated
   variables, TSV) which can be opened in R, Excel, or similar.
 * Visually formatted table ``summary/thapbi-pict.ITS1.samples.onebp.xlsx``
   (Microsoft Excel format), with the same content but with colors etc applied.
 
-These aim to give a summary of the species identified within each sample. The
-human readable text report deliberately does not include read counts as the
-method is only semi-quantitative - as long as it passed the minimum read
-abundance, any unique sequence is included.
-
+These aim to give a summary of the species identified within each sample.
 The tables have one row for each sample. The main columns give total read
 counts, those not matched to anything ("Unknown"), reads matched at species
 level (with ambiguous combinations listed explicitly), and reads matched only
