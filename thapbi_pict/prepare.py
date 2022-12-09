@@ -511,7 +511,6 @@ def prepare_sample(
     spikes,
     min_abundance,
     min_abundance_fraction,
-    control,
     tmp,
     debug=False,
     cpu=0,
@@ -528,20 +527,12 @@ def prepare_sample(
     if debug:
         sys.stderr.write(f"DEBUG: prepare_sample {trimmed_fasta} --> {fasta_name}\n")
     if os.path.isfile(fasta_name):
-        if control:
-            # Parse header for the pre-threshold cutadapt total
-            count_cutadapt = load_fasta_header(fasta_name)["cutadapt"]
-            uniq_count, total, max_abundance_by_spike = abundance_values_in_fasta(
-                fasta_name
-            )
-            return count_cutadapt, uniq_count, total, max_abundance_by_spike, -1
-        else:
-            # Don't actually need the max abundance
-            return None, None, None, {}, -1
+        # Don't actually need the max abundance
+        return None, None, None, {}, -1
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Starting to prepare {'control' if control else 'sample'}"
+            f"DEBUG: Starting to prepare sample"
             f" {fasta_name} (min abundance set to {min_abundance};"
             f" fraction abundance set to {min_abundance_fraction*100:.4f}%)\n"
         )
@@ -625,13 +616,13 @@ def prepare_sample(
         if debug:
             sys.stderr.write(
                 f"{fasta_name} had {uniq_count} unique marker sequences,"
-                f" but none above {'control' if control else 'sample'}"
+                f" but none above sample"
                 f" minimum abundance threshold {min_abundance}\n"
             )
     elif debug:
         sys.stderr.write(
             f"DEBUG: Filtered {fasta_name} down to {accepted_uniq_count} unique"
-            f" sequences above {'control' if control else 'sample'}"
+            f" sequences above sample"
             f" min abundance threshold {min_abundance}"
             f" (max abundance {max(max_spike_abundance.values(), default=0)})\n"
         )
@@ -674,14 +665,10 @@ def marker_cut(
 
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
-    sythetic_prepared = []  # return value
-    negative_prepared = []  # return value
 
-    # Assumes controls before samples in input file list!
-    for fraction_control, absolute_control, stem, raw_R1, raw_R2 in file_pairs:
-        control = fraction_control or absolute_control
+    for stem, raw_R1, raw_R2 in file_pairs:
         if debug:
-            sys.stderr.write(f"Preparing {'control' if control else 'sample'} {stem}\n")
+            sys.stderr.write(f"Preparing sample {stem}\n")
 
         sys.stdout.flush()
         sys.stderr.flush()
@@ -698,7 +685,7 @@ def marker_cut(
         stem = os.path.split(stem)[1]
         merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
 
-        count_raw = count_flash = None  # Won't need if just parsing a control
+        count_raw = count_flash = None
         if any(
             not os.path.isfile(os.path.join(out_dir, marker, f"{stem}.fasta"))
             for marker in marker_definitions
@@ -742,7 +729,7 @@ def marker_cut(
             fasta_name = os.path.join(out_dir, marker, f"{stem}.fasta")
             if fasta_name in fasta_files_prepared:
                 sys.exit(f"ERROR: Multiple files named {fasta_name}")
-            # Will parse pre-existing control file, skips pre-existing samples
+            # This skips pre-existing samples:
             (
                 marker_total,
                 uniq_count,
@@ -766,16 +753,11 @@ def marker_cut(
                 marker_values["spike_kmers"],
                 min_abundance,
                 min_abundance_fraction,
-                control,
                 tmp,
                 debug=debug,
                 cpu=cpu,
             )
             fasta_files_prepared.append(fasta_name)
-            if fraction_control:
-                sythetic_prepared.append(fasta_name)
-            if absolute_control:
-                negative_prepared.append(fasta_name)
             if uniq_count:
                 assert accepted_total <= marker_total, (accepted_total, marker_total)
                 assert (
@@ -817,7 +799,7 @@ def marker_cut(
     sys.stdout.flush()
     sys.stderr.flush()
 
-    return fasta_files_prepared, sythetic_prepared, negative_prepared
+    return fasta_files_prepared
 
 
 def load_marker_defs(session, spike_genus):
@@ -885,8 +867,6 @@ def load_marker_defs(session, spike_genus):
 
 def main(
     fastq,
-    synthetic_controls,
-    negative_controls,
     out_dir,
     session,
     spike_genus,
@@ -901,17 +881,12 @@ def main(
 ):
     """Implement the ``thapbi_pict prepare-reads`` command.
 
-    If there are controls, they will be used to potentially increase the
-    minimum abundance threshold used for the non-control files. The synthetic
-    controls increase the percentage threshold. The negative controls increase
-    the absolute threshold. A control FASTQ pair can be listed on both.
-
     For use in the pipeline command, returns a filename listing of the FASTA
     files created.
 
     Comma separated string argument spike_genus is treated case insensitively.
     """
-    assert isinstance(fastq, list)
+    assert isinstance(fastq, (list, set))
 
     if tmp_dir:
         # Up to the user to remove the files
@@ -953,52 +928,7 @@ def main(
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
     )
-    # The controls must be in the input list, or we ignore them
-    # (Useful for job splitting inputs by folder, and shared global controls list)
-    syn_control_file_pairs = [
-        _
-        for _ in find_fastq_pairs(
-            synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
-        )
-        if _ in fastq_file_pairs
-    ]
-    neg_control_file_pairs = [
-        _
-        for _ in find_fastq_pairs(
-            negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
-        )
-        if _ in fastq_file_pairs
-    ]
-    # Now exclude the control from the input to make a sample-only list:
-    fastq_file_pairs = [
-        _
-        for _ in fastq_file_pairs
-        if _ not in neg_control_file_pairs and _ not in syn_control_file_pairs
-    ]
 
-    if min_abundance < 2:
-        # Warning only if on a single file, or on negative controls only
-        if neg_control_file_pairs or syn_control_file_pairs:
-            sys.exit(
-                "ERROR: Singletons should never be accepted"
-                " (except perhaps for debugging controls)"
-            )
-        else:
-            sys.stderr.write(
-                "STRONG WARNING: Singletons should never be accepted"
-                " (except perhaps for debugging controls).\n"
-            )
-    elif min_abundance < 10:
-        sys.stderr.write(
-            "STRONG WARNING: Setting the minimum abundance threshold below 10"
-            " is not advised. You will accept many erroneous reads, and also"
-            " slow down the pipeline.\n"
-        )
-    elif min_abundance < 50 and not min_abundance_fraction:
-        sys.stderr.write(
-            "WARNING: Only set the minimum abundance threshold below 50 if"
-            " you have negative controls to justify this.\n"
-        )
     if min_abundance_fraction < 0 or 1 < min_abundance_fraction:
         sys.exit(
             f"ERROR: Minimum abundance fraction {min_abundance_fraction}"
@@ -1007,36 +937,15 @@ def main(
     elif 0.1 < min_abundance_fraction:
         sys.stderr.write("WARNING: Minimum abundance fraction should be small\n")
 
-    # Make a unified file list, with control flags
-    # Want all the controls FIRST, with the non-controls LAST
-    # Note a FASTQ entry can be in both control lists!
-    file_pairs = [
-        (
-            (stem, raw_R1, raw_R2) in syn_control_file_pairs,
-            (stem, raw_R1, raw_R2) in neg_control_file_pairs,
-            stem,
-            raw_R1,
-            raw_R2,
-        )
-        for stem, raw_R1, raw_R2 in (
-            sorted(set(neg_control_file_pairs + syn_control_file_pairs))
-            + fastq_file_pairs
-        )
-    ]
+    file_pairs = fastq_file_pairs  # TODO - cleanup legacy variable name
 
     if debug:
-        sys.stderr.write(
-            f"Preparing {len(fastq_file_pairs)} data FASTQ pairs,"
-            f" and {len(file_pairs) - len(fastq_file_pairs)} control FASTQ pairs\n"
-        )
+        sys.stderr.write(f"Preparing {len(fastq_file_pairs)} sample FASTQ pairs\n")
     if not fastq_file_pairs:
-        sys.stderr.write(
-            f"WARNING: All {len(file_pairs)} FASTQ pairs are controls,"
-            " no non-control reads!\n"
-        )
+        sys.stderr.write("WARNING: No FASTQ pairs!\n")
 
     # Run flash & cutadapt (once doing demultiplexing), apply abundance thresholds
-    fasta_files_prepared, sythetic_prepared, negative_prepared = marker_cut(
+    fasta_files_prepared = marker_cut(
         marker_definitions,
         file_pairs,
         out_dir,
@@ -1060,4 +969,4 @@ def main(
         sys.stderr.write(f"Prepared {len(fasta_files_prepared)} FASTA files\n")
     sys.stdout.flush()
     sys.stderr.flush()
-    return fasta_files_prepared, sythetic_prepared, negative_prepared
+    return fasta_files_prepared

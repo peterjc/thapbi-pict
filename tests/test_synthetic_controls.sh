@@ -19,9 +19,8 @@ echo "Checking prepare-reads with synthetic controls"
 echo "=============================================="
 
 mkdir $TMP/warning
-thapbi_pict prepare-reads \
+thapbi_pict prepare-reads -a 2 -f 0 \
     -i tests/reads/DNAMIX_S95_L001_R?_001.fastq.gz \
-    -y tests/reads/DNAMIX_S95_L001_R?_001.fastq.gz \
     -o $TMP/warning
 
 thapbi_pict sample-tally \
@@ -81,7 +80,6 @@ echo "Checking spike-in controls used via sample-tally:"
 rm -rf $TMP/mock_plates/intermediate_a2/*
 thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/mock_plates/plate-* \
-            -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
             -o $TMP/mock_plates/intermediate_a2/
 thapbi_pict sample-tally -d - -a 75 -f 0.001 \
@@ -120,7 +118,6 @@ echo "Checking spike-in controls used via prepare-reads:"
 rm -rf $TMP/single_plate/prepared/*
 thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/single_plate/raw_data/ \
-            -n $TMP/single_plate/raw_data/spike-in-* \
             --merged-cache $TMP/single_plate/merged/ \
             -o $TMP/single_plate/prepared/
 
@@ -145,7 +142,6 @@ echo "Checking spike-in controls used via sample-tally:"
 rm -rf $TMP/single_plate/prepared/*
 thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/single_plate/raw_data/ \
-            -n $TMP/single_plate/raw_data/spike-in-* \
             --merged-cache $TMP/single_plate/merged/ \
             -o $TMP/single_plate/prepared/
 thapbi_pict sample-tally -d - -a 75 -f 0.001 \

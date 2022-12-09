@@ -20,8 +20,9 @@ from .db_import import DEF_MIN_LENGTH
 from .db_import import fasta_parsing_function as fasta_conventions
 from .db_orm import connect_to_db
 from .db_orm import MarkerDef
+from .prepare import find_fastq_pairs
+from .utils import file_to_sample_name
 from .utils import find_requested_files
-
 
 # Common command line defaults
 # ============================
@@ -218,8 +219,6 @@ def prepare_reads(args=None):
 
     return_code = main(
         fastq=args.input,
-        synthetic_controls=args.synctrls,
-        negative_controls=args.negctrls,
         out_dir=args.output,
         session=session,
         spike_genus=args.synthetic,
@@ -425,11 +424,27 @@ def pipeline(args=None):
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
+    # We will silently ignore controls not also in the inputs argument!
+    neg_stems = []
+    if args.negctrls:
+        neg_stems = [
+            os.path.split(stem)[1]
+            for (stem, R1, R2) in find_fastq_pairs(
+                args.negctrls, ignore_prefixes=tuple(args.ignore_prefixes)
+            )
+        ]
+    syn_stems = []
+    if args.synctrls:
+        syn_stems = [
+            os.path.split(stem)[1]
+            for (stem, R1, R2) in find_fastq_pairs(
+                args.synctrls, ignore_prefixes=tuple(args.ignore_prefixes)
+            )
+        ]
+
     # This will do all the markers itself
     return_code = prepare(
         fastq=args.input,
-        synthetic_controls=args.synctrls,
-        negative_controls=args.negctrls,
         out_dir=intermediate_dir,
         session=session,
         spike_genus=args.synthetic,
@@ -442,12 +457,12 @@ def pipeline(args=None):
         debug=args.verbose,
         cpu=check_cpu(args.cpu),
     )
-    if isinstance(return_code, int):
+    if not isinstance(return_code, list):
         session.close()
         sys.stderr.write("ERROR: Pipeline aborted during prepare-reads\n")
         sys.exit(return_code)
-    # If not an integer, should be a 3-tuple of filename lists:
-    all_fasta_files, sythetic_prepared, negative_prepared = return_code
+    # If not an integer, should be a list of filenames:
+    all_fasta_files = return_code
     # TODO - Support known setting...
     # TODO - Can we specify different expected results from diff markers?
     known_files = find_requested_files(
@@ -479,8 +494,16 @@ def pipeline(args=None):
         tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
             inputs=fasta_files,
-            synthetic_controls=[_ for _ in fasta_files if _ in sythetic_prepared],
-            negative_controls=[_ for _ in fasta_files if _ in negative_prepared],
+            synthetic_controls=[
+                _
+                for _ in fasta_files
+                if file_to_sample_name(os.path.split(_)[1]) in syn_stems
+            ],
+            negative_controls=[
+                _
+                for _ in fasta_files
+                if file_to_sample_name(os.path.split(_)[1]) in neg_stems
+            ],
             output=tally_seqs_file,
             session=session,
             marker=marker,
@@ -1340,8 +1363,6 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument("-y", "--synctrls", **ARG_SYN_CONTROLS)
-    subcommand_parser.add_argument("-n", "--negctrls", **ARG_NEG_CONTROLS)
     subcommand_parser.add_argument(
         "-o",
         "--output",
