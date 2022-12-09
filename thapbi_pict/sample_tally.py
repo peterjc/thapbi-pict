@@ -174,7 +174,17 @@ def main(
                 pool_fraction_threshold[pool] = max(
                     f, pool_fraction_threshold.get(pool, min_abundance_fraction)
                 )
-                if debug:
+                if f > 0.5:
+                    sys.exit(
+                        f"ERROR: Control {sample} suggests extremely high"
+                        f" fractional abundance threshold {f*100:.1f}%\n"
+                    )
+                elif f > 0.05:
+                    sys.stderr.write(
+                        f"WARNING: Control {sample} suggests overly high"
+                        f" fractional abundance threshold {f*100:.1f}%\n"
+                    )
+                elif debug:
                     sys.stderr.write(
                         f"Synthetic control {sample} says increase {pool} "
                         "fractional abundance threshold from "

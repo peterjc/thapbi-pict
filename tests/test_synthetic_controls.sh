@@ -25,6 +25,12 @@ thapbi_pict prepare-reads \
     -o $TMP/warning \
     2>&1 | grep "WARNING: Control DNAMIX_S95_L001 suggests overly high fractional abundance threshold 23.6"
 
+thapbi_pict sample-tally \
+    -i $TMP/warning/ITS1/DNAMIX_S95_L001.fasta \
+    -y $TMP/warning/ITS1/DNAMIX_S95_L001.fasta \
+    -o $TMP/warning/tally.tsv \
+    2>&1 | grep "WARNING: Control DNAMIX_S95_L001 suggests overly high fractional abundance threshold 23.6"
+
 echo "------------------"
 echo "Four plate example"
 echo "------------------"
