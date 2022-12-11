@@ -71,12 +71,12 @@ cat tests/reads/DNAMIX_S95_L001_R1_001.fastq.gz | gunzip | head -n 200 > $TMP/po
 cat tests/reads/DNAMIX_S95_L001_R2_001.fastq.gz | gunzip | head -n 200 > $TMP/pool/MOCK_CONTROL_R2.fq
 set -o pipefail
 
-# Starting low threshold, should be increased to 19, so get new output count...
+# Starting low threshold, would be increased to 19, but now do that in sample-tally
 rm -rf $TMP/ITS1
 rm -rf $TMP/MOCK_CONTROL.fasta
 thapbi_pict prepare-reads -o $TMP -i $TMP/pool/ -a 5 -n $TMP/pool/MOCK_CONTROL_R?.fq
 if [ `grep -c "^>" $TMP/ITS1/MOCK_CONTROL.fasta` -ne "1" ]; then echo "Wrong FASTA control output count"; false; fi
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "9" ]; then echo "Wrong FASTA output count"; false; fi
+if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100

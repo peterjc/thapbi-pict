@@ -672,10 +672,6 @@ def marker_cut(
                 sys.stderr.write(f"Making {marker} output sub-directory\n")
             os.mkdir(os.path.join(out_dir, marker))
 
-    # (marker, folder) as key, max absolute abundance as value:
-    pool_worst_abs_control = {}
-    # (marker, folder) as key, max fractional abundance as value:
-    pool_worst_fraction_control = {}
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
     sythetic_prepared = []  # return value
@@ -746,7 +742,6 @@ def marker_cut(
             fasta_name = os.path.join(out_dir, marker, f"{stem}.fasta")
             if fasta_name in fasta_files_prepared:
                 sys.exit(f"ERROR: Multiple files named {fasta_name}")
-            pool_key = (marker, pool_path)
             # Will parse pre-existing control file, skips pre-existing samples
             (
                 marker_total,
@@ -769,26 +764,8 @@ def marker_cut(
                 marker_values["min_length"],
                 marker_values["max_length"],
                 marker_values["spike_kmers"],
-                # Absolute threshold:
-                (
-                    # use half for a synthetic (fractional) control:
-                    ceil(min_abundance * 0.5)
-                    if fraction_control
-                    else min_abundance
-                )
-                if control
-                else max(min_abundance, pool_worst_abs_control.get(pool_key, 0)),
-                # Fraction threshold:
-                (
-                    # use half for a negative (absolute) control:
-                    min_abundance_fraction * 0.5
-                    if absolute_control
-                    else min_abundance_fraction
-                )
-                if control
-                else max(
-                    min_abundance_fraction, pool_worst_fraction_control.get(pool_key, 0)
-                ),
+                min_abundance,
+                min_abundance_fraction,
                 control,
                 tmp,
                 debug=debug,
@@ -806,63 +783,7 @@ def marker_cut(
                 ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
             # Any spike-in is assumed to be a synthetic control, rest assumed biological
             max_non_spike_abundance = max_abundance_by_spike.get("", 0)
-            if control:
-                if (
-                    (debug and marker_total)
-                    or max_non_spike_abundance > min_abundance
-                    or max_non_spike_abundance > min_abundance_fraction * marker_total
-                ):
-                    assert marker_total, (marker_total, accepted_total)
-                    sys.stderr.write(
-                        f"Control {stem} max {marker} abundance"
-                        f" {max_non_spike_abundance}"
-                        f" ({max_non_spike_abundance*100/marker_total:.4f}%)"
-                        f" ({uniq_count} unique sequences,"
-                        f" {marker_total} reads, over default"
-                        f" threshold {min_abundance}"
-                        f" / {min_abundance_fraction*100:.4f}%)\n"
-                    )
-                if debug:
-                    sys.stderr.write(
-                        "Control %s max %s abundance breakdown %s\n"
-                        % (
-                            stem,
-                            marker,
-                            ", ".join(
-                                f"{k}: {v}"
-                                for k, v in sorted(max_abundance_by_spike.items())
-                            ),
-                        )
-                    )
-                if (
-                    absolute_control
-                    and max_non_spike_abundance
-                    > pool_worst_abs_control.get(pool_key, -1)
-                ):
-                    # Record even if zero, nice to have for summary later
-                    pool_worst_abs_control[pool_key] = max_non_spike_abundance
-                if (
-                    fraction_control
-                    and max_non_spike_abundance
-                    > pool_worst_fraction_control.get(pool_key, -1) * marker_total
-                ):
-                    # Record even if zero, nice to have for summary later
-                    pool_worst_fraction_control[pool_key] = (
-                        max_non_spike_abundance / marker_total
-                    )
-                    if max_non_spike_abundance / marker_total > 0.5:
-                        sys.exit(
-                            f"ERROR: Control {stem} suggests extremely high"
-                            " fractional abundance threshold"
-                            f" {max_non_spike_abundance*100/marker_total:.1f}%\n"
-                        )
-                    elif max_non_spike_abundance / marker_total > 0.05:
-                        sys.stderr.write(
-                            f"WARNING: Control {stem} suggests overly high"
-                            " fractional abundance threshold"
-                            f" {max_non_spike_abundance*100/marker_total:.1f}%\n"
-                        )
-            elif uniq_count is None:
+            if uniq_count is None:
                 skipped_samples.add(stem)
                 if debug:
                     sys.stderr.write(f"Skipping {fasta_name} as already done\n")
@@ -886,28 +807,6 @@ def marker_cut(
         sys.stderr.write(
             f"Skipped {len(skipped_samples)} previously prepared {marker} samples\n"
         )
-    for (marker, pool_path), a in sorted(pool_worst_abs_control.items()):
-        if a > min_abundance:
-            sys.stderr.write(
-                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
-                + f" {marker} absolute abundance threshold raised to {a}\n"
-            )
-        else:
-            sys.stderr.write(
-                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
-                + f" {marker} negative control abundance {a} (good)\n"
-            )
-    for (marker, pool_path), f in sorted(pool_worst_fraction_control.items()):
-        if f > min_abundance_fraction:
-            sys.stderr.write(
-                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
-                + f" {marker} fractional abundance threshold raised to {f*100:.4f}\n"
-            )
-        else:
-            sys.stderr.write(
-                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
-                + f" {marker} synthetic control abundance {f*100:.4f} (good)\n"
-            )
 
     sys.stderr.write(
         f"Spent {time_flash:0.1f}s running flash and making NR,"
