@@ -75,7 +75,7 @@ set -o pipefail
 rm -rf $TMP/ITS1
 rm -rf $TMP/MOCK_CONTROL.fasta
 thapbi_pict prepare-reads -o $TMP -i $TMP/pool/ -a 5 -n $TMP/pool/MOCK_CONTROL_R?.fq
-if [ `grep -c "^>" $TMP/MOCK_CONTROL.fasta` -ne "1" ]; then echo "Wrong FASTA control output count"; false; fi
+if [ `grep -c "^>" $TMP/ITS1/MOCK_CONTROL.fasta` -ne "1" ]; then echo "Wrong FASTA control output count"; false; fi
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "9" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/ITS1
