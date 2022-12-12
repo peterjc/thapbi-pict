@@ -241,9 +241,7 @@ thapbi_pict sample-tally -d - -a 75 -f 0.001 \
 # Very similar to four-plate tests/synthetic_controls/report.ITS1.tally.tsv
 # if ignores sample-A, sample-B and sample-C and compare sample-D with the
 # lone sample (i.e. compare the samples with the higher 107 not 75 threshold)
-# Avoiding problematic line on Windows
-diff <(grep -v "^#Threshold pool" $TMP/single_plate/tally.tsv) \
-     <(grep -v "^#Threshold pool" tests/synthetic_controls/single-plate.ITS1.tally.tsv)
+diff $TMP/single_plate/tally.tsv tests/synthetic_controls/single-plate.ITS1.tally.tsv
 
 echo "===="
 echo "Done"
