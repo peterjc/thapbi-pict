@@ -53,17 +53,10 @@ for PLATE in A B C D; do
         | gzip > $TMP/mock_plates/merged/spike-in-${PLATE}.fasta.gz
 done
 
-echo
-echo "Checking spike-in controls used via prepare-reads:"
+echo "Checking spike-in controls used via pipeline:"
 
 rm -rf $TMP/mock_plates/prepared/*
-thapbi_pict prepare-reads -d - -a 75 -f 0.001 \
-            -i $TMP/mock_plates/plate-* \
-            -n $TMP/mock_plates/plate-*/spike-in-* \
-            --merged-cache $TMP/mock_plates/merged/ \
-            -o $TMP/mock_plates/prepared/
-
-thapbi_pict pipeline -d - -a 75 \
+thapbi_pict pipeline -d - -a 75 -f 0.001 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
@@ -112,11 +105,7 @@ for PLATE in A B C D; do
         | gzip > $TMP/single_plate/merged/spike-in-${PLATE}.fasta.gz
 done
 
-echo
-echo "Checking spike-in controls used via prepare-reads:"
-
-rm -rf $TMP/single_plate/prepared/*
-thapbi_pict prepare-reads -d - -a 75 \
+thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/single_plate/raw_data/ \
             --merged-cache $TMP/single_plate/merged/ \
             -o $TMP/single_plate/prepared/
