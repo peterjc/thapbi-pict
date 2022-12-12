@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.14a1 *Pending*  Alpha release, only do abundance thresholding in ``sample-tally`` step.
 v0.13.6 2022-12-28 Factional abundance threshold in ``sample-tally`` was not strict enough.
 v0.13.5 2022-12-21 Misc small fixes and documentation updates.
 v0.13.4 2022-12-07 Support abundance thresholding in the ``sample-tally`` step. Log controls.
