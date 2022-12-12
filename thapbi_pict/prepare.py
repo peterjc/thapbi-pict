@@ -53,9 +53,13 @@ def find_fastq_pairs(
     The filenames will be normalised relative to the current directory
     (so that we can directly compare file lists which could have been
     defined inconsistently by the user).
+
+    Will ignore "-" if present in the inputs.
     """
     if ignore_prefixes:
         assert isinstance(ignore_prefixes, tuple), ignore_prefixes
+    if not filenames_or_folders:
+        return []
     if debug and ignore_prefixes:
         sys.stderr.write(
             "DEBUG: Finding FASTQ pairs ignoring prefixes: %s\n"
@@ -64,6 +68,8 @@ def find_fastq_pairs(
 
     answer = []
     for x in filenames_or_folders:
+        if not x or x == "-":
+            continue
         if not os.path.isabs(x):
             x = os.path.relpath(x)
         x = os.path.normpath(x)
@@ -1034,32 +1040,12 @@ def main(
 
     marker_definitions = load_marker_defs(session, spike_genus)
 
-    if fastq:
-        # Possible in a pipeline setting may need to pass a null value,
-        # e.g. -i "" or -i "-" when only have negatives?
-        fastq = [_ for _ in fastq if _ and _ != "-"]
-    if synthetic_controls:
-        # Possible in a pipeline setting may need to pass a null value,
-        # e.g. -n "" or -n "-"
-        synthetic_controls = [_ for _ in synthetic_controls if _ and _ != "-"]
-    if negative_controls:
-        # Possible in a pipeline setting may need to pass a null value,
-        # e.g. -n "" or -n "-"
-        negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
-
-    if synthetic_controls:
-        syn_control_file_pairs = find_fastq_pairs(
-            synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
-        )
-    else:
-        syn_control_file_pairs = []
-    if negative_controls:
-        neg_control_file_pairs = find_fastq_pairs(
-            negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
-        )
-    else:
-        neg_control_file_pairs = []
-
+    syn_control_file_pairs = find_fastq_pairs(
+        synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
+    )
+    neg_control_file_pairs = find_fastq_pairs(
+        negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
+    )
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
     )
