@@ -57,7 +57,7 @@ done
 
 echo "Checking spike-in controls used via prepare-reads:"
 
-rm -rf $TMP/mock_plates/prepared/
+rm -rf $TMP/mock_plates/prepared/*
 thapbi_pict prepare-reads -d - -a 75 -f 0.001 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
@@ -152,7 +152,7 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta` != "#ab
     echo "Wrong count accepted after abundance threshold in sample-D.fasta"; false
 fi
 
-rm -rf $TMP/mock_plates/prepared/
+rm -rf $TMP/mock_plates/prepared/*
 thapbi_pict pipeline -d - -a 75 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
@@ -167,7 +167,7 @@ done
 
 echo "Checking spike-in controls used via sample-tally:"
 
-rm -rf $TMP/mock_plates/prepared/
+rm -rf $TMP/mock_plates/intermediate_a2/*
 thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
@@ -203,7 +203,7 @@ done
 
 echo "Checking spike-in controls used via prepare-reads:"
 
-rm -rf $TMP/single_plate/prepared/
+rm -rf $TMP/single_plate/prepared/*
 thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/single_plate/raw_data/ \
             -n $TMP/single_plate/raw_data/spike-in-* \
@@ -228,7 +228,7 @@ diff \
 
 echo "Checking spike-in controls used via sample-tally:"
 
-rm -rf $TMP/single_plate/prepared/
+rm -rf $TMP/single_plate/prepared/*
 thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/single_plate/raw_data/ \
             -n $TMP/single_plate/raw_data/spike-in-* \
