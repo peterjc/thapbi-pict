@@ -202,20 +202,11 @@ def main(
     sample_threshold = {}
     for sample in samples:
         if sample in controls:
-            # Not dynamic (respect FASTA header which could be more)
-            # Note complicated logic inherited from prepare-reads
+            # Not dynamic (and respects FASTA header which could be more)
             threshold = max(
                 int(sample_headers[sample].get("threshold", 0)),
-                # use half for a synthetic (fractional) control:
-                ceil(min_abundance * 0.5)
-                if sample in synthetic_controls
-                else min_abundance,
-                # use half for a negative (absolute) control:
-                ceil(
-                    sample_counts[marker, sample]
-                    * min_abundance_fraction
-                    * (0.5 if sample in negative_controls else 1.0)
-                ),
+                min_abundance,
+                ceil(sample_counts[marker, sample] * min_abundance_fraction),
             )
             if debug:
                 sys.stderr.write(
