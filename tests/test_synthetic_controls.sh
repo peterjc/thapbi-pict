@@ -57,7 +57,7 @@ done
 
 echo "Checking spike-in controls used via prepare-reads:"
 
-thapbi_pict prepare-reads -d - -a 75 \
+thapbi_pict prepare-reads -d - -a 75 -f 0.001 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
@@ -165,12 +165,12 @@ done
 
 echo "Checking spike-in controls used via sample-tally:"
 
-thapbi_pict prepare-reads -d - -a 3 -f 0 \
+thapbi_pict prepare-reads -d - -a 2 -f 0 \
             -i $TMP/mock_plates/plate-* \
             -n $TMP/mock_plates/plate-*/spike-in-* \
             --merged-cache $TMP/mock_plates/merged/ \
             -o $TMP/mock_plates/intermediate_a2/
-thapbi_pict sample-tally -d - -a 75 \
+thapbi_pict sample-tally -d - -a 75 -f 0.001 \
             -i $TMP/mock_plates/intermediate_a2/ITS1/*.fasta \
             -n $TMP/mock_plates/intermediate_a2/ITS1/spike-in-*.fasta \
             -o $TMP/mock_plates/tally.tsv
@@ -198,6 +198,8 @@ for PLATE in A B C D; do
         | gzip > $TMP/single_plate/merged/spike-in-${PLATE}.fasta.gz
 done
 
+echo "Checking spike-in controls used via prepare-reads:"
+
 thapbi_pict prepare-reads -d - -a 75 \
             -i $TMP/single_plate/raw_data/ \
             -n $TMP/single_plate/raw_data/spike-in-* \
@@ -219,6 +221,22 @@ echo "Checking the mock sample and threshold used..."
 diff \
   <(grep -v "^#threshold_pool:" $TMP/single_plate/prepared/ITS1/sample.fasta) \
   <(grep -v "^#threshold_pool:" $TMP/mock_plates/prepared/ITS1/sample-D.fasta)
+
+echo "Checking spike-in controls used via sample-tally:"
+
+thapbi_pict prepare-reads -d - -a 2 -f 0 \
+            -i $TMP/single_plate/raw_data/ \
+            -n $TMP/single_plate/raw_data/spike-in-* \
+            --merged-cache $TMP/single_plate/merged/ \
+            -o $TMP/single_plate/prepared/
+thapbi_pict sample-tally -d - -a 75 -f 0.001 \
+            -i $TMP/single_plate/prepared/ITS1/*.fasta \
+            -n $TMP/single_plate/prepared/ITS1/spike-in-*.fasta \
+            -o $TMP/single_plate/tally.tsv
+# Very similar to four-plate tests/synthetic_controls/report.ITS1.tally.tsv
+# if ignores sample-A, sample-B and sample-C and compare sample-D with the
+# lone sample (i.e. compare the samples with the higher 107 not 75 threshold)
+diff $TMP/single_plate/tally.tsv tests/synthetic_controls/single-plate.ITS1.tally.tsv
 
 echo "===="
 echo "Done"
