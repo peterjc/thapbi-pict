@@ -758,24 +758,8 @@ def marker_cut(
                 marker_values["min_length"],
                 marker_values["max_length"],
                 marker_values["spike_kmers"],
-                # Absolute threshold:
-                (
-                    # use half for a synthetic (fractional) control:
-                    ceil(min_abundance * 0.5)
-                    if fraction_control
-                    else min_abundance
-                )
-                if control
-                else min_abundance,
-                # Fraction threshold:
-                (
-                    # use half for a negative (absolute) control:
-                    min_abundance_fraction * 0.5
-                    if absolute_control
-                    else min_abundance_fraction
-                )
-                if control
-                else min_abundance_fraction,
+                min_abundance,
+                min_abundance_fraction,
                 control,
                 tmp,
                 debug=debug,
