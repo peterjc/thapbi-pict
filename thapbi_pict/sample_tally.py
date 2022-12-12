@@ -348,6 +348,10 @@ def main(
                         f"DEBUG: Dropping threshold pool common prefix {common}\n"
                     )
                 stat_values = [_[len(common) + 1 :] for _ in stat_values]
+            elif len(set(stat_values)) == 1:
+                # discard possibly platform specific start
+                common = common.rsplit(os.path.sep, 1)[1]
+                stat_values = [common] * len(stat_values)
         # Using "-" as missing value to match default in summary reports
         out_handle.write(
             "\t".join(

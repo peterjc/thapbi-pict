@@ -1,7 +1,7 @@
 #						Raw FASTQ	1	5159	238
 #						Flash	1	4962	229
 #						Cutadapt	1	4955	15
-#						Threshold pool	tests/reads	tests/reads	tests/reads
+#						Threshold pool	reads	reads	reads
 #						Threshold	100	100	100
 #						Control	Sample	Sample	Sample
 #						Max non-spike	0	1170	0
