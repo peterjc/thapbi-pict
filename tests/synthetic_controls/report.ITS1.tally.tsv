@@ -2,7 +2,7 @@
 #Flash	4962	4962	4962	4962	61499	126373	68095	37882	
 #Cutadapt	4955	4955	4955	4955	38473	84805	44714	25276	
 #Threshold pool	plate-A	plate-B	plate-C	plate-D	plate-A	plate-B	plate-C	plate-D	
-#Threshold	75	75	75	107	75	75	75	75	
+#Threshold	75	75	75	107	75	85	75	75	
 #Control	Sample	Sample	Sample	Sample	Negative	Negative	Negative	Negative	
 #Max non-spike	1170	1170	1170	1170	0	0	0	107	
 #Max spike-in	0	0	0	0	27779	83756	28809	13630	
