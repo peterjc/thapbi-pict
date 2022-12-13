@@ -241,14 +241,18 @@ def main(
 
     new_counts = defaultdict(int)
     new_totals = defaultdict(int)
-    for (marker, seq, sample), a in counts.items():
+    before = len(totals)
+    del totals
+    while counts:
+        (marker, seq, sample), a = counts.popitem()
         if a >= sample_threshold[sample]:
             new_counts[marker, seq, sample] = a
             new_totals[marker, seq] += a
     sys.stderr.write(
-        f"Abundance thresholds reduced unique ASVs from {len(totals)} to "
+        f"Sample pool abundance thresholds reduced unique ASVs from {before} to "
         f"{len(new_totals)}.\n"
     )
+    del before
     counts = new_counts
     totals = new_totals
     del new_totals, new_counts
@@ -256,7 +260,8 @@ def main(
     if total_min_abundance:
         new_counts = defaultdict(int)
         new_totals = defaultdict(int)
-        for (marker, seq, sample), a in counts.items():
+        while counts:
+            (marker, seq, sample), a = counts.popitem()
             if totals[marker, seq] >= total_min_abundance:
                 new_counts[marker, seq, sample] = a
                 new_totals[marker, seq] += a
