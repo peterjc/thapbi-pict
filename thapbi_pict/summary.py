@@ -807,7 +807,10 @@ def main(
             if sample not in sample_species_counts:
                 sample_species_counts[sample] = Counter()
             sample_stats[sample] = values = [
-                fasta_header.get(_, -1) for _ in stats_fields
+                fasta_header.get(_, -1)
+                if _ in ("Sample", "Control", "Threshold pool")
+                else int(fasta_header.get(_, -1))
+                for _ in stats_fields
             ]
             if values == blank_stats:
                 sys.stderr.write(f"WARNING: Missing stats header for {sample}\n")
