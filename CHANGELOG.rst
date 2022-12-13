@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.13.5 *Pending*  Misc small fixes and documentation updates.
 v0.13.4 2022-12-07 Support abundance thresholding in the ``sample-tally`` step. Log controls.
 v0.13.3 2022-11-25 Using new ``sample-tally`` command in pipeline, not ``fasta-nr``.
 v0.13.2 2022-11-11 Sped up ``substr`` classifier, especially with larger databases.
