@@ -146,7 +146,7 @@ def main(
         # interest on the tail end low abundance samples.
         # Should we sort totals by count?
         if any(
-            max(max_spike_abundance[sample], max_non_spike_abundance[sample])
+            min(max_spike_abundance[sample], max_non_spike_abundance[sample])
             < counts[seq, sample]
             for sample in samples
         ):
