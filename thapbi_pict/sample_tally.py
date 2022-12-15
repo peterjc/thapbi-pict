@@ -30,7 +30,8 @@ def main(
     negative_controls,
     output,
     session,
-    spike_genus,
+    marker=None,
+    spike_genus=None,
     fasta=None,
     min_abundance=100,
     min_abundance_fraction=0.001,
@@ -49,8 +50,8 @@ def main(
     increased by pool if negative or synthetic controls are given respectively.
     Comma separated string argument spike_genus is treated case insensitively.
 
-    Results are sorted by marker, decreasing abundance then alphabetically by
-    sequence.
+    Results are for a single marker, sorted by decreasing abundance then
+    alphabetically by sequence.
     """
     if isinstance(inputs, str):
         inputs = [inputs]
@@ -82,11 +83,24 @@ def main(
         sys.exit("ERROR: Output directory given, want a filename.")
 
     marker_definitions = load_marker_defs(session, spike_genus)
+    if marker:
+        if not marker_definitions:
+            sys.exit("ERROR: Marker given with -k / --marker not in DB.")
+        spikes = marker_definitions[marker]["spike_kmers"]
+    elif len(marker_definitions) > 1:
+        sys.exit("ERROR: DB has multiple markers, please set -k / --marker.")
+    else:
+        # Implicit -k / --marker choice as only one in the DB
+        marker, marker_def = marker_definitions.popitem()
+        spikes = marker_def["spike_kmers"]
+        del marker_def
+    del marker_definitions
+    assert marker
 
     totals = Counter()
     counts = defaultdict(int)
     sample_counts = defaultdict(int)
-    sample_marker_cutadapt = {}  # before any thresholds
+    sample_cutadapt = {}  # before any thresholds
     samples = set()
     sample_pool = {}
     sample_headers = {}
@@ -94,29 +108,26 @@ def main(
         # Assuming FASTA for now
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
-        # TODO - Assuming just one marker for now:
         sample = file_to_sample_name(filename)
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
-        marker = sample_headers[sample]["marker"]
-        if marker not in marker_definitions:
-            # Probably using the default DB by mistake!
+        if marker != sample_headers[sample]["marker"]:
             sys.exit(
-                f"ERROR: Marker {marker} not in DB, should be one of "
-                + ", ".join(marker_definitions)
+                f"ERROR: Expected marker {marker},"
+                f" not {sample_headers[sample]['marker']} from {filename}"
             )
         assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
-        sample_marker_cutadapt[sample, marker] = int(sample_headers[sample]["cutadapt"])
+        sample_cutadapt[sample] = int(sample_headers[sample]["cutadapt"])
         sample_pool[sample] = sample_headers[sample].get("threshold_pool", "default")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 seq = seq.upper()
                 if min_length <= len(seq) <= max_length:
                     a = abundance_from_read_name(_.split(None, 1)[0])
-                    totals[marker, seq] += a
-                    counts[marker, seq, sample] += a
-                    sample_counts[marker, sample] += a
+                    totals[seq] += a
+                    counts[seq, sample] += a
+                    sample_counts[sample] += a
 
     if totals:
         sys.stderr.write(
@@ -126,24 +137,22 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
-    # TODO - support for multiple markers?
     pool_absolute_threshold = {}
     pool_fraction_threshold = {}
     max_spike_abundance = defaultdict(int)  # exporting in metadata
     max_non_spike_abundance = defaultdict(int)  # exporting in metadata
-    for (marker, seq) in totals:
-        spikes = marker_definitions[marker]["spike_kmers"]
+    for seq in totals:
         if is_spike_in(seq, spikes):
             for sample in samples:
-                if counts[marker, seq, sample]:
+                if counts[seq, sample]:
                     max_spike_abundance[sample] = max(
-                        max_spike_abundance[sample], counts[marker, seq, sample]
+                        max_spike_abundance[sample], counts[seq, sample]
                     )
         else:
             for sample in samples:
-                if counts[marker, seq, sample]:
+                if counts[seq, sample]:
                     max_non_spike_abundance[sample] = max(
-                        max_non_spike_abundance[sample], counts[marker, seq, sample]
+                        max_non_spike_abundance[sample], counts[seq, sample]
                     )
     if controls:
         if debug:
@@ -168,9 +177,9 @@ def main(
                 )
             if (
                 sample in synthetic_controls
-                and min_abundance_fraction * sample_marker_cutadapt[sample, marker] < a
+                and min_abundance_fraction * sample_cutadapt[sample] < a
             ):
-                f = a / sample_marker_cutadapt[sample, marker]
+                f = a / sample_cutadapt[sample]
                 pool_fraction_threshold[pool] = max(
                     f, pool_fraction_threshold.get(pool, min_abundance_fraction)
                 )
@@ -191,7 +200,7 @@ def main(
                         f"{min_abundance_fraction*100:.4f} to {f*100:.4f}%\n"
                     )
             elif debug and sample in synthetic_controls:
-                f = a / sample_marker_cutadapt[sample, marker]
+                f = a / sample_cutadapt[sample]
                 sys.stderr.write(
                     f"Synthetic control {sample} suggests drop {pool} fractional "
                     f"abundance threshold from {min_abundance_fraction*100:.4f} "
@@ -212,7 +221,7 @@ def main(
                 else min_abundance,
                 # use half for a negative (absolute) control:
                 ceil(
-                    sample_counts[marker, sample]
+                    sample_counts[sample]
                     * min_abundance_fraction
                     * (0.5 if sample in negative_controls else 1.0)
                 ),
@@ -229,7 +238,7 @@ def main(
                 int(sample_headers[sample].get("threshold", 0)),
                 pool_absolute_threshold.get(pool, min_abundance),
                 ceil(
-                    sample_counts[marker, sample]
+                    sample_counts[sample]
                     * pool_fraction_threshold.get(pool, min_abundance_fraction)
                 ),
             )
@@ -244,10 +253,10 @@ def main(
     before = len(totals)
     del totals
     while counts:
-        (marker, seq, sample), a = counts.popitem()
+        (seq, sample), a = counts.popitem()
         if a >= sample_threshold[sample]:
-            new_counts[marker, seq, sample] = a
-            new_totals[marker, seq] += a
+            new_counts[seq, sample] = a
+            new_totals[seq] += a
     sys.stderr.write(
         f"Sample pool abundance thresholds reduced unique ASVs from {before} to "
         f"{len(new_totals)}.\n"
@@ -261,10 +270,10 @@ def main(
         new_counts = defaultdict(int)
         new_totals = defaultdict(int)
         while counts:
-            (marker, seq, sample), a = counts.popitem()
-            if totals[marker, seq] >= total_min_abundance:
-                new_counts[marker, seq, sample] = a
-                new_totals[marker, seq] += a
+            (seq, sample), a = counts.popitem()
+            if totals[seq] >= total_min_abundance:
+                new_counts[seq, sample] = a
+                new_totals[seq] += a
         sys.stderr.write(
             f"Total abundance threshold {total_min_abundance} reduced unique "
             f"ASVs from {len(totals)} to {len(new_totals)}.\n"
@@ -275,9 +284,9 @@ def main(
 
     samples = sorted(samples)
     values = sorted(
-        ((marker, count, seq) for (marker, seq), count in totals.items()),
-        # sort by marker, then put the highest abundance entries first:
-        key=lambda x: (x[0], -x[1], x[2]),
+        ((count, seq) for seq, count in totals.items()),
+        # (sort by marker), then put the highest abundance entries first:
+        key=lambda x: (-x[0], x[1]),
     )
     del totals
 
@@ -378,8 +387,8 @@ def main(
         fasta_handle = open(fasta, "w")
     else:
         fasta_handle = None
-    for marker, count, seq in values:
-        data = "\t".join(str(counts[marker, seq, sample]) for sample in samples)
+    for count, seq in values:
+        data = "\t".join(str(counts[seq, sample]) for sample in samples)
         md5 = md5seq(seq)
         out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\n")
         if fasta_handle:

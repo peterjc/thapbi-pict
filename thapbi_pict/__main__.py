@@ -274,6 +274,7 @@ def sample_tally(args=None):
         negative_controls=args.negctrls,
         output=args.output,
         session=session,
+        marker=args.marker,
         spike_genus=args.synthetic,
         fasta=args.fasta,
         min_abundance=args.abundance,
@@ -482,6 +483,7 @@ def pipeline(args=None):
             negative_controls=[_ for _ in fasta_files if _ in negative_prepared],
             output=tally_seqs_file,
             session=session,
+            marker=marker,
             spike_genus=args.synthetic,
             fasta=all_fasta,
             min_abundance=args.abundance,
@@ -1419,14 +1421,14 @@ def main(args=None):
         "sample values are the counts from the input FASTA files (pooling any "
         "read-corrected sequences if using denoising).",
     )
-    # Currently get marker name FASTA headers... that could be optional if given here?
-    # subcommand_parser.add_argument(
-    #     "-k",
-    #     "--marker",
-    #     type=str,
-    #     default=None,
-    #     help="Which amplicon marker are these for? Used for column header.",
-    # )
+    subcommand_parser.add_argument(
+        "-k",
+        "--marker",
+        type=str,
+        default=None,
+        help="Which amplicon marker to process. Required if the DB has more "
+        "than one defined.",
+    )
     subcommand_parser.add_argument(
         "-i",
         "--input",
