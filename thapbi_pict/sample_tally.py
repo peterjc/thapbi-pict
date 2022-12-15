@@ -98,8 +98,8 @@ def main(
     assert marker
 
     totals = Counter()
-    counts = defaultdict(int)
-    sample_counts = defaultdict(int)
+    counts = Counter()
+    sample_counts = Counter()
     sample_cutadapt = {}  # before any thresholds
     samples = set()
     sample_pool = {}
