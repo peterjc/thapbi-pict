@@ -142,18 +142,26 @@ def main(
     max_spike_abundance = defaultdict(int)  # exporting in metadata
     max_non_spike_abundance = defaultdict(int)  # exporting in metadata
     for seq in totals:
-        if is_spike_in(seq, spikes):
-            for sample in samples:
-                if counts[seq, sample]:
-                    max_spike_abundance[sample] = max(
-                        max_spike_abundance[sample], counts[seq, sample]
-                    )
-        else:
-            for sample in samples:
-                if counts[seq, sample]:
-                    max_non_spike_abundance[sample] = max(
-                        max_non_spike_abundance[sample], counts[seq, sample]
-                    )
+        # Calling is_spike_in is relatively expensive, but will be of less
+        # interest on the tail end low abundance samples.
+        # Should we sort totals by count?
+        if any(
+            max(max_spike_abundance[sample], max_non_spike_abundance[sample])
+            < counts[seq, sample]
+            for sample in samples
+        ):
+            # This could raise the max (non-)spike-in abundance
+            if is_spike_in(seq, spikes):
+                for sample in samples:
+                    if max_spike_abundance[sample] < counts[seq, sample]:
+                        max_spike_abundance[sample] = counts[seq, sample]
+            else:
+                for sample in samples:
+                    if max_non_spike_abundance[sample] < counts[seq, sample]:
+                        max_non_spike_abundance[sample] = counts[seq, sample]
+    if debug:
+        sys.stderr.write("DEBUG: Finished tagging spike-in sequences.\n")
+
     if controls:
         if debug:
             sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
