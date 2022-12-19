@@ -830,19 +830,22 @@ def marker_cut(
                         f" threshold {min_abundance}"
                         f" / {min_abundance_fraction*100:.4f}%)\n"
                     )
+                # Note applying the half threshold heuristic here
+                # (irrelevant what was used in the individual FASTA file)
                 if (
                     absolute_control
                     and max_non_spike_abundance
+                    > 0.5 * min_abundance_fraction * marker_total
+                    and max_non_spike_abundance
                     > pool_worst_abs_control.get(pool_key, -1)
                 ):
-                    # Record even if zero, nice to have for summary later
                     pool_worst_abs_control[pool_key] = max_non_spike_abundance
                 if (
                     fraction_control
+                    and max_non_spike_abundance > 0.5 * min_abundance
                     and max_non_spike_abundance
                     > pool_worst_fraction_control.get(pool_key, -1) * marker_total
                 ):
-                    # Record even if zero, nice to have for summary later
                     pool_worst_fraction_control[pool_key] = (
                         max_non_spike_abundance / marker_total
                     )
