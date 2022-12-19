@@ -320,33 +320,48 @@ def save_nr_fasta(
     sequence.
 
     Returns the total and number of unique sequences accepted (above any
-    minimum abundance specified), and a dict of max spike abundances
-    (including non-spikes under the empty string).
+    minimum abundance specified), and the largest non-spike count.
 
     Use output_fasta='-' for standard out.
     """
     singletons = sum(1 for seq, count in counts.items() if count == 1)
-    if not spikes:
-        spikes = []
+
+    # Restructure the input counts to sort by decreasing abundance
     values = sorted(
-        (
-            (count, is_spike_in(seq, spikes), seq)
-            for seq, count in counts.items()
-            if count >= min_abundance
-        ),
+        ((count, seq) for seq, count in counts.items()),
         # put the highest abundance entries first:
         key=lambda x: (-x[0], x[1:]),
     )
+
+    # Find max spike and non-spike:
+    if not spikes:
+        spikes = []
+        max_spike = 0
+        if values:
+            max_non_spike = values[0][0]
+        else:
+            max_non_spike = 0
+    else:
+        max_spike = max_non_spike = 0
+        for count, seq in values:
+            if is_spike_in(seq, spikes):
+                if not max_spike:
+                    max_spike = count
+                    if max_non_spike:
+                        break
+            else:
+                # Non-spike in
+                if not max_non_spike:
+                    max_non_spike = count
+                    if max_spike:
+                        break
+        if values:
+            assert max_spike == values[0][0] or max_non_spike == values[0][0]
+        else:
+            assert max_spike == max_non_spike == 0
+    # Having found the max (non-)spike, apply min abundance:
+    values = [x for x in values if x[0] >= min_abundance]
     accepted_total = sum(_[0] for _ in values)
-    # Could use max in place of next, but sorted with largest entry first:
-    max_spike_abundance = {"": next((_[0] for _ in values if _[1] == ""), 0)}
-    for spike_name, _, _ in spikes:
-        max_spike_abundance[spike_name] = next(
-            (_[0] for _ in values if _[1] == spike_name), 0
-        )
-    max_spike = max(
-        (max_spike_abundance[spike_name] for spike_name, _, _ in spikes), default=0
-    )
 
     if output_fasta == "-":
         if gzipped:
@@ -365,10 +380,14 @@ def save_nr_fasta(
         out_handle.write(f"#abundance:{accepted_total}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
         if spikes:
-            out_handle.write(f"#max_non-spike:{max_spike_abundance['']}\n")
+            out_handle.write(f"#max_non-spike:{max_non_spike}\n")
             out_handle.write(f"#max_spike-in:{max_spike}\n")
         out_handle.write(f"#singletons:{singletons}\n")
-    for count, spike_name, seq in values:
+    for count, seq in values:
+        if not spikes or count > max_spike:
+            spike_name = ""
+        else:
+            spike_name = is_spike_in(seq, spikes)
         if spike_name:
             out_handle.write(f">{md5seq(seq)}_{count} {spike_name}\n{seq}\n")
         else:
@@ -376,7 +395,7 @@ def save_nr_fasta(
     if output_fasta != "-":
         out_handle.close()
     assert accepted_total >= 0
-    return accepted_total, len(values), max_spike_abundance
+    return accepted_total, len(values), max_non_spike
 
 
 def make_nr_fasta(
@@ -434,7 +453,7 @@ def make_nr_fasta(
             for _, seq in SimpleFastaParser(handle):
                 if min_len <= len(seq) <= max_len:
                     counts[seq.upper()] += 1
-    accepted_total, accepted_count, max_spike_abundance = save_nr_fasta(
+    accepted_total, accepted_count, max_non_spike = save_nr_fasta(
         counts,
         output_fasta,
         min_abundance,
@@ -447,7 +466,7 @@ def make_nr_fasta(
         len(counts),
         accepted_total,
         accepted_count,
-        max_spike_abundance,
+        max_non_spike,
     )
 
 
@@ -521,9 +540,9 @@ def prepare_sample(
     Does spike-in detection, abundance threshold, and min/max length.
 
     Returns pre-threshold total read count, accepted unique sequence count,
-    accepted total read count, a dict of max abundance (keyed by spike-in
-    name), and the absolute abundance threshold used (higher of the given
-    absolute threshold or the given fractional threshold).
+    accepted total read count, max non-spike abundance, and the absolute
+    abundance threshold used (higher of the given absolute threshold or the
+    given fractional threshold).
     """
     if debug:
         sys.stderr.write(f"DEBUG: prepare_sample {trimmed_fasta} --> {fasta_name}\n")
@@ -534,10 +553,10 @@ def prepare_sample(
             uniq_count, total, max_abundance_by_spike = abundance_values_in_fasta(
                 fasta_name
             )
-            return count_cutadapt, uniq_count, total, max_abundance_by_spike, -1
+            return count_cutadapt, uniq_count, total, max_abundance_by_spike[""], -1
         else:
             # Don't actually need the max abundance
-            return None, None, None, {}, -1
+            return None, None, None, -1, -1
 
     if debug:
         sys.stderr.write(
@@ -577,7 +596,7 @@ def prepare_sample(
         uniq_count,
         accepted_total,
         accepted_uniq_count,
-        max_spike_abundance,
+        max_non_spike,
     ) = make_nr_fasta(
         trimmed_fasta,
         dedup,
@@ -590,14 +609,11 @@ def prepare_sample(
         header_dict=header_dict,
         debug=debug,
     )
-    if accepted_total or accepted_uniq_count:
-        assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
     if count_cutadapt < count:
         # Can be less if cutadapt had to use more relaxed global min/max length
         sys.exit(
             f"ERROR: Cutadapt says wrote {count_cutadapt}, but we saw {count} reads."
         )
-    assert bool(sum(max_spike_abundance.values())) == bool(accepted_uniq_count)
     if debug:
         count_raw = headers["raw_fastq"]
         count_flash = headers["flash"]
@@ -614,8 +630,7 @@ def prepare_sample(
             sys.stderr.write(
                 f"From {count_raw} paired FASTQ reads,"
                 f" found {uniq_count} unique sequences,"
-                f" {accepted_uniq_count} above min abundance {min_abundance}"
-                f" (max abundance {max(max_spike_abundance.values())})\n"
+                f" {accepted_uniq_count} above min abundance {min_abundance}\n"
             )
 
     # File done
@@ -632,17 +647,14 @@ def prepare_sample(
         sys.stderr.write(
             f"DEBUG: Filtered {fasta_name} down to {accepted_uniq_count} unique"
             f" sequences above {'control' if control else 'sample'}"
-            f" min abundance threshold {min_abundance}"
-            f" (max abundance {max(max_spike_abundance.values(), default=0)})\n"
+            f" min abundance threshold {min_abundance}\n"
         )
 
-    if accepted_uniq_count or accepted_total:
-        assert max_spike_abundance, f"Got {max_spike_abundance!r} from {trimmed_fasta}"
     return (
         count_cutadapt,
         accepted_uniq_count,
         accepted_total,
-        max_spike_abundance,
+        max_non_spike,
         min_abundance,
     )
 
@@ -752,7 +764,7 @@ def marker_cut(
                 marker_total,
                 uniq_count,
                 accepted_total,
-                max_abundance_by_spike,
+                max_non_spike_abundance,
                 min_a,
             ) = prepare_sample(
                 fasta_name,
@@ -801,11 +813,7 @@ def marker_cut(
                 negative_prepared.append(fasta_name)
             if uniq_count:
                 assert accepted_total <= marker_total, (accepted_total, marker_total)
-                assert (
-                    max_abundance_by_spike
-                ), f"Got {max_abundance_by_spike!r} from {fasta_name}"
             # Any spike-in is assumed to be a synthetic control, rest assumed biological
-            max_non_spike_abundance = max_abundance_by_spike.get("", 0)
             if control:
                 if (
                     (debug and marker_total)
@@ -821,18 +829,6 @@ def marker_cut(
                         f" {marker_total} reads, over default"
                         f" threshold {min_abundance}"
                         f" / {min_abundance_fraction*100:.4f}%)\n"
-                    )
-                if debug:
-                    sys.stderr.write(
-                        "Control %s max %s abundance breakdown %s\n"
-                        % (
-                            stem,
-                            marker,
-                            ", ".join(
-                                f"{k}: {v}"
-                                for k, v in sorted(max_abundance_by_spike.items())
-                            ),
-                        )
                     )
                 if (
                     absolute_control
