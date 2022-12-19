@@ -890,12 +890,23 @@ def marker_cut(
         if a > min_abundance:
             sys.stderr.write(
                 (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
-                + f" {marker} abundance threshold raised to {a}\n"
+                + f" {marker} absolute abundance threshold raised to {a}\n"
             )
         else:
             sys.stderr.write(
                 (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
                 + f" {marker} negative control abundance {a} (good)\n"
+            )
+    for (marker, pool_path), f in sorted(pool_worst_fraction_control.items()):
+        if f > min_abundance_fraction:
+            sys.stderr.write(
+                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
+                + f" {marker} fractional abundance threshold raised to {f*100:.4f}\n"
+            )
+        else:
+            sys.stderr.write(
+                (pool_path if os.path.isabs(pool_path) else os.path.relpath(pool_path))
+                + f" {marker} synthetic control abundance {f*100:.4f} (good)\n"
             )
 
     sys.stderr.write(
