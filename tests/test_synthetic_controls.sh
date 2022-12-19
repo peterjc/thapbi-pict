@@ -55,6 +55,7 @@ for PLATE in A B C D; do
         | gzip > $TMP/mock_plates/merged/spike-in-${PLATE}.fasta.gz
 done
 
+echo
 echo "Checking spike-in controls used via prepare-reads:"
 
 rm -rf $TMP/mock_plates/prepared/*
@@ -76,9 +77,9 @@ if [ `grep "^#abundance:" $TMP/mock_plates/prepared/ITS1/spike-in-A.fasta` != "#
     echo "Wrong count accepted after abundance threshold in spike-in-A.fasta"; false
 fi
 # B:
-# Used -n to adjust absolute threshold only (not -z to adjust fractional control)
+# Used -n to adjust absolute threshold only (not -f to adjust fractional control)
 # So, will use -a 75 as it is, but reduce default -f 0.001 to half that, 0.0005
-# i.e. Given cutadapt count of 84805, rather than implied threshold of 85, get 43/
+# i.e. Given cutadapt count of 84805, rather than implied threshold of 85, get 43
 if [ `grep "^#threshold:" $TMP/mock_plates/prepared/ITS1/spike-in-B.fasta` != "#threshold:75" ]; then
     echo "Wrong abundance threshold in spike-in-B.fasta"; false
 fi
@@ -177,8 +178,10 @@ thapbi_pict sample-tally -d - -a 75 -f 0.001 \
             -i $TMP/mock_plates/intermediate_a2/ITS1/*.fasta \
             -n $TMP/mock_plates/intermediate_a2/ITS1/spike-in-*.fasta \
             -o $TMP/mock_plates/tally.tsv
+echo diff $TMP/mock_plates/tally.tsv tests/synthetic_controls/report.ITS1.tally.tsv
 diff $TMP/mock_plates/tally.tsv tests/synthetic_controls/report.ITS1.tally.tsv
 # Effectively just did this:
+echo diff $TMP/mock_plates/tally.tsv $TMP/mock_plates/report.ITS1.tally.tsv
 diff $TMP/mock_plates/tally.tsv $TMP/mock_plates/report.ITS1.tally.tsv
 
 echo "--------------------"
@@ -201,6 +204,7 @@ for PLATE in A B C D; do
         | gzip > $TMP/single_plate/merged/spike-in-${PLATE}.fasta.gz
 done
 
+echo
 echo "Checking spike-in controls used via prepare-reads:"
 
 rm -rf $TMP/single_plate/prepared/*
