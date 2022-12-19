@@ -139,8 +139,8 @@ def main(
 
     pool_absolute_threshold = {}
     pool_fraction_threshold = {}
-    max_spike_abundance = defaultdict(int)  # exporting in metadata
-    max_non_spike_abundance = defaultdict(int)  # exporting in metadata
+    max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
+    max_non_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     for seq in totals:
         # Calling is_spike_in is relatively expensive, but will be of less
         # interest on the tail end low abundance samples.
