@@ -315,7 +315,7 @@ def split_read_name_abundance(text, debug=False):
 
 
 def abundance_values_in_fasta(fasta_file, gzipped=False):
-    """Return unique count, total abundance, and maximum abundance from read names."""
+    """Return unique count, total abundance, and maximum abundances by spike-in."""
     unique = 0
     total = 0
     max_a = Counter()

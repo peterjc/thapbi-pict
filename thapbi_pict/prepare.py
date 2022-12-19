@@ -531,10 +531,10 @@ def prepare_sample(
         if control:
             # Parse header for the pre-threshold cutadapt total
             count_cutadapt = load_fasta_header(fasta_name)["cutadapt"]
-            uniq_count, total, max_spike_abundance = abundance_values_in_fasta(
+            uniq_count, total, max_abundance_by_spike = abundance_values_in_fasta(
                 fasta_name
             )
-            return count_cutadapt, uniq_count, total, max_spike_abundance, -1
+            return count_cutadapt, uniq_count, total, max_abundance_by_spike, -1
         else:
             # Don't actually need the max abundance
             return None, None, None, {}, -1
