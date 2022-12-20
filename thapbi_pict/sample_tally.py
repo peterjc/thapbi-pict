@@ -58,23 +58,21 @@ def main(
     assert isinstance(inputs, list)
     assert inputs
 
+    assert "-" not in inputs
     if synthetic_controls:
-        # Possible in a pipeline setting may need to pass a null value,
-        # e.g. -n "" or -n "-"
-        synthetic_controls = [_ for _ in synthetic_controls if _ and _ != "-"]
+        # Ignore anything not also in the inputs
+        synthetic_controls = [
+            file_to_sample_name(_) for _ in synthetic_controls if _ in inputs
+        ]
     else:
         synthetic_controls = []
     if negative_controls:
-        # Possible in a pipeline setting may need to pass a null value,
-        # e.g. -n "" or -n "-"
-        negative_controls = [_ for _ in negative_controls if _ and _ != "-"]
+        # Ignore anything not also in the inputs
+        negative_controls = [
+            file_to_sample_name(_) for _ in negative_controls if _ in inputs
+        ]
     else:
         negative_controls = []
-    for filename in synthetic_controls + negative_controls:
-        if filename not in inputs:
-            inputs.append(filename)
-    synthetic_controls = [file_to_sample_name(_) for _ in synthetic_controls]
-    negative_controls = [file_to_sample_name(_) for _ in negative_controls]
     controls = set(negative_controls + synthetic_controls)
     if debug and not controls:
         sys.stderr.write("DEBUG: No control samples\n")
