@@ -221,7 +221,6 @@ def prepare_reads(args=None):
         fastq=args.input,
         out_dir=args.output,
         session=session,
-        spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=args.abundance,
         min_abundance_fraction=args.abundance_fraction,
@@ -447,7 +446,6 @@ def pipeline(args=None):
         fastq=args.input,
         out_dir=intermediate_dir,
         session=session,
-        spike_genus=args.synthetic,
         flip=args.flip,
         min_abundance=2,
         min_abundance_fraction=0.0,
@@ -1373,7 +1371,6 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
-    subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
