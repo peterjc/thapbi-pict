@@ -50,12 +50,12 @@ if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 5 -d $DB --synthetic SYNtheTIC --database '-'
+    -a 5 -d $DB --database '-'
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
-    -a 5 -d $DB --synthetic ''
+    -a 5 -d $DB
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
 
 echo "---------------------"
@@ -75,13 +75,6 @@ rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100
 if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
 diff $TMP/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
-
-rm -rf $TMP/ITS1
-thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100 --synthetic ''
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
-# Should be identical but without the spike counts in the header,
-# and spike names in the FASTA title lines:
-diff <(grep -v ">" $TMP/ITS1/DNAMIX_S95_L001.fasta | grep -v spike) <(grep -v "^>" tests/prepare-reads/DNAMIX_S95_L001.fasta | grep -v spike)
 
 # Testing primers (default)
 rm -rf $TMP/ITS1
@@ -109,12 +102,12 @@ thapbi_pict import -d $DB -x -k Nema --minlen 150 --maxlen 350 \
     -i database/Phytophthora_ITS1_curated.fasta # empty file would work
 
 rm -rf $TMP/Nema
-thapbi_pict prepare-reads --synthetic '' -d $DB \
+thapbi_pict prepare-reads -d $DB \
     -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
 diff $TMP/Nema/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
 
 rm -rf $TMP/Nema
-thapbi_pict prepare-reads --synthetic '' --database $DB \
+thapbi_pict prepare-reads --database $DB \
     -i tests/nematodes/sample_R*.fastq.gz -a 10 --flip -o $TMP/
 diff $TMP/Nema/sample.fasta tests/nematodes/sample_flip_a10.fasta
 

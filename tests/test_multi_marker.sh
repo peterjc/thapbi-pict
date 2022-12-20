@@ -105,7 +105,7 @@ echo "====================="
 thapbi_pict prepare-reads \
     -i tests/multi_marker/raw_data/ \
     -o $TMP/intermediate \
-    -d $DB -a 10 --synthetic ''
+    -d $DB -a 10
 
 for f in tests/multi_marker/intermediate/*/EM_1_sample.fasta; do
     m=${f%/*}
