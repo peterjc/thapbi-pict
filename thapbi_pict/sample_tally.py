@@ -288,6 +288,14 @@ def main(
         totals = new_totals
         del new_totals, new_counts
 
+    # Cap max (non-)spike values by sample specific thresholds
+    # (to match historic behaviour of pipeline via prepare-reads)
+    for sample in samples:
+        if max_spike_abundance[sample] < sample_threshold[sample]:
+            max_spike_abundance[sample] = 0
+        if max_non_spike_abundance[sample] < sample_threshold[sample]:
+            max_non_spike_abundance[sample] = 0
+
     samples = sorted(samples)
     values = sorted(
         ((count, seq) for seq, count in totals.items()),
