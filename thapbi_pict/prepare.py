@@ -1051,15 +1051,26 @@ def main(
 
     marker_definitions = load_marker_defs(session, spike_genus)
 
-    syn_control_file_pairs = find_fastq_pairs(
-        synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
-    )
-    neg_control_file_pairs = find_fastq_pairs(
-        negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
-    )
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
     )
+    # The controls must be in the input list, or we ignore them
+    # (Useful for job splitting inputs by folder, and shared global controls list)
+    syn_control_file_pairs = [
+        _
+        for _ in find_fastq_pairs(
+            synthetic_controls, ignore_prefixes=ignore_prefixes, debug=debug
+        )
+        if _ in fastq_file_pairs
+    ]
+    neg_control_file_pairs = [
+        _
+        for _ in find_fastq_pairs(
+            negative_controls, ignore_prefixes=ignore_prefixes, debug=debug
+        )
+        if _ in fastq_file_pairs
+    ]
+    # Now exclude the control from the input to make a sample-only list:
     fastq_file_pairs = [
         _
         for _ in fastq_file_pairs
