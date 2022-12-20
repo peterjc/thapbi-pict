@@ -829,19 +829,20 @@ ARG_SYN_CONTROLS = dict(  # noqa: C408
     metavar="FASTQ",
     # Does accept folder names, but kind of pointless
     # (as would be applied only to that folder)
-    help="One or more synthetic control paired FASTQ filenames "
-    "(may also appear in the inputs). High non-synthetic marker levels "
-    "will increase the fractional abundance threshold of other "
-    "FASTQ files in the same folder. Can use '-' for none.",
+    help="One or more synthetic control paired FASTQ filenames (which must "
+    "also appear in the inputs or they will be ignored). High non-synthetic "
+    "marker levels will increase the fractional abundance threshold of other "
+    "FASTQ files in the folder. Can use '-' for none.",
 )
 ARG_SYN_CONTROLS_FASTA = dict(  # noqa: C408
     type=str,
     nargs="+",
     metavar="FASTA",
-    help="One or more synthetic control FASTA filenames (may also appear in "
-    "inputs). High non-synthetic marker levels will increase the fractional "
-    "abundance threshold of other FASTA files from the same threshold pool "
-    "(set in FASTA header metadata). Can use '-' for none.",
+    help="One or more synthetic control FASTA filenames (which must also "
+    "appear in inputs or they will be ignored). High non-synthetic marker "
+    "levels will increase the fractional abundance threshold of other FASTA "
+    "files from the same threshold pool (set in FASTA header metadata). "
+    "Can use '-' for none.",
 )
 
 # "-n", "--negctrls",
@@ -851,19 +852,20 @@ ARG_NEG_CONTROLS = dict(  # noqa: C408
     metavar="FASTQ",
     # Does accept folder names, but kind of pointless
     # (as would be applied only to that folder)
-    help="One or more negative control paired FASTQ filenames "
-    "(may also appear in the inputs). High non-synthetic levels "
-    "will increase the absolute minimum abundance threshold of other "
+    help="One or more negative control paired FASTQ filenames (which must "
+    "also appear in the inputs or they will be ignored). High non-synthetic "
+    "levels will increase the absolute minimum abundance threshold of other "
     "FASTQ files in the same folder. Can use '-' for none.",
 )
 ARG_NEG_CONTROLS_FASTA = dict(  # noqa: C408
     type=str,
     nargs="+",
     metavar="FASTA",
-    help="One or more synthetic control FASTA filenames (may also appear in "
-    "inputs). High non-synthetic marker levels will increase the absolute "
-    "abundance threshold of other FASTA files from the same threshold pool "
-    "(set in FASTA header metadata). Can use '-' for none.",
+    help="One or more synthetic control FASTA filenames (which must also "
+    "appear in the inputs or they will be ignored). High non-synthetic marker "
+    "levels will increase the absolute abundance threshold of other FASTA "
+    "files from the same threshold pool (set in FASTA header metadata). "
+    "Can use '-' for none.",
 )
 
 # "-a", "--abundance",
