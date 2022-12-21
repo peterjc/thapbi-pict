@@ -93,7 +93,7 @@ the TSV version at the command line:
     #                                               Raw FASTQ        12564                16297
     #                                               Flash            11641                15829
     #                                               Cutadapt         112                  131
-    #                                               Threshold pool   raw_data/AL1         raw_data/AL1
+    #                                               Threshold pool   AL1                  AL1
     #                                               Threshold        10                   10
     #                                               Control          Sample               Sample
     #                                               Max non-spike    64                   100
@@ -132,7 +132,7 @@ or if working at the terminal:
     #                                               Raw FASTQ        19406              7285
     #                                               Flash            12140              6128
     #                                               Cutadapt         1153               4340
-    #                                               Threshold pool   raw_data/AL1       raw_data/AL1
+    #                                               Threshold pool   AL1                AL1
     #                                               Threshold        10                 10
     #                                               Control          Sample             Sample
     #                                               Max non-spike    1085               3958
