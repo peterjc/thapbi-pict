@@ -83,7 +83,7 @@ step being the abundance threshold).
 
 .. code:: console
 
-    $ head -n 14 intermediate/ITS1/Site_1_sample_1.fasta
+    $ head -n 12 intermediate/ITS1/Site_1_sample_1.fasta
     #marker:ITS1
     #left_primer:GAAGGTGAAGTCGTAACAAGG
     #right_primer:GCARRGACTTTCGTCCCYRC
@@ -91,10 +91,8 @@ step being the abundance threshold).
     #raw_fastq:6136
     #flash:5900
     #cutadapt:5886
-    #abundance:4180
-    #threshold:100
-    #max_non-spike:2269
-    #max_spike-in:0
+    #abundance:5194
+    #threshold:2
     #singletons:692
     >2e4f0ed53888ed39a2aee6d6d8e02206_2269
     TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACTGTATCGAACAACTAGTTGG
@@ -132,7 +130,7 @@ wrapped at 80 characters.
 
 .. code:: console
 
-    $ grep "^>" intermediate/ITS1/Site_1_sample_1.fasta
+    $ grep "^>" intermediate/ITS1/Site_1_sample_1.fasta | head -n 8
     >2e4f0ed53888ed39a2aee6d6d8e02206_2269
     >c1a720b2005f101a9858107545726123_715
     >96e0e2f0475bd1617a4b05e778bb04c9_330
