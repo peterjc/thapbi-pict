@@ -26,14 +26,13 @@ echo =============================
 echo Exploring threshold for mocks
 echo =============================
 
-# Using separate folder as would not overwrite intermediate/ output above
-mkdir -p intermediate_a2
-
-# Not bothering the metadata here:
+# Not bothering with the metadata here,
+# using same -s intermediate/ folder as that's
+# before the abundance threshold is applied
 thapbi_pict pipeline -a 2 -f 0 -i expected \
         raw_data/DNA15MIX_R?.fastq.gz \
         raw_data/DNA10MIX_undiluted_R?.fastq.gz \
-        -s intermediate_a2 -o summary/mocks_a2
+        -s intermediate -o summary/mocks_a2
 
 # Crude parameter sweep of the abundance threshold (-a) with -f 0 assumed.
 echo -e "#Threshold\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\tHamming-loss\tAd-hoc-loss" > summary/mocks_a2.assess-vs-abundance.tsv
