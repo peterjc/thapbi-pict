@@ -54,12 +54,11 @@ echo Running analysis excluding only singletons
 echo ==========================================
 
 echo "Very low threshold (excluding only singletons) to compare with Figure 6."
-mkdir -p intermediate_a2/
 # NOT using negative controls YET, -n raw_data/SRR7109420_*.fastq.gz
 # or -y raw_data/m6/SRR7109420_*.fastq.gz
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -s intermediate_a2/ -o summary/a2 -a 2 -f 0 \
+    -s intermediate/ -o summary/a2 -a 2 -f 0 \
     -t metadata.tsv -x 1 -c 3,4
 
 echo ========================================
@@ -72,7 +71,7 @@ mkdir -p intermediate_ctrl/
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
     -y raw_data/SRR7109420_*.fastq.gz \
-    -s intermediate_ctrl/ -o summary/ctrl -a 100 -f 0 \
+    -s intermediate/ -o summary/ctrl -a 100 -f 0 \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
