@@ -139,24 +139,25 @@ def main(
     pool_fraction_threshold = {}
     max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     max_non_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
-    for seq in totals:
-        # Calling is_spike_in is relatively expensive, but will be of less
-        # interest on the tail end low abundance samples.
-        # Should we sort totals by count?
-        if any(
-            min(max_spike_abundance[sample], max_non_spike_abundance[sample])
-            < counts[seq, sample]
-            for sample in samples
-        ):
-            # This could raise the max (non-)spike-in abundance
-            if is_spike_in(seq, spikes):
-                for sample in samples:
-                    if max_spike_abundance[sample] < counts[seq, sample]:
-                        max_spike_abundance[sample] = counts[seq, sample]
-            else:
-                for sample in samples:
-                    if max_non_spike_abundance[sample] < counts[seq, sample]:
-                        max_non_spike_abundance[sample] = counts[seq, sample]
+    if spikes:
+        for seq in totals:
+            # Calling is_spike_in is relatively expensive, but will be of less
+            # interest on the tail end low abundance samples.
+            # Should we sort totals by count?
+            if any(
+                min(max_spike_abundance[sample], max_non_spike_abundance[sample])
+                < counts[seq, sample]
+                for sample in samples
+            ):
+                # This could raise the max (non-)spike-in abundance
+                if is_spike_in(seq, spikes):
+                    for sample in samples:
+                        if max_spike_abundance[sample] < counts[seq, sample]:
+                            max_spike_abundance[sample] = counts[seq, sample]
+                else:
+                    for sample in samples:
+                        if max_non_spike_abundance[sample] < counts[seq, sample]:
+                            max_non_spike_abundance[sample] = counts[seq, sample]
     if debug:
         sys.stderr.write("DEBUG: Finished tagging spike-in sequences.\n")
 
