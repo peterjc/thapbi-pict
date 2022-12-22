@@ -227,7 +227,7 @@ def main(
                 else min_abundance,
                 # use half for a negative (absolute) control:
                 ceil(
-                    sample_counts[sample]
+                    sample_cutadapt[sample]
                     * min_abundance_fraction
                     * (0.5 if sample in negative_controls else 1.0)
                 ),
@@ -244,7 +244,7 @@ def main(
                 int(sample_headers[sample].get("threshold", 0)),
                 pool_absolute_threshold.get(pool, min_abundance),
                 ceil(
-                    sample_counts[sample]
+                    sample_cutadapt[sample]
                     * pool_fraction_threshold.get(pool, min_abundance_fraction)
                 ),
             )
