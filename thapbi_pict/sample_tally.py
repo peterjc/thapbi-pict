@@ -159,10 +159,8 @@ def main(
                         if max_non_spike_abundance[sample] < counts[seq, sample]:
                             max_non_spike_abundance[sample] = counts[seq, sample]
     else:
-        for sample in samples:
-            max_non_spike_abundance[sample] = max(
-                (counts[seq, sample] for seq in totals), default=0
-            )
+        for (_, sample), a in counts.items():
+            max_non_spike_abundance[sample] = max(max_non_spike_abundance[sample], a)
     if debug:
         sys.stderr.write("DEBUG: Finished tagging spike-in sequences.\n")
 
