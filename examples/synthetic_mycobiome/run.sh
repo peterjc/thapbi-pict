@@ -49,6 +49,21 @@ fi
 # the worst Illumina tag-swapping in the other direction (synthetics appearing
 # in bioligical samples; see Figure 6).
 
+echo =======================================
+echo Running analysis using default settings
+echo =======================================
+
+echo "Running m6 plate using synthetic control and default thresholds"
+thapbi_pict pipeline -d references.sqlite \
+    -i raw_data/ expected/ --merged-cache tmp_merged/ \
+    -y raw_data/SRR7109420_*.fastq.gz \
+    -s intermediate/ -o summary/defaults \
+    -t metadata.tsv -x 1 -c 3,4 -m 1s5g
+
+thapbi_pict edit-graph -d references.sqlite -m 1s5g \
+    -i summary/defaults.ITS2.all_reads.1s5g.tsv summary/defaults.ITS2.tally.tsv \
+    -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
+
 echo ==========================================
 echo Running analysis excluding only singletons
 echo ==========================================
@@ -76,22 +91,6 @@ thapbi_pict pipeline -d references.sqlite \
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
     -i summary/ctrl.ITS2.all_reads.1s5g.tsv summary/ctrl.ITS2.tally.tsv \
     -o summary/ctrl.ITS2.edit-graph.1s5g.xgmml
-
-echo =======================================
-echo Running analysis using default settings
-echo =======================================
-
-echo "Running m6 page using synthetic control and defaults"
-echo "(which results in an even higher threshold)"
-thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -y raw_data/SRR7109420_*.fastq.gz \
-    -s intermediate/ -o summary/defaults \
-    -t metadata.tsv -x 1 -c 3,4 -m 1s5g
-
-thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/defaults.ITS2.all_reads.1s5g.tsv summary/defaults.ITS2.tally.tsv \
-    -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
 echo ====
 echo Done

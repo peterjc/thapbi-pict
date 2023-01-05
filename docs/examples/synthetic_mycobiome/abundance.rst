@@ -42,7 +42,7 @@ threshold of 0.1% (i.e. ``-a 100 -f 0.001``). After merging overlapping reads
 and primer matching we could expect over 650,000 reads per m6 sample, giving a
 threshold over 650 reads.
 
-So, with this coverage the default fractional abundance threshold of 0.1% 
+So, with this coverage the default fractional abundance threshold of 0.1%
 (i.e. ``-f 0.001``) makes the default absolute abundance threshold of 100
 (i.e. ``-a 100``) redundant. However, on this dataset our defaults are quite
 cautious, and control samples can help set thresholds objectively.
@@ -54,6 +54,61 @@ line to use this to set the fractional abundance threshold via ``-y`` or
 ``--negctrls`` (with a list of control file names). It turns out however that
 with the default thresholds the control is clean (no unwanted non-synthetic
 ITS2 reads).
+
+Using the defaults
+------------------
+
+The first step in ``run.sh`` is to run the pipeline with the default abundance
+thresholds (stricter than the alternatives analyses below), giving just a few
+hundred unique ITS2 sequences:
+
+.. code:: console
+
+    $ grep -c "^>" summary/defaults.ITS2.all_reads.fasta
+    360
+    $ grep -c "^ITS2" summary/defaults.ITS2.tally.tsv
+    360
+    $ grep -c "^ITS2" summary/defaults.ITS2.reads.1s5g.tsv
+    360
+
+Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
+line with the TSV file:
+
+.. code:: console
+
+    $ cut -f 1,7,9,11-12,14-15 summary/defaults.ITS2.samples.1s5g.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+============= ======== ========= ============= ============ ======== ======
+#sample_alias Cutadapt Threshold Max non-spike Max spike-in Accepted Unique
+============= ======== ========= ============= ============ ======== ======
+301-1         807956   808       348111        0            528957   10
+301-2         1108129  1109      457440        0            778850   10
+500-1         819468   820       289229        0            516474   8
+500-2         813470   814       214155        0            529967   8
+712-1         820146   821       131937        0            533310   13
+712-2         796363   797       299240        0            520290   11
+736-1         943427   944       349965        0            669563   12
+736-2         854919   855       282132        0            609025   4
+744-1         706659   707       358089        0            493209   6
+744-2         651528   652       136471        0            452421   11
+755-1         887650   888       462493        0            616322   6
+755-2         982087   983       589120        0            669602   5
+757-1         835431   836       281533        0            578198   9
+757-2         1099959  1100      224635        0            742540   8
+766-1         792260   793       526535        0            583643   7
+766-2         711176   712       251097        0            469397   7
+BioMock       866253   867       56120         0            591947   19
+BioMock       846519   847       65686         0            585715   19
+BioMock       1023231  1024      84748         0            698170   18
+BioMockStds   736334   737       35300         0            521693   24
+SynMock       1199806  1200      0             103014       862950   14
+============= ======== ========= ============= ============ ======== ======
+
+The ``SynMock`` control is clean, no non-spike-in reads passed the default
+abundance thresholds.
 
 So, there is scope to lower the default thresholds - but how low? We will start
 by reproducing the Illumina part of Figure 6, which was based on the m6 MiSeq
@@ -76,11 +131,11 @@ report with metadata, we have nearly 200 thousand ITS2 sequences:
 
 .. code:: console
 
-    $ grep -c "^>" summary/a2.ITS2.all_reads.fasta 
+    $ grep -c "^>" summary/a2.ITS2.all_reads.fasta
     196480
-    $ grep -c "^ITS2" summary/a2.ITS2.tally.tsv 
+    $ grep -c "^ITS2" summary/a2.ITS2.tally.tsv
     196480
-    $ grep -c "^ITS2" summary/a2.ITS2.reads.onebp.tsv 
+    $ grep -c "^ITS2" summary/a2.ITS2.reads.onebp.tsv
     196480
 
 Look at ``summary/a2.ITS2.samples.onebp.xlsx`` or working at the command line
@@ -143,11 +198,11 @@ allowing use of a slower but more lenient classifier as well:
 
 .. code:: console
 
-    $ grep -c "^>" summary/ctrl.ITS2.all_reads.fasta 
+    $ grep -c "^>" summary/ctrl.ITS2.all_reads.fasta
     3097
-    $ grep -c "^ITS2" summary/ctrl.ITS2.tally.tsv 
+    $ grep -c "^ITS2" summary/ctrl.ITS2.tally.tsv
     3097
-    $ grep -c "^ITS2" summary/ctrl.ITS2.reads.1s5g.tsv 
+    $ grep -c "^ITS2" summary/ctrl.ITS2.reads.1s5g.tsv
     3097
 
 Look at ``summary/ctrl.ITS2.samples.1s5g.xlsx`` or working at the command line
@@ -200,67 +255,11 @@ has *not* excluded PCR noise - there are hundreds of low abundance sequences
 unique to a single sample. To address that we have to use a considerably
 higher threshold, and the default 0.1% is a reasonable choice here.
 
-Using the defaults
-------------------
-
-The final step in ``run.sh`` is to run the pipeline with the default abundance
-thresholds (sticter than the two analyses above), giving just a few hundred
-unique ITS2 sequences:
-
-.. code:: console
-
-    $ grep -c "^>" summary/defaults.ITS2.all_reads.fasta 
-    360
-    $ grep -c "^ITS2" summary/defaults.ITS2.tally.tsv
-    360
-    $ grep -c "^ITS2" summary/defaults.ITS2.reads.1s5g.tsv 
-    360
-
-Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
-line with the TSV file:
-
-.. code:: console
-
-    $ cut -f 1,7,9,11-12,14-15 summary/defaults.ITS2.samples.1s5g.tsv
-    <SEE TABLE BELOW>
-
-As a table:
-
-============= ======== ========= ============= ============ ======== ======
-#sample_alias Cutadapt Threshold Max non-spike Max spike-in Accepted Unique
-============= ======== ========= ============= ============ ======== ======
-301-1         807956   808       348111        0            528957   10
-301-2         1108129  1109      457440        0            778850   10
-500-1         819468   820       289229        0            516474   8
-500-2         813470   814       214155        0            529967   8
-712-1         820146   821       131937        0            533310   13
-712-2         796363   797       299240        0            520290   11
-736-1         943427   944       349965        0            669563   12
-736-2         854919   855       282132        0            609025   4
-744-1         706659   707       358089        0            493209   6
-744-2         651528   652       136471        0            452421   11
-755-1         887650   888       462493        0            616322   6
-755-2         982087   983       589120        0            669602   5
-757-1         835431   836       281533        0            578198   9
-757-2         1099959  1100      224635        0            742540   8
-766-1         792260   793       526535        0            583643   7
-766-2         711176   712       251097        0            469397   7
-BioMock       866253   867       56120         0            591947   19
-BioMock       846519   847       65686         0            585715   19
-BioMock       1023231  1024      84748         0            698170   18
-BioMockStds   736334   737       35300         0            521693   24
-SynMock       1199806  1200      0             103014       862950   14
-============= ======== ========= ============= ============ ======== ======
-
-The accepted read counts have gone done a little further, as have the number
-of unique sequences accepted for each sample. Looking at the mock community
-controls, this may have gone a little too far...
-
 Threshold selection
 -------------------
 
-Excluding only singletons is too lienent, but how does the default (0.1%)
-compare to the synthetic control inferred threshold (0.0156%)?
+Excluding only singletons is too lenient, but how does the the synthetic
+control inferred threshold (0.0156%) compare to the default (0.1%)?
 
 Here are the classifier assessment values using the lower inferred threshold
 which allows a lot of PCR noise:
