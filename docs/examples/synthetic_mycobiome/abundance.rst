@@ -139,7 +139,9 @@ Next the ``run.sh`` example uses the ``SynMock`` synthetic control to
 automatically raise the fractional abundance threshold from zero to 0.015% by
 including ``-a 2 -f 0 -y raw_data/SRR7109420_*.fastq.gz`` in the command line.
 This brings down the unique sequence count enough to just over three thousand,
-allowing use of a slower but more lenient classifier as well.
+allowing use of a slower but more lenient classifier as well:
+
+.. code:: console
 
     $ grep -c "^>" summary/ctrl.ITS2.all_reads.fasta 
     3097
