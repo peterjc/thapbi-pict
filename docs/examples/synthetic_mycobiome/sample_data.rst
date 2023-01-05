@@ -86,5 +86,5 @@ synthetic controls expected in the mock samples. Folder ``expected/`` is
 created linking accession names to the appropriate species for assessing the
 classifier performance.
 
-Sub-folder under ``intermediate*/ITS2/`` are used for intermediate files,
-in general there is a sub-folder for each primer-pair.
+Sub-folder ``intermediate/ITS2/`` is used for intermediate files, in general
+there is a sub-folder for each primer-pair.
