@@ -899,6 +899,13 @@ ARG_FASTQ_MIN_ABUNDANCE = dict(  # noqa: C408
     " May be increased based on negative controls."
     " Half this value is applied to synthetic controls.",
 )
+ARG_FASTQ_MIN_ABUNDANCE_TWO = dict(  # noqa: C408
+    type=int,
+    metavar="INTEGER",
+    default=str(DEFAULT_MIN_ABUNDANCE),
+    help="Minimum abundance applied to unique marker sequences in each sample"
+    " (i.e. each FASTQ pair). Default 2 meaning only exclude singletons.",
+)
 # "-f", "--abundance-fraction",
 ARG_FASTQ_NOISE_PERC = dict(  # noqa: C408
     type=float,
@@ -908,6 +915,14 @@ ARG_FASTQ_NOISE_PERC = dict(  # noqa: C408
     " to unique marker sequences in each sample. Default 0.001 meaning 0.1%%."
     " May be increased based on synthetic controls."
     " Half this value is applied to negative controls.",
+)
+ARG_FASTQ_NOISE_PERC_ZERO = dict(  # noqa: C408
+    type=float,
+    metavar="FLOAT",
+    default="0",
+    help="Minimum abundance fraction, low frequency noise threshold applied"
+    " to unique marker sequences in each sample. e.g. 0.001 meaning 0.1%%."
+    " Default zero, meaning not used.",
 )
 
 # Common metadata arguments
@@ -1369,8 +1384,10 @@ def main(args=None):
         metavar="DIRNAME",
         help="Output directory. Required.",
     )
-    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
-    subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
+    subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE_TWO)
+    subcommand_parser.add_argument(
+        "-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC_ZERO
+    )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
