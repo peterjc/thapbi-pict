@@ -313,3 +313,47 @@ typically each seen in a single sample, which we attribute to PCR noise:
    :alt: Sequence edit-graph, with synthetic control inferred $0.0156\%$ abundance threshold, showing 3097 ASVs.
 
 The best choice of threshold may lie somewhere in between?
+
+Read-correction for denoising
+-----------------------------
+
+Read-correction is an alternative or supplement to a stringent abundance filter
+for removing the noise of sequence variants presumed to be PCR artefacts. Use
+``--denoise`` as part of the pipeline or sample-tally commands to enable our
+implementation of the `UNOISE algorithm
+<https://www.drive5.com/usearch/manual/unoise_algo.html>`_ (Edgar 2016).
+
+Adding this to the control-driven abundance threshold example drops the total
+unique read count from over 3 thousand to just 700:
+
+.. code:: console
+
+    $ grep -c "^>" summary/ctrl_denoise.ITS2.all_reads.fasta
+    700
+    $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.tally.tsv
+    700
+    $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.reads.1s5g.tsv
+    700
+
+This gives an edit graph visually somewhere in between the examples above,
+with the obvious variant halos collapsed, but some of the more complex chains
+of variants still present.
+
+In terms of classifier assessment on the mock community, there is no change:
+
+.. code:: console
+
+    $ head -n 2 summary/ctrl_denoise.ITS2.assess.1s5g.tsv
+    <SEE TABLE BELOW>
+
+As a table:
+
+======== === == == === =========== =========== ========= ==== ============ ===========
+#Species TP  FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
+======== === == == === =========== =========== ========= ==== ============ ===========
+OVERALL  102 11 1  186 0.99        0.94        0.90      0.94 0.0400       0.105
+======== === == == === =========== =========== ========= ==== ============ ===========
+
+Looking at the reports, the read counts are of course different, but also some
+of the reads assigned a genus-only classification have been removed via the
+read-correction, so the taxonomy output does not directly match up either.
