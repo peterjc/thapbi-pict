@@ -42,15 +42,15 @@ threshold of 0.1% (i.e. ``-a 100 -f 0.001``). After merging overlapping reads
 and primer matching we could expect over 650,000 reads per m6 sample, giving a
 threshold over 650 reads.
 
-So, with this coverage the default fractional abundance threshold of 0.1% makes
-the default absolute abundance threshold of 100 redundant. However, on this
-dataset our defaults are quite cautious, and control samples can help set
-thresholds objectively.
+So, with this coverage the default fractional abundance threshold of 0.1% 
+(i.e. ``-f 0.001``) makes the default absolute abundance threshold of 100
+(i.e. ``-a 100``) redundant. However, on this dataset our defaults are quite
+cautious, and control samples can help set thresholds objectively.
 
 In this dataset there is a single synthetic control for m6 sequencing run,
 library ``SynMock`` aka ``SRR7109420``. We can tell THAPBI PICT at the command
 line to use this to set the fractional abundance threshold via ``-y`` or
-``--synctrls``, or set the absolute abundance threshold via ``-n`` or
+``--synctrls``, and/or set the absolute abundance threshold via ``-n`` or
 ``--negctrls`` (with a list of control file names). It turns out however that
 with the default thresholds the control is clean (no unwanted non-synthetic
 ITS2 reads).
@@ -70,6 +70,18 @@ sequences which slows everything down). This first analysis does *not* use the
 synthetic control to raise the threshold on the rest of the samples - we want
 to see any low level mixing. We then can compare our sample report against
 Figure 6.
+
+Looking at the unique reads in the FASTA file, tally table, or in the reads
+report with metadata, we have nearly 200 thousand ITS2 sequences:
+
+.. code:: console
+
+    $ grep -c "^>" summary/a2.ITS2.all_reads.fasta 
+    196480
+    $ grep -c "^ITS2" summary/a2.ITS2.tally.tsv 
+    196480
+    $ grep -c "^ITS2" summary/a2.ITS2.reads.onebp.tsv 
+    196480
 
 Look at ``summary/a2.ITS2.samples.onebp.xlsx`` or working at the command line
 with the TSV file:
@@ -124,10 +136,17 @@ Using the synthetic control
 ---------------------------
 
 Next the ``run.sh`` example uses the ``SynMock`` synthetic control to
-automatically raise the fractional abundance threshold to 0.015% by including
-``-y raw_data/SRR7109420_*.fastq.gz`` in the command line. This brings down
-the unique sequence count enough to allow use of a slower but more lenient
-classifier as well.
+automatically raise the fractional abundance threshold from zero to 0.015% by
+including ``-a 2 -f 0 -y raw_data/SRR7109420_*.fastq.gz`` in the command line.
+This brings down the unique sequence count enough to just over three thousand,
+allowing use of a slower but more lenient classifier as well.
+
+    $ grep -c "^>" summary/ctrl.ITS2.all_reads.fasta 
+    3097
+    $ grep -c "^ITS2" summary/ctrl.ITS2.tally.tsv 
+    3097
+    $ grep -c "^ITS2" summary/ctrl.ITS2.reads.1s5g.tsv 
+    3097
 
 Look at ``summary/ctrl.ITS2.samples.1s5g.xlsx`` or working at the command line
 with the TSV file:
@@ -183,7 +202,17 @@ Using the defaults
 ------------------
 
 The final step in ``run.sh`` is to run the pipeline with the default abundance
-thresholds (sticter than the two analyses above).
+thresholds (sticter than the two analyses above), giving just a few hundred
+unique ITS2 sequences:
+
+.. code:: console
+
+    $ grep -c "^>" summary/defaults.ITS2.all_reads.fasta 
+    360
+    $ grep -c "^ITS2" summary/defaults.ITS2.tally.tsv
+    360
+    $ grep -c "^ITS2" summary/defaults.ITS2.reads.1s5g.tsv 
+    360
 
 Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
 line with the TSV file:
