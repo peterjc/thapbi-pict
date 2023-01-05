@@ -67,7 +67,6 @@ echo ========================================
 
 echo "Running m6 plate using synthetic control for percentage abundance threshold."
 echo "Less unique sequences, so can use more relaxed but slower classifier."
-mkdir -p intermediate_ctrl/
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
     -y raw_data/SRR7109420_*.fastq.gz \
@@ -84,7 +83,6 @@ echo =======================================
 
 echo "Running m6 page using synthetic control and defaults"
 echo "(which results in an even higher threshold)"
-mkdir -p intermediate/
 thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
     -y raw_data/SRR7109420_*.fastq.gz \
