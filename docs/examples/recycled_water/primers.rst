@@ -174,11 +174,6 @@ a single unique sequence matching *Phytophthora ramorum*:
 
 .. code:: console
 
-    $ grep -v "^#" intermediate_defaults/ITS1/SRR6303948.fasta
-    >dcd6316eb77be50ee344fbeca6e005c7_1439
-    TTTCCGTAGGTGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAACCCTTAGTTG
-    GGGGCTTCTGTTCGGCTGGCTTCGGCTGGCTGGGCGGCGGCTCTATCATGGCGAGCGCTTGAGCCTTCGGGTCTGAGCTA
-    GTAGCCCACTTTTTAAACCCATTCCTAAATACTGAATATACT
     $ tail -n +10 summary/recycled-water-defaults.ITS1.tally.tsv \
       | cut -f 365,386 | grep -v "^0"
     <SEE TABLE BELOW>
