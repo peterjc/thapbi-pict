@@ -4,9 +4,9 @@ Classifier Assessment
 =====================
 In assessing classification performance, it is the combination of both
 classification method (algorithm) and marker database which which matters.
-Settings like the abundance threshold are also important, and the tool default
-settings partly reflect one of the original project goals being to avoid false
-positives.
+Settings like the abundance threshold and any read correction are also
+important, and the tool default settings partly reflect one of the original
+project goals being to avoid false positives.
 
 To objectively assess a metabarcoding classifier we require sequenced samples
 of known composition, which generally means single isolates (where a single
