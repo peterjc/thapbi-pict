@@ -20,3 +20,4 @@ primers and known sequences (all of which ought to be properly curated).
 
    sample_data
    overview
+   presence_absence
