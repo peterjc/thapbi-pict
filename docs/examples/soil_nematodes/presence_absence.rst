@@ -5,7 +5,7 @@ As discussed in the paper, the recognised species recovered from the mock
 community varied dramatically by marker. This example has been setup with
 the same list of 23 species expected for all the markers.
 
-Note that none of the four reference sets include a known sequence for
+Note that three of the four reference sets lack a known sequence for
 *Laimaphelenchus penardi*, and most are missing more than just that species.
 
 The ``run.sh`` script runs a classifier assessment over all the samples which
@@ -17,8 +17,7 @@ We can compare these results to Ahmed *et al.* (2019) Table 9.
 NF1-18Sr2b
 ----------
 
-This marker as the best database coverage, lacking only any entry for
-*Laimaphelenchus penardi*, which is therefore the only expected false negative.
+This marker has the best database coverage.
 
 .. code:: console
 
