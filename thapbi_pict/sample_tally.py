@@ -164,27 +164,51 @@ def main(
     if debug:
         sys.stderr.write("DEBUG: Finished tagging spike-in sequences.\n")
 
+    sample_threshold = {}
     if controls:
         if debug:
             sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
-        # Samples with zero non-spike-ins can't raise the threshold:
-        for sample in max_non_spike_abundance:
+        for sample in controls:
             pool = sample_pool[sample]
             a = max_non_spike_abundance[sample]
+            # Ignore rest of pool. Respect FASTA header which could be more.
+            # Note heuristic half thresholds inherited from prepare-reads
+            sample_threshold[sample] = threshold = max(
+                int(sample_headers[sample].get("threshold", 0)),
+                # use half for a synthetic (fractional) control:
+                ceil(min_abundance * 0.5)
+                if sample in synthetic_controls
+                else min_abundance,
+                # use half for a negative (absolute) control:
+                ceil(
+                    sample_cutadapt[sample]
+                    * min_abundance_fraction
+                    * (0.5 if sample in negative_controls else 1.0)
+                ),
+            )
+            if a < threshold:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Control {sample} (in pool {pool}) does not "
+                        f"exceed its threshold {threshold}\n"
+                    )
+                continue
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Control {sample} in (pool {pool}) gets "
+                    f"threshold {threshold}, exceeded with {a}\n"
+                )
+
+            # Does this control raise the pool thresholds?
             if sample in negative_controls and min_abundance < a:
                 pool_absolute_threshold[pool] = max(
                     a, pool_absolute_threshold.get(pool, min_abundance)
                 )
                 if debug:
                     sys.stderr.write(
-                        f"Negative control {sample} says increase {pool} "
+                        f"DEBUG: Negative control {sample} says increase {pool} "
                         f"absolute abundance threshold from {min_abundance} to {a}\n"
                     )
-            elif debug and sample in negative_controls:
-                sys.stderr.write(
-                    f"Negative control {sample} suggests drop {pool} absolute "
-                    f"abundance threshold from {min_abundance} to {a} (lower)\n"
-                )
             if (
                 sample in synthetic_controls
                 and min_abundance_fraction * sample_cutadapt[sample] < a
@@ -205,58 +229,31 @@ def main(
                     )
                 elif debug:
                     sys.stderr.write(
-                        f"Synthetic control {sample} says increase {pool} "
-                        "fractional abundance threshold from "
+                        f"DEBUG: Synthetic control {sample} says increase "
+                        f"{pool} fractional abundance threshold from "
                         f"{min_abundance_fraction*100:.4f} to {f*100:.4f}%\n"
                     )
-            elif debug and sample in synthetic_controls:
-                f = a / sample_cutadapt[sample]
-                sys.stderr.write(
-                    f"Synthetic control {sample} suggests drop {pool} fractional "
-                    f"abundance threshold from {min_abundance_fraction*100:.4f} "
-                    f"to {f*100:.4f}% (lower)\n"
-                )
 
-    # Check for any dynamic abundance threshold increases from controls:
-    sample_threshold = {}
+    # Apply any dynamic abundance threshold increases from controls:
     for sample in samples:
         if sample in controls:
-            # Not dynamic (respect FASTA header which could be more)
-            # Note complicated logic inherited from prepare-reads
-            threshold = max(
-                int(sample_headers[sample].get("threshold", 0)),
-                # use half for a synthetic (fractional) control:
-                ceil(min_abundance * 0.5)
-                if sample in synthetic_controls
-                else min_abundance,
-                # use half for a negative (absolute) control:
-                ceil(
-                    sample_cutadapt[sample]
-                    * min_abundance_fraction
-                    * (0.5 if sample in negative_controls else 1.0)
-                ),
+            # Done above
+            assert sample in sample_threshold, sample
+            continue
+        # Apply dynamic pool threshold from controls
+        pool = sample_pool[sample]
+        sample_threshold[sample] = threshold = max(
+            int(sample_headers[sample].get("threshold", 0)),
+            pool_absolute_threshold.get(pool, min_abundance),
+            ceil(
+                sample_cutadapt[sample]
+                * pool_fraction_threshold.get(pool, min_abundance_fraction)
+            ),
+        )
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: {sample} in pool {pool} gets threshold {threshold}\n"
             )
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Control {sample} in pool {pool} gets "
-                    f"threshold {threshold}\n"
-                )
-        else:
-            # Apply dynamic pool threshold from controls
-            pool = sample_pool[sample]
-            threshold = max(
-                int(sample_headers[sample].get("threshold", 0)),
-                pool_absolute_threshold.get(pool, min_abundance),
-                ceil(
-                    sample_cutadapt[sample]
-                    * pool_fraction_threshold.get(pool, min_abundance_fraction)
-                ),
-            )
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: {sample} in pool {pool} gets threshold {threshold}\n"
-                )
-        sample_threshold[sample] = threshold
 
     new_counts = defaultdict(int)
     new_totals = defaultdict(int)
