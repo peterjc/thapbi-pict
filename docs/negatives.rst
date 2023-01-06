@@ -56,10 +56,10 @@ Minimum Absolute Abundance Threshold
 The initial absolute abundance threshold is set at the command line with
 ``-a`` or ``--abundance`` giving an integer value. If your samples have
 dramatically different read coverage, then the fractional abundance threshold
-may be more appropriate.
+may be more appropriate (see below).
 
-During the read preparation step, the ``-n`` or ``--negctrls`` argument gives
-the FASTQ filenames of any negative controls to use to potentially increase
+During the sample tally step, the ``-n`` or ``--negctrls`` argument gives
+the sample filenames of any negative controls to use to potentially increase
 the absolute abundance threshold (see below). If you have no spike-in
 controls, then any sequences in these negative controls can raise the
 threshold - regardless of what they may or may not match in the reference
@@ -75,7 +75,7 @@ identified for each marker after merging the overlapping pairs and primer
 matching.
 
 During the read preparation step, the ``-y`` or ``--synctrls`` argument gives
-the FASTQ filenames of any synthetic controls to use to potentially increase
+the sample filenames of any synthetic controls to use to potentially increase
 the absolute abundance threshold. This setting works in conjunction with the
 database which must include the spike-in sequences under the genera specified
 at the command lines with ``--synthetic`` (by default "synthetic").
@@ -85,7 +85,7 @@ your spike-in samples fail sequencing they should be left with zero reads.
 Otherwise you could have a situation where noise levels of non-spike-in reads
 gave a spurious high fractional abundance. A similar problem would occur if
 you accidentally use ``-y`` on a sample without spike-in controls (the
-resulting overly high fractional threshould would trigger a warning message).
+resulting overly high fractional threshold would trigger a warning message).
 
 Automatic thresholds
 --------------------
