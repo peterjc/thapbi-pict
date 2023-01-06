@@ -80,13 +80,6 @@ the absolute abundance threshold. This setting works in conjunction with the
 database which must include the spike-in sequences under the genera specified
 at the command lines with ``--synthetic`` (by default "synthetic").
 
-Note that the default thresholds are considered, which should mean if any of
-your spike-in samples fail sequencing they should be left with zero reads.
-Otherwise you could have a situation where noise levels of non-spike-in reads
-gave a spurious high fractional abundance. A similar problem would occur if
-you accidentally use ``-y`` on a sample without spike-in controls (the
-resulting overly high fractional threshold would trigger a warning message).
-
 Automatic thresholds
 --------------------
 
@@ -118,3 +111,15 @@ threshold would be raised slightly to 176 / 100000 = 0.00176 or 0.176%.
 Note that a control sample can be used with *both* ``-n`` and ``-y``, so in
 this second example that would *also* raise the absolute abundance threshold
 to 176 reads.
+
+Potentially a synthetic control sample can have unusually low read coverage,
+meaning even a low absolute number of non-spike-in reads (at noise level)
+would give a spuriously high inferred fractional abundance threshold. To guard
+against this corner case, as a heuristic half the absolute abundance threshold
+is applied to the synthetic control samples. Likewise, half of any fractional
+abundance threshold is applied to the negative control samples, which guards
+against spurious raising of the absolute threshold.
+
+A similar problem would occur if you accidentally use ``-y`` on a sample
+without any expected spike-in controls. This would suggest result in an overly
+high fractional threshold, treated as an error.
