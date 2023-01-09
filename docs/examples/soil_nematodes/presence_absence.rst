@@ -29,9 +29,9 @@ Or open this in Excel. You should find:
 ================================== == == == === ==== ===========
 #Species                           TP FP FN TN  F1   Ad-hoc-loss
 ================================== == == == === ==== ===========
-OVERALL                            55 67 14 184 0.58 0.596
+OVERALL                            54 62 15 189 0.58 0.588
 Acrobeles sp.                      0  0  3  1   0.00 1.000
-Acrobeloides sp.                   2  0  1  1   0.80 0.333
+Acrobeloides sp.                   3  0  0  1   1.00 0.000
 Alaimus sp.                        1  0  2  1   0.50 0.667
 Anaplectus sp.                     0  0  3  1   0.00 1.000
 Anatonchus tridentatus             3  0  0  1   1.00 0.000
@@ -39,7 +39,6 @@ Aphelenchoides sp.                 3  0  0  1   1.00 0.000
 Aporcelaimellus sp.                3  0  0  1   1.00 0.000
 Criconema sp.                      2  0  1  1   0.80 0.333
 Ditylenchus dipsaci                3  0  0  1   1.00 0.000
-Ditylenchus sp.                    0  2  0  2   0.00 1.000
 Ditylenchus weischeri              0  3  0  1   0.00 1.000
 Globodera achilleae                0  3  0  1   0.00 1.000
 Globodera artemisiae               0  3  0  1   0.00 1.000
@@ -51,7 +50,6 @@ Globodera tabacum                  0  3  0  1   0.00 1.000
 Hemicycliophora sp.                1  0  2  1   0.50 0.667
 Laimaphelenchus penardi            3  0  0  1   1.00 0.000
 Longidorus caespiticola            3  0  0  1   1.00 0.000
-Longidorus poessneckensis          0  2  0  2   0.00 1.000
 Meloidogyne cf. hapla 8 JH-2014    0  3  0  1   0.00 1.000
 Meloidogyne ethiopica              0  3  0  1   0.00 1.000
 Meloidogyne hapla                  3  0  0  1   1.00 0.000
@@ -68,7 +66,7 @@ Steinernema sp.                    0  3  0  1   0.00 1.000
 Steinernema websteri               0  3  0  1   0.00 1.000
 Trichodorus primitivus             3  0  0  1   1.00 0.000
 Tripyla daviesae                   0  3  0  1   0.00 1.000
-Tripyla glomerans                  2  0  1  1   0.80 0.333
+Tripyla glomerans                  0  0  3  1   0.00 1.000
 Tripyla sp.                        0  3  0  1   0.00 1.000
 Tylenchus sp.                      3  0  0  1   1.00 0.000
 Urtica sp.                         0  1  0  3   0.00 1.000
@@ -77,14 +75,14 @@ Xiphinema coxi europaeum           0  2  0  2   0.00 1.000
 Xiphinema diversicaudatum          2  0  1  1   0.80 0.333
 Xiphinema japonicum                0  2  0  2   0.00 1.000
 Xiphinema pseudocoxi               0  2  0  2   0.00 1.000
-Xiphinema tica                     0  1  0  3   0.00 1.000
 Xiphinema vuittenezi               0  2  0  2   0.00 1.000
-OTHER 31 SPECIES IN DB             0  0  0  124 0.00 0.000
+OTHER 34 SPECIES IN DB             0  0  0  136 0.00 0.000
 ================================== == == == === ==== ===========
 
 We have explainable false positives as within genus conflicts in
-*Ditylenchus*, *Globodera*, *Longidorus*, *Meloidogyne*, *Steinernema*,
-*Prionchulus*, *Tripyla*, and *Xiphinema*.
+*Ditylenchus*, *Globodera*, *Meloidogyne*, *Steinernema*,
+*Prionchulus*, *Tripyla*, and *Xiphinema*. Again, expected species *Tripyla
+glomerans* is not reported.
 
 Additionally there is an unexplained FP from plant *Urtica* sp. in the blank
 sample.
@@ -118,7 +116,7 @@ Or open this in Excel. You should find:
 ========================= == == == == ==== ===========
 #Species                  TP FP FN TN F1   Ad-hoc-loss
 ========================= == == == == ==== ===========
-OVERALL                   30 5  39 38 0.58 0.595
+OVERALL                   32 7  37 36 0.59 0.579
 Acrobeles sp.             0  0  3  1  0.00 1.000
 Acrobeloides sp.          2  0  1  1  0.80 0.333
 Alaimus sp.               3  0  0  1  1.00 0.000
@@ -136,15 +134,15 @@ Longidorus caespiticola   3  0  0  1  1.00 0.000
 Meloidogyne hapla         0  0  3  1  0.00 1.000
 Plectus sp.               3  0  0  1  1.00 0.000
 Prionchulus muscorum      0  3  0  1  0.00 1.000
-Prionchulus punctatus     2  0  1  1  0.80 0.333
-Prionchulus sp.           0  1  0  3  0.00 1.000
+Prionchulus punctatus     3  0  0  1  1.00 0.000
+Prionchulus sp.           0  3  0  1  0.00 1.000
 Pristionchus sp.          0  0  3  1  0.00 1.000
 Rhabditis sp.             0  0  3  1  0.00 1.000
 Steinernema carpocapsae   3  0  0  1  1.00 0.000
 Trichodorus primitivus    3  0  0  1  1.00 0.000
 Tripyla glomerans         0  0  3  1  0.00 1.000
 Tylenchus sp.             0  0  3  1  0.00 1.000
-Xiphinema diversicaudatum 2  0  1  1  0.80 0.333
+Xiphinema diversicaudatum 3  0  0  1  1.00 0.000
 OTHER 2 SPECIES IN DB     0  0  0  8  0.00 0.000
 ========================= == == == == ==== ===========
 
@@ -298,9 +296,9 @@ Or open this in Excel. You should find:
 ================================== === == === ==== ==== ===========
 #Species                           TP  FP FN  TN   F1   Ad-hoc-loss
 ================================== === == === ==== ==== ===========
-OVERALL                            130 92 146 1136 0.52 0.647
+OVERALL                            131 89 145 1139 0.53 0.641
 Acrobeles sp.                      2   0  10  4    0.29 0.833
-Acrobeloides sp.                   4   0  8   4    0.50 0.667
+Acrobeloides sp.                   5   0  7   4    0.59 0.583
 Alaimus sp.                        4   0  8   4    0.50 0.667
 Anaplectus sp.                     3   0  9   4    0.40 0.750
 Anatonchus tridentatus             6   0  6   4    0.67 0.500
@@ -310,7 +308,6 @@ Blastocystis sp.                   0   1  0   15   0.00 1.000
 Cercomonas sp.                     0   1  0   15   0.00 1.000
 Criconema sp.                      2   0  10  4    0.29 0.833
 Ditylenchus dipsaci                6   0  6   4    0.67 0.500
-Ditylenchus sp.                    0   2  0   14   0.00 1.000
 Ditylenchus weischeri              0   3  0   13   0.00 1.000
 Globodera achilleae                0   3  0   13   0.00 1.000
 Globodera artemisiae               0   3  0   13   0.00 1.000
@@ -323,7 +320,6 @@ Hemicycliophora sp.                2   0  10  4    0.29 0.833
 Laimaphelenchus deconincki         0   3  0   13   0.00 1.000
 Laimaphelenchus penardi            3   0  9   4    0.40 0.750
 Longidorus caespiticola            9   0  3   4    0.86 0.250
-Longidorus poessneckensis          0   2  0   14   0.00 1.000
 Meloidogyne cf. hapla 8 JH-2014    0   3  0   13   0.00 1.000
 Meloidogyne ethiopica              0   3  0   13   0.00 1.000
 Meloidogyne hapla                  9   0  3   4    0.86 0.250
@@ -331,8 +327,8 @@ Meloidogyne incognita              0   3  0   13   0.00 1.000
 Plectus sp.                        9   0  3   4    0.86 0.250
 Prionchulus cf. punctatus TSH-2005 0   3  0   13   0.00 1.000
 Prionchulus muscorum               0   6  0   10   0.00 1.000
-Prionchulus punctatus              8   0  4   4    0.80 0.333
-Prionchulus sp.                    0   1  0   15   0.00 1.000
+Prionchulus punctatus              9   0  3   4    0.86 0.250
+Prionchulus sp.                    0   3  0   13   0.00 1.000
 Pristionchus sp.                   6   0  6   4    0.67 0.500
 Rhabditis sp.                      6   0  6   4    0.67 0.500
 Sphaerularioidea gen. sp. EM-2016  0   1  0   15   0.00 1.000
@@ -343,24 +339,24 @@ Steinernema sp.                    0   3  0   13   0.00 1.000
 Steinernema websteri               0   3  0   13   0.00 1.000
 Trichodorus primitivus             9   0  3   4    0.86 0.250
 Tripyla daviesae                   0   3  0   13   0.00 1.000
-Tripyla glomerans                  2   0  10  4    0.29 0.833
+Tripyla glomerans                  0   0  12  4    0.00 1.000
 Tripyla sp.                        0   3  0   13   0.00 1.000
 Tylenchus sp.                      3   0  9   4    0.40 0.750
 Urtica sp.                         0   1  0   15   0.00 1.000
 Xiphinema bakeri                   0   4  0   12   0.00 1.000
 Xiphinema coxi europaeum           0   2  0   14   0.00 1.000
-Xiphinema diversicaudatum          7   0  5   4    0.74 0.417
+Xiphinema diversicaudatum          8   0  4   4    0.80 0.333
 Xiphinema japonicum                0   4  0   12   0.00 1.000
 Xiphinema pseudocoxi               0   2  0   14   0.00 1.000
 Xiphinema sp.                      0   2  0   14   0.00 1.000
-Xiphinema tica                     0   1  0   15   0.00 1.000
 Xiphinema vuittenezi               0   2  0   14   0.00 1.000
-OTHER 38 SPECIES IN DB             0   0  0   608  0.00 0.000
+OTHER 41 SPECIES IN DB             0   0  0   656  0.00 0.000
 ================================== === == === ==== ==== ===========
 
 As expected from the per-marker results, the false positives are largely due
 to species level difficulties within the genera including *Globodera*,
-*Steinernema*, and *Xiphinema*.
+*Steinernema*, and *Xiphinema*. This includes reporting sister species rather
+than the expected *Tripyla glomerans*.
 
 While many of the number of false negatives may be down to database coverage,
 it would also be worth exploring further dropping the minimum abundance
