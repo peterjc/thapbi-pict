@@ -13,6 +13,8 @@ import sys
 from collections import Counter
 from collections import defaultdict
 from math import ceil
+from math import floor
+from math import log2
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
@@ -44,24 +46,33 @@ def unoise(counts, unoise_alpha=2.0, abundance_based=True, debug=False):
         # entry it picks may not pass the dynamic threshold.
         search_function = extract
 
-    # Start by sorting sequences by abundance, largest first
+    top_a = max(counts.values())  # will become first centroid
+    last_a = None
+    cutoff = 0
     centroids = defaultdict(set)
+    high_abundance_centroids = None
+    # Start by sorting sequences by abundance, largest first
     for a, query in sorted(
         ((a, seq) for (seq, a) in counts.items()),
         key=lambda x: (-x[0], x[1]),
     ):
-        # if debug:
-        #    sys.stderr.write(
-        #        f"DEBUG: Any of {len(centroids)} clusters "
-        #        f"<-- Q:{md5seq(query)}_{a}?\n"
-        #    )
         # All the larger abundances have been processed already
-        # TODO - Compute upper bound on d
+        # Towards the end have lots of entries with the same abundance
+        # so cache these dynamic thresholds use to narrow search pool
+        if a != last_a:
+            last_a = a
+            # Fist centroid is largest, so gives upper bound on d
+            cutoff = min(
+                floor((log2(top_a / a) - 1) / unoise_alpha) if a * 2 < top_a else 0, 10
+            )
+            high_abundance_centroids = [
+                seq for seq in centroids if counts[seq] >= a * 2 ** (unoise_alpha + 1)
+            ]
         for choice, dist, _index in search_function(
             query,
-            centroids.keys(),
+            high_abundance_centroids,
             scorer=Levenshtein.distance,
-            score_cutoff=10,
+            score_cutoff=cutoff,
         ):
             if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
                 centroids[choice].add(query)
