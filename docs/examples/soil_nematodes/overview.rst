@@ -34,10 +34,10 @@ JB3-JB5GED    Blank  69641     62060   0        25        0
 JB3-JB5GED    MC1    1236201   1157824 0        25        0
 JB3-JB5GED    MC2    2160885   2058441 1        25        0
 JB3-JB5GED    MC3    1204900   1139777 0        25        0
-NF1-18Sr2b    Blank  260778    218813  187776   188       115419
-NF1-18Sr2b    MC1    2483453   2126062 2109488  2110      689854
-NF1-18Sr2b    MC2    2349364   1985981 1972923  1973      745031
-NF1-18Sr2b    MC3    2435278   2088185 2070379  2071      766573
+NF1-18Sr2b    Blank  260778    218813  187776   25        120655
+NF1-18Sr2b    MC1    2483453   2126062 2109488  25        1230982
+NF1-18Sr2b    MC2    2349364   1985981 1972923  25        1209292
+NF1-18Sr2b    MC3    2435278   2088185 2070379  25        1266310
 SSUF04-SSUR22 Blank  57199     46879   0        25        0
 SSUF04-SSUR22 MC1    3162379   2633321 77       25        0
 SSUF04-SSUR22 MC2    2790363   2370732 280      25        0
@@ -62,9 +62,10 @@ barcode leakage in the demultiplexing, or actual unwanted DNA in the samples.
 
 Then we have our "Threshold" and the final column highlighted here is the
 "Read count" after applying our minimum abundance threshold - and now we only
-get reads from the NF1-18Sr2b samples. Most of the threshold values are the
-absolute threshold picked with ``-a 25`` while the larger thresholds are via
-``-f 0.001``, meaning at least 0.1% of the reads for that primer pair.
+get reads from the NF1-18Sr2b samples. These are all 25 specified at the
+command line with ``-a 25`` in the script, and ``-f 0`` to disable the
+fractional abundance threshold. This was done to reduce the false negatives
+in the mock communities to be more in line with the original analysis.
 
 We can repeat this for the other three primer sets, and the same pattern is
 observed - strong signal only for the matching samples (with the blanks giving
@@ -74,8 +75,8 @@ abundance threshold is applied.
 Blank controls
 --------------
 
-The excellent news is at the default minimum abundance threshold there are no
-recognisable nematode sequences in any of the blanks.
+The excellent news is even at this (much lower than default) minimum abundance
+threshold there are no recognisable nematode sequences in any of the blanks.
 
 Looking at the same sample reports (or the more detailed read reports), we
 see that while the blank samples with no PCR template control give lots of
