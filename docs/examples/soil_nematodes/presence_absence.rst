@@ -86,7 +86,8 @@ We have explainable false positives as within genus conflicts in
 *Ditylenchus*, *Globodera*, *Longidorus*, *Meloidogyne*, *Steinernema*,
 *Prionchulus*, *Tripyla*, and *Xiphinema*.
 
-Additionally there is an unexplained FP from *Urtica* sp. in one sample.
+Additionally there is an unexplained FP from plant *Urtica* sp. in the blank
+sample.
 
 We also have false negatives, including reporting *Anatonchus* sp. rather than
 *Anatonchus tridentatus*, no *Acrobeles* sp. in any of the three samples, and
@@ -179,7 +180,7 @@ Or open this in Excel. You should find:
 ================================= == == == == ==== ===========
 #Species                          TP FP FN TN F1   Ad-hoc-loss
 ================================= == == == == ==== ===========
-OVERALL                           34 17 35 98 0.57 0.605
+OVERALL                           36 17 33 98 0.59 0.581
 Acrobeles sp.                     2  0  1  1  0.80 0.333
 Acrobeloides sp.                  0  0  3  1  0.00 1.000
 Alaimus sp.                       0  0  3  1  0.00 1.000
@@ -196,7 +197,7 @@ Globodera sp.                     0  3  0  1  0.00 1.000
 Hemicycliophora sp.               1  0  2  1  0.50 0.667
 Laimaphelenchus deconincki        0  3  0  1  0.00 1.000
 Laimaphelenchus penardi           0  0  3  1  0.00 1.000
-Longidorus caespiticola           1  0  2  1  0.50 0.667
+Longidorus caespiticola           3  0  0  1  1.00 0.000
 Meloidogyne hapla                 3  0  0  1  1.00 0.000
 Plectus sp.                       3  0  0  1  1.00 0.000
 Prionchulus punctatus             3  0  0  1  1.00 0.000
@@ -297,7 +298,7 @@ Or open this in Excel. You should find:
 ================================== === == === ==== ==== ===========
 #Species                           TP  FP FN  TN   F1   Ad-hoc-loss
 ================================== === == === ==== ==== ===========
-OVERALL                            128 92 148 1136 0.52 0.652
+OVERALL                            130 92 146 1136 0.52 0.647
 Acrobeles sp.                      2   0  10  4    0.29 0.833
 Acrobeloides sp.                   4   0  8   4    0.50 0.667
 Alaimus sp.                        4   0  8   4    0.50 0.667
@@ -321,7 +322,7 @@ Globodera tabacum                  0   3  0   13   0.00 1.000
 Hemicycliophora sp.                2   0  10  4    0.29 0.833
 Laimaphelenchus deconincki         0   3  0   13   0.00 1.000
 Laimaphelenchus penardi            3   0  9   4    0.40 0.750
-Longidorus caespiticola            7   0  5   4    0.74 0.417
+Longidorus caespiticola            9   0  3   4    0.86 0.250
 Longidorus poessneckensis          0   2  0   14   0.00 1.000
 Meloidogyne cf. hapla 8 JH-2014    0   3  0   13   0.00 1.000
 Meloidogyne ethiopica              0   3  0   13   0.00 1.000
