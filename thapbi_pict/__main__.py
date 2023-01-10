@@ -1710,10 +1710,15 @@ def main(args=None):
     arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for labels and colors. Use '' to mean no DB."
     del arg
-    # Currently ARG_INPUT_FASTA uses required=True, but we need to change that:
-    arg = subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
-    arg.required = False
-    del arg
+    subcommand_parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=False,
+        nargs="+",
+        help="One or more sample-tally TSV files or folder names "
+        "(containing files named *.tally.tsv).",
+    )
     subcommand_parser.add_argument(
         "-m",
         "--method",
