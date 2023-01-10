@@ -183,13 +183,23 @@ def main(
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
-        if marker != sample_headers[sample]["marker"]:
-            sys.exit(
-                f"ERROR: Expected marker {marker},"
-                f" not {sample_headers[sample]['marker']} from {filename}"
-            )
-        assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
-        sample_cutadapt[sample] = int(sample_headers[sample]["cutadapt"])
+        if not sample_headers[sample]:
+            if min_abundance_fraction or synthetic_controls:
+                sys.exit(
+                    f"ERROR: Missing FASTA header in {filename}, "
+                    "required for fractional abundance threshold\n"
+                )
+            sys.stderr.write(f"WARNING: Missing FASTA header in {filename}\n")
+            sample_cutadapt[sample] = 0
+            # Will assume marker matches, and use default for threshold_pool
+        else:
+            if marker != sample_headers[sample]["marker"]:
+                sys.exit(
+                    f"ERROR: Expected marker {marker},"
+                    f" not {sample_headers[sample]['marker']} from {filename}"
+                )
+            assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
+            sample_cutadapt[sample] = int(sample_headers[sample]["cutadapt"])
         sample_pool[sample] = sample_headers[sample].get("threshold_pool", "default")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
