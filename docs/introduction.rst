@@ -32,7 +32,8 @@ This currently runs as follows:
    `Cutadapt <https://github.com/marcelm/cutadapt>`_
    (`Martin 2011 <https://doi.org/10.14806/ej.17.1.200>`_).
 3. Tally unique sequences per sample per marker.
-4. Apply a minimum abundance threshold (guided by any negative controls).
+4. Optionally apply UNOISE read correction (de-noising).
+5. Apply a minimum abundance threshold (guided by any negative controls).
 
 Sequence classification
 -----------------------
