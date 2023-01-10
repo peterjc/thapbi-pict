@@ -22,8 +22,8 @@ Read preparation
 ----------------
 
 The first stage of the pipeline goes from a set of paired FASTQ files to a
-set of non-redundant primer trimmed FASTA files. This currently runs as
-follows:
+set of non-redundant primer trimmed FASTA files and sample tallies per marker.
+This currently runs as follows:
 
 1. Merge overlappping reads into single sequences, using
    `Flash <https://ccb.jhu.edu/software/FLASH/>`_
@@ -31,7 +31,8 @@ follows:
 2. Filter for primers and trim to target region, using
    `Cutadapt <https://github.com/marcelm/cutadapt>`_
    (`Martin 2011 <https://doi.org/10.14806/ej.17.1.200>`_).
-3. Apply a minimum abundance threshold (guided by any negative controls).
+3. Tally unique sequences per sample per marker.
+4. Apply a minimum abundance threshold (guided by any negative controls).
 
 Sequence classification
 -----------------------
