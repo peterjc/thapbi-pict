@@ -40,4 +40,19 @@ else
     done
 fi
 
+echo "----------------"
+echo "Checking denoise"
+echo "----------------"
+
+thapbi_pict sample-tally -i tests/read-correction/Rhabditis.before.fasta \
+    -o $TMP/Rhabditis.tally.tsv --fasta $TMP/Rhabditis.after.fasta \
+    -a 0 -f 0 # No denoise, should be unchangeed
+diff $TMP/Rhabditis.after.fasta tests/read-correction/Rhabditis.before.fasta
+
+thapbi_pict sample-tally -i tests/read-correction/Rhabditis.before.fasta \
+    -o $TMP/Rhabditis.tally.tsv --fasta $TMP/Rhabditis.after.fasta \
+    -a 0 -f 0 --denoise
+diff $TMP/Rhabditis.after.fasta tests/read-correction/Rhabditis.after.fasta
+thapbi_pict edit-graph -i $TMP/Rhabditis.tally.tsv -f matrix -d '' | cut -f 1-3
+
 echo "$0 - test_sample-tally.sh passed"
