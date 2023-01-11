@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# Copyright 2021-2023 by Peter Cock, The James Hutton Institute.
+# All rights reserved.
+# This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
 """Pool THAPBI PICT sample report using metadata."""
 import argparse
 import sys
@@ -9,7 +14,7 @@ import xlsxwriter
 # from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.3")
+    print("v0.0.4")
     sys.exit(0)
 
 # Parse Command Line
@@ -146,7 +151,7 @@ def pool(
         line = handle.readline().rstrip("\n")
         if not line.startswith("#") or "\t" not in line:
             sys.exit("ERROR: Invalid TSV input file.")
-        header = [_.rstrip() for _ in line.split("\t")]
+        header = [_.rstrip() for _ in line[1:].split("\t")]
         try:
             sample_col = header.index("Sequencing sample")
         except ValueError:
@@ -162,7 +167,7 @@ def pool(
                 first_sp_col = count_col + 1
             except ValueError:
                 sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
-        if max(value_cols) >= min(sample_col, count_col):
+        if max(value_cols) > sample_col or max(value_cols) >= count_col:
             sys.exit(
                 f"ERROR: Requested column {max(value_cols)+1} not in metadata range."
             )
