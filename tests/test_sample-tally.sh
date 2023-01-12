@@ -44,15 +44,20 @@ echo "----------------"
 echo "Checking denoise"
 echo "----------------"
 
-thapbi_pict sample-tally -i tests/read-correction/Rhabditis.before.fasta \
-    -o $TMP/Rhabditis.tally.tsv --fasta $TMP/Rhabditis.after.fasta \
-    -a 0 -f 0 # No denoise, should be unchangeed
-diff $TMP/Rhabditis.after.fasta tests/read-correction/Rhabditis.before.fasta
+for BEFORE in tests/read-correction/*.before.fasta; do
+    AFTER=${BEFORE%%.*}.after.fasta
+    echo "Checking denoising $BEFORE --> $AFTER"
+    thapbi_pict sample-tally -i $BEFORE \
+        -o $TMP/after.tally.tsv --fasta $TMP/after.fasta \
+        --minlen 60 -a 0 -f 0 # No denoise, should be unchanged
+    echo diff $TMP/after.fasta $BEFORE
+    diff $TMP/after.fasta $BEFORE
 
-thapbi_pict sample-tally -i tests/read-correction/Rhabditis.before.fasta \
-    -o $TMP/Rhabditis.tally.tsv --fasta $TMP/Rhabditis.after.fasta \
-    -a 0 -f 0 --denoise
-diff $TMP/Rhabditis.after.fasta tests/read-correction/Rhabditis.after.fasta
-thapbi_pict edit-graph -i $TMP/Rhabditis.tally.tsv -f matrix -d '' | cut -f 1-3
+    thapbi_pict sample-tally -i $BEFORE \
+        -o $TMP/after.tally.tsv --fasta $TMP/after.fasta \
+        --minlen 60 -a 0 -f 0 --denoise
+    echo diff $TMP/after.fasta $AFTER
+    diff $TMP/after.fasta $AFTER
+done
 
 echo "$0 - test_sample-tally.sh passed"
