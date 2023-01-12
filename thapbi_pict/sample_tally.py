@@ -35,6 +35,8 @@ def unoise(counts, unoise_alpha=2.0, abundance_based=True, debug=False):
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
     """
+    if not counts:
+        return {}
     if abundance_based:
         # size ordered abundance-based greedy clustering (AGC),
         # where choices are sorted by decreasing abundance.
@@ -237,8 +239,8 @@ def main(
             new_counts[seq, sample] += a
             new_totals[seq] += a
         sys.stderr.write(
-            f"UNOISE reduced unique ASVs from {len(totals)} to "
-            f"{len(new_totals)}, max abundance now {max(new_totals.values())}\n"
+            f"UNOISE reduced unique ASVs from {len(totals)} to {len(new_totals)}, "
+            f"max abundance now {max(new_totals.values(), default=0)}\n"
         )
         counts = new_counts
         totals = new_totals
