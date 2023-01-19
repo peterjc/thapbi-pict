@@ -99,15 +99,11 @@ Sphaerium striatinum      0  1  0  10
 OTHER 105 SPECIES IN DB   0  0  0  1155
 ========================= == == == ====
 
-This time we do have false negatives - in five of the seven samples the
-lowest abundance *Melanoides tuberculata* was not found. Given this was
-intended to be present at only 18 copies per sample, this is easily lost with
-a minimum abundance threshold designed to screen out noise.
-
-Also, three of the seven samples are missing *Sander vitreus*. Two of these
-are from Community 3 where this is intended to be at only 14 copies, the third
-was ``SC3PRO2`` aka ``SRR5534972`` for Mock Community 2 MOL16S with Fish Block
-Primer, with a target abundance of 72 copies. Here the fish block worked.
+This time we do have false negatives - three of the seven samples are missing
+*Sander vitreus*. Two of these are from Community 3 where this is intended to
+be at only 14 copies, the third was ``SC3PRO2`` aka ``SRR5534972`` for Mock
+Community 2 MOL16S with Fish Block Primer, with a target abundance of 72
+copies. Here the fish block worked.
 
 Again we have lots of false positives, mostly sister species which reflects
 limitations of the reference set.
