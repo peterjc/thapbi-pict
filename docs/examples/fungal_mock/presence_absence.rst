@@ -186,7 +186,7 @@ as the most fuzzy of the three:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/AL1.BITS-B58S3.assess.blast.tsv
+    $ cut -f 1-5,9,11 summary/AL1.BITS-B58S3.assess.blast.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
@@ -253,7 +253,7 @@ ITS1f/ITS2 primer is more successful:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/AL2.ITS1f-ITS2.assess.blast.tsv
+    $ cut -f 1-5,9,11 summary/AL2.ITS1f-ITS2.assess.blast.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
@@ -309,30 +309,30 @@ primers:
 
 Or open this in Excel. You should find:
 
-======================== === == === ==
-#Species                 TP  FP FN  TN
-======================== === == === ==
-OVERALL                  313 0  200 57
-Alternaria alternata     16  0  11  3
-Aspergillus flavus       24  0  3   3
-Candida apicola          0   0  27  3
-Chytriomyces hyalinus    0   0  27  3
-Claviceps purpurea       23  0  4   3
-Fusarium graminearum     27  0  0   3
-Fusarium oxysporum       27  0  0   3
-Fusarium verticillioides 27  0  0   3
-Mortierella verticillata 12  0  15  3
-Naganishia albida        27  0  0   3
-Neosartorya fischeri     16  0  11  3
-Penicillium expansum     23  0  4   3
-Rhizoctonia solani       11  0  16  3
-Rhizomucor miehei        0   0  27  3
-Rhizophagus irregularis  5   0  22  3
-Saccharomyces cerevisiae 27  0  0   3
-Saitoella complicata     26  0  1   3
-Trichoderma reesei       22  0  5   3
-Ustilago maydis          0   0  27  3
-======================== === == === ==
+======================== === == === == ==== ===========
+#Species                 TP  FP FN  TN F1   Ad-hoc-loss
+======================== === == === == ==== ===========
+OVERALL                  345 5  168 71 0.80 0.334
+Alternaria alternata     26  0  1   4  0.98 0.037
+Aspergillus flavus       25  0  2   4  0.96 0.074
+Candida apicola          27  0  0   4  1.00 0.000
+Chytriomyces hyalinus    0   0  27  4  0.00 1.000
+Claviceps purpurea       27  0  0   4  1.00 0.000
+Fusarium graminearum     27  4  0   0  0.93 0.129
+Fusarium oxysporum       27  0  0   4  1.00 0.000
+Fusarium verticillioides 0   0  27  4  0.00 1.000
+Mortierella verticillata 27  1  0   3  0.98 0.036
+Naganishia albida        27  0  0   4  1.00 0.000
+Neosartorya fischeri     24  0  3   4  0.94 0.111
+Penicillium expansum     22  0  5   4  0.90 0.185
+Rhizoctonia solani       19  0  8   4  0.83 0.296
+Rhizomucor miehei        0   0  27  4  0.00 1.000
+Rhizophagus irregularis  13  0  14  4  0.65 0.519
+Saccharomyces cerevisiae 0   0  27  4  0.00 1.000
+Saitoella complicata     27  0  0   4  1.00 0.000
+Trichoderma reesei       27  0  0   4  1.00 0.000
+Ustilago maydis          0   0  27  4  0.00 1.000
+======================== === == === == ==== ===========
 
 This time we're missing *Candida apicola*, *Chytriomyces hyalinus*,
 *Rhizomucor miehei* and *Ustilago maydis*.

@@ -93,51 +93,51 @@ lake, but that is a useful approximation for assessing the classifier:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/drained_ponds.12S.assess.onebp.tsv
+    $ cut -f 1-5,9,11 summary/drained_ponds.12S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 You might prefer to open this in Excel:
 
-=================================== === === === ====
-#Species                            TP  FP  FN  TN
-=================================== === === === ====
-OVERALL                             433 388 331 5877
-(Off-target) Anatidae (waterfowl)   0   70  0   29
-(Off-target) Apodemus               0   4   0   95
-(Off-target) Ardea cinerea          0   11  0   88
-(Off-target) Bos taurus             0   3   0   96
-(Off-target) Canis lupus familiaris 0   7   0   92
-(Off-target) Capra hircus           0   1   0   98
-(Off-target) Columba                0   47  0   52
-(Off-target) Gallinula chloropus    0   50  0   49
-(Off-target) Gallus gallus          0   13  0   86
-(Off-target) Homo sapiens           0   83  0   16
-(Off-target) Ovis aries             0   17  0   82
-(Off-target) Ovis dalli             0   1   0   98
-(Off-target) Phalacrocorax carbo    0   25  0   74
-(Off-target) Sturnus                0   3   0   96
-(Off-target) Sus scrofa             0   16  0   83
-(Off-target) Turdus                 0   7   0   92
-Abramis brama                       65  0   16  18
-Acipenser spp.                      0   0   9   90
-Alburnus mossulensis                0   1   0   98
-Astatotilapia calliptera            4   0   0   95
-Barbus barbus                       46  0   35  18
-Carassius carassius                 64  0   17  18
-Ctenopharyngodon idella             3   15  6   75
-Cyprinus carpio                     61  0   20  18
-Maylandia zebra                     4   0   0   95
-Perca fluviatilis                   40  0   41  18
-Pseudorasbora parva                 0   2   0   97
-Rutilus rutilus                     63  0   18  18
-Scardinius erythrophthalmus         6   0   75  18
-Silurus glanis                      9   0   0   90
-Spinibarbus denticulatus            0   11  0   88
-Squalidus gracilis                  0   1   0   98
-Squalius cephalus                   6   0   75  18
-Tinca tinca                         62  0   19  18
-OTHER 37 SPECIES IN DB              0   0   0   3663
-=================================== === === === ====
+=================================== === === === ==== ==== ===========
+#Species                            TP  FP  FN  TN   F1   Ad-hoc-loss
+=================================== === === === ==== ==== ===========
+OVERALL                             433 388 331 5877 0.55 0.624
+(Off-target) Anatidae (waterfowl)   0   70  0   29   0.00 1.000
+(Off-target) Apodemus               0   4   0   95   0.00 1.000
+(Off-target) Ardea cinerea          0   11  0   88   0.00 1.000
+(Off-target) Bos taurus             0   3   0   96   0.00 1.000
+(Off-target) Canis lupus familiaris 0   7   0   92   0.00 1.000
+(Off-target) Capra hircus           0   1   0   98   0.00 1.000
+(Off-target) Columba                0   47  0   52   0.00 1.000
+(Off-target) Gallinula chloropus    0   50  0   49   0.00 1.000
+(Off-target) Gallus gallus          0   13  0   86   0.00 1.000
+(Off-target) Homo sapiens           0   83  0   16   0.00 1.000
+(Off-target) Ovis aries             0   17  0   82   0.00 1.000
+(Off-target) Ovis dalli             0   1   0   98   0.00 1.000
+(Off-target) Phalacrocorax carbo    0   25  0   74   0.00 1.000
+(Off-target) Sturnus                0   3   0   96   0.00 1.000
+(Off-target) Sus scrofa             0   16  0   83   0.00 1.000
+(Off-target) Turdus                 0   7   0   92   0.00 1.000
+Abramis brama                       65  0   16  18   0.89 0.198
+Acipenser spp.                      0   0   9   90   0.00 1.000
+Alburnus mossulensis                0   1   0   98   0.00 1.000
+Astatotilapia calliptera            4   0   0   95   1.00 0.000
+Barbus barbus                       46  0   35  18   0.72 0.432
+Carassius carassius                 64  0   17  18   0.88 0.210
+Ctenopharyngodon idella             3   15  6   75   0.22 0.875
+Cyprinus carpio                     61  0   20  18   0.86 0.247
+Maylandia zebra                     4   0   0   95   1.00 0.000
+Perca fluviatilis                   40  0   41  18   0.66 0.506
+Pseudorasbora parva                 0   2   0   97   0.00 1.000
+Rutilus rutilus                     63  0   18  18   0.88 0.222
+Scardinius erythrophthalmus         6   0   75  18   0.14 0.926
+Silurus glanis                      9   0   0   90   1.00 0.000
+Spinibarbus denticulatus            0   11  0   88   0.00 1.000
+Squalidus gracilis                  0   1   0   98   0.00 1.000
+Squalius cephalus                   6   0   75  18   0.14 0.926
+Tinca tinca                         62  0   19  18   0.87 0.235
+OTHER 37 SPECIES IN DB              0   0   0   3663 0.00 0.000
+=================================== === === === ==== ==== ===========
 
 False positives
 ---------------

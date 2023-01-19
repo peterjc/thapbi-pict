@@ -29,22 +29,22 @@ key numbers:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/SPH16S.assess.onebp.tsv
+    $ cut -f 1-5,9,11 summary/SPH16S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
 
-====================== == == == ===
-#Species               TP FP FN TN
-====================== == == == ===
-OVERALL                9  5  0  656
-Pisidium compressum    3  0  0  7
-Sphaerium corneum      3  0  0  7
-Sphaerium nucleus      0  3  0  7
-Sphaerium simile       3  1  0  6
-Sphaerium striatinum   0  1  0  9
-OTHER 62 SPECIES IN DB 0  0  0  620
-====================== == == == ===
+====================== == == == === ==== ===========
+#Species               TP FP FN TN  F1   Ad-hoc-loss
+====================== == == == === ==== ===========
+OVERALL                9  5  0  656 0.78 0.357
+Pisidium compressum    3  0  0  7   1.00 0.000
+Sphaerium corneum      3  0  0  7   1.00 0.000
+Sphaerium nucleus      0  3  0  7   0.00 1.000
+Sphaerium simile       3  1  0  6   0.86 0.250
+Sphaerium striatinum   0  1  0  9   0.00 1.000
+OTHER 62 SPECIES IN DB 0  0  0  620 0.00 0.000
+====================== == == == === ==== ===========
 
 No false negatives (but we have set the threshold very low), but 5 false
 positives: Three cases of *Sphaerium nucleus*, and one each of *S. simile*
@@ -72,32 +72,32 @@ these are the key numbers:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/MOL16S.assess.onebp.tsv
+    $ cut -f 1-5,9,11 summary/MOL16S.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
 
-========================= == == == ====
-#Species                  TP FP FN TN
-========================= == == == ====
-OVERALL                   74 23 3  1220
-Cipangopaludina chinensis 7  0  0  4
-Corbicula fluminea        0  1  0  10
-Dreissena bugensis        0  8  0  3
-Dreissena polymorpha      7  1  0  3
-Dreissena rostriformis    7  1  0  3
-Gillia altilis            7  0  0  4
-Melanoides tuberculata    7  0  0  4
-Mytilopsis leucophaeata   7  0  0  4
-Pisidium compressum       7  0  0  4
-Potamopyrgus antipodarum  7  0  0  4
-Sander vitreus            4  0  3  4
-Sphaerium corneum         7  1  0  3
-Sphaerium nucleus         0  8  0  3
-Sphaerium simile          7  2  0  2
-Sphaerium striatinum      0  1  0  10
-OTHER 105 SPECIES IN DB   0  0  0  1155
-========================= == == == ====
+========================= == == == ==== ==== ===========
+#Species                  TP FP FN TN   F1   Ad-hoc-loss
+========================= == == == ==== ==== ===========
+OVERALL                   74 23 3  1220 0.85 0.260
+Cipangopaludina chinensis 7  0  0  4    1.00 0.000
+Corbicula fluminea        0  1  0  10   0.00 1.000
+Dreissena bugensis        0  8  0  3    0.00 1.000
+Dreissena polymorpha      7  1  0  3    0.93 0.125
+Dreissena rostriformis    7  1  0  3    0.93 0.125
+Gillia altilis            7  0  0  4    1.00 0.000
+Melanoides tuberculata    7  0  0  4    1.00 0.000
+Mytilopsis leucophaeata   7  0  0  4    1.00 0.000
+Pisidium compressum       7  0  0  4    1.00 0.000
+Potamopyrgus antipodarum  7  0  0  4    1.00 0.000
+Sander vitreus            4  0  3  4    0.73 0.429
+Sphaerium corneum         7  1  0  3    0.93 0.125
+Sphaerium nucleus         0  8  0  3    0.00 1.000
+Sphaerium simile          7  2  0  2    0.88 0.222
+Sphaerium striatinum      0  1  0  10   0.00 1.000
+OTHER 105 SPECIES IN DB   0  0  0  1155 0.00 0.000
+========================= == == == ==== ==== ===========
 
 This time we do have false negatives - three of the seven samples are missing
 *Sander vitreus*. Two of these are from Community 3 where this is intended to
