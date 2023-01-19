@@ -95,10 +95,10 @@ a few more not appearing in all the samples.
 
 This is not performing as well as the authors' analysis:
 
-> The NF1-18Sr2b had the highest coverage, producing 100% recovery of the
-> sampled taxa (Table 9). All 23 taxa were detected in all three replicates,
-> apart from *Acrobeles* and *Criconema*. They both failed to appear in one
-> of the replicates.
+    The NF1-18Sr2b had the highest coverage, producing 100% recovery of the
+    sampled taxa (Table 9). All 23 taxa were detected in all three replicates,
+    apart from *Acrobeles* and *Criconema*. They both failed to appear in one
+    of the replicates.
 
 Perhaps our abundance threshold is still too high?
 
@@ -154,10 +154,10 @@ also from *Blastocystis* sp. in the blank.
 We have TP for 11 species only. The original analysis reported recovering 15
 out of 23 species with this marker (Table 9), and wrote:
 
-> In the case of the SSUF04-SSUR22 marker, eight taxa were missing from all
-> three assignment methods. The taxa that were recovered occurred in all three
-> replicates. With all three methods of taxonomy assignment combined, the
-> number of correctly assigned OTUs improved to 56.
+    In the case of the SSUF04-SSUR22 marker, eight taxa were missing from all
+    three assignment methods. The taxa that were recovered occurred in all three
+    replicates. With all three methods of taxonomy assignment combined, the
+    number of correctly assigned OTUs improved to 56.
 
 Many of our false negatives are likely due to the database coverage, with
 the Table 9 noting the majority of their reference sequences from NCBI RefSeq
@@ -223,10 +223,10 @@ Note *Laimaphelenchus deconincki* is reported instead of the expected
 We have 13 species correctly identified (9 from all three samples), which
 exceeds authors' analysis with UTAX but falls short of their consensus:
 
-> The 28S rDNA-based D3Af-D3Br marker assigned 70 OTUs to nematodes and
-> recovered all taxa except *Criconema* in the consensus taxonomy. Amongst the
-> recovered taxa, *Hemicycliophora* occurred in one of the replicates,
-> *Acrobeles* in two, while the rest were found in all three replicates.
+    The 28S rDNA-based D3Af-D3Br marker assigned 70 OTUs to nematodes and
+    recovered all taxa except *Criconema* in the consensus taxonomy. Amongst
+    the recovered taxa, *Hemicycliophora* occurred in one of the replicates,
+    *Acrobeles* in two, while the rest were found in all three replicates.
 
 JB3-JB5GED
 ----------
@@ -277,9 +277,9 @@ sister species *Steinernema abbasi*.
 
 This is better than the authors analysis, which did not find *Globodera*:
 
-> For the COI-based JB3-JB5GED marker, even the consensus taxonomy drawn from
-> all three assignment methods could only recover two taxa, namely Meloidogyne
-> and Steinernema.
+    For the COI-based JB3-JB5GED marker, even the consensus taxonomy drawn from
+    all three assignment methods could only recover two taxa, namely Meloidogyne
+    and Steinernema.
 
 Pooled
 ------
