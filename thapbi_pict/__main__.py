@@ -257,6 +257,20 @@ def fasta_nr(args=None):
     )
 
 
+def denoise(args=None):
+    """Subcommand to denoise FASTA file(s) using UNOISE read-correction."""
+    from .denoise import main
+
+    return main(
+        inputs=args.input,
+        output=args.output,
+        total_min_abundance=args.total,
+        min_length=args.minlen,
+        max_length=args.maxlen,
+        debug=args.verbose,
+    )
+
+
 def sample_tally(args=None):
     """Subcommand to tally per-sample FASTA files using MD5 naming."""
     from .sample_tally import main
@@ -1453,6 +1467,44 @@ def main(args=None):
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=fasta_nr)
+
+    subcommand_parser = subparsers.add_parser(
+        "denoise",
+        description="Apply UNOISE based read-correction to denoise FASTA file(s).",
+        epilog="This is a simplified version of the sample-tally command. "
+        "Input FASTA files should use <prefix>_<count> naming. In the output "
+        "FASTA file each unique sequence will be named <MD5>_<count> using "
+        "the upper case sequence MD5 checksum, and its total abundance "
+        "including contributions from any reads corrected to that sequences.",
+    )
+    subcommand_parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=True,
+        nargs="+",
+        metavar="FASTA",
+        help="One or more input FASTA files.",
+    )
+    subcommand_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="-",
+        metavar="FASTA",
+        help="Single output FASTA filename, '-' for stdout (default).",
+    )
+    subcommand_parser.add_argument(
+        "-t",
+        "--total",
+        type=int,
+        default="0",
+        help="Minimum total abundance for each output sequence. Default 0 (not used).",
+    )
+    subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
+    subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
+    subcommand_parser.set_defaults(func=denoise)
 
     subcommand_parser = subparsers.add_parser(
         "sample-tally",

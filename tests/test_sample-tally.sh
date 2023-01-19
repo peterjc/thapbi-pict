@@ -44,6 +44,7 @@ echo "----------------"
 echo "Checking denoise"
 echo "----------------"
 
+# These tests are also used with the denoise command:
 for BEFORE in tests/read-correction/*.before.fasta; do
     AFTER=${BEFORE%%.*}.after.fasta
     echo "Checking denoising $BEFORE --> $AFTER"
@@ -58,14 +59,6 @@ for BEFORE in tests/read-correction/*.before.fasta; do
         --minlen 60 -a 0 -f 0 --denoise
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
-
-    # TODO - compare with usearch or vsearch?
-    # Something like this with a suitable example...
-    # $ vsearch --unoise_alpha 2 --minsize 4 --cluster_unoise \
-    #     <(python scripts/swarm2usearch.py $BEFORE) \
-    #     --centroids $TMP/vsearch.fasta --sizein --sizeout --sizeorder
-    # $ diff $TMP/vsearch.fasta \
-    #     <(python scripts/swarm2usearch.py $AFTER)
 done
 
 echo "$0 - test_sample-tally.sh passed"
