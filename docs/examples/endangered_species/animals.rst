@@ -31,7 +31,7 @@ samples expected - perhaps the default abundance threshold is too high?
 Mini-16S - short marker
 -----------------------
 
-The output from the Mini-16S marker is far more diverse, with 18 unique
+The output from the Mini-16S marker is far more diverse, with 84 unique
 sequences:
 
 .. code:: console
@@ -90,7 +90,7 @@ to plants in the Asteraceae family.
 Mini-cyt-b - short marker
 -------------------------
 
-The output from the Mini-COI marker had only 19 unique sequences:
+The output from the Mini-COI marker had only 17 unique sequences:
 
 .. code:: console
 
