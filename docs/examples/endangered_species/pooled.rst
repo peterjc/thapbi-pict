@@ -43,54 +43,54 @@ traditional medicine samples where the true species content is unknown.
 
 .. code:: console
 
-    $ cut -f 1-5 summary/pooled.assess.onebp.tsv
+    $ cut -f 1-5,9,11 summary/pooled.assess.onebp.tsv
     <SEE TABLE BELOW>
 
 Working at the command line or using Excel should show the following:
 
-====================== ==== === === ====
-#Species               TP   FP  FN  TN
-====================== ==== === === ====
-OVERALL                1058 727 240 7699
-Acipenser schrenckii   0    20  0   123
-Aloe reynoldsii        0    114 0   29
-Aloe variegata         110  0   25  8
-Anguilla anguilla      3    0   3   137
-Beta vulgaris          0    0   16  127
-Bos taurus             139  2   0   2
-Brassica juncea        0    127 0   16
-Brassica napus         7    0   9   127
-Brassica nigra         0    127 0   16
-Brassica oleracea      128  6   0   9
-Brassicaceae (misc)    0    70  0   73
-Cactaceae (misc)       0    3   0   140
-Carica papaya          16   0   0   127
-Crocodylus niloticus   122  0   12  9
-Cullen sp.             0    16  0   127
-Cycas revoluta         3    0   3   137
-Dendrobium sp.         131  0   3   9
-Echinocactus sp.       6    0   0   137
-Euphorbia sp.          3    0   3   137
-Gallus gallus          6    1   0   136
-Glycine max            16   0   0   127
-Gossypium hirsutum     16   0   0   127
-Homo sapiens           0    2   0   141
-Huso dauricus          112  0   16  15
-Lactuca altaica        0    66  0   77
-Lactuca sativa         74   2   0   67
-Lactuca serriola       0    66  0   77
-Lactuca tatarica       0    39  0   104
-Lactuca virosa         0    66  0   77
-Meleagris gallopavo    16   0   0   127
-Parapenaeopsis sp.     0    0   6   137
-Pieris brassicae       6    0   0   137
-Pleuronectes platessa  64   0   0   79
-Solanum lycopersicum   16   0   0   127
-Sus scrofa             64   0   0   79
-Triticum aestivum      0    0   16  127
-Zea mays               0    0   128 15
-OTHER 31 SPECIES IN DB 0    0   0   4433
-====================== ==== === === ====
+====================== ==== === === ==== ==== ===========
+#Species               TP   FP  FN  TN   F1   Ad-hoc-loss
+====================== ==== === === ==== ==== ===========
+OVERALL                1058 727 240 7699 0.69 0.478
+Acipenser schrenckii   0    20  0   123  0.00 1.000
+Aloe reynoldsii        0    114 0   29   0.00 1.000
+Aloe variegata         110  0   25  8    0.90 0.185
+Anguilla anguilla      3    0   3   137  0.67 0.500
+Beta vulgaris          0    0   16  127  0.00 1.000
+Bos taurus             139  2   0   2    0.99 0.014
+Brassica juncea        0    127 0   16   0.00 1.000
+Brassica napus         7    0   9   127  0.61 0.562
+Brassica nigra         0    127 0   16   0.00 1.000
+Brassica oleracea      128  6   0   9    0.98 0.045
+Brassicaceae (misc)    0    70  0   73   0.00 1.000
+Cactaceae (misc)       0    3   0   140  0.00 1.000
+Carica papaya          16   0   0   127  1.00 0.000
+Crocodylus niloticus   122  0   12  9    0.95 0.090
+Cullen sp.             0    16  0   127  0.00 1.000
+Cycas revoluta         3    0   3   137  0.67 0.500
+Dendrobium sp.         131  0   3   9    0.99 0.022
+Echinocactus sp.       6    0   0   137  1.00 0.000
+Euphorbia sp.          3    0   3   137  0.67 0.500
+Gallus gallus          6    1   0   136  0.92 0.143
+Glycine max            16   0   0   127  1.00 0.000
+Gossypium hirsutum     16   0   0   127  1.00 0.000
+Homo sapiens           0    2   0   141  0.00 1.000
+Huso dauricus          112  0   16  15   0.93 0.125
+Lactuca altaica        0    66  0   77   0.00 1.000
+Lactuca sativa         74   2   0   67   0.99 0.026
+Lactuca serriola       0    66  0   77   0.00 1.000
+Lactuca tatarica       0    39  0   104  0.00 1.000
+Lactuca virosa         0    66  0   77   0.00 1.000
+Meleagris gallopavo    16   0   0   127  1.00 0.000
+Parapenaeopsis sp.     0    0   6   137  0.00 1.000
+Pieris brassicae       6    0   0   137  1.00 0.000
+Pleuronectes platessa  64   0   0   79   1.00 0.000
+Solanum lycopersicum   16   0   0   127  1.00 0.000
+Sus scrofa             64   0   0   79   1.00 0.000
+Triticum aestivum      0    0   16  127  0.00 1.000
+Zea mays               0    0   128 15   0.00 1.000
+OTHER 31 SPECIES IN DB 0    0   0   4433 0.00 0.000
+====================== ==== === === ==== ==== ===========
 
 Most of the false positives (FP) are alternative genus level matches in
 *Brassica* and *Lactuca* (as discussed in the paper). The two sequences we
