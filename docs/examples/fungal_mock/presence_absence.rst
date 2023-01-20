@@ -191,30 +191,30 @@ as the most fuzzy of the three:
 
 Or open this in Excel. You should find:
 
-======================== === == === ==
-#Species                 TP  FP FN  TN
-======================== === == === ==
-OVERALL                  345 5  168 71
-Alternaria alternata     26  0  1   4
-Aspergillus flavus       25  0  2   4
-Candida apicola          27  0  0   4
-Chytriomyces hyalinus    0   0  27  4
-Claviceps purpurea       27  0  0   4
-Fusarium graminearum     27  4  0   0
-Fusarium oxysporum       27  0  0   4
-Fusarium verticillioides 0   0  27  4
-Mortierella verticillata 27  1  0   3
-Naganishia albida        27  0  0   4
-Neosartorya fischeri     24  0  3   4
-Penicillium expansum     22  0  5   4
-Rhizoctonia solani       19  0  8   4
-Rhizomucor miehei        0   0  27  4
-Rhizophagus irregularis  13  0  14  4
-Saccharomyces cerevisiae 0   0  27  4
-Saitoella complicata     27  0  0   4
-Trichoderma reesei       27  0  0   4
-Ustilago maydis          0   0  27  4
-======================== === == === ==
+======================== === == === == ==== ===========
+#Species                 TP  FP FN  TN F1   Ad-hoc-loss
+======================== === == === == ==== ===========
+OVERALL                  345 5  168 71 0.80 0.334
+Alternaria alternata     26  0  1   4  0.98 0.037
+Aspergillus flavus       25  0  2   4  0.96 0.074
+Candida apicola          27  0  0   4  1.00 0.000
+Chytriomyces hyalinus    0   0  27  4  0.00 1.000
+Claviceps purpurea       27  0  0   4  1.00 0.000
+Fusarium graminearum     27  4  0   0  0.93 0.129
+Fusarium oxysporum       27  0  0   4  1.00 0.000
+Fusarium verticillioides 0   0  27  4  0.00 1.000
+Mortierella verticillata 27  1  0   3  0.98 0.036
+Naganishia albida        27  0  0   4  1.00 0.000
+Neosartorya fischeri     24  0  3   4  0.94 0.111
+Penicillium expansum     22  0  5   4  0.90 0.185
+Rhizoctonia solani       19  0  8   4  0.83 0.296
+Rhizomucor miehei        0   0  27  4  0.00 1.000
+Rhizophagus irregularis  13  0  14  4  0.65 0.519
+Saccharomyces cerevisiae 0   0  27  4  0.00 1.000
+Saitoella complicata     27  0  0   4  1.00 0.000
+Trichoderma reesei       27  0  0   4  1.00 0.000
+Ustilago maydis          0   0  27  4  0.00 1.000
+======================== === == === == ==== ===========
 
 Or, open this plain text tab separated Excel.
 
@@ -258,30 +258,30 @@ ITS1f/ITS2 primer is more successful:
 
 Or open this in Excel. You should find:
 
-======================== === == === ==
-#Species                 TP  FP FN  TN
-======================== === == === ==
-OVERALL                  398 0  115 57
-Alternaria alternata     23  0  4   3
-Aspergillus flavus       27  0  0   3
-Candida apicola          12  0  15  3
-Chytriomyces hyalinus    25  0  2   3
-Claviceps purpurea       27  0  0   3
-Fusarium graminearum     27  0  0   3
-Fusarium oxysporum       27  0  0   3
-Fusarium verticillioides 12  0  15  3
-Mortierella verticillata 27  0  0   3
-Naganishia albida        27  0  0   3
-Neosartorya fischeri     23  0  4   3
-Penicillium expansum     24  0  3   3
-Rhizoctonia solani       24  0  3   3
-Rhizomucor miehei        4   0  23  3
-Rhizophagus irregularis  11  0  16  3
-Saccharomyces cerevisiae 9   0  18  3
-Saitoella complicata     27  0  0   3
-Trichoderma reesei       25  0  2   3
-Ustilago maydis          17  0  10  3
-======================== === == === ==
+======================== === == === == ==== ===========
+#Species                 TP  FP FN  TN F1   Ad-hoc-loss
+======================== === == === == ==== ===========
+OVERALL                  398 0  115 57 0.87 0.224
+Alternaria alternata     23  0  4   3  0.92 0.148
+Aspergillus flavus       27  0  0   3  1.00 0.000
+Candida apicola          12  0  15  3  0.62 0.556
+Chytriomyces hyalinus    25  0  2   3  0.96 0.074
+Claviceps purpurea       27  0  0   3  1.00 0.000
+Fusarium graminearum     27  0  0   3  1.00 0.000
+Fusarium oxysporum       27  0  0   3  1.00 0.000
+Fusarium verticillioides 12  0  15  3  0.62 0.556
+Mortierella verticillata 27  0  0   3  1.00 0.000
+Naganishia albida        27  0  0   3  1.00 0.000
+Neosartorya fischeri     23  0  4   3  0.92 0.148
+Penicillium expansum     24  0  3   3  0.94 0.111
+Rhizoctonia solani       24  0  3   3  0.94 0.111
+Rhizomucor miehei        4   0  23  3  0.26 0.852
+Rhizophagus irregularis  11  0  16  3  0.58 0.593
+Saccharomyces cerevisiae 9   0  18  3  0.50 0.667
+Saitoella complicata     27  0  0   3  1.00 0.000
+Trichoderma reesei       25  0  2   3  0.96 0.074
+Ustilago maydis          17  0  10  3  0.77 0.370
+======================== === == === == ==== ===========
 
 Everything was found, although *Rhizomucor miehei* in particular found rarely,
 followed by *Saccharomyces cerevisiae*. The original author wrote:
@@ -304,7 +304,7 @@ primers:
 
 .. code:: console
 
-    $ cut -f 1-5 summary/AL2.ITS3-KYO2-ITS4-KYO3.assess.blast.tsv
+    $ cut -f 1-5,9,11 summary/AL2.ITS3-KYO2-ITS4-KYO3.assess.blast.tsv
     <SEE TABLE BELOW>
 
 Or open this in Excel. You should find:
@@ -312,26 +312,26 @@ Or open this in Excel. You should find:
 ======================== === == === == ==== ===========
 #Species                 TP  FP FN  TN F1   Ad-hoc-loss
 ======================== === == === == ==== ===========
-OVERALL                  345 5  168 71 0.80 0.334
-Alternaria alternata     26  0  1   4  0.98 0.037
-Aspergillus flavus       25  0  2   4  0.96 0.074
-Candida apicola          27  0  0   4  1.00 0.000
-Chytriomyces hyalinus    0   0  27  4  0.00 1.000
-Claviceps purpurea       27  0  0   4  1.00 0.000
-Fusarium graminearum     27  4  0   0  0.93 0.129
-Fusarium oxysporum       27  0  0   4  1.00 0.000
-Fusarium verticillioides 0   0  27  4  0.00 1.000
-Mortierella verticillata 27  1  0   3  0.98 0.036
-Naganishia albida        27  0  0   4  1.00 0.000
-Neosartorya fischeri     24  0  3   4  0.94 0.111
-Penicillium expansum     22  0  5   4  0.90 0.185
-Rhizoctonia solani       19  0  8   4  0.83 0.296
-Rhizomucor miehei        0   0  27  4  0.00 1.000
-Rhizophagus irregularis  13  0  14  4  0.65 0.519
-Saccharomyces cerevisiae 0   0  27  4  0.00 1.000
-Saitoella complicata     27  0  0   4  1.00 0.000
-Trichoderma reesei       27  0  0   4  1.00 0.000
-Ustilago maydis          0   0  27  4  0.00 1.000
+OVERALL                  313 0  200 57 0.76 0.390
+Alternaria alternata     16  0  11  3  0.74 0.407
+Aspergillus flavus       24  0  3   3  0.94 0.111
+Candida apicola          0   0  27  3  0.00 1.000
+Chytriomyces hyalinus    0   0  27  3  0.00 1.000
+Claviceps purpurea       23  0  4   3  0.92 0.148
+Fusarium graminearum     27  0  0   3  1.00 0.000
+Fusarium oxysporum       27  0  0   3  1.00 0.000
+Fusarium verticillioides 27  0  0   3  1.00 0.000
+Mortierella verticillata 12  0  15  3  0.62 0.556
+Naganishia albida        27  0  0   3  1.00 0.000
+Neosartorya fischeri     16  0  11  3  0.74 0.407
+Penicillium expansum     23  0  4   3  0.92 0.148
+Rhizoctonia solani       11  0  16  3  0.58 0.593
+Rhizomucor miehei        0   0  27  3  0.00 1.000
+Rhizophagus irregularis  5   0  22  3  0.31 0.815
+Saccharomyces cerevisiae 27  0  0   3  1.00 0.000
+Saitoella complicata     26  0  1   3  0.98 0.037
+Trichoderma reesei       22  0  5   3  0.90 0.185
+Ustilago maydis          0   0  27  3  0.00 1.000
 ======================== === == === == ==== ===========
 
 This time we're missing *Candida apicola*, *Chytriomyces hyalinus*,
