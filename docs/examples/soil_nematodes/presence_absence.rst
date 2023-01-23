@@ -81,7 +81,7 @@ OTHER 34 SPECIES IN DB             0  0  0  136 0.00 0.000
 
 We have explainable false positives as within genus conflicts in
 *Ditylenchus*, *Globodera*, *Meloidogyne*, *Steinernema*,
-*Prionchulus*, *Tripyla*, and *Xiphinema*. Again, expected species *Tripyla
+*Prionchulus*, *Tripyla*, and *Xiphinema*. Note expected species *Tripyla
 glomerans* is not reported.
 
 Additionally there is an unexplained FP from plant *Urtica* sp. in the blank
@@ -178,7 +178,7 @@ Or open this in Excel. You should find:
 ================================= == == == == ==== ===========
 #Species                          TP FP FN TN F1   Ad-hoc-loss
 ================================= == == == == ==== ===========
-OVERALL                           36 17 33 98 0.59 0.581
+OVERALL                           39 17 30 98 0.62 0.547
 Acrobeles sp.                     2  0  1  1  0.80 0.333
 Acrobeloides sp.                  0  0  3  1  0.00 1.000
 Alaimus sp.                       0  0  3  1  0.00 1.000
@@ -204,7 +204,7 @@ Rhabditis sp.                     3  0  0  1  1.00 0.000
 Sphaerularioidea gen. sp. EM-2016 0  1  0  3  0.00 1.000
 Steinernema carpocapsae           0  0  3  1  0.00 1.000
 Trichodorus primitivus            3  0  0  1  1.00 0.000
-Tripyla glomerans                 0  0  3  1  0.00 1.000
+Tripyla glomerans                 3  0  0  1  1.00 0.000
 Tylenchus sp.                     0  0  3  1  0.00 1.000
 Xiphinema bakeri                  0  2  0  2  0.00 1.000
 Xiphinema diversicaudatum         3  0  0  1  1.00 0.000
@@ -218,13 +218,17 @@ but additionally *Cercomonas* sp. and *Sphaerularioidea* gen. sp. EM-2016.
 Note *Laimaphelenchus deconincki* is reported instead of the expected
 *Laimaphelenchus penardi* here.
 
-We have 13 species correctly identified (9 from all three samples), which
+We have 14 species correctly identified (10 from all three samples), which
 exceeds authors' analysis with UTAX but falls short of their consensus:
 
     The 28S rDNA-based D3Af-D3Br marker assigned 70 OTUs to nematodes and
     recovered all taxa except *Criconema* in the consensus taxonomy. Amongst
     the recovered taxa, *Hemicycliophora* occurred in one of the replicates,
     *Acrobeles* in two, while the rest were found in all three replicates.
+
+Note that as per the paper, accession MG994928 was used for *Tripyla glomerans*
+however, this required a 35bp 3' extension to cover the D3Af-D3Br amplicon,
+which was inferred from the observed reads matching other nematode sequences.
 
 JB3-JB5GED
 ----------
@@ -296,7 +300,7 @@ Or open this in Excel. You should find:
 ================================== === == === ==== ==== ===========
 #Species                           TP  FP FN  TN   F1   Ad-hoc-loss
 ================================== === == === ==== ==== ===========
-OVERALL                            131 89 145 1139 0.53 0.641
+OVERALL                            134 89 142 1139 0.54 0.633
 Acrobeles sp.                      2   0  10  4    0.29 0.833
 Acrobeloides sp.                   5   0  7   4    0.59 0.583
 Alaimus sp.                        4   0  8   4    0.50 0.667
@@ -339,7 +343,7 @@ Steinernema sp.                    0   3  0   13   0.00 1.000
 Steinernema websteri               0   3  0   13   0.00 1.000
 Trichodorus primitivus             9   0  3   4    0.86 0.250
 Tripyla daviesae                   0   3  0   13   0.00 1.000
-Tripyla glomerans                  0   0  12  4    0.00 1.000
+Tripyla glomerans                  3   0  9   4    0.40 0.750
 Tripyla sp.                        0   3  0   13   0.00 1.000
 Tylenchus sp.                      3   0  9   4    0.40 0.750
 Urtica sp.                         0   1  0   15   0.00 1.000
@@ -355,8 +359,7 @@ OTHER 41 SPECIES IN DB             0   0  0   656  0.00 0.000
 
 As expected from the per-marker results, the false positives are largely due
 to species level difficulties within the genera including *Globodera*,
-*Steinernema*, and *Xiphinema*. This includes reporting sister species rather
-than the expected *Tripyla glomerans*.
+*Steinernema*, *Tripyla*, and *Xiphinema*.
 
 While many of the number of false negatives may be down to database coverage,
 it would also be worth exploring further dropping the minimum abundance
