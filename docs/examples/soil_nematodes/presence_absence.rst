@@ -178,12 +178,12 @@ Or open this in Excel. You should find:
 ================================= == == == == ==== ===========
 #Species                          TP FP FN TN F1   Ad-hoc-loss
 ================================= == == == == ==== ===========
-OVERALL                           39 17 30 98 0.62 0.547
+OVERALL                           42 17 27 98 0.66 0.512
 Acrobeles sp.                     2  0  1  1  0.80 0.333
 Acrobeloides sp.                  0  0  3  1  0.00 1.000
 Alaimus sp.                       0  0  3  1  0.00 1.000
 Anaplectus sp.                    0  0  3  1  0.00 1.000
-Anatonchus tridentatus            0  0  3  1  0.00 1.000
+Anatonchus tridentatus            3  0  0  1  1.00 0.000
 Aphelenchoides sp.                0  0  3  1  0.00 1.000
 Aporcelaimellus sp.               3  0  0  1  1.00 0.000
 Cercomonas sp.                    0  1  0  3  0.00 1.000
@@ -218,7 +218,7 @@ but additionally *Cercomonas* sp. and *Sphaerularioidea* gen. sp. EM-2016.
 Note *Laimaphelenchus deconincki* is reported instead of the expected
 *Laimaphelenchus penardi* here.
 
-We have 14 species correctly identified (10 from all three samples), which
+We have 15 species correctly identified (11 from all three samples), which
 exceeds authors' analysis with UTAX but falls short of their consensus:
 
     The 28S rDNA-based D3Af-D3Br marker assigned 70 OTUs to nematodes and
@@ -226,9 +226,11 @@ exceeds authors' analysis with UTAX but falls short of their consensus:
     the recovered taxa, *Hemicycliophora* occurred in one of the replicates,
     *Acrobeles* in two, while the rest were found in all three replicates.
 
-Note that as per the paper, accession MG994928 was used for *Tripyla glomerans*
-however, this required a 35bp 3' extension to cover the D3Af-D3Br amplicon,
-which was inferred from the observed reads matching other nematode sequences.
+Note that as per the paper Table 1, accessions MG994941 and MG994928 were
+used for *Anatonchus tridentatus* and *Tripyla glomerans*, but required 34 and
+35bp 3' extensions respectively to cover the D3Af-D3Br amplicon (missing
+sequenced inferred from the observed reads, and matches other nematode
+sequences).
 
 JB3-JB5GED
 ----------
@@ -300,12 +302,12 @@ Or open this in Excel. You should find:
 ================================== === == === ==== ==== ===========
 #Species                           TP  FP FN  TN   F1   Ad-hoc-loss
 ================================== === == === ==== ==== ===========
-OVERALL                            134 89 142 1139 0.54 0.633
+OVERALL                            137 89 139 1139 0.55 0.625
 Acrobeles sp.                      2   0  10  4    0.29 0.833
 Acrobeloides sp.                   5   0  7   4    0.59 0.583
 Alaimus sp.                        4   0  8   4    0.50 0.667
 Anaplectus sp.                     3   0  9   4    0.40 0.750
-Anatonchus tridentatus             6   0  6   4    0.67 0.500
+Anatonchus tridentatus             9   0  3   4    0.86 0.250
 Aphelenchoides sp.                 3   0  9   4    0.40 0.750
 Aporcelaimellus sp.                9   0  3   4    0.86 0.250
 Blastocystis sp.                   0   1  0   15   0.00 1.000
