@@ -1,4 +1,4 @@
-# Copyright 2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2022-2023 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -246,6 +246,32 @@ def main(
         totals = new_totals
         del new_totals, new_counts, corrections
 
+    # Drop entries so low in abundance that they'll never be accepted, nor
+    # increase the pool threshold. Drop before bothering to check if spikes.
+    # Note factor of 0.5 due to heuristic below for threshold adjustment.
+    ultra_low = ceil(0.5 * min_abundance)
+    if ultra_low:
+        if debug:
+            sys.stderr.write("DEBUG: Dropping ultra low abundance entries\n")
+        new_counts = defaultdict(int)
+        new_totals = defaultdict(int)
+        before = len(totals)
+        del totals
+        while counts:
+            (seq, sample), a = counts.popitem()
+            if a >= ultra_low:
+                new_counts[seq, sample] = a
+                new_totals[seq] += a
+        if debug or len(new_totals) < before:
+            sys.stderr.write(
+                "Excluding ultra-low abundance entries reduced unique ASVs "
+                f"from {before} to {len(new_totals)}.\n"
+            )
+        del before
+        counts = new_counts
+        totals = new_totals
+        del new_totals, new_counts
+
     pool_absolute_threshold = {}
     pool_fraction_threshold = {}
     max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
@@ -255,6 +281,7 @@ def main(
             # Calling is_spike_in is relatively expensive, but will be of less
             # interest on the tail end low abundance samples.
             # Should we sort totals by count?
+            assert totals[seq] >= ultra_low, seq
             if any(
                 min(max_spike_abundance[sample], max_non_spike_abundance[sample])
                 < counts[seq, sample]
