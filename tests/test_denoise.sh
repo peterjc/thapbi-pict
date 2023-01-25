@@ -25,7 +25,7 @@ set -o pipefail
 for BEFORE in tests/read-correction/*.before.fasta; do
     AFTER=${BEFORE%%.*}.after.fasta
     echo "Checking denoising $BEFORE --> $AFTER"
-    thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta --minlen 60 -t 0
+    thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta --minlen 60 -t 0 -α 2.0 -𝛾 4
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
 
