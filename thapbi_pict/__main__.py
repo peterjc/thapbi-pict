@@ -267,6 +267,8 @@ def denoise(args=None):
         total_min_abundance=args.total,
         min_length=args.minlen,
         max_length=args.maxlen,
+        unoise_alpha=args.unoise_alpha,
+        unoise_gamma=args.unoise_gamma,
         debug=args.verbose,
     )
 
@@ -294,6 +296,8 @@ def sample_tally(args=None):
         total_min_abundance=args.total,
         min_length=args.minlen,
         max_length=args.maxlen,
+        unoise_alpha=args.unoise_alpha,
+        unoise_gamma=args.unoise_gamma,
         denoise=args.denoise,
         debug=args.verbose,
     )
@@ -529,6 +533,8 @@ def pipeline(args=None):
             # min_length=args.minlen,
             # max_length=args.maxlen,
             denoise=args.denoise,
+            unoise_alpha=args.unoise_alpha,
+            unoise_gamma=args.unoise_gamma,
             debug=args.verbose,
         )
         all_tally_files.append(tally_seqs_file)
@@ -835,6 +841,26 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
     "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
 )
 
+# Read-correction / denoise arguments
+# ===================================
+
+# "-α", "--unoise_alpha",
+ARG_UNOISE_ALPHA = dict(  # noqa: C408
+    type=float,
+    default="2.0",
+    metavar="FLOAT",
+    help="UNOISE read-correction alpha parameter (α), default 2.0, used in "
+    "skew threshold function beta (β).",
+)
+# "-𝛾", "--unoise_gamma"
+ARG_UNOISE_GAMMA = dict(  # noqa: C408
+    type=float,
+    default="4",
+    metavar="INT",
+    help="UNOISE read-correction gamma parameter (𝛾), default 4. Variants "
+    "below this total abundance are discarded before denoising.",
+)
+
 # Common pipeline arguments
 # =========================
 
@@ -1090,6 +1116,8 @@ def main(args=None):
         action="store_true",
         help="Apply UNOISE2 error correction algorithm.",
     )
+    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
+    subcommand_parser.add_argument("-𝛾", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
@@ -1494,6 +1522,8 @@ def main(args=None):
         metavar="FASTA",
         help="Single output FASTA filename, '-' for stdout (default).",
     )
+    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
+    subcommand_parser.add_argument("-𝛾", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument(
         "-t",
         "--total",
@@ -1574,6 +1604,8 @@ def main(args=None):
         action="store_true",
         help="Apply UNOISE2 error correction algorithm.",
     )
+    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
+    subcommand_parser.add_argument("-𝛾", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=sample_tally)
 

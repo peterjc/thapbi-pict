@@ -28,6 +28,8 @@ def main(
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
     gzipped=False,  # output
     debug=False,
 ):
@@ -75,9 +77,9 @@ def main(
 
     if debug:
         sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
-    unoise_gamma = 4
     corrections = unoise(
         {seq: a for seq, a in totals.items() if a >= unoise_gamma},
+        unoise_alpha=unoise_alpha,
         debug=False,
     )
     new_totals = defaultdict(int)
@@ -97,7 +99,7 @@ def main(
 
     values = sorted(
         ((count, seq) for seq, count in totals.items() if count >= total_min_abundance),
-        # (sort by marker), then put the highest abundance entries first:
+        # put the highest abundance entries first:
         key=lambda x: (-x[0], x[1]),
     )
     del totals

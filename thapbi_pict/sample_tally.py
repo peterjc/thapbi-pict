@@ -112,6 +112,8 @@ def main(
     min_length=0,
     max_length=sys.maxsize,
     denoise=False,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
     gzipped=False,  # output
     debug=False,
 ):
@@ -223,9 +225,9 @@ def main(
     if denoise:
         if debug:
             sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
-        unoise_gamma = 4
         corrections = unoise(
             {seq: a for seq, a in totals.items() if a >= unoise_gamma},
+            unoise_alpha=unoise_alpha,
             debug=False,
         )
         new_counts = defaultdict(int)
