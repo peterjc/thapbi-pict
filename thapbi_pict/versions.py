@@ -1,4 +1,4 @@
-# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2023 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -58,6 +58,7 @@ def check_tools(names, debug):
         "cutadapt": version_cutadapt,
         "flash": version_flash,
         "makeblastdb": version_blast,
+        "vsearch": version_vsearch,
     }
     missing = []
     versions = []
@@ -150,3 +151,28 @@ def version_flash(cmd="flash"):
     ver = text.split("\n", 1)[0]
     if ver.upper().startswith("FLASH V"):
         return ver[7:]
+
+
+def version_vsearch(cmd="vsearch"):
+    """Return the version of vsearch (as a short string).
+
+    Uses the output with ``--version``::
+
+        $ vsearch --version
+        ...
+        vsearch v2.22.1_macos_x86_64, 8.0GB RAM, 8 cores
+        ...
+
+    It would capture this:
+
+    >>> version_vsearch()
+    'v2.22.1'
+
+    If the command is not on the path, returns None.
+    """
+    # Seems to be first line on Linux/Mac, but not on Windows
+    # Could be due to stdout vs stderr sorting/buffering?
+    for text in getoutput(cmd + " --version").strip().split("\n"):
+        ver = text.split(",", 1)[0].split("_", 1)[0]
+        if ver.lower().startswith("vsearch v"):
+            return ver[8:]
