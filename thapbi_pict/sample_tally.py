@@ -13,88 +13,16 @@ import sys
 from collections import Counter
 from collections import defaultdict
 from math import ceil
-from math import floor
-from math import log2
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from rapidfuzz.distance import Levenshtein
-from rapidfuzz.process import extract
-from rapidfuzz.process import extract_iter
 
+from .denoise import unoise
 from .prepare import load_fasta_header
 from .prepare import load_marker_defs
 from .utils import abundance_from_read_name
 from .utils import file_to_sample_name
 from .utils import is_spike_in
 from .utils import md5seq
-
-
-def unoise(counts, unoise_alpha=2.0, abundance_based=True, debug=False):
-    """Apply UNOISE2 algorithm.
-
-    Argument counts is an (unsorted) dict of sequences (for the same amplicon
-    marker) as keys, with their total abundance counts as values.
-    """
-    if not counts:
-        return {}
-    if abundance_based:
-        # size ordered abundance-based greedy clustering (AGC),
-        # where choices are sorted by decreasing abundance.
-        # Don't need to calculate all the distances:
-        search_function = extract_iter
-    else:
-        # distance-based greedy clustering (DGC), must compute all distances
-        # in order to sort on them. Can't use ``extractOne`` as the single
-        # entry it picks may not pass the dynamic threshold.
-        search_function = extract
-
-    top_a = max(counts.values())  # will become first centroid
-    last_a = None
-    cutoff = 0
-    centroids = defaultdict(set)
-    high_abundance_centroids = None
-    # Start by sorting sequences by abundance, largest first
-    for a, query in sorted(
-        ((a, seq) for (seq, a) in counts.items()),
-        key=lambda x: (-x[0], x[1]),
-    ):
-        # All the larger abundances have been processed already
-        # Towards the end have lots of entries with the same abundance
-        # so cache these dynamic thresholds use to narrow search pool
-        if a != last_a:
-            last_a = a
-            # Fist centroid is largest, so gives upper bound on d
-            cutoff = min(
-                floor((log2(top_a / a) - 1) / unoise_alpha) if a * 2 < top_a else 0, 10
-            )
-            high_abundance_centroids = [
-                seq for seq in centroids if counts[seq] >= a * 2 ** (unoise_alpha + 1)
-            ]
-        for choice, dist, _index in search_function(
-            query,
-            high_abundance_centroids,
-            scorer=Levenshtein.distance,
-            score_cutoff=cutoff,
-        ):
-            if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
-                centroids[choice].add(query)
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: unoise C:{md5seq(choice)}_{counts[choice]} "
-                        f"<-- Q:{md5seq(query)}_{a} dist {dist}\n"
-                    )
-                break
-        else:
-            # New centroid
-            centroids[query].add(query)
-            # print(query, "new")
-
-    corrections = {}
-    for seq, choices in centroids.items():
-        for _ in choices:
-            corrections[_] = seq
-        assert corrections[seq] == seq, "Centroid missing"
-    return corrections
 
 
 def main(
@@ -226,9 +154,10 @@ def main(
         if debug:
             sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
         corrections = unoise(
-            {seq: a for seq, a in totals.items() if a >= unoise_gamma},
+            totals,
             unoise_alpha=unoise_alpha,
-            debug=False,
+            unoise_gamma=unoise_gamma,
+            debug=debug,
         )
         new_counts = defaultdict(int)
         new_totals = defaultdict(int)
