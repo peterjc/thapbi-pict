@@ -24,18 +24,36 @@ set -o pipefail
 # These tests are also used with the sample-tally command:
 for AFTER in tests/read-correction/*.unoise.fasta; do
     BEFORE=${AFTER%%.*}.before.fasta
-    echo "Checking denoising $BEFORE --> $AFTER"
-    thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta --minlen 60 -t 0 -α 2.0 -γ 4
+    echo "Checking denoising $BEFORE --> $AFTER (UNOISE)"
+    thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
+                --denoise unoise --minlen 60 -t 0 -α 2.0 -γ 4
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
-
-    # TODO - compare with usearch or vsearch?
-    # Something like this with a suitable example...
-    # $ vsearch --unoise_alpha 2 --minsize 4 --cluster_unoise \
-    #     <(python scripts/swarm2usearch.py $BEFORE) \
-    #     --centroids $TMP/vsearch.fasta --sizein --sizeout --sizeorder
-    # $ diff $TMP/vsearch.fasta \
-    #     <(python scripts/swarm2usearch.py $AFTER)
 done
+
+if ! [ -x "$(command -v vsearch)" ]; then
+    echo "Skipping testing using VSEARCH"
+else
+    for AFTER in tests/read-correction/*.vsearch.fasta; do
+        BEFORE=${AFTER%%.*}.before.fasta
+        echo "Checking denoising $BEFORE --> $AFTER (VSEARCH)"
+        thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
+                --denoise vsearch --minlen 60 -t 0 -α 2.0 -γ 4
+        echo diff $TMP/after.fasta $AFTER
+        diff $TMP/after.fasta $AFTER
+
+        echo "Checking versus direct use of vsearch"
+        vsearch --unoise_alpha 2.0 --minsize 4 --cluster_unoise \
+             <(python scripts/swarm2usearch.py $BEFORE) \
+             --centroids $TMP/vsearch.fasta --sizein --sizeout \
+             --sizeorder -maxaccepts 3000
+        # The THAPBI-PICT output is upper case and not line wrapped,
+        # the VSEARCH output is mixed case (masking?) and wrapped.
+        # Also while both are sorted by abundance, tie breaking differs.
+        # So, can just compare the title lines (MD5 and abundance)
+        diff <(grep "^>" $TMP/vsearch.fasta | sort) \
+             <(python scripts/swarm2usearch.py $AFTER | grep "^>" | sort)
+    done
+fi
 
 echo "$0 - test_denoise.sh passed"
