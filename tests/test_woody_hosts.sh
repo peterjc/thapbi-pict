@@ -65,7 +65,7 @@ diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 echo "And with UNOISE..."
 thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
             -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
-            -o $TMP/woody_hosts.de-noise.tsv --denoise
+            -o $TMP/woody_hosts.de-noise.tsv --denoise unoise
 echo diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 

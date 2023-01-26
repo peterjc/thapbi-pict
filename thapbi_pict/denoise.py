@@ -12,6 +12,7 @@ to use outside the THAPBI PICT pipeline.
 import gzip
 import os
 import sys
+import tempfile
 from collections import Counter
 from collections import defaultdict
 from math import floor
@@ -24,6 +25,8 @@ from rapidfuzz.process import extract_iter
 
 from .utils import abundance_from_read_name
 from .utils import md5seq
+from .utils import run
+from .versions import check_tools
 
 
 def unoise(counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=True, debug=False):
@@ -133,16 +136,146 @@ def unoise(counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=True, debug
     return corrections
 
 
+def vsearch(
+    counts,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
+    abundance_based=True,
+    tmp_dir=None,
+    debug=False,
+    cpu=0,
+):
+    """Invoke VSEARCH to run its reimplementation of the UNOISE3 algorithm.
+
+    Argument counts is an (unsorted) dict of sequences (for the same amplicon
+    marker) as keys, with their total abundance counts as values.
+    """
+    check_tools(["vsearch"], debug)
+
+    if tmp_dir:
+        # Up to the user to remove the files
+        tmp_obj = None
+        shared_tmp = tmp_dir
+    else:
+        tmp_obj = tempfile.TemporaryDirectory()
+        shared_tmp = tmp_obj.name
+
+    if debug:
+        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
+
+    input_fasta = os.path.join(shared_tmp, "noisy.fasta")
+    output_tsv = os.path.join(shared_tmp, "clustering.tsv")
+    md5_to_seq = {}
+    with open(input_fasta, "w") as handle:
+        # Output using MD5 with USEARCH naming: md5;size=abundance
+        prev_a = None
+        for seq, a in counts.items():
+            if a >= unoise_gamma:
+                md5 = md5seq(seq)
+                handle.write(f">{md5};size={a}\n{seq}\n")
+                md5_to_seq[md5] = seq
+            if prev_a is not None and prev_a < a:
+                sys.exit("ERROR: Input to VSEARCH was not sorted by abundance")
+            prev_a = a
+        del prev_a
+
+    cmd = [
+        "vsearch",
+        "--unoise_alpha",
+        str(unoise_alpha),
+        "--minsize",
+        str(unoise_gamma),
+        "--sizein",
+        "--sizeout",
+        "--cluster_unoise",
+        input_fasta,
+        # "--centroids",
+        # output_fasta,
+        "--uc",
+        output_tsv,
+    ]
+    if abundance_based:
+        cmd += ["--sizeorder", "--maxaccepts", "30"]
+        # Note --sizeorder is documented to only takes effect if --maxaccepts
+        # is higher than one, then it turns on abundance-based greedy
+        # clustering (AGC), in contrast to the default distance-based greedy
+        # clustering (DGC).
+    if cpu:
+        cmd += ["--threads", str(cpu)]
+    run(cmd, debug=debug)
+    corrections = {}
+    with open(output_tsv) as handle:
+        for line in handle:
+            if not line:
+                continue
+            parts = line.split("\t")
+            md5 = parts[8].split(";", 1)[0]  # strip the size information
+            seq = md5_to_seq[md5]
+            if len(parts) != 10:
+                sys.exit(
+                    f"ERROR: Found {len(parts)} fields in vsearch --uc output, not 10"
+                )
+            if parts[0] == "S":
+                # centroid
+                corrections[seq] = seq
+            elif parts[0] == "H":
+                # hit, mapped to a centroid
+                centroid_md5 = parts[9].split(";", 1)[0]
+                corrections[seq] = md5_to_seq[centroid_md5]
+            elif parts[0] == "C":
+                # cluster summary (should be one for each S line)
+                pass
+            else:
+                sys.exit(
+                    f"ERROR: vsearch --uc output line started {parts[0]}, not S, H or C"
+                )
+    del md5_to_seq
+    return corrections
+
+
+def read_correction(
+    algorithm,
+    counts,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
+    abundance_based=True,
+    tmp_dir=None,
+    debug=False,
+    cpu=0,
+):
+    """Apply builtin UNOISE algorithm or invoke an external tool like VSEARCH.
+
+    Argument counts is an (unsorted) dict of sequences (for the same amplicon
+    marker) as keys, with their total abundance counts as values.
+    """
+    if algorithm == "unoise":
+        # Does not need tmp_dir, cpu
+        return unoise(counts, unoise_alpha, unoise_gamma, abundance_based, debug=False)
+    elif algorithm == "vsearch":
+        return vsearch(
+            counts, unoise_alpha, unoise_gamma, abundance_based, tmp_dir, debug, cpu
+        )
+    elif algorithm == "-":
+        sys.exit("ERROR: Internal function denoise_algorithm called without algorithm.")
+    else:
+        sys.exit(
+            f"ERROR: denoise_algorithm called with {algorithm} (unknown algorithm)."
+        )
+
+
 def main(
     inputs,
     output,
+    denoise_algorithm,
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
     unoise_alpha=2.0,
     unoise_gamma=4,
     gzipped=False,  # output
+    tmp_dir=None,
     debug=False,
+    cpu=0,
 ):
     """Implement the ``thapbi_pict denoise`` command.
 
@@ -163,6 +296,7 @@ def main(
     assert inputs
 
     assert "-" not in inputs
+    assert denoise_algorithm != "-"
 
     if os.path.isdir(output):
         sys.exit("ERROR: Output directory given, want a FASTA filename.")
@@ -187,12 +321,17 @@ def main(
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
     if debug:
-        sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
-    corrections = unoise(
+        sys.stderr.write(
+            f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
+        )
+    corrections = read_correction(
+        denoise_algorithm,
         totals,
         unoise_alpha=unoise_alpha,
         unoise_gamma=unoise_gamma,
+        tmp_dir=tmp_dir,
         debug=debug,
+        cpu=cpu,
     )
     new_totals = defaultdict(int)
     for seq, a in totals.items():
