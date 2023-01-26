@@ -9,3 +9,4 @@ blast
 flash
 graphviz
 unzip
+vsearch >=2.22.1

@@ -16,7 +16,7 @@ from math import ceil
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-from .denoise import unoise
+from .denoise import read_correction
 from .prepare import load_fasta_header
 from .prepare import load_marker_defs
 from .utils import abundance_from_read_name
@@ -39,11 +39,13 @@ def main(
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
-    denoise=False,
+    denoise_algorithm="-",
     unoise_alpha=2.0,
     unoise_gamma=4,
     gzipped=False,  # output
+    tmp_dir=None,
     debug=False,
+    cpu=0,
 ):
     """Implement the ``thapbi_pict sample-tally`` command.
 
@@ -150,14 +152,17 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
-    if denoise:
+    if denoise_algorithm != "-":
         if debug:
             sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
-        corrections = unoise(
+        corrections = read_correction(
+            denoise_algorithm,
             totals,
             unoise_alpha=unoise_alpha,
             unoise_gamma=unoise_gamma,
+            tmp_dir=tmp_dir,
             debug=debug,
+            cpu=cpu,
         )
         new_counts = defaultdict(int)
         new_totals = defaultdict(int)

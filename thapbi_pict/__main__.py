@@ -264,12 +264,15 @@ def denoise(args=None):
     return main(
         inputs=args.input,
         output=args.output,
+        denoise_algorithm=args.denoise,
         total_min_abundance=args.total,
         min_length=args.minlen,
         max_length=args.maxlen,
         unoise_alpha=args.unoise_alpha,
         unoise_gamma=args.unoise_gamma,
+        tmp_dir=args.temp,
         debug=args.verbose,
+        cpu=check_cpu(args.cpu),
     )
 
 
@@ -298,8 +301,10 @@ def sample_tally(args=None):
         max_length=args.maxlen,
         unoise_alpha=args.unoise_alpha,
         unoise_gamma=args.unoise_gamma,
-        denoise=args.denoise,
+        denoise_algorithm=args.denoise,
+        tmp_dir=args.temp,
         debug=args.verbose,
+        cpu=check_cpu(args.cpu),
     )
 
 
@@ -532,10 +537,12 @@ def pipeline(args=None):
             total_min_abundance=args.abundance,
             # min_length=args.minlen,
             # max_length=args.maxlen,
-            denoise=args.denoise,
+            denoise_algorithm=args.denoise,
             unoise_alpha=args.unoise_alpha,
             unoise_gamma=args.unoise_gamma,
+            tmp_dir=args.temp,
             debug=args.verbose,
+            cpu=check_cpu(args.cpu),
         )
         all_tally_files.append(tally_seqs_file)
         classified_files = classify(
@@ -844,6 +851,17 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
 # Read-correction / denoise arguments
 # ===================================
 
+# "--denoise",
+ARG_DENOISE = dict(  # noqa: C408
+    choices=["-", "unoise", "vsearch"],
+    default="-",
+    help="Optional read-correction algorithm, default '-' for none. "
+    "Use 'unoise' for built-in reimplementation of the Edgar (2016) "
+    "UNOISE2 algorithm using Levenshtein distance. Use 'vsearch' to call "
+    "external tool 'vsearch --cluster_unoise ...' and their UNOISE3 "
+    "reimplementation using pairwise alignment based distance.",
+)
+
 # "-α", "--unoise_alpha",
 ARG_UNOISE_ALPHA = dict(  # noqa: C408
     type=float,
@@ -854,7 +872,7 @@ ARG_UNOISE_ALPHA = dict(  # noqa: C408
 )
 # "-γ", "--unoise_gamma"
 ARG_UNOISE_GAMMA = dict(  # noqa: C408
-    type=float,
+    type=int,
     default="4",
     metavar="INT",
     help="UNOISE read-correction gamma parameter (γ), default 4. Variants "
@@ -1110,12 +1128,7 @@ def main(args=None):
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
-    subcommand_parser.add_argument(
-        "--denoise",
-        default=False,
-        action="store_true",
-        help="Apply UNOISE2 error correction algorithm.",
-    )
+    subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
@@ -1522,6 +1535,16 @@ def main(args=None):
         metavar="FASTA",
         help="Single output FASTA filename, '-' for stdout (default).",
     )
+    subcommand_parser.add_argument(
+        "--denoise",  # Named to match sample-tally and pipeline setting
+        choices=["unoise", "vsearch"],
+        default="unoise",
+        help="Choice of read-correction algorithm, default 'unoise' for "
+        "built-in reimplementation of the Edgar (2016) "
+        "UNOISE2 algorithm using Levenshtein distance. Use 'vsearch' to call "
+        "external tool 'vsearch --cluster_unoise ...' and their UNOISE3 "
+        "reimplementation using pairwise alignment based distance.",
+    )
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument(
@@ -1533,6 +1556,8 @@ def main(args=None):
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
+    subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=denoise)
 
@@ -1598,14 +1623,11 @@ def main(args=None):
     )
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
-    subcommand_parser.add_argument(
-        "--denoise",
-        default=False,
-        action="store_true",
-        help="Apply UNOISE2 error correction algorithm.",
-    )
+    subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-𝛾", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=sample_tally)
 
