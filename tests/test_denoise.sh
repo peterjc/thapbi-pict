@@ -22,8 +22,8 @@ thapbi_pict denoise 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 # These tests are also used with the sample-tally command:
-for BEFORE in tests/read-correction/*.before.fasta; do
-    AFTER=${BEFORE%%.*}.after.fasta
+for AFTER in tests/read-correction/*.unoise.fasta; do
+    BEFORE=${AFTER%%.*}.before.fasta
     echo "Checking denoising $BEFORE --> $AFTER"
     thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta --minlen 60 -t 0 -α 2.0 -𝛾 4
     echo diff $TMP/after.fasta $AFTER

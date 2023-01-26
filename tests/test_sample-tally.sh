@@ -45,8 +45,8 @@ echo "Checking denoise"
 echo "----------------"
 
 # These tests are also used with the denoise command:
-for BEFORE in tests/read-correction/*.before.fasta; do
-    AFTER=${BEFORE%%.*}.after.fasta
+for AFTER in tests/read-correction/*.unoise.fasta; do
+    BEFORE=${AFTER%%.*}.before.fasta
     echo "Checking denoising $BEFORE --> $AFTER"
     thapbi_pict sample-tally -i $BEFORE \
         -o $TMP/after.tally.tsv --fasta $TMP/after.fasta \
