@@ -142,6 +142,99 @@ def unoise(
     return corrections
 
 
+def usearch(
+    counts,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
+    abundance_based=True,
+    tmp_dir=None,
+    debug=False,
+    cpu=0,
+):
+    """Invoke USEARCH to run its implementation of the UNOISE3 algorithm.
+
+    Assumes v10 or v11 (or later if the command line API is the same).
+    Parses the four columns tabbed output.
+    """
+    debug = True
+    check_tools(["usearch"], debug)
+
+    if tmp_dir:
+        # Up to the user to remove the files
+        tmp_obj = None
+        shared_tmp = tmp_dir
+    else:
+        tmp_obj = tempfile.TemporaryDirectory()
+        shared_tmp = tmp_obj.name
+
+    if debug:
+        sys.stderr.write(f"DEBUG: Shared temp folder {shared_tmp}\n")
+
+    input_fasta = os.path.join(shared_tmp, "noisy.fasta")
+    output_tsv = os.path.join(shared_tmp, "clustering.tsv")
+    md5_to_seq = {}
+    with open(input_fasta, "w") as handle:
+        # Output using MD5 with USEARCH naming: md5;size=abundance
+        prev_a = None
+        for seq, a in counts.items():
+            if a >= unoise_gamma:
+                md5 = md5seq(seq)
+                handle.write(f">{md5};size={a}\n{seq}\n")
+                md5_to_seq[md5] = seq
+            if prev_a is not None and prev_a < a:
+                sys.exit("ERROR: Input to VSEARCH was not sorted by abundance")
+            prev_a = a
+        del prev_a
+
+    cmd = [
+        "usearch",
+        "-unoise_alpha",
+        str(unoise_alpha),
+        "-minsize",
+        str(unoise_gamma),
+        "-unoise3",
+        input_fasta,
+        # "-zotus",
+        # output_fasta,
+        "-tabbedout",
+        output_tsv,
+    ]
+    if abundance_based:
+        pass
+    if cpu:
+        # Currently triggers:
+        # WARNING: Option -threads not used
+        cmd += ["--threads", str(cpu)]
+    run(cmd, debug=debug)
+    corrections = {}
+    with open(output_tsv) as handle:
+        for line in handle:
+            if not line:
+                continue
+            parts = line.split("\t")
+            md5 = parts[0].split(";", 1)[0]  # strip the size information
+            seq = md5_to_seq[md5]
+            if len(parts) not in (3, 4):
+                sys.exit(
+                    f"ERROR: Found {len(parts)} fields in "
+                    "usearch -tabbedout output, not 3 or 4"
+                )
+            if parts[1] != "denoise":
+                # Currently ignoring "chfilter" lines (chimera filter)
+                continue
+            if parts[2].startswith("amp") and len(parts) == 3:
+                # centroid
+                corrections[seq] = seq
+            elif parts[2] in ("bad", "shifted") and ";top=" in parts[3]:
+                # hit, mapped to a centroid
+                centroid_md5 = parts[3].split(";top=", 1)[1].split(";", 1)[0]
+                corrections[seq] = md5_to_seq[centroid_md5]
+            else:
+                sys.exit(f"ERROR: Unexpected usearch tabbedout line: {repr(line)}")
+    del md5_to_seq
+    return corrections
+
+
 def vsearch(
     counts,
     unoise_alpha=2.0,
@@ -257,6 +350,11 @@ def read_correction(
     if algorithm == "unoise":
         # Does not need tmp_dir, cpu
         return unoise(counts, unoise_alpha, unoise_gamma, abundance_based, debug=False)
+    elif algorithm == "usearch":
+        # Does not need cpu?
+        return usearch(
+            counts, unoise_alpha, unoise_gamma, abundance_based, tmp_dir, debug, cpu
+        )
     elif algorithm == "vsearch":
         return vsearch(
             counts, unoise_alpha, unoise_gamma, abundance_based, tmp_dir, debug, cpu
@@ -348,7 +446,8 @@ def main(
         seq = corrections[seq]
         new_totals[seq] += a
     sys.stderr.write(
-        f"UNOISE reduced unique ASVs from {len(totals)} to {len(new_totals)}, "
+        f"{denoise_algorithm.upper()} reduced unique ASVs from "
+        f"{len(totals)} to {len(new_totals)}, "
         f"max abundance now {max(new_totals.values(), default=0)}\n"
     )
     totals = new_totals
