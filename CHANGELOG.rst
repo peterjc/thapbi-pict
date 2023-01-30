@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.14a3 *Pending*  Can also call VSEARCH for optional read-correction.
+v0.14a3 *Pending*  Can invoke USEARCH or VSEARCH tools for external UNOISE read-correction.
 v0.14a2 2022-01-23 UNOISE read-correction option in ``sample-tally``, new ``denoise`` command.
 v0.14a1 2022-01-20 Unreleased alpha, only do abundance thresholding in ``sample-tally`` step.
 v0.13.6 2022-12-28 Factional abundance threshold in ``sample-tally`` was not strict enough.
