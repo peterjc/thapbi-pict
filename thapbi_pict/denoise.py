@@ -29,7 +29,9 @@ from .utils import run
 from .versions import check_tools
 
 
-def unoise(counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=True, debug=False):
+def unoise(
+    counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=False, debug=False
+):
     """Apply UNOISE2 algorithm.
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
@@ -44,6 +46,10 @@ def unoise(counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=True, debug
     cutoff = 0
     centroids = defaultdict(set)
     high_abundance_centroids = None
+    if abundance_based:
+        sys.stderr.write("Starting UNOISE abundance-based greedy clustering (AGC)\n")
+    else:
+        sys.stderr.write("Starting UNOISE distance-based greedy clustering (DGC)\n")
     # Start by sorting sequences by abundance, largest first
     for a, query in sorted(
         ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
@@ -140,7 +146,7 @@ def vsearch(
     counts,
     unoise_alpha=2.0,
     unoise_gamma=4,
-    abundance_based=True,
+    abundance_based=False,
     tmp_dir=None,
     debug=False,
     cpu=0,
@@ -238,7 +244,7 @@ def read_correction(
     counts,
     unoise_alpha=2.0,
     unoise_gamma=4,
-    abundance_based=True,
+    abundance_based=False,
     tmp_dir=None,
     debug=False,
     cpu=0,
