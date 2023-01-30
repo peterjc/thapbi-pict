@@ -58,6 +58,7 @@ def check_tools(names, debug):
         "cutadapt": version_cutadapt,
         "flash": version_flash,
         "makeblastdb": version_blast,
+        "usearch": version_usearch,
         "vsearch": version_vsearch,
     }
     missing = []
@@ -151,6 +152,27 @@ def version_flash(cmd="flash"):
     ver = text.split("\n", 1)[0]
     if ver.upper().startswith("FLASH V"):
         return ver[7:]
+
+
+def version_usearch(cmd="usearch"):
+    """Return the version of usearch (as a short string).
+
+    Uses the output with ``--version``::
+
+        $ usearch --version
+        usearch v11.0.667_i86linux32
+
+    It would capture this:
+
+    >>> version_vsearch()
+    'v11.0.667'
+
+    If the command is not on the path, returns None.
+    """
+    text = getoutput(cmd + " --version").strip().split("\n", 1)[0]
+    ver = text.split("_", 1)[0]
+    if ver.lower().startswith("usearch v"):
+        return ver[8:]
 
 
 def version_vsearch(cmd="vsearch"):
