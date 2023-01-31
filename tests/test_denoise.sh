@@ -31,6 +31,11 @@ for AFTER in tests/read-correction/*.unoise.fasta; do
     diff $TMP/after.fasta $AFTER
 done
 
+set +x
+echo "============================="
+echo "Checking denoise with vsearch"
+echo "============================="
+set -x
 if ! [ -x "$(command -v vsearch)" ]; then
     echo "Skipping testing using VSEARCH"
 else
@@ -53,6 +58,41 @@ else
         # So, can just compare the title lines (MD5 and abundance)
         diff <(grep "^>" $TMP/vsearch.fasta | sort) \
              <(python scripts/swarm2usearch.py $AFTER | grep "^>" | sort)
+    done
+fi
+
+set +x
+echo "============================="
+echo "Checking denoise with usearch"
+echo "============================="
+set -x
+if ! [ -x "$(command -v usearch)" ]; then
+    echo "Skipping testing using USEARCH"
+else
+    for AFTER in tests/read-correction/*.vsearch.fasta; do
+        BEFORE=${AFTER%%.*}.before.fasta
+        if [ -f ${AFTER%%.*}.usearch.fasta ]; then
+            AFTER=${AFTER%%.*}.usearch.fasta
+        fi
+        echo "Checking denoising $BEFORE --> $AFTER (USEARCH)"
+        thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
+                --denoise usearch --minlen 60 -t 0 -α 2.0 -γ 4
+        echo diff $TMP/after.fasta $AFTER
+        diff $TMP/after.fasta $AFTER
+
+        echo "Checking versus direct use of usearch"
+        python scripts/swarm2usearch.py $BEFORE > $TMP/input.fasta
+        usearch -unoise_alpha 2.0 -minsize 4 -unoise3 $TMP/input.fasta \
+            -ampout $TMP/usearch_ampout.fasta \
+            -zotus $TMP/usearch_zotus.fasta \
+            -tabbedout $TMP/usearch.tsv
+        # These would differ if USEARCH flagged a chimera:
+        diff <(grep -v "^>" $TMP/usearch_ampout.fasta) <(grep -v "^>" $TMP/usearch_zotus.fasta)
+        # The ZOTUs file does not indicate abundance, and lacks MD5
+        # The ampout file does use MD5, but not easily compared
+        # and it line-wraps the sequences...
+        diff <(grep "^>" $TMP/usearch_ampout.fasta | cut -c 2-33 | sort) \
+             <(grep "^>" $AFTER | cut -c 2-33 | sort)
     done
 fi
 
