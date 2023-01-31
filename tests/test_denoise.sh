@@ -43,10 +43,11 @@ else
         diff $TMP/after.fasta $AFTER
 
         echo "Checking versus direct use of vsearch"
-        vsearch --unoise_alpha 2.0 --minsize 4 --cluster_unoise \
-             <(python scripts/swarm2usearch.py $BEFORE) \
-             --centroids $TMP/vsearch.fasta --sizein --sizeout \
-             --sizeorder -maxaccepts 3000
+        python scripts/swarm2usearch.py $BEFORE > $TMP/before.fasta
+        vsearch --unoise_alpha 2.0 --minsize 4 --sizein --sizeout \
+            --cluster_unoise $TMP/before.fasta \
+            --centroids $TMP/vsearch.fasta \
+            --sizeorder -maxaccepts 3000
         # The THAPBI-PICT output is upper case and not line wrapped,
         # the VSEARCH output is mixed case (masking?) and wrapped.
         # Also while both are sorted by abundance, tie breaking differs.
