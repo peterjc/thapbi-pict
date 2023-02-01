@@ -29,9 +29,9 @@ Or open this in Excel. You should find:
 ================================== == == == === ==== ===========
 #Species                           TP FP FN TN  F1   Ad-hoc-loss
 ================================== == == == === ==== ===========
-OVERALL                            54 62 15 189 0.58 0.588
+OVERALL                            52 60 17 191 0.57 0.597
 Acrobeles sp.                      0  0  3  1   0.00 1.000
-Acrobeloides sp.                   3  0  0  1   1.00 0.000
+Acrobeloides sp.                   2  0  1  1   0.80 0.333
 Alaimus sp.                        1  0  2  1   0.50 0.667
 Anaplectus sp.                     0  0  3  1   0.00 1.000
 Anatonchus tridentatus             3  0  0  1   1.00 0.000
@@ -55,9 +55,9 @@ Meloidogyne ethiopica              0  3  0  1   0.00 1.000
 Meloidogyne hapla                  3  0  0  1   1.00 0.000
 Meloidogyne incognita              0  3  0  1   0.00 1.000
 Plectus sp.                        3  0  0  1   1.00 0.000
-Prionchulus cf. punctatus TSH-2005 0  3  0  1   0.00 1.000
-Prionchulus muscorum               0  3  0  1   0.00 1.000
-Prionchulus punctatus              3  0  0  1   1.00 0.000
+Prionchulus cf. punctatus TSH-2005 0  2  0  2   0.00 1.000
+Prionchulus muscorum               0  2  0  2   0.00 1.000
+Prionchulus punctatus              2  0  1  1   0.80 0.333
 Pristionchus sp.                   3  0  0  1   1.00 0.000
 Rhabditis sp.                      3  0  0  1   1.00 0.000
 Steinernema carpocapsae            3  0  0  1   1.00 0.000
@@ -116,7 +116,7 @@ Or open this in Excel. You should find:
 ========================= == == == == ==== ===========
 #Species                  TP FP FN TN F1   Ad-hoc-loss
 ========================= == == == == ==== ===========
-OVERALL                   32 7  37 36 0.59 0.579
+OVERALL                   32 6  37 37 0.60 0.573
 Acrobeles sp.             0  0  3  1  0.00 1.000
 Acrobeloides sp.          2  0  1  1  0.80 0.333
 Alaimus sp.               3  0  0  1  1.00 0.000
@@ -135,7 +135,7 @@ Meloidogyne hapla         0  0  3  1  0.00 1.000
 Plectus sp.               3  0  0  1  1.00 0.000
 Prionchulus muscorum      0  3  0  1  0.00 1.000
 Prionchulus punctatus     3  0  0  1  1.00 0.000
-Prionchulus sp.           0  3  0  1  0.00 1.000
+Prionchulus sp.           0  2  0  2  0.00 1.000
 Pristionchus sp.          0  0  3  1  0.00 1.000
 Rhabditis sp.             0  0  3  1  0.00 1.000
 Steinernema carpocapsae   3  0  0  1  1.00 0.000
@@ -302,9 +302,9 @@ Or open this in Excel. You should find:
 ================================== === == === ==== ==== ===========
 #Species                           TP  FP FN  TN   F1   Ad-hoc-loss
 ================================== === == === ==== ==== ===========
-OVERALL                            137 89 139 1139 0.55 0.625
+OVERALL                            135 86 141 1142 0.54 0.627
 Acrobeles sp.                      2   0  10  4    0.29 0.833
-Acrobeloides sp.                   5   0  7   4    0.59 0.583
+Acrobeloides sp.                   4   0  8   4    0.50 0.667
 Alaimus sp.                        4   0  8   4    0.50 0.667
 Anaplectus sp.                     3   0  9   4    0.40 0.750
 Anatonchus tridentatus             9   0  3   4    0.86 0.250
@@ -331,10 +331,10 @@ Meloidogyne ethiopica              0   3  0   13   0.00 1.000
 Meloidogyne hapla                  9   0  3   4    0.86 0.250
 Meloidogyne incognita              0   3  0   13   0.00 1.000
 Plectus sp.                        9   0  3   4    0.86 0.250
-Prionchulus cf. punctatus TSH-2005 0   3  0   13   0.00 1.000
-Prionchulus muscorum               0   6  0   10   0.00 1.000
-Prionchulus punctatus              9   0  3   4    0.86 0.250
-Prionchulus sp.                    0   3  0   13   0.00 1.000
+Prionchulus cf. punctatus TSH-2005 0   2  0   14   0.00 1.000
+Prionchulus muscorum               0   5  0   11   0.00 1.000
+Prionchulus punctatus              8   0  4   4    0.80 0.333
+Prionchulus sp.                    0   2  0   14   0.00 1.000
 Pristionchus sp.                   6   0  6   4    0.67 0.500
 Rhabditis sp.                      6   0  6   4    0.67 0.500
 Sphaerularioidea gen. sp. EM-2016  0   1  0   15   0.00 1.000

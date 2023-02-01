@@ -324,16 +324,16 @@ implementation of the `UNOISE algorithm
 <https://www.drive5.com/usearch/manual/unoise_algo.html>`_ (Edgar 2016).
 
 Adding this to the control-driven abundance threshold example drops the total
-unique read count from over 3 thousand to just 700:
+unique read count from over 3 thousand to just over 700:
 
 .. code:: console
 
     $ grep -c "^>" summary/ctrl_denoise.ITS2.all_reads.fasta
-    700
+    704
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.tally.tsv
-    700
+    704
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.reads.1s5g.tsv
-    700
+    704
 
 This gives an edit graph visually somewhere in between the examples above,
 with the obvious variant halos collapsed, but some of the more complex chains
