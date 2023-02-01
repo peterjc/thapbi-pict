@@ -46,8 +46,7 @@ else
         python scripts/swarm2usearch.py $BEFORE > $TMP/before.fasta
         vsearch --unoise_alpha 2.0 --minsize 4 --sizein --sizeout \
             --cluster_unoise $TMP/before.fasta \
-            --centroids $TMP/vsearch.fasta \
-            --sizeorder -maxaccepts 3000
+            --centroids $TMP/vsearch.fasta
         # The THAPBI-PICT output is upper case and not line wrapped,
         # the VSEARCH output is mixed case (masking?) and wrapped.
         # Also while both are sorted by abundance, tie breaking differs.
