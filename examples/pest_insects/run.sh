@@ -71,22 +71,22 @@ echo Running pipeline
 echo ================
 
 thapbi_pict pipeline --cpu 4 \
-    -d references/merged_arthropoda.sqlite --synthetic "" -a 50 -f 0.0001 \
+    -d references/merged_arthropoda.sqlite \
+    --synthetic "" -a 50 -f 0.0001 \
     -i raw_data/ expected/ \
     --merged-cache tmp_merged/ -s intermediate/ \
     -t metadata.tsv -c 3,4,2 -x 1 \
     -o summary/
-# -t PRJNA716058.tsv -c 7 -x 1 \
 
 echo ==============
 echo Making figures
 echo ==============
 
 # First redraw with original data
-if [ -f figure3.tsv ]; then
+if [ -f figure3original.tsv ]; then
     echo "Recreating original Figure 3 with Batovska et al. (2021) data"
-    ./recreate_figure3.py -i figure3.tsv -o figure3.png
-    ./recreate_figure3.py -i figure3.tsv -o figure3.pdf
+    ./recreate_figure3.py -i figure3original.tsv -o figure3original.png
+    ./recreate_figure3.py -i figure3original.tsv -o figure3original.pdf
 else
     # We provide the TSV file, so shouldn't need to do this...
     echo "Missing figure3.tsv data file. Using RStudio run Batovska et al."
