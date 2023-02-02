@@ -39,4 +39,4 @@ export_ALL <- export_ALL[order(export_ALL$pool_comp, export_ALL$Genus),]
 names(export_ALL)[1] <- "Caption"
 export_ALL[1] <- to_vec(for(px in export_ALL[1]) paste(c("100", "250", "500", "1000")[round(10*(px-floor(px)))], "Pool", floor(px)))
 
-write.table(export_ALL, file="figure3.tsv", sep="\t", quote=FALSE, row.names=FALSE)
+write.table(export_ALL, file="figure3original.tsv", sep="\t", quote=FALSE, row.names=FALSE)
