@@ -1,4 +1,4 @@
-.. _soil_nematodes:
+.. _pest_insects:
 
 Pest Insect Mock Communities
 ============================
