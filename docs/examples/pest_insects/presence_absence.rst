@@ -117,4 +117,20 @@ Querying this on NCBI BLAST confirms it to be 1bp away from multiple
 *Acyrthosiphon pisum*. Rather than reporting multiple conflicting species,
 the author's pipeline likely assigned a lower rank?
 
+We can look at this visually by reproducing Figure 3 from the original paper.
+The authors provided their R based analysis, from which I have exported the
+numbers used to draw the figure (see ``figure3original.R``) giving a simple
+tab-separated file (``figure3original.tsv``). Likewise the Python script
+``figure3reproduction.py`` will produce an equivalent table using the output
+from THABPI PICT (``figure3reproduction.tsv``). Finally, Python script
+``recreate_figure3.py`` uses MatPlotLib to reproduce an annotated recreation
+of the original.
+
+In the original paper the false positives and false negatives were marked with
+pluses and minus in colour coded circles, and these were added by hand.
+Here this annotation is automated, but is less aesthetically pleasing. The
+false negatives get a cross, false positives are shown with an exclamation
+mark, and furthermore low abundance (under 5%) true positives get a tick.
+Again, these are all species coloured.
+
 Overall this seems to show very good agreement with the published analysis.
