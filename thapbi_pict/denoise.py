@@ -347,7 +347,7 @@ def read_correction(
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
     """
-    if algorithm == "unoise":
+    if algorithm == "unoise-l":
         # Does not need tmp_dir, cpu
         return unoise(counts, unoise_alpha, unoise_gamma, abundance_based, debug=False)
     elif algorithm == "usearch":
