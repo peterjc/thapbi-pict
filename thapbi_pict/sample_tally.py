@@ -175,7 +175,8 @@ def main(
             new_counts[seq, sample] += a
             new_totals[seq] += a
         sys.stderr.write(
-            f"UNOISE reduced unique ASVs from {len(totals)} to {len(new_totals)}, "
+            f"{denoise_algorithm.upper()} reduced unique ASVs from "
+            f"{len(totals)} to {len(new_totals)}, "
             f"max abundance now {max(new_totals.values(), default=0)}\n"
         )
         counts = new_counts
