@@ -154,7 +154,7 @@ def main(
 
     if denoise_algorithm != "-":
         if debug:
-            sys.stderr.write("DEBUG: Starting UNOISE algorithm...\n")
+            f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
         corrections = read_correction(
             denoise_algorithm,
             totals,
