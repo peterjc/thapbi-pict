@@ -175,16 +175,14 @@ def usearch(
     md5_to_seq = {}
     with open(input_fasta, "w") as handle:
         # Output using MD5 with USEARCH naming: md5;size=abundance
-        prev_a = None
-        for seq, a in counts.items():
-            if a >= unoise_gamma:
-                md5 = md5seq(seq)
-                handle.write(f">{md5};size={a}\n{seq}\n")
-                md5_to_seq[md5] = seq
-            if prev_a is not None and prev_a < a:
-                sys.exit("ERROR: Input to VSEARCH was not sorted by abundance")
-            prev_a = a
-        del prev_a
+        # Sorting sequences by abundance, largest first
+        for a, seq in sorted(
+            ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
+            key=lambda x: (-x[0], x[1]),
+        ):
+            md5 = md5seq(seq)
+            handle.write(f">{md5};size={a}\n{seq}\n")
+            md5_to_seq[md5] = seq
 
     cmd = [
         "usearch",
@@ -267,16 +265,14 @@ def vsearch(
     md5_to_seq = {}
     with open(input_fasta, "w") as handle:
         # Output using MD5 with USEARCH naming: md5;size=abundance
-        prev_a = None
-        for seq, a in counts.items():
-            if a >= unoise_gamma:
-                md5 = md5seq(seq)
-                handle.write(f">{md5};size={a}\n{seq}\n")
-                md5_to_seq[md5] = seq
-            if prev_a is not None and prev_a < a:
-                sys.exit("ERROR: Input to VSEARCH was not sorted by abundance")
-            prev_a = a
-        del prev_a
+        # Sorting sequences by abundance, largest first
+        for a, seq in sorted(
+            ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
+            key=lambda x: (-x[0], x[1]),
+        ):
+            md5 = md5seq(seq)
+            handle.write(f">{md5};size={a}\n{seq}\n")
+            md5_to_seq[md5] = seq
 
     cmd = [
         "vsearch",
