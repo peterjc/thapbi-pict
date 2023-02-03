@@ -17,6 +17,7 @@ from collections import Counter
 from collections import defaultdict
 from math import floor
 from math import log2
+from time import time
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
@@ -343,16 +344,19 @@ def read_correction(
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
     """
+    start = time()
     if algorithm == "unoise-l":
         # Does not need tmp_dir, cpu
-        return unoise(counts, unoise_alpha, unoise_gamma, abundance_based, debug=False)
+        answer = unoise(
+            counts, unoise_alpha, unoise_gamma, abundance_based, debug=False
+        )
     elif algorithm == "usearch":
         # Does not need cpu?
-        return usearch(
+        answer = usearch(
             counts, unoise_alpha, unoise_gamma, abundance_based, tmp_dir, debug, cpu
         )
     elif algorithm == "vsearch":
-        return vsearch(
+        answer = vsearch(
             counts, unoise_alpha, unoise_gamma, abundance_based, tmp_dir, debug, cpu
         )
     elif algorithm == "-":
@@ -361,6 +365,11 @@ def read_correction(
         sys.exit(
             f"ERROR: denoise_algorithm called with {algorithm} (unknown algorithm)."
         )
+    time_corrections = time() - start
+    sys.stderr.write(
+        f"Spent {time_corrections:0.1f}s running {algorithm} for read-corrections\n"
+    )
+    return answer
 
 
 def main(
