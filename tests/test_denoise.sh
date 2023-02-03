@@ -26,7 +26,7 @@ for AFTER in tests/read-correction/*.unoise.fasta; do
     BEFORE=${AFTER%%.*}.before.fasta
     echo "Checking denoising $BEFORE --> $AFTER (UNOISE)"
     thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise unoise --minlen 60 -t 0 -α 2.0 -γ 4
+                --denoise unoise-l --minlen 60 -t 0 -α 2.0 -γ 4
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
 done

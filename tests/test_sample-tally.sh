@@ -56,7 +56,7 @@ for AFTER in tests/read-correction/*.unoise.fasta; do
 
     thapbi_pict sample-tally -i $BEFORE \
         -o $TMP/after.tally.tsv --fasta $TMP/after.fasta \
-        --minlen 60 -a 0 -f 0 --denoise unoise
+        --minlen 60 -a 0 -f 0 --denoise unoise-l
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
 done

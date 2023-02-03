@@ -853,11 +853,11 @@ ARG_PRIMER_RIGHT = dict(  # noqa: C408
 
 # "--denoise",
 ARG_DENOISE = dict(  # noqa: C408
-    choices=["-", "unoise", "usearch", "vsearch"],
+    choices=["-", "unoise-l", "usearch", "vsearch"],
     default="-",
     help="Optional read-correction algorithm, default '-' for none. "
-    "Use 'unoise' for built-in reimplementation of the Edgar (2016) "
-    "UNOISE2 algorithm using Levenshtein distance. Use 'usearch' to "
+    "Use 'unoise-l' for built-in reimplementation of the Levenshtein distance "
+    "UNOISE algorithm as described in Edgar (2016) Use 'usearch' to "
     "call external tool 'usearch -unoise3 ...' and the original "
     "author's UNOISE3 implementation. Use 'vsearch' to call "
     "external tool 'vsearch --cluster_unoise ...' and their UNOISE3 "
@@ -1539,10 +1539,10 @@ def main(args=None):
     )
     subcommand_parser.add_argument(
         "--denoise",  # Named to match sample-tally and pipeline setting
-        choices=["unoise", "usearch", "vsearch"],
-        default="unoise",
-        help="Choice of read-correction algorithm, default 'unoise' for "
-        "built-in reimplementation of the Edgar (2016) UNOISE2 algorithm "
+        choices=["unoise-l", "usearch", "vsearch"],
+        default="unoise-l",
+        help="Choice of read-correction algorithm, default 'unoise-l' for "
+        "built-in reimplementation of the Edgar (2016) UNOISE algorithm "
         "using Levenshtein distance. Use 'usearch' or 'vsearch' to call "
         "external tools 'usearch -unoise3 ...' or 'vsearch --cluster_unoise "
         "...' respectively.",

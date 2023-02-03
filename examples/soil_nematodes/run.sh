@@ -70,7 +70,7 @@ echo ================
 # Turning off the fractional abundance filter with -f 0
 thapbi_pict pipeline -d references/pooled.sqlite --synthetic '' \
             -i raw_data/ expected/pooled/ --merged-cache tmp_merged/ \
-            -s intermediate/ -o summary/ -a 25 -f 0 --denoise unoise \
+            -s intermediate/ -o summary/ -a 25 -f 0 --denoise unoise-l \
             -t metadata.tsv -x 1 -c 4,3
 
 for MARKER in NF1-18Sr2b SSUF04-SSUR22 D3Af-D3Br JB3-JB5GED; do

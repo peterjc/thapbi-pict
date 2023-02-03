@@ -101,7 +101,7 @@ thapbi_pict pipeline -d references.sqlite \
     -i raw_data/ expected/ --merged-cache tmp_merged/ \
     -y raw_data/SRR7109420_*.fastq.gz \
     -s intermediate/ -o summary/ctrl_denoise -a 100 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise unoise
+    -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise unoise-l
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
     -i summary/ctrl_denoise.ITS2.all_reads.1s5g.tsv summary/ctrl_denoise.ITS2.tally.tsv \
