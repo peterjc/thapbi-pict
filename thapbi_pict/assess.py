@@ -322,7 +322,7 @@ def extract_global_tally(tally, sp_list):
     If the input data has no negative controls, all there will be no TN.
     """
     all_sp = set()
-    for (expt, pred) in tally:
+    for expt, pred in tally:
         if expt:
             all_sp.update(expt.split(";"))
         if pred:
