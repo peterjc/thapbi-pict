@@ -529,7 +529,12 @@ def prepare_sample(
 
     # deduplicate and apply minimum abundance threshold
     dedup = os.path.join(tmp, "dedup_trimmed.fasta")
-    (count, uniq_count, accepted_total, accepted_uniq_count,) = make_nr_fasta(
+    (
+        count,
+        uniq_count,
+        accepted_total,
+        accepted_uniq_count,
+    ) = make_nr_fasta(
         trimmed_fasta,
         dedup,
         min_abundance=min_abundance,
@@ -681,7 +686,12 @@ def marker_cut(
             if fasta_name in fasta_files_prepared:
                 sys.exit(f"ERROR: Multiple files named {fasta_name}")
             # This skips pre-existing samples:
-            (marker_total, uniq_count, accepted_total, min_a,) = prepare_sample(
+            (
+                marker_total,
+                uniq_count,
+                accepted_total,
+                min_a,
+            ) = prepare_sample(
                 fasta_name,
                 os.path.join(tmp, f"{stem}.{marker}.fasta"),
                 {

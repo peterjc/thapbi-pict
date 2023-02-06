@@ -688,7 +688,12 @@ def main(
     if report_stem.endswith(os.path.sep) or os.path.isdir(report_stem):
         sys.exit("ERROR: Summary requires an output filename stem, not a directory")
 
-    (stem_to_meta, meta_to_stem, meta_names, group_col,) = load_metadata(
+    (
+        stem_to_meta,
+        meta_to_stem,
+        meta_names,
+        group_col,
+    ) = load_metadata(
         metadata_file,
         metadata_encoding,
         metadata_cols,

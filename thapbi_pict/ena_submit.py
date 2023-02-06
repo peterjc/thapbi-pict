@@ -143,7 +143,12 @@ def main(
         os.path.basename(stem) for stem, _raw_R1, _raw_R2 in fastq_file_pairs
     )
 
-    (metadata, _, meta_names, group_col,) = load_metadata(
+    (
+        metadata,
+        _,
+        meta_names,
+        group_col,
+    ) = load_metadata(
         metadata_file,
         metadata_encoding,
         metadata_cols,
