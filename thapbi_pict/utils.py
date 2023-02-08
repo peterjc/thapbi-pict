@@ -234,7 +234,7 @@ def run(cmd, debug=False, attempts=1):
     """
     for i in range(attempts):
         if debug:
-            if attempts:
+            if attempts > 1:
                 sys.stderr.write(
                     f"Attempt {i + 1} of {attempts} calling command:"
                     f" {cmd_as_string(cmd)}\n"
