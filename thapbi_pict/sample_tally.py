@@ -152,10 +152,11 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
+    chimeras = {}
     if denoise_algorithm != "-":
         if debug:
             f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
-        corrections = read_correction(
+        corrections, chimeras = read_correction(
             denoise_algorithm,
             totals,
             unoise_alpha=unoise_alpha,
@@ -182,6 +183,10 @@ def main(
             f"{len(totals)} to {len(new_totals)}, "
             f"max abundance now {max(new_totals.values(), default=0)}\n"
         )
+        if chimeras:
+            sys.stderr.write(
+                f"{denoise_algorithm.upper()} flagged {len(chimeras)} as chimeras\n"
+            )
         counts = new_counts
         totals = new_totals
         del new_totals, new_counts, corrections
@@ -487,7 +492,11 @@ def main(
         if fasta_handle:
             # Does not export per-sample counts
             # TODO - Include the marker? Older fasta-nr command did not.
-            fasta_handle.write(f">{md5}_{count}\n{seq}\n")
+            if md5 in chimeras:
+                # Write any dict value as it is...
+                fasta_handle.write(f">{md5}_{count} chimera {chimeras[md5]}\n{seq}\n")
+            else:
+                fasta_handle.write(f">{md5}_{count}\n{seq}\n")
     if output != "-":
         out_handle.close()
     if fasta and fasta != "-":
