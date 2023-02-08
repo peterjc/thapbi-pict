@@ -288,8 +288,8 @@ def vsearch(
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
 
-    Returns a dict mapping input sequences to centroid sequences, and an empty
-    dict (no chimera detection performed, yet).
+    Returns a dict mapping input sequences to centroid sequences, and a dict
+    of MD5 checksums of any sequences flagged as chimeras.
     """
     check_tools(["vsearch"], debug)
 
@@ -306,6 +306,8 @@ def vsearch(
 
     input_fasta = os.path.join(shared_tmp, "noisy.fasta")
     output_tsv = os.path.join(shared_tmp, "clustering.tsv")
+    denoised_fasta = os.path.join(shared_tmp, "denoised.fasta")
+    chimera_tsv = os.path.join(shared_tmp, "chimeras.tsv")
     md5_to_seq = {}
     with open(input_fasta, "w") as handle:
         # Output using MD5 with USEARCH naming: md5;size=abundance
@@ -374,7 +376,50 @@ def vsearch(
                     f"ERROR: vsearch --uc output line started {parts[0]}, not S, H or C"
                 )
     del md5_to_seq
-    return corrections, {}
+
+    with open(denoised_fasta, "w") as handle:
+        # TODO: Wasteful as will re-compute the post-correction counts
+        post_counts = defaultdict(int)
+        for seq, a in counts.items():
+            if seq not in corrections:
+                # Ignored as per UNOISE algorithm
+                if unoise_gamma:
+                    assert (
+                        a < unoise_gamma
+                    ), f"{md5seq(seq)} total {a} vs {unoise_gamma}"
+                continue
+            seq = corrections[seq]
+            post_counts[seq] += a
+        post_counts = sorted(post_counts.items(), key=lambda x: (-x[1], x[0]))
+        for seq, a in post_counts:
+            if unoise_gamma:
+                assert a >= unoise_gamma
+            assert corrections[seq] == seq
+            handle.write(f">{md5seq(seq)};size={a}\n{seq}\n")
+        del post_counts
+    cmd = [
+        "vsearch",
+        "--sizein",
+        "--sizeout",
+        "--uchime3_denovo",
+        denoised_fasta,
+        "--uchimeout",
+        chimera_tsv,
+    ]
+    if cpu:
+        cmd += ["--threads", str(cpu)]
+    run(cmd, debug=debug)
+    chimeras = {}
+    with open(chimera_tsv) as handle:
+        for line in handle:
+            if not line or line.endswith("N\n"):
+                continue
+            parts = line.split("\t", 5)
+            md5 = parts[1].split(";", 1)[0]  # strip the size information
+            assert len(md5) == 32, line
+            chimeras[md5] = parts[2].split(";", 1)[0] + "/" + parts[3].split(";", 1)[0]
+
+    return corrections, chimeras
 
 
 def read_correction(
@@ -509,6 +554,10 @@ def main(
         f"{len(totals)} to {len(new_totals)}, "
         f"max abundance now {max(new_totals.values(), default=0)}\n"
     )
+    if chimeras:
+        sys.stderr.write(
+            f"{denoise_algorithm.upper()} flagged {len(chimeras)} as chimeras\n"
+        )
     totals = new_totals
     del new_totals, corrections
 

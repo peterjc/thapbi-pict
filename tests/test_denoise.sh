@@ -57,7 +57,7 @@ else
         # Also while both are sorted by abundance, tie breaking differs.
         # So, can just compare the title lines (MD5 and abundance)
         diff <(grep "^>" $TMP/vsearch.fasta | sort) \
-             <(python scripts/swarm2usearch.py $AFTER | grep "^>" | sort)
+             <(python scripts/swarm2usearch.py $AFTER | grep "^>" | cut -f 1 -d " " | sort)
     done
 fi
 
