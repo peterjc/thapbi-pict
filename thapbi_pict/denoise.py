@@ -40,6 +40,9 @@ def unoise(
 
     If not specified (i.e. set to zero or None), unoise_alpha defaults to 2.0
     and unoise_gamma to 4.
+
+    Returns a dict mapping input sequences to centroid sequences, and an empty
+    dict (no chimera detection performed).
     """
     debug = False  # too noisy otherwise
     if not counts:
@@ -147,7 +150,7 @@ def unoise(
         for _ in choices:
             corrections[_] = seq
         assert corrections[seq] == seq, "Centroid missing"
-    return corrections
+    return corrections, {}
 
 
 def usearch(
@@ -163,6 +166,9 @@ def usearch(
 
     Assumes v10 or v11 (or later if the command line API is the same).
     Parses the four columns tabbed output.
+
+    Returns a dict mapping input sequences to centroid sequences, and a dict
+    of MD5 checksums of any sequences flagged as chimeras.
     """
     debug = True
     check_tools(["usearch"], debug)
@@ -218,6 +224,8 @@ def usearch(
         cmd += ["--threads", str(cpu)]
     run(cmd, debug=debug)
     corrections = {}
+    chimeras = {}
+    amp_md5 = {}  # maps USEARCH amplicon (centroid) names to MD5
     with open(output_tsv) as handle:
         for line in handle:
             if not line:
@@ -230,20 +238,40 @@ def usearch(
                     f"ERROR: Found {len(parts)} fields in "
                     "usearch -tabbedout output, not 3 or 4"
                 )
-            if parts[1] != "denoise":
-                # Currently ignoring "chfilter" lines (chimera filter)
-                continue
-            if parts[2].startswith("amp") and len(parts) == 3:
-                # centroid
-                corrections[seq] = seq
-            elif parts[2] in ("bad", "shifted") and ";top=" in parts[3]:
-                # hit, mapped to a centroid
-                centroid_md5 = parts[3].split(";top=", 1)[1].split(";", 1)[0]
-                corrections[seq] = md5_to_seq[centroid_md5]
+            if parts[1] == "denoise":
+                if parts[2].startswith("amp") and len(parts) == 3:
+                    # centroid
+                    corrections[seq] = seq
+                    amp_md5[parts[2].strip("\n").lower()] = md5
+                elif parts[2] in ("bad", "shifted") and ";top=" in parts[3]:
+                    # hit, mapped to a centroid
+                    centroid_md5 = parts[3].split(";top=", 1)[1].split(";", 1)[0]
+                    corrections[seq] = md5_to_seq[centroid_md5]
+                else:
+                    sys.exit(f"ERROR: Unexpected usearch denoise line: {repr(line)}")
+            elif parts[1] == "chfilter":
+                if parts[2] == "zotu\n":
+                    pass
+                elif parts[2] == "chimera":
+                    # Expect something like this in final field:
+                    # dqm=0;dqt=33;div=18.2;top=(R);parentL=Amp4;parentR=Amp13;
+                    # dqm=0;dqt=7;div=3.4;top=(L);parentL=Amp8;parentR=Amp4;
+                    # dqm=0;dqt=9;div=4.5;top=Amp54;parentL=Amp25;parentR=Amp13;
+                    # Note Amp with upper case A, verus lower case above.
+                    # Note not clear to me what top field means...
+                    fields = dict(
+                        _.split("=", 1)
+                        for _ in parts[3].strip("\n").strip(";").lower().split(";")
+                    )
+                    chimeras[md5] = (
+                        amp_md5[fields["parentl"]] + "/" + amp_md5[fields["parentr"]]
+                    )
+                else:
+                    sys.exit(f"ERROR: Unexpected usearch chfilter line: {repr(line)}")
             else:
                 sys.exit(f"ERROR: Unexpected usearch tabbedout line: {repr(line)}")
     del md5_to_seq
-    return corrections
+    return corrections, chimeras
 
 
 def vsearch(
@@ -259,6 +287,9 @@ def vsearch(
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
+
+    Returns a dict mapping input sequences to centroid sequences, and an empty
+    dict (no chimera detection performed, yet).
     """
     check_tools(["vsearch"], debug)
 
@@ -343,7 +374,7 @@ def vsearch(
                     f"ERROR: vsearch --uc output line started {parts[0]}, not S, H or C"
                 )
     del md5_to_seq
-    return corrections
+    return corrections, {}
 
 
 def read_correction(
@@ -360,6 +391,9 @@ def read_correction(
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
+
+    Returns a dict mapping input sequences to centroid sequences, and dict of
+    any chimeras detected (empty for some algorithms).
     """
     start = time()
     if algorithm == "unoise-l":
@@ -450,7 +484,7 @@ def main(
         sys.stderr.write(
             f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
         )
-    corrections = read_correction(
+    corrections, chimeras = read_correction(
         denoise_algorithm,
         totals,
         unoise_alpha=unoise_alpha,
@@ -496,6 +530,10 @@ def main(
 
     for count, seq in values:
         md5 = md5seq(seq)
-        out_handle.write(f">{md5}_{count}\n{seq}\n")
+        if md5 in chimeras:
+            # Write any dict value as it is...
+            out_handle.write(f">{md5}_{count} chimera {chimeras[md5]}\n{seq}\n")
+        else:
+            out_handle.write(f">{md5}_{count}\n{seq}\n")
     if output != "-":
         out_handle.close()
