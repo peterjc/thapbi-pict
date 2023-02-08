@@ -86,9 +86,8 @@ else
             -ampout $TMP/usearch_ampout.fasta \
             -zotus $TMP/usearch_zotus.fasta \
             -tabbedout $TMP/usearch.tsv
-        # These would differ if USEARCH flagged a chimera:
-        diff <(grep -v "^>" $TMP/usearch_ampout.fasta) <(grep -v "^>" $TMP/usearch_zotus.fasta)
-        # The ZOTUs file does not indicate abundance, and lacks MD5
+        # The ZOTUs file does not indicate abundance, and lacks MD5,
+        # and any chimeras.
         # The ampout file does use MD5, but not easily compared
         # and it line-wraps the sequences...
         diff <(grep "^>" $TMP/usearch_ampout.fasta | cut -c 2-33 | sort) \
