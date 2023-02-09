@@ -37,6 +37,9 @@ def unoise(
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
+
+    If not specified (i.e. set to zero or None), unoise_alpha defaults to 2.0
+    and unoise_gamma to 4.
     """
     debug = False  # too noisy otherwise
     if not counts:
@@ -46,7 +49,7 @@ def unoise(
     if not unoise_gamma:
         unoise_gamma = 4
 
-    top_a = max(counts.values(), default=0)  # will become first centroid
+    top_a = max(counts.values())  # will become first centroid
     last_a = None
     cutoff = 0
     centroids = defaultdict(set)
@@ -181,8 +184,13 @@ def usearch(
     with open(input_fasta, "w") as handle:
         # Output using MD5 with USEARCH naming: md5;size=abundance
         # Sorting sequences by abundance, largest first
+        # If gamma known, can pre-filter to drop trace level entries
         for a, seq in sorted(
-            ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
+            (
+                (a, seq)
+                for (seq, a) in counts.items()
+                if not unoise_gamma or a >= unoise_gamma
+            ),
             key=lambda x: (-x[0], x[1]),
         ):
             md5 = md5seq(seq)
@@ -271,8 +279,13 @@ def vsearch(
     with open(input_fasta, "w") as handle:
         # Output using MD5 with USEARCH naming: md5;size=abundance
         # Sorting sequences by abundance, largest first
+        # If we can, pre-filter using gamma
         for a, seq in sorted(
-            ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
+            (
+                (a, seq)
+                for (seq, a) in counts.items()
+                if not unoise_gamma or a >= unoise_gamma
+            ),
             key=lambda x: (-x[0], x[1]),
         ):
             md5 = md5seq(seq)
@@ -336,8 +349,8 @@ def vsearch(
 def read_correction(
     algorithm,
     counts,
-    unoise_alpha=None,
-    unoise_gamma=None,
+    unoise_alpha=2.0,
+    unoise_gamma=4,
     abundance_based=False,
     tmp_dir=None,
     debug=False,
@@ -383,8 +396,8 @@ def main(
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
-    unoise_alpha=None,
-    unoise_gamma=None,
+    unoise_alpha=None,  # e.g. 2.0,
+    unoise_gamma=None,  # e.g. 4,
     gzipped=False,  # output
     tmp_dir=None,
     debug=False,
@@ -448,9 +461,12 @@ def main(
     )
     new_totals = defaultdict(int)
     for seq, a in totals.items():
-        if totals[seq] < unoise_gamma:
-            # Ignoring as per UNOISE algorithm
-            assert seq not in corrections
+        if seq not in corrections:
+            # Ignored as per UNOISE algorithm
+            if unoise_gamma:
+                assert (
+                    totals[seq] < unoise_gamma
+                ), f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
             continue
         seq = corrections[seq]
         new_totals[seq] += a
