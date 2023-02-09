@@ -167,9 +167,12 @@ def main(
         new_counts = defaultdict(int)
         new_totals = defaultdict(int)
         for (seq, sample), a in counts.items():
-            if totals[seq] < unoise_gamma:
-                # Ignoring as per UNOISE algorithm
-                assert seq not in corrections
+            if seq not in corrections:
+                # Should have been ignored as per UNOISE algorithm
+                if unoise_gamma:
+                    assert (
+                        totals[seq] < unoise_gamma
+                    ), f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
                 continue
             seq = corrections[seq]
             new_counts[seq, sample] += a

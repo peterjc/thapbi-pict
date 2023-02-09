@@ -867,18 +867,20 @@ ARG_DENOISE = dict(  # noqa: C408
 # "-α", "--unoise_alpha",
 ARG_UNOISE_ALPHA = dict(  # noqa: C408
     type=float,
-    default="2.0",
+    default=None,
     metavar="FLOAT",
-    help="UNOISE read-correction alpha parameter (α), default 2.0, used in "
-    "skew threshold function beta (β).",
+    help="UNOISE read-correction alpha parameter (α), used in "
+    "skew threshold function beta (β). Default 2.0 for UNOISE-L, "
+    "tool defaults for USEARCH and VSEARCH.",
 )
 # "-γ", "--unoise_gamma"
 ARG_UNOISE_GAMMA = dict(  # noqa: C408
     type=int,
-    default="4",
+    default=None,
     metavar="INT",
-    help="UNOISE read-correction gamma parameter (γ), default 4. Variants "
-    "below this total abundance are discarded before denoising.",
+    help="UNOISE read-correction gamma parameter (γ). Variants "
+    "below this total abundance are discarded before denoising. Default 4 "
+    "for UNOISE-L, tool defaults for USEARCH and VSEARCH.",
 )
 
 # Common pipeline arguments

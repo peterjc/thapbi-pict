@@ -41,8 +41,12 @@ def unoise(
     debug = False  # too noisy otherwise
     if not counts:
         return {}
+    if not unoise_alpha:
+        unoise_alpha = 2.0
+    if not unoise_gamma:
+        unoise_gamma = 4
 
-    top_a = max(counts.values())  # will become first centroid
+    top_a = max(counts.values(), default=0)  # will become first centroid
     last_a = None
     cutoff = 0
     centroids = defaultdict(set)
@@ -145,8 +149,8 @@ def unoise(
 
 def usearch(
     counts,
-    unoise_alpha=2.0,
-    unoise_gamma=4,
+    unoise_alpha=None,
+    unoise_gamma=None,
     abundance_based=True,
     tmp_dir=None,
     debug=False,
@@ -187,10 +191,6 @@ def usearch(
 
     cmd = [
         "usearch",
-        "-unoise_alpha",
-        str(unoise_alpha),
-        "-minsize",
-        str(unoise_gamma),
         "-unoise3",
         input_fasta,
         # "-zotus",
@@ -198,6 +198,10 @@ def usearch(
         "-tabbedout",
         output_tsv,
     ]
+    if unoise_alpha:
+        cmd += ["-unoise_alpha", str(unoise_alpha)]
+    if unoise_gamma:
+        cmd += ["-minsize", str(unoise_gamma)]
     if abundance_based:
         pass
     if cpu:
@@ -236,8 +240,8 @@ def usearch(
 
 def vsearch(
     counts,
-    unoise_alpha=2.0,
-    unoise_gamma=4,
+    unoise_alpha=None,
+    unoise_gamma=None,
     abundance_based=False,
     tmp_dir=None,
     debug=False,
@@ -277,10 +281,6 @@ def vsearch(
 
     cmd = [
         "vsearch",
-        "--unoise_alpha",
-        str(unoise_alpha),
-        "--minsize",
-        str(unoise_gamma),
         "--sizein",
         "--sizeout",
         "--cluster_unoise",
@@ -290,6 +290,10 @@ def vsearch(
         "--uc",
         output_tsv,
     ]
+    if unoise_alpha:
+        cmd += ["-unoise_alpha", str(unoise_alpha)]
+    if unoise_gamma:
+        cmd += ["-minsize", str(unoise_gamma)]
     if abundance_based:
         cmd += ["--sizeorder", "--maxaccepts", "30"]
         # Note --sizeorder is documented to only takes effect if --maxaccepts
@@ -332,8 +336,8 @@ def vsearch(
 def read_correction(
     algorithm,
     counts,
-    unoise_alpha=2.0,
-    unoise_gamma=4,
+    unoise_alpha=None,
+    unoise_gamma=None,
     abundance_based=False,
     tmp_dir=None,
     debug=False,
@@ -379,8 +383,8 @@ def main(
     total_min_abundance=0,
     min_length=0,
     max_length=sys.maxsize,
-    unoise_alpha=2.0,
-    unoise_gamma=4,
+    unoise_alpha=None,
+    unoise_gamma=None,
     gzipped=False,  # output
     tmp_dir=None,
     debug=False,
