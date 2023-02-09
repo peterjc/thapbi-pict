@@ -43,13 +43,13 @@ else
         BEFORE=${AFTER%%.*}.before.fasta
         echo "Checking denoising $BEFORE --> $AFTER (VSEARCH)"
         thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise vsearch --minlen 60 -t 0 -α 2.0 -γ 4
+                --denoise vsearch --minlen 60 -t 0
         echo diff $TMP/after.fasta $AFTER
         diff $TMP/after.fasta $AFTER
 
         echo "Checking versus direct use of vsearch"
         python scripts/swarm2usearch.py $BEFORE > $TMP/before.fasta
-        vsearch --unoise_alpha 2.0 --minsize 4 --sizein --sizeout \
+        vsearch --sizein --sizeout \
             --cluster_unoise $TMP/before.fasta \
             --centroids $TMP/vsearch.fasta
         # The THAPBI-PICT output is upper case and not line wrapped,
@@ -76,13 +76,13 @@ else
         fi
         echo "Checking denoising $BEFORE --> $AFTER (USEARCH)"
         thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise usearch --minlen 60 -t 0 -α 2.0 -γ 4
+                --denoise usearch --minlen 60 -t 0
         echo diff $TMP/after.fasta $AFTER
         diff $TMP/after.fasta $AFTER
 
         echo "Checking versus direct use of usearch"
         python scripts/swarm2usearch.py $BEFORE > $TMP/input.fasta
-        usearch -unoise_alpha 2.0 -minsize 4 -unoise3 $TMP/input.fasta \
+        usearch -unoise3 $TMP/input.fasta \
             -ampout $TMP/usearch_ampout.fasta \
             -zotus $TMP/usearch_zotus.fasta \
             -tabbedout $TMP/usearch.tsv
