@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.14a4 2022-02-10 Note chimeras if denoising with USEARCH or VSEARCH, not yet in main reports.
 v0.14a3 2022-02-08 Can invoke USEARCH or VSEARCH tools for external UNOISE read-correction.
 v0.14a2 2022-01-23 UNOISE read-correction option in ``sample-tally``, new ``denoise`` command.
 v0.14a1 2022-01-20 Unreleased alpha, only do abundance thresholding in ``sample-tally`` step.
