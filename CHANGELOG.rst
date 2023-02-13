@@ -4,8 +4,8 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.14a4 2022-02-10 Note chimeras if denoising with USEARCH or VSEARCH, not yet in main reports.
-v0.14a3 2022-02-08 Can invoke USEARCH or VSEARCH tools for external UNOISE read-correction.
+v0.14a4 2022-02-10 Note any chimeras from USEARCH or VSEARCH, not yet in main reports.
+v0.14a3 2022-02-08 Can invoke USEARCH or VSEARCH for external UNOISE read-correction.
 v0.14a2 2022-01-23 UNOISE read-correction option in ``sample-tally``, new ``denoise`` command.
 v0.14a1 2022-01-20 Unreleased alpha, only do abundance thresholding in ``sample-tally`` step.
 v0.13.6 2022-12-28 Factional abundance threshold in ``sample-tally`` was not strict enough.
@@ -21,7 +21,7 @@ v0.12.7 2022-07-26 Report NCBI taxid in genus-only fallback classifier output. M
 v0.12.6 2022-07-25 Changes to how NCBI sequences are trimmed for use in the default DB.
 v0.12.5 2022-07-08 Merged/child NCBI taxid entries kept as synonyms. Import FASTA with taxid.
 v0.12.4 2022-07-07 Updated edit-graph code to work with RapidFuzz v2.0.0 or later.
-v0.12.3 2022-07-06 Updated NCBI taxonomy and bulk imported genus-only entries in default DB.
+v0.12.3 2022-07-06 Updated NCBI taxonomy and bulk genus-only entries in default DB.
 v0.12.2 2022-06-15 Updates to the curated entries in the default *Phytophthora* ITS1 DB.
 v0.12.1 2022-05-18 Fix missing field regression on reports including unsequenced samples.
 v0.12.0 2022-04-19 Synthetic spike-ins can set fractional abundance threshold. Cutadapt v4.0+.
@@ -36,7 +36,7 @@ v0.10.6 2022-01-12 Fixed slow-down in v0.10.0 on large datasets with small DB.
 v0.10.5 2021-12-23 Default for ``-f`` / ``--abundance-fraction`` is now 0.001, meaning 0.1%.
 v0.10.4 2021-11-24 Updates to default curated DB, including newer NCBI taxonomy.
 v0.10.3 2021-11-19 New ``-f`` / ``--abundance-fraction`` setting, off by default.
-v0.10.2 2021-11-05 Updates to default curated DB, and small changes to NCBI taxonomy loading.
+v0.10.2 2021-11-05 Updates to default curated DB. Small changes to NCBI taxonomy loading.
 v0.10.1 2021-07-28 Fix for using SQLAlchemy v1.3 (previous release needed v1.4).
 v0.10.0 2021-07-28 Rework to handle larger DB and multiple markers. Modifies DB schema.
 v0.9.9  2021-07-08 Drop SWARM based classifiers. Single intermediate TSV file in pipeline.
