@@ -17,14 +17,14 @@ v0.13.1 2022-09-21 Minor default DB update. Cap ``--cpu`` by available CPUs. Fas
 v0.13.0 2022-09-14 Sped up distance based classifiers by better use of RapidFuzz library.
 v0.12.9 2022-08-19 Updates default DB with new curated species and improved left trimming.
 v0.12.8 2022-08-08 Treat NCBI taxonomy 'equivalent name' as a synonym. Minor DB update.
-v0.12.7 2022-07-26 Report NCBI taxid in genus-only fallback classifier output. Minor DB update.
+v0.12.7 2022-07-26 NCBI taxid in genus-only fallback classifier output. Minor DB update.
 v0.12.6 2022-07-25 Changes to how NCBI sequences are trimmed for use in the default DB.
-v0.12.5 2022-07-08 Merged/child NCBI taxid entries kept as synonyms. Import FASTA with taxid.
+v0.12.5 2022-07-08 Merged/child NCBI taxid entries as synonyms. Import FASTA with taxid.
 v0.12.4 2022-07-07 Updated edit-graph code to work with RapidFuzz v2.0.0 or later.
 v0.12.3 2022-07-06 Updated NCBI taxonomy and bulk genus-only entries in default DB.
 v0.12.2 2022-06-15 Updates to the curated entries in the default *Phytophthora* ITS1 DB.
 v0.12.1 2022-05-18 Fix missing field regression on reports including unsequenced samples.
-v0.12.0 2022-04-19 Synthetic spike-ins can set fractional abundance threshold. Cutadapt v4.0+.
+v0.12.0 2022-04-19 Set fractional abundance threshold via synthetic spike-ins. Cutadapt v4.0+.
 v0.11.6 2022-03-09 Fix regression on reports including unsequenced samples.
 v0.11.5 2022-02-18 Reporting enhancements when using spike-in (synthetic) controls.
 v0.11.4 2022-02-08 Updates to default curated DB, adding several more *Phytophthora* species.
@@ -42,12 +42,12 @@ v0.10.0 2021-07-28 Rework to handle larger DB and multiple markers. Modifies DB 
 v0.9.9  2021-07-08 Drop SWARM based classifiers. Single intermediate TSV file in pipeline.
 v0.9.8  2021-06-17 Drop edit-graph in pipeline. Require full length primers in merged reads.
 v0.9.7  2021-06-04 USEARCH SINTAX & OBITools FASTA conventions in ``import`` command.
-v0.9.6  2021-05-21 Update default DB taxonomy, Peronosporales & Pythiales up to 450bp only.
+v0.9.6  2021-05-21 Update default DB taxonomy, Peronosporales & Pythiales max 450bp.
 v0.9.5  2021-05-10 Simplify to just one ``import`` command for pre-trimmed FASTA input.
-v0.9.4  2021-05-05 Drop unused metadata fields from DB schema. Fix GML format edit graphs.
+v0.9.4  2021-05-05 Drop unused metadata fields in DB schema. Fix GML format edit graphs.
 v0.9.3  2021-05-04 Drop HMM for spike-in control detection, now via DB & *k*-mer counting.
 v0.9.2  2021-04-28 Fix obscure problem using relative versions of absolute paths.
-v0.9.1  2021-04-20 Set metadata encoding. Warn if low abundance threshold. HMM default off.
+v0.9.1  2021-04-20 Set metadata encoding. Low abundance threshold warning. HMM default off.
 v0.9.0  2021-04-19 Drop use of Trimmomatic, faster and slightly higher read counts.
 v0.8.4  2021-04-13 Sped up re-running by delaying method setup until and if required.
 v0.8.3  2021-04-13 Include abundance threshold in summary reports (if varied by sample).
@@ -62,13 +62,13 @@ v0.7.7  2021-02-24 Revise default ITS1 DB: NCBI Oomycetes, more curation & singl
 v0.7.6  2021-02-17 ``curated-seq`` replaces ``seq-import``, used when building default DB.
 v0.7.5  2021-02-16 Refine default DB by adjusting how genus-level NCBI import trimmed.
 v0.7.4  2021-02-15 Edit-graph genus-only labels. New ``1s2g``, ``1s4g`` & ``1s5g`` classifiers.
-v0.7.3  2021-01-29 Update NCBI import & taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
+v0.7.3  2021-01-29 Update NCBI import, taxonomy. New ``1s3g`` classifier. Use cutadapt v3.0+.
 v0.7.2  2020-10-06 New ``ena-submit`` command for use with interactive ENA read submission.
 v0.7.1  2020-09-29 Curated *Phytophthora* DB minor updates. Classifier output in edit-graph.
 v0.7.0  2020-04-02 Read counts etc as a header in intermediate FASTA files; shown in reports.
 v0.6.15 2020-03-12 Fix regression in read report column sorting.
 v0.6.14 2020-03-12 Merge ``read-summary`` & ``sample-summary`` into new ``summary`` command.
-v0.6.13 2020-03-09 New classifier method ``substr`` for testing with poorly trimmed DB content.
+v0.6.13 2020-03-09 New classifier method ``substr`` for poorly trimmed DB content.
 v0.6.12 2020-03-09 New advanced setting ``--merged-cache`` intended for multiple marker use.
 v0.6.11 2020-03-02 Update genus-level only NCBI import, restrict to those with 32bp leader.
 v0.6.10 2020-02-24 Treat I (for inosine as in tRNA) in primers as N (IUPAC code for any base).
@@ -78,7 +78,7 @@ v0.6.7  2020-02-13 Method in ``pipeline`` filenames; max sample abundance in rea
 v0.6.6  2020-02-05 Coloring groups in ``sample-report``. Can call assessment from ``pipeline``.
 v0.6.5  2020-01-27 Do ``--flip`` in ``prepare-reads`` using cutadapt v2.8 or later.
 v0.6.4  2020-01-23 ``curated-import`` accepts primers. Reduce memory usage for ``onebp``.
-v0.6.3  2020-01-20 Treat NCBI taxonomy "includes" as synonyms, adds 396 new species aliases.
+v0.6.3  2020-01-20 Treat NCBI taxonomy "includes" as synonyms, 396 new species aliases.
 v0.6.2  2020-01-14 Memory optimisation to the default ``onebp`` classifier.
 v0.6.1  2020-01-08 Requires at least Python 3.6 as now using f-strings (internal change only).
 v0.6.0  2020-01-08 Stop discarding normally conserved *Phytophthora* ITS1 marker 32bp start.
