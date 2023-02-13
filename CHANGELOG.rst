@@ -47,7 +47,7 @@ v0.9.5  2021-05-10 Simplify to just one ``import`` command for pre-trimmed FASTA
 v0.9.4  2021-05-05 Drop unused metadata fields in DB schema. Fix GML format edit graphs.
 v0.9.3  2021-05-04 Drop HMM for spike-in control detection, now via DB & *k*-mer counting.
 v0.9.2  2021-04-28 Fix obscure problem using relative versions of absolute paths.
-v0.9.1  2021-04-20 Set metadata encoding. Low abundance threshold warning. HMM default off.
+v0.9.1  2021-04-20 Set metadata encoding. Spike-in HMM default now off.
 v0.9.0  2021-04-19 Drop use of Trimmomatic, faster and slightly higher read counts.
 v0.8.4  2021-04-13 Sped up re-running by delaying method setup until and if required.
 v0.8.3  2021-04-13 Include abundance threshold in summary reports (if varied by sample).
