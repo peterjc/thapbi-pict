@@ -462,22 +462,30 @@ def find_paired_files(
 
 
 def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
-    """Parse file of sample abundances and sequence.
+    """Parse file of sample abundances and sequence (etc).
 
     Optional argument min_abundance is applied to the per sequence per sample
     values (i.e. the matrix elements, not the row/column totals).
 
-    Supports the optional sample metadata header.
+    Columns are:
+    * Sequence identifier as <marker>/<MD5>_<abundance>
+    * Column per sample giving the sequence count
+    * Sequence itself
+    * Optional additional columns for sequence metadata (e.g. chimera flags)
+
+    Supports optional sample metadata header too as # prefixed header lines.
     """
     header_lines = []
     samples = []
     counts = {}
     seqs = {}
+    seq_col = None
     with open(tabular_file) as handle:
         for line in handle:
             parts = line.rstrip("\n").split("\t")
-            if parts[0] == "#Marker/MD5_abundance" and parts[-1] == "Sequence":
-                samples = parts[1:-1]
+            if parts[0] == "#Marker/MD5_abundance":
+                seq_col = parts.index("Sequence")
+                samples = parts[1:seq_col]
                 if debug:
                     sys.stderr.write(
                         f"DEBUG: {len(samples)} samples in {tabular_file}\n"
@@ -490,7 +498,8 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                 marker, idn = parts[0].split("/")
                 idn = idn.rsplit("_")[0]  # drop the total count
                 above_threshold = False
-                for sample, value in zip(samples, parts[1:-1]):
+                assert seq_col, "Error: Did not find 'Sequence' column"
+                for sample, value in zip(samples, parts[1:seq_col]):
                     if value == "0":  # Don't bother with int("0")
                         continue  # Don't store blank values!
                     try:
@@ -503,7 +512,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                         counts[marker, idn, sample] = value
                         above_threshold = True
                 if above_threshold:
-                    seqs[marker, idn] = parts[-1]
+                    seqs[marker, idn] = parts[seq_col]
             else:
                 raise ValueError(
                     "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
@@ -513,7 +522,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     sample_headers = {sample: {} for sample in samples}
     for parts in header_lines:
         name = parts[0][1:]  # Drop the leading "#"
-        for sample, value in zip(samples, parts[1:-1]):
+        for sample, value in zip(samples, parts[1:seq_col]):
             sample_headers[sample][name] = value
     return seqs, sample_headers, counts
 
