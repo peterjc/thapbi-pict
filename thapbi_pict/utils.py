@@ -461,6 +461,88 @@ def find_paired_files(
     return input_list
 
 
+def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=False):
+    """Export a sequence vs sample counts TSV table, with metadata.
+
+    The TSV file ought to be readable by the parse_sample_tsv function, and
+    is first generated in our pipeline by the sample-tally command, and then
+    extended by the classify command to add taxonomic sequence metadata.
+
+    If the output tabular file argument is "-", it writes to stdout (not
+    supported with gzipped mode).
+
+    With no sequence metadata this should be accepted as a TSV BIOM file.
+    """
+    if (
+        not isinstance(seqs, dict)
+        or not isinstance(seq_meta, dict)
+        or not isinstance(sample_meta, dict)
+        or not isinstance(counts, dict)
+    ):
+        raise TypeError("Expect dictionaries are arguments")
+    if output_file == "-":
+        if gzipped:
+            raise ValueError("Does not support gzipped output to stdout.")
+        out_handle = sys.stdout
+    elif gzipped:
+        out_handle = gzip.open(output_file, "wt")
+    else:
+        out_handle = open(output_file, "w")
+
+    # Write a header row for any sample metadata
+    if sample_meta:
+        sample_fields = None
+        for sample, values in sample_meta.items():
+            if sample_fields is None:
+                sample_fields = list(values.keys())
+            elif sample_fields != list(values.keys()):
+                raise ValueError(f"Inconsistent sample metadata keys in {sample}")
+    else:
+        sample_fields = []
+    if seq_meta:
+        seq_fields = None
+        for seq, values in seq_meta.items():
+            if seq_fields is None:
+                seq_fields = list(values.keys())
+            elif seq_fields != list(values.keys()):
+                raise ValueError(f"Inconsistent seq metadata keys in {seq}")
+    else:
+        seq_fields = []
+
+    for stat in sample_fields:
+        # Using "-" as missing value to match default in summary reports
+        values = [sample_meta[sample][stat] for sample in sample_meta]
+        out_handle.write(
+            "\t".join(
+                ["#" + stat]
+                + ["-" if _ is None else str(_) for _ in values]
+                + [""] * len(seq_fields)
+                + ["\n"]
+            )
+        )
+
+    samples = list(sample_meta)
+    out_handle.write(
+        "\t".join(["#Marker/MD5_abundance"] + samples + ["Sequence"] + seq_fields)
+        + "\n"
+    )
+
+    for (marker, idn), seq in seqs.items():
+        values = [counts.get((marker, idn, sample), 0) for sample in samples]
+        out_handle.write(
+            "\t".join(
+                [f"{marker}/{idn}_{sum(values)}"]
+                + [str(_) for _ in values]
+                + [seq]
+                + [str(seq_meta[marker, idn, _]) for _ in seq_fields]
+            )
+            + "\n"
+        )
+
+    if output_file != "-":
+        out_handle.close()
+
+
 def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     """Parse file of sample abundances and sequence (etc).
 
@@ -468,7 +550,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     values (i.e. the matrix elements, not the row/column totals).
 
     Columns are:
-    * Sequence label, <marker>/<identifier>, typically <marker>/<MD5>_<abundance>
+    * Sequence label, <marker>/<identifier>_<abundance>
     * Column per sample giving the sequence count
     * Sequence itself
     * Optional additional columns for sequence metadata (e.g. chimera flags)
