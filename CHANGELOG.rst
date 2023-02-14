@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.14a5 *Pending*  Record any chimera flags as optional column in ``sample-tally`` output.
 v0.14a4 2022-02-10 Note any chimeras from USEARCH or VSEARCH, not yet in main reports.
 v0.14a3 2022-02-08 Can invoke USEARCH or VSEARCH for external UNOISE read-correction.
 v0.14a2 2022-01-23 UNOISE read-correction option in ``sample-tally``, new ``denoise`` command.
