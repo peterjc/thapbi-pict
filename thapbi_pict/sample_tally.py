@@ -351,7 +351,6 @@ def main(
         f"Sample pool abundance thresholds reduced unique ASVs from {before} to "
         f"{len(new_totals)}.\n"
     )
-    del before
     counts = new_counts
     totals = new_totals
     del new_totals, new_counts
@@ -371,6 +370,19 @@ def main(
         counts = new_counts
         totals = new_totals
         del new_totals, new_counts
+
+    if chimeras:
+        # Filter the chimeras list to drop low abundance entries
+        # Would be better to call VSEARCH chimera detection here?
+        chimeras = {
+            md5seq(seq): chimeras[md5seq(seq)]
+            for seq in totals
+            if md5seq(seq) in chimeras
+        }
+        sys.stderr.write(
+            f"Have {len(chimeras)} chimeras passing the abundance thresholds.\n"
+        )
+    del before
 
     # Cap max (non-)spike values by sample specific thresholds
     # (to match historic behaviour of pipeline via prepare-reads)
@@ -469,11 +481,15 @@ def main(
             "\t".join(
                 ["#" + stat]
                 + ["-" if _ is None else str(_) for _ in stat_values]
+                + ([""] if chimeras else [])
                 + ["\n"]
             )
         )
         del stat_values
-    out_handle.write("\t".join(["#Marker/MD5_abundance"] + samples + ["Sequence\n"]))
+    fields = ["Marker/MD5_abundance"] + samples + ["Sequence"]
+    if chimeras:
+        fields += ["Chimeras"]
+    out_handle.write("#" + "\t".join(fields) + "\n")
 
     if fasta == "-":
         if gzipped:
@@ -488,7 +504,16 @@ def main(
     for count, seq in values:
         data = "\t".join(str(counts[seq, sample]) for sample in samples)
         md5 = md5seq(seq)
-        out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\n")
+        if md5 in chimeras:
+            out_handle.write(
+                f"{marker}/{md5}_{count}\t{data}\t{seq}\t{chimeras[md5]}\n"
+            )
+        elif chimeras:
+            # Empty field
+            out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\t\n")
+        else:
+            # Can omit the column
+            out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\n")
         if fasta_handle:
             # Does not export per-sample counts
             # TODO - Include the marker? Older fasta-nr command did not.
