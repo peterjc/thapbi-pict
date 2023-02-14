@@ -259,7 +259,7 @@ def main(
                 )
             # sample = file_to_sample_name(filename)
             # samples.add(sample)
-            seqs, sample_headers, counts = parse_sample_tsv(
+            seqs, _, sample_headers, counts = parse_sample_tsv(
                 filename, min_abundance=min_abundance, debug=debug
             )
             md5_warn = False
