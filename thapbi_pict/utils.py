@@ -477,6 +477,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
 
     Returns dictionaries of:
     * Sequence keyed on [<marker>, <identitifer>], string
+    * Sequence metadata keyed [<marker>, <identitifer>], dict of key:value pairs
     * Sample metadata keyed on [<sample>], dict of key:value pairs
     * Counts keyed on 3-tuple [<marker>, <identifier>, <sample>], integer
     """
@@ -484,6 +485,8 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     samples = []
     counts = {}
     seqs = {}
+    seq_meta_keys = None
+    seq_meta = {}
     seq_col = None
     with open(tabular_file) as handle:
         for line in handle:
@@ -491,6 +494,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
             if parts[0] == "#Marker/MD5_abundance":
                 seq_col = parts.index("Sequence")
                 samples = parts[1:seq_col]
+                seq_meta_keys = parts[seq_col + 1 :]
                 if debug:
                     sys.stderr.write(
                         f"DEBUG: {len(samples)} samples in {tabular_file}\n"
@@ -518,6 +522,10 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                         above_threshold = True
                 if above_threshold:
                     seqs[marker, idn] = parts[seq_col]
+                    if seq_meta_keys:
+                        seq_meta[marker, idn] = dict(
+                            zip(seq_meta_keys, parts[seq_col + 1 :])
+                        )
             else:
                 raise ValueError(
                     "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
@@ -529,7 +537,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
         name = parts[0][1:]  # Drop the leading "#"
         for sample, value in zip(samples, parts[1:seq_col]):
             sample_headers[sample][name] = value
-    return seqs, sample_headers, counts
+    return seqs, seq_meta, sample_headers, counts
 
 
 def parse_species_tsv(
