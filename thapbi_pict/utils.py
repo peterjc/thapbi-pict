@@ -468,12 +468,17 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
     values (i.e. the matrix elements, not the row/column totals).
 
     Columns are:
-    * Sequence identifier as <marker>/<MD5>_<abundance>
+    * Sequence label, <marker>/<identifier>, typically <marker>/<MD5>_<abundance>
     * Column per sample giving the sequence count
     * Sequence itself
     * Optional additional columns for sequence metadata (e.g. chimera flags)
 
     Supports optional sample metadata header too as # prefixed header lines.
+
+    Returns dictionaries of:
+    * Sequence keyed on [<marker>, <identitifer>], string
+    * Sample metadata keyed on [<sample>], dict of key:value pairs
+    * Counts keyed on 3-tuple [<marker>, <identifier>, <sample>], integer
     """
     header_lines = []
     samples = []
