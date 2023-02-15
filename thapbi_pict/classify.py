@@ -11,7 +11,6 @@ import os
 import shutil
 import sys
 import tempfile
-from collections import OrderedDict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from numpy import int8
@@ -502,7 +501,7 @@ def method_blast(
     # and they will be missing in the BLAST output.
     # Therefore must look at the FASTA input file too.
 
-    query_length = OrderedDict()
+    query_length = {}
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):
             idn = title.split(None, 1)[0]
