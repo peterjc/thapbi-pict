@@ -636,14 +636,30 @@ def parse_species_tsv(
     taxid, and genus_species.
     """
     marker = None
+    tally_mode = False
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):
-                parts = line[1:].split("\t")
+                parts = line[1:].strip("\n").split("\t")
                 if parts[0].endswith("/sequence-name") and parts[1] == "taxid":
                     marker = parts[0][:-14]
+                if (
+                    "Sequence" in parts
+                    and "taxid" in parts
+                    and "genus-species" in parts
+                ):
+                    tally_mode = (parts.index("taxid"), parts.index("genus-species"))
+                    allow_wildcard = False
                 continue
-            if line.count("\t") == 2:
+            if tally_mode:
+                parts = line.strip("\n").split("\t")
+                marker2, name = parts[0].split("/")
+                if marker is None:
+                    marker = marker2
+                elif marker != marker2:
+                    raise ValueError("Mixed markers in {tabular_file}")
+                taxid, genus_species = (parts[_] for _ in tally_mode)
+            elif line.count("\t") == 2:
                 name, taxid, genus_species = line.rstrip("\n").split("\t", 3)
             elif line.count("\t") == 3:
                 name, taxid, genus_species, _ = line.split("\t", 3)
