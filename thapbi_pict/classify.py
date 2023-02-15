@@ -21,10 +21,10 @@ from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
-from .utils import abundance_filter_fasta
 from .utils import abundance_from_read_name
 from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import parse_sample_tsv
 from .utils import run
 from .utils import species_level
 from .versions import check_rapidfuzz
@@ -166,30 +166,29 @@ def perfect_substr_in_db(session, marker_name, seq, debug=False):
     )
 
 
-def apply_method_to_file(
+def apply_method_to_seqs(
     method_fn,
-    fasta_file,
+    input_seqs,
     session,
     marker_name,
     read_report,
     min_abundance=0,
     debug=False,
 ):
-    """Call given method on each sequence in the FASTA file."""
-    with open(fasta_file) as handle:
-        for title, seq in SimpleFastaParser(handle):
-            idn = title.split(None, 1)[0]
-            abundance = abundance_from_read_name(idn)
-            if min_abundance and abundance < min_abundance:
-                continue
-            taxid, genus_species, note = method_fn(
-                session, marker_name, seq.upper(), debug=debug
-            )
-            yield idn, str(taxid), genus_species, note
+    """Call given method on each sequence in the dict.
+
+    Assumes any abundance filter has already been applied. Input is a dict of
+    identifiers mapped to upper case sequences.
+    """
+    for idn, seq in input_seqs.items():
+        taxid, genus_species, note = method_fn(
+            session, marker_name, seq.upper(), debug=debug
+        )
+        yield idn, str(taxid), genus_species, note
 
 
 def method_identity(
-    fasta_file,
+    input_seqs,
     session,
     marker_name,
     read_report,
@@ -204,9 +203,9 @@ def method_identity(
     This is a deliberately simple approach, in part for testing
     purposes. It looks for a perfect identical entry in the database.
     """
-    return apply_method_to_file(
+    return apply_method_to_seqs(
         perfect_match_in_db,
-        fasta_file,
+        input_seqs,
         session,
         marker_name,
         read_report,
@@ -216,7 +215,7 @@ def method_identity(
 
 
 def method_substr(
-    fasta_file,
+    input_seqs,
     session,
     marker_name,
     read_report,
@@ -232,9 +231,9 @@ def method_substr(
     has not been trimmed, or has been imperfectly trimmed (e.g. primer
     mismatch).
     """
-    return apply_method_to_file(
+    return apply_method_to_seqs(
         perfect_substr_in_db,
-        fasta_file,
+        input_seqs,
         session,
         marker_name,
         read_report,
@@ -310,7 +309,7 @@ def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_dist(
-    fasta_file,
+    input_seqs,
     session,
     marker_name,
     read_report,
@@ -326,24 +325,13 @@ def method_dist(
     global max_dist_genus
     assert max_dist_genus >= 1, max_dist_genus
 
-    count = 0
-    seqs = {}
-    with open(fasta_file) as handle:
-        for title, seq in SimpleFastaParser(handle):
-            idn = title.split(None, 1)[0]
-            abundance = abundance_from_read_name(idn)
-            if min_abundance and abundance < min_abundance:
-                continue
-            count += abundance
-            seqs[idn] = seq.upper()
-
-    if not seqs:
+    if not input_seqs:
         # Shortcut
         return {}
 
     # Compute all the query vs DB distances in one call
     all_dists = cdist(
-        seqs.values(),
+        input_seqs.values(),
         db_seqs,
         scorer=Levenshtein.distance,
         dtype=int8,
@@ -351,7 +339,7 @@ def method_dist(
     )
 
     results = {}
-    for (idn, seq), dists in zip(seqs.items(), all_dists):
+    for (idn, seq), dists in zip(input_seqs.items(), all_dists):
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
         if min_dist == 0:
@@ -411,7 +399,7 @@ def method_dist(
             )
         assert results[idn]
 
-    for idn in seqs:
+    for idn in input_seqs:
         taxid, genus_species, note = results[idn]
         yield idn, str(taxid), genus_species, note
 
@@ -441,7 +429,7 @@ def setup_blast(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_blast(
-    fasta_file,
+    input_seqs,
     session,
     marker_name,
     read_report,
@@ -467,16 +455,16 @@ def method_blast(
         and os.path.isfile(blast_db + ".nsq")
     ):
         sys.exit(f"ERROR: Missing generated BLAST database {blast_db}.n*\n")
-    if min_abundance:
-        old = fasta_file
-        fasta_file = os.path.join(tmp_dir, os.path.basename(old))
-        if debug:
-            sys.stderr.write(
-                f"DEBUG: Applying minimum abundance filter to {old}, "
-                f"making {fasta_file}\n"
-            )
-        abundance_filter_fasta(old, fasta_file, min_abundance)
-        del old
+
+    fasta_file = os.path.join(tmp_dir, "blast_query.fasta")
+    if debug:
+        sys.stderr.write(f"DEBUG: Writing {fasta_file}\n")
+    query_length = {}
+    with open(fasta_file, "w") as handle:
+        for idn, seq in input_seqs.items():
+            handle.write(f">{idn}\n{seq}\n")
+            query_length[idn] = len(seq)
+
     cmd = [
         "blastn",
         "-db",
@@ -599,7 +587,7 @@ method_setup = {
 
 
 def main(
-    fasta,
+    inputs,
     session,
     marker_name,
     method,
@@ -615,12 +603,12 @@ def main(
     For use in the pipeline command, returns a filename list of the TSV
     classifier output.
 
-    The FASTA files should have been prepared with the same or a lower minimum
+    The input files should have been prepared with the same or a lower minimum
     abundance - this acts as an additional filter useful if exploring the best
     threshold.
     """
     global genus_taxid
-    assert isinstance(fasta, list)
+    assert isinstance(inputs, list)
 
     if method not in method_classify_file:
         sys.exit(
@@ -702,9 +690,11 @@ def main(
     if not count:
         sys.exit(f"ERROR: No {marker_name} sequences, cannot classify anything.\n")
 
-    fasta_files = find_requested_files(fasta, ".fasta", ignore_prefixes, debug=debug)
+    input_files = find_requested_files(
+        inputs, (".fasta", ".tsv"), ignore_prefixes, debug=debug
+    )
     if debug:
-        sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
+        sys.stderr.write(f"Classifying {len(input_files)} input files\n")
 
     if out_dir and out_dir != "-" and not os.path.isdir(out_dir):
         sys.stderr.write(f"Making output directory {out_dir!r}\n")
@@ -726,12 +716,15 @@ def main(
     seq_count = 0
     match_count = 0
     skipped_samples = set()
-    for filename in fasta_files:
+    for filename in input_files:
         sys.stdout.flush()
         sys.stderr.flush()
 
         folder, stem = os.path.split(filename)
-        stem = os.path.splitext(stem)[0]
+        if stem.endswith(".tally.tsv"):
+            stem = stem[:-10]
+        else:
+            stem = os.path.splitext(stem)[0]
         if not out_dir:
             # Use input folder
             output_name = os.path.join(folder, f"{stem}.{method}.tsv")
@@ -752,7 +745,36 @@ def main(
             setup_fn(session, marker_name, shared_tmp, debug, cpu)
             setup_fn = None
 
-        sys.stderr.write(f"Running {method} classifier on {filename}\n")
+        if filename.endswith(".fasta"):
+            input_seqs = {}
+            with open(filename) as handle:
+                for title, seq in SimpleFastaParser(handle):
+                    idn = title.split(None, 1)[0]
+                    abundance = abundance_from_read_name(idn)
+                    if min_abundance and abundance < min_abundance:
+                        continue
+                    input_seqs[idn] = seq.upper()
+        elif filename.endswith(".tsv"):
+            # Refactor to match the FASTA naming
+            seqs, _, _, counts = parse_sample_tsv(filename, min_abundance)
+            md5_count = {}
+            input_seqs = {}
+            for (marker, md5, _), a in counts.items():
+                if marker != marker_name:
+                    sys.exit(
+                        f"ERROR: Found marker {marker_name} in {filename}, not {marker}"
+                    )
+                md5_count[md5] = md5_count.get(md5, 0) + a
+            for (marker, md5), seq in seqs.items():
+                assert marker == marker_name
+                input_seqs[f"{md5}_{md5_count[md5]}"] = seq.upper()
+            del seqs, counts, md5_count
+        else:
+            sys.exit(f"ERROR: Unexpected extension in classifier input: {filename}")
+
+        sys.stderr.write(
+            f"Running {method} classifier on {filename}, {len(input_seqs)} sequences\n"
+        )
         if debug:
             sys.stderr.write(f"DEBUG: Output {output_name}\n")
 
@@ -781,7 +803,7 @@ def main(
             pred_handle.write(f"#{marker_name}/sequence-name\ttaxid\tgenus-species\n")
         assert os.path.isdir(tmp), tmp
         for idn, taxid, genus_species, note in classify_file_fn(
-            filename,
+            input_seqs,
             session,
             marker_name,
             pred_handle,
@@ -820,7 +842,7 @@ def main(
 
     sys.stderr.write(
         f"{method} classifier assigned species/genus to {match_count}"
-        f" of {seq_count} unique sequences from {len(fasta_files)} files\n"
+        f" of {seq_count} unique sequences from {len(input_files)} files\n"
     )
 
     sys.stdout.flush()
