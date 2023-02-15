@@ -512,7 +512,6 @@ def pipeline(args=None):
             sys.stderr.write("\n")
             sys.stderr.write(f"Processesing {marker}\n")
             sys.stderr.write("\n")
-        all_fasta = f"{stem}.all_reads.fasta"
         tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
             inputs=fasta_files,
@@ -530,7 +529,6 @@ def pipeline(args=None):
             session=session,
             marker=marker,
             spike_genus=args.synthetic,
-            fasta=all_fasta,
             min_abundance=args.abundance,
             min_abundance_fraction=args.abundance_fraction,
             # Historical behaviour, discards rare control-only ASVs:

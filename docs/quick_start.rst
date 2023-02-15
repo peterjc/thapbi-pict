@@ -80,8 +80,7 @@ with the prefix ``summary/thapbi-pict.*`` given as follows:
 .. code:: console
 
     $ ls -1 summary/thapbi-pict.*
-    summary/thapbi-pict.ITS1.all_reads.fasta
-    summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    summary/thapbi-pict.ITS1.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.xlsx
     summary/thapbi-pict.ITS1.samples.onebp.tsv
@@ -120,23 +119,21 @@ trimming. Many third-party tools will accept these files as FASTA without
 complaint, but some tools require the header be removed.
 
 The second stage of the pipeline can be run separately as the ``thapbi_pict
-sample-tally`` command. This produces a pooled non-redundant FASTA file with
-all the observed marker sequences in it (and the total read abundance). This
-is file ``summary/thapbi-pict.ITS1.all_reads.fasta`` in the above example.
+sample-tally`` command. This produces a sequence versus sample tally table as
+a tab-separated table (TSV file), with the sequences as the final column. This
+is file ``summary/thapbi-pict.ITS1.tally.tsv`` in the above example.
 
-It also produces a sequence versus sample tally table as a tab-separated
-table (TSV file), with the sequences as the final column. This is file
-``summary/thapbi-pict.ITS1.tally.tsv`` in the above example.
+This step can optionally produce a pooled non-redundant FASTA file with all
+the observed marker sequences in it (and the total read abundance).
 
 Intermediate TSV files
 ----------------------
 
 The third stage of the pipeline can be run separately as the ``thapbi_pict
 classify`` command. Here species predictions are made for each sequence in the
-prepared non-redundant FASTA file, generating a tab separated variable (TSV)
-file where the first column is the sequence name in ``<checksum>_<abundance>``
-format. This is file ``summary/thapbi-pict.ITS1.all_reads.onebp.tsv`` in the
-above example.
+prepared sequence vs sample tally file, generating a TSV file where the first
+column is the sequence name in ``<checksum>_<abundance>`` format. This is file
+``summary/thapbi-pict.ITS1.onebp.tsv`` in the above example.
 
 Sample Reports
 --------------

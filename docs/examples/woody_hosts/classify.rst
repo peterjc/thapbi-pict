@@ -9,12 +9,12 @@ Running thapbi-pict-classify
    If you don't have the FASTQ files, just the FASTA files, start from here.
 
 The second stage of the pipeline is to merge all the sample specific FASTA
-files into one non-redundant FASTA file, and then classify all the unique
-sequences in it. These steps can be run separately:
+files into one non-redundant sequence vs sample TSV file, ready to classify all
+the unique sequences in it. These steps can be run separately:
 
 .. code:: console
 
-    $ thapbi_pict fasta-nr -h
+    $ thapbi_pict sample-tally -h
     ...
     $ thapbi_pict classify -h
     ...
@@ -25,29 +25,29 @@ we will stick with the defaults and tell it to look for FASTA files in the
 
 .. code:: console
 
-    $ thapbi_pict fasta-nr -i intermediate/ -o summary/thapbi-pict.ITS1.all_reads.fasta
+    $ thapbi_pict sample-tally -i intermediate/ITS1/*.fasta -o summary/thapbi-pict.ITS1.tally.tsv
     ...
-    $ thapbi_pict classify -i summary/thapbi-pict.ITS1.all_reads.fasta
+    $ thapbi_pict classify -i summary/thapbi-pict.ITS1.tally.tsv
     ...
 
 Here we have not set the output folder with ``-o`` or ``--output``, which
-means the classify step will default to writing the TSV output files next to
-the input FASTA file. There should now be a new FASTA and TSV file:
+means the classify step will default to writing the classifier TSV output file
+next to the input tally TSV file. There should now be two new files:
 
 .. code:: console
 
-    $ ls -1 summary/thapbi-pict.ITS1.all_reads.*
-    summary/thapbi-pict.ITS1.all_reads.fasta
-    summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    $ ls -1 summary/thapbi-pict.ITS1.*.tsv
+    summary/thapbi-pict.ITS1.onebp.tsv
+    summary/thapbi-pict.ITS1.tally.tsv
 
 Intermediate TSV files
 ----------------------
 
-For each input FASTA file ``<name>.fasta`` a plain text tab separated variable
-(TSV) file is generated named ``<name>.<method>.tsv`` where the default method
-is ``onebp`` (which looks for perfect matches or up to one base pair
-different). The first line is a header comment line (starting with ``#``)
-labelling the columns, which are:
+For each input tally TSV file ``<name>.tally.tsv`` another plain text TSV file
+is generated named ``<name>.<method>.tsv`` where the default method is
+``onebp`` (which looks for perfect matches or up to one base pair different).
+The first line is a header comment line (starting with ``#``) labelling the
+columns, which are:
 
 * Unique sequence name in ``<checksum>_<abundance>`` format.
 * NCBI taxid of any predictions (semi-colon separated, same order as species)
@@ -58,7 +58,7 @@ These files are not really intended for human use, but are readable:
 
 .. code:: console
 
-    $ head summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    $ head summary/thapbi-pict.ITS1.onebp.tsv
     <SEE TABLE BELOW>
 
 Viewing it like this is not ideal, although there are command line tools which
@@ -92,7 +92,7 @@ had matches to *Phytophthora rubi* using ``grep`` as follows:
 
 .. code:: console
 
-    $ grep "Phytophthora rubi" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    $ grep "Phytophthora rubi" summary/thapbi-pict.ITS1.onebp.tsv
     d8613e80b8803b13f7ea5d097f8fe46f_899  129364  Phytophthora rubi
     $ grep d8613e80b8803b13f7ea5d097f8fe46f intermediate/ITS1/*.fasta
     intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_279

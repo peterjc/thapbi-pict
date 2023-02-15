@@ -82,7 +82,7 @@ for MARKER in NF1-18Sr2b SSUF04-SSUR22 D3Af-D3Br JB3-JB5GED; do
     # Note expected/$MARKER/ is a subset of the samples!
     thapbi_pict assess -d references/pooled.sqlite --marker $MARKER \
                 -i expected/$MARKER/ summary/$MARKER.tally.tsv \
-                summary/$MARKER.all_reads.onebp.tsv \
+                summary/$MARKER.onebp.tsv \
                 -o summary/$MARKER.assess.onebp.tsv
 done
 

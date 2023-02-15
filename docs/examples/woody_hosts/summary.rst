@@ -19,7 +19,7 @@ To mimic what the pipeline command would do, run the following:
 .. code:: console
 
     $ thapbi_pict summary -i intermediate/ \
-      summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      summary/thapbi-pict.ITS1.onebp.tsv \
       -o summary/thapbi-pict.ITS1
     ...
 
@@ -35,7 +35,7 @@ numbers):
 .. code:: console
 
     $ thapbi_pict summary -i intermediate/ \
-      summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+      summary/thapbi-pict.ITS1.onebp.tsv \
       -o summary/with-metadata.ITS1 \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...

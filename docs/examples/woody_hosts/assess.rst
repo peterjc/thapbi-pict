@@ -132,7 +132,7 @@ counts for that sequence:
 
 .. code:: console
 
-    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.onebp.tsv
     29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
     $ grep -E "(Sequence|29de890989becddc5e0b10ecbbc11b1a)" \
       summary/thapbi-pict.ITS1.tally.tsv | cut -f 2-5
@@ -187,7 +187,7 @@ the first five columns from the 15 species mix:
 
 .. code:: console
 
-    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
       | cut -f 1-5
     Assessed onebp vs known in 1 files (244 species)
@@ -216,7 +216,7 @@ More usually, you would output to a named file, and look at that:
 
 .. code:: console
 
-    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
       -o DNA15MIX.assess.tsv
     Assessed onebp vs known in 1 files (244 species)
@@ -275,7 +275,7 @@ Doing that for one of the 10 species mixtures:
 
 .. code:: console
 
-    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       summary/thapbi-pict.ITS1.tally.tsv expected/DNA10MIX_undiluted.known.tsv \
       -o DNA10MIX.assess.tsv
     Assessed onebp vs known in 1 files (244 species)
@@ -315,7 +315,7 @@ giving the combined intermediate filenames, and *all* the expected files:
 
 .. code:: console
 
-    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       summary/thapbi-pict.ITS1.tally.tsv expected/ -o thabpi-pict.ITS1.assess.tsv
     Assessed onebp vs known in 4 files (244 species)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
@@ -375,15 +375,15 @@ reports:
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
     $ ls -1 summary/with-metadata.*
-    summary/with-metadata.ITS1.all_reads.fasta
-    summary/with-metadata.ITS1.all_reads.onebp.tsv
     summary/with-metadata.ITS1.assess.confusion.onebp.tsv
     summary/with-metadata.ITS1.assess.onebp.tsv
     summary/with-metadata.ITS1.assess.tally.onebp.tsv
+    summary/with-metadata.ITS1.onebp.tsv
     summary/with-metadata.ITS1.reads.onebp.tsv
     summary/with-metadata.ITS1.reads.onebp.xlsx
     summary/with-metadata.ITS1.samples.onebp.tsv
     summary/with-metadata.ITS1.samples.onebp.xlsx
+    summary/with-metadata.ITS1.tally.tsv
     $ diff summary/with-metadata.ITS1.assess.onebp.tsv \
       thabpi-pict.ITS1.assess.tsv
 
@@ -415,7 +415,7 @@ to make direct comparison more straight forward:
 
 .. code:: console
 
-    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.all_reads.onebp.tsv \
+    $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       summary/thapbi-pict.ITS1.tally.tsv expected/DNA15MIX.known.tsv \
       expected/DNA10MIX_undiluted.known.tsv | head -n 2 | cut -f 1-5,9,11
     Assessed onebp vs known in 2 files (244 species)

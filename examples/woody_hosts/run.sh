@@ -40,7 +40,7 @@ for A in 2 10 20 30 40 50 60 70 80 90 100; do
     # Name files explicitly to avoid warnings about unused entries
     thapbi_pict assess -i \
             summary/mocks_a2.ITS1.tally.tsv \
-            summary/mocks_a2.ITS1.all_reads.onebp.tsv \
+            summary/mocks_a2.ITS1.onebp.tsv \
             expected/DNA15MIX.known.tsv \
             expected/DNA10MIX_undiluted.known.tsv \
             -a $A | grep OVERALL | sed "s/OVERALL/A=$A/g" \
