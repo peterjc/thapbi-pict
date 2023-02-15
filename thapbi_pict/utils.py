@@ -543,7 +543,7 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
         out_handle.close()
 
 
-def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
+def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=True):
     """Parse file of sample abundances and sequence (etc).
 
     Optional argument min_abundance is applied to the per sequence per sample
@@ -603,7 +603,10 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False):
                         counts[marker, idn, sample] = value
                         above_threshold = True
                 if above_threshold:
-                    seqs[marker, idn] = parts[seq_col]
+                    if force_upper:
+                        seqs[marker, idn] = parts[seq_col].upper()
+                    else:
+                        seqs[marker, idn] = parts[seq_col]
                     if seq_meta_keys:
                         seq_meta[marker, idn] = dict(
                             zip(seq_meta_keys, parts[seq_col + 1 :])
