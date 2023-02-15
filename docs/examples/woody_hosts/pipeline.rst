@@ -21,8 +21,7 @@ command as follows, and should get multiple output report files:
       -o summary/thapbi-pict
     ...
     $ ls -1 summary/thapbi-pict.*
-    summary/thapbi-pict.ITS1.all_reads.fasta
-    summary/thapbi-pict.ITS1.all_reads.onebp.tsv
+    summary/thapbi-pict.ITS1.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.xlsx
     summary/thapbi-pict.ITS1.samples.onebp.tsv
@@ -61,8 +60,7 @@ against any expected sample species classifications:
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
     $ ls -1 summary/with-metadata.*
-    summary/with-metadata.ITS1.all_reads.fasta
-    summary/with-metadata.ITS1.all_reads.onebp.tsv
+    summary/with-metadata.ITS1.onebp.tsv
     summary/with-metadata.ITS1.assess.confusion.onebp.tsv
     summary/with-metadata.ITS1.assess.onebp.tsv
     summary/with-metadata.ITS1.assess.tally.onebp.tsv

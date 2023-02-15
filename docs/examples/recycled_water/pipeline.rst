@@ -22,7 +22,7 @@ Compared to the original worked example, we must specify our custom database
     Wrote summary/recycled-water-custom.ITS1-long.reads.onebp.*
     ...
     $ ls -1 summary/recycled-water-custom.*.onebp.*
-    summary/recycled-water-custom.ITS1-long.all_reads.onebp.tsv
+    summary/recycled-water-custom.ITS1-long.onebp.tsv
     summary/recycled-water-custom.ITS1-long.reads.onebp.tsv
     summary/recycled-water-custom.ITS1-long.reads.onebp.xlsx
     summary/recycled-water-custom.ITS1-long.samples.onebp.tsv
@@ -56,7 +56,7 @@ more matches:
     Wrote summary/recycled-water-custom.ITS1-long.reads.blast.*
     ...
     $ ls -1 summary/recycled-water-custom.*.blast.*
-    summary/recycled-water-custom.ITS1-long.all_reads.blast.tsv
+    summary/recycled-water-custom.ITS1-long.blast.tsv
     summary/recycled-water-custom.ITS1-long.reads.blast.tsv
     summary/recycled-water-custom.ITS1-long.reads.blast.xlsx
     summary/recycled-water-custom.ITS1-long.samples.blast.tsv

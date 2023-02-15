@@ -64,8 +64,6 @@ hundred unique ITS2 sequences:
 
 .. code:: console
 
-    $ grep -c "^>" summary/defaults.ITS2.all_reads.fasta
-    360
     $ grep -c "^ITS2" summary/defaults.ITS2.tally.tsv
     360
     $ grep -c "^ITS2" summary/defaults.ITS2.reads.1s5g.tsv
@@ -131,8 +129,6 @@ report with metadata, we have nearly 200 thousand ITS2 sequences:
 
 .. code:: console
 
-    $ grep -c "^>" summary/a2.ITS2.all_reads.fasta
-    196480
     $ grep -c "^ITS2" summary/a2.ITS2.tally.tsv
     196480
     $ grep -c "^ITS2" summary/a2.ITS2.reads.onebp.tsv
@@ -198,8 +194,6 @@ allowing use of a slower but more lenient classifier as well:
 
 .. code:: console
 
-    $ grep -c "^>" summary/ctrl.ITS2.all_reads.fasta
-    3097
     $ grep -c "^ITS2" summary/ctrl.ITS2.tally.tsv
     3097
     $ grep -c "^ITS2" summary/ctrl.ITS2.reads.1s5g.tsv
@@ -328,8 +322,6 @@ unique read count from over 3 thousand to just over 700:
 
 .. code:: console
 
-    $ grep -c "^>" summary/ctrl_denoise.ITS2.all_reads.fasta
-    704
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.tally.tsv
     704
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.reads.1s5g.tsv

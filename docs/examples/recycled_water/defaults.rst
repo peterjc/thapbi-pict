@@ -29,8 +29,7 @@ as follows, and you should get the listed output report files:
     Wrote summary/recycled-water-defaults.ITS1.reads.onebp.*
     ...
     $ ls -1 summary/recycled-water-defaults.*
-    summary/recycled-water-defaults.ITS1.all_reads.fasta
-    summary/recycled-water-defaults.ITS1.all_reads.onebp.tsv
+    summary/recycled-water-defaults.ITS1.onebp.tsv
     summary/recycled-water-defaults.ITS1.reads.onebp.tsv
     summary/recycled-water-defaults.ITS1.reads.onebp.xlsx
     summary/recycled-water-defaults.ITS1.samples.onebp.tsv
