@@ -22,8 +22,12 @@ from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
+from .utils import export_sample_tsv
+from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import load_fasta_header
+from .utils import md5seq
 from .utils import parse_sample_tsv
 from .utils import run
 from .utils import species_level
@@ -739,29 +743,62 @@ def main(
             setup_fn = None
 
         if filename.endswith(".fasta"):
+            sample = file_to_sample_name(filename)
+            # Populate as if this was a single sample tally TSV input:
             input_seqs = {}
+            seq_meta = {}
+            md5_count = {}
+            tally_counts = {}
+            # TODO - avoid repeated definition here, in summary code, and sample-tally:
+            stats_fields = (
+                "Raw FASTQ",
+                "Flash",
+                "Cutadapt",
+                "Threshold pool",
+                "Threshold",
+                "Control",
+                "Max non-spike",
+                "Max spike-in",
+                "Singletons",
+            )
+            header = load_fasta_header(filename)
+            sample_meta = {
+                sample: {
+                    key: header[key.lower().replace(" ", "_")]
+                    for key in stats_fields
+                    if key.lower().replace(" ", "_") in header
+                }
+            }
             with open(filename) as handle:
                 for title, seq in SimpleFastaParser(handle):
-                    idn = title.split(None, 1)[0]
-                    abundance = abundance_from_read_name(idn)
+                    abundance = abundance_from_read_name(title.split(None, 1)[0])
                     if min_abundance and abundance < min_abundance:
                         continue
-                    input_seqs[idn] = seq.upper()
+                    seq = seq.upper()
+                    md5 = md5seq(seq)
+                    md5_count[md5] = abundance
+                    input_seqs[f"{md5}_{abundance}"] = seq
+                    tally_counts[marker_name, md5, sample] = abundance
+            del sample
         elif filename.endswith(".tsv"):
             # Refactor to match the FASTA naming
-            seqs, _, _, counts = parse_sample_tsv(filename, min_abundance)
+            seqs, seq_meta, sample_meta, tally_counts = parse_sample_tsv(
+                filename, min_abundance
+            )
             md5_count = {}
             input_seqs = {}
-            for (marker, md5, _), a in counts.items():
+            for (marker, md5, _), a in tally_counts.items():
                 if marker != marker_name:
                     sys.exit(
                         f"ERROR: Found marker {marker_name} in {filename}, not {marker}"
                     )
                 md5_count[md5] = md5_count.get(md5, 0) + a
+            # Drop the marker from the key, use md5_abundance
             for (marker, md5), seq in seqs.items():
                 assert marker == marker_name
                 input_seqs[f"{md5}_{md5_count[md5]}"] = seq.upper()
-            del seqs, counts, md5_count
+            del seqs
+            assert sample_meta
         else:
             sys.exit(f"ERROR: Unexpected extension in classifier input: {filename}")
 
@@ -779,23 +816,9 @@ def main(
 
         if debug:
             sys.stderr.write(f"DEBUG: Temp folder of {stem} is {tmp}\n")
-        # Using same file names, but in tmp folder:
-        tmp_pred = os.path.join(tmp, f"{stem}.{method}.tsv")
-        # Run the classifier and write the sequence report:
-        if output_name is None:
-            pred_handle = sys.stdout
-        else:
-            pred_handle = open(tmp_pred, "w")
 
-        # Could write one column per db_sp_list entry, but would be very sparse.
-        if debug:
-            pred_handle.write(
-                f"#{marker_name}/sequence-name\ttaxid\tgenus-species\tnote\n"
-            )
-        else:
-            pred_handle.write(f"#{marker_name}/sequence-name\ttaxid\tgenus-species\n")
-        assert os.path.isdir(tmp), tmp
-        for idn, taxid, genus_species, note in classify_file_fn(
+        # Add the predictions to the seq_meta dict
+        for idn, taxid, genus_species, _ in classify_file_fn(
             input_seqs,
             session,
             marker_name,
@@ -805,16 +828,34 @@ def main(
             debug=debug,
             cpu=cpu,
         ):
-            if debug:
-                pred_handle.write(f"{idn}\t{str(taxid)}\t{genus_species}\t{note}\n")
+            md5 = md5seq(input_seqs[idn])  # convert to md5
+            if (marker_name, md5) in seq_meta:
+                seq_meta[marker_name, md5]["taxid"] = taxid
+                seq_meta[marker_name, md5]["genus-species"] = genus_species
             else:
-                pred_handle.write(f"{idn}\t{str(taxid)}\t{genus_species}\n")
+                seq_meta[marker_name, md5] = {
+                    "taxid": taxid,
+                    "genus-species": genus_species,
+                }
             seq_count += 1
             if genus_species:
                 match_count += 1
 
+        # Using same file names, but in tmp folder:
+        tmp_pred = (
+            "-" if output_name is None else os.path.join(tmp, f"{stem}.{method}.tsv")
+        )
+
+        export_sample_tsv(
+            tmp_pred,
+            # Re-insert the marker into the sequence dict keys, and use md5:
+            {(marker_name, md5seq(seq)): seq for seq in input_seqs.values()},
+            seq_meta,
+            sample_meta,
+            tally_counts,
+        )
+
         if output_name is not None:
-            pred_handle.close()
             # Move our temp file into position...
             shutil.move(tmp_pred, output_name)
 
