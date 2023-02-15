@@ -503,11 +503,11 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
         sample_fields = []
     if seq_meta:
         seq_fields = None
-        for seq, values in seq_meta.items():
+        for key, values in seq_meta.items():
             if seq_fields is None:
                 seq_fields = list(values.keys())
             elif seq_fields != list(values.keys()):
-                raise ValueError(f"Inconsistent seq metadata keys in {seq}")
+                raise ValueError(f"Inconsistent seq metadata keys in {key}")
     else:
         seq_fields = []
 
@@ -536,7 +536,7 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
                 [f"{marker}/{idn}_{sum(values)}"]
                 + [str(_) for _ in values]
                 + [seq]
-                + [str(seq_meta.get((marker, idn), {}).get(_, "")) for _ in seq_fields]
+                + [str(seq_meta[marker, idn][_]) for _ in seq_fields]
             )
             + "\n"
         )
