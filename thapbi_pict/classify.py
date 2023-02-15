@@ -776,6 +776,14 @@ def main(
                         continue
                     seq = seq.upper()
                     md5 = md5seq(seq)
+                    if md5 in md5_count:
+                        # Remove old entry
+                        del input_seqs[f"{md5}_{md5_count[md5]}"]
+                        # Merge counts
+                        abundance += md5_count[md5]
+                        sys.stderr.write(
+                            f"WARNING: Duplicate seq from {title} (merging abundance)\n"
+                        )
                     md5_count[md5] = abundance
                     input_seqs[f"{md5}_{abundance}"] = seq
                     tally_counts[marker_name, md5, sample] = abundance
