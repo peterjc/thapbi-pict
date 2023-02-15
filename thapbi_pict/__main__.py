@@ -324,7 +324,7 @@ def classify(args=None):
     session = Session()
 
     return_code = main(
-        fasta=args.input,
+        inputs=args.input,
         session=session,
         marker_name=args.marker,
         method=args.method,
@@ -546,7 +546,7 @@ def pipeline(args=None):
         )
         all_tally_files.append(tally_seqs_file)
         classified_files = classify(
-            fasta=[all_fasta],
+            inputs=[tally_seqs_file],
             session=session,
             marker_name=marker,
             method=args.method,
@@ -715,6 +715,13 @@ ARG_INPUT_FASTA = dict(  # noqa: C408
     nargs="+",
     help="One or more prepared FASTA filenames or folder names "
     "(containing files named *.fasta).",
+)
+ARG_INPUT_FASTA_OR_TSV = dict(  # noqa: C408
+    type=str,
+    required=True,
+    nargs="+",
+    help="One or more prepared FASTA or sample tally TSV filenames, or folder "
+    "names (containing files named *.fasta or *.tsv).",
 )
 
 # "--ignore-prefixes",
@@ -1643,7 +1650,7 @@ def main(args=None):
         "named XXX.method.tsv in the specified output directory (default "
         "input dir).",
     )
-    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
+    subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA_OR_TSV)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
         "-a",
