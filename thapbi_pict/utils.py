@@ -534,7 +534,7 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
                 [f"{marker}/{idn}_{sum(values)}"]
                 + [str(_) for _ in values]
                 + [seq]
-                + [str(seq_meta[marker, idn, _]) for _ in seq_fields]
+                + [str(seq_meta.get((marker, idn), {}).get(_, "")) for _ in seq_fields]
             )
             + "\n"
         )
