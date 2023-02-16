@@ -69,7 +69,7 @@ for M in "${methods[@]}"; do
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
     # Directly from FASTA, no metadata for: Control, Max non-spike, Max spike-in
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
-    diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
+    diff $TMP/P-infestans-T30-4.$M.tsv <(grep -v -E "#(Control|Max non-spike|Max spike-in)" tests/classify/P-infestans-T30-4.$M.tsv)
 done
 
 rm -rf $TMP/hmm_trim.*.tsv
