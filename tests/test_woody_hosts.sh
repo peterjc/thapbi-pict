@@ -69,28 +69,32 @@ thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
 echo diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 
-echo "======================================="
-echo "Running woody hosts fasta-nr & classify"
-echo "======================================="
+echo "============================"
+echo "Running woody hosts fasta-nr"
+echo "============================"
 thapbi_pict fasta-nr -i $TMP/intermediate/ITS1/*.fasta -o $TMP/woody_hosts.all_reads.fasta
 echo diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
 diff $TMP/woody_hosts.all_reads.fasta tests/woody_hosts/all.fasta
+
+echo "============================"
+echo "Running woody hosts classify"
+echo "============================"
 for M in onebp identity; do
-    thapbi_pict classify -i $TMP/woody_hosts.all_reads.fasta -m $M
-    echo diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
-    diff $TMP/woody_hosts.all_reads.$M.tsv tests/woody_hosts/all.$M.tsv
+    thapbi_pict classify -i $TMP/woody_hosts.tally.tsv -m $M
+    echo diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
+    diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
 done
 
 echo "==========================="
 echo "Running woody hosts summary"
 echo "==========================="
-time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv \
+time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.onebp.tsv \
     -o $TMP/summary/no-metadata
 ls $TMP/summary/no-metadata.*
 if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
 # Expect 99 + total line
 
-time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv \
+time thapbi_pict summary -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.onebp.tsv \
     -o $TMP/summary/with-metadata \
     -t examples/woody_hosts/metadata.tsv \
     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
@@ -106,14 +110,14 @@ if [ `grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; the
 echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
-time thapbi_pict edit-graph -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
+time thapbi_pict edit-graph -i $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
 if [ `grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 99 ]; then echo "Wrong node count"; false; fi
 if [ `grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then echo "Wrong edge count"; false; fi
 
 echo "=========================="
 echo "Running woody hosts assess"
 echo "=========================="
-time thapbi_pict assess -i $TMP/positive_controls/ $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.all_reads.onebp.tsv -o $TMP/DNA_MIXES.assess.tsv
+time thapbi_pict assess -i $TMP/positive_controls/ $TMP/woody_hosts.tally.tsv $TMP/woody_hosts.onebp.tsv -o $TMP/DNA_MIXES.assess.tsv
 echo diff $TMP/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 diff $TMP/DNA_MIXES.assess.tsv tests/woody_hosts/DNA_MIXES.assess.tsv
 
