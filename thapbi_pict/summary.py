@@ -707,32 +707,18 @@ def main(
     meta_default = tuple([MISSING_META] * len(meta_names))
     markers = set()
 
-    samples_tsv = find_requested_files(inputs, ".tally.tsv", ignore_prefixes, debug)
-    if not samples_tsv:
-        sys.exit("ERROR: No sample-tally files matching *.tally.tsv")
-    stems = tuple(
-        {os.path.basename(filename).rsplit(".", 2)[0] for filename in samples_tsv}
-    )
     classifications_tsv = [
-        filename
-        for filename in find_requested_files(
-            inputs, f".{method}.tsv", ignore_prefixes, debug
-        )
-        if os.path.basename(filename).startswith(stems)
+        _
+        for _ in find_requested_files(inputs, f".{method}.tsv", ignore_prefixes, debug)
+        # These are what we'll call the output files:
+        if not _.endswith((f".reads.{method}.tsv", f".samples.{method}.tsv"))
     ]
-    del stems
-
-    # TODO - Drop this restriction? e.g. concatenating inputs
-    if len(samples_tsv) != len(classifications_tsv):
-        sys.exit(
-            "ERROR: Sample and classification files not paired "
-            f"{samples_tsv} vs {classifications_tsv} from {inputs}"
-        )
+    if not classifications_tsv:
+        sys.exit(f"ERROR: No classification files matching *.{method}.tsv")
 
     if debug:
         sys.stderr.write(
             f"DEBUG: Have metadata for {len(stem_to_meta)} samples, found "
-            f"{len(samples_tsv)} sample tally files and "
             f"{len(classifications_tsv)} classifier files\n"
         )
 
@@ -787,10 +773,10 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: Loading samples sequences and abundances from {samples_tsv}\n"
+            f"DEBUG: Loading samples sequences etc from {classifications_tsv}\n"
         )
 
-    for filename in samples_tsv:
+    for filename in classifications_tsv:
         seqs, _, sample_headers, counts = parse_sample_tsv(
             filename, min_abundance=min_abundance, debug=debug
         )
@@ -890,7 +876,9 @@ def main(
     if require_metadata:
         assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
     else:
-        assert set(sample_stats) == set(sample_species_counts)
+        assert set(sample_stats) == set(
+            sample_species_counts
+        ), f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
         assert len(sample_stats) <= len(stem_to_meta)
 
     sample_summary(
