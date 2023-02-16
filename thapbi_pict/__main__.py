@@ -494,7 +494,6 @@ def pipeline(args=None):
         debug=args.verbose,
     )
 
-    all_tally_files = []
     all_classified_files = []
     for marker in markers:
         if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
@@ -542,7 +541,6 @@ def pipeline(args=None):
             debug=args.verbose,
             cpu=check_cpu(args.cpu),
         )
-        all_tally_files.append(tally_seqs_file)
         classified_files = classify(
             inputs=[tally_seqs_file],
             session=session,
@@ -617,7 +615,7 @@ def pipeline(args=None):
             # Have a filename stem (possibly with a directory)
             stem = f"{args.output}.pooled"
         return_code = summary(
-            inputs=all_tally_files + all_classified_files,
+            inputs=all_classified_files,
             report_stem=stem,
             method=args.method,
             min_abundance=args.abundance,
@@ -640,7 +638,7 @@ def pipeline(args=None):
         if known_files:
             sys.stderr.write("Assessing pooled classification...\n")
             return_code = assess(
-                inputs=known_files + all_tally_files + all_classified_files,
+                inputs=known_files + all_classified_files,
                 known="known",  # =args.known,
                 db_url=db,
                 marker=None,  # all of them!
