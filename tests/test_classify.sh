@@ -62,7 +62,13 @@ methods=(identity onebp substr 1s3g)
 if [ -x "$(command -v blastn)" ]; then methods+=(blast); fi
 for M in "${methods[@]}"; do
     echo "Checking single isolate control with $M"
+    # Directly from FASTA
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
+    diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
+    # Now via tally TSV
+    thapbi_pict sample-tally -i tests/classify/P-infestans-T30-4.fasta -o $TMP/P-infestans-T30-4.tally.tsv
+    diff $TMP/P-infestans-T30-4.tally.tsv tests/classify/P-infestans-T30-4.tally.tsv
+    thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.tally.tsv -o $TMP/ -m $M
     diff $TMP/P-infestans-T30-4.$M.tsv tests/classify/P-infestans-T30-4.$M.tsv
 done
 
