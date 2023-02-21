@@ -24,8 +24,6 @@ from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import md5seq
 from .utils import parse_sample_tsv
-from .utils import parse_species_tsv
-from .utils import split_read_name_abundance
 
 MISSING_META = ""
 MISSING_DATA = "-"
@@ -728,42 +726,21 @@ def main(
     marker_md5_to_seq = {}
     sample_species_counts = {}  # 2nd key is sp list with semi-colons
 
-    if debug:
-        sys.stderr.write(
-            f"DEBUG: Loading sequence classifications from {classifications_tsv}\n"
-        )
-
-    for filename in classifications_tsv:
-        for marker, name, _taxid, sp_list in parse_species_tsv(filename, min_abundance):
-            assert marker, filename
-            markers.add(marker)
-            md5, abundance = split_read_name_abundance(name)
-            if min_abundance > 1 and abundance < min_abundance:
-                continue
-            if (marker, md5) in marker_md5_species:
-                marker_md5_species[marker, md5].update(sp_list.split(";"))
-            else:
-                marker_md5_species[marker, md5] = set(sp_list.split(";"))
-
-    if len(markers) == 1:
-        # Not loading the post-abundance-threshold count,
-        # Count should match the Seq-count column, but will not if running
-        # report with higher abundance threshold - simpler to exclude.
-        # For the threshold we have to update this if the report is stricter...
-        stats_fields = (
-            "Raw FASTQ",
-            "Flash",
-            "Cutadapt",
-            "Threshold pool",
-            "Threshold",
-            "Control",
-            "Max non-spike",
-            "Max spike-in",
-            "Singletons",
-        )
-    else:
-        # TODO: How best to show the cutadapt and threshold values (per marker)?
-        stats_fields = ("Raw FASTQ", "Flash", "Control")
+    # Not loading the post-abundance-threshold count,
+    # Count should match the Seq-count column, but will not if running
+    # report with higher abundance threshold - simpler to exclude.
+    # For the threshold we have to update this if the report is stricter...
+    stats_fields = (
+        "Raw FASTQ",
+        "Flash",
+        "Cutadapt",
+        "Threshold pool",
+        "Threshold",
+        "Control",
+        "Max non-spike",
+        "Max spike-in",
+        "Singletons",
+    )
     blank_stats = [-1] * len(stats_fields)
     sample_stats = {}
 
@@ -777,7 +754,7 @@ def main(
         )
 
     for filename in classifications_tsv:
-        seqs, _, sample_headers, counts = parse_sample_tsv(
+        seqs, seq_meta, sample_headers, counts = parse_sample_tsv(
             filename, min_abundance=min_abundance, debug=debug
         )
         for sample, fasta_header in sample_headers.items():
@@ -813,11 +790,12 @@ def main(
             del values
 
         for (marker, md5), seq in seqs.items():
-            assert (
-                marker in markers
-            ), f"Unexpected marker {marker} in {filename}, expected {markers}"
+            markers.add(marker)
             assert md5 == md5seq(seq), (marker, md5, filename)
             marker_md5_to_seq[marker, md5] = seq
+            marker_md5_species[marker, md5] = set(
+                seq_meta[marker, md5]["genus-species"].split(";")
+            )
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
                     continue
@@ -835,6 +813,16 @@ def main(
                     ";".join(sorted(marker_md5_species[marker, md5]))
                 ] += abundance
         del seqs, sample_headers, counts
+
+    if len(markers) > 1:
+        # TODO: How best to show the cutadapt and threshold values (per marker)?
+        sample_stats = {
+            sample: [values[i] for i in (0, 1, 5)]
+            for sample, values in sample_stats.items()
+        }
+        stats_fields = tuple(stats_fields[i] for i in (0, 1, 5))
+        assert stats_fields == ("Raw FASTQ", "Flash", "Control"), stats_fields
+        blank_stats = [-1] * len(stats_fields)
 
     if debug:
         sys.stderr.write(
