@@ -159,23 +159,6 @@ def db_import(args=None):
     )
 
 
-def curated_seq(args=None):
-    """Subcommand to prepare classified sequences for later curated import."""
-    from .seq_import import main
-
-    if args.output:
-        check_output_directory(args.output, must_exist=False)
-    return main(
-        inputs=args.input,
-        out_dir=args.output,
-        method=args.method,
-        min_abundance=args.abundance,
-        ignore_prefixes=tuple(args.ignore_prefixes),
-        tmp_dir=args.temp,
-        debug=args.verbose,
-    )
-
-
 def dump(args=None):
     """Subcommand to dump a database to a text file."""
     from .dump import main
@@ -1289,61 +1272,6 @@ def main(args=None):
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=db_import)
-    del subcommand_parser  # To prevent accidentally adding more
-
-    # curated-seq
-    subcommand_parser = subparsers.add_parser(
-        "curated-seq",
-        description="Prepare FASTA files with curated species name (for "
-        "later import to a database with 'thapbi_pict curated-import) "
-        "from prepared single isolate controls (FASTA and TSV files).",
-    )
-    subcommand_parser.add_argument(
-        "-i",
-        "--input",
-        type=str,
-        required=True,
-        nargs="+",
-        help="One or more marker FASTA and classifier filenames or folders "
-        "(names containing files named *.fasta and *.method.tsv, where "
-        "method is set via the -m / --method argument).",
-    )
-    subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
-    subcommand_parser.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        default="-",
-        metavar="DIRNAME",
-        help="Directory for FASTA files with species names in records. "
-        "Default '-' for stdout.",
-    )
-    subcommand_parser.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default="known",
-        help="Method name used to determines TSV filenames from which the "
-        "species classification will be read. Default is 'known' matching "
-        "the convention used in the classifier assessment command for "
-        "known trusted species assignments (i.e. positive controls).",
-    )
-    subcommand_parser.add_argument(
-        "-a",
-        "--abundance",
-        type=int,
-        default=str(DEFAULT_MIN_ABUNDANCE * 10),
-        help=(
-            "Minimum abundance to require before importing a sequence, "
-            "over-and-above whatever was used to prepare the FASTA file. "
-            f"Default here is {DEFAULT_MIN_ABUNDANCE * 10}, ten times the default "
-            f" of {DEFAULT_MIN_ABUNDANCE} used for the classification pipeline - "
-            "be cautious what goes in your marker database)."
-        ),
-    )
-    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
-    subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
-    subcommand_parser.set_defaults(func=curated_seq)
     del subcommand_parser  # To prevent accidentally adding more
 
     # dump
