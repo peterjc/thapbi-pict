@@ -52,8 +52,6 @@ second :ref:`worked example, with a custom database <recycled_water>`:
 * ``dump`` - export a DB as TSV or FASTA format
 * ``load-tax`` - import a copy of the NCBI taxonomy
 * ``import`` - import a FASTA file, e.g. using the NCBI style naming
-* ``curated-seq`` - label prepared reads with known species assignment (single
-  isolate positive controls)
 * ``conflicts`` - report on genus or species level conflicts in the database
 
 And some other miscellaneous commands:
