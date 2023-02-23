@@ -1826,7 +1826,7 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "edit-graph",
         description="Draw network graph of marker sequences using edit distance.",
-        epilog="Takes a marker database and/or prepared FASTA files as input. "
+        epilog="Takes a marker database and/or prepared sample-tally files as input. "
         "The output is a network graph (in a choice of format) with unique "
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
         "colored by genus, size set by total abundance in the FASTA files), "
