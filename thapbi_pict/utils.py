@@ -392,7 +392,9 @@ def find_requested_files(
                     continue
                 answer.append(x)
             elif debug:
-                sys.stderr.write(f"DEBUG: Due to extension ignoring {x}\n")
+                sys.stderr.write(
+                    f"DEBUG: Looking for extension {ext} so ignoring {x}\n"
+                )
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?
