@@ -390,6 +390,8 @@ def main(
 
     filenames = find_requested_files(inputs, ".tally.tsv", ignore_prefixes, debug=debug)
     if not filenames:
+        if debug:
+            sys.stderr.write("DEBUG: Found no *.tally.tsv files\n")
         tally_file = None
         samples = {}
     else:
@@ -402,6 +404,11 @@ def main(
             )
             seq_sample_counts.update(counts.items())
             samples.update(set(sample_headers))
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: Found {len(filenames)} *.tally.tsv files, "
+                f"containing {len(samples)} samples\n"
+            )
 
     known_files = find_requested_files(
         inputs, f".{known}.tsv", ignore_prefixes, debug=debug
@@ -446,7 +453,10 @@ def main(
                 except KeyError:
                     method_tsv[sample] = [tsv_file]
             else:
-                sys.stderr.write(f"WARNING: Ignoring {tsv_file}\n")
+                sys.stderr.write(
+                    f"WARNING: Ignoring {tsv_file} "
+                    f"as stem not in expected {len(samples)} samples\n"
+                )
 
     if not samples:
         sys.exit("ERROR: Could not determine a sample list")
