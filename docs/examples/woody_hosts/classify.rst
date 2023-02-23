@@ -58,25 +58,25 @@ These files are not really intended for human use, but are readable:
 
 .. code:: console
 
-    $ head summary/thapbi-pict.ITS1.onebp.tsv
+    $ tail -n +10 summary/thapbi-pict.ITS1.onebp.tsv | head | cut -f 1,125,126
     <SEE TABLE BELOW>
 
 Viewing it like this is not ideal, although there are command line tools which
-help. You could open the file in R, Excel, etc:
+help. You could instead open the file in R, Excel, etc:
 
-======================================= ===================== ================================================================
-#ITS1/sequence-name                     taxid                 genus-species
-======================================= ===================== ================================================================
-2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518                Phytophthora pseudosyringae
-d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361                Phytophthora austrocedri
-32159de6cbb6df37d084e31c37c30e7b_28976  67594                 Phytophthora syringae
-ed15fefb7a3655147115fc28a8d6d671_28786  78237                 Phytophthora gonapodyides
-972db44c016a166de86a2bacab3f4226_28515  53983;2056922         Phytophthora cambivora;Phytophthora x cambivora
-c1a720b2005f101a9858107545726123_20400  78237                 Phytophthora gonapodyides
-96e0e2f0475bd1617a4b05e778bb04c9_17392  78237                 Phytophthora gonapodyides
-f27df8e8755049e831b1ea4521ad6eb3_16369  2496075;2897317;29920 Phytophthora aleatoria;Phytophthora alpina;Phytophthora cactorum
-21d6308d89d74b8ed493d73a2cb4adb5_16169  53983                 Phytophthora cambivora
-======================================= ===================== ================================================================
+============================================ ===================== ================================================================
+#Marker/MD5_abundance                        taxid                 genus-species
+============================================ ===================== ================================================================
+ITS1/2e4f0ed53888ed39a2aee6d6d8e02206_163094 221518                Phytophthora pseudosyringae
+ITS1/d9bc3879fdab3b4184c04bfbb5cf6afb_83653  631361                Phytophthora austrocedri
+ITS1/32159de6cbb6df37d084e31c37c30e7b_28976  67594                 Phytophthora syringae
+ITS1/ed15fefb7a3655147115fc28a8d6d671_28786  78237                 Phytophthora gonapodyides
+ITS1/972db44c016a166de86a2bacab3f4226_28515  53983;2056922         Phytophthora cambivora;Phytophthora x cambivora
+ITS1/c1a720b2005f101a9858107545726123_20400  78237                 Phytophthora gonapodyides
+ITS1/96e0e2f0475bd1617a4b05e778bb04c9_17392  78237                 Phytophthora gonapodyides
+ITS1/f27df8e8755049e831b1ea4521ad6eb3_16369  2496075;2897317;29920 Phytophthora aleatoria;Phytophthora alpina;Phytophthora cactorum
+ITS1/21d6308d89d74b8ed493d73a2cb4adb5_16169  53983                 Phytophthora cambivora
+============================================ ===================== ================================================================
 
 The first entry says the most abundance sequence with MD5 checksum
 ``2e4f0ed53888ed39a2aee6d6d8e02206`` was seen in a total of 163094 reads, and
@@ -92,8 +92,8 @@ had matches to *Phytophthora rubi* using ``grep`` as follows:
 
 .. code:: console
 
-    $ grep "Phytophthora rubi" summary/thapbi-pict.ITS1.onebp.tsv
-    d8613e80b8803b13f7ea5d097f8fe46f_899  129364  Phytophthora rubi
+    $ grep "Phytophthora rubi" summary/thapbi-pict.ITS1.onebp.tsv | cut -f 1,125,126
+    ITS1/d8613e80b8803b13f7ea5d097f8fe46f_899  129364  Phytophthora rubi
     $ grep d8613e80b8803b13f7ea5d097f8fe46f intermediate/ITS1/*.fasta
     intermediate/ITS1/DNA10MIX_bycopynumber.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_279
     intermediate/ITS1/DNA10MIX_diluted25x.fasta:>d8613e80b8803b13f7ea5d097f8fe46f_349
