@@ -132,8 +132,8 @@ counts for that sequence:
 
 .. code:: console
 
-    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.onebp.tsv
-    29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
+    $ grep "Phytophthora agathidicida" summary/thapbi-pict.ITS1.onebp.tsv | cut -f 1,125,126
+    ITS1/29de890989becddc5e0b10ecbbc11b1a_1524  1642459;1642465  Phytophthora agathidicida;Phytophthora castaneae
     $ grep -E "(Sequence|29de890989becddc5e0b10ecbbc11b1a)" \
       summary/thapbi-pict.ITS1.tally.tsv | cut -f 2-5
     DNA10MIX_bycopynumber  DNA10MIX_diluted25x  DNA10MIX_undiluted  DNA15MIX
