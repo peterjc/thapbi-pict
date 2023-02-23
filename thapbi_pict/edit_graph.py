@@ -23,14 +23,11 @@ from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
-from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
 from .utils import parse_sample_tsv
-from .utils import parse_species_tsv
 from .utils import species_level
-from .utils import split_read_name_abundance
 from .versions import check_rapidfuzz
 
 
@@ -249,9 +246,11 @@ def main(
         )
 
     if inputs:
-        # TODO : Refactor this to work from the sample tally table input layout
         for filename in find_requested_files(
-            inputs, ".tally.tsv", ignore_prefixes, debug=debug
+            inputs,
+            f".{method}.tsv" if method and method != "-" else ".tally.tsv",
+            ignore_prefixes,
+            debug=debug,
         ):
             if debug:
                 sys.stderr.write(
@@ -259,12 +258,13 @@ def main(
                 )
             # sample = file_to_sample_name(filename)
             # samples.add(sample)
-            seqs, _, sample_headers, counts = parse_sample_tsv(
+            seqs, seq_meta, sample_headers, counts = parse_sample_tsv(
                 filename, min_abundance=min_abundance, debug=debug
             )
             md5_warn = False
             for (marker, md5), seq in seqs.items():
-                # TODO - filter on marker?
+                if show_db_marker and marker != show_db_marker:
+                    continue
                 if md5 != md5seq(seq):
                     md5_warn = True
                 for sample in sample_headers:
@@ -290,39 +290,21 @@ def main(
                     f"WARNING: Sequence(s) in {filename}"
                     " not using MD5_abundance naming\n"
                 )
-        sys.stderr.write(
-            f"Loaded {len(md5_in_fasta)} unique sequences"
-            f" from {len(samples)} samples.\n"
-        )
-
-        if method and method != "-":
-            if debug:
-                sys.stderr.write(f"DEBUG: Loading any {method} TSV files\n")
-            for tsv_file in find_requested_files(
-                inputs, f".{method}.tsv", ignore_prefixes, debug
-            ):
-                if debug:
-                    sys.stderr.write(f"DEBUG: Loading {method} TSV file {tsv_file}\n")
-                sample = file_to_sample_name(tsv_file)
-                if not sample.endswith(".all_reads") and sample not in samples:
-                    sys.stderr.write(f"DEBUG: Ignoring {tsv_file}\n")
+            for (marker, idn), meta in seq_meta.items():
+                if show_db_marker and marker != show_db_marker:
                     continue
-                # Record any assigned species
-                # Does min_abundance make sense for all_reads file?
-                for _marker, name, _taxid, sp in parse_species_tsv(
-                    tsv_file, min_abundance
-                ):
-                    md5, abundance = split_read_name_abundance(name)
-                    # May not pass our abundance threshold...
-                    if md5 in md5_to_seq and sp:
-                        try:
-                            md5_species[md5].update(sp.split(";"))
-                        except KeyError:
-                            md5_species[md5] = set(sp.split(";"))
+                sp = meta.get("genus-species", "")
+                if sp:
+                    md5_species[idn] = set(sp.split(";"))
+                del sp
             if debug:
                 sys.stderr.write(
                     f"Have species assignments for {len(md5_species)} unique seqs\n"
                 )
+        sys.stderr.write(
+            f"Loaded {len(md5_in_fasta)} unique sequences"
+            f" from {len(samples)} samples.\n"
+        )
 
         # Drop low total abundance FASTA sequences now (before compute distances)
         if total_min_abundance:

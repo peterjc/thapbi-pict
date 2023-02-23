@@ -1771,8 +1771,8 @@ def main(args=None):
         type=str,
         required=False,
         nargs="+",
-        help="One or more sample-tally TSV files or folder names "
-        "(containing files named *.tally.tsv).",
+        help="One or more sample-tally TSV files or folder names (containing "
+        "files named *.<method>.tsv or *.tally.tsv if method is none).",
     )
     subcommand_parser.add_argument(
         "-m",
