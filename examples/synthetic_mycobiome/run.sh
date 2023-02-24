@@ -61,7 +61,7 @@ thapbi_pict pipeline -d references.sqlite \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/defaults.ITS2.1s5g.tsv summary/defaults.ITS2.tally.tsv \
+    -i summary/defaults.ITS2.1s5g.tsv \
     -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
 echo ==========================================
@@ -89,7 +89,7 @@ thapbi_pict pipeline -d references.sqlite \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/ctrl.ITS2.1s5g.tsv summary/ctrl.ITS2.tally.tsv \
+    -i summary/ctrl.ITS2.1s5g.tsv \
     -o summary/ctrl.ITS2.edit-graph.1s5g.xgmml
 
 echo ================================================================
@@ -104,7 +104,7 @@ thapbi_pict pipeline -d references.sqlite \
     -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise unoise-l
 
 thapbi_pict edit-graph -d references.sqlite -m 1s5g \
-    -i summary/ctrl_denoise.ITS2.1s5g.tsv summary/ctrl_denoise.ITS2.tally.tsv \
+    -i summary/ctrl_denoise.ITS2.1s5g.tsv \
     -o summary/ctrl_denoise.ITS2.edit-graph.1s5g.xgmml
 
 if ! [ -x "$(command -v usearch)" ]; then
