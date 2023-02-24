@@ -389,7 +389,7 @@ def edit_graph(args=None):
         graph_output=args.output,
         graph_format=args.format,
         db_url=db,
-        inputs=args.input,
+        input=args.input,
         method=args.method,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
@@ -1754,7 +1754,7 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "edit-graph",
         description="Draw network graph of marker sequences using edit distance.",
-        epilog="Takes a marker database and/or prepared sample-tally files as input. "
+        epilog="Takes a marker database and/or prepared sample-tally file as input. "
         "The output is a network graph (in a choice of format) with unique "
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
         "colored by genus, size set by total abundance in the FASTA files), "
@@ -1771,10 +1771,10 @@ def main(args=None):
         "-i",
         "--input",
         type=str,
+        metavar="FILENAME",
         required=False,
-        nargs="+",
-        help="One or more sample-tally TSV files or folder names (containing "
-        "files named *.<method>.tsv or *.tally.tsv if method is none).",
+        help="Sample-tally TSV file (*.tally.tsv) or classifier output "
+        "(*.<method>.tsv)",
     )
     subcommand_parser.add_argument(
         "-m",
@@ -1808,8 +1808,7 @@ def main(args=None):
         "--marker",
         type=str,
         default=None,
-        help="Show DB entries from this marker, regardless of their abundance"
-        " in the FASTA inputs. Required if only drawing DB entries.",
+        help="Show only entries from this marker. Required if only drawing DB entries.",
     )
     subcommand_parser.add_argument(
         "-e",

@@ -23,7 +23,6 @@ from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
-from .utils import find_requested_files
 from .utils import genus_species_name
 from .utils import md5seq
 from .utils import parse_sample_tsv
@@ -198,7 +197,7 @@ def main(
     graph_output,
     graph_format,
     db_url,
-    inputs,
+    input,
     method="-",
     min_abundance=100,
     show_db_marker=None,
@@ -210,8 +209,8 @@ def main(
     """Run the edit-graph command with arguments from the command line.
 
     This shows sequences from a database (possibly filtered with species/genus
-    limits) and/or selected sample-tally TSV files (possibly with minimum
-    abundance limits).
+    limits) and/or selected sample-tally TSV file (optionally with classifier
+    output, and possibly with a minimum abundance limit set here).
 
     Computes a Levenshtein edit-distance matrix from the selected sequences,
     which can be exported as a matrix, but is usually converted into a graph
@@ -220,9 +219,7 @@ def main(
     Graph node size is scaled by sample count (number of FASTA files that it
     appears in), and colored by assigned species (from a classifier TSV file).
     """
-    if inputs is None:
-        inputs = []
-    assert isinstance(inputs, list)
+    assert isinstance(input, str) or input is None
 
     if 3 < max_edit_dist:
         sys.exit("ERROR: Maximum supported edit distance is 3bp.")
@@ -237,21 +234,19 @@ def main(
     md5_in_db = set()
     md5_in_fasta = set()
 
-    if not (inputs or db_url):
+    if not (input or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")
 
-    if not inputs and not show_db_marker:
+    if not input and not show_db_marker:
         sys.exit(
             "If not using -i / --input argument, require -k / --marker to use DB only."
         )
 
-    if inputs:
-        for filename in find_requested_files(
-            inputs,
-            f".{method}.tsv" if method and method != "-" else ".tally.tsv",
-            ignore_prefixes,
-            debug=debug,
-        ):
+    if input:
+        if not input.endswith(".tsv"):
+            sys.exit(f"ERROR: Expected a .tsv file, not {input}")
+        else:
+            filename = input
             if debug:
                 sys.stderr.write(
                     f"DEBUG: Loading sequences sample tallies from {filename}\n"
@@ -383,7 +378,7 @@ def main(
                 f"Matched {len(md5_in_db)} unique sequences in database.\n"
             )
 
-    if db_url and inputs and show_db_marker:
+    if db_url and input and show_db_marker:
         sys.stderr.write(
             f"DB had {len(md5_in_db)} sequences"
             f" ({len(md5_in_db.difference(md5_in_fasta))} not in FASTA),"
@@ -453,7 +448,7 @@ def main(
             # Will include high abundance singletons too
             if total_min_abundance <= md5_abundance.get(md5, 0):
                 wanted.add(md5)
-    if inputs:
+    if input:
         sys.stderr.write(
             "Including high abundance isolated sequences,"
             f" will draw {len(wanted)} nodes.\n"
