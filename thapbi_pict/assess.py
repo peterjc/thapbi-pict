@@ -375,100 +375,92 @@ def main(
 
     The inputs argument is a list of filenames and/or folders.
 
-    Can provide:
-    * at least one per-sample <sample>.<method>.tsv files
-    * at least one per-sample <sample>.<known>.tsv file (matching stems)
+    Must provide:
+    * at least one XXX.<method>.tsv file
+    * at least one XXX.<known>.tsv file
 
-    Or:
-    * exactly one XXX.tally.tsv of sample counts
-    * one (matched) XXX.<method>.tsv with their classifications
-    * at least one per-sample <sample>.<known>.tsv file
+    These files can cover multiple samples as the sample-tally based classifier
+    output, or legacy per-sample <sample>.<known>.tsv files.
     """
     assert isinstance(inputs, list), inputs
-    # TODO - Replace the *.known.tsv files with a single TSV?
-    # TODO - Merge the sample-tally and classification into one file?
+    # TODO - Replace legacy sample.known.tsv files with a single TSV?
 
-    filenames = find_requested_files(inputs, ".tally.tsv", ignore_prefixes, debug=debug)
-    if not filenames:
-        if debug:
-            sys.stderr.write("DEBUG: Found no *.tally.tsv files\n")
-        tally_file = None
-        samples = {}
-    else:
-        # Expect one tally-file per marker
-        samples = set()
-        seq_sample_counts = {}
-        for tally_file in filenames:
-            _, _, sample_headers, counts = parse_sample_tsv(
-                tally_file, min_abundance=min_abundance, debug=debug
-            )
-            seq_sample_counts.update(counts.items())
-            samples.update(set(sample_headers))
-        if debug:
-            sys.stderr.write(
-                f"DEBUG: Found {len(filenames)} *.tally.tsv files, "
-                f"containing {len(samples)} samples\n"
-            )
-
-    known_files = find_requested_files(
-        inputs, f".{known}.tsv", ignore_prefixes, debug=debug
-    )
-    known_tsv = {}
-    for tsv_file in known_files:
-        sample = file_to_sample_name(tsv_file)
-        if sample.endswith(".all_reads"):
-            sys.exit(f"ERROR: {tsv_file} unexpected")
-        elif tally_file and sample not in samples:
-            sys.stderr.write(f"WARNING: Ignoring {tsv_file} as not in {tally_file}\n")
-        # elif tally_file and sample not in method_tsv:
-        #    sys.exit(
-        #        f"ERROR: Sample {sample} from {tsv_file} not in *.{method}.tsv given"
-        #    )
-        else:
-            try:
-                known_tsv[sample].append(tsv_file)
-            except KeyError:
-                known_tsv[sample] = [tsv_file]
-    if not samples:
-        samples = set(known_tsv)
-
-    method_tsv = {}
-    pooled_method = {}  # keyed on marker, md5 -> species lists
-    filenames = find_requested_files(
+    method_filenames = find_requested_files(
         inputs, f".{method}.tsv", ignore_prefixes, debug=debug
     )
-    if not filenames:
+    if not method_filenames:
         sys.exit(f"ERROR: Need file(s) name *.{method}.tsv")
-    elif tally_file:
-        for method_tsv in filenames:
-            # Updates the dict in place:
-            load_tsv(pooled_method, method_tsv, min_abundance)
-    else:
-        for tsv_file in filenames:
-            sample = file_to_sample_name(tsv_file)
-            assert not sample.endswith(".all_reads"), f"{tsv_file} from inputs {inputs}"
-            if sample in samples:
-                try:
-                    method_tsv[sample].append(tsv_file)
-                except KeyError:
-                    method_tsv[sample] = [tsv_file]
-            else:
-                sys.stderr.write(
-                    f"WARNING: Ignoring {tsv_file} "
-                    f"as stem not in expected {len(samples)} samples\n"
-                )
 
-    if not samples:
-        sys.exit("ERROR: Could not determine a sample list")
-    if not known_tsv:
-        sys.exit("ERROR: No known TSV files found")
-    if not method_tsv and not tally_file:
-        sys.exit("ERROR: No classifier TSV files found")
-    samples = sorted(known_tsv)
-    if not samples:
-        sys.exit("ERROR: Could not determine a sample list")
+    known_filenames = find_requested_files(
+        inputs, f".{known}.tsv", ignore_prefixes, debug=debug
+    )
+    if not known_filenames:
+        sys.exit(f"ERROR: Need file(s) name *.{known}.tsv")
+    file_count = len(known_filenames) + len(method_filenames)
+
+    method_sp = {}
+    known_sp = {}
+    for filenames, sample_dict in (
+        (method_filenames, method_sp),
+        (known_filenames, known_sp),
+    ):
+        for filename in filenames:
+            if debug:
+                sys.stderr.write(
+                    f"DEBUG: Parsing sample classifications from {filename}\n"
+                )
+            try:
+                _, seq_meta, _, counts = parse_sample_tsv(
+                    filename, min_abundance=min_abundance, debug=debug
+                )
+            except ValueError as e:
+                if (
+                    r"Missing #Marker/MD5_abundance(tab)...(tab)Sequence\n line"
+                    not in str(e)
+                ):
+                    sys.exit(f"ERROR: Unable to parse {filename}\n{e}\n")
+                sample = file_to_sample_name(filename)
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Trying {filename} as a legacy file for {sample}\n"
+                    )
+                genus_species = set(sp_in_tsv([filename], min_abundance).split(";"))
+                if sample in sample_dict:
+                    # Update existing value...
+                    sample_dict[sample].update(genus_species)
+                else:
+                    sample_dict[sample] = genus_species
+            else:
+                for (marker, idn, sample), a in counts.items():
+                    assert a >= min_abundance
+                    try:
+                        genus_species = {
+                            _
+                            for _ in seq_meta[marker, idn]["genus-species"].split(";")
+                            if species_level(_)
+                        }
+                    except KeyError:
+                        sys.exit(
+                            f"ERROR: Missing {marker}/{idn} genus-species in {filename}"
+                        )
+                    if sample in sample_dict:
+                        sample_dict[sample].update(genus_species)
+                    else:
+                        sample_dict[sample] = genus_species
+    samples = set(method_sp).intersection(known_sp)
     if debug:
-        sys.stderr.write(f"Assessing {len(samples)} samples\n")
+        sys.stderr.write(f"DEBUG: {len(samples)} common samples\n")
+        sys.stderr.write(
+            f"DEBUG: {known} has {len(known_sp)} samples in {len(known_filenames)} "
+            f"files, {method} has {len(method_sp)} samples in "
+            f"{len(method_filenames)} files.\n"
+        )
+    if not samples:
+        sys.exit(
+            "ERROR: No shared samples between "
+            f"{known} ({len(known_sp)} samples in {len(known_filenames)} files) and "
+            f"{method} ({len(method_sp)} samples in {len(method_filenames)} files)"
+        )
 
     # Connect to the DB,
     Session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
@@ -490,28 +482,10 @@ def main(
     if not db_sp_list:
         sys.exit("ERROR: No species listed in DB")
 
-    file_count = 0
     global_tally = {}
-
     for sample in samples:
-        file_count += 1
-
-        if sample not in known_tsv:
-            sys.exit(f"ERROR: Missing {known} results for {sample}")
-        expt = sp_in_tsv(known_tsv[sample], min_abundance)
-
-        if tally_file:
-            if sample not in sample_headers:
-                sys.exit(f"ERROR: Missing sample-tally for {sample}")
-            pred = set()
-            for (marker, md5, alt_sample), count in seq_sample_counts.items():
-                if sample == alt_sample and count >= min_abundance and count > 0:
-                    pred.update(pooled_method[marker, md5].split(";"))
-            if "" in pred:
-                pred.remove("")
-            pred = ";".join(sorted(pred))
-        else:
-            pred = sp_in_tsv(method_tsv[sample], min_abundance)
+        expt = ";".join(sorted(known_sp[sample]))
+        pred = ";".join(sorted(method_sp[sample]))
         global_tally[expt, pred] = global_tally.get((expt, pred), 0) + 1
     assert len(samples) == sum(global_tally.values())
 
@@ -540,11 +514,6 @@ def main(
         f"Assessed {method} vs {known} in {file_count} files"
         f" ({len(sp_list)} species)\n"
     )
-
-    assert file_count == len(samples)
-
-    if not file_count:
-        sys.exit("ERROR: Could not find files to assess\n")
 
     if map_output == "-":
         save_mapping(global_tally, "/dev/stdout", debug=debug)
