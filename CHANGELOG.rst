@@ -4,11 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v0.14a5 2022-02-28 Classifier output now uses sample-tally style TSV with more columns.
-v0.14a4 2022-02-10 Note any chimeras from USEARCH or VSEARCH, not yet in main reports.
-v0.14a3 2022-02-08 Can invoke USEARCH or VSEARCH for external UNOISE read-correction.
-v0.14a2 2022-01-23 UNOISE read-correction option in ``sample-tally``, new ``denoise`` command.
-v0.14a1 2022-01-20 Unreleased alpha, only do abundance thresholding in ``sample-tally`` step.
+v0.14.0 *Pending*  Offers UNOISE read-correction, built-in or invoking USEARCH or VSEARCH.
 v0.13.6 2022-12-28 Factional abundance threshold in ``sample-tally`` was not strict enough.
 v0.13.5 2022-12-21 Misc small fixes and documentation updates.
 v0.13.4 2022-12-07 Support abundance thresholding in the ``sample-tally`` step. Log controls.
