@@ -573,7 +573,7 @@ def pipeline(args=None):
         if known_files:
             sys.stderr.write(f"Assessing {marker} classification...\n")
             return_code = assess(
-                inputs=known_files + [tally_seqs_file] + classified_files,
+                inputs=known_files + classified_files,
                 known="known",  # =args.known,
                 db_url=db,
                 marker=marker,
@@ -623,7 +623,7 @@ def pipeline(args=None):
         if known_files:
             sys.stderr.write("Assessing pooled classification...\n")
             return_code = assess(
-                inputs=known_files + all_tally_files + all_classified_files,
+                inputs=known_files + all_classified_files,
                 known="known",  # =args.known,
                 db_url=db,
                 marker=None,  # all of them!
@@ -1608,10 +1608,9 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "assess",
         description="Assess accuracy of marker sequence classification.",
-        epilog="Takes as input matching sample-tally and classification files "
-        "(<report>.tally.tsv and <report>.<method>.tsv), or multiple "
-        "per-sample <sample>.<method>.tsv files, to be assessed against "
-        "per-sample expected classification files (<sample>.known.tsv). "
+        epilog="Takes input sample-tally classification files (*.<method>.tsv), "
+        "to be assessed against sample-tally classification files (*.<known>.tsv) "
+        "or legacy per-sample expected classification files (<sample>.known.tsv). "
         "Produces a multi-species confusion matrix (output on request) and "
         "classifier performance metrics (to stdout by default). Assessment is "
         "at sample level (taking the union of species predicted by all "
@@ -1623,11 +1622,9 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="TSV filenames or folders including either a pair named "
-        "*.tally.tsv and *.<method>.tsv, or one or more pre-sample "
-        "<sample>.<method>.tsv files; and one or more per-sample known "
-        "<sample>.<known>.tsv files. These filename suffixes "
-        "can be set via the -m / --method and --known arguments. ",
+        help="TSV filenames or folders named *.<method>.tsv, and *.<known>.tsv "
+        "where the filename suffixes can be set via the -m / --method and "
+        "--known arguments.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
