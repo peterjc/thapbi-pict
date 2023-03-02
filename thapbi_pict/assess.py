@@ -171,7 +171,7 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
                     sp
                 ), f"{sp} from prediction {pred} is not species-level"
                 classes.add(sp)
-                if sp and sp not in db_sp_list:
+                if sp not in db_sp_list:
                     sys.exit(f"ERROR: Predicted species {sp} was not in the database!")
     if impossible:
         sys.stderr.write(
@@ -431,17 +431,22 @@ def main(
                 else:
                     sample_dict[sample] = genus_species
             else:
-                for (marker, idn, sample), a in counts.items():
+                for (marker2, idn, sample), a in counts.items():
                     assert a >= min_abundance
+                    if marker and marker != marker2:
+                        sys.exit(
+                            "ERROR: Assessing marker "
+                            f"{marker}, found {marker2} in {filename}"
+                        )
                     try:
                         genus_species = {
                             _
-                            for _ in seq_meta[marker, idn]["genus-species"].split(";")
+                            for _ in seq_meta[marker2, idn]["genus-species"].split(";")
                             if species_level(_)
                         }
                     except KeyError:
                         sys.exit(
-                            f"ERROR: Missing {marker}/{idn} genus-species in {filename}"
+                            f"ERROR: No {marker2}/{idn} genus-species in {filename}"
                         )
                     if sample in sample_dict:
                         sample_dict[sample].update(genus_species)
@@ -481,6 +486,13 @@ def main(
     session.close()
     if not db_sp_list:
         sys.exit("ERROR: No species listed in DB")
+    for sp in db_sp_list:
+        assert species_level(sp), sp
+    if debug:
+        if marker:
+            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB for {marker}\n")
+        else:
+            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB (all markers)\n")
 
     global_tally = {}
     for sample in samples:
@@ -492,10 +504,6 @@ def main(
     if debug:
         sys.stderr.write(f"DEBUG: Assessing {sum(global_tally.values())} predictions\n")
 
-    if db_sp_list is None:
-        sys.exit("ERROR: Failed to load DB species list from headers")
-    for sp in db_sp_list:
-        assert species_level(sp), sp
     sp_list = class_list_from_tally_and_db_list(global_tally, db_sp_list)
     if "" in sp_list:
         sp_list.remove("")
