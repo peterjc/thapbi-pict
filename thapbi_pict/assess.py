@@ -524,7 +524,7 @@ def main(
 
     sys.stderr.write(
         f"Assessed {method} vs {known} in {file_count} files"
-        f" ({len(sp_list)} species)\n"
+        f" ({len(sp_list)} species; {len(samples)} samples)\n"
     )
 
     if map_output == "-":

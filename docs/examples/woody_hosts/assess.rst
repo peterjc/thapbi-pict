@@ -189,7 +189,7 @@ the first five columns from the 15 species mix:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv | cut -f 1-5
-    Assessed onebp vs known in 2 files (244 species)
+    Assessed onebp vs known in 2 files (244 species; 1 samples)
     #Species                     TP  FP  FN  TN
     OVERALL                      8   2   7   227
     Phytophthora aleatoria       0   1   0   0
@@ -217,7 +217,7 @@ More usually, you would output to a named file, and look at that:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv -o DNA15MIX.assess.tsv
-    Assessed onebp vs known in 2 files (244 species)
+    Assessed onebp vs known in 2 files (244 species; 1 samples)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -275,7 +275,7 @@ Doing that for one of the 10 species mixtures:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA10MIX_undiluted.known.tsv -o DNA10MIX.assess.tsv
-    Assessed onebp vs known in 2 files (244 species)
+    Assessed onebp vs known in 2 files (244 species; 1 samples)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -313,8 +313,8 @@ giving the combined intermediate filenames, and *all* the expected files:
 .. code:: console
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
-      summary/thapbi-pict.ITS1.tally.tsv expected/ -o thabpi-pict.ITS1.assess.tsv
-    Assessed onebp vs known in 5 files (244 species)
+      expected/ -o thabpi-pict.ITS1.assess.tsv
+    Assessed onebp vs known in 5 files (244 species; 4 samples)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
@@ -415,7 +415,7 @@ to make direct comparison more straight forward:
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
       | head -n 2 | cut -f 1-5,9,11
-    Assessed onebp vs known in 3 files (244 species)
+    Assessed onebp vs known in 3 files (244 species; 2 samples)
     #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
     OVERALL   16  4   9   459  0.71  0.448
 
