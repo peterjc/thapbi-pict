@@ -410,7 +410,7 @@ def main(
                     f"DEBUG: Parsing sample classifications from {filename}\n"
                 )
             try:
-                _, seq_meta, _, counts = parse_sample_tsv(
+                _, seq_meta, sample_meta, counts = parse_sample_tsv(
                     filename, min_abundance=min_abundance, debug=debug
                 )
             except ValueError as e:
@@ -431,6 +431,10 @@ def main(
                 else:
                     sample_dict[sample] = genus_species
             else:
+                # Zero count samples would otherwise be omitted:
+                for sample in sample_meta:
+                    if sample not in sample_dict:
+                        sample_dict[sample] = set()
                 for (marker2, idn, sample), a in counts.items():
                     assert a >= min_abundance
                     if marker and marker != marker2:
