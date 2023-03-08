@@ -1,7 +1,7 @@
 Classifying sequences
 =====================
 
-Running thapbi-pict-classify
+Running thapbi-pict classify
 ----------------------------
 
 .. tip:
@@ -46,15 +46,15 @@ Intermediate TSV files
 For each input tally TSV file ``<name>.tally.tsv`` another plain text TSV file
 is generated named ``<name>.<method>.tsv`` where the default method is
 ``onebp`` (which looks for perfect matches or up to one base pair different).
-The first line is a header comment line (starting with ``#``) labelling the
-columns, which are:
+These are both sequence versus sample observation tables of counts, but with
+sample metadata in header lines (starting with ``#``) and additional columns
+for the amplicon marker sequence, and for the classifier output also the NCBI
+taxid(s), and genus-species of any classification(s).
 
-* Unique sequence name in ``<checksum>_<abundance>`` format.
-* NCBI taxid of any predictions (semi-colon separated, same order as species)
-* Genus-species of any predictions (semi-colon separated, alphabetical)
-* Text note field in verbose mode (arbitrary debug text from the tool)
-
-These files are not really intended for human use, but are readable:
+These files are not really intended for human use, but are readable. Here we
+skip ten lines of sample metadata at the start, and all the sample-specific
+counts in columns 2 to 123, and the sequence in column 124, showing just the
+first and final two columns:
 
 .. code:: console
 
