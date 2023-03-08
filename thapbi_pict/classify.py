@@ -22,6 +22,7 @@ from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
+from .utils import export_sample_biom
 from .utils import export_sample_tsv
 from .utils import file_to_sample_name
 from .utils import find_requested_files
@@ -725,10 +726,13 @@ def main(
         if not out_dir:
             # Use input folder
             output_name = os.path.join(folder, f"{stem}.{method}.tsv")
+            output_biom = os.path.join(folder, f"{stem}.{method}.biom")
         elif out_dir == "-":
             output_name = None
+            output_biom = None
         else:
             output_name = os.path.join(out_dir, f"{stem}.{method}.tsv")
+            output_biom = os.path.join(out_dir, f"{stem}.{method}.biom")
 
         if output_name in classifier_output:
             sys.exit(
@@ -866,6 +870,26 @@ def main(
         if output_name is not None:
             # Move our temp file into position...
             shutil.move(tmp_pred, output_name)
+
+        if output_biom is not None:
+            msg = export_sample_biom(
+                tmp_pred,
+                # Re-insert the marker into the sequence dict keys, and use md5:
+                {(marker_name, md5seq(seq)): seq for seq in input_seqs.values()},
+                seq_meta,
+                sample_meta,
+                tally_counts,
+            )
+            if msg:
+                # Move our temp file into position...
+                shutil.move(tmp_pred, output_biom)
+                if debug:
+                    sys.stderr.write(f"DEBUG: Wrote {output_biom}\n")
+            else:
+                sys.stderr.write(
+                    "WARNING: No BIOM format output as missing "
+                    "optional Python libraries\n"
+                )
 
     method_cleanup()
 

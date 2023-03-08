@@ -463,6 +463,50 @@ def find_paired_files(
     return input_list
 
 
+def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped=True):
+    """Export a sequence vs samples counts BIOM table, with metadata.
+
+    Similar to the export_sample_tsv file (our TSV output), expects same
+    arguments as loaded from one of our TSV files via he parse_sample_tsv
+    function.
+
+    Will save a BIOM v2 HDF5 file if possible and return True. If output
+    fails, returns False.
+    """
+    from thapbi_pict import __version__
+
+    try:
+        from biom.table import Table
+        from biom.util import biom_open
+    except ImportError:
+        return False
+
+    biom_table = Table(
+        # BIOM want counts indexed by sequence and sample integer index:
+        {
+            (list(seq_meta).index((marker, md5)), list(sample_meta).index(sample)): v
+            for (marker, md5, sample), v in counts.items()
+        },
+        # BIOM wants single string names for sequences
+        [f"{marker}/{md5}" for (marker, md5) in seq_meta],
+        list(sample_meta),
+        seq_meta.values(),
+        sample_meta.values(),
+    )
+    del seqs, seq_meta, sample_meta, counts
+
+    tag = "THAPBI PICT " + __version__
+    # TODO - override refault date of now for reproducibility?
+
+    # Is JSON output useful? BIOM v1 format:
+    # with open(output_file, "w") as handle:
+    #     biom_table.to_json(generated_by=tag, direct_io=handle)
+
+    with biom_open(output_file, "w") as handle:
+        biom_table.to_hdf5(handle, generated_by=tag, compress=gzipped)
+    return True
+
+
 def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=False):
     """Export a sequence vs sample counts TSV table, with metadata.
 
