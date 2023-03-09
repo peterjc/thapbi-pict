@@ -36,7 +36,9 @@ mkdir -p $TMP/input/
 cp database/Phytophthora_ITS1_curated.fasta $TMP/input/
 thapbi_pict classify -m identity -d $DB -i $TMP/input/Phytophthora_ITS1_curated.fasta
 grep "^#Marker/MD5_abundance" $TMP/input/Phytophthora_ITS1_curated.identity.tsv
-file $TMP/input/Phytophthora_ITS1_curated.identity.biom | grep "Hierarchical Data Format"
+if [ -x "$(command -v biom)" ]; then
+    biom validate-table -i $TMP/input/Phytophthora_ITS1_curated.identity.biom
+fi
 
 rm -rf $TMP/DNAMIX_S95_L001.identity.tsv
 rm -rf $TMP/thapbi_onebp
@@ -73,7 +75,9 @@ for M in "${methods[@]}"; do
     # Ignore any DOS vs Unix newline differences
     diff -w $TMP/P-infestans-T30-4.$M.tsv \
          <(grep -v -E "#(Control|Max non-spike|Max spike-in)" tests/classify/P-infestans-T30-4.$M.tsv)
-    file $TMP/P-infestans-T30-4.$M.biom | grep "Hierarchical Data Format"
+    if [ -x "$(command -v biom)" ]; then
+        biom validate-table -i $TMP/P-infestans-T30-4.$M.biom
+    fi
 done
 
 rm -rf $TMP/hmm_trim.*.tsv

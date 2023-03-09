@@ -83,7 +83,9 @@ for M in onebp identity; do
     thapbi_pict classify -i $TMP/woody_hosts.tally.tsv -m $M
     echo diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
-    file $TMP/woody_hosts.$M.tsv | grep "Hierarchical Data Format"
+    if [ -x "$(command -v biom)" ]; then
+        biom validate-table -i $TMP/woody_hosts.$M.biom
+    fi
 done
 
 echo "==========================="
