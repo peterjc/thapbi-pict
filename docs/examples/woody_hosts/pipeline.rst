@@ -21,6 +21,7 @@ command as follows, and should get multiple output report files:
       -o summary/thapbi-pict
     ...
     $ ls -1 summary/thapbi-pict.*
+    summary/thapbi-pict.ITS1.onebp.biom
     summary/thapbi-pict.ITS1.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.tsv
     summary/thapbi-pict.ITS1.reads.onebp.xlsx
