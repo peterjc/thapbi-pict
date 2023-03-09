@@ -53,6 +53,7 @@ done
 diff <(head -n 30 $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta) tests/prepare-reads/DNAMIX_S95_L001-a2-head.fasta
 diff $TMP/output/thapbi-pict.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
+file $TMP/output/thapbi-pict.ITS1.onebp.biom | grep "Hierarchical Data Format"
 
 # Now with denoising, changes the counts but not the 10 sequences themselves
 thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache \
