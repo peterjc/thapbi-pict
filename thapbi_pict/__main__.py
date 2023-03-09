@@ -1537,8 +1537,8 @@ def main(args=None):
         default="-",
         metavar="FILENAME",
         help="Single output filename, '-' for stdout (default). The pipeline "
-        "will use the .tally.tsv extension which is assumed for the assess "
-        "and summary commands.",
+        "will use the .tally.tsv extension which is assumed for the summary "
+        "and edit-graph commands.",
     )
     subcommand_parser.add_argument(
         "--fasta",
