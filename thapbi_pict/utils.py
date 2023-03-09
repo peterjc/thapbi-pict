@@ -492,6 +492,8 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
         list(sample_meta),
         seq_meta.values(),
         sample_meta.values(),
+        # Required attribute in BIOM format:
+        type="OTU table",
     )
     del seqs, seq_meta, sample_meta, counts
 
