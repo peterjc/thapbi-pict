@@ -392,8 +392,7 @@ def read_summary(
                 key: {"genus-species": ";".join(sorted(value))}
                 for key, value in marker_md5_species.items()
             },
-            # User-suppolied sample data,
-            # TODO - include sample data from the pipeline:
+            # User-suppolied sample data, plus stats from the pipeline:
             {
                 sample: dict(
                     list(zip(meta_names, stem_to_meta[sample]))

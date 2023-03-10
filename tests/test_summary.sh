@@ -87,16 +87,25 @@ for M in identity onebp blast; do
     rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 --output $TMP/test-case --input tests/classify/
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify.$M.tsv
+    if [ -x "$(command -v biom)" ]; then
+        biom validate-table -i $TMP/test-case.reads.$M.biom
+    fi
     # And again, but with metadata
     rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta.$M.tsv
+    if [ -x "$(command -v biom)" ]; then
+        biom validate-table -i $TMP/test-case.reads.$M.biom
+    fi
     # Now require metadata...
     rm -rf $TMP/test-case.samples.$M.*
     thapbi_pict summary -m $M -a 99 -o $TMP/test-case -i tests/classify/ -q \
         -t tests/classify/P-infestans-T30-4.meta.tsv -x 1 -c 2,3,4,5
     diff $TMP/test-case.samples.$M.tsv tests/summary/classify-meta-req.$M.tsv
+    if [ -x "$(command -v biom)" ]; then
+        biom validate-table -i $TMP/test-case.reads.$M.biom
+    fi
 done
 
 echo "$0 - test_summary.sh passed"
