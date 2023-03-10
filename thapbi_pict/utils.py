@@ -490,7 +490,8 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
         # BIOM wants single string names for sequences
         [f"{marker}/{md5}" for (marker, md5) in seq_meta],
         list(sample_meta),
-        seq_meta.values(),
+        # Add the sequence itself to the metadata dict for BIOM export:
+        [dict([("Sequence", seqs[k])] + list(v.items())) for k, v in seq_meta.items()],
         sample_meta.values(),
         # Required attribute in BIOM format:
         type="OTU table",
