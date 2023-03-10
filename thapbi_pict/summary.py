@@ -20,6 +20,7 @@ from collections import Counter
 import xlsxwriter
 
 from .utils import color_bands
+from .utils import export_sample_biom
 from .utils import find_requested_files
 from .utils import load_metadata
 from .utils import md5seq
@@ -372,6 +373,7 @@ def read_summary(
     method,
     min_abundance=1,
     excel=None,
+    biom=None,
     debug=False,
 ):
     """Create reads (rows) vs species (cols) report.
@@ -379,6 +381,29 @@ def read_summary(
     The expectation is that the inputs represent all the samples
     from one (96 well) plate, or some other meaningful batch.
     """
+    if biom and marker_md5_to_seq and stem_to_meta:
+        export_sample_biom(
+            biom,
+            marker_md5_to_seq,
+            # The only sequence metadata is our classification,
+            # Use field name f"{method}-predictions" to match TSV/Excel?
+            # TODO - include list of taxids?
+            {
+                key: {"genus-species": ";".join(sorted(value))}
+                for key, value in marker_md5_species.items()
+            },
+            # User-suppolied sample data,
+            # TODO - include sample data from the pipeline:
+            {
+                sample: dict(
+                    list(zip(meta_names, stem_to_meta[sample]))
+                    + list(zip(stats_fields, sample_stats[sample]))
+                )
+                for sample in sample_stats
+            },
+            abundance_by_samples,
+        )
+
     if not output:
         sys.exit("ERROR: No output file specified.\n")
 
@@ -901,6 +926,7 @@ def main(
         stats_fields,
         output=f"{report_stem}.reads.{method}.tsv",
         excel=f"{report_stem}.reads.{method}.xlsx",
+        biom=f"{report_stem}.reads.{method}.biom",
         method=method,
         min_abundance=min_abundance,
         debug=debug,
