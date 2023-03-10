@@ -593,6 +593,7 @@ def main(
     ignore_prefixes,
     tmp_dir,
     min_abundance=0,
+    biom=False,
     debug=False,
     cpu=0,
 ):
@@ -733,6 +734,8 @@ def main(
         else:
             output_name = os.path.join(out_dir, f"{stem}.{method}.tsv")
             output_biom = os.path.join(out_dir, f"{stem}.{method}.biom")
+        if not biom:
+            output_biom = None
 
         if output_name in classifier_output:
             sys.exit(
@@ -872,24 +875,20 @@ def main(
             shutil.move(tmp_pred, output_name)
 
         if output_biom is not None:
-            msg = export_sample_biom(
+            if export_sample_biom(
                 tmp_pred,
                 # Re-insert the marker into the sequence dict keys, and use md5:
                 {(marker_name, md5seq(seq)): seq for seq in input_seqs.values()},
                 seq_meta,
                 sample_meta,
                 tally_counts,
-            )
-            if msg:
+            ):
                 # Move our temp file into position...
                 shutil.move(tmp_pred, output_biom)
                 if debug:
                     sys.stderr.write(f"DEBUG: Wrote {output_biom}\n")
             else:
-                sys.stderr.write(
-                    "WARNING: No BIOM format output as missing "
-                    "optional Python libraries\n"
-                )
+                sys.exit("ERROR: Missing optional Python library for BIOM output")
 
     method_cleanup()
 
