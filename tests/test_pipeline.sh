@@ -46,16 +46,19 @@ diff $TMP/output/report.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.on
 # Clear the intermediate, run again with --merged-cache
 rm -rf $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
 mkdir $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
-thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/
+if [ -x "$(command -v biom)" ]; then
+    thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/ --biom
+    biom validate-table -i $TMP/output/thapbi-pict.ITS1.onebp.biom
+else
+    # can't use --biom option:
+    thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/
+fi
 for F in $TMP/intermediate_with_cache/ITS1/*.fasta; do
     diff $F $TMP/intermediate/ITS1/${F##*/}
 done
 diff <(head -n 30 $TMP/intermediate/ITS1/DNAMIX_S95_L001.fasta) tests/prepare-reads/DNAMIX_S95_L001-a2-head.fasta
 diff $TMP/output/thapbi-pict.ITS1.samples.onebp.tsv tests/pipeline/thapbi-pict.samples.onebp.tsv
 diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.reads.onebp.tsv
-if [ -x "$(command -v biom)" ]; then
-    biom validate-table -i $TMP/output/thapbi-pict.ITS1.onebp.biom
-fi
 
 # Now with denoising, changes the counts but not the 10 sequences themselves
 thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache \
@@ -78,7 +81,5 @@ else
     diff <(cut -f 1-3 $TMP/output/usearch.ITS1.samples.onebp.tsv) \
          <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
 fi
-
-
 
 echo "$0 - test_pipeline.sh passed"

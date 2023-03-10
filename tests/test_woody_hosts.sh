@@ -80,12 +80,14 @@ echo "============================"
 echo "Running woody hosts classify"
 echo "============================"
 for M in onebp identity; do
-    thapbi_pict classify -i $TMP/woody_hosts.tally.tsv -m $M
+    if [ -x "$(command -v biom)" ]; then
+        thapbi_pict classify -i $TMP/woody_hosts.tally.tsv -m $M --biom
+        biom validate-table -i $TMP/woody_hosts.$M.biom
+    else
+        thapbi_pict classify -i $TMP/woody_hosts.tally.tsv -m $M
+    fi
     echo diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
     diff $TMP/woody_hosts.$M.tsv tests/woody_hosts/all.$M.tsv
-    if [ -x "$(command -v biom)" ]; then
-        biom validate-table -i $TMP/woody_hosts.$M.biom
-    fi
 done
 
 echo "==========================="

@@ -315,6 +315,7 @@ def classify(args=None):
         ignore_prefixes=tuple(args.ignore_prefixes),
         min_abundance=args.abundance,
         tmp_dir=args.temp,
+        biom=args.biom,
         debug=args.verbose,
         cpu=check_cpu(args.cpu),
     )
@@ -371,6 +372,7 @@ def summary(args=None):
         require_metadata=args.requiremeta,
         show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
+        biom=args.biom,
         debug=args.verbose,
     )
 
@@ -534,6 +536,7 @@ def pipeline(args=None):
             out_dir=os.path.split(stem)[0],  # i.e. next to FASTA all_reads input,
             ignore_prefixes=tuple(args.ignore_prefixes),  # not really needed
             min_abundance=args.abundance,
+            biom=args.biom,
             tmp_dir=args.temp,
             debug=args.verbose,
             cpu=check_cpu(args.cpu),
@@ -563,6 +566,7 @@ def pipeline(args=None):
             require_metadata=args.requiremeta,
             show_unsequenced=args.unsequenced,
             ignore_prefixes=tuple(args.ignore_prefixes),
+            biom=args.biom,
             debug=args.verbose,
         )
         if return_code:
@@ -613,6 +617,7 @@ def pipeline(args=None):
             require_metadata=args.requiremeta,
             show_unsequenced=args.unsequenced,
             ignore_prefixes=tuple(args.ignore_prefixes),
+            biom=args.biom,
             debug=args.verbose,
         )
         if return_code:
@@ -730,6 +735,9 @@ ARG_METHOD_INPUT = dict(  # noqa: C408
     choices=sorted(method_classifier),
     help=f"Classify method (to infer filenames), default '{DEFAULT_METHOD}'.",
 )
+
+# "-b", "--biom",
+ARG_BIOM = dict(action="store_true", help="Enable optional BIOM output.")  # noqa: C408
 
 # "--merged-cache",
 ARG_MERGED_CACHE = dict(  # noqa: C408
@@ -1133,6 +1141,7 @@ def main(args=None):
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
+    subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
@@ -1599,6 +1608,7 @@ def main(args=None):
         "each input file. Use '-' for stdout.",
     )
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
+    subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.set_defaults(func=classify)
@@ -1743,6 +1753,7 @@ def main(args=None):
     subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
+    subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=summary)
     del subcommand_parser  # To prevent accidentally adding more

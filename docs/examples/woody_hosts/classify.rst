@@ -40,10 +40,10 @@ next to the input tally TSV file. There should now be two new files:
     summary/thapbi-pict.ITS1.onebp.tsv
     summary/thapbi-pict.ITS1.tally.tsv
 
-If you have the ``biom-format`` Python library installed, there will also be a
-``summary/thapbi-pict.ITS1.onebp.biom`` file as well, equivalent to the data
-in ``summary/thapbi-pict.ITS1.tally.tsv`` potentially more useful for export
-to other analysis tools.
+If you have the ``biom-format`` Python library installed, adding ``--biom`` to
+the command line will result in a ``summary/thapbi-pict.ITS1.onebp.biom`` file
+as well, equivalent to the data in ``summary/thapbi-pict.ITS1.tally.tsv`` but
+potentially more useful for export to other analysis tools.
 
 Intermediate TSV files
 ----------------------
