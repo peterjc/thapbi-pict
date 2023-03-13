@@ -37,6 +37,14 @@ cp database/Phytophthora_ITS1_curated.fasta $TMP/input/
 if [ -x "$(command -v biom)" ]; then
     thapbi_pict classify -m identity -d $DB -i $TMP/input/Phytophthora_ITS1_curated.fasta --biom
     biom validate-table -i $TMP/input/Phytophthora_ITS1_curated.identity.biom
+    echo "Checking BIOM output (like this FASTA input) has no sample metadata:"
+    biom export-metadata -i $TMP/input/Phytophthora_ITS1_curated.identity.biom \
+        --sample-metadata-fp sample_meta.tsv \
+        | grep "biom does not contain sample metadata"
+    echo "Checking BIOM output has sequence, genus-species, and taxid metadata:"
+    biom export-metadata -i $TMP/input/Phytophthora_ITS1_curated.identity.biom \
+        --observation-metadata-fp /dev/stdout | grep "^.Sequence.genus-species.taxid$"
+    echo "BIOM output looks fine"
 else
     thapbi_pict classify -m identity -d $DB -i $TMP/input/Phytophthora_ITS1_curated.fasta
 fi
