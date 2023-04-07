@@ -79,14 +79,14 @@ line with ``git``.
     $ git clone https://github.com/peterjc/thapbi-pict.git
     $ cd thapbi-pict
 
-Then load the plain text SQL dump of the default database into SQLite3, see
-``database/README.rst`` for more information on this. Make it read only to
-prevent accidental edits:
+Then build the default reference database, by loading the provided FASTA files
+into SQLite3, see ``database/README.rst`` for more information on this. Make it
+read only to prevent accidental edits:
 
 .. code:: console
 
     $ cd database
-    $ ./build_all.sh
+    $ ./build_ITS1_DB.sh
     $ cd ..
     $ cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
     $ chmod a-w thapbi_pict/ITS1_DB.sqlite
