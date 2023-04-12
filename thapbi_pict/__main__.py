@@ -512,6 +512,7 @@ def pipeline(args=None):
                 if file_to_sample_name(os.path.split(_)[1]) in neg_stems
             ],
             output=tally_seqs_file,
+            histogram=f"{stem}.histogram.tsv",
             session=session,
             marker=marker,
             spike_genus=args.synthetic,
