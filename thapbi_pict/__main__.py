@@ -277,6 +277,7 @@ def sample_tally(args=None):
         marker=args.marker,
         spike_genus=args.synthetic,
         fasta=args.fasta,
+        histogram=args.histogram,
         min_abundance=args.abundance,
         min_abundance_fraction=args.abundance_fraction,
         total_min_abundance=args.total,
@@ -1554,6 +1555,12 @@ def main(args=None):
         type=str,
         metavar="FILENAME",
         help="Optional output FASTA filename, '-' for stdout. ",
+    )
+    subcommand_parser.add_argument(
+        "--histogram",
+        type=str,
+        metavar="FILENAME",
+        help="Optional output frequency histogram TSV filename, '-' for stdout. ",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)

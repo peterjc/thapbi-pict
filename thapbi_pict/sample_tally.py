@@ -8,6 +8,7 @@
 This implements the ``thapbi_pict sample-tally ...`` command.
 """
 import gzip
+import math
 import os
 import sys
 from collections import Counter
@@ -34,6 +35,7 @@ def main(
     marker=None,
     spike_genus=None,
     fasta=None,
+    histogram=None,
     min_abundance=100,
     min_abundance_fraction=0.001,
     total_min_abundance=0,
@@ -109,8 +111,10 @@ def main(
     samples = set()
     sample_pool = {}
     sample_headers = {}
+    histogram_global = []
     for filename in inputs:
         # Assuming FASTA for now
+        histogram_sample = []  # useful while debugging
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
         sample = file_to_sample_name(filename)
@@ -123,6 +127,11 @@ def main(
                     f"ERROR: Missing FASTA header in {filename}, "
                     "required for fractional abundance threshold\n"
                 )
+            if histogram:
+                sys.exit(
+                    f"ERROR: Missing FASTA header in {filename}, "
+                    "required for frequency histogram\n"
+                )
             sys.stderr.write(f"WARNING: Missing FASTA header in {filename}\n")
             sample_cutadapt[sample] = 0
             # Will assume marker matches, and use default for threshold_pool
@@ -134,15 +143,66 @@ def main(
                 )
             assert "raw_fastq" in sample_headers[sample], sample_headers[sample]
             sample_cutadapt[sample] = int(sample_headers[sample]["cutadapt"])
+            if histogram:
+                if (
+                    "threshold" not in sample_headers[sample]
+                    or int(sample_headers[sample]["threshold"]) > 2
+                ):
+                    sys.exit(
+                        "ERROR: Frequency histogram needs FASTA with abundance "
+                        f"threshold 1 or 2, check {filename}\n"
+                    )
+                if "singletons" not in sample_headers[sample]:
+                    sys.exit(
+                        "ERROR: Frequency histogram needs FASTA with singletons "
+                        f"count, check {filename}\n"
+                    )
+                histogram_sample.append(int(sample_headers[sample]["singletons"]))
         sample_pool[sample] = sample_headers[sample].get("threshold_pool", "default")
         with open(filename) as handle:
             for _, seq in SimpleFastaParser(handle):
                 seq = seq.upper()
+                a = abundance_from_read_name(_.split(None, 1)[0])
+                if histogram:
+                    bin = math.ceil(math.log(a, 2))
+                    try:
+                        histogram_sample[bin] += a
+                    except IndexError:
+                        if len(histogram_sample) + 1 < bin:
+                            histogram_sample.extend([0] * (bin - len(histogram_sample)))
+                        assert len(histogram_sample) == bin
+                        histogram_sample.append(a)
+                        assert histogram_sample[bin] == a
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_.split(None, 1)[0])
                     totals[seq] += a
                     counts[seq, sample] += a
                     sample_counts[sample] += a
+        if histogram:
+            if debug:
+                print(f"{sample} {marker} histogram {histogram_sample}")
+            # Now update the global one...
+            for bin, a in enumerate(histogram_sample):
+                try:
+                    histogram_global[bin] += a
+                except IndexError:
+                    if len(histogram_global) + 1 < bin:
+                        histogram_global.extend([0] * (bin - len(histogram_global)))
+                    assert len(histogram_global) == bin
+                    histogram_global.append(a)
+                    assert histogram_global[bin] == a
+    if histogram:
+        if debug:
+            print(f"Global {marker} histogram {histogram_global}")
+        # TODO - plot this if filename extension for PNG or PDF?
+        if histogram == "-":
+            out_handle = sys.stdout
+        else:
+            out_handle = open(histogram, "w")
+        out_handle.write("#per-sample-count-bin-limit\tread-count\n")
+        for bin, a in enumerate(histogram_global):
+            out_handle.write(f"{2**bin}\t{a}\n")
+        if histogram != "-":
+            out_handle.close()
 
     if totals:
         sys.stderr.write(
