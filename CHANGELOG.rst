@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v0.14.2 *Pending*  Optional ``sample-tally`` TSV histogram of per-sample read counts.
 v0.14.1 2023-03-13 Optional BIOM output using the ``biom-format`` Python library.
 v0.14.0 2023-03-02 Offers UNOISE read-correction, built-in or invoking USEARCH or VSEARCH.
 v0.13.6 2022-12-28 Factional abundance threshold in ``sample-tally`` was not strict enough.
