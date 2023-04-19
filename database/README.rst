@@ -51,11 +51,9 @@ sets of biological sequences (subject to taxonomy filtering):
 
   Note the import command discards uncultured entries.
 
-- Observed ITS1 sequence files ``single_isolates/*.fasta`` from single isolate
-  positive controls run on MiSeq plates. Created using
-  ``thapbi_pict prepare-reads`` and ``thapbi_pict curated-seq`` with default
-  settings (default minimum abundance 1000 was well above the plate level
-  minimum abundance set via negative controls).
+- Observed ITS1 sequence files ``single_isolates/*.fasta`` with at least
+  abundance 1000 (well above plate negative controls) from single isolate
+  positive controls run on MiSeq plates.
 
 Additionally:
 
