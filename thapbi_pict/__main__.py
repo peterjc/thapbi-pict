@@ -496,6 +496,7 @@ def pipeline(args=None):
         if len(markers) > 1:
             sys.stderr.write("\n")
             sys.stderr.write(f"Processesing {marker}\n")
+            sys.stderr.write("~" * (13 + len(marker)) + "\n")
             sys.stderr.write("\n")
         tally_seqs_file = f"{stem}.tally.tsv"
         sample_tally(
@@ -597,6 +598,11 @@ def pipeline(args=None):
 
     if len(markers) > 1:
         # Pooled marker report
+        if len(markers) > 1:
+            sys.stderr.write("\n")
+            sys.stderr.write("Processesing pooled markers\n")
+            sys.stderr.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            sys.stderr.write("\n")
         if args.output.endswith(os.path.sep) or os.path.isdir(args.output):
             # Just a directory
             stem = os.path.join(args.output, "pooled")
