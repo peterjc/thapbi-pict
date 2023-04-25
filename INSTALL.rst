@@ -11,7 +11,7 @@ We recommend installing this tool on Linux or macOS using the `Conda
 
 .. code:: console
 
-    $ conda install thapbi_pict
+    $ conda install thapbi-pict
 
 Alternatively, since the software is on the `Python Package Index (PyPI)
 <https://pypi.python.org/>`__, the following command will install it along
@@ -19,7 +19,7 @@ with its Python dependencies:
 
 .. code:: console
 
-    $ pip install thapbi_pict
+    $ pip install thapbi-pict
 
 However, in this case you will still need to install at least the command line
 tool ``flash`` (for merging Illumina paired reads), and optionally others like
