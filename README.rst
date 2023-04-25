@@ -66,7 +66,7 @@ We recommend installing this tool on Linux or macOS using the
 
 .. code:: console
 
-   $ conda install thapbi_pict
+   $ conda install thapbi-pict
 
 Alternatively or on Windows, since `the software is on the Python Package
 Index (PyPI) <https://pypi.org/project/thapbi-pict/>`__, the following command
@@ -74,7 +74,7 @@ will install it along with its Python dependencies:
 
 .. code:: console
 
-   $ pip install thapbi_pict
+   $ pip install thapbi-pict
 
 However, in this case you will still need to install various external command
 line tools. See ``INSTALL.rst`` for more details (especially for Windows),
