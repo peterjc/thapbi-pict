@@ -718,11 +718,17 @@ def marker_cut(
                 skipped_samples.add(stem)
                 if debug:
                     sys.stderr.write(f"Skipping {fasta_name} as already done\n")
-            else:
+            elif min_a > 1:
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
                     f" or {accepted_total}/{marker_total}"
                     f" reads over abundance threshold {min_a}\n"
+                )
+            else:
+                assert accepted_total == marker_total
+                sys.stderr.write(
+                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                    f" or {accepted_total} reads (abundance threshold {min_a})\n"
                 )
         time_abundance += time() - start
         if debug:
