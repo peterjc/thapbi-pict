@@ -456,7 +456,10 @@ def pipeline(args=None):
         out_dir=intermediate_dir,
         session=session,
         flip=args.flip,
-        min_abundance=2,
+        # Unless pipeline explicitly using min abundance 0 or 1
+        # (which are equivalent ways to retain singletons),
+        # at this point only want to exclude singletons:
+        min_abundance=min(2, args.abundance),
         min_abundance_fraction=0.0,
         ignore_prefixes=tuple(args.ignore_prefixes),
         merged_cache=args.merged_cache,
