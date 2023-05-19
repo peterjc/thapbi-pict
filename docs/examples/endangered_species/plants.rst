@@ -53,14 +53,14 @@ The edit-graph is the most complicated of those in this dataset - not
 simply in terms of the number of nodes. This marker needs more careful
 review before using THAPBI PICT's default ``onebp`` classifier.
 
-trnl-UAA
+trnL-UAA
 --------
 
 Not very diverse, only eight unique sequences recovered:
 
 .. code:: console
 
-    $ grep -c -v "^#" summary/trnl-UAA.tally.tsv
+    $ grep -c -v "^#" summary/trnL-UAA.tally.tsv
     8
 
 We see lots of *Brassica*, the difficulties with *Brassica oleracea* vs
