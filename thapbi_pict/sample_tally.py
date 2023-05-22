@@ -52,8 +52,9 @@ def main(
     Arguments min_length and max_length are applied while loading the input
     per-sample FASTA files.
 
-    Set argument denoise=True for our reimplementation of the UNOISE2 read
-    correction / denoising algorithm.
+    Argument algorithm is a string, "-" for no read correction (denoising),
+    "unoise-l" for our reimplementation of the UNOISE2 algorithm, or "usearch"
+    or "vsearch" to invoke those tools at the command line.
 
     Arguments min_abundance and min_abundance_fraction are applied per-sample
     (after denoising if being used), increased by pool if negative or

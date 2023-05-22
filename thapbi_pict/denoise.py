@@ -434,6 +434,10 @@ def read_correction(
 ):
     """Apply builtin UNOISE algorithm or invoke an external tool like VSEARCH.
 
+    Argument algorithm is a string, "unoise-l" for our reimplementation of the
+    UNOISE2 algorithm, or "usearch" or "vsearch" to invoke those tools at the
+    command line.
+
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
     marker) as keys, with their total abundance counts as values.
 
