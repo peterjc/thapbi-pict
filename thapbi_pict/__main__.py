@@ -1580,7 +1580,7 @@ def main(args=None):
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
-    subcommand_parser.add_argument("-𝛾", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
