@@ -46,9 +46,9 @@ except ImportError:
 
 
 # Make sure we have the right Python version.
-if sys.version_info[:2] < (3, 6):
+if sys.version_info[:2] < (3, 7):
     sys.exit(
-        "THAPBI PICT requires Python 3.6 or later. "
+        "THAPBI PICT requires Python 3.7 or later. "
         "Python %d.%d detected.\n" % sys.version_info[:2]
     )
 
@@ -96,14 +96,12 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
     packages=find_packages(),
     include_package_data=True,
