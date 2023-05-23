@@ -64,6 +64,13 @@ thapbi_pict edit-graph -d references.sqlite -m 1s5g \
     -i summary/defaults.ITS2.1s5g.tsv \
     -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
+
+echo "Recreating stacked-line plot from THAPBI PICT paper"
+
+python ../../scripts/plot_reduction.py \
+       -i summary/defaults.ITS2.samples.1s5g.tsv \
+       -o summary/defaults.ITS2.read-reduction.pdf
+
 echo ==========================================
 echo Running analysis excluding only singletons
 echo ==========================================
