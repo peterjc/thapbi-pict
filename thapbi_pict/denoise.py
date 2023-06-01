@@ -173,7 +173,6 @@ def usearch(
     Returns a dict mapping input sequences to centroid sequences, and a dict
     of MD5 checksums of any sequences flagged as chimeras.
     """
-    debug = True
     check_tools(["usearch"], debug)
 
     if tmp_dir:
