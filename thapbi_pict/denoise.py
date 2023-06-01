@@ -91,6 +91,9 @@ def unoise(
                 scorer=Levenshtein.distance,
                 score_cutoff=cutoff,
             ):
+                # UNOISE merges query into centroid if skew(M,C) <= beta(d),
+                #   (query abundance) / (centroid abundance) <= 1 / 2**(alpha*dist +1)
+                #   (query abundance) * 2**(alpha*dist + 1) <= centroid abundance
                 if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
                     centroids[choice].add(query)
                     if debug:
