@@ -118,6 +118,7 @@ def unoise(
                         high_abundance_centroids,
                         scorer=Levenshtein.distance,
                         score_cutoff=cutoff,
+                        limit=None,
                     )
                     if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]
                 ],
