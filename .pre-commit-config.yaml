@@ -68,7 +68,7 @@ repos:
     -   id: doc8
         additional_dependencies: [pygments]
         args: [--quiet,--ignore=D001]
--   repo: https://github.com/asottile/reorder_python_imports
+-   repo: https://github.com/asottile/reorder-python-imports
     rev: v3.9.0
     hooks:
     -   id: reorder-python-imports
