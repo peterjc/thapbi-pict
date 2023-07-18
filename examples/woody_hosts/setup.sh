@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [ -f raw_data.tar.gz ]; then
-    echo "Already have taxdmp_2019-12-01/"
+    echo "Already have raw_data.tar.gz (assuming it has been decompressed)"
 else
     echo "Downloading raw data"
     wget https://zenodo.org/record/3342957/files/raw_data.tar.gz
