@@ -10,4 +10,4 @@ flash
 graphviz
 sqlite >=3
 unzip
-vsearch >=2.22.1
+vsearch >=2.23.0
