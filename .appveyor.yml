@@ -39,7 +39,7 @@ install:
   - mv flash.exe %PYTHON%\\
   - flash --version
   - echo "Installing vsearch"
-  - curl -L -O "https://github.com/torognes/vsearch/releases/download/v2.22.1/vsearch-2.22.1-win-x86_64.zip"
+  - curl -L -O "https://github.com/torognes/vsearch/releases/download/v2.23.0/vsearch-2.23.0-win-x86_64.zip"
   - unzip vsearch-2.22.1-win-x86_64.zip
   - mv vsearch-2.22.1-win-x86_64\\bin\\vsearch.exe %PYTHON%\\
   - vsearch --version
