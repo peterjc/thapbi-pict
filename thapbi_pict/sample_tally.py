@@ -106,7 +106,6 @@ def main(
 
     totals = Counter()
     counts = Counter()
-    sample_counts = Counter()
     sample_cutadapt = {}  # before any thresholds
     samples = set()
     sample_pool = {}
@@ -144,7 +143,6 @@ def main(
                     a = abundance_from_read_name(_.split(None, 1)[0])
                     totals[seq] += a
                     counts[seq, sample] += a
-                    sample_counts[sample] += a
 
     if totals:
         sys.stderr.write(
