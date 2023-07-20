@@ -352,7 +352,7 @@ def main(
                 * pool_fraction_threshold.get(pool, min_abundance_fraction)
             ),
         )
-        if debug:
+        if debug and not controls:
             sys.stderr.write(
                 f"DEBUG: {sample} in pool {pool} gets threshold {threshold}\n"
             )
