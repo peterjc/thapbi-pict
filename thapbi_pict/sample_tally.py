@@ -533,7 +533,9 @@ def main(
     else:
         fasta_handle = None
     for count, seq in values:
-        data = "\t".join(str(counts[seq, sample]) for sample in samples)
+        # This is the last time we'll use the counts[seq, *] values,
+        # so use pop to gradually reduce the data held in memory.
+        data = "\t".join(str(counts.pop((seq, sample), 0)) for sample in samples)
         md5 = md5seq(seq)
         if md5 in chimeras:
             out_handle.write(
