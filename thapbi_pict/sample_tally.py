@@ -13,6 +13,7 @@ import sys
 from collections import Counter
 from collections import defaultdict
 from math import ceil
+from time import time
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -156,7 +157,9 @@ def main(
     chimeras = {}
     if denoise_algorithm != "-":
         if debug:
-            f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
+            sys.stderr.write(
+                f"DEBUG: Starting read-correction with {denoise_algorithm}...\n"
+            )
         corrections, chimeras = read_correction(
             denoise_algorithm,
             totals,
@@ -194,9 +197,12 @@ def main(
 
     # Drop entries so low in abundance that they'll never be accepted, nor
     # increase the pool threshold. Drop before bothering to check if spikes.
-    # Note factor of 0.5 due to heuristic below for threshold adjustment.
+    # Note factor of 0.5 due to heuristic below for threshold adjustment
+    # (things slightly below the absolute threshold might still contribut to
+    # raising the max non-spike in counts and this the automatic fractional
+    # threshold)
     ultra_low = ceil(0.5 * min_abundance)
-    if ultra_low:
+    if ultra_low > 1:
         if debug:
             sys.stderr.write("DEBUG: Dropping ultra low abundance entries\n")
         new_counts = defaultdict(int)
@@ -223,11 +229,21 @@ def main(
     max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     max_non_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     if spikes:
+        if debug:
+            sys.stderr.write(
+                "DEBUG: About to identify spike-in synthetic sequences...\n"
+            )
+        start = time()
         for seq in totals:
             # Calling is_spike_in is relatively expensive, but will be of less
             # interest on the tail end low abundance samples.
             # Should we sort totals by count?
             assert totals[seq] >= ultra_low, seq
+            if totals[seq] < min(max_spike_abundance.values()) and totals[seq] < min(
+                max_non_spike_abundance.values()
+            ):
+                # Note counts[seq, sample] <= totals[seq] so will not be able to exceed
+                continue
             if any(
                 min(max_spike_abundance[sample], max_non_spike_abundance[sample])
                 < counts[seq, sample]
@@ -242,12 +258,16 @@ def main(
                     for sample in samples:
                         if max_non_spike_abundance[sample] < counts[seq, sample]:
                             max_non_spike_abundance[sample] = counts[seq, sample]
+        time_spike_tagging = time() - start
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: Spent {time_spike_tagging:0.1f}s tagging spike-in sequences.\n"
+            )
     else:
         for (_, sample), a in counts.items():
             max_non_spike_abundance[sample] = max(max_non_spike_abundance[sample], a)
-    if debug:
-        sys.stderr.write("DEBUG: Finished tagging spike-in sequences.\n")
 
+    start = time()
     sample_threshold = {}
     if controls:
         if debug:
@@ -372,6 +392,12 @@ def main(
         totals = new_totals
         del new_totals, new_counts
 
+    if debug:
+        time_thresholds = time() - start
+        sys.stderr.write(
+            f"DEBUG: Spent {time_thresholds:0.1f}s on abundance thresholds\n"
+        )
+
     if chimeras:
         # Filter the chimeras list to drop low abundance entries
         # Would be better to call VSEARCH chimera detection here?
@@ -401,6 +427,9 @@ def main(
     )
     del totals
 
+    if debug:
+        sys.stderr.write("DEBUG: Sorted, about to start output...\n")
+
     # TODO - avoid double definition here and in summary code:
     stats_fields = (
         "Raw FASTQ",
@@ -414,6 +443,7 @@ def main(
         "Singletons",
     )
 
+    start = time()
     if output == "-":
         if fasta == "-":
             sys.exit("ERROR: Don't use stdout for both TSV and FASTA output.")
@@ -527,3 +557,6 @@ def main(
         out_handle.close()
     if fasta and fasta != "-":
         fasta_handle.close()
+    if debug:
+        time_output = time() - start
+        sys.stderr.write(f"DEBUG: Spent {time_output:0.1f}s writing output files\n")
