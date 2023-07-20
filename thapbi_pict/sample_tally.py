@@ -358,6 +358,8 @@ def main(
             sys.stderr.write(
                 f"DEBUG: {sample} in pool {pool} gets threshold {threshold}\n"
             )
+    del pool_absolute_threshold
+    del pool_fraction_threshold
 
     new_counts = defaultdict(int)
     new_totals = defaultdict(int)
