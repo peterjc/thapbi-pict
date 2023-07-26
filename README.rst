@@ -107,9 +107,9 @@ in the ``examples/`` folder (which are based on published datasets).
 Citation
 --------
 
-If you use THAPBI PICT in your work, please cite this manuscript (currently
-only available as a preprint), and give details of the version and any
-non-default settings used in your methods:
+If you use THAPBI PICT in your work, please cite this manuscript (to appear in
+the journal *PeerJ* but currently only available as a preprint), and give
+details of the version and any non-default settings used in your methods:
 
     Cock *et al.* (2023) "THAPBI PICT - a fast, cautious, and accurate
     metabarcoding analysis pipeline" *bioRxiv*
