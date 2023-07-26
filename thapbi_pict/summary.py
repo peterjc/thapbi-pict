@@ -101,8 +101,6 @@ def sample_summary(
 
     species_predictions = sorted(species_predictions, key=_sp_sort_key)
 
-    missing_stats = [MISSING_DATA] * len(stats_fields)
-
     # Open files and write headers
     # ============================
 
@@ -243,9 +241,12 @@ def sample_summary(
             if metadata:
                 handle.write("\t".join(metadata) + "\t")
             handle.write(sample + "\t" + ", ".join(human_sp_list) + "\t")
-            if stats_fields:
+            if stats_fields and sample_stats:
                 handle.write(
-                    "\t".join(str(_) for _ in sample_stats.get(sample, missing_stats))
+                    "\t".join(
+                        str(sample_stats.get(sample, {}).get(field, MISSING_DATA))
+                        for field in stats_fields
+                    )
                     + "\t"
                 )
             if sample in sample_species_counts:
@@ -283,14 +284,14 @@ def sample_summary(
             worksheet.write_string(
                 current_row, len(meta_names) + 1, ", ".join(human_sp_list), cell_format
             )
-            for offset, _ in enumerate(stats_fields):
+            for offset, field in enumerate(stats_fields):
                 # Currently all the statistics are integers, or strings
-                v = sample_stats.get(sample, missing_stats)[offset]
+                v = sample_stats.get(sample, {}).get(field, MISSING_DATA)
                 if isinstance(v, int):
                     worksheet.write_number(
                         current_row,
                         len(meta_names) + 2 + offset,
-                        sample_stats[sample][offset],
+                        v,
                         cell_format,
                     )
                 else:
@@ -479,7 +480,10 @@ def read_summary(
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
         meta = [
-            sample_stats.get(sample, [MISSING_DATA] * len(stats_fields))
+            [
+                sample_stats.get(sample, {}).get(field, MISSING_DATA)
+                for field in stats_fields
+            ]
             for sample in stem_to_meta
         ]
         for i, name in enumerate(stats_fields):
@@ -770,8 +774,8 @@ def main(
         "Max spike-in",
         "Singletons",
     )
-    blank_stats = [-1] * len(stats_fields)
-    sample_stats = {}
+    blank_stat = -1
+    sample_stats = {}  # nested dict, keys are sample, then field name
 
     if not markers:
         # Corner case of zero sequences in all markers?
@@ -803,20 +807,53 @@ def main(
                     sys.stderr.write(f"DEBUG: Missing metadata for {sample}\n")
             if sample not in sample_species_counts:
                 sample_species_counts[sample] = Counter()
-            sample_stats[sample] = values = [
-                fasta_header.get(_, -1)
-                if _ in ("Sample", "Control", "Threshold pool")
-                else int(fasta_header.get(_, -1))
-                for _ in stats_fields
-            ]
-            if values == blank_stats:
+            if sample not in sample_stats:
+                sample_stats[sample] = {}
+            for field in stats_fields:
+                value = fasta_header.get(field, blank_stat)
+                if field in ("Sample", "Control", "Threshold pool"):
+                    # Text fields; should be consistent between markers
+                    if field in sample_stats[sample]:
+                        assert sample_stats[sample][field] == value
+                    else:
+                        sample_stats[sample][field] = value
+                else:
+                    # Integer fields
+                    value = int(value)
+                    if value == blank_stat:
+                        pass
+                    elif field in ("Cutadapt", "Singletons"):
+                        # Sum over the markers
+                        sample_stats[sample][field] = (
+                            sample_stats[sample].get(field, 0) + value
+                        )
+                    elif field in ("Threshold"):
+                        # Report value if shared between markers
+                        if field not in sample_stats[sample]:
+                            sample_stats[sample][field] = value
+                        elif sample_stats[sample][field] != value:
+                            sample_stats[sample][field] = "By marker"
+                    elif field.startswith("Max "):
+                        # Take largest value over the markers
+                        if field not in sample_stats[sample]:
+                            sample_stats[sample][field] = value
+                        else:
+                            sample_stats[sample][field] = max(
+                                value, sample_stats[sample][field]
+                            )
+                    else:
+                        # e.g. Threshold pool
+                        # Should be consistent between markers
+                        if field in sample_stats[sample]:
+                            assert sample_stats[sample][field] == value
+                        else:
+                            sample_stats[sample][field] = value
+                del value
+            if (
+                not sample_stats[sample]
+                or set(sample_stats[sample].values()) == blank_stat
+            ):
                 sys.stderr.write(f"WARNING: Missing stats header for {sample}\n")
-                if debug:
-                    sys.stderr.write(f"DEBUG: Wanted {';'.join(stats_fields)}\n")
-                    sys.stderr.write(f"DEBUG: Had {';'.join(fasta_header)}\n")
-                stats_fields = []
-                sample_stats = {}
-            del values
 
         for (marker, md5), seq in seqs.items():
             markers.add(marker)
@@ -843,16 +880,6 @@ def main(
                 ] += abundance
         del seqs, sample_headers, counts
 
-    if len(markers) > 1:
-        # TODO: How best to show the cutadapt and threshold values (per marker)?
-        sample_stats = {
-            sample: [values[i] for i in (0, 1, 5)]
-            for sample, values in sample_stats.items()
-        }
-        stats_fields = tuple(stats_fields[i] for i in (0, 1, 5))
-        assert stats_fields == ("Raw FASTQ", "Flash", "Control"), stats_fields
-        blank_stats = [-1] * len(stats_fields)
-
     if debug:
         sys.stderr.write(
             f"DEBUG: Loaded sample counts for {len(sample_species_counts)} sequences\n"
@@ -860,27 +887,30 @@ def main(
 
     if "Threshold" in stats_fields:
         # Apply any over-ride min_abundance for the reports
-        i = stats_fields.index("Threshold")
-        for _ in sample_stats:
-            if int(sample_stats[_][i]) < min_abundance:
-                sample_stats[_][i] = min_abundance
+        for sample in sample_stats:
+            if (
+                sample_stats[sample]["Threshold"] != "By marker"
+                and int(sample_stats[sample]["Threshold"]) < min_abundance
+            ):
+                sample_stats[sample]["Threshold"] = min_abundance
 
     bad_fields = []
-    for i, field in enumerate(stats_fields):
-        if -1 in (_[i] for _ in sample_stats.values()):
-            bad_fields.append(i)
-            if debug:
-                sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
+    for field in stats_fields:
+        if blank_stat in {_.get(field, blank_stat) for _ in sample_stats.values()}:
+            bad_fields.append(field)
+            sys.stderr.write(f"WARNING: Dropping {field} column as missing stats\n")
     if bad_fields:
-        for key, value in sample_stats.items():
-            sample_stats[key] = [_ for i, _ in enumerate(value) if i not in bad_fields]
-        stats_fields = [_ for i, _ in enumerate(stats_fields) if i not in bad_fields]
+        for sample in sample_stats:
+            for field in bad_fields:
+                if field in sample_stats[sample]:
+                    del sample_stats[sample][field]
+        stats_fields = tuple(field for field in stats_fields if field not in bad_fields)
     del bad_fields
 
     if "Threshold pool" in stats_fields:
         # Try to remove any common folder prefix like raw_data/
         i = stats_fields.index("Threshold pool")
-        paths = {_[i] for _ in sample_stats.values()}
+        paths = {_["Threshold pool"] for _ in sample_stats.values()}
         common = os.path.commonpath(paths)
         if len(paths) > 1 and common:
             if debug:
