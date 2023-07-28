@@ -336,6 +336,20 @@ def main(
                         f"{min_abundance_fraction*100:.4f} to {f*100:.4f}%\n"
                     )
 
+    for pool, value in pool_absolute_threshold.items():
+        if value > min_abundance:
+            sys.stderr.write(
+                f"Negative controls for marker {marker} increased "
+                f"pool {pool} absolute abundance threshold to {value}.\n"
+            )
+    for pool, value in pool_fraction_threshold.items():
+        if value > min_abundance_fraction:
+            sys.stderr.write(
+                f"Negative controls for marker {marker} increased "
+                f"pool {pool} fractional abundance threshold to "
+                f"{value*100:0.4f}%\n."
+            )
+
     # Apply any dynamic abundance threshold increases from controls:
     for sample in samples:
         if sample in controls:
