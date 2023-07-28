@@ -384,10 +384,11 @@ def main(
             if totals[seq] >= total_min_abundance:
                 new_counts[seq, sample] = a
                 new_totals[seq] += a
-        sys.stderr.write(
-            f"Total abundance threshold {total_min_abundance} reduced unique "
-            f"ASVs from {len(totals)} to {len(new_totals)}.\n"
-        )
+        if debug or len(new_totals) < len(totals):
+            sys.stderr.write(
+                f"Total abundance threshold {total_min_abundance} reduced "
+                f"unique ASVs from {len(totals)} to {len(new_totals)}.\n"
+            )
         counts = new_counts
         totals = new_totals
         del new_totals, new_counts
