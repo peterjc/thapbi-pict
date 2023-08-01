@@ -16,7 +16,7 @@ import numpy as np
 plt.style.use("tableau-colorblind10")
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.1")
+    print("v0.0.2")
     sys.exit(0)
 
 # Parse Command Line
@@ -40,6 +40,11 @@ Example usage:
 $ ./plot_reduction.py -i thapbi-pict.ITS1.samples.onebp.tsv \
                       -o thapbi-pict.ITS1.reduction.pdf -c 1
 
+By default it draws one line per sample, and the column argument can be set
+to another column for sample labels. However, this will also merge on that
+column allowing you to plot things like biological samples vs controls, or
+different sample groups. This is particularly useful when the number of
+samples is too large for the legend to be meaningful.
 """
 
 parser = argparse.ArgumentParser(
@@ -60,9 +65,10 @@ parser.add_argument(
     type=str,
     default="0",
     metavar="COLUMN",
-    help="Which column in the input table to use as the caption. Use 0 "
-    "(default) for the sample FASTQ stem in the 'Sequencing Sample' column. "
-    "Use integer 1 or more for a column number, or the column header name.",
+    help="Which column in the input table to pool on and use as the caption. "
+    "Use 0 (default) for the sample FASTQ stem in the 'Sequencing Sample' "
+    "column. Use integer 1 or more for a column number, or the column header "
+    "name.",
 )
 parser.add_argument(
     "-o",
@@ -81,8 +87,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
     """Load a THAPBI PICT TSV sample report."""
     # The key data is all in the headers of the THAPBI PICT tally file but
     # that lacks any user-supplied metadata which we want for sample names.
-    data = []
-    labels = []
+    data = {}  # key on sample/group caption via specified column
     captions = [
         "Raw FASTQ",
         "Flash",
@@ -130,14 +135,29 @@ def load_samples(input_sample_report_tsv, caption_column=0):
         else:
             sys.exit(f"ERROR - Did not find this in header columns: {caption_column}")
         sys.stderr.write(
-            f"Using column {idn_col+1}, '{parts[idn_col]}', for sample captions\n"
+            f"Using column {idn_col+1}, '{parts[idn_col]}', for captions/grouping\n"
         )
+        count = 0
         for line in handle:
             parts = line.rstrip("\n").split("\t")
             try:
-                labels.append(parts[idn_col])
-                data.append(
-                    (
+                idn = parts[idn_col]
+                if idn in data:
+                    # Append - TODO refactor, maybe use numpy array?
+                    old = data[idn]
+                    data[idn] = (
+                        old[0] + int(parts[raw_col]),
+                        old[1] + int(parts[merged_col]),
+                        old[2] + int(parts[primer_matched_col]),
+                        old[3]
+                        + int(parts[primer_matched_col])
+                        - int(parts[singletons_col]),
+                        old[4] + int(parts[accepted_total_col]),
+                        old[5] + int(parts[accepted_unique_col]),
+                    )
+                    del old
+                else:
+                    data[idn] = (
                         int(parts[raw_col]),
                         int(parts[merged_col]),
                         int(parts[primer_matched_col]),
@@ -145,11 +165,16 @@ def load_samples(input_sample_report_tsv, caption_column=0):
                         int(parts[accepted_total_col]),
                         int(parts[accepted_unique_col]),
                     )
-                )
             except IndexError:
                 sys.exit("ERROR - Not enough fields in line:\n" + repr(line))
-        sys.stderr.write(f"Loaded read counts for {len(data)} samples\n")
-    return captions, labels, data
+            count += 1
+        if len(data) < count:
+            sys.stderr.write(
+                f"Loaded read counts for {count} samples into {len(data)} groups\n"
+            )
+        else:
+            sys.stderr.write(f"Loaded read counts for {len(data)} samples\n")
+    return captions, list(data.keys()), list(data.values())
 
 
 def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_column=0):
