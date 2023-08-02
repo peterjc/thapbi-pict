@@ -71,6 +71,12 @@ parser.add_argument(
     "name.",
 )
 parser.add_argument(
+    "-p",
+    "--percent",
+    action="store_true",
+    help="Plot as percentages of the raw FASTQ read count.",
+)
+parser.add_argument(
     "-o",
     "--output",
     dest="output",
@@ -177,7 +183,9 @@ def load_samples(input_sample_report_tsv, caption_column=0):
     return captions, list(data.keys()), list(data.values())
 
 
-def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_column=0):
+def plot_read_reduction(
+    input_sample_report_tsv, output_stacked_plot, caption_column=0, percent=False
+):
     """Load a THAPBI PICT TSV sample report, and plot read reduction."""
     # The key data is all in the headers of the THAPBI PICT tally file but
     # that lacks any user-supplied metadata which we want for sample names.
@@ -189,9 +197,17 @@ def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_co
 
     fig, ax = plt.subplots(figsize=(12, 6))
     # ax.stackplot(captions, data, labels=labels)
-    stacked = np.zeros(len(captions), dtype=np.uint64)
+    if percent:
+        factor = 100.0 / sum(row[0] for row in data)
+        stacked = np.zeros(len(captions), dtype=np.float32)
+    else:
+        factor = None
+        stacked = np.zeros(len(captions), dtype=np.uint64)
     for idx, (sample, values) in enumerate(zip(labels, data)):
-        stacked += np.array(values, dtype=np.uint64)
+        if percent:
+            stacked += factor * np.array(values, dtype=np.float32)
+        else:
+            stacked += np.array(values, dtype=np.uint64)
         ax.plot(
             captions,
             stacked,
@@ -200,12 +216,21 @@ def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_co
             linewidth=2,
             marker=marker_styles[(idx // color_count) % len(marker_styles)],
         )
-    # Leaving a little extra space on left if read counts are excessive,
-    # and generous space on the right for legends with long sample names:
-    plt.tight_layout(rect=[0.05, 0, 0.85, 1])
     # ax.set_ylim(0)
     ax.set_xlim(-0.1, 5.1)
     ax.xaxis.set_ticks_position("top")
+    if percent:
+        ax.set_ylim(0, 100 + 5)  # top margin for x-axis labels
+        ax.yaxis.set_ticks(range(0, 110, 10))  # every 10%
+        ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter())
+    else:
+        # Leaving a little extra space on left if read counts are excessive,
+        # and generous space on the right for legends with long sample names:
+        plt.tight_layout(rect=[0.05, 0, 0.85, 1])
+        # Force read counts to be comma-separated thousands (not scientific notation)
+        # ax.yaxis.get_major_formatter().set_useOffset(False)
+        # ax.yaxis.get_major_formatter().set_scientific(False)
+        ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter("{x:,.0f}"))
     ax.legend(
         reverse=True,
         loc="center left",
@@ -214,10 +239,6 @@ def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_co
     )
     ax.set_frame_on(False)
     ax.grid(axis="y", which="major")
-    # Force read counts to be comma-separated thousands (not scientific notation)
-    # ax.yaxis.get_major_formatter().set_useOffset(False)
-    # ax.yaxis.get_major_formatter().set_scientific(False)
-    ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter("{x:,.0f}"))
 
     # Display
     if output_stacked_plot:
@@ -229,4 +250,4 @@ def plot_read_reduction(input_sample_report_tsv, output_stacked_plot, caption_co
         plt.show()
 
 
-plot_read_reduction(options.input, options.output, options.column)
+plot_read_reduction(options.input, options.output, options.column, options.percent)
