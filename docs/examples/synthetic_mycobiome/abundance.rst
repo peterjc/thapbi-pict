@@ -116,10 +116,10 @@ in the authors' analysis goes as low as 5 reads.
 Excluding only singletons
 -------------------------
 
-The ``run.sh`` example starts by running the pipeline on the m6 dataset with
+The ``run.sh`` example continues by running the pipeline on the m6 dataset with
 ``-f 0 -a 2`` to accept everything except singletons (sequences which are only
 seen once in a sample; including them gives about ten times as many unique
-sequences which slows everything down). This first analysis does *not* use the
+sequences which slows everything down). Also, this analysis does *not* use the
 synthetic control to raise the threshold on the rest of the samples - we want
 to see any low level mixing. We then can compare our sample report against
 Figure 6.
