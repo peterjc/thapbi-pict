@@ -44,7 +44,12 @@ By default it draws one line per sample, and the column argument can be set
 to another column for sample labels. However, this will also merge on that
 column allowing you to plot things like biological samples vs controls, or
 different sample groups. This is particularly useful when the number of
-samples is too large for the legend to be meaningful.
+samples is too large for the legend to be meaningful. You can even group
+on multiple columns (e.g. sequencing platform and amplicon name).
+
+As an alternative to a stacked line graph, percentage mode shows each sample
+(or group of samples) as percentages of its raw FASTQ read count. In this
+mode you may wish to exclude any negative controls (by subsetting your input).
 """
 
 parser = argparse.ArgumentParser(
@@ -65,16 +70,18 @@ parser.add_argument(
     type=str,
     default="0",
     metavar="COLUMN",
-    help="Which column in the input table to pool on and use as the caption. "
+    help="Which column(s) in the input table to pool on and use as the caption. "
     "Use 0 (default) for the sample FASTQ stem in the 'Sequencing Sample' "
-    "column. Use integer 1 or more for a column number, or the column header "
-    "name.",
+    "column. Use a comma-separated list of integers for a column numbers, or a "
+    "single column header name.",
 )
 parser.add_argument(
     "-p",
     "--percent",
     action="store_true",
-    help="Plot as percentages of the raw FASTQ read count.",
+    help="Plot each sample (or group) as a percentage of its raw FASTQ read "
+    "count. This is no longer a stacked line chart (which is the default using "
+    "read counts).",
 )
 parser.add_argument(
     "-o",
@@ -103,7 +110,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
         "Accepted unique",
     ]
     try:
-        caption_column = int(caption_column)
+        caption_column = tuple(int(_) for _ in caption_column.split(","))
     except ValueError:
         pass
     with open(input_sample_report_tsv) as handle:
@@ -112,7 +119,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
             sys.exit("ERROR - Input TSV file did not start with #")
         parts = line[1:].rstrip("\n").split("\t")
         try:
-            idn_col = parts.index("Sequencing sample")  # default caption
+            idn_col = (parts.index("Sequencing sample"),)  # default caption
             raw_col = parts.index("Raw FASTQ")
             merged_col = parts.index("Flash")
             primer_matched_col = parts.index("Cutadapt")
@@ -121,33 +128,30 @@ def load_samples(input_sample_report_tsv, caption_column=0):
             accepted_unique_col = parts.index("Unique")
         except IndexError:
             sys.exit("ERROR - Did not find all expected columns in TSV header")
-        if isinstance(caption_column, int):
-            if caption_column == 0:
+        if isinstance(caption_column, tuple):
+            if caption_column is None:
                 # Default, use inferred idn_col
                 pass
-            elif caption_column > len(parts):
+            elif max(caption_column) > len(parts):
                 sys.exit(
-                    f"ERROR - Only {len(parts)} columns, can't use {caption_column}"
+                    f"ERROR - Only {len(parts)} columns, "
+                    f"can't use {max(caption_column)}"
                 )
             else:
-                if caption_column > idn_col:
-                    sys.stderr.write(
-                        f"WARNING - Selected caption column {parts[caption_column-1]} "
-                        "is not metadata\n"
-                    )
-                idn_col = caption_column - 1
+                idn_col = tuple(v - 1 for v in caption_column)
         elif caption_column in parts:
-            idn_col = parts.index(caption_column)
+            idn_col = (parts.index(caption_column),)
         else:
             sys.exit(f"ERROR - Did not find this in header columns: {caption_column}")
         sys.stderr.write(
-            f"Using column {idn_col+1}, '{parts[idn_col]}', for captions/grouping\n"
+            f"Using column(s) {','.join(str(v+1) for v in idn_col)}, "
+            f"{' - '.join(parts[v] for v in idn_col)}, for captions/grouping\n"
         )
         count = 0
         for line in handle:
             parts = line.rstrip("\n").split("\t")
             try:
-                idn = parts[idn_col]
+                idn = tuple(parts[v] for v in idn_col)
                 if idn in data:
                     # Append - TODO refactor, maybe use numpy array?
                     old = data[idn]
@@ -180,7 +184,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
             )
         else:
             sys.stderr.write(f"Loaded read counts for {len(data)} samples\n")
-    return captions, list(data.keys()), list(data.values())
+    return captions, [" - ".join(_) for _ in data.keys()], list(data.values())
 
 
 def plot_read_reduction(
@@ -197,20 +201,18 @@ def plot_read_reduction(
 
     fig, ax = plt.subplots(figsize=(12, 6))
     # ax.stackplot(captions, data, labels=labels)
-    if percent:
-        factor = 100.0 / sum(row[0] for row in data)
-        stacked = np.zeros(len(captions), dtype=np.float32)
-    else:
-        factor = None
-        stacked = np.zeros(len(captions), dtype=np.uint64)
+    if not percent:
+        line_values = np.zeros(len(captions), dtype=np.uint64)
     for idx, (sample, values) in enumerate(zip(labels, data)):
         if percent:
-            stacked += factor * np.array(values, dtype=np.float32)
+            # Convert to a percentage of this group's raw reads
+            line_values = 100.0 * np.array(values, dtype=np.float64) / values[0]
         else:
-            stacked += np.array(values, dtype=np.uint64)
+            # Add to previous values for a stacked read-count plot
+            line_values += np.array(values, dtype=np.uint64)
         ax.plot(
             captions,
-            stacked,
+            line_values,
             label=sample,
             linestyle=line_styles[(idx // color_count) % len(line_styles)],
             linewidth=2,
@@ -220,9 +222,14 @@ def plot_read_reduction(
     ax.set_xlim(-0.1, 5.1)
     ax.xaxis.set_ticks_position("top")
     if percent:
+        # Sub-plot rectangle (left, bottom, right, top),
+        # generous space on the right for legens with long sample names:
+        plt.tight_layout(rect=[0, 0, 0.85, 1])
         ax.set_ylim(0, 100 + 5)  # top margin for x-axis labels
         ax.yaxis.set_ticks(range(0, 110, 10))  # every 10%
         ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter())
+        # Generous space on the right for legens with long sample names:
+
     else:
         # Leaving a little extra space on left if read counts are excessive,
         # and generous space on the right for legends with long sample names:
