@@ -84,6 +84,15 @@ parser.add_argument(
     help="Plot stacked raw counts (default), raw counts, or percentages.",
 )
 parser.add_argument(
+    "-t",
+    "--threshold",
+    type=int,
+    default=10000,
+    metavar="COUNT",
+    help="For percentage graphs, minimum number of raw reads to include a sample. "
+    "Default 10,000 reads is suitable for MiSeq data.",
+)
+parser.add_argument(
     "-o",
     "--output",
     dest="output",
@@ -96,7 +105,7 @@ if len(sys.argv) == 1:
 options = parser.parse_args()
 
 
-def load_samples(input_sample_report_tsv, caption_column=0):
+def load_samples(input_sample_report_tsv, caption_column=0, sample_threshold=0):
     """Load a THAPBI PICT TSV sample report."""
     # The key data is all in the headers of the THAPBI PICT tally file but
     # that lacks any user-supplied metadata which we want for sample names.
@@ -150,6 +159,12 @@ def load_samples(input_sample_report_tsv, caption_column=0):
         count = 0
         for line in handle:
             parts = line.rstrip("\n").split("\t")
+            if int(parts[raw_col]) < sample_threshold:
+                sys.stderr.write(
+                    "WARNING: Ignoring low abundance sample "
+                    f"{' - '.join(parts[v] for v in idn_col)}\n"
+                )
+                continue
             try:
                 idn = tuple(parts[v] for v in idn_col)
                 if idn in data:
@@ -188,12 +203,20 @@ def load_samples(input_sample_report_tsv, caption_column=0):
 
 
 def plot_read_reduction(
-    input_sample_report_tsv, output_stacked_plot, caption_column=0, mode="stacked"
+    input_sample_report_tsv,
+    output_stacked_plot,
+    caption_column=0,
+    mode="stacked",
+    percent_threshold=10000,
 ):
     """Load a THAPBI PICT TSV sample report, and plot read reduction."""
     # The key data is all in the headers of the THAPBI PICT tally file but
     # that lacks any user-supplied metadata which we want for sample names.
-    captions, labels, data = load_samples(input_sample_report_tsv, caption_column)
+    captions, labels, data = load_samples(
+        input_sample_report_tsv,
+        caption_column,
+        percent_threshold if mode == "percent" else 0,
+    )
 
     color_count = len(plt.rcParams["axes.prop_cycle"].by_key()["color"])
     line_styles = ("solid", "dotted", "dashed", "dashdot")
@@ -263,4 +286,6 @@ def plot_read_reduction(
         plt.show()
 
 
-plot_read_reduction(options.input, options.output, options.column, options.mode)
+plot_read_reduction(
+    options.input, options.output, options.column, options.mode, options.threshold
+)
