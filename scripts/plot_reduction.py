@@ -47,9 +47,10 @@ different sample groups. This is particularly useful when the number of
 samples is too large for the legend to be meaningful. You can even group
 on multiple columns (e.g. sequencing platform and amplicon name).
 
-As an alternative to a stacked line graph, percentage mode shows each sample
-(or group of samples) as percentages of its raw FASTQ read count. In this
-mode you may wish to exclude any negative controls (by subsetting your input).
+The default mode is a stacked line graph of raw read counts, but it can also
+draw non-stacked raw counts, or in percentage mode shows each sample (or
+group of samples) as percentages of its raw FASTQ read count. In this mode
+you may wish to exclude any negative controls (by subsetting your input).
 """
 
 parser = argparse.ArgumentParser(
@@ -76,12 +77,11 @@ parser.add_argument(
     "single column header name.",
 )
 parser.add_argument(
-    "-p",
-    "--percent",
-    action="store_true",
-    help="Plot each sample (or group) as a percentage of its raw FASTQ read "
-    "count. This is no longer a stacked line chart (which is the default using "
-    "read counts).",
+    "-m",
+    "--mode",
+    choices=["stacked", "counts", "percent"],
+    default="stacked",
+    help="Plot stacked raw counts (default), raw counts, or percentages.",
 )
 parser.add_argument(
     "-o",
@@ -129,7 +129,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
         except IndexError:
             sys.exit("ERROR - Did not find all expected columns in TSV header")
         if isinstance(caption_column, tuple):
-            if caption_column is None:
+            if caption_column == (0,):
                 # Default, use inferred idn_col
                 pass
             elif max(caption_column) > len(parts):
@@ -188,7 +188,7 @@ def load_samples(input_sample_report_tsv, caption_column=0):
 
 
 def plot_read_reduction(
-    input_sample_report_tsv, output_stacked_plot, caption_column=0, percent=False
+    input_sample_report_tsv, output_stacked_plot, caption_column=0, mode="stacked"
 ):
     """Load a THAPBI PICT TSV sample report, and plot read reduction."""
     # The key data is all in the headers of the THAPBI PICT tally file but
@@ -201,15 +201,19 @@ def plot_read_reduction(
 
     fig, ax = plt.subplots(figsize=(12, 6))
     # ax.stackplot(captions, data, labels=labels)
-    if not percent:
+    if mode == "stacked":
         line_values = np.zeros(len(captions), dtype=np.uint64)
     for idx, (sample, values) in enumerate(zip(labels, data)):
-        if percent:
+        if mode == "percent":
             # Convert to a percentage of this group's raw reads
             line_values = 100.0 * np.array(values, dtype=np.float64) / values[0]
-        else:
+        elif mode == "counts":
+            line_values = np.array(values, dtype=np.uint64)
+        elif mode == "stacked":
             # Add to previous values for a stacked read-count plot
             line_values += np.array(values, dtype=np.uint64)
+        else:
+            sys.exit(f"ERROR - Unsupported mode {mode}")
         ax.plot(
             captions,
             line_values,
@@ -221,7 +225,8 @@ def plot_read_reduction(
     # ax.set_ylim(0)
     ax.set_xlim(-0.1, 5.1)
     ax.xaxis.set_ticks_position("top")
-    if percent:
+    legend_cols = 1 + len(labels) // 28
+    if mode == "percent":
         # Sub-plot rectangle (left, bottom, right, top),
         # generous space on the right for legens with long sample names:
         plt.tight_layout(rect=[0, 0, 0.85, 1])
@@ -243,6 +248,7 @@ def plot_read_reduction(
         loc="center left",
         # Left position affect by layout and xlim?
         bbox_to_anchor=(1, 0.5),
+        ncol=legend_cols,
     )
     ax.set_frame_on(False)
     ax.grid(axis="y", which="major")
@@ -257,4 +263,4 @@ def plot_read_reduction(
         plt.show()
 
 
-plot_read_reduction(options.input, options.output, options.column, options.percent)
+plot_read_reduction(options.input, options.output, options.column, options.mode)
