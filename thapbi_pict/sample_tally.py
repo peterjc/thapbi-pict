@@ -18,11 +18,11 @@ from time import time
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 from .denoise import read_correction
-from .prepare import load_fasta_header
 from .prepare import load_marker_defs
 from .utils import abundance_from_read_name
 from .utils import file_to_sample_name
 from .utils import is_spike_in
+from .utils import load_fasta_header
 from .utils import md5seq
 
 

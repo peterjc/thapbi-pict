@@ -16,10 +16,10 @@ from .db_orm import connect_to_db
 from .db_orm import MarkerDef
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
-from .prepare import load_fasta_header
 from .utils import file_to_sample_name
 from .utils import find_requested_files
 from .utils import genus_species_name
+from .utils import load_fasta_header
 from .utils import md5seq
 from .utils import parse_sample_tsv
 from .utils import parse_species_tsv
