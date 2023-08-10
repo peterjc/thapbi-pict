@@ -13,6 +13,7 @@ The output is sorted by sequence (case in-sensitive sort).
 See also the thapbi_pict fasta-nr and various import commands.
 """
 import sys
+from typing import Dict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -20,7 +21,7 @@ if len(sys.argv) == 1:
     sys.exit("ERROR: Requires one or more FASTA filenames")
 
 sep = ";"
-seq_dict = {}
+seq_dict: Dict[str, set[str]] = {}
 
 for filename in sys.argv[1:]:
     with open(filename) as handle:
