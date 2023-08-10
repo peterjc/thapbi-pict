@@ -15,12 +15,17 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Index
 from sqlalchemy import Integer
 from sqlalchemy import String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    """Base class for SQLAlchemy ORM declarations.
+
+    See the SQLAlchemy 2.0 documentation. This is expected to be
+    compatible with type checkers like mypy.
+    """
 
 
 class DataSource(Base):
