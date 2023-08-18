@@ -107,13 +107,12 @@ in the ``examples/`` folder (which are based on published datasets).
 Citation
 --------
 
-If you use THAPBI PICT in your work, please cite this manuscript (to appear in
-the journal *PeerJ* but currently only available as a preprint), and give
+If you use THAPBI PICT in your work, please cite our *PeerJ* paper, and give
 details of the version and any non-default settings used in your methods:
 
     Cock *et al.* (2023) "THAPBI PICT - a fast, cautious, and accurate
-    metabarcoding analysis pipeline" *bioRxiv*
-    https://doi.org/10.1101/2023.03.24.534090
+    metabarcoding analysis pipeline" *PeerJ* **11**:e15648
+    https://doi.org/10.7717/peerj.15648
 
 You can also cite the software specifically via Zenodo which offers version
 specific DOIs as well as https://doi.org/10.5281/zenodo.4529395 which is for
