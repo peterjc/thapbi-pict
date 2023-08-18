@@ -45,7 +45,7 @@ Key links:
 * Source code repository on GitHub: https://github.com/peterjc/thapbi-pict/
 * Software released on PyPI: https://pypi.org/project/thapbi-pict/
 * Zenodo DOI for software: https://doi.org/10.5281/zenodo.4529395
-* Preprint of paper: https://doi.org/10.1101/2023.03.24.534090
+* Paper on PeerJ: https://doi.org/10.7717/peerj.15648
 
 .. toctree::
    :maxdepth: 1
