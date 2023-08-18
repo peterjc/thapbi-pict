@@ -18,8 +18,8 @@ sets of biological sequences (subject to taxonomy filtering):
   extended with the assumed 32bp leader.
 
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
-  in two files extracted from 34201 sequences downloaded from an NCBI Entrez
-  search on 2022-09-16::
+  in two files extracted from 36631 sequences downloaded from an NCBI Entrez
+  search on 2023-08-18::
 
       (Peronosporales[organism] OR Pythiales[organism])
       AND ((internal AND transcribed AND spacer) OR its1)
@@ -30,14 +30,14 @@ sets of biological sequences (subject to taxonomy filtering):
   left primer if present, and require and trim the start to the expected 32bp
   leader as follows::
 
-      $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2022-09-16_ITS1_Oomycota_34201.fasta \
+      $ cutadapt -a GYRGGGACGAAAGTCYYTGC 2023-08-18_ITS1_Oomycota_36631.fasta \
         --discard-untrimmed -e 0.2 --quiet \
         | sed "s/^TTCCGTAGGTGAAC/tTTCCGTAGGTGAAC/" \
         | sed  "s/^TCCGTAGGTGAAC/ttTCCGTAGGTGAAC/"  \
         | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
         | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 32 --action retain \
         --discard-untrimmed -M 450 --quiet /dev/stdin \
-        -o 2022-09-16_ITS1_Oomycota_w32.fasta
+        -o 2023-08-18_ITS1_Oomycota_w32.fasta
 
   Then to catch useful references without the typical 32bp leader in full,
   where observed in at least five of our samples::
@@ -45,9 +45,9 @@ sets of biological sequences (subject to taxonomy filtering):
       $ ../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \
         -a 1000 -s 5 -o unknowns.fasta
       $ ../scripts/missed_refs.py -i unknowns.fasta \
-        -f 2022-09-16_ITS1_Oomycota_34201.fasta \
-        -x 2022-09-16_ITS1_Oomycota_w32.fasta \
-        -o 2022-09-16_ITS1_Oomycota_obs.fasta
+        -f 2023-08-18_ITS1_Oomycota_36631.fasta \
+        -x 2023-08-18_ITS1_Oomycota_w32.fasta \
+        -o 2023-08-18_ITS1_Oomycota_obs.fasta
 
   Note the import command discards uncultured entries.
 
