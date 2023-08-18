@@ -19,7 +19,7 @@ sets of biological sequences (subject to taxonomy filtering):
 
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
   in two files extracted from 34201 sequences downloaded from an NCBI Entrez
-  search on 2022-08-17::
+  search on 2022-09-16::
 
       (Peronosporales[organism] OR Pythiales[organism])
       AND ((internal AND transcribed AND spacer) OR its1)
