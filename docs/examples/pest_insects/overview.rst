@@ -72,7 +72,7 @@ The numbers are similar for the 12S and 18S markers, or pooling them all:
 
 .. code:: console
 
-    $ cut -f 3,6,7,9,10 summary/pooled.samples.onebp.tsv
+    $ cut -f 3,6,7,13,14 summary/pooled.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Again, alternatively open Excel file ``summary/pooled.samples.onebp.xlsx``,

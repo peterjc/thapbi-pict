@@ -56,7 +56,7 @@ specimen (Figure 4). We see that too, but have two other false positives:
 
 .. code:: console
 
-    $ cut -f 3,33,34 summary/pooled.samples.onebp.tsv
+    $ cut -f 3,37,38 summary/pooled.samples.onebp.tsv
     <SEE TABLE BELOW>
 
 Note 576 unwanted reads in ``1000-Pool-1`` for *Diuraphis noxia* (consistent
