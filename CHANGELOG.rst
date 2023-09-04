@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v1.0.3  *Pending*  Updated NCBI import and curated *P. condilina* entries in default DB.
+v1.0.3  2023-09-04 Updated NCBI import and curated *P. condilina* entries in default DB.
 v1.0.2  2023-08-18 Use sum of cutadapt and singleton values etc for pooled marker reports.
 v1.0.1  2023-07-26 Fixed some rare corner-case read-corrections in ``unoise-l`` mode.
 v1.0.0  2023-05-19 Minor documentation changes, linked to Cock *et al.* (2023) preprint.
