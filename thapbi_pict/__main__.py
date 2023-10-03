@@ -1839,8 +1839,9 @@ def main(args=None):
         "--format",
         type=str,
         default="xgmml",
-        choices=["graphml", "gexf", "gml", "xgmml", "pdf", "matrix"],
-        help="Format to write out (default 'xgmml' for Cytoscape).",
+        choices=["graphml", "gexf", "gml", "xgmml", "pdf", "matrix", "components"],
+        help="Format to write out (default 'xgmml' for Cytoscape, distance matrix "
+        "and components are TSV outputs).",
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=edit_graph)

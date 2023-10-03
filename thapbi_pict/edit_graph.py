@@ -466,11 +466,73 @@ def main(
             # Will include high abundance singletons too
             if total_min_abundance <= md5_abundance.get(md5, 0):
                 wanted.add(md5)
-    if input_file:
-        sys.stderr.write(
-            "Including high abundance isolated sequences,"
-            f" will draw {len(wanted)} nodes.\n"
+
+    sys.stderr.write(
+        "Including high abundance isolated sequences,"
+        f" will draw {len(wanted)} nodes.\n"
+    )
+
+    if graph_format == "components":
+        # Obeys the wanted list used for plotting
+        # i.e. ignores isolated low abundance nodes
+        if graph_output in ("-", "/dev/stdout"):
+            handle = sys.stdout
+        else:
+            handle = open(graph_output, "w")
+        G = nx.Graph()
+        for md5 in md5_list:
+            if md5 in wanted:
+                G.add_node(md5)
+        for i, check1 in enumerate(md5_list):
+            if check1 not in wanted:
+                continue
+            for j, check2 in enumerate(md5_list):
+                if i < j and check2 in wanted:
+                    dist = int(distances[i, j])  # casting to drop numpy dtype
+                    if dist <= max_edit_dist:
+                        G.add_edge(check1, check2)
+        handle.write(
+            "\t".join(
+                [
+                    "Most-abundant-MD5",
+                    "Sequence",
+                    "Abundance",
+                    "Sample-count",
+                    "Taxonomy",
+                    "Component-size",
+                    "Fraction",
+                    "Total-component-abundance",
+                    "Rest-of-MD5",
+                ]
+            )
+            + "\n"
         )
+        for c in sorted(nx.connected_components(G), key=len, reverse=True):
+            c = sorted(c, key=md5_abundance.get, reverse=True)
+            total = sum(md5_abundance[md5] for md5 in c)
+            md5 = c[0]
+            if any(species_level(_) for _ in md5_species.get(md5, [])):
+                continue
+            genus_species = ";".join(sorted(md5_species.get(md5, [])))
+            handle.write(
+                "\t".join(
+                    [
+                        md5,
+                        md5_to_seq[md5],
+                        str(md5_abundance[md5]),
+                        str(md5_sample_count.get(md5, 0)),
+                        genus_species,
+                        str(len(c)),
+                        f"{md5_abundance[md5] * 100.0 / total:0.2f}",
+                        str(total),
+                        ";".join(c[1:]),  # rest of component
+                    ]
+                )
+                + "\n"
+            )
+        if graph_output != "-":
+            handle.close()
+        return 0
 
     if md5_sample_count:
         # scaling factor
