@@ -1,4 +1,4 @@
-# These are the Python dependencies, best installed with
+# These are Python dependencies, which can either be installed from PyPI,
 #
 # $ pip install -r requirements.txt
 #
