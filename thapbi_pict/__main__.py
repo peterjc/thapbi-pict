@@ -1776,7 +1776,7 @@ def main(args=None):
         "sequences as nodes (in the PDF labelled by the database taxonomy, "
         "colored by genus, size set by total abundance in the FASTA files), "
         "and short edit distances as edges between nodes. For Cytoscape "
-        "we recommend generating XGMML output here, the start Cytoscape, "
+        "we recommend generating XGMML output here, then start Cytoscape, "
         "menu 'File', 'Import', 'Import from file', and then run a layout. "
         "Both 'Perfuse Force Directed' and 'Edge-weighted Spring Embedded' "
         "work well.",
