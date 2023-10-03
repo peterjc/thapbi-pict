@@ -396,6 +396,7 @@ def edit_graph(args=None):
         input_file=args.input,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
+        min_samples=args.min_samples,
         show_db_marker=args.marker,
         max_edit_dist=args.editdist,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -1811,6 +1812,13 @@ def main(args=None):
         help="Minimum total abundance for FASTA sequences. "
         "Applied after per-sample level minimum (-a / --abundance). "
         "Offered as a way to simplify the final graph.",
+    )
+    subcommand_parser.add_argument(
+        "--min-samples",
+        type=int,
+        default="0",
+        help="Minimum number of samples a unique sequence must appear in. "
+        "Offered as a way to simplify the final graph. Default 0.",
     )
     subcommand_parser.add_argument(
         "-k",
