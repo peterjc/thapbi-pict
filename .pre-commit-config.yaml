@@ -31,7 +31,12 @@ repos:
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
-        args: [ --fix, --exit-non-zero-on-fix ]
+        args: [
+            '--fix',
+            '--exit-non-zero-on-fix',
+            '--extend-select=B,PIE,D,ISC',
+            '--extend-ignore=D203,D213',
+        ]
     # Run the Ruff formatter (black alternative):
     -   id: ruff-format
 -   repo: https://github.com/PyCQA/flake8
@@ -46,7 +51,6 @@ repos:
             'flake8-sfs',
             'flake8-pie',
             'flake8-comprehensions',
-            'flake8-docstrings',
             'flake8-implicit-str-concat',
             'pydocstyle>=5.0.0',
          ]
