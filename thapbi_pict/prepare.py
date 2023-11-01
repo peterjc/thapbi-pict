@@ -179,9 +179,8 @@ def parse_cutadapt_stdout(stdout):
 
 
 # Example where not recording bad primers, want smaller number
-assert (
-    parse_cutadapt_stdout(
-        """\
+assert parse_cutadapt_stdout(
+    """\
 === Summary ===
 
 Total reads processed:                 106,089
@@ -190,9 +189,7 @@ Reads that were too short:               3,271 (3.1%)
 Reads that were too long:                    0 (0.0%)
 Reads written (passing filters):         1,471 (1.4%)
 """,
-    )
-    == (106089, 1471)
-)
+) == (106089, 1471)
 
 
 def run_cutadapt(
@@ -266,18 +263,15 @@ def parse_flash_stdout(stdout):
     return before, after
 
 
-assert (
-    parse_flash_stdout(
-        """\
+assert parse_flash_stdout(
+    """\
 ...
 [FLASH] Read combination statistics:
 [FLASH]     Total pairs:      6105
 [FLASH]     Combined pairs:   5869
 ...
 """
-    )
-    == (6105, 5869)
-)
+) == (6105, 5869)
 
 
 def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
