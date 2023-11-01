@@ -163,7 +163,7 @@ def expand_IUPAC_ambiguity_codes(seq):
         yield seq
     else:
         # Recursive!
-        nuc = list(ambig_letters)[0]
+        nuc = next(iter(ambig_letters))
         i = seq.index(nuc)  # first appearance of nuc
         before = seq[:i]
         after = seq[i + 1 :]
