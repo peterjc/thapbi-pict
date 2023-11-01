@@ -245,7 +245,8 @@ def parse_sintax_fasta_entry(text, known_species=None):
                 return 0, field[2:]
         valid = True
     if not valid:
-        raise ValueError(f"FASTA entry not in SINTAX format: {text!r}")
+        msg = f"FASTA entry not in SINTAX format: {text!r}"
+        raise ValueError(msg)
     return 0, ""
 
 

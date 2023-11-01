@@ -157,7 +157,8 @@ def expand_IUPAC_ambiguity_codes(seq):
     ambig_letters = set(seq).difference(["A", "C", "G", "T"])
     for nuc in ambig_letters:
         if nuc not in ambiguous_dna_values:
-            raise ValueError(f"{nuc!r} is not an IUPAC ambiguous DNA letter")
+            msg = f"{nuc!r} is not an IUPAC ambiguous DNA letter"
+            raise ValueError(msg)
     if not ambig_letters:
         yield seq
     else:
@@ -357,7 +358,8 @@ def file_to_sample_name(filename):
     elif filename.endswith((".fasta.gz", ".tsv", ".fastq.gz")):
         return os.path.basename(filename).rsplit(".", 2)[0]
     else:
-        raise ValueError(f"Invalid file_to_sample_name arg: {filename}")
+        msg = f"Invalid file_to_sample_name arg: {filename}"
+        raise ValueError(msg)
 
 
 def find_requested_files(
@@ -528,10 +530,12 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
         or not isinstance(sample_meta, dict)
         or not isinstance(counts, dict)
     ):
-        raise TypeError("Expect dictionaries are arguments")
+        msg = "Expect dictionaries are arguments"
+        raise TypeError(msg)
     if output_file == "-":
         if gzipped:
-            raise ValueError("Does not support gzipped output to stdout.")
+            msg = "Does not support gzipped output to stdout."
+            raise ValueError(msg)
         out_handle = sys.stdout
     elif gzipped:
         out_handle = gzip.open(output_file, "wt")
@@ -545,7 +549,8 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
             if sample_fields is None:
                 sample_fields = list(values.keys())
             elif sample_fields != list(values.keys()):
-                raise ValueError(f"Inconsistent sample metadata keys in {sample}")
+                msg = f"Inconsistent sample metadata keys in {sample}"
+                raise ValueError(msg)
     else:
         sample_fields = []
     if seq_meta:
@@ -554,7 +559,8 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
             if seq_fields is None:
                 seq_fields = list(values.keys())
             elif seq_fields != list(values.keys()):
-                raise ValueError(f"Inconsistent seq metadata keys in {key}")
+                msg = f"Inconsistent seq metadata keys in {key}"
+                raise ValueError(msg)
     else:
         seq_fields = []
 
@@ -645,9 +651,8 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
                     try:
                         value = int(value)
                     except ValueError:
-                        raise ValueError(
-                            f"ERROR: Non-integer count for {parts[0]} vs {sample}"
-                        ) from None
+                        msg = f"ERROR: Non-integer count for {parts[0]} vs {sample}"
+                        raise ValueError(msg) from None
                     if min_abundance <= value:
                         counts[marker, idn, sample] = value
                         above_threshold = True
@@ -661,10 +666,11 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
                             zip(seq_meta_keys, parts[seq_col + 1 :])
                         )
             else:
-                raise ValueError(
-                    "ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\\n line"
-                    f" in {tabular_file}"
+                msg = (
+                    r"ERROR: Missing #Marker/MD5_abundance(tab)...(tab)Sequence\n"
+                    f" line in {tabular_file}"
                 )
+                raise ValueError(msg)
     # TODO: Turn counts into an array?
     sample_headers = {sample: {} for sample in samples}
     for parts in header_lines:
@@ -704,7 +710,8 @@ def parse_species_tsv(
                 if marker is None:
                     marker = marker2
                 elif marker != marker2:
-                    raise ValueError("Mixed markers in {tabular_file}")
+                    msg = "Mixed markers in {tabular_file}"
+                    raise ValueError(msg)
                 taxid, genus_species = (parts[_] for _ in tally_mode)
             elif line.count("\t") == 2:
                 name, taxid, genus_species = line.rstrip("\n").split("\t", 3)
@@ -716,7 +723,8 @@ def parse_species_tsv(
                     f" (name, taxid, genus-species, optional note):\n{line}"
                 )
             if name == "*" and not allow_wildcard:
-                raise ValueError("Wildcard species name found")
+                msg = "Wildcard species name found"
+                raise ValueError(msg)
             if (
                 min_abundance > 1
                 and abundance_from_read_name(name) < min_abundance
