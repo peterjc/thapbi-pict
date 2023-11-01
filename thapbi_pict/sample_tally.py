@@ -533,7 +533,7 @@ def main(
             )
         )
         del stat_values
-    fields = ["Marker/MD5_abundance"] + samples + ["Sequence"]
+    fields = ["Marker/MD5_abundance", *samples, "Sequence"]
     if chimeras:
         fields += ["Chimeras"]
     out_handle.write("#" + "\t".join(fields) + "\n")
