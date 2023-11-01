@@ -290,7 +290,7 @@ def parse_obitools_fasta_entry(text, known_species=None):
 
 
 assert parse_obitools_fasta_entry(
-    "AP009202 species_name=Abalistes stellaris; taxid=392897; genus_name=Abalistes; rank=species; Abalistes stellaris mitochondrial DNA, complete genome"  # noqa E501
+    "AP009202 species_name=Abalistes stellaris; taxid=392897; genus_name=Abalistes; rank=species; Abalistes stellaris mitochondrial DNA, complete genome"  # noqa: E501
 ) == (392897, "Abalistes stellaris")
 
 assert parse_obitools_fasta_entry(
