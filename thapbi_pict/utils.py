@@ -647,7 +647,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
                     except ValueError:
                         raise ValueError(
                             f"ERROR: Non-integer count for {parts[0]} vs {sample}"
-                        )
+                        ) from None
                     if min_abundance <= value:
                         counts[marker, idn, sample] = value
                         above_threshold = True
