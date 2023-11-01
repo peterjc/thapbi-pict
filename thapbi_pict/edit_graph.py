@@ -1,4 +1,4 @@
-# Copyright 2019-2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2023 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -197,7 +197,7 @@ def main(
     graph_output,
     graph_format,
     db_url,
-    input,
+    input_file,
     method="-",
     min_abundance=100,
     show_db_marker=None,
@@ -219,7 +219,7 @@ def main(
     Graph node size is scaled by sample count (number of FASTA files that it
     appears in), and colored by assigned species (from a classifier TSV file).
     """
-    assert isinstance(input, str) or input is None
+    assert isinstance(input_file, str) or input_file is None
 
     if 3 < max_edit_dist:
         sys.exit("ERROR: Maximum supported edit distance is 3bp.")
@@ -234,19 +234,19 @@ def main(
     md5_in_db = set()
     md5_in_fasta = set()
 
-    if not (input or db_url):
+    if not (input_file or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")
 
-    if not input and not show_db_marker:
+    if not input_file and not show_db_marker:
         sys.exit(
             "If not using -i / --input argument, require -k / --marker to use DB only."
         )
 
-    if input:
-        if not input.endswith(".tsv"):
-            sys.exit(f"ERROR: Expected a .tsv file, not {input}")
+    if input_file:
+        if not input_file.endswith(".tsv"):
+            sys.exit(f"ERROR: Expected a .tsv file, not {input_file}")
         else:
-            filename = input
+            filename = input_file
             if debug:
                 sys.stderr.write(
                     f"DEBUG: Loading sequences sample tallies from {filename}\n"
@@ -378,7 +378,7 @@ def main(
                 f"Matched {len(md5_in_db)} unique sequences in database.\n"
             )
 
-    if db_url and input and show_db_marker:
+    if db_url and input_file and show_db_marker:
         sys.stderr.write(
             f"DB had {len(md5_in_db)} sequences"
             f" ({len(md5_in_db.difference(md5_in_fasta))} not in FASTA),"
@@ -448,7 +448,7 @@ def main(
             # Will include high abundance singletons too
             if total_min_abundance <= md5_abundance.get(md5, 0):
                 wanted.add(md5)
-    if input:
+    if input_file:
         sys.stderr.write(
             "Including high abundance isolated sequences,"
             f" will draw {len(wanted)} nodes.\n"
