@@ -251,7 +251,7 @@ def usearch(
                     centroid_md5 = parts[3].split(";top=", 1)[1].split(";", 1)[0]
                     corrections[seq] = md5_to_seq[centroid_md5]
                 else:
-                    sys.exit(f"ERROR: Unexpected usearch denoise line: {repr(line)}")
+                    sys.exit(f"ERROR: Unexpected usearch denoise line: {line!r}")
             elif parts[1] == "chfilter":
                 if parts[2] == "zotu\n":
                     pass
@@ -270,9 +270,9 @@ def usearch(
                         amp_md5[fields["parentl"]] + "/" + amp_md5[fields["parentr"]]
                     )
                 else:
-                    sys.exit(f"ERROR: Unexpected usearch chfilter line: {repr(line)}")
+                    sys.exit(f"ERROR: Unexpected usearch chfilter line: {line!r}")
             else:
-                sys.exit(f"ERROR: Unexpected usearch tabbedout line: {repr(line)}")
+                sys.exit(f"ERROR: Unexpected usearch tabbedout line: {line!r}")
     del md5_to_seq
     return corrections, chimeras
 
