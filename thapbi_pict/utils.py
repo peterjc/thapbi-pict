@@ -279,6 +279,7 @@ def run(cmd, debug=False, attempts=1):
                     f"ERROR: Attempt {i + 1} of {attempts} failed"
                     f" with return code {e.returncode}, cmd:\n{cmd_as_string(cmd)}\n"
                 )
+    return None
 
 
 def abundance_from_read_name(text, debug=False):
