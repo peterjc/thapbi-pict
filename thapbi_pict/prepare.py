@@ -323,7 +323,8 @@ def save_nr_fasta(
 
     if output_fasta == "-":
         if gzipped:
-            raise ValueError("Does not support gzipped output to stdout.")
+            msg = "Does not support gzipped output to stdout."
+            raise ValueError(msg)
         out_handle = sys.stdout
     elif gzipped:
         out_handle = gzip.open(output_fasta, "wt")

@@ -463,7 +463,8 @@ def main(
         if fasta == "-":
             sys.exit("ERROR: Don't use stdout for both TSV and FASTA output.")
         if gzipped:
-            raise ValueError("Does not support gzipped output to stdout.")
+            msg = "Does not support gzipped output to stdout."
+            raise ValueError(msg)
         out_handle = sys.stdout
     elif gzipped:
         out_handle = gzip.open(output, "wt")
@@ -539,7 +540,8 @@ def main(
 
     if fasta == "-":
         if gzipped:
-            raise ValueError("Does not support gzipped output to stdout.")
+            msg = "Does not support gzipped output to stdout."
+            raise ValueError(msg)
         fasta_handle = sys.stdout
     elif fasta and gzipped:
         fasta_handle = gzip.open(fasta, "wt")
