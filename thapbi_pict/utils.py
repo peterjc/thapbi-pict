@@ -494,7 +494,7 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
         [f"{marker}/{md5}" for (marker, md5) in seq_meta],
         list(sample_meta),
         # Add the sequence itself to the metadata dict for BIOM export:
-        [dict([("Sequence", seqs[k])] + list(v.items())) for k, v in seq_meta.items()],
+        [dict([("Sequence", seqs[k]), *list(v.items())]) for k, v in seq_meta.items()],
         sample_meta.values(),
         # Required attribute in BIOM format:
         type="OTU table",
@@ -579,8 +579,7 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
 
     samples = list(sample_meta)
     out_handle.write(
-        "\t".join(["#Marker/MD5_abundance"] + samples + ["Sequence"] + seq_fields)
-        + "\n"
+        "\t".join(["#Marker/MD5_abundance", *samples, "Sequence", *seq_fields]) + "\n"
     )
 
     for (marker, idn), seq in seqs.items():
@@ -908,7 +907,7 @@ def load_metadata(
             )
 
     # Select columns of interest
-    meta_plus_idx = [[_[i].strip() for i in value_cols + [sample_col]] for _ in lines]
+    meta_plus_idx = [[_[i].strip() for i in [*value_cols, sample_col]] for _ in lines]
 
     # Remove blanks
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]

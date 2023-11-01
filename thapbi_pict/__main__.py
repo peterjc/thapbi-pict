@@ -559,7 +559,7 @@ def pipeline(args=None):
         all_classified_files.extend(classified_files)
 
         return_code = summary(
-            inputs=[tally_seqs_file] + classified_files,
+            inputs=[tally_seqs_file, *classified_files],
             report_stem=stem,
             method=args.method,
             min_abundance=args.abundance,
@@ -1800,7 +1800,7 @@ def main(args=None):
         "--method",
         type=str,
         default=DEFAULT_METHOD,
-        choices=sorted(method_classifier) + ["-"],
+        choices=[*sorted(method_classifier), "-"],
         help="Optional classifier method to annotate sequences sequences with. "
         f"Default is {DEFAULT_METHOD}, use '-' for none.",
     )

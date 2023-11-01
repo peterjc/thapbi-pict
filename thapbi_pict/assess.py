@@ -214,7 +214,7 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
             for sp in pred.split(";"):
                 assert sp in db_sp_list, sp
                 predicted.add(sp)
-    cols = ["(TN)", "(FN)"] + sorted(predicted)
+    cols = ["(TN)", "(FN)", *sorted(predicted)]
     del predicted
 
     # Will report one row per possible combination of expected species
@@ -566,7 +566,7 @@ def main(
     multi_class_total1 = multi_class_total2 = 0
     boring_species_count = 0
     boring_species_tn = 0
-    for sp in [""] + sp_list + [None]:
+    for sp in ["", *sp_list, None]:
         if sp == "":
             # Special case flag to report global values at top
             tp, fp, fn, tn = extract_global_tally(global_tally, sp_list)
