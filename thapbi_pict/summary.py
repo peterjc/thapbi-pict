@@ -91,7 +91,7 @@ def sample_summary(
 
     species_predictions = set()  # includes A;B;C ambiguous entries
     for sample in sample_species_counts:
-        for sp_list, _ in sample_species_counts[sample].items():
+        for sp_list in sample_species_counts[sample].keys():
             species_predictions.add(sp_list)  # as string with any ; included
             genus_list = {sp_list.split(" ", 1)[0] for sp in sp_list.split(";")}
             if len(genus_list) > 1:
