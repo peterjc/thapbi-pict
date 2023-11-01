@@ -34,8 +34,8 @@ repos:
         args: [
             '--fix',
             '--exit-non-zero-on-fix',
-            '--extend-select=B,PIE,D,ISC',
-            '--extend-ignore=D203,D213',
+            '--extend-select=B,PIE,D,ISC,UP',
+            '--extend-ignore=D203,D213,UP031',
         ]
     # Run the Ruff formatter (black alternative):
     -   id: ruff-format

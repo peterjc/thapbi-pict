@@ -31,8 +31,8 @@ Or start it as a module::
 
 Either should find the installed copy of the Python code.
 """
-from __future__ import print_function
-from __future__ import with_statement
+from __future__ import print_function  # noqa: UP010
+from __future__ import with_statement  # noqa: UP010
 
 import sys
 
@@ -46,7 +46,7 @@ except ImportError:
 
 
 # Make sure we have the right Python version.
-if sys.version_info[:2] < (3, 7):
+if sys.version_info[:2] < (3, 7):  # noqa: UP036
     sys.exit(
         "THAPBI PICT requires Python 3.7 or later. "
         "Python %d.%d detected.\n" % sys.version_info[:2]
