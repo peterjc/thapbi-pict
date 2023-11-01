@@ -162,16 +162,16 @@ def main(
                 seq_entry[seq].add(entry)
             else:
                 seq_entry[seq] = {entry}
-        for seq, entries in sorted(seq_entry.items()):
-            # entry_count += len(entries)
-            try:
+        try:
+            for seq, entries in sorted(seq_entry.items()):
+                # entry_count += len(entries)
                 out_handle.write(f">{sep.join(sorted(entries))}\n{seq}\n")
-            except BrokenPipeError:
-                # Likely writing to stdout | head, or similar
-                # If so, stdout has been closed
-                sys.stderr.write("Aborting with broken pipe\n")
-                sys.stderr.close()
-                sys.exit(1)
+        except BrokenPipeError:
+            # Likely writing to stdout | head, or similar
+            # If so, stdout has been closed
+            sys.stderr.write("Aborting with broken pipe\n")
+            sys.stderr.close()
+            sys.exit(1)
         entry_count = len(seq_entry)  # number of FASTA entries
     else:
         for seq_source in view:
