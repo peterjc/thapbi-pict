@@ -9,7 +9,8 @@ and `PEP257 docstring <https://www.python.org/dev/peps/pep-0257/>`__ style,
 guided by the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
 
 Practically, coding style is enforced with several command line tools
-including `black <https://github.com/python/black>`__ and `flake8
+including `ruff <https://github.com/astral-sh/ruff>`__ (which implements
+a faster version of `black <https://github.com/python/black>`__) and `flake8
 <http://flake8.pycqa.org/>`__ (with plugins) run via the tool `pre-commit
 <https://pre-commit.com/>`__.
 
