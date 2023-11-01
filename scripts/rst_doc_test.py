@@ -281,7 +281,6 @@ for filename in sys.argv[1:]:
                 if err_out:
                     # Warning?
                     print(err_out)
-                pass
             elif old_out == new_out + err_out or old_out == err_out + new_out:
                 pass
             elif old_out.startswith("...\n") and (
