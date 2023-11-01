@@ -82,6 +82,7 @@ def check_output_stem(out_stem, dir_only_ok=False, dir_must_exist=True):
         sys.exit(f"ERROR: Output stem directory name is a file: {out_dir!r}")
     elif dir_must_exist:
         sys.exit(f"ERROR: Output stem directory does not exist: {out_dir!r}")
+    return None
 
 
 def check_output_directory(out_dir, must_exist=True):
@@ -94,6 +95,7 @@ def check_output_directory(out_dir, must_exist=True):
         sys.exit(f"ERROR: Output directory name is a file: {out_dir!r}")
     elif must_exist:
         sys.exit(f"ERROR: Output directory does not exist: {out_dir!r}")
+    return None
 
 
 def expand_database_argument(text, exist=False, hyphen_default=False):

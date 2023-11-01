@@ -111,6 +111,7 @@ def version_blast(cmd="blastn"):
             words = line.strip().split()
             if "BLAST" in words or "version" in words:
                 return words[-1]
+    return None
 
 
 def version_cutadapt(cmd="cutadapt"):
@@ -131,6 +132,7 @@ def version_cutadapt(cmd="cutadapt"):
     text = getoutput(cmd + " --version").strip().split("\n", 1)[0]
     if "." in text:
         return text
+    return None
 
 
 def version_flash(cmd="flash"):
@@ -152,6 +154,7 @@ def version_flash(cmd="flash"):
     ver = text.split("\n", 1)[0]
     if ver.upper().startswith("FLASH V"):
         return ver[7:]
+    return None
 
 
 def version_usearch(cmd="usearch"):
@@ -173,6 +176,7 @@ def version_usearch(cmd="usearch"):
     ver = text.split("_", 1)[0]
     if ver.lower().startswith("usearch v"):
         return ver[8:]
+    return None
 
 
 def version_vsearch(cmd="vsearch"):
@@ -198,3 +202,4 @@ def version_vsearch(cmd="vsearch"):
         ver = text.split(",", 1)[0].split("_", 1)[0]
         if ver.lower().startswith("vsearch v"):
             return ver[8:]
+    return None
