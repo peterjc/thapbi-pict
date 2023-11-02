@@ -198,7 +198,6 @@ def main(
     graph_format,
     db_url,
     input_file,
-    method="-",
     min_abundance=100,
     show_db_marker=None,
     total_min_abundance=0,
