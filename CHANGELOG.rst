@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.4  *Pending*  Dropped unused ``-m`` / ``--method`` argument to ``edit-graph`` command.
 v1.0.3  2023-09-04 Updated NCBI import and curated *P. condilina* entries in default DB.
 v1.0.2  2023-08-18 Use sum of cutadapt and singleton values etc for pooled marker reports.
 v1.0.1  2023-07-26 Fixed some rare corner-case read-corrections in ``unoise-l`` mode.
