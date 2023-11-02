@@ -394,7 +394,6 @@ def edit_graph(args=None):
         graph_format=args.format,
         db_url=db,
         input_file=args.input,
-        method=args.method,
         min_abundance=args.abundance,
         total_min_abundance=args.total,
         show_db_marker=args.marker,
@@ -1794,15 +1793,6 @@ def main(args=None):
         required=False,
         help="Sample-tally TSV file (*.tally.tsv) or classifier output "
         "(*.<method>.tsv)",
-    )
-    subcommand_parser.add_argument(
-        "-m",
-        "--method",
-        type=str,
-        default=DEFAULT_METHOD,
-        choices=[*sorted(method_classifier), "-"],
-        help="Optional classifier method to annotate sequences sequences with. "
-        f"Default is {DEFAULT_METHOD}, use '-' for none.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
