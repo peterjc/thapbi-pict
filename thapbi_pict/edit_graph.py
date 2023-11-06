@@ -546,9 +546,6 @@ def main(
                     redundant += 1
                     continue
                 else:
-                    # Some graph layout algorithms can use weight attr; some want int
-                    # Larger weight makes it closer to the requested length.
-                    # fdp default length is 0.3, neato is 1.0
                     edge_count += 1
                     if dist <= 1:
                         edge_count1 += 1
