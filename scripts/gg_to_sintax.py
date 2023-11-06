@@ -13,7 +13,7 @@ if "-v" in sys.argv or "--version" in sys.argv:
 # Parse Command Line
 usage = """\
 The input file should be a FASTA file without species annotation, and a simple
-two-column tab separated plain text TSV file mapping the FASTA idenfiers to
+two-column tab separated plain text TSV file mapping the FASTA identifiers to
 taxonomic information (Greengenes database style with entries like semicolon
 g underscore underscore genus). The output is a FASTA file with SINTAX style
 taxonomic annotation (like comma g colon genus).

@@ -200,7 +200,7 @@ read abundance.
 
 Also, interpreting the main reports is much easier if you can provide suitably
 formatted :ref:`metadata <metadata>`. Happily, you can quickly re-run the
-pipeline and it will re-use any already generated intermediate files.
+pipeline and it will reuse any already generated intermediate files.
 
 .. image:: images/pipeline-meta.svg
    :alt: Flowchart summarising THAPBI PICT pipeline, from raw paired FASTQ files to reports, using metadata.
