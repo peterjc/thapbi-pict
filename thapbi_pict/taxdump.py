@@ -178,7 +178,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
     NCBI:txid4791 will be mapped to species 'Phytophthora nicotianae'
     NCBI:txid4790 instead.
 
-    Will map anything else to the parent genus, although genererally it will
+    Will map anything else to the parent genus, although generally it will
     be skipped via the reject_species_name(...) function, e.g.
 
     * no-rank entry 'unclassified Pythium' NCBI:txid228096 would be mapped to
