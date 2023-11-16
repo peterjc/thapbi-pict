@@ -25,11 +25,11 @@ thapbi_pict import 2>&1 | grep "the following arguments are required"
 thapbi_pict import -d "sqlite:///:memory:" -i database/controls.fasta 2>&1 | grep "Taxonomy table empty"
 set -o pipefail
 
-echo "Controls (lax mode, without the synthetic controls in the taxonomy)"
+echo "Untrimmed controls (lax mode, without the synthetic controls in the taxonomy)"
 export DB=$TMP/contols_lax.sqlite
 rm -rf $DB
 thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
-    -i database/controls.fasta -x --minlen 150 --maxlen 250
+    -i database/controls.fasta -x --minlen 268 --maxlen 268
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "4" ]; then echo "Wrong sequence_source count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "4" ]; then echo "Wrong marker_sequence count"; false; fi
