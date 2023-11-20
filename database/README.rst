@@ -18,36 +18,23 @@ sets of biological sequences (subject to taxonomy filtering):
   extended with the assumed 32bp leader.
 
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
-  in two files extracted from 36631 sequences downloaded from an NCBI Entrez
-  search on 2023-08-18::
+  in two files extracted from tens of thousands of candidate sequences in file
+  ``Oomycota_ITS1_search.fasta`` (not under version control) downloaded from
+  an NCBI Entrez search via script ``Oomycota_ITS1_search.sh``::
 
       (Peronosporales[organism] OR Pythiales[organism])
       AND ((internal AND transcribed AND spacer) OR its1)
       AND 150:10000[sequence length]
 
-  Require and remove the right primer, add missing T or TT (in lower case) if
-  the accession otherwise starts with the expected 32bp leader, remove any
-  left primer if present, and require and trim the start to the expected 32bp
-  leader as follows::
+  The search results are filtered to extract the amplicons with the expected
+  32bp leader (allowing for the leading T or TT to be missing) with cutadapt
+  as file ``Oomycota_ITS1_w32.fasta`` (under version control).
 
-      $ cutadapt -a GYRGGGACGAAAGTCYYTGC Oomycota_ITS1_search.fasta \
-        --discard-untrimmed -e 0.2 --quiet \
-        | sed "s/^TTCCGTAGGTGAAC/tTTCCGTAGGTGAAC/" \
-        | sed  "s/^TCCGTAGGTGAAC/ttTCCGTAGGTGAAC/"  \
-        | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
-        | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 32 --action retain \
-        --discard-untrimmed -M 450 --quiet /dev/stdin \
-        -o Oomycota_ITS1_w32.fasta
-
-  Then to catch useful references without the typical 32bp leader in full,
-  where observed in at least five of our samples::
-
-      $ ../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \
-        -a 1000 -s 5 -o unknowns.fasta
-      $ ../scripts/missed_refs.py -i unknowns.fasta \
-        -f Oomycota_ITS1_search.fasta \
-        -x Oomycota_ITS1_w32.fasta \
-        -o Oomycota_ITS1_obs.fasta
+  Then script ``../scripts/missed_refs.py`` is used to catch useful references
+  without the typical 32bp leader in full as file ``Oomycota_ITS1_obs.fasta``
+  (under version control), where observed in at least five of our samples
+  (using file ``unknowns.fasta`` which is not under version controls but is
+  generated from our sequencing data using script ``../scripts/unknowns.py``).
 
   Note the import command discards uncultured entries.
 
