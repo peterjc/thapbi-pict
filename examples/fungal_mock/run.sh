@@ -43,9 +43,9 @@ function edit_graph {
     # (works as long as pipeline or prepare-reads was run with
     # the same or lower threshold).
     # Including relevant DB entries with -k / --marker argument
-    # Do not show the classifier output using -m with "-"
+    # Do not show the classifier output by using tally file
     thapbi_pict edit-graph -d $DB -k $MARKER \
-                -i summary/${LIBRARY}.${MARKER}.tally.tsv -a 75 -m - \
+                -i summary/${LIBRARY}.${MARKER}.tally.tsv -a 75 \
                 -o summary/${LIBRARY}.${MARKER}.edit-graph.a75.xgmml
 }
 
