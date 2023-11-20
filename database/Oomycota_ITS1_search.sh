@@ -16,7 +16,7 @@ rm -rf $TMP
 mkdir -p $TMP
 
 echo "Starting NCBI search..."
-esearch -db nuccore \
+esearch -db nuccore -sort accession \
      -query "(Peronosporales[organism] OR Pythiales[organism])\
      AND ((internal AND transcribed AND spacer) OR its1)\
      AND 150:10000[sequence length]" > $TMP/search.xml
