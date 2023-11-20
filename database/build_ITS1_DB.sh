@@ -2,7 +2,7 @@
 VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-TAX=taxdmp_2023-08-01
+TAX=taxdmp_2023-11-01
 DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
