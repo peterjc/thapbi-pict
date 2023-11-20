@@ -28,7 +28,7 @@ also run the checks directly using:
 
     $ pre-commit run -a
 
-If your editor can be configured to run flake8 and/or black automatically,
+If your editor can be configured to run flake8 and/or ruff automatically,
 even better. These checks are done as part of the continuous integration when
 changes are made on GitHub.
 
