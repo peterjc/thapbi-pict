@@ -47,7 +47,7 @@ jobs:
             python -m build
             echo "Installing our wheel..."
             cd dist
-            python -m pip install thapbi_pict-*.whl
+            python -m pip install --force-reinstall thapbi_pict-*.whl
             cd ..
             echo "THAPBI PICT should now be installed"
             thapbi_pict -v

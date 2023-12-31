@@ -61,7 +61,7 @@ build_script:
   - python -m build
   - echo "Installing our wheel..."
   - cd dist
-  - for %%w in (*.whl) do pip install %%w
+  - for %%w in (*.whl) do pip install --force-reinstall %%w
   - cd ..
   - echo "THAPBI PICT should now be installed"
   - thapbi_pict -v
