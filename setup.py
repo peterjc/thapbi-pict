@@ -106,7 +106,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "biopython",
+        "biopython >=1.82",
         "cutadapt >=4.0",
         "matplotlib >=3.7",
         "networkx >=2.4,!=2.8.3,!=2.8.4",
