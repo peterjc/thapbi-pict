@@ -96,6 +96,13 @@ repos:
     -   id: codespell
         files: \.(py|sh|rst|yml|yaml)$
         args: ['-L', 'sintax,nin,otu']
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+    -   id: mypy
+        # equivalent to "files" in .mypy.ini
+        files: '^(thapbi_pict|scripts)/'
+        additional_dependencies: [biopython>=1.82]
 ci:
     # Settings for the https://pre-commit.ci/ continuous integration service
     autofix_prs: true
