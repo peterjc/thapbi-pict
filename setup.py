@@ -108,7 +108,7 @@ setup(
     install_requires=[
         "biopython",
         "cutadapt >=4.0",
-        "matplotlib",
+        "matplotlib >=3.7",
         "networkx >=2.4,!=2.8.3,!=2.8.4",
         "pydot",
         "rapidfuzz >=2.4.0",
