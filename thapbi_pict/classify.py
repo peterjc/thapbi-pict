@@ -14,6 +14,7 @@ import tempfile
 from typing import Iterable
 from typing import Iterator
 from typing import Sequence
+from typing import Union
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from numpy import int8
@@ -45,7 +46,7 @@ max_dist_genus = None  # global variable for 1s?g distance classifiers
 genus_taxid = {}  # global variable to cache taxids for genus names
 
 
-def unique_or_separated(values: Sequence[str | int], sep: str = ";") -> str:
+def unique_or_separated(values: Sequence[Union[str, int]], sep: str = ";") -> str:
     """Return sole element, or a string joining all elements using the separator."""
     if len(set(values)) == 1:
         return str(values[0])
@@ -109,7 +110,7 @@ assert consoliate_and_sort_taxonomy(
 
 def taxid_and_sp_lists(
     taxon_entries: Iterable,
-) -> tuple[int | str, str, str]:
+) -> tuple[Union[int, str], str, str]:
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
     Will discard genus level predictions (e.g. 'Phytophthora') if there is a
@@ -155,7 +156,7 @@ def perfect_match_in_db(session, marker_name, seq, debug=False):
 
 def perfect_substr_in_db(
     session, marker_name: str, seq: str, debug: bool = False
-) -> tuple[int | str, str, str]:
+) -> tuple[Union[int, str], str, str]:
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the matches containing the sequence as a substring give multiple species,
@@ -366,7 +367,7 @@ def method_dist(
         score_cutoff=max_dist_genus,
     )
 
-    results = {}  # type: dict[str,tuple[int|str,str,str]]
+    results = {}  # type: dict[str,tuple[Union[int,str],str,str]]
     for (idn, seq), dists in zip(input_seqs.items(), all_dists):
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
@@ -528,7 +529,7 @@ def method_blast(
     # and the associated score in a second dict
     blast_hits = {}
     blast_score = {}  # type: dict[str,str]
-    score = ""  # type: str|float
+    score = ""  # type: Union[str,float]
     with open(blast_out) as handle:
         for line in handle:
             # if debug:

@@ -14,6 +14,7 @@ from collections import Counter
 from keyword import iskeyword
 from typing import Iterator
 from typing import Optional
+from typing import Union
 
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -374,7 +375,7 @@ def file_to_sample_name(filename: str) -> str:
 
 def find_requested_files(
     filenames_or_folders: list[str],
-    ext: str | tuple[str, ...] = ".fasta",
+    ext: Union[str, tuple[str, ...]] = ".fasta",
     ignore_prefixes: Optional[tuple[str]] = None,
     debug: bool = False,
 ) -> list[str]:
