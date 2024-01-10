@@ -11,6 +11,9 @@ import os
 import shutil
 import sys
 import tempfile
+from typing import Iterable
+from typing import Iterator
+from typing import Sequence
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from numpy import int8
@@ -42,15 +45,17 @@ max_dist_genus = None  # global variable for 1s?g distance classifiers
 genus_taxid = {}  # global variable to cache taxids for genus names
 
 
-def unique_or_separated(values, sep=";"):
+def unique_or_separated(values: Sequence[str | int], sep: str = ";") -> str:
     """Return sole element, or a string joining all elements using the separator."""
     if len(set(values)) == 1:
-        return values[0]
+        return str(values[0])
     else:
         return sep.join(str(_) for _ in values)
 
 
-def consoliate_and_sort_taxonomy(genus_species_taxid):
+def consoliate_and_sort_taxonomy(
+    genus_species_taxid: Iterable[tuple[str, str, int]],
+) -> list[tuple[str, str, int]]:
     """Remove any redundant entries, returns new sorted list.
 
     Drops zero taxid entries if has matching non-zero entry.
@@ -102,7 +107,9 @@ assert consoliate_and_sort_taxonomy(
 ) == [("Genie", "alpha", 101)]
 
 
-def taxid_and_sp_lists(taxon_entries):
+def taxid_and_sp_lists(
+    taxon_entries: Iterable,
+) -> tuple[int | str, str, str]:
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
     Will discard genus level predictions (e.g. 'Phytophthora') if there is a
@@ -146,13 +153,16 @@ def perfect_match_in_db(session, marker_name, seq, debug=False):
     )
 
 
-def perfect_substr_in_db(session, marker_name, seq, debug=False):
+def perfect_substr_in_db(
+    session, marker_name: str, seq: str, debug: bool = False
+) -> tuple[int | str, str, str]:
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the matches containing the sequence as a substring give multiple species,
     then taxid and genus_species will be semi-colon separated strings.
     """
     global db_seqs
+    assert db_seqs is not None
     assert seq == seq.upper(), seq
     matches = set()
     for db_seq in db_seqs:
@@ -178,7 +188,7 @@ def apply_method_to_seqs(
     marker_name,
     min_abundance=0,
     debug=False,
-):
+) -> Iterator[tuple[str, str, str, str]]:
     """Call given method on each sequence in the dict.
 
     Assumes any abundance filter has already been applied. Input is a dict of
@@ -197,10 +207,10 @@ def method_identity(
     marker_name,
     tmp_dir,
     shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
-):
+    min_abundance: int = 0,
+    debug: bool = False,
+    cpu: int = 0,
+) -> Iterator[tuple[str, str, str, str]]:
     """Classify using perfect identity.
 
     This is a deliberately simple approach, in part for testing
@@ -225,7 +235,7 @@ def method_substr(
     min_abundance=0,
     debug=False,
     cpu=0,
-):
+) -> Iterator[tuple[str, str, str, str]]:
     """Classify using perfect identity including as a sub-string.
 
     Like the 'identity' method, but allows for a database where the marker
@@ -242,7 +252,7 @@ def method_substr(
     )
 
 
-def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0) -> None:
     """Prepare a set of all the DB marker sequences as upper case strings.
 
     Also setup set of sequences in the DB, and dict of genus to NCBI taxid.
@@ -268,7 +278,9 @@ def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     }
 
 
-def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_onebp(
+    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+) -> None:
     """Prepare a set of all the DB marker sequences; set dist to 1."""
     global max_dist_genus
     check_rapidfuzz()
@@ -276,7 +288,9 @@ def setup_onebp(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 1
 
 
-def setup_dist2(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist2(
+    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+) -> None:
     """Prepare a set of all DB marker sequences; set dist to 2."""
     global max_dist_genus
     check_rapidfuzz()
@@ -284,7 +298,9 @@ def setup_dist2(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 2
 
 
-def setup_dist3(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist3(
+    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+) -> None:
     """Prepare a set of all DB marker sequences; set dist to 3."""
     global max_dist_genus
     check_rapidfuzz()
@@ -292,7 +308,9 @@ def setup_dist3(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 3
 
 
-def setup_dist4(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist4(
+    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+) -> None:
     """Prepare a set of all DB marker sequences; set dist to 4."""
     global max_dist_genus
     check_rapidfuzz()
@@ -300,7 +318,9 @@ def setup_dist4(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 4
 
 
-def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_dist5(
+    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+) -> None:
     """Prepare a set of all DB marker sequences; set dist to 5."""
     global max_dist_genus
     check_rapidfuzz()
@@ -322,15 +342,16 @@ def method_dist(
     marker_name,
     tmp_dir,
     shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
-):
+    min_abundance: int = 0,
+    debug: bool = False,
+    cpu: int = 0,
+) -> Iterator[tuple[str, str, str, str]]:
     """Classify using edit distance."""
     global db_seqs
+    assert db_seqs is not None
     global genus_taxid
     global max_dist_genus
-    assert max_dist_genus >= 1, max_dist_genus
+    assert max_dist_genus and max_dist_genus >= 1, max_dist_genus
 
     if not input_seqs:
         # Shortcut
@@ -345,7 +366,7 @@ def method_dist(
         score_cutoff=max_dist_genus,
     )
 
-    results = {}
+    results = {}  # type: dict[str,tuple[int|str,str,str]]
     for (idn, seq), dists in zip(input_seqs.items(), all_dists):
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
@@ -411,7 +432,9 @@ def method_dist(
         yield idn, str(taxid), genus_species, note
 
 
-def setup_blast(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+def setup_blast(
+    session, marker_name, shared_tmp_dir, debug: bool = False, cpu: int = 0
+):
     """Prepare a BLAST DB from the marker sequence DB entries."""
     view = (
         session.query(MarkerSeq)
@@ -441,10 +464,10 @@ def method_blast(
     marker_name,
     tmp_dir,
     shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
-):
+    min_abundance: int = 0,
+    debug: bool = False,
+    cpu: int = 0,
+) -> Iterator[tuple[str, str, str, str]]:
     """Classify using BLAST.
 
     Another simplistic classifier, run the reads through blastn
@@ -504,8 +527,8 @@ def method_blast(
     # Load the top-equal BLAST results into a dict, values are lists hit MD5,
     # and the associated score in a second dict
     blast_hits = {}
-    blast_score = {}
-    score = None
+    blast_score = {}  # type: dict[str,str]
+    score = ""  # type: str|float
     with open(blast_out) as handle:
         for line in handle:
             # if debug:
@@ -547,7 +570,7 @@ def method_blast(
         yield idn, str(taxid), genus_species, note
 
 
-def method_cleanup():
+def method_cleanup() -> None:
     """Free any memory and/or delete any files on disk.
 
     Currently no need to generalise this for the different classifiers, but
@@ -603,10 +626,10 @@ def main(
     out_dir,
     ignore_prefixes,
     tmp_dir,
-    min_abundance=0,
+    min_abundance: int = 0,
     biom=False,
-    debug=False,
-    cpu=0,
+    debug: bool = False,
+    cpu: int = 0,
 ):
     """Implement the ``thapbi_pict classify`` command.
 
@@ -725,7 +748,7 @@ def main(
 
     seq_count = 0
     match_count = 0
-    skipped_samples = set()
+    skipped_samples = set()  # type: set[str]
     for filename in input_files:
         sys.stdout.flush()
         sys.stderr.flush()
@@ -763,9 +786,9 @@ def main(
         if filename.endswith(".fasta"):
             sample = file_to_sample_name(filename)
             # Populate as if this was a single sample tally TSV input:
-            input_seqs = {}
+            input_seqs = {}  # type: dict[str,str]
             seq_meta = {}
-            md5_count = {}
+            md5_count = {}  # type: dict[str,int]
             tally_counts = {}
             # TODO - avoid repeated definition here, in summary code, and sample-tally:
             stats_fields = (
@@ -913,6 +936,7 @@ def main(
             f"WARNING: Please remove temporary files written to {tmp_dir}\n"
         )
     else:
+        assert tmp_obj is not None
         tmp_obj.cleanup()
 
     sys.stderr.write(
