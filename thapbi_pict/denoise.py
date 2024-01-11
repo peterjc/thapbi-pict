@@ -393,8 +393,7 @@ def vsearch(
                 continue
             seq = corrections[seq]
             post_counts[seq] += a
-        post_counts = sorted(post_counts.items(), key=lambda x: (-x[1], x[0]))
-        for seq, a in post_counts:
+        for seq, a in sorted(post_counts.items(), key=lambda x: (-x[1], x[0])):
             if unoise_gamma:
                 assert a >= unoise_gamma
             assert corrections[seq] == seq
