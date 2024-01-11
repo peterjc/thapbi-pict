@@ -1,4 +1,4 @@
-# Copyright 2018-2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -606,7 +606,7 @@ def marker_cut(
         f"Looking for {len(marker_definitions)} markers in {len(file_pairs)} samples\n"
     )
 
-    time_flash = time_cutadapt = time_abundance = 0
+    time_flash = time_cutadapt = time_abundance = 0.0
 
     for marker in marker_definitions:
         if not os.path.isdir(os.path.join(out_dir, marker)):
@@ -764,7 +764,8 @@ def load_marker_defs(session, spike_genus=""):
         else:
             for taxonomy in view:
                 tmp_genus_set.add(taxonomy.genus)  # record case as used in DB
-    spike_genus = sorted(tmp_genus_set)
+    del spike_genus
+    spike_genera = sorted(tmp_genus_set)
     del tmp_genus_set
 
     marker_definitions = {}
@@ -781,7 +782,7 @@ def load_marker_defs(session, spike_genus=""):
 
         # Spike-in negative controls are marker specific
         spikes = []
-        if spike_genus:
+        if spike_genera:
             # Doing a join to pull in the marker and taxonomy tables too:
             cur_tax = aliased(Taxonomy)
             marker_seq = aliased(MarkerSeq)
@@ -793,7 +794,7 @@ def load_marker_defs(session, spike_genus=""):
                 .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
                 .filter(SeqSource.marker_definition_id == reference_marker.id)
                 .order_by(marker_seq.sequence, SeqSource.id)
-                .filter(cur_tax.genus.in_(spike_genus))
+                .filter(cur_tax.genus.in_(spike_genera))
             ):
                 spikes.append(
                     (
