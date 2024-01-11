@@ -328,7 +328,7 @@ def abundance_values_in_fasta(
     """Return unique count, total abundance, and maximum abundances by spike-in."""
     unique = 0
     total = 0
-    max_a = Counter()  # type: Counter
+    max_a: Counter = Counter()
     if gzipped:
         handle = gzip.open(fasta_file, "rt")
     else:
@@ -701,8 +701,8 @@ def parse_species_tsv(
     Yields tuples of marker name (from the file header line), sequence name,
     taxid, and genus_species.
     """
-    marker = None  # type: Optional[str]
-    tally_mode = None  # type: Optional[tuple]
+    marker: Optional[str] = None
+    tally_mode: Optional[tuple] = None
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):

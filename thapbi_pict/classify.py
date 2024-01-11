@@ -367,7 +367,7 @@ def method_dist(
         score_cutoff=max_dist_genus,
     )
 
-    results = {}  # type: dict[str,tuple[Union[int,str],str,str]]
+    results: dict[str, tuple[Union[int, str], str, str]] = {}
     for (idn, seq), dists in zip(input_seqs.items(), all_dists):
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
@@ -528,8 +528,8 @@ def method_blast(
     # Load the top-equal BLAST results into a dict, values are lists hit MD5,
     # and the associated score in a second dict
     blast_hits = {}
-    blast_score = {}  # type: dict[str,str]
-    score = ""  # type: Union[str,float]
+    blast_score: dict[str, str] = {}
+    score: Union[str, float] = ""
     with open(blast_out) as handle:
         for line in handle:
             # if debug:
@@ -747,9 +747,10 @@ def main(
 
     classifier_output = []  # return value
 
-    seq_count = 0
-    match_count = 0
-    skipped_samples = set()  # type: set[str]
+    abundance: int = 0
+    seq_count: int = 0
+    match_count: int = 0
+    skipped_samples: set[str] = set()
     for filename in input_files:
         sys.stdout.flush()
         sys.stderr.flush()
@@ -787,10 +788,10 @@ def main(
         if filename.endswith(".fasta"):
             sample = file_to_sample_name(filename)
             # Populate as if this was a single sample tally TSV input:
-            input_seqs = {}  # type: dict[str,str]
+            input_seqs: dict[str, str] = {}
             seq_meta = {}
-            md5_count = {}  # type: dict[str,int]
-            tally_counts = {}
+            md5_count: dict[str, int] = {}
+            tally_counts: dict[tuple[str, str, str], int] = {}
             # TODO - avoid repeated definition here, in summary code, and sample-tally:
             stats_fields = (
                 "Raw FASTQ",
