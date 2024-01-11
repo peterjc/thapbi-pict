@@ -1,4 +1,4 @@
-# Copyright 2019-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -20,16 +20,17 @@ re-evaluated for use with THAPBI-PICT.
 """
 import sys
 from subprocess import getoutput
+from typing import Optional
 
 
-def check_rapidfuzz():
+def check_rapidfuzz() -> str:
     """Check can import rapidfuzz and confirm recent enough."""
     try:
         import rapidfuzz
     except ImportError:
         sys.exit("ERROR: Missing Python library rapidfuzz")
     try:
-        version = rapidfuzz.__version__
+        version: str = rapidfuzz.__version__
     except AttributeError:
         sys.exit("ERROR: Could not check rapidfuzz.__version__")
     try:
@@ -43,7 +44,7 @@ def check_rapidfuzz():
     return version
 
 
-def check_tools(names, debug):
+def check_tools(names: list[str], debug: bool) -> list[str]:
     """Verify the named tools are present, log versions if debug=True.
 
     Argument names should be an interable of tool binary names.
@@ -83,7 +84,7 @@ def check_tools(names, debug):
         return versions
 
 
-def version_blast(cmd="blastn"):
+def version_blast(cmd: str = "blastn") -> Optional[str]:
     """Return the version of the NCBI BLAST+ suite's blastn (as a short string).
 
     In the absence of a built in version switch like ``-v``, this works by
@@ -114,7 +115,7 @@ def version_blast(cmd="blastn"):
     return None
 
 
-def version_cutadapt(cmd="cutadapt"):
+def version_cutadapt(cmd: str = "cutadapt") -> Optional[str]:
     """Return the version of cutadapt (as a short string).
 
     Uses the output with ``--version``::
@@ -135,7 +136,7 @@ def version_cutadapt(cmd="cutadapt"):
     return None
 
 
-def version_flash(cmd="flash"):
+def version_flash(cmd: str = "flash") -> Optional[str]:
     """Return the version of flash (as a short string).
 
     Parses the output with ``-v``::
@@ -157,7 +158,7 @@ def version_flash(cmd="flash"):
     return None
 
 
-def version_usearch(cmd="usearch"):
+def version_usearch(cmd: str = "usearch") -> Optional[str]:
     """Return the version of usearch (as a short string).
 
     Uses the output with ``--version``::
@@ -179,7 +180,7 @@ def version_usearch(cmd="usearch"):
     return None
 
 
-def version_vsearch(cmd="vsearch"):
+def version_vsearch(cmd: str = "vsearch") -> Optional[str]:
     """Return the version of vsearch (as a short string).
 
     Uses the output with ``--version``::

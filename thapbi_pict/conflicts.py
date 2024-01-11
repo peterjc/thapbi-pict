@@ -1,4 +1,4 @@
-# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -17,7 +17,7 @@ from .db_orm import Taxonomy
 from .utils import genus_species_name
 
 
-def main(db_url, output_filename, debug=False):
+def main(db_url: str, output_filename: str, debug: bool = False) -> int:
     """Implement the ``thapbi_pict conflicts`` subcommand.
 
     Looks for taxonomy conflicts at marker, genus or species level, with the
@@ -55,10 +55,10 @@ def main(db_url, output_filename, debug=False):
         .options(contains_eager(SeqSource.marker_definition, alias=marker_def))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
-    md5_to_seq = {}
-    md5_to_marker = {}
-    md5_to_genus = {}
-    md5_to_species = {}
+    md5_to_seq: dict[str, str] = {}
+    md5_to_marker: dict[str, set[str]] = {}
+    md5_to_genus: dict[str, set[str]] = {}
+    md5_to_species: dict[str, set[str]] = {}
     for seq_source in view:
         md5 = seq_source.marker_seq.md5
         seq = seq_source.marker_seq.sequence

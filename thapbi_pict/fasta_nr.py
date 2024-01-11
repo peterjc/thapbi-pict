@@ -1,4 +1,4 @@
-# Copyright 2018-2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -11,6 +11,7 @@ same code internally as the ``thapbi_pict prepare-reads`` command.
 import os
 import sys
 from collections import Counter
+from typing import Union
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -20,14 +21,14 @@ from .utils import abundance_from_read_name
 
 
 def main(
-    inputs,
-    revcomp,
-    output,
-    min_abundance=0,
-    min_length=0,
-    max_length=sys.maxsize,
-    debug=False,
-):
+    inputs: Union[str, list[str]],
+    revcomp: Union[str, list[str]],
+    output: str,
+    min_abundance: int = 0,
+    min_length: int = 0,
+    max_length: int = sys.maxsize,
+    debug: bool = False,
+) -> None:
     """Implement the ``thapbi_pict fasta-nr`` command."""
     if not inputs:
         inputs = []
@@ -54,7 +55,7 @@ def main(
                 "ERROR: Output directory can only be used with a single input file"
             )
 
-    counts = Counter()
+    counts: dict[str, int] = Counter()
     for filename in inputs:
         # Assuming FASTA for now
         if debug:

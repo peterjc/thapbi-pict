@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -11,6 +11,7 @@ sequence FASTA file databases, and other other FASTA naming conventions.
 import os
 import re
 import sys
+from typing import Optional
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -36,7 +37,9 @@ DEF_MAX_LENGTH = 1000
 taxid_regex = re.compile(r"(ncbi|[ _:;({\[\-\t])taxid=\d+")
 
 
-def parse_ncbi_fasta_entry(text, known_species=None):
+def parse_ncbi_fasta_entry(
+    text: str, known_species: Optional[list[str]] = None
+) -> tuple[int, str]:
     """Split an entry of Accession Genus Species-name Description.
 
     Returns a two-tuple: taxid (always zero), presumed genus-species (may be
@@ -115,7 +118,9 @@ assert parse_ncbi_fasta_entry(
 ) == (0, "Phytophthora humicola x inundata")
 
 
-def parse_ncbi_taxid_entry(text, know_species=None):
+def parse_ncbi_taxid_entry(
+    text: str, know_species: Optional[list[str]] = None
+) -> tuple[int, str]:
     """Find any NCBI taxid as a pattern in the text.
 
     Returns a two-tuple of taxid (zero if not found), and an
@@ -149,7 +154,9 @@ assert parse_ncbi_taxid_entry(
 assert parse_ncbi_taxid_entry("HQ013219:Phytophthora_arenaria:taxid=456") == (456, "")
 
 
-def parse_curated_fasta_entry(text, known_species=None):
+def parse_curated_fasta_entry(
+    text: str, known_species: Optional[list[str]] = None
+) -> tuple[int, str]:
     """Split an entry of "Accession genus species etc" into fields.
 
     Does not use the optional known_species argument.
@@ -210,7 +217,9 @@ assert parse_curated_fasta_entry(
 )
 
 
-def parse_sintax_fasta_entry(text, known_species=None):
+def parse_sintax_fasta_entry(
+    text: str, known_species: Optional[list[str]] = None
+) -> tuple[int, str]:
     """Extract the species from SINTAX taxonomy annotation.
 
     See https://drive5.com/usearch/manual/tax_annot.html which defines
@@ -259,7 +268,9 @@ assert parse_sintax_fasta_entry(
 ) == (0, "Escherichia coli")
 
 
-def parse_obitools_fasta_entry(text, known_species=None):
+def parse_obitools_fasta_entry(
+    text: str, known_species: Optional[list[str]] = None
+) -> tuple[int, str]:
     """Parse species from the OBITools extended FASTA header.
 
     See https://pythonhosted.org/OBITools/attributes.html which explains that
@@ -307,7 +318,7 @@ fasta_parsing_function = {
 }
 
 
-def load_taxonomy(session):
+def load_taxonomy(session) -> set[str]:
     """Pre-load all the species and synonym names as a set."""
     names = set()
     view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
@@ -321,7 +332,7 @@ def load_taxonomy(session):
     return names
 
 
-def lookup_species(session, name):
+def lookup_species(session, name: str):
     """Find this species entry in the taxonomy/synonym table (if present)."""
     assert isinstance(name, str), name
     genus, species = genus_species_split(name)
@@ -337,7 +348,7 @@ def lookup_species(session, name):
     )
 
 
-def lookup_genus(session, name):
+def lookup_genus(session, name: str):
     """Find genus entry via taxonomy/synonym table (if present)."""
     # Apply synonym (which might change the genus)
     taxonomy = (
@@ -486,10 +497,10 @@ def import_fasta_file(
 
     valid_letters = set("GATCRYWSMKHBVDN")
 
-    existing_taxonomy = {}
-    existing_sequences = {}
-    additional_taxonomy = {}
-    additional_sequences = {}
+    existing_taxonomy: dict[str, str] = {}
+    existing_sequences: dict[str, str] = {}
+    additional_taxonomy: dict[str, str] = {}
+    additional_sequences: dict[str, str] = {}
     record_entries = []
     with open(fasta_file) as handle:
         for title, seq in SimpleFastaParser(handle):

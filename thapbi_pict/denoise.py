@@ -1,4 +1,4 @@
-# Copyright 2023-2024 by Peter Cock, The James Hutton Institute.
+# Copyright 2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -18,6 +18,8 @@ from collections import defaultdict
 from math import floor
 from math import log2
 from time import time
+from typing import Optional
+from typing import Union
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
@@ -31,8 +33,12 @@ from .versions import check_tools
 
 
 def unoise(
-    counts, unoise_alpha=2.0, unoise_gamma=4, abundance_based=False, debug=False
-):
+    counts: dict[str, int],
+    unoise_alpha: Optional[float] = 2.0,
+    unoise_gamma: Optional[int] = 4,
+    abundance_based: bool = False,
+    debug: bool = False,
+) -> tuple[dict[str, str], dict[str, str]]:
     """Apply UNOISE2 algorithm.
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
@@ -55,7 +61,7 @@ def unoise(
     top_a = max(counts.values())  # will become first centroid
     last_a = None
     cutoff = 0
-    centroids = defaultdict(set)
+    centroids: dict[str, set[str]] = defaultdict(set)
     high_abundance_centroids = None
     if abundance_based:
         sys.stderr.write("Starting UNOISE abundance-based greedy clustering (AGC)\n")
@@ -149,7 +155,7 @@ def unoise(
                 centroids[query].add(query)
                 # print(query, "new")
 
-    corrections = {}
+    corrections: dict[str, str] = {}
     for seq, choices in centroids.items():
         for _ in choices:
             corrections[_] = seq
@@ -158,14 +164,14 @@ def unoise(
 
 
 def usearch(
-    counts,
-    unoise_alpha=None,
-    unoise_gamma=None,
-    abundance_based=False,
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
-):
+    counts: dict[str, int],
+    unoise_alpha: Optional[float] = None,
+    unoise_gamma: Optional[int] = None,
+    abundance_based: bool = False,
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[dict[str, str], dict[str, str]]:
     """Invoke USEARCH to run its implementation of the UNOISE3 algorithm.
 
     Assumes v10 or v11 (or later if the command line API is the same).
@@ -278,14 +284,14 @@ def usearch(
 
 
 def vsearch(
-    counts,
-    unoise_alpha=None,
-    unoise_gamma=None,
-    abundance_based=False,
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
-):
+    counts: dict[str, int],
+    unoise_alpha: Optional[float] = None,
+    unoise_gamma: Optional[int] = None,
+    abundance_based: bool = True,
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[dict[str, str], dict[str, str]]:
     """Invoke VSEARCH to run its reimplementation of the UNOISE3 algorithm.
 
     Argument counts is an (unsorted) dict of sequences (for the same amplicon
@@ -382,7 +388,7 @@ def vsearch(
 
     with open(denoised_fasta, "w") as handle:
         # TODO: Wasteful as will re-compute the post-correction counts
-        post_counts = defaultdict(int)
+        post_counts: dict[str, int] = defaultdict(int)
         for seq, a in counts.items():
             if seq not in corrections:
                 # Ignored as per UNOISE algorithm
@@ -425,15 +431,15 @@ def vsearch(
 
 
 def read_correction(
-    algorithm,
-    counts,
-    unoise_alpha=2.0,
-    unoise_gamma=4,
-    abundance_based=False,
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
-):
+    algorithm: str,
+    counts: dict[str, int],
+    unoise_alpha: Optional[float] = 2.0,
+    unoise_gamma: Optional[int] = 4,
+    abundance_based: bool = False,
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[dict[str, str], dict[str, str]]:
     """Apply builtin UNOISE algorithm or invoke an external tool like VSEARCH.
 
     Argument algorithm is a string, "unoise-l" for our reimplementation of the
@@ -475,18 +481,18 @@ def read_correction(
 
 
 def main(
-    inputs,
-    output,
-    denoise_algorithm,
-    total_min_abundance=0,
-    min_length=0,
-    max_length=sys.maxsize,
-    unoise_alpha=None,  # e.g. 2.0,
-    unoise_gamma=None,  # e.g. 4,
-    gzipped=False,  # output
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
+    inputs: Union[str, list[str]],
+    output: str,
+    denoise_algorithm: str,
+    total_min_abundance: int = 0,
+    min_length: int = 0,
+    max_length: int = sys.maxsize,
+    unoise_alpha: Optional[float] = None,  # e.g. 2.0,
+    unoise_gamma: Optional[int] = None,  # e.g. 4,
+    gzipped: bool = False,  # output
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
 ):
     """Implement the ``thapbi_pict denoise`` command.
 
@@ -512,7 +518,7 @@ def main(
     if os.path.isdir(output):
         sys.exit("ERROR: Output directory given, want a FASTA filename.")
 
-    totals = Counter()
+    totals: dict[str, int] = Counter()
     for filename in inputs:
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
@@ -544,7 +550,7 @@ def main(
         debug=debug,
         cpu=cpu,
     )
-    new_totals = defaultdict(int)
+    new_totals: dict[str, int] = defaultdict(int)
     for seq, a in totals.items():
         if seq not in corrections:
             # Ignored as per UNOISE algorithm

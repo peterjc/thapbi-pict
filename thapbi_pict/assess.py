@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -27,7 +27,9 @@ from .utils import species_level
 from .utils import split_read_name_abundance
 
 
-def load_tsv(mapping, classifier_file, min_abundance):
+def load_tsv(
+    mapping: dict[tuple[str, str], str], classifier_file: str, min_abundance: int
+) -> dict[tuple[str, str], str]:
     """Update dict mapping of (marker, MD5) to semi-colon separated species string."""
     for marker, name, _taxid, sp in parse_species_tsv(
         classifier_file, min_abundance, req_species_level=True, allow_wildcard=False
@@ -49,7 +51,9 @@ def load_tsv(mapping, classifier_file, min_abundance):
     return mapping
 
 
-def sp_for_sample(fasta_files, min_abundance, pooled_sp):
+def sp_for_sample(
+    fasta_files: list[str], min_abundance: int, pooled_sp: dict[tuple[str, str], str]
+) -> str:
     """Return semi-colon separated species string from FASTA files via dict."""
     answer = set()
     for fasta_file in fasta_files:
@@ -72,7 +76,7 @@ def sp_for_sample(fasta_files, min_abundance, pooled_sp):
     return ";".join(sorted(answer))
 
 
-def sp_in_tsv(classifier_files, min_abundance):
+def sp_in_tsv(classifier_files: list[str], min_abundance: int) -> str:
     """Return semi-colon separated list of species in column 2.
 
     Will ignore genus level predictions.
@@ -86,13 +90,15 @@ def sp_in_tsv(classifier_files, min_abundance):
     return ";".join(sorted(_ for _ in species if species_level(_)))
 
 
-def tally_files(expected_file, predicted_file, min_abundance=0):
+def tally_files(
+    expected_file: str, predicted_file: str, min_abundance: int = 0
+) -> dict[tuple[str, str], set[str]]:
     """Make dictionary tally confusion matrix of species assignments.
 
     Rather than the values simply being an integer count, they are
     the set of MD5 identifiers (take the length for the count).
     """
-    counter = {}
+    counter: dict[tuple[str, str], set[str]] = {}
     # Sorting because currently not all the classifiers produce out in
     # the same order. The identify classifier respects the input FASTA
     # order (which is by decreasing abundance), while the swarm classifier
@@ -152,7 +158,9 @@ def tally_files(expected_file, predicted_file, min_abundance=0):
     return counter
 
 
-def class_list_from_tally_and_db_list(tally, db_sp_list):
+def class_list_from_tally_and_db_list(
+    tally: dict[tuple[str, str], int], db_sp_list: list[str]
+) -> list[str]:
     """Sorted list of all class names used in a confusion table dict."""
     classes = set()
     impossible = set()
@@ -183,7 +191,9 @@ def class_list_from_tally_and_db_list(tally, db_sp_list):
     return sorted(classes)
 
 
-def save_mapping(tally, filename, debug=False):
+def save_mapping(
+    tally: dict[tuple[str, str], int], filename: str, debug: bool = False
+) -> None:
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
         handle.write("#sample-count\tExpected\tPredicted\n")
@@ -196,7 +206,14 @@ def save_mapping(tally, filename, debug=False):
         )
 
 
-def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug=False):
+def save_confusion_matrix(
+    tally: dict[tuple[str, str], int],
+    db_sp_list: list[str],
+    sp_list: list[str],
+    filename: str,
+    exp_total: int,
+    debug: bool = False,
+) -> None:
     """Output a multi-class confusion matrix as a tab-separated table."""
     total = 0
 
@@ -227,7 +244,7 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
 
     assert len(sp_list) * sum(tally.values()) == exp_total
 
-    values = Counter()
+    values: dict[tuple[str, str], int] = Counter()
     for (expt, pred), count in tally.items():
         if expt:
             assert expt in rows
@@ -277,7 +294,9 @@ def save_confusion_matrix(tally, db_sp_list, sp_list, filename, exp_total, debug
         sys.exit(f"ERROR: Expected {exp_total} but confusion matrix total {total}")
 
 
-def extract_binary_tally(class_name, tally):
+def extract_binary_tally(
+    class_name: str, tally: dict[tuple[str, str], int]
+) -> tuple[int, int, int, int]:
     """Extract single-class TP, FP, FN, TN from multi-class confusion tally.
 
     Reduces the mutli-class expectation/prediction to binary - did they
@@ -286,13 +305,15 @@ def extract_binary_tally(class_name, tally):
     Returns a 4-tuple of values, True Positives (TP), False Positives (FP),
     False Negatives (FN), True Negatives (TN), which sum to the tally total.
     """
-    bt = Counter()
+    bt: dict[tuple[bool, bool], int] = Counter()
     for (expt, pred), count in tally.items():
         bt[class_name in expt.split(";"), class_name in pred.split(";")] += count
     return bt[True, True], bt[False, True], bt[True, False], bt[False, False]
 
 
-def extract_global_tally(tally, sp_list):
+def extract_global_tally(
+    tally: dict[tuple[str, str], int], sp_list: list[str]
+) -> tuple[int, int, int, int]:
     """Process multi-label confusion matrix (tally dict) to TP, FP, FN, TN.
 
     If the input data has no negative controls, all there will be no
@@ -331,7 +352,7 @@ def extract_global_tally(tally, sp_list):
     for sp in all_sp:
         assert sp in sp_list, sp
 
-    x = Counter()
+    x: dict[tuple[bool, bool], int] = Counter()
     for (expt, pred), count in tally.items():
         if expt == "" and pred == "":
             # TN special case

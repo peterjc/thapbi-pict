@@ -388,7 +388,7 @@ def make_nr_fasta(
     of those which passed the minimum abundance threshold (integer),
     and number of those which are unique (integer).
     """
-    counts: Counter = Counter()
+    counts: dict[str, int] = Counter()
     with open(input_fasta_or_fastq) as handle:
         if fastq:
             assert not weighted_input, "Not implemented for FASTQ"

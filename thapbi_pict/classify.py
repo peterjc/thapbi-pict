@@ -135,7 +135,9 @@ def taxid_and_sp_lists(
     )
 
 
-def perfect_match_in_db(session, marker_name, seq, debug=False):
+def perfect_match_in_db(
+    session, marker_name, seq: str, debug: bool = False
+) -> tuple[Union[int, str], str, str]:
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
     If the 100% matches in the DB give multiple species, then taxid and
@@ -460,11 +462,11 @@ def setup_blast(
 
 
 def method_blast(
-    input_seqs,
+    input_seqs: dict[str, str],
     session,
-    marker_name,
-    tmp_dir,
-    shared_tmp_dir,
+    marker_name: str,
+    tmp_dir: str,
+    shared_tmp_dir: str,
     min_abundance: int = 0,
     debug: bool = False,
     cpu: int = 0,
@@ -582,7 +584,7 @@ def method_cleanup() -> None:
     max_dist_genus = None  # global variable for 1s?g distance classifier
 
 
-method_tool_check = {
+method_tool_check: dict[str, list[str]] = {
     "blast": ["makeblastdb", "blastn"],
     "identity": [],
     "onebp": [],

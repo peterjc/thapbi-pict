@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -322,11 +322,11 @@ def split_read_name_abundance(text: str, debug: bool = False) -> tuple[str, int]
 
 def abundance_values_in_fasta(
     fasta_file: str, gzipped: bool = False
-) -> tuple[int, int, Counter]:
+) -> tuple[int, int, dict[str, int]]:
     """Return unique count, total abundance, and maximum abundances by spike-in."""
     unique = 0
     total = 0
-    max_a: Counter = Counter()
+    max_a: dict[str, int] = Counter()
     if gzipped:
         handle = gzip.open(fasta_file, "rt")
     else:
