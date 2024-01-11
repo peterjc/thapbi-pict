@@ -161,7 +161,7 @@ def usearch(
     counts,
     unoise_alpha=None,
     unoise_gamma=None,
-    abundance_based=True,
+    abundance_based=False,
     tmp_dir=None,
     debug=False,
     cpu=0,
