@@ -46,7 +46,7 @@ def unoise(
     """
     debug = False  # too noisy otherwise
     if not counts:
-        return {}
+        return {}, {}
     if not unoise_alpha:
         unoise_alpha = 2.0
     if not unoise_gamma:
