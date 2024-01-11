@@ -15,6 +15,8 @@ import tempfile
 from collections import Counter
 from math import ceil
 from time import time
+from typing import Optional
+from typing import Union
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -38,11 +40,11 @@ from .versions import check_tools
 
 
 def find_fastq_pairs(
-    filenames_or_folders,
-    ext=(".fastq", ".fastq.gz", ".fq", ".fq.gz"),
-    ignore_prefixes=None,
-    debug=False,
-):
+    filenames_or_folders: list[str],
+    ext: tuple[str, ...] = (".fastq", ".fastq.gz", ".fq", ".fq.gz"),
+    ignore_prefixes: Optional[tuple[str]] = None,
+    debug: bool = False,
+) -> list[tuple[str, str, str]]:
     """Interpret a list of filenames and/or foldernames.
 
     Returns a list of tuples (stem, left filename, right filename)
@@ -149,7 +151,7 @@ def find_fastq_pairs(
     return pairs
 
 
-def parse_cutadapt_stdout(stdout):
+def parse_cutadapt_stdout(stdout: str) -> tuple[int, int]:
     r"""Extract FASTA count before and after cutadapt.
 
     >>> parse_cutadapt_stdout("...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n...")
@@ -193,12 +195,12 @@ Reads written (passing filters):         1,471 (1.4%)
 
 
 def run_cutadapt(
-    long_in,
-    out_template,
+    long_in: str,
+    out_template: str,
     marker_definitions,
-    flip=False,
-    debug=False,
-    cpu=0,
+    flip: bool = False,
+    debug: bool = False,
+    cpu: int = 0,
 ):
     """Run cutadapt on a single file (i.e. after merging paired FASTQ).
 
@@ -242,7 +244,7 @@ def run_cutadapt(
     return parse_cutadapt_stdout(run(cmd, debug=debug).stdout)
 
 
-def parse_flash_stdout(stdout):
+def parse_flash_stdout(stdout: str) -> tuple[int, int]:
     r"""Extract FASTQ pair count before/after running flash.
 
     >>> parse_flash_stdout("...\n[FLASH] Read combination statistics:[FLASH]     Total pairs:      6105\n[FLASH]     Combined pairs:   5869\n...")
@@ -274,7 +276,14 @@ assert parse_flash_stdout(
 ) == (6105, 5869)
 
 
-def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cpu=0):
+def run_flash(
+    trimmed_R1: str,
+    trimmed_R2: str,
+    output_dir: str,
+    output_prefix: str,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[int, int]:
     """Run FLASH on a pair of trimmed FASTQ files to merge overlapping pairs.
 
     Returns two integers, FASTQ pair count for input and output files.
@@ -290,11 +299,11 @@ def run_flash(trimmed_R1, trimmed_R2, output_dir, output_prefix, debug=False, cp
 
 
 def save_nr_fasta(
-    counts,
-    output_fasta,
-    min_abundance=0,
-    gzipped=False,
-    header_dict=None,
+    counts: dict[str, int],
+    output_fasta: str,
+    min_abundance: int = 0,
+    gzipped: bool = False,
+    header_dict: Optional[dict[str, Union[str, int, None]]] = None,
 ):
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -348,16 +357,16 @@ def save_nr_fasta(
 
 
 def make_nr_fasta(
-    input_fasta_or_fastq,
-    output_fasta,
-    min_abundance=0,
-    min_len=0,
-    max_len=sys.maxsize,
-    weighted_input=False,
-    fastq=False,
-    gzipped=False,
-    header_dict=None,
-    debug=False,
+    input_fasta_or_fastq: str,
+    output_fasta: str,
+    min_abundance: int = 0,
+    min_len: int = 0,
+    max_len: int = sys.maxsize,
+    weighted_input: bool = False,
+    fastq: bool = False,
+    gzipped: bool = False,
+    header_dict: Optional[dict[str, Union[str, int, None]]] = None,
+    debug: bool = False,
 ):
     r"""Trim and make non-redundant FASTA/Q file from FASTA input.
 
@@ -379,7 +388,7 @@ def make_nr_fasta(
     of those which passed the minimum abundance threshold (integer),
     and number of those which are unique (integer).
     """
-    counts = Counter()
+    counts: Counter = Counter()
     with open(input_fasta_or_fastq) as handle:
         if fastq:
             assert not weighted_input, "Not implemented for FASTQ"
@@ -416,13 +425,13 @@ def make_nr_fasta(
 
 
 def merge_paired_reads(
-    raw_R1,
-    raw_R2,
-    merged_fasta_gz,
-    tmp,
-    debug=False,
-    cpu=0,
-):
+    raw_R1: str,
+    raw_R2: str,
+    merged_fasta_gz: str,
+    tmp: str,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[int, int]:
     """Create NR FASTA file by overlap merging the paired FASTQ files."""
     if os.path.isfile(merged_fasta_gz):
         if debug:
@@ -462,22 +471,21 @@ def merge_paired_reads(
     )
     shutil.move(tmp_fasta_gz, merged_fasta_gz)
     del tmp_fasta_gz
-    merged_fastq = None
     return count_raw, count_flash
 
 
 def prepare_sample(
-    fasta_name,
-    trimmed_fasta,
-    headers,
-    min_len,
-    max_len,
-    min_abundance,
-    min_abundance_fraction,
-    tmp,
-    debug=False,
-    cpu=0,
-):
+    fasta_name: str,
+    trimmed_fasta: str,
+    headers: dict[str, Union[int, str, None]],
+    min_len: int,
+    max_len: int,
+    min_abundance: int,
+    min_abundance_fraction: float,
+    tmp: str,
+    debug: bool = False,
+    cpu: int = 0,
+) -> tuple[Optional[int], Optional[int], Optional[int], int]:
     """Create marker-specific FASTA file for sample from paired FASTQ.
 
     Applies abundance threshold, and min/max length.
@@ -592,15 +600,15 @@ def prepare_sample(
 def marker_cut(
     marker_definitions,
     file_pairs,
-    out_dir,
-    merged_cache,
-    tmp,
-    flip,
-    min_abundance,
-    min_abundance_fraction,
-    debug=False,
-    cpu=0,
-):
+    out_dir: str,
+    merged_cache: str,
+    tmp: str,
+    flip: bool,
+    min_abundance: int,
+    min_abundance_fraction: float,
+    debug: bool = False,
+    cpu: int = 0,
+) -> list[str]:
     """Apply primer-trimming for given markers."""
     sys.stderr.write(
         f"Looking for {len(marker_definitions)} markers in {len(file_pairs)} samples\n"
@@ -647,7 +655,8 @@ def marker_cut(
                 raw_R1, raw_R2, merged_fasta_gz, tmp, debug=debug, cpu=cpu
             )
             time_flash += time() - start
-
+            assert count_raw is not None
+            assert count_flash is not None
             if count_flash:
                 # Run cutadapt to cut primers (giving one output per marker)
                 start = time()
@@ -708,18 +717,22 @@ def marker_cut(
             )
             fasta_files_prepared.append(fasta_name)
             if uniq_count:
+                assert marker_total is not None
+                assert accepted_total is not None
                 assert accepted_total <= marker_total, (accepted_total, marker_total)
             if uniq_count is None:
                 skipped_samples.add(stem)
                 if debug:
                     sys.stderr.write(f"Skipping {fasta_name} as already done\n")
             elif min_a > 1:
+                assert marker_total is not None
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
                     f" or {accepted_total}/{marker_total}"
                     f" reads over abundance threshold {min_a}\n"
                 )
             else:
+                assert marker_total is not None
                 assert accepted_total == marker_total
                 sys.stderr.write(
                     f"Sample {stem} has {uniq_count} unique {marker} sequences,"
@@ -751,7 +764,7 @@ def marker_cut(
     return fasta_files_prepared
 
 
-def load_marker_defs(session, spike_genus=""):
+def load_marker_defs(session, spike_genus: str = "") -> dict[str, object]:
     """Load marker definitions and any spike-in sequences from the DB."""
     tmp_genus_set = set()
     # Split on commas, strip white spaces,
@@ -768,7 +781,7 @@ def load_marker_defs(session, spike_genus=""):
     spike_genera = sorted(tmp_genus_set)
     del tmp_genus_set
 
-    marker_definitions = {}
+    marker_definitions: dict[str, object] = {}
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
         if not reference_marker.left_primer or not reference_marker.right_primer:
             # TODO - ERROR if more than one marker? Always an error?

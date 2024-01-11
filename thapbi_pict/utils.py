@@ -232,9 +232,7 @@ def cmd_as_string(cmd):
         return cmd
 
 
-def run(
-    cmd, debug: bool = False, attempts: int = 1
-) -> Optional[subprocess.CompletedProcess]:
+def run(cmd, debug: bool = False, attempts: int = 1) -> subprocess.CompletedProcess:
     """Run a command via subprocess, abort if fails.
 
     Returns a subprocess.CompletedProcess object, or None if all attempts fail.
@@ -285,7 +283,7 @@ def run(
                     f"ERROR: Attempt {i + 1} of {attempts} failed"
                     f" with return code {e.returncode}, cmd:\n{cmd_as_string(cmd)}\n"
                 )
-    return None
+    raise RuntimeError(f"Attempts exceeded for {cmd}")
 
 
 def abundance_from_read_name(text: str, debug: bool = False) -> int:
