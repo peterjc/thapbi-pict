@@ -19,7 +19,7 @@ thapbi_pict edit-graph -d '' 2>&1 | grep "Require -d / --database and/or -i / --
 set -o pipefail
 
 # No database, small FASTA file, have to use explicit total abundance threshold
-diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.xgmml <(thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200)
+diff --strip-trailing-cr tests/edit-graph/DNAMIX_S95_L001.xgmml <(thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 --min-samples 1)
 # Loaded 7 unique sequences from 1 FASTA files.
 # Minimum total abundance threshold 200 left 7 sequences from FASTA files.
 # Computed 42 Levenshtein edit distances between 7 sequences.
