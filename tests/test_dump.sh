@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -19,11 +19,11 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ `thapbi_pict dump | grep -c -v "^#"` -ne 4433 ]; then echo "Wrong source count for table dump"; false; fi
-if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 1417 ]; then echo "Wrong sequence count for fasta dump"; false; fi
+if [ `thapbi_pict dump | grep -c -v "^#"` -ne 4438 ]; then echo "Wrong source count for table dump"; false; fi
+if [ `thapbi_pict dump -f fasta | grep -c "^>"` -ne 1421 ]; then echo "Wrong sequence count for fasta dump"; false; fi
 
-if [ `thapbi_pict dump --minimal | grep -c -v "^#"` -ne 1417 ]; then echo "Wrong sequence count for minimal table dump"; false; fi
-if [ `thapbi_pict dump -m -f fasta | grep -c "^>"` -ne 1417 ]; then echo "Wrong sequence count for minimal fasta dump"; false; fi
+if [ `thapbi_pict dump --minimal | grep -c -v "^#"` -ne 1421 ]; then echo "Wrong sequence count for minimal table dump"; false; fi
+if [ `thapbi_pict dump -m -f fasta | grep -c "^>"` -ne 1421 ]; then echo "Wrong sequence count for minimal fasta dump"; false; fi
 
 # With genus filter,
 if [ `thapbi_pict dump -f txt -g Phytophthora | grep -v -c "^#"` -ne 2919 ]; then echo "Wrong source for Phytophthora genus"; false; fi
