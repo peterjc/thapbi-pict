@@ -17,6 +17,11 @@ sets of biological sequences (subject to taxonomy filtering):
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
   extended with the assumed 32bp leader.
 
+- Curated other Peronosporales ITS1 sequences including *Peronosclerospora*
+  from file ``Peronosporales_ITS1_curated.fasta``, currently imported only to
+  genus. Most have been extended with the assumed 32bp leader, or in some
+  cases the final dozen bases.
+
 - NCBI Peronosporales (including *Phytophthora*) or Pythiales at genus level,
   in two files extracted from tens of thousands of candidate sequences in file
   ``Oomycota_ITS1_search.fasta`` (not under version control) downloaded from
