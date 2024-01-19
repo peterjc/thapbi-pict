@@ -80,6 +80,11 @@ sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('OR
 # in the NCBI taxonomy, like putative novel species.
 thapbi_pict import -d "$DB.sqlite" -i Phytophthora_ITS1_curated.fasta Nothophytophthora_ITS1_curated.fasta --maxlen 450 -s ";" -x
 
+# Currently only importing these other Peronosporales at genus
+# level. This is a initially an ad hoc collection based on
+# sequences lacking the primers and thus missed above:
+thapbi_pict import -d "$DB.sqlite" -i Peronosporales_ITS1_curated.fasta --maxlen 450 -s ";" -g
+
 # ======
 # Export
 # ======
