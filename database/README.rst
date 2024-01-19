@@ -11,7 +11,7 @@ sets of biological sequences (subject to taxonomy filtering):
   Sadly many published sequences are missing the first 32bp which our default
   primers would amplify, namely ``TTTCCGTAGGTGAACCTGCGGAAGGATCATTA``. This
   has been assumed and added to the FASTA in lower case as needed - at the
-  time of writing no exceptions are known.
+  time of writing exceptions are rare.
 
 - Curated *Nothophytophthora* ITS1 sequences (mostly at species level) from
   file ``Nothophytophthora_ITS1_curated.fasta``. Again, most have been
