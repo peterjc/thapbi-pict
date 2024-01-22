@@ -15,6 +15,7 @@ import tempfile
 from collections import Counter
 from math import ceil
 from time import time
+from typing import Any
 from typing import Optional
 from typing import Union
 
@@ -197,11 +198,11 @@ Reads written (passing filters):         1,471 (1.4%)
 def run_cutadapt(
     long_in: str,
     out_template: str,
-    marker_definitions,
+    marker_definitions: dict[str, Any],
     flip: bool = False,
     debug: bool = False,
     cpu: int = 0,
-):
+) -> tuple[int, int]:
     """Run cutadapt on a single file (i.e. after merging paired FASTQ).
 
     The input and/or output files may be compressed as long as they
@@ -304,7 +305,7 @@ def save_nr_fasta(
     min_abundance: int = 0,
     gzipped: bool = False,
     header_dict: Optional[dict[str, Union[str, int, None]]] = None,
-):
+) -> tuple[int, int]:
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
     Writes a FASTA file with header lines starting # (which not all tools will
@@ -367,7 +368,7 @@ def make_nr_fasta(
     gzipped: bool = False,
     header_dict: Optional[dict[str, Union[str, int, None]]] = None,
     debug: bool = False,
-):
+) -> tuple[int, int, int, int]:
     r"""Trim and make non-redundant FASTA/Q file from FASTA input.
 
     Makes a non-redundant FASTA file with the sequences named
@@ -554,6 +555,7 @@ def prepare_sample(
             f"ERROR: Cutadapt says wrote {count_cutadapt}, but we saw {count} reads."
         )
     if debug:
+        assert isinstance(headers["raw_fastq"], int)
         count_raw = headers["raw_fastq"]
         count_flash = headers["flash"]
         if count_raw:
@@ -599,7 +601,7 @@ def prepare_sample(
 
 def marker_cut(
     marker_definitions,
-    file_pairs,
+    file_pairs: list[tuple[str, str, str]],
     out_dir: str,
     merged_cache: str,
     tmp: str,
@@ -764,7 +766,9 @@ def marker_cut(
     return fasta_files_prepared
 
 
-def load_marker_defs(session, spike_genus: str = "") -> dict[str, object]:
+def load_marker_defs(
+    session, spike_genus: str = ""
+) -> dict[str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]]:
     """Load marker definitions and any spike-in sequences from the DB."""
     tmp_genus_set = set()
     # Split on commas, strip white spaces,
@@ -781,7 +785,9 @@ def load_marker_defs(session, spike_genus: str = "") -> dict[str, object]:
     spike_genera = sorted(tmp_genus_set)
     del tmp_genus_set
 
-    marker_definitions: dict[str, object] = {}
+    marker_definitions: dict[
+        str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]
+    ] = {}
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
         if not reference_marker.left_primer or not reference_marker.right_primer:
             # TODO - ERROR if more than one marker? Always an error?
@@ -829,18 +835,18 @@ def load_marker_defs(session, spike_genus: str = "") -> dict[str, object]:
 
 
 def main(
-    fastq,
-    out_dir,
+    fastq: list[str],
+    out_dir: str,
     session,
-    flip=False,
-    min_abundance=2,
-    min_abundance_fraction=0,
-    ignore_prefixes=None,
-    merged_cache=None,
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
-):
+    flip: bool = False,
+    min_abundance: int = 2,
+    min_abundance_fraction: float = 0.0,
+    ignore_prefixes: Optional[tuple[str]] = None,
+    merged_cache: Optional[str] = None,
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
+) -> list[str]:
     """Implement the ``thapbi_pict prepare-reads`` command.
 
     For use in the pipeline command, returns a filename listing of the FASTA
@@ -923,6 +929,7 @@ def main(
             f"WARNING: Please remove temporary files written to {tmp_dir}\n"
         )
     else:
+        assert tmp_obj is not None
         tmp_obj.cleanup()
 
     if debug:
