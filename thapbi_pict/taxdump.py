@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -11,6 +11,9 @@ The code is needed initially for loading an NCBI taxdump folder (files
 import os
 import sys
 from collections import defaultdict
+from typing import Iterator
+from typing import Optional
+from typing import Sequence
 
 from .db_orm import connect_to_db
 from .db_orm import Synonym
@@ -18,7 +21,9 @@ from .db_orm import Taxonomy
 from .utils import reject_species_name
 
 
-def load_nodes(nodes_dmp, wanted_ranks=None):
+def load_nodes(
+    nodes_dmp: str, wanted_ranks: Optional[Sequence[str]] = None
+) -> tuple[dict[int, int], dict[str, set[int]]]:
     """Load the NCBI taxdump nodes.dmp file.
 
     Returns two dicts, the parent/child relationships, and the ranks (values
@@ -27,8 +32,8 @@ def load_nodes(nodes_dmp, wanted_ranks=None):
     Default is all ranks, can provide a possibly empty list/set of ranks of
     interest.
     """
-    tree = {}
-    ranks = {}  # keys are rank names, values are lists of ids
+    tree: dict[int, int] = {}
+    ranks: dict[str, set[int]] = {}  # keys are rank names, values are sets of ids
     with open(nodes_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -38,13 +43,15 @@ def load_nodes(nodes_dmp, wanted_ranks=None):
             tree[taxid] = parent
             if wanted_ranks is None or rank in wanted_ranks:
                 try:
-                    ranks[rank].append(taxid)
+                    ranks[rank].add(taxid)
                 except KeyError:
-                    ranks[rank] = [taxid]
+                    ranks[rank] = {
+                        taxid,
+                    }
     return tree, ranks
 
 
-def load_merged(merged_dmp, wanted=None):
+def load_merged(merged_dmp: str, wanted: Optional[set[int]] = None) -> dict[int, int]:
     """Load mapping of merged taxids of interest from NCBI taxdump merged.dmp file."""
     merged = {}
     with open(merged_dmp) as handle:
@@ -59,10 +66,12 @@ def load_merged(merged_dmp, wanted=None):
     return merged
 
 
-def load_names(names_dmp, wanted=None):
+def load_names(
+    names_dmp: str, wanted: Optional[set[int]] = None
+) -> tuple[dict[int, str], dict[int, set[str]]]:
     """Load scientific names of species from NCBI taxdump names.dmp file."""
     names = {}
-    synonym = defaultdict(list)
+    synonym = defaultdict(set)
     with open(names_dmp) as handle:
         for line in handle:
             parts = line.split("\t|\t", 3)
@@ -77,11 +86,13 @@ def load_names(names_dmp, wanted=None):
             ):
                 # e.g. Phytophthora aquimorbida 'includes' Phytophthora sp. CCH-2009b
                 # which we want to treat like a synonym
-                synonym[taxid].append(name)
+                synonym[taxid].add(name)
     return names, synonym
 
 
-def filter_tree(tree, ranks, ancestors):
+def filter_tree(
+    tree: dict[int, int], ranks: dict[str, set[int]], ancestors: set[int]
+) -> tuple[dict[int, int], dict[str, set[int]]]:
     """Return a filtered version of the tree & ranks dict.
 
     NOTE: Does NOT preserve the original dict order.
@@ -123,11 +134,11 @@ def filter_tree(tree, ranks, ancestors):
     assert count == len(wanted) + len(reject)
 
     return wanted, {
-        rank: sorted(set(values).intersection(wanted)) for rank, values in ranks.items()
+        rank: set(values).intersection(wanted) for rank, values in ranks.items()
     }
 
 
-def get_ancestor(taxid, tree, stop_nodes):
+def get_ancestor(taxid: int, tree: dict[int, int], stop_nodes: set[int]) -> int:
     """Walk up tree until reach a stop node, or root."""
     t = taxid
     while True:
@@ -139,8 +150,10 @@ def get_ancestor(taxid, tree, stop_nodes):
             t = tree[t]
 
 
-def species_or_species_groups(tree, ranks, names):
-    """Find taxids for species or species groups under the genus_list.
+def species_or_species_groups(
+    tree: dict[int, int], ranks: dict[str, set[int]], names: dict[int, str]
+) -> Iterator[tuple[int, int]]:
+    """Find taxids for species or species groups.
 
     Our "genus" list matches the NCBI rank "genus", and includes child nodes
     as aliases (unless they fall on our "species" list or reject list of
@@ -155,22 +168,28 @@ def species_or_species_groups(tree, ranks, names):
 
     Yields (species taxid, genus taxid) tuples.
     """
-    genus_list = set(ranks["genus"])
+    genus_set = set(ranks["genus"])
     spgroup = set(ranks["species group"])
     species_or_spgroup = spgroup.union(ranks["species"])
     for taxid in tree:
         if taxid in species_or_spgroup and tree[taxid] not in spgroup:
             # Want this as a "species"
-            assert taxid not in genus_list
+            assert taxid not in genus_set, f"species {taxid} has genus rank!?"
             if reject_species_name(names[taxid]):
                 # Strange, but happens for "uncultured Hyaloperonospora"
                 # taxid 660915 which currently has rank "species"
                 continue
-            genus_taxid = get_ancestor(taxid, tree, genus_list)
+            genus_taxid = get_ancestor(taxid, tree, genus_set)
             yield taxid, genus_taxid
 
 
-def not_top_species(tree, ranks, names, synonyms, top_species):
+def not_top_species(
+    tree: dict[int, int],
+    ranks: dict[str, set[int]],
+    names: dict[int, str],
+    synonyms: dict[int, set[str]],
+    top_species,
+) -> Iterator[tuple[int, str]]:
     """Find all 'minor' species, takes set of species taxid to ignore.
 
     Will map assorted sub-species (i.e. any nodes under top_species) to the
@@ -194,7 +213,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
     * clade entry 'Skeletonema marinoi-dohrnii complex' NCBI:txid1171708 would
       be mapped to genus 'Skeletonema' NCBI:txid2842
 
-    Yields (genus taxid, node name, node taxid) tuples.
+    Yields (genus taxid, node name) tuples.
     """
     stop_nodes = set(top_species).union(ranks["genus"])
     for taxid in tree:
@@ -209,7 +228,7 @@ def not_top_species(tree, ranks, names, synonyms, top_species):
             yield parent, f"NCBI:taxid{taxid}"
 
 
-def main(tax, db_url, ancestors, debug=True):
+def main(tax: str, db_url: str, ancestors: str, debug: bool = True) -> int:
     """Load an NCBI taxdump into a database."""
     if not os.path.isdir(tax):
         sys.exit(f"ERROR: Could not find taxdump directory: {tax!r}\n")
@@ -218,7 +237,7 @@ def main(tax, db_url, ancestors, debug=True):
             sys.exit(f"ERROR: Missing {filename} in the taxdump directory: {tax!r}\n")
 
     try:
-        ancestors = [int(_) for _ in ancestors.split(",")]
+        ancestors_set = {int(_) for _ in ancestors.split(",")}
     except ValueError:
         sys.exit(f"ERROR: Invalid ancestors argument: {ancestors!r}\n")
 
@@ -228,39 +247,39 @@ def main(tax, db_url, ancestors, debug=True):
     )
     if debug:
         sys.stderr.write(f"Loaded {len(tree)} nodes from nodes.dmp\n")
-    tree, ranks = filter_tree(tree, ranks, ancestors)
+    tree, ranks = filter_tree(tree, ranks, ancestors_set)
     if debug:
         sys.stderr.write(f"Reduced to {len(tree)} nodes under ancestors\n")
-    genus_list = sorted(ranks["genus"])
-    if not genus_list:
+    genus_set = set(ranks["genus"])
+    if not genus_set:
         sys.exit("ERROR: Could not identify any genus names under the given nodes\n")
-    tree, ranks = filter_tree(tree, ranks, genus_list)
+    tree, ranks = filter_tree(tree, ranks, genus_set)
     if debug:
         sys.stderr.write(
-            f"Reduced to {len(tree)} nodes under {len(genus_list)} genera\n"
+            f"Reduced to {len(tree)} nodes under {len(genus_set)} genera\n"
         )
-    assert genus_list == sorted(ranks["genus"])
+    assert sorted(genus_set) == sorted(ranks["genus"])  # remove?
 
-    names, synonyms = load_names(os.path.join(tax, "names.dmp"), tree)
+    names, synonyms = load_names(os.path.join(tax, "names.dmp"), set(tree))
     if debug:
         sys.stderr.write(f"Loaded {len(names)} scientific names from names.dmp\n")
 
     if debug:
         sys.stderr.write(
-            f"Identified {len(genus_list)} genera under specified ancestor node:"
-            f" {', '.join(sorted(names[_] for _ in genus_list))}\n"
+            f"Identified {len(genus_set)} genera under specified ancestor node:"
+            f" {', '.join(sorted(names[_] for _ in genus_set))}\n"
         )
 
     genus_species = sorted(species_or_species_groups(tree, ranks, names))
     if debug:
         sys.stderr.write(f"Filtered down to {len(genus_species)} species names\n")
 
-    merged = load_merged(os.path.join(tax, "merged.dmp"), tree)
+    merged = load_merged(os.path.join(tax, "merged.dmp"), set(tree))
     if debug:
         sys.stderr.write(f"Loaded {len(merged)} relevant aliases from merged.dmp\n")
     # Treat the merged nodes like aliases
     for alias, taxid in merged.items():
-        synonyms[taxid].append(f"NCBI:taxid{alias}")
+        synonyms[taxid].add(f"NCBI:taxid{alias}")
     del merged
 
     synonym_entries = defaultdict(set)
@@ -280,7 +299,7 @@ def main(tax, db_url, ancestors, debug=True):
 
     g_old = 0
     g_new = 0
-    for taxid in genus_list:
+    for taxid in sorted(genus_set):
         genus = names[taxid]
         # Is genus already there? e.g. prior import
         taxonomy = (
