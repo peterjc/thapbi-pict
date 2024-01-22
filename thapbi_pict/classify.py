@@ -11,6 +11,7 @@ import os
 import shutil
 import sys
 import tempfile
+from typing import Callable
 from typing import Iterable
 from typing import Iterator
 from typing import Sequence
@@ -136,7 +137,7 @@ def taxid_and_sp_lists(
 
 
 def perfect_match_in_db(
-    session, marker_name, seq: str, debug: bool = False
+    session, marker_name: str, seq: str, debug: bool = False
 ) -> tuple[Union[int, str], str, str]:
     """Lookup sequence in DB, returns taxid, genus_species, note as tuple.
 
@@ -185,12 +186,12 @@ def perfect_substr_in_db(
 
 
 def apply_method_to_seqs(
-    method_fn,
-    input_seqs,
+    method_fn: Callable,
+    input_seqs: dict[str, str],
     session,
-    marker_name,
-    min_abundance=0,
-    debug=False,
+    marker_name: str,
+    min_abundance: int = 0,
+    debug: bool = False,
 ) -> Iterator[tuple[str, str, str, str]]:
     """Call given method on each sequence in the dict.
 
@@ -205,11 +206,11 @@ def apply_method_to_seqs(
 
 
 def method_identity(
-    input_seqs,
+    input_seqs: dict[str, str],
     session,
-    marker_name,
-    tmp_dir,
-    shared_tmp_dir,
+    marker_name: str,
+    tmp_dir: str,
+    shared_tmp_dir: str,
     min_abundance: int = 0,
     debug: bool = False,
     cpu: int = 0,
@@ -230,14 +231,14 @@ def method_identity(
 
 
 def method_substr(
-    input_seqs,
+    input_seqs: dict[str, str],
     session,
-    marker_name,
-    tmp_dir,
-    shared_tmp_dir,
-    min_abundance=0,
-    debug=False,
-    cpu=0,
+    marker_name: str,
+    tmp_dir: str,
+    shared_tmp_dir: str,
+    min_abundance: int = 0,
+    debug: bool = False,
+    cpu: int = 0,
 ) -> Iterator[tuple[str, str, str, str]]:
     """Classify using perfect identity including as a sub-string.
 
@@ -255,7 +256,9 @@ def method_substr(
     )
 
 
-def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0) -> None:
+def setup_seqs(
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
+) -> None:
     """Prepare a set of all the DB marker sequences as upper case strings.
 
     Also setup set of sequences in the DB, and dict of genus to NCBI taxid.
@@ -282,7 +285,7 @@ def setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0) 
 
 
 def setup_onebp(
-    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ) -> None:
     """Prepare a set of all the DB marker sequences; set dist to 1."""
     global max_dist_genus
@@ -292,7 +295,7 @@ def setup_onebp(
 
 
 def setup_dist2(
-    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ) -> None:
     """Prepare a set of all DB marker sequences; set dist to 2."""
     global max_dist_genus
@@ -302,7 +305,7 @@ def setup_dist2(
 
 
 def setup_dist3(
-    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ) -> None:
     """Prepare a set of all DB marker sequences; set dist to 3."""
     global max_dist_genus
@@ -312,7 +315,7 @@ def setup_dist3(
 
 
 def setup_dist4(
-    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ) -> None:
     """Prepare a set of all DB marker sequences; set dist to 4."""
     global max_dist_genus
@@ -322,7 +325,7 @@ def setup_dist4(
 
 
 def setup_dist5(
-    session, marker_name, shared_tmp_dir, debug=False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ) -> None:
     """Prepare a set of all DB marker sequences; set dist to 5."""
     global max_dist_genus
@@ -340,11 +343,11 @@ def setup_dist6(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
 
 
 def method_dist(
-    input_seqs,
+    input_seqs: dict[str, str],
     session,
-    marker_name,
-    tmp_dir,
-    shared_tmp_dir,
+    marker_name: str,
+    tmp_dir: str,
+    shared_tmp_dir: str,
     min_abundance: int = 0,
     debug: bool = False,
     cpu: int = 0,
@@ -436,7 +439,7 @@ def method_dist(
 
 
 def setup_blast(
-    session, marker_name, shared_tmp_dir, debug: bool = False, cpu: int = 0
+    session, marker_name: str, shared_tmp_dir: str, debug: bool = False, cpu: int = 0
 ):
     """Prepare a BLAST DB from the marker sequence DB entries."""
     view = (
@@ -622,18 +625,18 @@ method_setup = {
 
 
 def main(
-    inputs,
+    inputs: list[str],
     session,
-    marker_name,
-    method,
-    out_dir,
-    ignore_prefixes,
-    tmp_dir,
+    marker_name: str,
+    method: str,
+    out_dir: str,
+    ignore_prefixes: tuple[str],
+    tmp_dir: str,
     min_abundance: int = 0,
     biom=False,
     debug: bool = False,
     cpu: int = 0,
-):
+) -> list[Union[str, None]]:
     """Implement the ``thapbi_pict classify`` command.
 
     For use in the pipeline command, returns a filename list of the TSV
