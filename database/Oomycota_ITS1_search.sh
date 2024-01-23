@@ -25,7 +25,7 @@ echo "Fetching NCBI matches (likely to take over an hour)..."
 efetch -format fasta < $TMP/search.xml > $TMP/search.fasta
 
 COUNT=`grep -c "^>" $TMP/search.fasta`
-if [ `grep -oh "<Count>\d*</Count>" /tmp/search.xml` != "<Count>$COUNT</Count>" ]; then
+if [ `grep -oh "<Count>\d*</Count>" $TMP/search.xml` != "<Count>$COUNT</Count>" ]; then
     echo "ERROR: FASTA file had $COUNT entries, but search said:"
     grep -oh "<Count>\d*</Count>" /tmp/search.xml
     exit 1
