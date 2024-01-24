@@ -21,17 +21,18 @@ esearch -db nuccore -sort accession \
      AND ((internal AND transcribed AND spacer) OR its1)\
      AND 150:10000[sequence length]" > $TMP/search.xml
 
-echo "Fetching NCBI matches (likely to take over an hour)..."
+COUNT=`grep -oh "<Count>\d*</Count>" $TMP/search.xml | grep -oh "\d*"`
+
+echo "Fetching $COUNT NCBI matches (may take over an hour)..."
 efetch -format fasta < $TMP/search.xml > $TMP/search.fasta
 
-COUNT=`grep -c "^>" $TMP/search.fasta`
-if [ `grep -oh "<Count>\d*</Count>" $TMP/search.xml` != "<Count>$COUNT</Count>" ]; then
-    echo "ERROR: FASTA file had $COUNT entries, but search said:"
-    grep -oh "<Count>\d*</Count>" /tmp/search.xml
+FOUND=`grep -c "^>" $TMP/search.fasta`
+echo "Downloaded $FOUND ITS1 sequences."
+if [ $COUNT != $FOUND ]; then
+    echo "ERROR: Search said $COUNT entries, but FASTA file has $FOUND"
     exit 1
 fi
 
-echo "Downloaded $COUNT ITS1 sequences."
 mv $TMP/search.fasta Oomycota_ITS1_search.fasta
 echo
 
