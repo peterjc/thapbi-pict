@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v1.0.6  *Pending*  Added some *Peronosclerospora* to curated DB.
+v1.0.6  *Pending*  Added some *Peronosclerospora* to curated DB. Updated NCBI import.
 v1.0.5  2023-11-22 Updated NCBI import, and scripted most of what was a semi-manual process.
 v1.0.4  2023-11-20 Dropped unused ``-m`` / ``--method`` argument to ``edit-graph`` command.
 v1.0.3  2023-09-04 Updated NCBI import and curated *P. condilina* entries in default DB.
