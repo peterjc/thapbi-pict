@@ -12,6 +12,7 @@ Python API
    thapbi_pict.assess
    thapbi_pict.classify
    thapbi_pict.conflicts
+   thapbi_pict.denoise
    thapbi_pict.db_import
    thapbi_pict.db_orm
    thapbi_pict.dump
@@ -19,7 +20,6 @@ Python API
    thapbi_pict.fasta_nr
    thapbi_pict.sample_tally
    thapbi_pict.prepare
-   thapbi_pict.seq_import
    thapbi_pict.summary
    thapbi_pict.taxdump
    thapbi_pict.utils
