@@ -68,7 +68,7 @@ autodoc_default_values = {
     "member-order": "bysource",
     "exclude-members": "__dict__,__weakref__,__module__",
 }
-
+autodoc_mock_imports = ["sqlalchemy"]
 
 # -- Options for HTML output -------------------------------------------------
 
