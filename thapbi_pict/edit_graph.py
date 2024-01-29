@@ -499,9 +499,16 @@ def main(
             )
             + "\n"
         )
-        for c in sorted(nx.connected_components(G), key=len, reverse=True):
+
+        def component_total_abundance(c):
+            """Total number of reads for a graph component."""
+            return sum(md5_abundance[md5] for md5 in c)
+
+        for c in sorted(
+            nx.connected_components(G), key=component_total_abundance, reverse=True
+        ):
             c = sorted(c, key=md5_abundance.get, reverse=True)
-            total = sum(md5_abundance[md5] for md5 in c)
+            total = component_total_abundance(c)
             md5 = c[0]
             if any(species_level(_) for _ in md5_species.get(md5, [])):
                 continue
