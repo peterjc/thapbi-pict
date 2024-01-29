@@ -306,7 +306,8 @@ def main(
             for md5, total in md5_abundance.items():
                 if total < total_min_abundance:
                     # Remove it!
-                    md5_in_fasta.remove(md5)
+                    if md5 in md5_in_fasta:
+                        md5_in_fasta.remove(md5)
                     del md5_to_seq[md5]
             sys.stderr.write(
                 f"Minimum total abundance threshold {total_min_abundance}"
@@ -316,8 +317,10 @@ def main(
             for md5, total in md5_sample_count.items():
                 if total < min_samples:
                     # Remove it!
-                    md5_in_fasta.remove(md5)
-                    del md5_to_seq[md5]
+                    if md5 in md5_in_fasta:
+                        md5_in_fasta.remove(md5)
+                    if md5 in md5_to_seq:
+                        del md5_to_seq[md5]
             sys.stderr.write(
                 f"Minimum sample threshold {min_samples}"
                 f" left {len(md5_in_fasta)} sequences from input files.\n"
