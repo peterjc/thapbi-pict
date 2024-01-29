@@ -27,6 +27,15 @@ sqlite3 "$DB.sqlite" "UPDATE synonym SET name='Phytophthora austrocedrae' WHERE 
 sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phytophthora' AND species='austrocedrae'"
 # Should now be able to import data using either name.
 
+# Another ad-hoc taxonomy fix, treating  Phytophthora cambivora txid53983
+# as a synonym of Phytophthora x cambivora txid2056922
+#
+# Drop the old species entry
+sqlite3 "$DB.sqlite" "DELETE FROM taxonomy WHERE ncbi_taxid=53983;"
+# Now add synonym
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=2056922), 'Phytophthora cambivora');"
+
+
 # ==========================
 # G-BLOCK synthetic controls
 # ==========================
