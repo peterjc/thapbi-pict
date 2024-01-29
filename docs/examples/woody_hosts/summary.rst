@@ -191,7 +191,7 @@ classifier result, with the number of reads. Picking out some examples:
 
 .. code:: console
 
-    $ cut -f 16,31,43,64 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,31,41,63 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
@@ -212,36 +212,34 @@ Site_1_sample_9-2 0                        0                         656
 
 Generally we hope to see single species predictions for each ASV, however when
 there are conflicts such as equally good matches, or a reference sequence that
-is shared between species, both are reported:
+is shared between species, both are reported. For example:
 
 .. code:: console
 
-    $ cut -f 16,32,33 summary/with-metadata.ITS1.samples.onebp.tsv | head
+    $ cut -f 16,35 summary/with-metadata.ITS1.samples.onebp.tsv | head
     <SEE TABLE BELOW>
 
 As a table:
 
-================= ====================== ===============================================
-Sequencing sample Phytophthora cambivora Phytophthora cambivora;Phytophthora x cambivora
-================= ====================== ===============================================
-Site_1_sample_1   0                      182
-Site_1_sample_2   0                      538
-Site_1_sample_3   0                      0
-Site_1_sample_4   0                      186
-Site_1_sample_5   0                      0
-Site_1_sample_6   0                      0
-Site_1_sample_7   390                    0
-Site_1_sample_8   0                      0
-Site_1_sample_9-2 0                      0
-================= ====================== ===============================================
+================= =================================================
+Sequencing sample Phytophthora chlamydospora;Phytophthora x stagnum
+================= =================================================
+Site_1_sample_1   0
+Site_1_sample_2   0
+Site_1_sample_3   0
+Site_1_sample_4   0
+Site_1_sample_5   0
+Site_1_sample_6   1217
+Site_1_sample_7   0
+Site_1_sample_8   0
+Site_1_sample_9-2 0
+================= =================================================
 
-In this example, while ``Site_1_sample_7`` had sequences uniquely matching
-*Phytophthora cambivora*, ``Site_1_sample_1``, ``Site_1_sample_1`` and
-``Site_1_sample_4`` instead had sequences which could be either *Phytophthora
-cambivora* or *Phytophthora x cambivora*. These species are listed with a
-``(*)`` suffix in the earlier classification summary column:
+In this example, ``Site_1_sample_6`` had sequences matching both
+*Phytophthora chlamydospora* and *Phytophthora x stagnum*. These species are
+listed with a ``(*)`` suffix in the earlier classification summary column:
 
 .. code:: console
 
-    $ grep Site_1_sample_4 summary/with-metadata.ITS1.samples.onebp.tsv | cut -f 16,17
-    Site_1_sample_4  Phytophthora austrocedri, Phytophthora cambivora(*), Phytophthora gonapodyides, Phytophthora pseudosyringae, Phytophthora x cambivora(*)
+    $ grep Site_1_sample_6 summary/with-metadata.ITS1.samples.onebp.tsv | cut -f 16,17
+    Site_1_sample_6  Phytophthora castanetorum, Phytophthora chlamydospora(*), Phytophthora pseudosyringae, Phytophthora syringae, Phytophthora x stagnum(*)
