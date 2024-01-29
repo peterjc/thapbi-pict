@@ -21,7 +21,7 @@ plate, a set of 15 *Phytophthora* species (listed here alphabetically):
 - *Phytophthora austrocedri*
 - *Phytophthora boehmeriae*
 - *Phytophthora cactorum*
-- *Phytophthora cambivora*
+- *Phytophthora cambivora* (now *Phytophthora x cambivora*)
 - *Phytophthora chlamydospora*
 - *Phytophthora cinnamomi*
 - *Phytophthora gonapodyides*
@@ -71,12 +71,12 @@ The bad news is we are missing seven expected species (seven false negatives,
 7 FN):
 
 - *Phytophthora boehmeriae*
-- *Phytophthora cambivora*
 - *Phytophthora chlamydospora*
 - *Phytophthora cinnamomi*
 - *Phytophthora lateralis*
 - *Phytophthora plurivora*
 - *Phytophthora syringae*
+- *Phytophthora x cambivora*
 
 We will return to interpretation after showing how to get the tool to compute
 these FP, FP and FN values.
