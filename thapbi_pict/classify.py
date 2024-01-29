@@ -342,6 +342,30 @@ def setup_dist6(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 6
 
 
+def setup_dist7(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 7."""
+    global max_dist_genus
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    max_dist_genus = 7
+
+
+def setup_dist8(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 8."""
+    global max_dist_genus
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    max_dist_genus = 8
+
+
+def setup_dist9(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 9."""
+    global max_dist_genus
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    max_dist_genus = 9
+
+
 def method_dist(
     input_seqs: dict[str, str],
     session,
@@ -596,6 +620,9 @@ method_tool_check: dict[str, list[str]] = {
     "1s4g": [],
     "1s5g": [],
     "1s6g": [],
+    "1s7g": [],
+    "1s8g": [],
+    "1s9g": [],
     "substr": [],
 }
 
@@ -608,6 +635,9 @@ method_classify_file = {
     "1s4g": method_dist,
     "1s5g": method_dist,
     "1s6g": method_dist,
+    "1s7g": method_dist,
+    "1s8g": method_dist,
+    "1s9g": method_dist,
     "substr": method_substr,
 }
 
@@ -620,6 +650,9 @@ method_setup = {
     "1s4g": setup_dist4,
     "1s5g": setup_dist5,
     "1s6g": setup_dist6,
+    "1s7g": setup_dist7,
+    "1s8g": setup_dist8,
+    "1s9g": setup_dist9,
     "substr": setup_seqs,
 }
 
