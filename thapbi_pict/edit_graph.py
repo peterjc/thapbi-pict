@@ -464,7 +464,7 @@ def main(
         f" will draw {len(wanted)} nodes.\n"
     )
 
-    if graph_format == "components":
+    if graph_format == "unknown-components":
         # Obeys the wanted list used for plotting
         # i.e. ignores isolated low abundance nodes
         if graph_output in ("-", "/dev/stdout"):
@@ -487,8 +487,8 @@ def main(
             "\t".join(
                 [
                     "Most-abundant-MD5",
-                    "Sequence",
                     "Abundance",
+                    "Sequence",
                     "Sample-count",
                     "Taxonomy",
                     "Component-size",
@@ -510,8 +510,8 @@ def main(
                 "\t".join(
                     [
                         md5,
-                        md5_to_seq[md5],
                         str(md5_abundance[md5]),
+                        md5_to_seq[md5],
                         str(md5_sample_count.get(md5, 0)),
                         genus_species,
                         str(len(c)),

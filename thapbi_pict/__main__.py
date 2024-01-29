@@ -1786,7 +1786,11 @@ def main(args=None):
         "we recommend generating XGMML output here, then start Cytoscape, "
         "menu 'File', 'Import', 'Import from file', and then run a layout. "
         "Both 'Perfuse Force Directed' and 'Edge-weighted Spring Embedded' "
-        "work well.",
+        "work well."
+        "The 'matrix' output format gives a TSV distance matrix. "
+        "The 'unknown-components' output format gives a TSV file with one line for "
+        "each connected component of the graph (subject to the given edit distance) "
+        "where the dominant sequence does not have a species name.",
     )
     arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for labels and colors. Use '' to mean no DB."
@@ -1853,9 +1857,17 @@ def main(args=None):
         "--format",
         type=str,
         default="xgmml",
-        choices=["graphml", "gexf", "gml", "xgmml", "pdf", "matrix", "components"],
-        help="Format to write out (default 'xgmml' for Cytoscape, distance matrix "
-        "and components are TSV outputs).",
+        choices=[
+            "graphml",
+            "gexf",
+            "gml",
+            "xgmml",
+            "pdf",
+            "matrix",
+            "unknown-components",
+        ],
+        help="Format to write out (default 'xgmml' for Cytoscape, distance 'matrix' "
+        "and 'unknown-components' are TSV outputs).",
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=edit_graph)
