@@ -1867,7 +1867,7 @@ def main(args=None):
             "unknown-components",
         ],
         help="Format to write out (default 'xgmml' for Cytoscape, distance 'matrix' "
-        "and 'unknown-components' are TSV outputs).",
+        "is TSV, while 'unknown-components' is FASTA).",
     )
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=edit_graph)

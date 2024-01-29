@@ -483,22 +483,6 @@ def main(
                     dist = int(distances[i, j])  # casting to drop numpy dtype
                     if dist <= max_edit_dist:
                         G.add_edge(check1, check2)
-        handle.write(
-            "\t".join(
-                [
-                    "Most-abundant-MD5",
-                    "Abundance",
-                    "Sequence",
-                    "Sample-count",
-                    "Taxonomy",
-                    "Component-size",
-                    "Fraction",
-                    "Total-component-abundance",
-                    "Rest-of-MD5",
-                ]
-            )
-            + "\n"
-        )
 
         def component_total_abundance(c):
             """Total number of reads for a graph component."""
@@ -512,22 +496,11 @@ def main(
             md5 = c[0]
             if any(species_level(_) for _ in md5_species.get(md5, [])):
                 continue
-            genus_species = ";".join(sorted(md5_species.get(md5, [])))
+            genus_species = ";".join(sorted(md5_species.get(md5, ["Unknown"])))
             handle.write(
-                "\t".join(
-                    [
-                        md5,
-                        str(md5_abundance[md5]),
-                        md5_to_seq[md5],
-                        str(md5_sample_count.get(md5, 0)),
-                        genus_species,
-                        str(len(c)),
-                        f"{md5_abundance[md5] * 100.0 / total:0.2f}",
-                        str(total),
-                        ";".join(c[1:]),  # rest of component
-                    ]
-                )
-                + "\n"
+                f">{md5}_{md5_abundance[md5]} total={total} "
+                f"nodes={len(c)} samples={md5_sample_count[md5]} {genus_species}\n"
+                f"{md5_to_seq[md5]}\n"
             )
         if graph_output != "-":
             handle.close()
