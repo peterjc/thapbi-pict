@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.8  *Pending*  Additional curated *Phytophthora* ITS1 entries in default DB.
 v1.0.7  2024-01-29 Treat *Phytophthora cambivora* as a synonym of *Phytophthora x cambivora*.
 v1.0.6  2024-01-24 Added some *Peronosclerospora* to curated DB. Updated NCBI import.
 v1.0.5  2023-11-22 Updated NCBI import, and scripted most of what was a semi-manual process.
