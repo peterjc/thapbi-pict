@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -308,6 +308,14 @@ def setup_dist5(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
     max_dist_genus = 5
 
 
+def setup_dist6(session, marker_name, shared_tmp_dir, debug=False, cpu=0):
+    """Prepare a set of all DB marker sequences; set dist to 6."""
+    global max_dist_genus
+    check_rapidfuzz()
+    setup_seqs(session, marker_name, shared_tmp_dir, debug=False, cpu=0)
+    max_dist_genus = 6
+
+
 def method_dist(
     input_seqs,
     session,
@@ -558,6 +566,7 @@ method_tool_check = {
     "1s3g": [],
     "1s4g": [],
     "1s5g": [],
+    "1s6g": [],
     "substr": [],
 }
 
@@ -569,6 +578,7 @@ method_classify_file = {
     "1s3g": method_dist,
     "1s4g": method_dist,
     "1s5g": method_dist,
+    "1s6g": method_dist,
     "substr": method_substr,
 }
 
@@ -580,6 +590,7 @@ method_setup = {
     "1s3g": setup_dist3,
     "1s4g": setup_dist4,
     "1s5g": setup_dist5,
+    "1s6g": setup_dist6,
     "substr": setup_seqs,
 }
 
