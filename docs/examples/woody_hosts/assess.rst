@@ -103,7 +103,7 @@ for ``DNA10MIX_undiluted`` and ``DNA10MIX_diluted25x`` we got:
 - *Phytophthora castaneae* (uncertain/ambiguous)
 - *Phytophthora fallax*
 - *Phytophthora foliorum*
-- *Phytophthora glovera* (uncertain/ambiguous)
+- *Phytophthora gloveri* (uncertain/ambiguous)
 - *Phytophthora obscura*
 - *Phytophthora plurivora*
 - *Phytophthora rubi*
@@ -116,7 +116,7 @@ flagged as "(uncertain/ambiguous)".
 Leaving aside the ambiguous qualifier, there are ten species predictions, but
 only nine are correct (9 TP: *P. capsici*, *P. castaneae*, *P. fallax*,
 *P. foliorum*, *P. obscura*, *P. plurivora*, *P. rubi*, *P. siskiyouensis*),
-with two wrong guesses (2 FP: *P. agathidicida* and *P. glovera*), and two
+with two wrong guesses (2 FP: *P. agathidicida* and *P. gloveri*), and two
 missing predictions (2 FN: *P. boehmeriae* and *P. cactorum*).
 
 The uncertain/ambiguous prediction of *Phytophthora agathidicida* is easily
@@ -141,7 +141,7 @@ counts for that sequence:
     $ thapbi_pict conflicts | grep 29de890989becddc5e0b10ecbbc11b1a
     29de890989becddc5e0b10ecbbc11b1a  species  Phytophthora agathidicida;Phytophthora castaneae
 
-The same applies to *Phytophthora capsici* and *Phytophthora glovera*.
+The same applies to *Phytophthora capsici* and *Phytophthora gloveri*.
 i.e. These false positives are unavoidable.
 
 As noted above, the woody hosts paper concluded the failure to detect
@@ -293,7 +293,7 @@ Phytophthora capsici       1  0  0  0   1.00 0.000
 Phytophthora castaneae     1  0  0  0   1.00 0.000
 Phytophthora fallax        1  0  0  0   1.00 0.000
 Phytophthora foliorum      1  0  0  0   1.00 0.000
-Phytophthora glovera       0  1  0  0   0.00 1.000
+Phytophthora gloveri       0  1  0  0   0.00 1.000
 Phytophthora obscura       1  0  0  0   1.00 0.000
 Phytophthora plurivora     1  0  0  0   1.00 0.000
 Phytophthora rubi          1  0  0  0   1.00 0.000
@@ -337,7 +337,7 @@ Phytophthora chlamydospora  0  0  1  3   0.00 1.000
 Phytophthora cinnamomi      0  0  1  3   0.00 1.000
 Phytophthora fallax         3  0  0  1   1.00 0.000
 Phytophthora foliorum       3  0  0  1   1.00 0.000
-Phytophthora glovera        0  3  0  1   0.00 1.000
+Phytophthora gloveri        0  3  0  1   0.00 1.000
 Phytophthora gonapodyides   1  0  0  3   1.00 0.000
 Phytophthora ilicis         1  0  0  3   1.00 0.000
 Phytophthora kernoviae      1  0  0  3   1.00 0.000
