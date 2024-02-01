@@ -21,7 +21,7 @@ esearch -db nuccore -sort accession \
      AND ((internal AND transcribed AND spacer) OR its1)\
      AND 150:10000[sequence length]" > $TMP/search.xml
 
-COUNT=`grep -oh "<Count>\d*</Count>" $TMP/search.xml | grep -oh "\d*"`
+COUNT=`grep -oh "<Count>[0-9]*</Count>" search.xml | grep -oh "[0-9]*"`
 
 echo "Fetching $COUNT NCBI matches (may take over an hour)..."
 efetch -format fasta < $TMP/search.xml > $TMP/search.fasta
