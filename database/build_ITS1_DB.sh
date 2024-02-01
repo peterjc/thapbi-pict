@@ -2,7 +2,7 @@
 VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-TAX=taxdmp_2023-11-01
+TAX=taxdmp_2024-02-01
 DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
@@ -15,17 +15,15 @@ if [ ! -d "${TAX}/" ]; then unzip ${TAX}.zip nodes.dmp names.dmp merged.dmp -d $
 # 4762 = Oomycetes
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX" -a 4762
 
-# Ad-hoc fix for NCBI taxonomy not yet having caught up with community consensus.
-# At the 7th Meeting of the International Union of Forest Research Organisations
-# Working Party (IUFRO) 7.02.09, Phytophthoras in forests and natural ecosystems,
-# a decision was made to adhere to the original and correct version of the species
-# name, Phytophthora austrocedri.
-#
-# First, rename 'Phytophthora austrocedri' synonym to 'Phytophthora austrocedrae'
-sqlite3 "$DB.sqlite" "UPDATE synonym SET name='Phytophthora austrocedrae' WHERE name='Phytophthora austrocedri';"
-# Change 'Phytophthora austrocedrae' main entry to 'Phytophthora austrocedri'
-sqlite3 "$DB.sqlite" "UPDATE taxonomy SET species='austrocedri' WHERE genus='Phytophthora' AND species='austrocedrae'"
-# Should now be able to import data using either name.
+# Ad-hoc fixes for NCBI taxonomy as of Feb 2024 not having synonyms for older names:
+# Phytophthora austrocedrae -> Phytophthora austrocedri (txid631361):
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=631361), 'Phytophthora austrocedrae');"
+# Phytophthora citricola III -> Phytophthora aff. citricola III (txid572928)
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=572928), 'Phytophthora citricola III');"
+# Phytophthora glovera -> Phytophthora gloveri (txid132615)
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=132615), 'Phytophthora glovera');"
+# txid187986 Phytophthora bisheria -> txid1880901 Phytophthora bishii (with entry in merged.dmp for taxid change)
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=1880901), 'Phytophthora bisheria');"
 
 # Another ad-hoc taxonomy fix, treating  Phytophthora cambivora txid53983
 # as a synonym of Phytophthora x cambivora txid2056922
