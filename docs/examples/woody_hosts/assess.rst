@@ -189,9 +189,9 @@ the first five columns from the 15 species mix:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv | cut -f 1-5
-    Assessed onebp vs known in 2 files (245 species; 1 samples)
+    Assessed onebp vs known in 2 files (260 species; 1 samples)
     #Species                     TP  FP  FN  TN
-    OVERALL                      8   2   7   228
+    OVERALL                      8   2   7   243
     Phytophthora aleatoria       0   1   0   0
     Phytophthora alpina          0   1   0   0
     Phytophthora austrocedri     1   0   0   0
@@ -209,7 +209,7 @@ the first five columns from the 15 species mix:
     Phytophthora ramorum         1   0   0   0
     Phytophthora syringae        0   0   1   0
     Phytophthora x cambivora     0   0   1   0
-    OTHER 228 SPECIES IN DB      0   0   0   228
+    OTHER 243 SPECIES IN DB      0   0   0   243
 
 More usually, you would output to a named file, and look at that:
 
@@ -217,7 +217,7 @@ More usually, you would output to a named file, and look at that:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv -o DNA15MIX.assess.tsv
-    Assessed onebp vs known in 2 files (245 species; 1 samples)
+    Assessed onebp vs known in 2 files (260 species; 1 samples)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -227,7 +227,7 @@ and focus on the same column selection:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     8  2  7  228 0.64 0.529
+OVERALL                     8  2  7  243 0.64 0.529
 Phytophthora aleatoria      0  1  0  0   0.00 1.000
 Phytophthora alpina         0  1  0  0   0.00 1.000
 Phytophthora austrocedri    1  0  0  0   1.00 0.000
@@ -245,7 +245,7 @@ Phytophthora pseudosyringae 1  0  0  0   1.00 0.000
 Phytophthora ramorum        1  0  0  0   1.00 0.000
 Phytophthora syringae       0  0  1  0   0.00 1.000
 Phytophthora x cambivora    0  0  1  0   0.00 1.000
-OTHER 228 SPECIES IN DB     0  0  0  228 0.00 0.000
+OTHER 243 SPECIES IN DB     0  0  0  243 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 2 false
@@ -275,7 +275,7 @@ Doing that for one of the 10 species mixtures:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA10MIX_undiluted.known.tsv -o DNA10MIX.assess.tsv
-    Assessed onebp vs known in 2 files (245 species; 1 samples)
+    Assessed onebp vs known in 2 files (260 species; 1 samples)
     $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -285,7 +285,7 @@ similar to what we had before:
 ========================== == == == === ==== ===========
 #Species                   TP FP FN TN  F1   Ad-hoc-loss
 ========================== == == == === ==== ===========
-OVERALL                    8  2  2  233 0.80 0.333
+OVERALL                    8  2  2  248 0.80 0.333
 Phytophthora agathidicida  0  1  0  0   0.00 1.000
 Phytophthora boehmeriae    0  0  1  0   0.00 1.000
 Phytophthora cactorum      0  0  1  0   0.00 1.000
@@ -293,12 +293,12 @@ Phytophthora capsici       1  0  0  0   1.00 0.000
 Phytophthora castaneae     1  0  0  0   1.00 0.000
 Phytophthora fallax        1  0  0  0   1.00 0.000
 Phytophthora foliorum      1  0  0  0   1.00 0.000
-Phytophthora gloveri       0  1  0  0   0.00 1.000
+Phytophthora glovera       0  1  0  0   0.00 1.000
 Phytophthora obscura       1  0  0  0   1.00 0.000
 Phytophthora plurivora     1  0  0  0   1.00 0.000
 Phytophthora rubi          1  0  0  0   1.00 0.000
 Phytophthora siskiyouensis 1  0  0  0   1.00 0.000
-OTHER 233 SPECIES IN DB    0  0  0  233 0.00 0.000
+OTHER 248 SPECIES IN DB    0  0  0  248 0.00 0.000
 ========================== == == == === ==== ===========
 
 It is clear from the metrics that the classifier is performing better on the
@@ -314,7 +314,7 @@ giving the combined intermediate filenames, and *all* the expected files:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/ -o thabpi-pict.ITS1.assess.tsv
-    Assessed onebp vs known in 5 files (245 species; 4 samples)
+    Assessed onebp vs known in 5 files (260 species; 4 samples)
     $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
@@ -324,7 +324,7 @@ per-species lines have TP+FP+FN+TN=4 as there were 4 samples:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     32 8  13 927 0.75 0.396
+OVERALL                     32 8  13 987 0.75 0.396
 Phytophthora agathidicida   0  3  0  1   0.00 1.000
 Phytophthora aleatoria      0  1  0  3   0.00 1.000
 Phytophthora alpina         0  1  0  3   0.00 1.000
@@ -337,7 +337,7 @@ Phytophthora chlamydospora  0  0  1  3   0.00 1.000
 Phytophthora cinnamomi      0  0  1  3   0.00 1.000
 Phytophthora fallax         3  0  0  1   1.00 0.000
 Phytophthora foliorum       3  0  0  1   1.00 0.000
-Phytophthora gloveri        0  3  0  1   0.00 1.000
+Phytophthora glovera        0  3  0  1   0.00 1.000
 Phytophthora gonapodyides   1  0  0  3   1.00 0.000
 Phytophthora ilicis         1  0  0  3   1.00 0.000
 Phytophthora kernoviae      1  0  0  3   1.00 0.000
@@ -350,7 +350,7 @@ Phytophthora rubi           3  0  0  1   1.00 0.000
 Phytophthora siskiyouensis  3  0  0  1   1.00 0.000
 Phytophthora syringae       0  0  1  3   0.00 1.000
 Phytophthora x cambivora    0  0  1  3   0.00 1.000
-OTHER 220 SPECIES IN DB     0  0  0  880 0.00 0.000
+OTHER 235 SPECIES IN DB     0  0  0  940 0.00 0.000
 =========================== == == == === ==== ===========
 
 This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 827 TN.
@@ -415,9 +415,9 @@ to make direct comparison more straight forward:
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
       | head -n 2 | cut -f 1-5,9,11
-    Assessed onebp vs known in 3 files (245 species; 2 samples)
+    Assessed onebp vs known in 3 files (260 species; 2 samples)
     #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
-    OVERALL   16  4   9   461  0.71  0.448
+    OVERALL   16  4   9   491  0.71  0.448
 
 We can recover most of the missing species (the FN) by dropping the minimum
 abundance thresholds (which requires deleting the intermediate FASTA files,
@@ -453,17 +453,17 @@ Open the table in Excel if you prefer, the columns of particular interest:
 ========== == == == === ==== ===========
 #Threshold TP FP FN TN  F1   Ad-hoc-loss
 ========== == == == === ==== ===========
-A=2        22 17 3  448 0.69 0.476
-A=10       20 9  5  456 0.74 0.412
-A=20       20 8  5  457 0.75 0.394
-A=30       19 8  6  457 0.73 0.424
-A=40       19 6  6  459 0.76 0.387
-A=50       19 5  6  460 0.78 0.367
-A=60       18 5  7  460 0.75 0.400
-A=70       18 5  7  460 0.75 0.400
-A=80       18 5  7  460 0.75 0.400
-A=90       16 4  9  461 0.71 0.448
-A=100      16 4  9  461 0.71 0.448
+A=2        22 17 3  478 0.69 0.476
+A=10       20 9  5  486 0.74 0.412
+A=20       20 8  5  487 0.75 0.394
+A=30       19 8  6  487 0.73 0.424
+A=40       19 6  6  489 0.76 0.387
+A=50       19 5  6  490 0.78 0.367
+A=60       18 5  7  490 0.75 0.400
+A=70       18 5  7  490 0.75 0.400
+A=80       18 5  7  490 0.75 0.400
+A=90       16 4  9  491 0.71 0.448
+A=100      16 4  9  491 0.71 0.448
 ========== == == == === ==== ===========
 
 This suggests the optimal absolute abundance threshold for these two samples
