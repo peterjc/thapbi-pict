@@ -800,7 +800,7 @@ def load_marker_defs(
             )
 
         # Spike-in negative controls are marker specific
-        spikes = []
+        spikes: list[tuple[str, str, set[str]]] = []
         if spike_genera:
             # Doing a join to pull in the marker and taxonomy tables too:
             cur_tax = aliased(Taxonomy)
