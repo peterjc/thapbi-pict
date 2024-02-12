@@ -4,6 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.9  *Pending*  Using Python type annotations (internal code change).
 v1.0.8  2024-02-06 Additional curated *Phytophthora* in default DB. Adds ``1s6g`` classifier.
 v1.0.7  2024-01-29 Treat *Phytophthora cambivora* as a synonym of *Phytophthora x cambivora*.
 v1.0.6  2024-01-24 Added some *Peronosclerospora* to curated DB. Updated NCBI import.

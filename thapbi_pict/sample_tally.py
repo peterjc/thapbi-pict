@@ -1,4 +1,4 @@
-# Copyright 2022-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2022-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -14,6 +14,8 @@ from collections import Counter
 from collections import defaultdict
 from math import ceil
 from time import time
+from typing import Optional
+from typing import Union
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -27,27 +29,27 @@ from .utils import md5seq
 
 
 def main(
-    inputs,
-    synthetic_controls,
-    negative_controls,
-    output,
+    inputs: Union[str, list[str]],
+    synthetic_controls: list[str],
+    negative_controls: list[str],
+    output: str,
     session,
-    marker=None,
+    marker: Optional[str] = None,
     spike_genus=None,
     fasta=None,
-    min_abundance=100,
-    min_abundance_fraction=0.001,
-    total_min_abundance=0,
-    min_length=0,
-    max_length=sys.maxsize,
-    denoise_algorithm="-",
-    unoise_alpha=2.0,
-    unoise_gamma=4,
-    gzipped=False,  # output
-    tmp_dir=None,
-    debug=False,
-    cpu=0,
-):
+    min_abundance: int = 100,
+    min_abundance_fraction: float = 0.001,
+    total_min_abundance: int = 0,
+    min_length: int = 0,
+    max_length: int = sys.maxsize,
+    denoise_algorithm: str = "-",
+    unoise_alpha: float = 2.0,
+    unoise_gamma: int = 4,
+    gzipped: bool = False,  # output
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
+    cpu: int = 0,
+) -> None:
     """Implement the ``thapbi_pict sample-tally`` command.
 
     Arguments min_length and max_length are applied while loading the input
@@ -90,32 +92,35 @@ def main(
         sys.exit("ERROR: Output directory given, want a filename.")
 
     marker_definitions = load_marker_defs(session, spike_genus)
+    spikes: list[tuple[str, str, set[str]]] = []
     if marker:
         if not marker_definitions:
             sys.exit("ERROR: Marker given with -k / --marker not in DB.")
-        spikes = marker_definitions[marker]["spike_kmers"]
+        marker_def = marker_definitions[marker]
     elif len(marker_definitions) > 1:
         sys.exit("ERROR: DB has multiple markers, please set -k / --marker.")
     else:
         # Implicit -k / --marker choice as only one in the DB
         marker, marker_def = marker_definitions.popitem()
-        spikes = marker_def["spike_kmers"]
-        del marker_def
+    assert isinstance(marker_def["spike_kmers"], list)
+    spikes = marker_def["spike_kmers"]
+    del marker_def
     del marker_definitions
     assert marker
 
-    totals = Counter()
-    counts = Counter()
-    sample_cutadapt = {}  # before any thresholds
-    samples = set()
-    sample_pool = {}
-    sample_headers = {}
+    totals: dict[str, int] = Counter()
+    counts: dict[tuple[str, str], int] = Counter()
+    sample_cutadapt: dict[str, int] = {}  # before any thresholds
+    samples: Union[set[str], list[str]] = set()
+    sample_pool: dict[str, str] = {}
+    sample_headers: dict[str, dict] = {}
     for filename in inputs:
         # Assuming FASTA for now
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
         sample = file_to_sample_name(filename)
         assert sample not in samples, f"ERROR: Duplicate stem from {filename}"
+        assert isinstance(samples, set)  # will later turn it into a list
         samples.add(sample)
         sample_headers[sample] = load_fasta_header(filename)
         if not sample_headers[sample]:
@@ -152,7 +157,7 @@ def main(
     else:
         sys.stderr.write("WARNING: Loaded zero sequences within length range\n")
 
-    chimeras = {}
+    chimeras: dict[str, str] = {}
     if denoise_algorithm != "-":
         if debug:
             sys.stderr.write(
@@ -167,8 +172,8 @@ def main(
             debug=debug,
             cpu=cpu,
         )
-        new_counts = defaultdict(int)
-        new_totals = defaultdict(int)
+        new_counts: dict[tuple[str, str], int] = defaultdict(int)
+        new_totals: dict[str, int] = defaultdict(int)
         for (seq, sample), a in counts.items():
             if seq not in corrections:
                 # Should have been ignored as per UNOISE algorithm
@@ -222,8 +227,8 @@ def main(
         totals = new_totals
         del new_totals, new_counts
 
-    pool_absolute_threshold = {}
-    pool_fraction_threshold = {}
+    pool_absolute_threshold: dict[str, int] = {}
+    pool_fraction_threshold: dict[str, float] = {}
     max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     max_non_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
     if spikes:
@@ -266,7 +271,7 @@ def main(
             max_non_spike_abundance[sample] = max(max_non_spike_abundance[sample], a)
 
     start = time()
-    sample_threshold = {}
+    sample_threshold: dict[str, int] = {}
     if controls:
         if debug:
             sys.stderr.write("DEBUG: Applying dynamic abundance thresholds...\n")
@@ -342,12 +347,12 @@ def main(
                 f"Negative controls for marker {marker} increased "
                 f"pool {pool} absolute abundance threshold to {value}.\n"
             )
-    for pool, value in pool_fraction_threshold.items():
-        if value > min_abundance_fraction:
+    for pool, fraction in pool_fraction_threshold.items():
+        if fraction > min_abundance_fraction:
             sys.stderr.write(
                 f"Negative controls for marker {marker} increased "
                 f"pool {pool} fractional abundance threshold to "
-                f"{value*100:0.4f}%\n."
+                f"{fraction*100:0.4f}%\n."
             )
 
     # Apply any dynamic abundance threshold increases from controls:
@@ -434,7 +439,7 @@ def main(
         if max_non_spike_abundance[sample] < sample_threshold[sample]:
             max_non_spike_abundance[sample] = 0
 
-    samples = sorted(samples)
+    samples = sorted(samples)  # converting from set to list
     values = sorted(
         ((count, seq) for seq, count in totals.items()),
         # (sort by marker), then put the highest abundance entries first:
@@ -471,6 +476,7 @@ def main(
     else:
         out_handle = open(output, "w")
     missing = [None] * len(samples)
+    stat_values: Union[list[int], list[str]] = []
     for stat in stats_fields:
         if stat == "Max non-spike":
             if not spike_genus:
@@ -511,8 +517,8 @@ def main(
                 )
         if stat == "Threshold pool":
             # Try to remove any common folder prefix like raw_data/
-            # or C:/Users/... or /tmp/...
-            common = os.path.commonpath(set(stat_values))
+            # or C:/Users/... or /tmp/... - note making str type explicit:
+            common = os.path.commonpath([str(_) for _ in stat_values])
             if len(set(stat_values)) > 1 and common:
                 if debug:
                     sys.stderr.write(
@@ -573,8 +579,10 @@ def main(
             else:
                 fasta_handle.write(f">{md5}_{count}\n{seq}\n")
     if output != "-":
+        assert out_handle is not None
         out_handle.close()
     if fasta and fasta != "-":
+        assert fasta_handle is not None
         fasta_handle.close()
     if debug:
         time_output = time() - start

@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -12,6 +12,9 @@ import sys
 import time
 from collections import Counter
 from keyword import iskeyword
+from typing import Iterator
+from typing import Optional
+from typing import Union
 
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -20,7 +23,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 KMER_LENGTH = 31
 
 
-def valid_marker_name(text):
+def valid_marker_name(text: str) -> bool:
     """Check the proposed string valid for use as a marker name.
 
     Want to be able to use the string for file or directory names, and also
@@ -44,7 +47,7 @@ def valid_marker_name(text):
     )
 
 
-def primer_clean(primer):
+def primer_clean(primer: str) -> str:
     """Handle non-IUPAC entries in primers, maps I for inosine to N.
 
     >>> primer_clean("I")
@@ -58,7 +61,7 @@ def primer_clean(primer):
     return primer.upper().replace("I", "N")
 
 
-def reject_species_name(species):
+def reject_species_name(species: str) -> bool:
     """Reject species names like 'environmental samples' or 'uncultured ...'."""
     return (
         not species
@@ -67,7 +70,7 @@ def reject_species_name(species):
     )
 
 
-def genus_species_name(genus, species):
+def genus_species_name(genus: str, species: str) -> str:
     """Return name, genus with species if present.
 
     Copes with species being None (or empty string).
@@ -81,28 +84,29 @@ def genus_species_name(genus, species):
         return genus
 
 
-def genus_species_split(name):
+def genus_species_split(name: str) -> tuple[str, str]:
     """Return (genus, species) splitting on first space.
 
     If there are no spaces, returns (name, '') instead.
     """
     if " " in name:
-        return name.split(" ", 1)
+        g, s = name.split(" ", 1)
+        return (g, s)
     else:
         return name, ""
 
 
-def species_level(prediction):
+def species_level(prediction: str) -> bool:
     """Is this prediction at species level.
 
     Returns True for a binomial name (at least one space), False for genus
     only or no prediction.
     """
     assert ";" not in prediction, prediction
-    return prediction and " " in prediction
+    return bool(prediction) and " " in prediction
 
 
-def onebp_substitutions(seq):
+def onebp_substitutions(seq: str):
     """Generate all 1bp substitutions of the sequence.
 
     Assumes unambiguous IUPAC codes A, C, G, T only.
@@ -117,7 +121,7 @@ def onebp_substitutions(seq):
     return variants
 
 
-def onebp_deletions(seq):
+def onebp_deletions(seq: str) -> set[str]:
     """Generate all variants of sequence with 1bp deletion.
 
     Assumes unambiguous IUPAC codes A, C, G, T only.
@@ -130,7 +134,7 @@ def onebp_deletions(seq):
     return variants
 
 
-def onebp_inserts(seq):
+def onebp_inserts(seq: str) -> set[str]:
     """Generate all variants of sequence with 1bp insert.
 
     Assumes unambiguous IUPAC codes A, C, G, T only.
@@ -147,7 +151,7 @@ def onebp_inserts(seq):
     return variants
 
 
-def expand_IUPAC_ambiguity_codes(seq):
+def expand_IUPAC_ambiguity_codes(seq: str):
     """Convert to upper case and iterate over possible unabmigous interpretations.
 
     This is a crude recursive implementation, intended for use on sequences with
@@ -193,7 +197,7 @@ assert sorted(expand_IUPAC_ambiguity_codes("GYRGGGACGAAAGTCYYTGC")) == [
 ]
 
 
-def md5seq(seq):
+def md5seq(seq: str) -> str:
     """Return MD5 32-letter hex digest of the (upper case) sequence.
 
     >>> md5seq("ACGT")
@@ -203,7 +207,7 @@ def md5seq(seq):
     return hashlib.md5(seq.upper().encode("ascii")).hexdigest()
 
 
-def md5_hexdigest(filename, chunk_size=1024):
+def md5_hexdigest(filename: str, chunk_size: int = 1024) -> str:
     """Return the MD5 hex-digest of the given file."""
     hash_md5 = hashlib.md5()
     with open(filename, "rb") as f:
@@ -228,10 +232,10 @@ def cmd_as_string(cmd):
         return cmd
 
 
-def run(cmd, debug=False, attempts=1):
+def run(cmd, debug: bool = False, attempts: int = 1) -> subprocess.CompletedProcess:
     """Run a command via subprocess, abort if fails.
 
-    Returns a subprocess.CompletedProcess object.
+    Returns a subprocess.CompletedProcess object, or None if all attempts fail.
     """
     for i in range(attempts):
         if debug:
@@ -279,10 +283,10 @@ def run(cmd, debug=False, attempts=1):
                     f"ERROR: Attempt {i + 1} of {attempts} failed"
                     f" with return code {e.returncode}, cmd:\n{cmd_as_string(cmd)}\n"
                 )
-    return None
+    raise RuntimeError(f"Attempts exceeded for {cmd}")
 
 
-def abundance_from_read_name(text, debug=False):
+def abundance_from_read_name(text: str, debug: bool = False) -> int:
     """Extract abundance from SWARM style read name.
 
     >>> abundance_from_read_name("9e8f051c64c2b9cc3b6fcb27559418ca_988")
@@ -298,7 +302,7 @@ def abundance_from_read_name(text, debug=False):
         return 1
 
 
-def split_read_name_abundance(text, debug=False):
+def split_read_name_abundance(text: str, debug: bool = False) -> tuple[str, int]:
     """Split SWARM style read name into prefix and abundance.
 
     >>> abundance_from_read_name("9e8f051c64c2b9cc3b6fcb27559418ca_988")
@@ -316,11 +320,13 @@ def split_read_name_abundance(text, debug=False):
         return text, 1
 
 
-def abundance_values_in_fasta(fasta_file, gzipped=False):
+def abundance_values_in_fasta(
+    fasta_file: str, gzipped: bool = False
+) -> tuple[int, int, dict[str, int]]:
     """Return unique count, total abundance, and maximum abundances by spike-in."""
     unique = 0
     total = 0
-    max_a = Counter()
+    max_a: dict[str, int] = Counter()
     if gzipped:
         handle = gzip.open(fasta_file, "rt")
     else:
@@ -338,7 +344,9 @@ def abundance_values_in_fasta(fasta_file, gzipped=False):
     return unique, total, max_a
 
 
-def abundance_filter_fasta(input_fasta, output_fasta, min_abundance):
+def abundance_filter_fasta(
+    input_fasta: str, output_fasta: str, min_abundance: int
+) -> None:
     """Apply a minimum abundance filter to a FASTA file."""
     with open(input_fasta) as in_handle:
         with open(output_fasta, "w") as out_handle:
@@ -349,7 +357,7 @@ def abundance_filter_fasta(input_fasta, output_fasta, min_abundance):
                 out_handle.write(f">{title}\n{seq}\n")
 
 
-def file_to_sample_name(filename):
+def file_to_sample_name(filename: str) -> str:
     """Given filename (with or without a directory name), return sample name only.
 
     i.e. XXX.fasta, XXX.fastq.gz, XXX.method.tsv --> XXX
@@ -364,8 +372,11 @@ def file_to_sample_name(filename):
 
 
 def find_requested_files(
-    filenames_or_folders, ext=".fasta", ignore_prefixes=None, debug=False
-):
+    filenames_or_folders: list[str],
+    ext: Union[str, tuple[str, ...]] = ".fasta",
+    ignore_prefixes: Optional[tuple[str]] = None,
+    debug: bool = False,
+) -> list[str]:
     """Interpret a list of filenames and/or foldernames.
 
     The extensions argument can be a tuple.
@@ -682,14 +693,14 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
 
 def parse_species_tsv(
     tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
-):
+) -> Iterator[tuple[Optional[str], str, str, str]]:
     """Parse file of species assignments/predictions by sequence.
 
     Yields tuples of marker name (from the file header line), sequence name,
     taxid, and genus_species.
     """
-    marker = None
-    tally_mode = False
+    marker: Optional[str] = None
+    tally_mode: Optional[tuple] = None
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):
@@ -949,7 +960,7 @@ def load_metadata(
     return stem_to_meta, meta_to_stem, names, group_col
 
 
-def color_bands(meta_groups, sample_color_bands, debug=False):
+def color_bands(meta_groups, sample_color_bands, debug: bool = False) -> list:
     """Return a list for formats, one for each sample."""
     default = [None] * len(meta_groups)
 
@@ -1022,7 +1033,7 @@ def color_bands(meta_groups, sample_color_bands, debug=False):
     return [sample_color_bands[_ % len(sample_color_bands)] for _ in bands]
 
 
-def load_fasta_header(fasta_file, gzipped=False):
+def load_fasta_header(fasta_file, gzipped=False) -> dict:
     """Parse our FASTA hash-comment line header as a dict."""
     answer = {}
     if gzipped:
@@ -1046,12 +1057,12 @@ def load_fasta_header(fasta_file, gzipped=False):
     return answer
 
 
-def kmers(sequence, k=KMER_LENGTH):
+def kmers(sequence: str, k: int = KMER_LENGTH) -> set[str]:
     """Make set of all kmers in the given sequence."""
     return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
 
 
-def is_spike_in(sequence, spikes):
+def is_spike_in(sequence: str, spikes: list[tuple[str, str, set[str]]]) -> str:
     """Return spike-in name if sequence matches, else empty string."""
     for spike_name, spike_seq, spike_kmers in spikes:
         if sequence == spike_seq:

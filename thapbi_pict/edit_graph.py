@@ -1,4 +1,4 @@
-# Copyright 2019-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -62,7 +62,7 @@ genus_color = {
 }
 
 
-def write_pdf(G, handle):
+def write_pdf(G, handle) -> None:
     """Render NetworkX graph to PDF using GraphViz fdp."""
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
     default = G.graph["node_default"]["color"]
@@ -98,7 +98,7 @@ def write_pdf(G, handle):
     plt.savefig(handle, format="pdf")
 
 
-def write_xgmml(G, handle, name="THAPBI PICT edit-graph"):
+def write_xgmml(G, handle, name: str = "THAPBI PICT edit-graph") -> None:
     """Save graph in XGMML format suitable for Cytoscape import."""
     # Not currently supported in NetworkX, and third party
     # package networkxgmml is not up to date (Python 3,
@@ -225,14 +225,14 @@ def main(
         sys.exit("ERROR: Maximum supported edit distance is 3bp.")
 
     samples = set()
-    md5_abundance = Counter()
-    md5_sample_count = Counter()
+    md5_abundance: dict[str, int] = Counter()
+    md5_sample_count: dict[tuple[str, str], int] = Counter()
     abundance_by_samples = {}
-    max_sample_abundance = {}
-    md5_to_seq = {}
+    max_sample_abundance: dict[str, int] = {}
+    md5_to_seq: dict[str, str] = {}
     md5_species = {}
-    md5_in_db = set()
-    md5_in_fasta = set()
+    md5_in_db: set[str] = set()
+    md5_in_fasta: set[str] = set()
 
     if not (input_file or db_url):
         sys.exit("Require -d / --database and/or -i / --input argument.")

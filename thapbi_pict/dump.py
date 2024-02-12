@@ -1,4 +1,4 @@
-# Copyright 2018-2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -8,6 +8,7 @@
 This implements the ``thapbi_pict dump ...`` command.
 """
 import sys
+from typing import Optional
 
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
@@ -21,7 +22,7 @@ from .db_orm import Taxonomy
 from .utils import genus_species_name
 
 
-def none_str(value, none_value=""):
+def none_str(value, none_value: str = "") -> str:
     """Turn value into a string, special case None to empty string."""
     if value is None:
         return none_value
@@ -30,15 +31,15 @@ def none_str(value, none_value=""):
 
 
 def main(
-    db_url,
-    output_filename,
-    output_format,
-    marker=None,
-    minimal=False,
-    genus="",
-    species="",
-    sep=None,
-    debug=True,
+    db_url: str,
+    output_filename: str,
+    output_format: str,
+    marker: Optional[str] = None,
+    minimal: bool = False,
+    genus: str = "",
+    species: str = "",
+    sep: Optional[str] = None,
+    debug: bool = True,
 ):
     """Run the database dump with arguments from the command line."""
     if not sep:
@@ -49,7 +50,7 @@ def main(
     Session = connect_to_db(db_url, echo=debug)
     session = Session()
 
-    entry_count = 0
+    entry_count: int = 0
 
     if output_filename == "-":
         out_handle = sys.stdout
@@ -118,10 +119,10 @@ def main(
         out_handle.write("#Marker\tIdentifier\tGenus\tSpecies\tTaxID\tMD5\tSequence\n")
 
     if minimal:
-        md5_seq = {}
-        md5_sp = {}
+        md5_seq: dict[str, str] = {}
+        md5_sp: dict[str, set[str]] = {}
         for seq_source in view:
-            md5 = seq_source.marker_seq.md5
+            md5: str = seq_source.marker_seq.md5
             # genus_species = genus_species_name(
             #                            seq_source.taxonomy.genus,
             #                            seq_source.taxonomy.species,
@@ -149,7 +150,7 @@ def main(
                 sys.exit(1)
         entry_count = len(md5_seq)
     elif output_format == "fasta":
-        seq_entry = {}
+        seq_entry: dict[str, set[str]] = {}
         for seq_source in view:
             seq = seq_source.marker_seq.sequence
             genus_species = genus_species_name(

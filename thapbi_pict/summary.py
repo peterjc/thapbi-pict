@@ -1,4 +1,4 @@
-# Copyright 2019-2022 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -16,6 +16,8 @@ files (via header lines in the intermediate FASTA files).
 import os
 import sys
 from collections import Counter
+from typing import Optional
+from typing import Union
 
 import xlsxwriter
 
@@ -30,7 +32,7 @@ MISSING_META = ""
 MISSING_DATA = "-"
 
 
-def _sp_display(species):
+def _sp_display(species: str) -> str:
     """Format species classification for reports, see also _sp_sort_key."""
     if " " in species:
         return species
@@ -40,7 +42,7 @@ def _sp_display(species):
         return "Unknown"
 
 
-def _sp_sort_key(species):
+def _sp_sort_key(species: str) -> str:
     """Sort unknowns after knowns, see also _sp_display.
 
     Want this order:
@@ -376,7 +378,7 @@ def read_summary(
     excel=None,
     biom=None,  # filename
     debug=False,
-):
+) -> None:
     """Create reads (rows) vs species (cols) report.
 
     The expectation is that the inputs represent all the samples
@@ -693,21 +695,21 @@ def read_summary(
 
 def main(
     inputs,
-    report_stem,
-    method,
-    min_abundance=1,
-    metadata_file=None,
-    metadata_encoding=None,
-    metadata_cols=None,
-    metadata_groups=None,
-    metadata_fieldnames=None,
-    metadata_index=None,
-    require_metadata=False,
-    show_unsequenced=True,
-    ignore_prefixes=None,
-    biom=False,  # boolean
-    debug=False,
-):
+    report_stem: str,
+    method: str,
+    min_abundance: int = 1,
+    metadata_file: Optional[str] = None,
+    metadata_encoding: Optional[str] = None,
+    metadata_cols: Optional[str] = None,
+    metadata_groups: Optional[str] = None,
+    metadata_fieldnames: Optional[str] = None,
+    metadata_index: Optional[str] = None,
+    require_metadata: bool = False,
+    show_unsequenced: bool = True,
+    ignore_prefixes: Optional[tuple[str]] = None,
+    biom: bool = False,
+    debug: bool = False,
+) -> int:
     """Implement the ``thapbi_pict summary`` command.
 
     The expectation is that the inputs represent all the samples from
@@ -736,7 +738,7 @@ def main(
     )
 
     meta_default = tuple([MISSING_META] * len(meta_names))
-    markers = set()
+    markers: set[str] = set()
 
     classifications_tsv = [
         _
@@ -753,17 +755,21 @@ def main(
             f"{len(classifications_tsv)} classifier files\n"
         )
 
-    marker_md5_abundance = Counter()
-    abundance_by_samples = {}
-    marker_md5_species = {}  # sp values are sets (e.g. ambiguous matches)
-    marker_md5_to_seq = {}
-    sample_species_counts = {}  # 2nd key is sp list with semi-colons
+    marker_md5_abundance: dict[tuple[str, str], int] = Counter()
+    abundance_by_samples: dict[tuple[str, str, str], int] = {}
+    marker_md5_species: dict[
+        tuple[str, str], set[str]
+    ] = {}  # sp values are sets (e.g. ambiguous matches)
+    marker_md5_to_seq: dict[tuple[str, str], str] = {}
+    sample_species_counts: dict[
+        str, dict[str, int]
+    ] = {}  # 2nd key is sp list with semi-colons
 
     # Not loading the post-abundance-threshold count,
     # Count should match the Seq-count column, but will not if running
     # report with higher abundance threshold - simpler to exclude.
     # For the threshold we have to update this if the report is stricter...
-    stats_fields = (
+    stats_fields: tuple[str, ...] = (
         "Raw FASTQ",
         "Flash",
         "Cutadapt",
@@ -775,7 +781,8 @@ def main(
         "Singletons",
     )
     blank_stat = -1
-    sample_stats = {}  # nested dict, keys are sample, then field name
+    # nested dict, keys are sample, then field name:
+    sample_stats: dict[str, dict[str, Union[str, int]]] = {}
 
     if not markers:
         # Corner case of zero sequences in all markers?
@@ -909,15 +916,16 @@ def main(
 
     if "Threshold pool" in stats_fields:
         # Try to remove any common folder prefix like raw_data/
-        i = stats_fields.index("Threshold pool")
+        i: int = stats_fields.index("Threshold pool")
         paths = {_["Threshold pool"] for _ in sample_stats.values()}
-        common = os.path.commonpath(paths)
+        common = os.path.commonpath([str(_) for _ in paths])  # make type explicit!
         if len(paths) > 1 and common:
             if debug:
                 sys.stderr.write(
                     f"DEBUG: Dropping threshold pool common prefix {common}\n"
                 )
             for values in sample_stats.values():
+                assert isinstance(values, list)
                 values[i] = values[i][len(common) + 1 :]
 
     if require_metadata:

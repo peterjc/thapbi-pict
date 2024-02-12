@@ -1,4 +1,4 @@
-# Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -12,6 +12,7 @@ the ``main()`` function define in this Python file.
 import argparse
 import os
 import sys
+from typing import Optional
 
 from . import __version__
 from .classify import method_classify_file as method_classifier
@@ -56,13 +57,15 @@ def check_cpu(cpu):
         )
 
 
-def check_input_file(filename):
+def check_input_file(filename: str) -> None:
     """Command line validation of an input filename."""
     if not os.path.isfile(filename):
         sys.exit(f"ERROR: Could not find input file: {filename}")
 
 
-def check_output_stem(out_stem, dir_only_ok=False, dir_must_exist=True):
+def check_output_stem(
+    out_stem: str, dir_only_ok: bool = False, dir_must_exist: bool = True
+) -> Optional[str]:
     """Command line validation of output stem value.
 
     Returns the output directory, or aborts.
@@ -85,7 +88,7 @@ def check_output_stem(out_stem, dir_only_ok=False, dir_must_exist=True):
     return None
 
 
-def check_output_directory(out_dir, must_exist=True):
+def check_output_directory(out_dir: str, must_exist: bool = True) -> Optional[bool]:
     """Command line validation of output directory value."""
     if not out_dir:
         sys.exit("ERROR: Output directory name blank")
@@ -98,7 +101,9 @@ def check_output_directory(out_dir, must_exist=True):
     return None
 
 
-def expand_database_argument(text, exist=False, hyphen_default=False):
+def expand_database_argument(
+    text: str, exist: bool = False, hyphen_default: bool = False
+) -> str:
     """Expand an SQLite3 filename to an SQLalchemy URL."""
     # TODO: Expand this to allow other DB prefixes later
     # Note we are not currently checking file exists,
