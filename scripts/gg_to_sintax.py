@@ -1,22 +1,33 @@
 #!/usr/bin/env python3
-"""Convert GreenGenes style FASTA+TSV into SINTAX style annotated FASTA file."""
+<<<<<<< HEAD
+"""Convert GreenGenes style FASTA+TSV into SINTAX style annotated FASTA file.
+
+As of v0.2.0 of the script, the input files can optionally be provided inside
+Qiime QZA files (ZIP files with a single in a .../data/... subdirectory).
+"""
+>>>>>>> Support Qiime2 archive files (.qza) in gg_to_sintax.py
 import argparse
 import gzip
+import io
 import sys
+import zipfile
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.1")
+    print("v0.2.0")
     sys.exit(0)
 
 # Parse Command Line
 usage = """\
-The input file should be a FASTA file without species annotation, and a simple
+The input files should be a FASTA file without species annotation, and a simple
 two-column tab separated plain text TSV file mapping the FASTA identifiers to
 taxonomic information (GreenGenes database style with entries like semicolon
-g underscore underscore genus). The output is a FASTA file with SINTAX style
-taxonomic annotation (like comma g colon genus).
+g underscore underscore genus). These can be provided inside Qiime QZA files
+which are expected to contain a single data file each, here we are expecting
+'.../data/dna-sequences.fasta' and '.../data/taxonomy.tsv' respectively. The
+output is a FASTA file with SINTAX style taxonomic annotation (like comma g
+colon genus).
 """
 
 # Example FASTA:
@@ -38,8 +49,6 @@ taxonomic annotation (like comma g colon genus).
 #
 # Note SINTAX (and the NCBI taxonomy) does not have a sub-family rank.
 
-# TODO: Optionally support extracting inputs from Qiime2 archive files (*.qza)?
-
 parser = argparse.ArgumentParser(
     prog="gg_to_sintax.py",
     description="Combine GreenGeens style FASTA & TSV in SINTAX style FASTA.",
@@ -48,16 +57,17 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "-i",
     "--input",
-    metavar="FASTA",
+    metavar="FILE",
     required=True,
-    help="Input FASTA filename.",
+    help="Input FASTA filename, or QZA file containing '.../data/dna-sequences.fasta'.",
 )
 parser.add_argument(
     "-t",
     "--taxonomy",
-    metavar="TSV",
+    metavar="FILE",
     required=True,
-    help="Input TSV taxonomy, with column one matching the FASTA file IDs.",
+    help="Input TSV taxonomy, or QZA file containing '.../data/taxonomy.tsv', "
+    "with column one matching the FASTA file IDs.",
 )
 parser.add_argument(
     "-o",
@@ -65,7 +75,7 @@ parser.add_argument(
     dest="output",
     default="/dev/stdout",
     metavar="FASTA",
-    help="SINTAX style FASTA output filename, defaults stdout.",
+    help="SINTAX style FASTA output filename, default stdout.",
 )
 
 if len(sys.argv) == 1:
@@ -83,18 +93,41 @@ def convert_taxonomy(gg_style):
     )
 
 
+def qza_open(qza_filename, mode="rt"):
+    """Open the only data file within a QZA style ZIP file for reading."""
+    if mode not in ("r", "rb", "rt"):
+        raise ValueError(f"Unsupported mode {mode!r}, expected r, rb or rt only.")
+    zip = zipfile.ZipFile(qza_filename)
+    data = [_ for _ in zip.namelist() if "/data/" in _]
+    if len(data) != 1:
+        sys.exit(
+            "ERROR: Expected one .../data/... file in QZA, found %i:\n%s"
+            % (len(data), "\n".join(data))
+        )
+    name = data[0]
+    sys.stderr.write(f"Opening {name} from QZA file.\n")
+    if mode == "rb":
+        return zip.open(data[0])
+    else:
+        return io.TextIOWrapper(zip.open(data[0]), encoding="utf-8")
+
+
 def merge(fasta_filename, tsv_filename, output_fasta):
     """Extract FASTA file of unknown sequences."""
     taxonomy = {}
 
-    with gzip.open(tsv_filename, "rt") if tsv_filename.endswith(".gz") else open(
-        tsv_filename
+    with gzip.open(tsv_filename, "rt") if tsv_filename.endswith(".gz") else qza_open(
+        tsv_filename, "rt"
+    ) if tsv_filename.endswith(".qza") else open(
+        tsv_filename,
     ) as handle:
         for line in handle:
             idn, tax = line.rstrip().split("\t")
             taxonomy[idn] = convert_taxonomy(tax)
 
-    with gzip.open(fasta_filename, "rt") if fasta_filename.endswith(".gz") else open(
+    with gzip.open(fasta_filename, "rt") if fasta_filename.endswith(
+        ".gz"
+    ) else qza_open(fasta_filename, "rt") if tsv_filename.endswith(".qza") else open(
         fasta_filename
     ) as handle:
         with open(output_fasta, "w") as output:
