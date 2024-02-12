@@ -1062,7 +1062,7 @@ def kmers(sequence: str, k: int = KMER_LENGTH) -> set[str]:
     return {sequence[i : i + k] for i in range(len(sequence) - k + 1)}
 
 
-def is_spike_in(sequence: str, spikes: tuple[str, str, set[str]]) -> str:
+def is_spike_in(sequence: str, spikes: list[tuple[str, str, set[str]]]) -> str:
     """Return spike-in name if sequence matches, else empty string."""
     for spike_name, spike_seq, spike_kmers in spikes:
         if sequence == spike_seq:
