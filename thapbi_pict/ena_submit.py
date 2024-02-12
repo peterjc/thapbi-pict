@@ -1,4 +1,4 @@
-# Copyright 2019-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -11,6 +11,7 @@ import os
 import shutil
 import sys
 import tempfile
+from typing import Optional
 
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
@@ -27,7 +28,7 @@ TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t%s\t%s\t%i\t%s\t%s\t%s
 assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 
 
-def load_md5(file_list):
+def load_md5(file_list: list[str]) -> dict[str, str]:
     """Return a dict mapping given filenames to MD5 digests."""
     assert file_list, "Nothing to do here."
     answer = {}
@@ -59,14 +60,14 @@ def load_md5(file_list):
 
 def write_table(
     handle,
-    pairs,
-    meta,
-    library_name,
-    instrument_model,
-    design_description,
-    library_construction_protocol,
-    insert_size,
-):
+    pairs: list[tuple[str, str, str]],
+    meta: Optional[dict[str, str]],
+    library_name: str,
+    instrument_model: str,
+    design_description: str,
+    library_construction_protocol: str,
+    insert_size: int,
+) -> None:
     """Write read file table for ENA upload."""
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
@@ -95,21 +96,21 @@ def write_table(
 
 
 def main(
-    fastq,
-    output,
-    metadata_file=None,
-    metadata_encoding=None,
-    metadata_cols=None,
-    metadata_fieldnames=None,
-    metadata_index=None,
-    ignore_prefixes=None,
-    library_name="-",
-    instrument_model="Illumina MiSeq",
-    design_description="",
-    library_construction_protocol="",
-    insert_size=250,
-    tmp_dir=None,
-    debug=False,
+    fastq: list[str],
+    output: str,
+    metadata_file: Optional[str] = None,
+    metadata_encoding: Optional[str] = None,
+    metadata_cols: Optional[str] = None,
+    metadata_fieldnames: Optional[str] = None,
+    metadata_index: Optional[str] = None,
+    ignore_prefixes: Optional[str] = None,
+    library_name: str = "-",
+    instrument_model: str = "Illumina MiSeq",
+    design_description: str = "",
+    library_construction_protocol: str = "",
+    insert_size: int = 250,
+    tmp_dir: Optional[str] = None,
+    debug: bool = False,
 ):
     """Implement the ``thapbi_pict ena-submit`` command."""
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
@@ -187,5 +188,7 @@ def main(
     )
 
     if output != "-":
+        assert table_handle is not None
         table_handle.close()
+        assert tmp_output is not None
         shutil.move(tmp_output, output)
