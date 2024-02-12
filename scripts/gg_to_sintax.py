@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-<<<<<<< HEAD
 """Convert GreenGenes style FASTA+TSV into SINTAX style annotated FASTA file.
 
 As of v0.2.0 of the script, the input files can optionally be provided inside
 Qiime QZA files (ZIP files with a single in a .../data/... subdirectory).
 """
->>>>>>> Support Qiime2 archive files (.qza) in gg_to_sintax.py
 import argparse
 import gzip
 import io
