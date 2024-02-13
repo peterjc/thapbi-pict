@@ -240,7 +240,9 @@ def parse_sintax_fasta_entry(
     """
     valid = False
     for part in text.split(";"):
-        part = part.strip().replace("_", " ")
+        part = part.replace("_", " ").strip()
+        while "  " in part:
+            part = part.replace("  ", " ")
         if not part.startswith("tax="):
             continue
         fields = [_.strip() for _ in part.split(",")]
@@ -596,6 +598,7 @@ def import_fasta_file(
                     )
 
                 assert not name.startswith("P."), title
+                assert "  " not in name, title
 
                 if name in existing_taxonomy:
                     taxonomy = existing_taxonomy[name]
