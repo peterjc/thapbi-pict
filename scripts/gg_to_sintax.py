@@ -116,16 +116,14 @@ def merge(fasta_filename, tsv_filename, output_fasta):
 
     with gzip.open(tsv_filename, "rt") if tsv_filename.endswith(".gz") else qza_open(
         tsv_filename, "rt"
-    ) if tsv_filename.endswith(".qza") else open(
-        tsv_filename,
-    ) as handle:
+    ) if tsv_filename.endswith(".qza") else open(tsv_filename) as handle:
         for line in handle:
             idn, tax = line.rstrip().split("\t")
             taxonomy[idn] = convert_taxonomy(tax)
 
     with gzip.open(fasta_filename, "rt") if fasta_filename.endswith(
         ".gz"
-    ) else qza_open(fasta_filename, "rt") if tsv_filename.endswith(".qza") else open(
+    ) else qza_open(fasta_filename, "rt") if fasta_filename.endswith(".qza") else open(
         fasta_filename
     ) as handle:
         with open(output_fasta, "w") as output:
