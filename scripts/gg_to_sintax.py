@@ -21,7 +21,7 @@ usage = """\
 The input files should be a FASTA file without species annotation, and a simple
 two-column tab separated plain text TSV file mapping the FASTA identifiers to
 taxonomic information (GreenGenes database style with entries like semicolon
-g underscore underscore genus). These can be provided inside Qiime QZA files
+g underscore underscore genus). These can be provided inside Qiime QZA/QZV files
 which are expected to contain a single data file each, here we are expecting
 '.../data/dna-sequences.fasta' and '.../data/taxonomy.tsv' respectively. The
 output is a FASTA file with SINTAX style taxonomic annotation (like comma g
@@ -57,15 +57,16 @@ parser.add_argument(
     "--input",
     metavar="FILE",
     required=True,
-    help="Input FASTA filename, or QZA file containing '.../data/dna-sequences.fasta'.",
+    help="Input FASTA filename, or QZA/QZV file containing "
+    "'.../data/dna-sequences.fasta'.",
 )
 parser.add_argument(
     "-t",
     "--taxonomy",
     metavar="FILE",
     required=True,
-    help="Input TSV taxonomy, or QZA file containing '.../data/taxonomy.tsv', "
-    "with column one matching the FASTA file IDs.",
+    help="Input TSV taxonomy, or QZA/QZV file containing "
+    "'.../data/taxonomy.tsv', with column one matching the FASTA file IDs.",
 )
 parser.add_argument(
     "-o",
@@ -91,19 +92,28 @@ def convert_taxonomy(gg_style):
     )
 
 
-def qza_open(qza_filename, mode="rt"):
-    """Open the only data file within a QZA style ZIP file for reading."""
+def qza_open(qza_filename, mode="rt", suffix=None):
+    """Open the only data file within a QZA/QZV style ZIP file for reading."""
     if mode not in ("r", "rb", "rt"):
         raise ValueError(f"Unsupported mode {mode!r}, expected r, rb or rt only.")
     zip = zipfile.ZipFile(qza_filename)
     data = [_ for _ in zip.namelist() if "/data/" in _]
+    if suffix:
+        data = [_ for _ in data if _.endswith(suffix)]
     if len(data) != 1:
-        sys.exit(
-            "ERROR: Expected one .../data/... file in QZA, found %i:\n%s"
-            % (len(data), "\n".join(data))
-        )
+        if suffix:
+            sys.exit(
+                "ERROR: Expected one .../data/... file "
+                "ending %r in Quiime file, found %i:\n%s"
+                % (suffix, len(data), "\n".join(data))
+            )
+        else:
+            sys.exit(
+                "ERROR: Expected one .../data/... file "
+                "in Quiime file, found %i:\n%s" % (len(data), "\n".join(data))
+            )
     name = data[0]
-    sys.stderr.write(f"Opening {name} from QZA file.\n")
+    sys.stderr.write(f"Opening {name} from Qiime file.\n")
     if mode == "rb":
         return zip.open(data[0])
     else:
@@ -115,17 +125,17 @@ def merge(fasta_filename, tsv_filename, output_fasta):
     taxonomy = {}
 
     with gzip.open(tsv_filename, "rt") if tsv_filename.endswith(".gz") else qza_open(
-        tsv_filename, "rt"
-    ) if tsv_filename.endswith(".qza") else open(tsv_filename) as handle:
+        tsv_filename, "rt", ".tsv"
+    ) if tsv_filename.endswith((".qza", ".qzv")) else open(tsv_filename) as handle:
         for line in handle:
             idn, tax = line.rstrip().split("\t")
             taxonomy[idn] = convert_taxonomy(tax)
 
     with gzip.open(fasta_filename, "rt") if fasta_filename.endswith(
         ".gz"
-    ) else qza_open(fasta_filename, "rt") if fasta_filename.endswith(".qza") else open(
-        fasta_filename
-    ) as handle:
+    ) else qza_open(fasta_filename, "rt", ".fasta") if fasta_filename.endswith(
+        (".qza", ".qzv")
+    ) else open(fasta_filename) as handle:
         with open(output_fasta, "w") as output:
             for title, seq in SimpleFastaParser(handle):
                 idn = title.split(None, 1)[0]
