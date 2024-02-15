@@ -293,7 +293,7 @@ Phytophthora capsici       1  0  0  0   1.00 0.000
 Phytophthora castaneae     1  0  0  0   1.00 0.000
 Phytophthora fallax        1  0  0  0   1.00 0.000
 Phytophthora foliorum      1  0  0  0   1.00 0.000
-Phytophthora glovera       0  1  0  0   0.00 1.000
+Phytophthora gloveri       0  1  0  0   0.00 1.000
 Phytophthora obscura       1  0  0  0   1.00 0.000
 Phytophthora plurivora     1  0  0  0   1.00 0.000
 Phytophthora rubi          1  0  0  0   1.00 0.000
@@ -337,7 +337,7 @@ Phytophthora chlamydospora  0  0  1  3   0.00 1.000
 Phytophthora cinnamomi      0  0  1  3   0.00 1.000
 Phytophthora fallax         3  0  0  1   1.00 0.000
 Phytophthora foliorum       3  0  0  1   1.00 0.000
-Phytophthora glovera        0  3  0  1   0.00 1.000
+Phytophthora gloveri        0  3  0  1   0.00 1.000
 Phytophthora gonapodyides   1  0  0  3   1.00 0.000
 Phytophthora ilicis         1  0  0  3   1.00 0.000
 Phytophthora kernoviae      1  0  0  3   1.00 0.000
