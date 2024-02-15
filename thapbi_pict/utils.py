@@ -62,11 +62,17 @@ def primer_clean(primer: str) -> str:
 
 
 def reject_species_name(species: str) -> bool:
-    """Reject species names like 'environmental samples' or 'uncultured ...'."""
+    """Reject species names like 'environmental samples' or 'uncultured ...'.
+
+    Will also reject names with ";" in them as used in the classifier and
+    reports to combine multiple species entries.
+    """
     return (
         not species
-        or species.split(None, 1)[0] in ("unclassified", "uncultured", "unidentified")
+        or species.split(None, 1)[0].lower()
+        in ("unclassified", "uncultured", "unidentified")
         or species == "environmental samples"
+        or ";" in species
     )
 
 
