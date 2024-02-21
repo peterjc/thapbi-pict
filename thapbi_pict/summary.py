@@ -135,7 +135,14 @@ def sample_summary(
     )
     sample_color_bands = [
         # Simple rolling rainbow pastel pallet
-        workbook.add_format({"bg_color": c, "font_color": "#000000"})
+        workbook.add_format(
+            {
+                "bg_color": c,
+                "font_color": "#000000",
+                # Integers with thousands separators (regional settings respected):
+                "num_format": "#,###,###,##0",
+            }
+        )
         for c in [
             "#FFCCDA",  # pink
             "#F7D6B7",  # orange
@@ -423,9 +430,17 @@ def read_summary(
         # Maraschino red
         {"bg_color": "#FF2600", "font_color": "#000000"}
     )
+    thousands_format = workbook.add_format({"num_format": "#,###,###,##0"})
     sample_color_bands = [
         # Simple rolling rainbow pastel pallet
-        workbook.add_format({"bg_color": c, "font_color": "#000000"})
+        workbook.add_format(
+            {
+                "bg_color": c,
+                "font_color": "#000000",
+                # Integers with thousands separators (regional settings respected):
+                "num_format": "#,###,###,##0",
+            }
+        )
         for c in [
             "#FFCCDA",  # pink
             "#F7D6B7",  # orange
@@ -588,6 +603,7 @@ def read_summary(
         )
         if marker_md5_to_seq
         else 0,
+        thousands_format,
     )
     worksheet.write_number(
         current_row,
@@ -601,8 +617,11 @@ def read_summary(
             ),
             default=0,
         ),
+        thousands_format,
     )
-    worksheet.write_number(current_row, 6, sum(marker_md5_abundance.values()))
+    worksheet.write_number(
+        current_row, 6, sum(marker_md5_abundance.values()), thousands_format
+    )
     for s, sample in enumerate(stem_to_meta):
         worksheet.write_number(
             current_row,
@@ -666,9 +685,9 @@ def read_summary(
         worksheet.write_string(current_row, 1, md5)
         worksheet.write_string(current_row, 2, sp)
         worksheet.write_string(current_row, 3, seq)
-        worksheet.write_number(current_row, 4, md5_in_xxx_samples)
-        worksheet.write_number(current_row, 5, max(sample_counts))
-        worksheet.write_number(current_row, 6, total_abundance)
+        worksheet.write_number(current_row, 4, md5_in_xxx_samples, thousands_format)
+        worksheet.write_number(current_row, 5, max(sample_counts), thousands_format)
+        worksheet.write_number(current_row, 6, total_abundance, thousands_format)
         for s, count in enumerate(sample_counts):
             worksheet.write_number(
                 current_row, LEADING_COLS + s, count, sample_formats[s]
