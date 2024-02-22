@@ -133,6 +133,7 @@ def sample_summary(
         # Vertical text, reading up the page
         {"rotation": 90}
     )
+    thousands_format = workbook.add_format({"num_format": "#,###,###,##0"})
     sample_color_bands = [
         # Simple rolling rainbow pastel pallet
         workbook.add_format(
@@ -161,6 +162,7 @@ def sample_summary(
         sample_formats = color_bands(
             group_value,
             sample_color_bands,
+            thousands_format,
             debug=debug,
         )
         del group_value
@@ -214,7 +216,7 @@ def sample_summary(
             try:
                 cell_format = sample_formats[current_row]  # sample number
             except IndexError:
-                cell_format = None
+                cell_format = thousands_format
             current_row += 1
             assert len(meta_names) == len(metadata)
             assert col_offset == len(meta_names) + 2 + len(stats_fields)
@@ -283,7 +285,7 @@ def sample_summary(
             try:
                 cell_format = sample_formats[current_row]  # sample number
             except IndexError:
-                cell_format = None
+                cell_format = thousands_format
             current_row += 1
             assert len(meta_names) == len(metadata)
             assert col_offset == len(meta_names) + 2 + len(stats_fields)
@@ -466,7 +468,7 @@ def read_summary(
     # -------------
     current_row = 0
     first_data_row = 0
-    sample_formats = [None] * len(stem_to_meta)
+    sample_formats = [thousands_format] * len(stem_to_meta)
     if meta_names:
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
@@ -479,6 +481,7 @@ def read_summary(
         sample_formats = color_bands(
             [stem_to_meta[_][group_col] for _ in stem_to_meta],
             sample_color_bands,
+            thousands_format,
             debug=debug,
         )
         for i, name in enumerate(meta_names):

@@ -966,9 +966,11 @@ def load_metadata(
     return stem_to_meta, meta_to_stem, names, group_col
 
 
-def color_bands(meta_groups, sample_color_bands, debug: bool = False) -> list:
+def color_bands(
+    meta_groups, sample_color_bands, default_fmt=None, debug: bool = False
+) -> list:
     """Return a list for formats, one for each sample."""
-    default = [None] * len(meta_groups)
+    default = [default_fmt] * len(meta_groups)
 
     min_groups = 3
     max_groups = 0.8 * len(meta_groups)
