@@ -284,9 +284,7 @@ def sample_summary(
             else:
                 # e.g. unsequenced sample, use "-" for missing data
                 handle.write(
-                    MISSING_DATA
-                    + ("\t" + MISSING_DATA) * (1 + len(species_predictions))
-                    + "\n"
+                    "\t".join([MISSING_DATA] * len(species_predictions)) + "\n"
                 )
 
             # Excel
