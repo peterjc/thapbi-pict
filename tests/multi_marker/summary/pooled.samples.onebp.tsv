@@ -1,2 +1,2 @@
 #Sequencing sample	Classification summary	Raw FASTQ	Flash	Cutadapt	Threshold pool	Threshold	Control	Singletons	Accepted	Unique	Bos taurus	Lactuca sativa
-EM_1_sample	Bos taurus, Lactuca sativa	264	186	178	raw_data	10	Sample	75	93	2	42	51
+EM_1_sample	Bos taurus, Lactuca sativa	264	186	178	raw_data	10	Sample	75	93	4	42	51
