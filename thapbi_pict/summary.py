@@ -528,7 +528,7 @@ def read_summary(
         % (method, "\t".join(stem_to_meta))
     )
     handle.write(
-        "TOTAL or MAX\t-\t-\t-\t%i\t%i\t%i\t%s\n"
+        "MAX or TOTAL\t-\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             # max Sample-count
             max(
@@ -550,12 +550,16 @@ def read_summary(
                 ),
                 default=0,
             ),
+            # sum of Total-abundance
             sum(marker_md5_abundance.values()),
             "\t".join(
                 str(
-                    sum(
-                        abundance_by_samples.get((marker, md5, sample), 0)
-                        for (marker, md5) in marker_md5_to_seq
+                    max(
+                        (
+                            abundance_by_samples.get((marker, md5, sample), 0)
+                            for (marker, md5) in marker_md5_to_seq
+                        ),
+                        default=0,
                     )
                 )
                 for sample in stem_to_meta
@@ -576,7 +580,7 @@ def read_summary(
         worksheet.write_string(current_row, LEADING_COLS + s, sample, sample_formats[s])
     current_row += 1
     first_data_row = current_row
-    worksheet.write_string(current_row, 0, "TOTAL or MAX")
+    worksheet.write_string(current_row, 0, "MAX or TOTAL")
     worksheet.write_string(current_row, 1, "-")
     worksheet.write_string(current_row, 2, "-")
     worksheet.write_string(current_row, 3, "-")
@@ -611,15 +615,22 @@ def read_summary(
         thousands_format,
     )
     worksheet.write_number(
-        current_row, 6, sum(marker_md5_abundance.values()), thousands_format
+        # sum of Total-abundance
+        current_row,
+        6,
+        sum(marker_md5_abundance.values()),
+        thousands_format,
     )
     for s, sample in enumerate(stem_to_meta):
         worksheet.write_number(
             current_row,
             LEADING_COLS + s,
-            sum(
-                abundance_by_samples.get((marker, md5, sample), 0)
-                for (marker, md5) in marker_md5_to_seq
+            max(
+                (
+                    abundance_by_samples.get((marker, md5, sample), 0)
+                    for (marker, md5) in marker_md5_to_seq
+                ),
+                default=0,
             ),
             sample_formats[s],
         )
@@ -977,9 +988,6 @@ def main(
     sys.stderr.write(f"Wrote {report_stem}.samples.{method}.*\n")
 
     del sample_species_counts, meta_to_stem
-
-    # TODO - Use these and compute MAX where currently do column TOTAL (aka Accepted)?
-    stats_fields = stats_fields[:-2]  # Drop "Accepted", "Unique"
 
     read_summary(
         sorted(markers),
