@@ -202,23 +202,14 @@ def sample_summary(
 
     # Main body
     # =========
-    # Note already sorted on metadata values, discarded the order in the metadata file
-
-    # Columns are:
-    # - len(meta_names) == len(metadata)
-    # - Sequencing sample
-    # - Classification summary
-    # - len(stats_fields)
-    # - len(species_predictions)
-    assert col_offset == len(meta_names) + 2 + len(stats_fields)
-
+    # Note already sorted on metadata values, discarded the order in the table
     for metadata, sample_batch in meta_to_stem.items():
         if not sample_batch and not show_unsequenced:
-            # Nothing sequenced for this metadata entry, don't report it
+            # Nothing sequenced for this metadata entry,don't report it
             continue
         if not sample_batch and show_unsequenced:
             # Missing data in TSV:
-            blanks = 2 + len(stats_fields) + len(species_predictions)
+            blanks = len(stats_fields) + 4 + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
             handle.write("\t".join(metadata) + ("\t" + MISSING_DATA) * blanks + "\n")
             # Missing data in Excel:
@@ -284,7 +275,9 @@ def sample_summary(
             else:
                 # e.g. unsequenced sample, use "-" for missing data
                 handle.write(
-                    "\t".join([MISSING_DATA] * len(species_predictions)) + "\n"
+                    MISSING_DATA
+                    + ("\t" + MISSING_DATA) * (1 + len(species_predictions))
+                    + "\n"
                 )
 
             # Excel
