@@ -110,7 +110,7 @@ def sample_summary(
     # ----------
     handle = open(output, "w")
     handle.write(
-        "#%sSequencing sample\tClassification summary\t%sAccepted\tUnique\t%s\n"
+        "#%sSequencing sample\tClassification summary\t%s%s\n"
         % (
             "\t".join(meta_names) + "\t" if meta_names else "",
             "\t".join(stats_fields) + "\t" if stats_fields else "",
@@ -194,22 +194,29 @@ def sample_summary(
     for offset, name in enumerate(stats_fields):
         worksheet.write_string(current_row, col_offset + offset, name)
     col_offset += len(stats_fields)
-    worksheet.write_string(current_row, col_offset, "Accepted")  # offset reference!
-    worksheet.write_string(current_row, col_offset + 1, "Unique")  # offset reference!
     for offset, sp in enumerate(species_predictions):
-        worksheet.write_string(current_row, col_offset + 2 + offset, _sp_display(sp))
-    worksheet.freeze_panes(current_row + 1, col_offset + 2)
+        worksheet.write_string(current_row, col_offset + offset, _sp_display(sp))
+    worksheet.freeze_panes(current_row + 1, col_offset)
 
     # Main body
     # =========
-    # Note already sorted on metadata values, discarded the order in the table
+    # Note already sorted on metadata values, discarded the order in the metadata table
+
+    # Columns are:
+    # - len(meta_names) == len(metadata)
+    # - Sequencing sample
+    # - Classification summary
+    # - len(stats_fields)
+    # - len(species_predictions)
+    assert col_offset == len(meta_names) + 2 + len(stats_fields)
+
     for metadata, sample_batch in meta_to_stem.items():
         if not sample_batch and not show_unsequenced:
             # Nothing sequenced for this metadata entry,don't report it
             continue
         if not sample_batch and show_unsequenced:
             # Missing data in TSV:
-            blanks = len(stats_fields) + 4 + len(species_predictions)
+            blanks = 2 + len(stats_fields) + len(species_predictions)
             # Using "-" for missing data, could use "NA" or "?"
             handle.write("\t".join(metadata) + ("\t" + MISSING_DATA) * blanks + "\n")
             # Missing data in Excel:
@@ -219,7 +226,6 @@ def sample_summary(
                 cell_format = thousands_format
             current_row += 1
             assert len(meta_names) == len(metadata)
-            assert col_offset == len(meta_names) + 2 + len(stats_fields)
             for offset, value in enumerate(metadata):
                 worksheet.write_string(current_row, offset, value, cell_format)
             for offset in range(blanks):
@@ -262,22 +268,16 @@ def sample_summary(
                 )
             if sample in sample_species_counts:
                 handle.write(
-                    "%i\t%i\t%s\n"
-                    % (
-                        sum(sample_species_counts[sample].values()),
-                        sum(1 for _ in sample_species_counts[sample].values() if _),
-                        "\t".join(
-                            str(sample_species_counts[sample][sp])
-                            for sp in species_predictions
-                        ),
+                    "\t".join(
+                        str(sample_species_counts[sample][sp])
+                        for sp in species_predictions
                     )
+                    + "\n"
                 )
             else:
                 # e.g. unsequenced sample, use "-" for missing data
                 handle.write(
-                    MISSING_DATA
-                    + ("\t" + MISSING_DATA) * (1 + len(species_predictions))
-                    + "\n"
+                    "\t".join([MISSING_DATA] * len(species_predictions)) + "\n"
                 )
 
             # Excel
@@ -313,27 +313,15 @@ def sample_summary(
                         cell_format,
                     )
             if sample in sample_species_counts:
-                worksheet.write_number(
-                    current_row,
-                    col_offset,
-                    sum(sample_species_counts[sample].values()),
-                    cell_format,
-                )
-                worksheet.write_number(
-                    current_row,
-                    col_offset + 1,
-                    sum(1 for _ in sample_species_counts[sample].values() if _),
-                    cell_format,
-                )
                 for offset, sp in enumerate(species_predictions):
                     worksheet.write_number(
                         current_row,
-                        col_offset + 2 + offset,
+                        col_offset + offset,
                         sample_species_counts[sample][sp],
                         cell_format,
                     )
             else:
-                for offset in range(2 + len(species_predictions)):
+                for offset in range(len(species_predictions)):
                     worksheet.write_string(
                         current_row,
                         col_offset + offset,
@@ -346,7 +334,7 @@ def sample_summary(
         1,
         col_offset - 2 - len(stats_fields),  # go back to sample name
         current_row,
-        col_offset + 2 + len(species_predictions),
+        col_offset + len(species_predictions) - 1,
         {
             "type": "cell",
             "criteria": "equal to",
@@ -356,9 +344,9 @@ def sample_summary(
     )
     worksheet.conditional_format(
         1,
-        col_offset + 2,
+        col_offset,
         current_row,
-        col_offset + 2 + len(species_predictions),
+        col_offset + len(species_predictions) - 1,
         {
             "type": "cell",
             "criteria": "greater than",
@@ -950,6 +938,19 @@ def main(
                 assert isinstance(values, list)
                 values[i] = values[i][len(common) + 1 :]
 
+    # Both of these are potentially altered by the min_abundance argument,
+    # simplest to calculate them here rather than in the separate reports:
+    stats_fields = tuple(list(stats_fields) + ["Accepted", "Unique"])
+    for sample in sample_stats:
+        asv_counts = [
+            a
+            for (marker, md5, s), a in abundance_by_samples.items()
+            if a >= min_abundance and sample == s and marker in markers
+        ]
+        sample_stats[sample]["Accepted"] = sum(asv_counts)
+        sample_stats[sample]["Unique"] = len(asv_counts)
+        del asv_counts
+
     if require_metadata:
         assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
     else:
@@ -976,6 +977,9 @@ def main(
     sys.stderr.write(f"Wrote {report_stem}.samples.{method}.*\n")
 
     del sample_species_counts, meta_to_stem
+
+    # TODO - Use these and compute MAX where currently do column TOTAL (aka Accepted)?
+    stats_fields = stats_fields[:-2]  # Drop "Accepted", "Unique"
 
     read_summary(
         sorted(markers),
