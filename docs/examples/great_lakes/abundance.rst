@@ -138,8 +138,10 @@ at the command line (using grep to drop the rows ending with a zero count):
     #                                                                  Threshold        10
     #                                                                  Control          Sample
     #                                                                  Singletons       258
+    #                                                                  Accepted         551
+    #                                                                  Unique           4
     #Marker       MD5                               onebp-predictions  Total-abundance  SRR5534986
-    TOTAL or MAX  -                                 -                  4914872          551
+    MAX or TOTAL  -                                 -                  4914872          478
     MOL16S        20c0669e4c6f8436c9d42736df727c83  Sphaerium simile   152924           478
     MOL16S        e1d838b4f39bffe88d8c0e79b52700f1  Sphaerium simile   3215             13
     MOL16S        778e3dace4b993135e11d450e6c559ff  Sphaerium simile   249              11
@@ -172,8 +174,10 @@ read report, or at the command line:
     #                                               Threshold        10
     #                                               Control          Sample
     #                                               Singletons       272
+    #                                               Accepted         108
+    #                                               Unique           3
     #Marker       MD5                               Total-abundance  SRR5534980
-    TOTAL or MAX  -                                 4914872          108
+    MAX or TOTAL  -                                 4914872          46
     MOL16S        ecdaa082b70f5e268f76128693531760  269109           45
     MOL16S        98dc259e48de3e258cb93a34c38a9484  120026           17
     MOL16S        20c0669e4c6f8436c9d42736df727c83  152924           46

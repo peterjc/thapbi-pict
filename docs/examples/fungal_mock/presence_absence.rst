@@ -98,8 +98,10 @@ the TSV version at the command line:
     #                                               Control          Sample               Sample
     #                                               Max non-spike    64                   100
     #                                               Singletons       14                   17
+    #                                               Accepted         98                   110
+    #                                               Unique           2                    2
     #Marker       MD5                               Total-abundance  SRR5314317           SRR5314316
-    TOTAL or MAX  -                                 881219           98                   110
+    MAX or TOTAL  -                                 881219           64                   100
     BITS-B58S3    d51507f661ebee38a85bec35b70b7ee1  47984            64                   100
     BITS-B58S3    daadc4126b5747c43511bd3be0ea2438  34               34                   0
     BITS-B58S3    e5b7a8b5dc0da33108cc8a881eb409f5  10               0                    10
@@ -137,8 +139,10 @@ or if working at the terminal:
     #                                               Control          Sample             Sample
     #                                               Max non-spike    1085               3958
     #                                               Singletons       42                 127
+    #                                               Accepted         1085               4014
+    #                                               Unique           1                  4
     #Marker       MD5                               Total-abundance  SRR5314315         SRR5314314
-    TOTAL or MAX  -                                 881219           1085               4014
+    MAX or TOTAL  -                                 881219           1085               3958
     BITS-B58S3    d51507f661ebee38a85bec35b70b7ee1  47984            1085               3958
     BITS-B58S3    716f6111ac2ee192c23282e07d23078a  31294            0                  25
     BITS-B58S3    5194a4ae3a27d987892a8fee7b1669b9  17               0                  17
