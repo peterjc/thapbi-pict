@@ -283,9 +283,11 @@ def main(
             sample_threshold[sample] = threshold = max(
                 int(sample_headers[sample].get("threshold", 0)),
                 # use half for a synthetic (fractional) control:
-                ceil(min_abundance * 0.5)
-                if sample in synthetic_controls
-                else min_abundance,
+                (
+                    ceil(min_abundance * 0.5)
+                    if sample in synthetic_controls
+                    else min_abundance
+                ),
                 # use half for a negative (absolute) control:
                 ceil(
                     sample_cutadapt[sample]

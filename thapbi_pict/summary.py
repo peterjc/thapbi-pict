@@ -21,7 +21,6 @@ from typing import Union
 
 import xlsxwriter
 
-from .utils import color_bands
 from .utils import export_sample_biom
 from .utils import find_requested_files
 from .utils import load_metadata
@@ -66,6 +65,81 @@ def _sp_sort_key(species: str) -> str:
         return species + " {unknown species}"
     else:
         return "{Unknown}"
+
+
+def color_bands(
+    meta_groups, sample_color_bands, default_fmt=None, debug: bool = False
+) -> list:
+    """Return a list for formats, one for each sample."""
+    default = [default_fmt] * len(meta_groups)
+
+    min_groups = 3
+    max_groups = 0.8 * len(meta_groups)
+    if min_groups > max_groups:
+        if debug:
+            sys.stderr.write("DEBUG: Not enough columns to bother with coloring\n")
+        return default
+
+    if len(set(meta_groups)) == 1:
+        # All the same not helpful for banding
+        if debug:
+            sys.stderr.write(
+                "DEBUG: All samples had same metadata in color grouping field:"
+                f" {meta_groups[0]!r}\n"
+            )
+        return default
+
+    if max_groups < len(set(meta_groups)):
+        if debug:
+            sys.stderr.write(
+                "DEBUG: Too many coloring groups, trying first word only\n"
+            )
+        # Attempting heuristic, taking the first word/field will work on schemes like
+        # SITE_DATE_NUMBER or SPECIES-SAMPLE etc.
+        meta_groups = [
+            _.replace("-", " ").replace("_", " ").split(None, 1)[0] if _ else ""
+            for _ in meta_groups
+        ]
+        if len(set(meta_groups)) == 1:
+            # That didn't work.
+            if debug:
+                sys.stderr.write(
+                    "DEBUG: Too many coloring groups, but first word only was unique\n"
+                )
+            return default
+
+    if len(set(meta_groups)) < min_groups or max_groups < len(set(meta_groups)):
+        # (Almost) all same or (almost) unique not helpful
+        if debug:
+            sys.stderr.write(
+                f"DEBUG: {len(set(meta_groups))} groups not suitable for coloring:\n"
+            )
+            sys.stderr.write(";".join(sorted(set(meta_groups))) + "\n")
+        return default
+
+    bands = []
+    debug_msg = []
+    for s, value in enumerate(meta_groups):
+        if s == 0:
+            bands.append(0)
+            debug_msg.append(value)
+        elif value == meta_groups[s - 1]:
+            # Same
+            bands.append(bands[-1])
+        else:
+            # Different
+            if value in meta_groups[:s]:
+                # Metadata values are not grouped, can't use for banding
+                # (might be able to use with a color key?)
+                sys.stderr.write(
+                    "WARNING: Metadata not grouped nicely for coloring:"
+                    f" {', '.join(debug_msg)} and then {value} (again).\n"
+                )
+                return default
+            bands.append(max(bands) + 1)
+            debug_msg.append(value)
+    assert len(set(bands)) == max(bands) + 1, bands
+    return [sample_color_bands[_ % len(sample_color_bands)] for _ in bands]
 
 
 def sample_summary(
@@ -531,16 +605,18 @@ def read_summary(
         "MAX or TOTAL\t-\t-\t-\t%i\t%i\t%i\t%s\n"
         % (
             # max Sample-count
-            max(
-                sum(
-                    1
-                    for sample in stem_to_meta
-                    if abundance_by_samples.get((marker, md5, sample), 0)
+            (
+                max(
+                    sum(
+                        1
+                        for sample in stem_to_meta
+                        if abundance_by_samples.get((marker, md5, sample), 0)
+                    )
+                    for (marker, md5) in marker_md5_to_seq
                 )
-                for (marker, md5) in marker_md5_to_seq
-            )
-            if marker_md5_to_seq
-            else 0,
+                if marker_md5_to_seq
+                else 0
+            ),
             # max of Max-sample-abundance
             max(
                 (
@@ -588,16 +664,18 @@ def read_summary(
         current_row,
         4,
         # max Sample-count:
-        max(
-            sum(
-                1
-                for sample in stem_to_meta
-                if abundance_by_samples.get((marker, md5, sample), 0)
+        (
+            max(
+                sum(
+                    1
+                    for sample in stem_to_meta
+                    if abundance_by_samples.get((marker, md5, sample), 0)
+                )
+                for (marker, md5) in marker_md5_to_seq
             )
-            for (marker, md5) in marker_md5_to_seq
-        )
-        if marker_md5_to_seq
-        else 0,
+            if marker_md5_to_seq
+            else 0
+        ),
         thousands_format,
     )
     worksheet.write_number(
