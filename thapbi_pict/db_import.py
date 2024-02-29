@@ -117,6 +117,8 @@ assert parse_ncbi_fasta_entry(
 assert parse_ncbi_fasta_entry(
     "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
 ) == (0, "Phytophthora humicola x inundata")
+# TODO: Should we stop converting "Phytophthora humicola x Phytophthora inundata"
+# into "Phytophthora humicola x inundata"?
 
 
 def parse_ncbi_taxid_entry(
@@ -238,8 +240,20 @@ def parse_sintax_fasta_entry(
     >>> parse_sintax_fasta_entry("AB008314;tax=d:...,g:Streptococcus;")
     (0, 'Streptococcus')
 
+    If the species entry is missing the genus information (which may happen
+    depending how the file was generated), that is inferred heuristically:
+
+    >>> entry = "X80725_S000004313;tax=d:...,g:Escherichia,s:coli"
+    >>> parse_sintax_fasta_entry(entry)
+    (0, 'Escherichia coli')
+
+    This can be unclear:
+
+    >>> entry = ">X80725_S000004313;tax=d:...,g:Escherichia/Shigella,s:Escherichia_coli"
+    >>> parse_sintax_fasta_entry(entry)
+    (0, 'Escherichia coli')
     """
-    valid = False
+    genus = species = ""
     for part in text.split(";"):
         part = part.replace("_", " ").strip()
         while "  " in part:
@@ -247,19 +261,32 @@ def parse_sintax_fasta_entry(
         if not part.startswith("tax="):
             continue
         fields = [_.strip() for _ in part.split(",")]
-        # Try for species first:
-        for field in fields:
-            if field.startswith("s:"):
-                return 0, field[2:]
-        # Fall back on genus:
         for field in fields:
             if field.startswith("g:"):
-                return 0, field[2:]
-        valid = True
-    if not valid:
-        msg = f"FASTA entry not in SINTAX format: {text!r}"
+                genus = field[2:]
+            elif field.startswith("s:"):
+                species = field[2:]
+    if genus and species:
+        # Heuristic, will miss e.g. "sp. x"
+        if species.startswith(genus) or species.split(None, 1)[0] in genus:
+            # Good, genus is present
+            return 0, species
+        elif " " not in species or species[0].islower():
+            # Looks like the genus is missing, perform ad hoc fix
+            return 0, genus + " " + species
+        else:
+            # Unclear... assume the genus is present as per SINTAX expectations
+            sys.stderr.write(f"WARNING: Genus vs species unclear in {text}\n")
+            return 0, species
+    elif genus:
+        return 0, genus
+    elif species:
+        # Missing genus?
+        msg = f"Failed to parse SINTAX entry: {text!r}"
         raise ValueError(msg)
-    return 0, ""
+    else:
+        # Neither found
+        return 0, ""
 
 
 assert parse_sintax_fasta_entry(
@@ -542,12 +569,9 @@ def import_fasta_file(
                 entry_count += 1
                 try:
                     taxid, name = entry_taxonomy_fn(entry, preloaded_taxonomy)
-                except ValueError:
+                except ValueError as e:
                     bad_entries += 1
-                    sys.stderr.write(
-                        "WARNING: Could not parse entry %r\n"
-                        % (entry if len(entry) < 60 else entry[:67] + "...")
-                    )
+                    sys.stderr.write(f"WARNING: Could not parse entry - {e}\n")
                     continue
 
                 assert isinstance(name, str), name
@@ -775,7 +799,9 @@ def main(
         fasta, (".fasta", ".fa"), ignore_prefixes, debug=debug
     )
     if debug:
-        sys.stderr.write(f"Classifying {len(fasta_files)} input FASTA files\n")
+        sys.stderr.write(
+            f"Classifying {len(fasta_files)} input {convention} FASTA files\n"
+        )
 
     for fasta_file in fasta_files:
         import_fasta_file(
