@@ -519,7 +519,7 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
     del seqs, seq_meta, sample_meta, counts
 
     tag = "THAPBI PICT " + __version__
-    # TODO - override refault date of now for reproducibility?
+    # TODO - override default date of now for reproducibility?
 
     # Is JSON output useful? BIOM v1 format:
     # with open(output_file, "w") as handle:
