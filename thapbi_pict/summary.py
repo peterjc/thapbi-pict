@@ -931,7 +931,7 @@ def main(
                     elif field in ("Cutadapt", "Singletons"):
                         # Sum over the markers
                         sample_stats[sample][field] = (
-                            sample_stats[sample].get(field, 0) + value
+                            int(sample_stats[sample].get(field, 0)) + value
                         )
                     elif field in ("Threshold"):
                         # Report value if shared between markers
