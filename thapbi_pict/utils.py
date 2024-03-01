@@ -483,7 +483,14 @@ def find_paired_files(
     return input_list
 
 
-def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped=True):
+def export_sample_biom(
+    output_file: str,
+    seqs: dict[tuple[str, str], str],  # (marker, idn): seq
+    seq_meta: dict[tuple[str, str], dict],  # (marker, idn): dict
+    sample_meta: dict[str, dict[str, str]],
+    counts: dict[tuple[str, str, str], int],  # (marker, idn, sample): abundance
+    gzipped: bool = True,
+) -> bool:
     """Export a sequence vs samples counts BIOM table, with metadata.
 
     Similar to the export_sample_tsv file (our TSV output), expects same
@@ -504,8 +511,8 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
     biom_table = Table(
         # BIOM want counts indexed by sequence and sample integer index:
         {
-            (list(seq_meta).index((marker, md5)), list(sample_meta).index(sample)): v
-            for (marker, md5, sample), v in counts.items()
+            (list(seq_meta).index((marker, md5)), list(sample_meta).index(sample)): a
+            for (marker, md5, sample), a in counts.items()
         },
         # BIOM wants single string names for sequences
         [f"{marker}/{md5}" for (marker, md5) in seq_meta],
@@ -530,7 +537,14 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
     return True
 
 
-def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=False):
+def export_sample_tsv(
+    output_file: str,
+    seqs: dict[tuple[str, str], str],  # (marker, idn): seq
+    seq_meta: dict[tuple[str, str], dict],  # (marker, idn): dict
+    sample_meta: dict[str, dict[str, str]],
+    counts: dict[tuple[str, str, str], int],  # (marker, idn, sample): abundance
+    gzipped: bool = False,
+) -> None:
     """Export a sequence vs sample counts TSV table, with metadata.
 
     The TSV file ought to be readable by the parse_sample_tsv function, and
@@ -582,13 +596,15 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
     else:
         seq_fields = []
 
+    assert sample_fields is not None
+    assert seq_fields is not None
     for stat in sample_fields:
         # Using "-" as missing value to match default in summary reports
-        values = [sample_meta[sample][stat] for sample in sample_meta]
+        stat_values = [sample_meta[sample][stat] for sample in sample_meta]
         out_handle.write(
             "\t".join(
                 ["#" + stat]
-                + ["-" if _ is None else str(_) for _ in values]
+                + ["-" if _ is None else str(_) for _ in stat_values]
                 + [""] * len(seq_fields)
                 + ["\n"]
             )
@@ -600,11 +616,11 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
     )
 
     for (marker, idn), seq in seqs.items():
-        values = [counts.get((marker, idn, sample), 0) for sample in samples]
+        abundance_values = [counts.get((marker, idn, sample), 0) for sample in samples]
         out_handle.write(
             "\t".join(
-                [f"{marker}/{idn}_{sum(values)}"]
-                + [str(_) for _ in values]
+                [f"{marker}/{idn}_{sum(abundance_values)}"]
+                + [str(_) for _ in abundance_values]
                 + [seq]
                 + [str(seq_meta[marker, idn][_]) for _ in seq_fields]
             )
@@ -615,7 +631,17 @@ def export_sample_tsv(output_file, seqs, seq_meta, sample_meta, counts, gzipped=
         out_handle.close()
 
 
-def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=True):
+def parse_sample_tsv(
+    tabular_file: str,
+    min_abundance: int = 0,
+    debug: bool = False,
+    force_upper: bool = True,
+) -> tuple[
+    dict[tuple[str, str], str],
+    dict[tuple[str, str], dict[str, str]],
+    dict[str, dict[str, str]],
+    dict[tuple[str, str, str], int],
+]:
     """Parse file of sample abundances and sequence (etc).
 
     Optional argument min_abundance is applied to the per sequence per sample
@@ -635,13 +661,14 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
     * Sample metadata keyed on [<sample>], dict of key:value pairs
     * Counts keyed on 3-tuple [<marker>, <identifier>, <sample>], integer
     """
-    header_lines = []
-    samples = []
-    counts = {}
+    header_lines: list[list[str]] = []
+    samples: list[str] = []
+    counts: dict[tuple[str, str, str], int] = {}
+    abundance: int = 0
     seqs = {}
     seq_meta_keys = None
     seq_meta = {}
-    seq_col = None
+    seq_col: Optional[int] = None
     with open(tabular_file) as handle:
         for line in handle:
             parts = line.rstrip("\n").split("\t")
@@ -666,12 +693,12 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
                     if value == "0":  # Don't bother with int("0")
                         continue  # Don't store blank values!
                     try:
-                        value = int(value)
+                        abundance = int(value)
                     except ValueError:
                         msg = f"ERROR: Non-integer count for {parts[0]} vs {sample}"
                         raise ValueError(msg) from None
-                    if min_abundance <= value:
-                        counts[marker, idn, sample] = value
+                    if min_abundance <= abundance:
+                        counts[marker, idn, sample] = abundance
                         above_threshold = True
                 if above_threshold:
                     if force_upper:
@@ -689,7 +716,7 @@ def parse_sample_tsv(tabular_file, min_abundance=0, debug=False, force_upper=Tru
                 )
                 raise ValueError(msg)
     # TODO: Turn counts into an array?
-    sample_headers = {sample: {} for sample in samples}
+    sample_headers: dict[str, dict[str, str]] = {sample: {} for sample in samples}
     for parts in header_lines:
         name = parts[0][1:]  # Drop the leading "#"
         for sample, value in zip(samples, parts[1:seq_col]):

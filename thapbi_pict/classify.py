@@ -828,7 +828,7 @@ def main(
             sample = file_to_sample_name(filename)
             # Populate as if this was a single sample tally TSV input:
             input_seqs: dict[str, str] = {}
-            seq_meta = {}
+            seq_meta: dict[tuple[str, str], dict] = {}
             md5_count: dict[str, int] = {}
             tally_counts: dict[tuple[str, str, str], int] = {}
             # TODO - avoid repeated definition here, in summary code, and sample-tally:
