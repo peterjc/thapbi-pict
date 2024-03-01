@@ -294,6 +294,7 @@ def sample_tally(args=None):
         unoise_gamma=args.unoise_gamma,
         denoise_algorithm=args.denoise,
         tmp_dir=args.temp,
+        biom=args.biom,
         debug=args.verbose,
         cpu=check_cpu(args.cpu),
     )
@@ -535,6 +536,7 @@ def pipeline(args=None):
             denoise_algorithm=args.denoise,
             unoise_alpha=args.unoise_alpha,
             unoise_gamma=args.unoise_gamma,
+            biom=f"{stem}.tally.biom",
             tmp_dir=args.temp,
             debug=args.verbose,
             cpu=check_cpu(args.cpu),
@@ -1589,6 +1591,14 @@ def main(args=None):
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument(
+        "-b",
+        "--biom",
+        type=str,
+        default="-",
+        metavar="FILENAME",
+        help="Optional BIOM format output. ",
+    )
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
@@ -1624,8 +1634,8 @@ def main(args=None):
         help="Directory for output reports. Default '' means next to "
         "each input file. Use '-' for stdout.",
     )
-    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)
+    subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.set_defaults(func=classify)

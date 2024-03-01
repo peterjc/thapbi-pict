@@ -56,9 +56,17 @@ fi
 echo "================================"
 echo "Running woody hosts sample-tally"
 echo "================================"
-thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
-            -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
-            -o $TMP/woody_hosts.tally.tsv
+if [ -x "$(command -v biom)" ]; then
+    thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
+                -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+                -o $TMP/woody_hosts.tally.tsv -b $TMP/woody_hosts.tally.biom
+    biom validate-table -i $TMP/woody_hosts.tally.biom
+else
+    thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
+                -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+                -o $TMP/woody_hosts.tally.tsv
+fi
+
 echo diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 
