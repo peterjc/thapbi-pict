@@ -10,6 +10,7 @@ This implements the ``thapbi_pict edit-graph ...`` command.
 
 import sys
 from collections import Counter
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -194,18 +195,18 @@ def write_xgmml(G, handle, name: str = "THAPBI PICT edit-graph") -> None:
 
 
 def main(
-    graph_output,
-    graph_format,
-    db_url,
-    input_file,
-    min_abundance=100,
-    show_db_marker=None,
-    total_min_abundance=0,
-    min_samples=0,
-    max_edit_dist=3,
-    ignore_prefixes=None,
-    debug=False,
-):
+    graph_output: str,
+    graph_format: str,
+    db_url: str,
+    input_file: str,
+    min_abundance: int = 100,
+    show_db_marker: Optional[str] = None,
+    total_min_abundance: int = 0,
+    min_samples: int = 0,
+    max_edit_dist: int = 3,
+    ignore_prefixes: Optional[tuple[str, ...]] = None,
+    debug: bool = False,
+) -> int:
     """Run the edit-graph command with arguments from the command line.
 
     This shows sequences from a database (possibly filtered with species/genus
@@ -226,7 +227,7 @@ def main(
 
     samples = set()
     md5_abundance: dict[str, int] = Counter()
-    md5_sample_count: dict[tuple[str, str], int] = Counter()
+    md5_sample_count: dict[str, int] = Counter()
     abundance_by_samples = {}
     max_sample_abundance: dict[str, int] = {}
     md5_to_seq: dict[str, str] = {}
@@ -280,6 +281,7 @@ def main(
                         assert md5_to_seq[md5] == seq, f"{md5} vs {seq}"
                     else:
                         md5_to_seq[md5] = seq
+            del seqs
             if md5_warn:
                 sys.stderr.write(
                     f"WARNING: Sequence(s) in {filename}"
@@ -409,16 +411,17 @@ def main(
     check_rapidfuzz()
     n = len(md5_to_seq)
     md5_list = sorted(md5_to_seq)
-    seqs = [md5_to_seq[_] for _ in md5_list]
+    seq_list: list[str] = [md5_to_seq[_] for _ in md5_list]
     # Will get values 0, 1, ..., max_edit_dist, or
     # max_edit_dist+1 if distance is higher (was -1 prior to rapidfuzz v2.0.0)
     distances = cdist(
-        seqs,
-        seqs,
+        seq_list,
+        seq_list,
         scorer=Levenshtein.distance,
         dtype=np.int16 if graph_format == "matrix" else np.int8,
         score_cutoff=None if graph_format == "matrix" else max_edit_dist,
     )
+    del seq_list
     sys.stderr.write("Computed Levenshtein edit distances.\n")
     assert (
         min(min(_) for _ in distances) == 0
@@ -481,23 +484,22 @@ def main(
     for md5 in md5_list:
         if md5 not in wanted:
             continue
-        sp = md5_species.get(md5, [])
-        genus = sorted({_.split(None, 1)[0] for _ in sp})
+        sp_list: list[str] = sorted(set(md5_species.get(md5, [])))
+        genera = {_.split(None, 1)[0] for _ in sp_list}
         if md5 not in md5_in_db or not genus:
             node_color = "#808080"  # grey
-        elif len(genus) > 1:
+        elif len(genera) > 1:
             node_color = "#FF8C00"  # dark orange
         elif genus[0] in genus_color:
             node_color = genus_color[genus[0]]
         else:
             node_color = "#8B0000"  # dark red
-        if sp:
+        if sp_list:
             # TODO - Remove this Phytophthora specific hack, or automate it?
-            node_label = "\n".join(sorted(sp)).replace("Phytophthora", "P.")
+            node_label = "\n".join(sp_list).replace("Phytophthora", "P.")
         else:
             # No species, not even genus only - fall back on MD5 as node ID
             node_label = ""
-        genus = ";".join(sorted({_.split(None, 1)[0] for _ in sp}))
         # DB only entries get size zero, FASTA entries can be up to 100.
         node_size = max(1, SIZE * md5_sample_count.get(md5, 0))
         G.add_node(
@@ -508,16 +510,17 @@ def main(
             total_abundance=md5_abundance.get(md5, 0),
             max_sample_abundance=max_sample_abundance.get(md5, 0),
             sample_count=md5_sample_count.get(md5, 0),
-            genus=genus,
-            taxonomy=";".join(sorted(sp)),
+            genus=";".join(sorted(genera)),
+            taxonomy=";".join(sp_list),
             in_db=md5 in md5_in_db,
         )
+        del sp_list
 
     edge_count = 0
     edge_count1 = edge_count2 = edge_count3 = 0
-    edge_style = []
-    edge_width = []
-    edge_color = []
+    edge_style = ""
+    edge_width = 0.0
+    edge_color = ""
     redundant = 0
     for i, check1 in enumerate(md5_list):
         if check1 not in wanted:
@@ -614,7 +617,7 @@ def main(
     if graph_output in ("-", "/dev/stdout"):
         write_fn(G, sys.stdout.buffer)
     else:
-        with open(graph_output, "wb") as handle:
-            write_fn(G, handle)
+        with open(graph_output, "wb") as output_handle:
+            write_fn(G, output_handle)
 
     return 0
