@@ -9,7 +9,9 @@ This implements the ``thapbi_pict sample-tally ...`` command.
 """
 import gzip
 import os
+import shutil
 import sys
+import tempfile
 from collections import Counter
 from collections import defaultdict
 from math import ceil
@@ -22,6 +24,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from .denoise import read_correction
 from .prepare import load_marker_defs
 from .utils import abundance_from_read_name
+from .utils import export_sample_biom
 from .utils import file_to_sample_name
 from .utils import is_spike_in
 from .utils import load_fasta_header
@@ -46,6 +49,7 @@ def main(
     unoise_alpha: float = 2.0,
     unoise_gamma: int = 4,
     gzipped: bool = False,  # output
+    biom: Optional[str] = None,
     tmp_dir: Optional[str] = None,
     debug: bool = False,
     cpu: int = 0,
@@ -442,7 +446,7 @@ def main(
             max_non_spike_abundance[sample] = 0
 
     samples = sorted(samples)  # converting from set to list
-    values = sorted(
+    count_seq = sorted(
         ((count, seq) for seq, count in totals.items()),
         # (sort by marker), then put the highest abundance entries first:
         key=lambda x: (-x[0], x[1]),
@@ -465,6 +469,47 @@ def main(
         "Singletons",
     )
 
+    start = time()
+    # First, BIOM output for the AVS vs samples table
+    if biom:
+        if debug:
+            sys.stderr.write("DEBUG: Starting BIOM output\n")
+        if tmp_dir:
+            # Using same file names, but in tmp folder:
+            tmp_biom = os.path.join(tmp_dir, os.path.basename(biom))
+        else:
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".biom", delete=False
+            ) as handle:
+                handle.write("Put BIOM data here please\n")
+                tmp_biom = handle.name
+        if export_sample_biom(
+            tmp_biom,
+            # Re-insert the marker into the sequence dict keys, and use md5:
+            {(marker, md5seq(seq)): seq for total, seq in count_seq},
+            {
+                (marker, md5seq(seq)): {} for total, seq in count_seq
+            },  # no sequence metadata
+            {sample: {} for sample in samples},  # TODO - sample_meta,
+            {
+                (marker, md5seq(seq), sample): counts.get((seq, sample), 0)
+                for sample in samples
+                for (total, seq) in count_seq
+            },
+        ):
+            # Move our temp file into position...
+            shutil.move(tmp_biom, biom)
+            if debug:
+                sys.stderr.write(f"DEBUG: Wrote {biom}\n")
+        else:
+            sys.exit("ERROR: Missing optional Python library for BIOM output")
+        if debug:
+            time_output = time() - start
+            sys.stderr.write(
+                f"DEBUG: Spent {time_output:0.1f}s writing BIOM output file\n"
+            )
+
+    # Now the main TSV output for our pipeline...
     start = time()
     if output == "-":
         if fasta == "-":
@@ -557,7 +602,7 @@ def main(
         fasta_handle = open(fasta, "w")
     else:
         fasta_handle = None
-    for count, seq in values:
+    for count, seq in count_seq:
         # This is the last time we'll use the counts[seq, *] values,
         # so use pop to gradually reduce the data held in memory.
         data = "\t".join(str(counts.pop((seq, sample), 0)) for sample in samples)
@@ -586,6 +631,7 @@ def main(
     if fasta and fasta != "-":
         assert fasta_handle is not None
         fasta_handle.close()
+
     if debug:
         time_output = time() - start
-        sys.stderr.write(f"DEBUG: Spent {time_output:0.1f}s writing output files\n")
+        sys.stderr.write(f"DEBUG: Spent {time_output:0.1f}s writing TSV output file\n")
