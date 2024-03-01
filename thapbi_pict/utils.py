@@ -487,11 +487,11 @@ def export_sample_biom(output_file, seqs, seq_meta, sample_meta, counts, gzipped
     """Export a sequence vs samples counts BIOM table, with metadata.
 
     Similar to the export_sample_tsv file (our TSV output), expects same
-    arguments as loaded from one of our TSV files via he parse_sample_tsv
+    arguments as loaded from one of our TSV files via the parse_sample_tsv
     function.
 
     Will save a BIOM v2 HDF5 file if possible and return True. If output
-    fails, returns False.
+    fails (e.g. cannot import the biom Python library), returns False.
     """
     from thapbi_pict import __version__
 
