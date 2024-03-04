@@ -632,12 +632,13 @@ def main(
             out_handle.write(f"{marker}/{md5}_{count}\t{data}\t{seq}\n")
         if fasta_handle:
             # Does not export per-sample counts
-            # TODO - Include the marker? Older fasta-nr command did not.
             if md5 in chimeras:
                 # Write any dict value as it is...
-                fasta_handle.write(f">{md5}_{count} chimera {chimeras[md5]}\n{seq}\n")
+                fasta_handle.write(
+                    f">{marker}/{md5}_{count} chimera {chimeras[md5]}\n{seq}\n"
+                )
             else:
-                fasta_handle.write(f">{md5}_{count}\n{seq}\n")
+                fasta_handle.write(f">{marker}/{md5}_{count}\n{seq}\n")
     if output != "-":
         assert out_handle is not None
         out_handle.close()
