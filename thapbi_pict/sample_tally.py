@@ -469,6 +469,64 @@ def main(
         "Max spike-in",
         "Singletons",
     )
+    sample_stats: dict[str, dict[str, Union[int, str, None]]] = {
+        sample: {} for sample in samples
+    }
+    for stat in stats_fields:
+        if stat == "Max non-spike":
+            if not spike_genus:
+                continue
+            for sample in samples:
+                sample_stats[sample][stat] = max_non_spike_abundance[sample]
+        elif stat == "Max spike-in":
+            if not spike_genus:
+                continue
+            for sample in samples:
+                sample_stats[sample][stat] = max_spike_abundance[sample]
+        elif stat == "Control":
+            terms = {
+                (True, True): "Neg/Synth",
+                (True, False): "Negative",
+                (False, True): "Synthetic",
+                (False, False): "Sample",
+            }
+            for sample in samples:
+                sample_stats[sample][stat] = terms[
+                    sample in negative_controls, sample in synthetic_controls
+                ]
+            del terms
+        elif stat == "Threshold":
+            for sample in samples:
+                sample_stats[sample][stat] = sample_threshold[sample]
+        elif stat == "Threshold pool":
+            # Get from FASTA headers
+            stat_values = [
+                sample_headers[sample].get("threshold_pool", None) for sample in samples
+            ]
+            # Try to remove any common folder prefix like raw_data/
+            # or C:/Users/... or /tmp/... - note making str type explicit:
+            common = os.path.commonpath([str(_) for _ in stat_values])
+            if set(stat_values) == {None}:
+                stat_values = [None] * len(stat_values)
+            elif len(set(stat_values)) > 1 and common:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
+                    )
+                stat_values = [_[len(common) + 1 :] for _ in stat_values]
+            elif len(set(stat_values)) == 1:
+                # discard possibly platform specific start
+                common = common.rsplit(os.path.sep, 1)[-1]
+                stat_values = [common] * len(stat_values)
+            for sample, pool in zip(samples, stat_values):
+                sample_stats[sample][stat] = pool
+            del common, pool, stat_values
+        else:
+            # Get from FASTA headers
+            for sample in samples:
+                sample_stats[sample][stat] = sample_headers[sample].get(
+                    stat.lower().replace(" ", "_"), None
+                )
 
     start = time()
     # First, BIOM output for the AVS vs samples table
@@ -486,12 +544,12 @@ def main(
                 tmp_biom = handle.name
         if export_sample_biom(
             tmp_biom,
-            # Re-insert the marker into the sequence dict keys, and use md5:
+            # Created expected marker based sequence dict using md5:
             {(marker, md5seq(seq)): seq for total, seq in count_seq},
             {
                 (marker, md5seq(seq)): {} for total, seq in count_seq
             },  # no sequence metadata
-            {sample: {} for sample in samples},  # TODO - sample_meta,
+            sample_stats,  # internal sample metadata from FASTQ processing
             {
                 (marker, md5seq(seq), sample): counts.get((seq, sample), 0)
                 for sample in samples
@@ -523,61 +581,16 @@ def main(
         out_handle = gzip.open(output, "wt")
     else:
         out_handle = open(output, "w")
-    missing = [None] * len(samples)
-    stat_values: Union[list[int], list[str]] = []
     for stat in stats_fields:
-        if stat == "Max non-spike":
-            if not spike_genus:
-                continue
-            stat_values = [max_non_spike_abundance[sample] for sample in samples]
-        elif stat == "Max spike-in":
-            if not spike_genus:
-                continue
-            stat_values = [max_spike_abundance[sample] for sample in samples]
-        elif stat == "Control":
-            terms = {
-                (True, True): "Neg/Synth",
-                (True, False): "Negative",
-                (False, True): "Synthetic",
-                (False, False): "Sample",
-            }
-            stat_values = [
-                terms[sample in negative_controls, sample in synthetic_controls]
-                for sample in samples
-            ]
-            del terms
-        elif stat == "Threshold":
-            stat_values = [sample_threshold[sample] for sample in samples]
-        else:
-            # Get from FASTA headers
-            stat_values = [
-                sample_headers[sample].get(stat.lower().replace(" ", "_"), None)
-                for sample in samples
-            ]
-            if stat_values == missing:
-                sys.stderr.write(
-                    f"WARNING: Missing all {stat} values in FASTA headers\n"
-                )
-                continue
-            if None in stat_values:
-                sys.stderr.write(
-                    f"WARNING: Missing some {stat} values in FASTA headers\n"
-                )
-        if stat == "Threshold pool":
-            # Try to remove any common folder prefix like raw_data/
-            # or C:/Users/... or /tmp/... - note making str type explicit:
-            common = os.path.commonpath([str(_) for _ in stat_values])
-            if len(set(stat_values)) > 1 and common:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
-                    )
-                stat_values = [_[len(common) + 1 :] for _ in stat_values]
-            elif len(set(stat_values)) == 1:
-                # discard possibly platform specific start
-                common = common.rsplit(os.path.sep, 1)[-1]
-                stat_values = [common] * len(stat_values)
         # Using "-" as missing value to match default in summary reports
+        stat_values = [sample_stats[sample].get(stat, None) for sample in samples]
+        missing = [_ is None for _ in stat_values]
+        if all(missing):
+            sys.stderr.write(f"WARNING: Missing all {stat} values in FASTA headers\n")
+            continue  # don't export it
+        elif any(missing):
+            sys.stderr.write(f"WARNING: Missing some {stat} values in FASTA headers\n")
+        del missing
         out_handle.write(
             "\t".join(
                 ["#" + stat]
