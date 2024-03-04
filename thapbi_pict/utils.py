@@ -487,7 +487,7 @@ def export_sample_biom(
     output_file: str,
     seqs: dict[tuple[str, str], str],  # (marker, idn): seq
     seq_meta: dict[tuple[str, str], dict],  # (marker, idn): dict
-    sample_meta: dict[str, dict[str, str]],
+    sample_meta: dict[str, dict[str, Union[str, int, None]]],  # (sample,): dict
     counts: dict[tuple[str, str, str], int],  # (marker, idn, sample): abundance
     gzipped: bool = True,
 ) -> bool:
