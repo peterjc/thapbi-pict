@@ -1479,9 +1479,9 @@ def main(args=None):
         description="Apply UNOISE based read-correction to denoise FASTA file(s).",
         epilog="This is a simplified version of the sample-tally command. "
         "Input FASTA files should use <prefix>_<count> naming. In the output "
-        "FASTA file each unique sequence will be named <MD5>_<count> using "
-        "the upper case sequence MD5 checksum, and its total abundance "
-        "including contributions from any reads corrected to that sequences.",
+        "FASTA file each unique sequence will be named <prefix>_<count> using "
+        "the first seen name for each sequence in the input files, and its total "
+        "abundance including contributions from any reads corrected to that sequences.",
     )
     subcommand_parser.add_argument(
         "-i",

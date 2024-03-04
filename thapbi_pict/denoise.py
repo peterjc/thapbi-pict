@@ -27,9 +27,9 @@ from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import extract
 from rapidfuzz.process import extract_iter
 
-from .utils import abundance_from_read_name
 from .utils import md5seq
 from .utils import run
+from .utils import split_read_name_abundance
 from .versions import check_tools
 
 
@@ -499,12 +499,14 @@ def main(
 
     This is a simplified version of the ``thapbi_pict sample-tally`` command
     which pools one or more FASTA input files before running the UNOISE read
-    correction algorithm to denoise the dataset.
+    correction algorithm to denoise the dataset. The input sequences should
+    use the SWARM <prefix>_<abundance> style naming, which is used on output
+    (taking the first loaded name if a sequence appears more than once).
 
     Arguments min_length and max_length are applied while loading the input
     FASTA file(s).
 
-    Arguments total_min_abundance is applied after read correction.
+    Argument total_min_abundance is applied after read correction.
 
     Results sorted by decreasing abundance, then alphabetically by sequence.
     """
@@ -520,6 +522,7 @@ def main(
         sys.exit("ERROR: Output directory given, want a FASTA filename.")
 
     totals: dict[str, int] = Counter()
+    seq_names: dict[str, str] = {}
     for filename in inputs:
         if debug:
             sys.stderr.write(f"DEBUG: Parsing {filename}\n")
@@ -527,8 +530,10 @@ def main(
             for _, seq in SimpleFastaParser(handle):
                 seq = seq.upper()
                 if min_length <= len(seq) <= max_length:
-                    a = abundance_from_read_name(_.split(None, 1)[0])
+                    name, a = split_read_name_abundance(_.split(None, 1)[0])
                     totals[seq] += a
+                    if seq not in seq_names:
+                        seq_names[seq] = name
 
     if totals:
         sys.stderr.write(
@@ -559,6 +564,7 @@ def main(
                 assert (
                     totals[seq] < unoise_gamma
                 ), f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
+            del seq_names[seq]
             continue
         seq = corrections[seq]
         new_totals[seq] += a
@@ -593,10 +599,11 @@ def main(
 
     for count, seq in values:
         md5 = md5seq(seq)
+        name = seq_names[seq]
         if md5 in chimeras:
             # Write any dict value as it is...
-            out_handle.write(f">{md5}_{count} chimera {chimeras[md5]}\n{seq}\n")
+            out_handle.write(f">{name}_{count} chimera {chimeras[md5]}\n{seq}\n")
         else:
-            out_handle.write(f">{md5}_{count}\n{seq}\n")
+            out_handle.write(f">{name}_{count}\n{seq}\n")
     if output != "-":
         out_handle.close()
