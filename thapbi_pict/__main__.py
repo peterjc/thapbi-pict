@@ -411,11 +411,11 @@ def edit_graph(args=None):
 
 def pipeline(args=None):
     """Subcommand to run the default classification pipeline."""
+    from .assess import main as assess
+    from .classify import main as classify
     from .prepare import main as prepare
     from .sample_tally import main as sample_tally
-    from .classify import main as classify
     from .summary import main as summary
-    from .assess import main as assess
 
     check_output_stem(args.output, dir_only_ok=True)
     if args.temp:

@@ -29,7 +29,6 @@ from .utils import parse_sample_tsv
 from .utils import species_level
 from .versions import check_rapidfuzz
 
-
 genus_color = {
     # From the VGA colors, in order of DB abundance,
     # dark red for other, grey for none, dark orange for conflicts

@@ -16,7 +16,6 @@ from typing import Optional
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
 
-
 TABLE_HEADER = (
     "sample_alias\tinstrument_model\tlibrary_name\tlibrary_source\t"
     "library_selection\tlibrary_strategy\tdesign_description\t"

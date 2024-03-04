@@ -19,7 +19,6 @@ from typing import Union
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
-
 KMER_LENGTH = 31
 
 
