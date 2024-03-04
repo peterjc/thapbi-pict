@@ -1573,6 +1573,13 @@ def main(args=None):
         metavar="FILENAME",
         help="Optional output FASTA filename, '-' for stdout. ",
     )
+    subcommand_parser.add_argument(
+        "-b",
+        "--biom",
+        type=str,
+        metavar="FILENAME",
+        help="Optional BIOM format output. ",
+    )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
@@ -1590,14 +1597,6 @@ def main(args=None):
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
-    subcommand_parser.add_argument(
-        "-b",
-        "--biom",
-        type=str,
-        default="-",
-        metavar="FILENAME",
-        help="Optional BIOM format output. ",
-    )
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)

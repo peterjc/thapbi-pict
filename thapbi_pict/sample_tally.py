@@ -531,7 +531,7 @@ def main(
     # First, BIOM output for the AVS vs samples table
     if biom:
         if debug:
-            sys.stderr.write("DEBUG: Starting BIOM output\n")
+            sys.stderr.write(f"DEBUG: Starting BIOM output {biom}\n")
         if tmp_dir:
             # Using same file names, but in tmp folder:
             tmp_biom = os.path.join(tmp_dir, os.path.basename(biom))
