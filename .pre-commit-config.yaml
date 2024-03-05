@@ -78,16 +78,6 @@ repos:
     -   id: doc8
         additional_dependencies: [pygments]
         args: [--quiet,--ignore=D001]
--   repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.1
-    hooks:
-    -   id: pyupgrade
-        # Still would like setup to run under Python 2 (and fail nicely)
-        exclude: setup.py
-        args: [
-           --py37-plus,
-           --keep-percent-format,
-        ]
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
