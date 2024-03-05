@@ -61,6 +61,9 @@ if [ -x "$(command -v biom)" ]; then
                 -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
                 -o $TMP/woody_hosts.tally.tsv -b $TMP/woody_hosts.tally.biom
     biom validate-table -i $TMP/woody_hosts.tally.biom
+    # Export the ASV names and their sequences, confirm matches our TSV
+    diff <(biom export-metadata -i $TMP/woody_hosts.tally.biom --observation-metadata-fp /dev/stdout | grep ^ITS1) \
+         <(cut -f 1,124 $TMP/woody_hosts.tally.tsv | grep ^ITS1)
 else
     thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
                 -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
