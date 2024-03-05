@@ -4,7 +4,7 @@ Release History
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v1.0.11 *Pending*  Optional BIOM output from ``sample-tally`` stage (pre-classifier).
+v1.0.11 2024-03-05 Harmonize ASV naming in BIOM output, optional ``sample-tally`` BIOM output.
 v1.0.10 2024-02-26 Sample report 'Unique' column is now the unique ASV count. Misc updates.
 v1.0.9  2024-02-12 Using Python type annotations (internal code change).
 v1.0.8  2024-02-06 Additional curated *Phytophthora* in default DB. Adds ``1s6g`` classifier.
