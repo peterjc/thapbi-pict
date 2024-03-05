@@ -9,6 +9,7 @@ This implements the ``thapbi_pict denoise ...`` command, which is a simplified
 version of the ``thapbi_pict sample-tally ...`` command intended to be easier
 to use outside the THAPBI PICT pipeline.
 """
+
 import gzip
 import os
 import sys

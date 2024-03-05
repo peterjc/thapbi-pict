@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict sample-tally ...`` command.
 """
+
 import gzip
 import os
 import sys

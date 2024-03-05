@@ -8,6 +8,7 @@
 This code is used for importing NCBI formatted FASTA files, our curated ITS1
 sequence FASTA file databases, and other other FASTA naming conventions.
 """
+
 import os
 import re
 import sys

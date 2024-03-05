@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Convert PRJNA417859.txt into metadata.tsv for THAPBI PICT."""
+
 import os
 
 months = {

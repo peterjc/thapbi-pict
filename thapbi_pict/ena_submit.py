@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict ena-submit ...`` command.
 """
+
 import os
 import shutil
 import sys

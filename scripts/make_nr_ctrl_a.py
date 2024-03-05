@@ -1,4 +1,5 @@
 """Make FASTA files non-redundant using Ctrl+A separator."""
+
 import sys
 from typing import Dict
 

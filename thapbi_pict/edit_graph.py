@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict edit-graph ...`` command.
 """
+
 import sys
 from collections import Counter
 

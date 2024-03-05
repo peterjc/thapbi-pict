@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict dump ...`` command.
 """
+
 import sys
 from typing import Optional
 

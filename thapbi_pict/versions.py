@@ -18,6 +18,7 @@ If we cannot parse the output, again the commands return None - which is
 likely an indication of a major version change, meaning the tool ought to be
 re-evaluated for use with THAPBI-PICT.
 """
+
 import sys
 from subprocess import getoutput
 from typing import Optional

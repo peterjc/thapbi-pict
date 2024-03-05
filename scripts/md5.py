@@ -10,6 +10,7 @@ Expected usage, where a TSV file has been download from the ENA::
 
 This requires at least the "fastq_md" and "fastq_ftp" columns be present.
 """
+
 import os
 import sys
 

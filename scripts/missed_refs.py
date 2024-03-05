@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Extract references for unknown FASTA."""
+
 import argparse
 import sys
 from collections import defaultdict

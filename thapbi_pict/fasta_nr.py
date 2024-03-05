@@ -8,6 +8,7 @@
 This implements the ``thapbi_pict fasta-nr ...`` command, using some of the
 same code internally as the ``thapbi_pict prepare-reads`` command.
 """
+
 import os
 import sys
 from collections import Counter
