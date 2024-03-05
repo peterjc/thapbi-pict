@@ -156,7 +156,9 @@ def find_fastq_pairs(
 def parse_cutadapt_stdout(stdout: str) -> tuple[int, int]:
     r"""Extract FASTA count before and after cutadapt.
 
-    >>> parse_cutadapt_stdout("...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n...")
+    >>> parse_cutadapt_stdout(
+    ...     "...\nTotal reads processed: 5,869\n...\nReads written (passing filters): 5,861 (99.9%)\n..."
+    ... )
     (5869, 5861)
     """  # noqa: E501
     before = None
@@ -249,7 +251,9 @@ def run_cutadapt(
 def parse_flash_stdout(stdout: str) -> tuple[int, int]:
     r"""Extract FASTQ pair count before/after running flash.
 
-    >>> parse_flash_stdout("...\n[FLASH] Read combination statistics:[FLASH]     Total pairs:      6105\n[FLASH]     Combined pairs:   5869\n...")
+    >>> parse_flash_stdout(
+    ...     "...\n[FLASH] Read combination statistics:[FLASH]     Total pairs:      6105\n[FLASH]     Combined pairs:   5869\n..."
+    ... )
     (6105, 5869)
     """  # noqa: E501
     before = None

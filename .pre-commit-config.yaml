@@ -41,6 +41,9 @@ repos:
         ]
     # Run the Ruff formatter (black alternative):
     -   id: ruff-format
+        args: [
+            '--config=format.docstring-code-format=true'
+        ]
 -   repo: https://github.com/PyCQA/flake8
     rev: 7.0.0
     hooks:

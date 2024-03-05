@@ -46,11 +46,11 @@ def parse_ncbi_fasta_entry(
     Returns a two-tuple: taxid (always zero), presumed genus-species (may be
     the empty string).
 
-    >>> parse_ncbi_fasta_entry('LC159493.1 Phytophthora drechsleri genes ...')
+    >>> parse_ncbi_fasta_entry("LC159493.1 Phytophthora drechsleri genes ...")
     (0, 'Phytophthora drechsleri')
-    >>> parse_ncbi_fasta_entry('A57915.1 Sequence 20 from Patent EP0751227')
+    >>> parse_ncbi_fasta_entry("A57915.1 Sequence 20 from Patent EP0751227")
     (0, '')
-    >>> parse_ncbi_fasta_entry('Y08654.1 P.cambivora ribosomal internal ...')
+    >>> parse_ncbi_fasta_entry("Y08654.1 P.cambivora ribosomal internal ...")
     (0, '')
 
     If a list of known species are used, then right most word is dropped until
@@ -131,9 +131,9 @@ def parse_ncbi_taxid_entry(
     Uses a regular expression based on taxid=<digits>, and
     only considers the first match:
 
-    >>> parse_ncbi_taxid_entry('HQ013219 Phytophthora arenaria [taxid=]')
+    >>> parse_ncbi_taxid_entry("HQ013219 Phytophthora arenaria [taxid=]")
     (0, '')
-    >>> parse_ncbi_taxid_entry('HQ013219 Phytophthora arenaria [taxid=123] [taxid=456]')
+    >>> parse_ncbi_taxid_entry("HQ013219 Phytophthora arenaria [taxid=123] [taxid=456]")
     (123, '')
     """
     match = taxid_regex.search(text)
@@ -164,13 +164,13 @@ def parse_curated_fasta_entry(
 
     Returns a two-tuple of taxid (0 unless taxid=... entry found), genus-species.
 
-    >>> parse_curated_fasta_entry('HQ013219 Phytophthora arenaria')
+    >>> parse_curated_fasta_entry("HQ013219 Phytophthora arenaria")
     (0, 'Phytophthora arenaria')
 
     Will look for an NCBI taxid after the species name (and ignore anything
     following that, such as other key=value entries):
 
-    >>> parse_curated_fasta_entry('P13660 Phytophthora aff infestans taxid=907744 etc')
+    >>> parse_curated_fasta_entry("P13660 Phytophthora aff infestans taxid=907744 etc")
     (907744, 'Phytophthora aff infestans')
 
     In this example we expect the NCBI taxid will be matched to a pre-loaded

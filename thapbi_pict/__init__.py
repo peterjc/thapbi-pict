@@ -15,7 +15,6 @@ top level package currently only defines the tool version:
 
     >>> from thapbi_pict import __version__
     >>> print(__version__)
-    ...
 
 The `tool documentation <https://thapbi-pict.readthedocs.io/>`_ is
 hosted by `Read The Docs <https://readthedocs.org/>`_, generated
