@@ -508,6 +508,10 @@ def export_sample_biom(
     except ImportError:
         return False
 
+    abundance_values: dict[tuple[str, str], int] = {}
+    for (marker, md5, _sample), a in counts.items():
+        abundance_values[marker, md5] = abundance_values.get((marker, md5), 0) + a
+
     biom_table = Table(
         # BIOM want counts indexed by sequence and sample integer index:
         {
@@ -515,7 +519,11 @@ def export_sample_biom(
             for (marker, md5, sample), a in counts.items()
         },
         # BIOM wants single string names for sequences
-        [f"{marker}/{md5}" for (marker, md5) in seq_meta],
+        # Use same style as sample-tally FASTA output to make using this in Qiime easier
+        [
+            f"{marker}/{md5}_{abundance_values[marker, md5]}"
+            for (marker, md5) in seq_meta
+        ],
         list(sample_meta),
         # Add the sequence itself to the metadata dict for BIOM export:
         [dict([("Sequence", seqs[k]), *list(v.items())]) for k, v in seq_meta.items()],
