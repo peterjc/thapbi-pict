@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict assess ...`` command.
 """
+
 import sys
 from collections import Counter
 

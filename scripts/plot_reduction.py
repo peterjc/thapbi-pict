@@ -6,6 +6,7 @@ paper in PeerJ, using matplotlib. This figure replaced the equivalent figure
 in the preprint https://doi.org/10.1101/2023.03.24.534090 created with
 Microsoft Excel.
 """
+
 import argparse
 import sys
 

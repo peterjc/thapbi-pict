@@ -6,6 +6,7 @@ format as ``figure3.tsv`` (Batovska et al. 2021 data underlying Figure 3,
 exported using our ``figure3.R`` script). Either TSV file can be plotted in
 the style of Figure 3 using the ``recreate_figure3.py`` Python script.
 """
+
 import numpy as np
 
 species_key = [

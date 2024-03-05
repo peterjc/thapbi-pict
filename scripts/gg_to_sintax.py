@@ -4,6 +4,7 @@
 As of v0.2.0 of the script, the input files can optionally be provided inside
 Qiime QZA files (ZIP files with a single in a .../data/... subdirectory).
 """
+
 import argparse
 import gzip
 import io

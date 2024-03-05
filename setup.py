@@ -31,13 +31,15 @@ Or start it as a module::
 
 Either should find the installed copy of the Python code.
 """
+
 from __future__ import print_function  # noqa: UP010
 from __future__ import with_statement  # noqa: UP010
 
 import sys
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages
+    from setuptools import setup
 except ImportError:
     sys.exit(
         "We need the Python library setuptools to be installed. "

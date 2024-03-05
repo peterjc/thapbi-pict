@@ -5,6 +5,7 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 """Pool THAPBI PICT sample report using metadata."""
+
 import argparse
 import re
 import sys

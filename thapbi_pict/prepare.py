@@ -7,6 +7,7 @@
 
 This implements the ``thapbi_pict prepare-reads ...`` command.
 """
+
 import gzip
 import os
 import shutil

@@ -12,6 +12,7 @@ The output is sorted by sequence (case in-sensitive sort).
 
 See also the thapbi_pict fasta-nr and various import commands.
 """
+
 import sys
 from typing import Dict
 

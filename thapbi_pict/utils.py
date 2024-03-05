@@ -4,6 +4,7 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 """Helper functions for THAPB-PICT code."""
+
 import gzip
 import hashlib
 import os

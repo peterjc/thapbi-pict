@@ -13,6 +13,7 @@ and statistics for the internally tracked information about
 each sample like the number of raw reads in the original FASTQ
 files (via header lines in the intermediate FASTA files).
 """
+
 import os
 import sys
 from collections import Counter

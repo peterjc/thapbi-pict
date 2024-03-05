@@ -18,6 +18,7 @@ a simple RST table (with and without a header row respectively).
 
 STRONG WARNING: Do not use this on untrusted input files!
 """
+
 # TODO - Configurable skipped commands prefix/suffix list?
 import os
 import subprocess

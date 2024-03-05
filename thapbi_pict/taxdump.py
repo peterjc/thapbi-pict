@@ -8,6 +8,7 @@
 The code is needed initially for loading an NCBI taxdump folder (files
 ``names.dmp``, ``nodes.dmp``, ``merged.dmp`` etc) into a marker database.
 """
+
 import os
 import sys
 from collections import defaultdict

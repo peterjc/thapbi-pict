@@ -7,6 +7,7 @@ with the output being ">identifier;size=abundance [optional text]" instead.
     $ python swarm2usearch.py swarm.fasta > usearch.fasta
 
 """
+
 import os
 import sys
 

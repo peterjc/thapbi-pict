@@ -23,6 +23,7 @@ does drop uncultured and unidentified entries, and environmental samples.
 WARNING: This may result in duplicated identifiers where the end points
 of a matched sequence differ slightly from the BLAST matches.
 """
+
 import os
 import sys
 from typing import Dict
