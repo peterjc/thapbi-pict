@@ -865,17 +865,18 @@ def load_metadata(
     if min(value_cols) < 0:
         sys.exit("ERROR: Invalid metadata output column, should all be positive.")
     if metadata_index:
-        sample_col = int(metadata_index) - 1
-        if sample_col < 0:
+        sample_cols = [int(_) - 1 for _ in metadata_index.split(",")]
+        if min(sample_cols) < 0:
             sys.exit(
-                "ERROR: Invalid metadata index column, should be positive,"
+                "ERROR: Invalid metadata index column, should all be positive,"
                 f" not {metadata_index!r}."
             )
     else:
-        sample_col = value_cols[0]  # Default is first output column
+        sample_cols = [value_cols[0]]  # Default is first output column
     if debug:
         sys.stderr.write(
-            f"DEBUG: Matching sample names to metadata column {sample_col + 1}\n"
+            "DEBUG: Matching sample names to metadata columns "
+            f"{[_ + 1 for _ in sample_cols]}\n"
         )
 
     if metadata_groups:
@@ -951,15 +952,13 @@ def load_metadata(
     lines = [dequote_line(_.rstrip("\n").split("\t")) for _ in lines]
 
     for _ in lines:
-        if len(_) <= sample_col:
-            sys.exit(f"ERROR: Missing sample column {sample_col+1} in metadata")
+        if len(_) <= max(sample_cols):
+            sys.exit(f"ERROR: Missing column {max(sample_cols)+1} for {_!r}")
         if len(_) <= max(value_cols):
-            sys.exit(
-                f"ERROR: Missing column {max(value_cols)+1} for sample {_[sample_col]}"
-            )
+            sys.exit(f"ERROR: Missing column {max(value_cols)+1} for {_!r}")
 
     # Select columns of interest
-    meta_plus_idx = [[_[i].strip() for i in [*value_cols, sample_col]] for _ in lines]
+    meta_plus_idx = [[_[i].strip() for i in [*value_cols, *sample_cols]] for _ in lines]
 
     # Remove blanks
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
@@ -972,9 +971,12 @@ def load_metadata(
     meta_to_stem = {}
     stem_to_meta = {}
     for meta_and_index in meta_plus_idx:
-        meta = tuple(meta_and_index[:-1])
-        stems = [_.strip() for _ in meta_and_index[-1].split(metadata_index_sep)]
-        stems = [_ for _ in stems if _]  # drop any blanks
+        # The first batch of columns are the metadata, the rest are indexes
+        meta = tuple(meta_and_index[: len(value_cols)])
+        stems = metadata_index_sep.join(meta_and_index[len(value_cols) :]).split(
+            metadata_index_sep
+        )
+        stems = [_.strip() for _ in stems if _]  # drop any blanks
         if ignore_prefixes:
             stems = [_ for _ in stems if not _.startswith(ignore_prefixes)]
         for stem in stems:
