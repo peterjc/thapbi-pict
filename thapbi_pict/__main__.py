@@ -1040,7 +1040,7 @@ ARG_METACOLS = dict(  # noqa: C408
 ARG_METAINDEX = dict(  # noqa: C408
     type=str,
     default="1",
-    metavar="COL",
+    metavar="COLUMNS",
     help="If using metadata, which column contains the sequenced sample "
     "names. Default 1. Field can contain multiple comma separated names "
     "catering to the fact that a field sample could be sequenced multiple "
