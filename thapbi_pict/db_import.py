@@ -267,7 +267,6 @@ def parse_sintax_fasta_entry(
             elif field.startswith("s:"):
                 species = field[2:]
     if genus and species:
-        # Heuristic, will miss e.g. "sp. x"
         if species.startswith(genus) or species.split(None, 1)[0] in genus:
             # Good, genus is present
             return 0, species
