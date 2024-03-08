@@ -839,30 +839,6 @@ ARG_FLIP = dict(  # noqa: C408
     help="Also check reverse complement strand for primers.",
 )
 
-# "-l", "--left",
-ARG_PRIMER_LEFT = dict(  # noqa: C408
-    type=str,
-    default="GAAGGTGAAGTCGTAACAAGG",
-    metavar="PRIMER",
-    help="Left primer sequence, find and remove from start of "
-    "marker sequence. Can use IUPAC ambiguity codes. "
-    "Default 21bp ITS6 'GAAGGTGAAGTCGTAACAAGG' from Cooke "
-    "et al. 2000 https://doi.org/10.1006/fgbi.2000.1202",
-)
-
-# "-r", "--right",
-ARG_PRIMER_RIGHT = dict(  # noqa: C408
-    type=str,
-    default="GCARRGACTTTCGTCCCYRC",
-    metavar="PRIMER",
-    help="Right primer sequence, find and remove reverse "
-    "complement from end of marker sequence. Can use "
-    "IUPAC ambiguity codes. Default 20bp 5.8S-1R primer "
-    "'GCARRGACTTTCGTCCCYRC' from Scibetta et al. 2012 "
-    "https://doi.org/10.1016/j.mimet.2011.12.012 - meaning "
-    "look for 'GYRGGGACGAAAGTCYYTGC' after marker.",
-)
-
 # Read-correction / denoise arguments
 # ===================================
 
