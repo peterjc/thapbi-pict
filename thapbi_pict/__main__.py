@@ -1394,13 +1394,13 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "prepare-reads",
         description="Trim and merge paired FASTQ files of marker amplicons.",
-        epilog="Each pair of input files should follow the naming style"
+        epilog="Each pair of input files should follow the naming style "
         "XXX_1.fastq[.gz] and XXX_2.fastq[.gz], or "
         "XXX_R1.fastq[.gz] and XXX_R2.fastq[.gz], or "
         "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz], and will given an "
-        "output file XXX.fasta. These are non-redundant, entries named by "
-        "checksum and their abundance, and sorted by decreasing abundance "
-        "then alphabetically by sequence.",
+        "output file XXX.fasta. These FASTA files have a header, and their "
+        "sequences are non-redundant, named by MD5 checksum and their abundance, "
+        "and sorted by decreasing abundance then alphabetically by sequence.",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
