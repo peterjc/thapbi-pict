@@ -60,14 +60,14 @@ if sys.version_info[:2] < (3, 7):  # noqa: UP036
 __version__ = "Undefined"
 with open("thapbi_pict/__init__.py") as handle:
     for line in handle:
-        if line.startswith("__version__"):
+        if line.startswith("__version__ = "):
             exec(line.strip())
             break
 
-# Load our markdown file README.rst as the long description.
+# Load our rsStructuredText file README.rst as the long description.
 #
-# Without declaring an encoding, any problematic character in the file, it may
-# fail on Python 3 depending on the user's locale. By explicitly checking it
+# Without declaring an encoding, decoding a problematic character in the file
+# may fail on Python 3 depending on the user's locale. By explicitly checking
 # it is ASCII (could use latin1 or UTF8 if needed later), if any invalid
 # character does appear in our README, this will fail for everyone.
 with open("README.rst", "rb") as handle:
