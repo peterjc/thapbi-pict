@@ -917,9 +917,9 @@ ARG_SYNTHETIC_SPIKE = dict(  # noqa: C408
     type=str,
     default="synthetic",
     metavar="GENUS",
-    help="Comma separated genus list of any spike-in sequences in the "
-    "negative controls, used with the database synthetic controls settings. "
-    "Default 'synthetic'.",
+    help="Comma separated case insensitive genus list of any spike-in "
+    "sequences in the database which should be expected in the negative "
+    "controls. Default 'synthetic', use '' if none.",
 )
 
 # "-y", "--synctrls",
