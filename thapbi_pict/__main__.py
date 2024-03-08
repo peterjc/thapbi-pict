@@ -271,10 +271,13 @@ def sample_tally(args=None):
     """Subcommand to tally per-sample FASTA files using MD5 naming."""
     from .sample_tally import main
 
-    # Connect to the DB,
-    db = expand_database_argument(args.database, exist=True, hyphen_default=True)
-    Session = connect_to_db(db)
-    session = Session()
+    if args.database:
+        # Connect to the DB,
+        db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+        Session = connect_to_db(db)
+        session = Session()
+    else:
+        session = None
 
     return main(
         inputs=args.input,

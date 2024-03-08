@@ -68,11 +68,35 @@ def main(
     (after denoising if being used), increased by pool if negative or
     synthetic controls are given respectively. Comma separated string argument
     spike_genus is treated case insensitively.
+
+    If passing a database via the session argument, the marker argument is
+    optional provided the database defines only one marker.
+
+    If not passing a database by leaving the session argument as None, then
+    the marker argument is required, since there are no synthetic sequences
+    available, both the spike genus and synthetic controls arguments should
+    be empty.
     """
     if isinstance(inputs, str):
         inputs = [inputs]
     assert isinstance(inputs, list)
     assert inputs
+
+    if not session:
+        if not marker:
+            sys.exit(
+                "ERROR: If not passing a database, then the marker name is required"
+            )
+        if synthetic_controls:
+            sys.exit(
+                "ERROR: If not passing a database, "
+                "--synthetic_controls should not be used"
+            )
+        if spike_genus:
+            sys.exit(
+                "ERROR: If not passing a database, "
+                "use --synthetic '' to mean to spike-in genus"
+            )
 
     assert "-" not in inputs
     if synthetic_controls:
@@ -96,21 +120,22 @@ def main(
     if os.path.isdir(output):
         sys.exit("ERROR: Output directory given, want a filename.")
 
-    marker_definitions = load_marker_defs(session, spike_genus)
     spikes: list[tuple[str, str, set[str]]] = []
-    if marker:
-        if not marker_definitions:
-            sys.exit("ERROR: Marker given with -k / --marker not in DB.")
-        marker_def = marker_definitions[marker]
-    elif len(marker_definitions) > 1:
-        sys.exit("ERROR: DB has multiple markers, please set -k / --marker.")
-    else:
-        # Implicit -k / --marker choice as only one in the DB
-        marker, marker_def = marker_definitions.popitem()
-    assert isinstance(marker_def["spike_kmers"], list)
-    spikes = marker_def["spike_kmers"]
-    del marker_def
-    del marker_definitions
+    if session:
+        marker_definitions = load_marker_defs(session, spike_genus)
+        if marker:
+            if not marker_definitions:
+                sys.exit("ERROR: Marker given with -k / --marker not in DB.")
+            marker_def = marker_definitions[marker]
+        elif len(marker_definitions) > 1:
+            sys.exit("ERROR: DB has multiple markers, please set -k / --marker.")
+        else:
+            # Implicit -k / --marker choice as only one in the DB
+            marker, marker_def = marker_definitions.popitem()
+        assert isinstance(marker_def["spike_kmers"], list)
+        spikes = marker_def["spike_kmers"]
+        del marker_def
+        del marker_definitions
     assert marker
 
     totals: dict[str, int] = Counter()
@@ -586,6 +611,9 @@ def main(
         stat_values = [sample_stats[sample].get(stat, None) for sample in samples]
         missing = [_ is None for _ in stat_values]
         if all(missing):
+            if stat in ("Max non-spike", "Max spike-in") and not spike_genus:
+                # Expected to be missing, no warning
+                continue
             sys.stderr.write(f"WARNING: Missing all {stat} values in FASTA headers\n")
             continue  # don't export it
         elif any(missing):

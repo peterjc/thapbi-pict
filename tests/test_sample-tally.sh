@@ -51,6 +51,15 @@ else
          <(cut -f 1,3 $TMP/x.tsv | grep ^ITS1)
 fi
 
+echo "Checking sample-tally without a database"
+rm -rf $TMP/x.*
+thapbi_pict sample-tally -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
+    -o $TMP/x.tsv --fasta $TMP/x.fasta --database "" --synthetic "" --marker ITS1
+# Should match except missing two header lines:
+# #Max non-spike  1170
+# #Max spike-in   0
+diff $TMP/x.tsv <(grep -v "^#.*spike" tests/sample-tally/DNAMIX_S95_L001.tally.tsv)
+
 echo "----------------"
 echo "Checking denoise"
 echo "----------------"
