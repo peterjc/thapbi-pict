@@ -460,7 +460,7 @@ def main(
         sys.stderr.write("DEBUG: Sorted, about to start output...\n")
 
     # TODO - avoid double definition here and in summary code:
-    stats_fields = (
+    stats_fields: tuple[str, ...] = (
         "Raw FASTQ",
         "Flash",
         "Cutadapt",
@@ -471,6 +471,12 @@ def main(
         "Max spike-in",
         "Singletons",
     )
+    if not spike_genus:
+        stats_fields = tuple(
+            stat
+            for stat in stats_fields
+            if stat not in ("Max non-spike", "Max spike-in")
+        )
     sample_stats: dict[str, dict[str, Union[int, str, None]]] = {
         sample: {} for sample in samples
     }
