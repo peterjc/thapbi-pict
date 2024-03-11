@@ -34,6 +34,10 @@ if [ `thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.t
 if [ `thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -f gml | grep -c "  edge \["` -ne 1 ]; then echo echo "Wrong edge count"; false; fi
 
 # Same example, but PDF output (more dependencies):
-thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -f pdf | grep "%PDF-1.4"
+if ! [ -x "$(command -v fdp)" ]; then
+    echo "Skipping testing PDF output using GraphViz fdp"
+else
+    thapbi_pict edit-graph -d '' -i tests/sample-tally/DNAMIX_S95_L001.tally.tsv -t 200 -f pdf | grep "%PDF-1.4"
+fi
 
 echo "$0 - test_edit-graph.sh passed"

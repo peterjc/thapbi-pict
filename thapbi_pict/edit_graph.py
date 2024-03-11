@@ -32,6 +32,7 @@ from .utils import md5seq
 from .utils import parse_sample_tsv
 from .utils import species_level
 from .versions import check_rapidfuzz
+from .versions import check_tools
 
 genus_color = {
     # From the VGA colors, in order of DB abundance,
@@ -68,6 +69,8 @@ genus_color = {
 def write_pdf(G, handle) -> None:
     """Render NetworkX graph to PDF using GraphViz fdp."""
     # TODO: Try "sfdp" but need GraphViz built with triangulation library
+    check_tools(["fdp"], debug=False)
+
     default = G.graph["node_default"]["color"]
     node_colors = [G.nodes[_].get("color", default) for _ in G]
 

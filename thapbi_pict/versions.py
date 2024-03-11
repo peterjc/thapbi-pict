@@ -61,6 +61,7 @@ def check_tools(names: list[str], debug: bool) -> list[str]:
         "blastn": version_blast,
         "cutadapt": version_cutadapt,
         "flash": version_flash,
+        "fdp": version_graphviz_fdp,
         "makeblastdb": version_blast,
         "usearch": version_usearch,
         "vsearch": version_vsearch,
@@ -85,6 +86,29 @@ def check_tools(names: list[str], debug: bool) -> list[str]:
         sys.exit("ERROR: Missing external tool(s): " + ",".join(missing))
     else:
         return versions
+
+
+def version_graphviz_fdp(cmd: str = "fdp") -> Optional[str]:
+    """Return the version of the GraphViz tool fdp (as a short string).
+
+    Depends on the -V switch::
+
+        $ fdp -V
+        fdp - graphviz version 9.0.0 (0)
+
+    In the above example, it would behave as follows:
+
+    >>> version_graphviz_fdp()
+    '9.0.0'
+
+    If the command is not on the path, returns None.
+    """
+    text = getoutput(cmd + " -V")
+    for line in text.splitlines():
+        if line.startswith("fdp - graphviz version "):
+            words = line.strip().split()
+            return words[4]
+    return None
 
 
 def version_blast(cmd: str = "blastn") -> Optional[str]:
