@@ -55,10 +55,6 @@ if [ -x "$(command -v biom)" ]; then
     echo "Checking BIOM output has sequence, genus-species, and taxid metadata:"
     biom export-metadata -i $TMP/output/thapbi-pict.ITS1.onebp.biom \
         --observation-metadata-fp /dev/stdout | grep "^.Sequence.genus-species.taxid$"
-    # Currently read-report does not include the taxid, so nor does the BIOM version
-    echo "Checking BIOM output has sequence, and genus-species metadata:"
-    biom export-metadata -i $TMP/output/thapbi-pict.ITS1.onebp.biom \
-        --observation-metadata-fp /dev/stdout | grep "^.Sequence.genus-species$"
     echo "BIOM output looks fine"
 else
     # can't use --biom option:
