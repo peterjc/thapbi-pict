@@ -5,6 +5,8 @@
 # file that should have been included as part of this package.
 """Helper functions for THAPB-PICT code."""
 
+from __future__ import annotations
+
 import gzip
 import hashlib
 import os

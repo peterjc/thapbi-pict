@@ -8,6 +8,8 @@
 This implements the ``thapbi_pict edit-graph ...`` command.
 """
 
+from __future__ import annotations
+
 import sys
 from collections import Counter
 from typing import Optional

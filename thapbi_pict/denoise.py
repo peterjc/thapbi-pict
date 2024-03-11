@@ -10,6 +10,8 @@ version of the ``thapbi_pict sample-tally ...`` command intended to be easier
 to use outside the THAPBI PICT pipeline.
 """
 
+from __future__ import annotations
+
 import gzip
 import os
 import sys

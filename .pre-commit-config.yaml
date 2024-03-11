@@ -35,9 +35,10 @@ repos:
             '--fix',
             '--exit-non-zero-on-fix',
             '--extend-select=B,PIE,D,I,ISC,UP',
-            '--extend-ignore=D203,D213,UP031',
+            '--extend-ignore=D203,D213,UP007,UP031',
             '--config=lint.isort.force-single-line=true',
             '--config=lint.isort.order-by-type=false',
+            '--config=lint.pyupgrade.keep-runtime-typing=true'
         ]
     # Run the Ruff formatter (black alternative):
     -   id: ruff-format

@@ -5,6 +5,8 @@
 # file that should have been included as part of this package.
 """Explore conflicts at species and genus level."""
 
+from __future__ import annotations
+
 import sys
 
 from sqlalchemy.orm import aliased

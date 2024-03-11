@@ -8,6 +8,8 @@
 This implements the ``thapbi_pict sample-tally ...`` command.
 """
 
+from __future__ import annotations
+
 import gzip
 import os
 import shutil
