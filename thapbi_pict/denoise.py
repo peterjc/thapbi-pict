@@ -436,8 +436,8 @@ def vsearch(
 def read_correction(
     algorithm: str,
     counts: dict[str, int],
-    unoise_alpha: Optional[float] = 2.0,
-    unoise_gamma: Optional[int] = 4,
+    unoise_alpha: Optional[float] = None,
+    unoise_gamma: Optional[int] = None,
     abundance_based: bool = False,
     tmp_dir: Optional[str] = None,
     debug: bool = False,

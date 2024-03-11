@@ -49,8 +49,8 @@ def main(
     min_length: int = 0,
     max_length: int = sys.maxsize,
     denoise_algorithm: str = "-",
-    unoise_alpha: float = 2.0,
-    unoise_gamma: int = 4,
+    unoise_alpha: Optional[float] = None,
+    unoise_gamma: Optional[int] = None,
     gzipped: bool = False,  # output
     biom: Optional[str] = None,
     tmp_dir: Optional[str] = None,
