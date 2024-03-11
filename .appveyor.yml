@@ -9,8 +9,7 @@ init:
 
 environment:
   matrix:
-    - PYTHON: "C:\\Python310-x64"
-    # - PYTHON: "C:\\Python310"
+    - PYTHON: "C:\\Python312-x64"
 
 matrix:
   fast_finish: true
