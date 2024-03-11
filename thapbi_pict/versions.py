@@ -19,6 +19,8 @@ likely an indication of a major version change, meaning the tool ought to be
 re-evaluated for use with THAPBI-PICT.
 """
 
+from __future__ import annotations
+
 import sys
 from subprocess import getoutput
 from typing import Optional

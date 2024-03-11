@@ -14,6 +14,8 @@ each sample like the number of raw reads in the original FASTQ
 files (via header lines in the intermediate FASTA files).
 """
 
+from __future__ import annotations
+
 import os
 import sys
 from collections import Counter

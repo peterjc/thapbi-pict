@@ -8,6 +8,8 @@
 This implements the ``thapbi_pict classify ...`` command.
 """
 
+from __future__ import annotations
+
 import os
 import shutil
 import sys

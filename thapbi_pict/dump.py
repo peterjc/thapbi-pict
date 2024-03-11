@@ -8,6 +8,8 @@
 This implements the ``thapbi_pict dump ...`` command.
 """
 
+from __future__ import annotations
+
 import sys
 from typing import Optional
 

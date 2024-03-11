@@ -48,9 +48,9 @@ except ImportError:
 
 
 # Make sure we have the right Python version.
-if sys.version_info[:2] < (3, 9):  # noqa: UP036
+if sys.version_info[:2] < (3, 8):  # noqa: UP036
     sys.exit(
-        "THAPBI PICT requires Python 3.9 or later. "
+        "THAPBI PICT requires Python 3.8 or later. "
         "Python %d.%d detected.\n" % sys.version_info[:2]
     )
 
@@ -103,7 +103,7 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.8",
     entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
     packages=find_packages(),
     include_package_data=True,
