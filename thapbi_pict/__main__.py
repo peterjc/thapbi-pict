@@ -848,7 +848,7 @@ ARG_DENOISE = dict(  # noqa: C408
     default="-",
     help="Optional read-correction algorithm, default '-' for none. "
     "Use 'unoise-l' for built-in reimplementation of the Levenshtein distance "
-    "UNOISE algorithm as described in Edgar (2016) Use 'usearch' to "
+    "UNOISE algorithm as described in Edgar (2016). Use 'usearch' to "
     "call external tool 'usearch -unoise3 ...' and the original "
     "author's UNOISE3 implementation. Use 'vsearch' to call "
     "external tool 'vsearch --cluster_unoise ...' and their UNOISE3 "
