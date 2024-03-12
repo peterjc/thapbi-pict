@@ -27,7 +27,7 @@ thapbi_pict import 2>&1 | grep "the following arguments are required"
 thapbi_pict import -c ncbi -d sqlite:///:memory: --input tests/ncbi-import/20th_Century_ITS1.fasta 2>&1 | grep "Taxonomy table empty"
 set -o pipefail
 
-if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
+if [ ! -f "new_taxdump_2019-09-01.zip" ]; then curl -L -O "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/new_taxdump_2019-09-01.zip"; fi
 if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip nodes.dmp names.dmp merged.dmp -d new_taxdump_2019-09-01; fi
 
 
