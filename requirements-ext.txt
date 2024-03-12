@@ -1,10 +1,11 @@
-# These are the external (non-Python) dependencies, best installed with
+# These are external dependencies (not available via PyPI and pip),
+# best installed with:
 #
 # $ conda install --file requirements-ext.txt
 #
 # We assume you have the default channel, conda-forge, and bioconda.
 
-biom-format
+biom-format >=2.1.15
 blast
 flash
 graphviz

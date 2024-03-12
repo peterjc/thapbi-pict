@@ -49,6 +49,13 @@ mkdir $TMP/intermediate_with_cache $TMP/output $TMP/merged_cache
 if [ -x "$(command -v biom)" ]; then
     thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/ --biom
     biom validate-table -i $TMP/output/thapbi-pict.ITS1.onebp.biom
+    # Hold off checking the metadata column order pending biom-format update:
+    # biom export-metadata -i $TMP/output/thapbi-pict.ITS1.onebp.biom \
+    #     --sample-metadata-fp /dev/stdout
+    echo "Checking BIOM output has sequence, genus-species, and taxid metadata:"
+    biom export-metadata -i $TMP/output/thapbi-pict.ITS1.onebp.biom \
+        --observation-metadata-fp /dev/stdout | grep "^.Sequence.genus-species.taxid$"
+    echo "BIOM output looks fine"
 else
     # can't use --biom option:
     thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache -o $TMP/output/thapbi-pict -i tests/reads/
