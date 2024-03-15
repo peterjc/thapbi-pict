@@ -1,6 +1,9 @@
 Release History
 ===============
 
+The following table lists a consise summary of the main changes in each release. Please see
+https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
+
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
@@ -8,7 +11,7 @@ v1.0.12 2024-03-11 Restored Python 3.8 support. More robust import of SINTAX sty
 v1.0.11 2024-03-05 Harmonize ASV naming in BIOM output, optional ``sample-tally`` BIOM output.
 v1.0.10 2024-02-26 Sample report 'Unique' column is now the unique ASV count. Misc updates.
 v1.0.9  2024-02-12 Using Python type annotations (internal code change). Python 3.9 onwards.
-v1.0.8  2024-02-06 Additional curated *Phytophthora* in default DB. Adds ``1s6g`` classifier.
+v1.0.8  2024-02-06 Additional curated *Phytophthora* in default DB including 15 novel taxa.
 v1.0.7  2024-01-29 Treat *Phytophthora cambivora* as a synonym of *Phytophthora x cambivora*.
 v1.0.6  2024-01-24 Added some *Peronosclerospora* to curated DB. Updated NCBI import.
 v1.0.5  2023-11-22 Updated NCBI import, and scripted most of what was a semi-manual process.
