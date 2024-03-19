@@ -10,7 +10,7 @@ mkdir -p intermediate/ summary/
 # Takes arguments via variable names
 function import_marker {
     echo "Trimming $GENE sequences for $MARKER"
-    export RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
+    RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
     # Doing the left and right primer trimming separately:
     cutadapt --quiet -g $LEFT $GENE.fasta \
       | cutadapt --quiet -a $RIGHT_RC -o $MARKER.fasta /dev/stdin
