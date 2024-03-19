@@ -26,6 +26,14 @@ repos:
         entry: '\t'
         language: pygrep
         files: \.(py|sh|rst|yml|yaml)$
+-   repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+    -   id: shellcheck
+        args: [
+            '--exclude=SC2046',
+            '--severity=warning',
+        ]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.3.0
     hooks:
