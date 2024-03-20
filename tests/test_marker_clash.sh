@@ -22,7 +22,7 @@ export DB=$TMP/clashes.sqlite
 set -x
 
 cutadapt --discard-untrimmed --quiet -g GAAGGTGAAGTCGTAACAAGG...GYRGGGACGAAAGTCYYTGC \
-         database/controls.fasta -o $TMP/trimmed-controls.fasta
+    database/controls.fasta -o $TMP/trimmed-controls.fasta
 
 # This also defines the marker name, primers, and length range for preparing reads
 thapbi_pict import -d $DB -i $TMP/trimmed-controls.fasta -x \
@@ -39,12 +39,30 @@ thapbi_pict import -d $DB -i $TMP/three_controls.fasta -x \
     -k NotITS1 -l ATGCGATACTTGGTGTGAAT -r GACGCTTCTCCAGACTACAAT \
     --minlen 50 --maxlen 250
 
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_definition;"` -ne "2" ]; then echo "Wrong marker count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "3" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "8" ]; then echo "Wrong sequence_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "5" ]; then echo "Wrong marker_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "8" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l` -ne 8 ]; then echo "Wrong species count"; false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM marker_definition;") -ne "2" ]; then
+    echo "Wrong marker count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM data_source;") -ne "3" ]; then
+    echo "Wrong data_source count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;") -ne "8" ]; then
+    echo "Wrong sequence_source count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;") -ne "5" ]; then
+    echo "Wrong marker_sequence count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;") -ne "8" ]; then
+    echo "Wrong taxonomy count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l) -ne 8 ]; then
+    echo "Wrong species count"
+    false
+fi
 
 # This should fail - it should spot the 3 marker level conflicts
 set +o pipefail
@@ -55,7 +73,7 @@ diff $TMP/conflicts.tsv tests/marker_clash/conflicts.tsv
 for M in identity onebp substr 1s5g; do
     # This should work, making it explicit to use ITS1:
     rm -rf $TMP/*.tsv
-    thapbi_pict classify -m $M  -d $DB -i tests/marker_clash/GBLOCK-example.fasta -o $TMP/ -k ITS1
+    thapbi_pict classify -m $M -d $DB -i tests/marker_clash/GBLOCK-example.fasta -o $TMP/ -k ITS1
     diff $TMP/GBLOCK-example.${M}.tsv tests/marker_clash/GBLOCK-example.ITS1.${M}.tsv
 
     # Doesn't yet, but this should ideally fail (mismatch between DB and FASTA header information):
@@ -66,7 +84,7 @@ for M in identity onebp substr 1s5g; do
 
     # This should fail (multiple markers and not told which one to use):
     set +o pipefail
-    thapbi_pict classify -m $M -d $DB  -i tests/marker_clash/GBLOCK-example.fasta -o - 2>&1 | grep "DB has multiple amplicon markers"
+    thapbi_pict classify -m $M -d $DB -i tests/marker_clash/GBLOCK-example.fasta -o - 2>&1 | grep "DB has multiple amplicon markers"
     set -o pipefail
 done
 

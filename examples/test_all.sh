@@ -5,7 +5,7 @@ set -euo pipefail
 # and probably need to have used run_all.sh too.
 
 # Only look at documented examples, and run them in that order:
-for example in `grep "/index" ../docs/examples/index.rst | cut -f 1 -d "/" | cut -c 4-`; do
+for example in $(grep "/index" ../docs/examples/index.rst | cut -f 1 -d "/" | cut -c 4-); do
     echo "================================="
     echo "Checking docs for $example"
     echo "================================="

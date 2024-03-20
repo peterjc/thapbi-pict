@@ -10,13 +10,13 @@ mkdir -p intermediate/ summary/
 # Takes arguments via variable names
 function import_marker {
     echo "Trimming $GENE sequences for $MARKER"
-    RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
+    RIGHT_RC=$(python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))")
     # Doing the left and right primer trimming separately:
-    cutadapt --quiet -g $LEFT $GENE.fasta \
-      | cutadapt --quiet -a $RIGHT_RC -o $MARKER.fasta /dev/stdin
+    cutadapt --quiet -g $LEFT $GENE.fasta |
+        cutadapt --quiet -a $RIGHT_RC -o $MARKER.fasta /dev/stdin
     echo "Adding $GENE $MARKER to database"
-    thapbi_pict import -d $DB -i $MARKER.fasta  -x \
-                -k $MARKER --left $LEFT --right $RIGHT
+    thapbi_pict import -d $DB -i $MARKER.fasta -x \
+        -k $MARKER --left $LEFT --right $RIGHT
 }
 
 # Takes arguments via variable names
@@ -29,10 +29,10 @@ function analyse {
     mkdir -p intermediate/${LIBRARY}/
     for METHOD in identity onebp blast; do
         thapbi_pict pipeline -d $DB -m $METHOD \
-                    -i raw_data/$LIBRARY/ expected/$LIBRARY/ \
-                    -s intermediate/${LIBRARY}/ \
-                    -o summary/${LIBRARY} -a 10 -f 0 \
-                    -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
+            -i raw_data/$LIBRARY/ expected/$LIBRARY/ \
+            -s intermediate/${LIBRARY}/ \
+            -o summary/${LIBRARY} -a 10 -f 0 \
+            -t metadata_$LIBRARY.tsv -c 5,6,7,3,4,2 -x 1 -g 6
     done
     echo "$LIBRARY done"
 }
@@ -45,10 +45,9 @@ function edit_graph {
     # Including relevant DB entries with -k / --marker argument
     # Do not show the classifier output by using tally file
     thapbi_pict edit-graph -d $DB -k $MARKER \
-                -i summary/${LIBRARY}.${MARKER}.tally.tsv -a 75 \
-                -o summary/${LIBRARY}.${MARKER}.edit-graph.a75.xgmml
+        -i summary/${LIBRARY}.${MARKER}.tally.tsv -a 75 \
+        -o summary/${LIBRARY}.${MARKER}.edit-graph.a75.xgmml
 }
-
 
 DB=fungi_solo.sqlite
 if [ ! -f $DB ]; then
@@ -60,7 +59,7 @@ if [ ! -f $DB ]; then
     MARKER=BITS-B58S3
     LEFT=ACCTGCGGARGGATC
     RIGHT=GAGATCCRTTGYTRAAAGTT
-    import_marker  # call function above
+    import_marker # call function above
 fi
 
 echo =====================================================
@@ -68,10 +67,10 @@ echo Amplicon library one - ITS1 - BITS/B58S3 primers only
 echo =====================================================
 
 LIBRARY=AL1
-analyse  # call function above
+analyse # call function above
 
 MARKER=BITS-B58S3
-edit_graph  # call function abover
+edit_graph # call function abover
 
 echo ================================================
 echo Amplicon library two - ITS1 - BITS/B58S3 primers
@@ -81,10 +80,10 @@ echo really used ITS1f/ITS2 primers which amplify a
 echo a larger fragment, see below.
 
 LIBRARY=AL2
-analyse  # call function above
+analyse # call function above
 
 MARKER=BITS-B58S3
-edit_graph  # call function above
+edit_graph # call function above
 
 DB=fungi_duo.sqlite
 if [ ! -f $DB ]; then
@@ -96,14 +95,14 @@ if [ ! -f $DB ]; then
     MARKER=ITS1f-ITS2
     LEFT=CTTGGTCATTTAGAGGAAGTAA
     RIGHT=GCTGCGTTCTTCATCGATGC
-    import_marker  # call function above
+    import_marker # call function above
 
     GENE=ITS2
     LIBRARY=AL2
     MARKER=ITS3-KYO2-ITS4-KYO3
     LEFT=GATGAAGAACGYAGYRAA
     RIGHT=CTBTTVCCKCTTCACTCG
-    import_marker  # call function above
+    import_marker # call function above
 fi
 
 echo ================================================
@@ -113,10 +112,10 @@ echo ITS2 - ITS3-KYO2/ITS4-KYO3 primers
 echo ================================================
 
 LIBRARY=AL2
-analyse  # call function above
+analyse # call function above
 
 for MARKER in ITS1f-ITS2 ITS3-KYO2-ITS4-KYO3; do
-    edit_graph  # call function above
+    edit_graph # call function above
 done
 
 echo ====

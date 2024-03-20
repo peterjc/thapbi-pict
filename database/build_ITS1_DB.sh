@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
+VERSION=$(thapbi_pict -v | sed "s/THAPBI PICT //g")
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
 TAX=taxdmp_2024-02-01
@@ -33,7 +33,6 @@ sqlite3 "$DB.sqlite" "DELETE FROM taxonomy WHERE ncbi_taxid=53983;"
 # Now add synonym
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=2056922), 'Phytophthora cambivora');"
 
-
 # ==========================
 # G-BLOCK synthetic controls
 # ==========================
@@ -45,8 +44,8 @@ sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (
 cutadapt --discard-untrimmed --quiet -g GAAGGTGAAGTCGTAACAAGG...GYRGGGACGAAAGTCYYTGC controls.fasta -o trimmed-controls.fasta
 # This also defines the marker name, primers, and length range for preparing reads
 thapbi_pict import -d "$DB.sqlite" -i trimmed-controls.fasta \
-            -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC \
-            --minlen 100 --maxlen 1000
+    -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC \
+    --minlen 100 --maxlen 1000
 
 # ===============
 # Single isolates
@@ -59,12 +58,12 @@ thapbi_pict import -d "$DB.sqlite" -i single_isolates/*.fasta
 # ===================
 # These are multi-entries per FASTA sequence, using semi-colon:
 thapbi_pict import -d "$DB.sqlite" -s ";" -g -s ";" \
-            -i Oomycota_ITS1_obs.fasta
+    -i Oomycota_ITS1_obs.fasta
 
 # Single entry per FASTA sequence, where semi-colon may appear in free text.
 # Length limits deliberately more cautious than the pipeline settings above.
 thapbi_pict import -d "$DB.sqlite" -c ncbi -g --minlen 150 --maxlen 450 \
-            -i Oomycota_ITS1_w32.fasta
+    -i Oomycota_ITS1_w32.fasta
 
 # Add hoc fixes for some accessions apparently with wrong genus
 # MN128447.1 probably not Phytopythium vexans, but Phytophthora

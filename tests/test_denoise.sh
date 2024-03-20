@@ -11,7 +11,7 @@ set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp/thapbi_pict}/sample-tally
-    rm -rf $TMP
+rm -rf $TMP
 mkdir -p $TMP
 
 echo "================"
@@ -26,7 +26,7 @@ for AFTER in tests/read-correction/*.unoise.fasta; do
     BEFORE=${AFTER%%.*}.before.fasta
     echo "Checking denoising $BEFORE --> $AFTER (UNOISE)"
     thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise unoise-l --minlen 60 -t 0 -α 2.0 -γ 4
+        --denoise unoise-l --minlen 60 -t 0 -α 2.0 -γ 4
     echo diff $TMP/after.fasta $AFTER
     diff $TMP/after.fasta $AFTER
 done
@@ -43,7 +43,7 @@ else
         BEFORE=${AFTER%%.*}.before.fasta
         echo "Checking denoising $BEFORE --> $AFTER (VSEARCH)"
         thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise vsearch --minlen 60 -t 0
+            --denoise vsearch --minlen 60 -t 0
         echo diff $TMP/after.fasta $AFTER
         diff $TMP/after.fasta $AFTER
 
@@ -57,7 +57,7 @@ else
         # Also while both are sorted by abundance, tie breaking differs.
         # So, can just compare the title lines (MD5 and abundance)
         diff <(grep "^>" $TMP/vsearch.fasta | sort) \
-             <(python scripts/swarm2usearch.py $AFTER | grep "^>" | cut -f 1 -d " " | sort)
+            <(python scripts/swarm2usearch.py $AFTER | grep "^>" | cut -f 1 -d " " | sort)
     done
 fi
 
@@ -76,7 +76,7 @@ else
         fi
         echo "Checking denoising $BEFORE --> $AFTER (USEARCH)"
         thapbi_pict denoise -i $BEFORE -o $TMP/after.fasta \
-                --denoise usearch --minlen 60 -t 0
+            --denoise usearch --minlen 60 -t 0
         echo diff $TMP/after.fasta $AFTER
         diff $TMP/after.fasta $AFTER
 
@@ -91,7 +91,7 @@ else
         # The ampout file does use MD5, but not easily compared
         # and it line-wraps the sequences...
         diff <(grep "^>" $TMP/usearch_ampout.fasta | cut -c 2-33 | sort) \
-             <(grep "^>" $AFTER | cut -c 2-33 | sort)
+            <(grep "^>" $AFTER | cut -c 2-33 | sort)
     done
 fi
 

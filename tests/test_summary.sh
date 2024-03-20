@@ -29,7 +29,7 @@ diff $TMP/summary.samples.1s3g.tsv tests/summary_meta/summary.samples.1s3g.tsv
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-u \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -u
-diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv  # no change
+diff $TMP/summary-u.reads.1s3g.tsv tests/summary_meta/summary.reads.1s3g.tsv # no change
 diff $TMP/summary-u.samples.1s3g.tsv tests/summary_meta/summary-u.samples.1s3g.tsv
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-q \
@@ -39,7 +39,7 @@ diff $TMP/summary-q.samples.1s3g.tsv tests/summary_meta/summary-q.samples.1s3g.t
 
 thapbi_pict summary -i tests/summary_meta/ -m 1s3g -o $TMP/summary-qu \
     -t tests/summary_meta/metadata.tsv -x 4 -c 1,2 -q -u
-diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv  # no change
+diff $TMP/summary-qu.reads.1s3g.tsv tests/summary_meta/summary-q.reads.1s3g.tsv # no change
 diff $TMP/summary-qu.samples.1s3g.tsv tests/summary_meta/summary-qu.samples.1s3g.tsv
 
 # With metadata, using default method, -m onebp
@@ -61,7 +61,6 @@ thapbi_pict summary --input tests/classify/ -o $TMP/summary \
     -t tests/classify/P-infestans-etc.meta.tsv -x 1 -c 2,3,4,5 -e latin1
 diff $TMP/summary.reads.onebp.tsv tests/classify/P-infestans-etc.reads.tsv
 diff $TMP/summary.samples.onebp.tsv tests/classify/P-infestans-etc.samples.tsv
-
 
 # Passing filename, default method, explicit min abundance
 # Note:

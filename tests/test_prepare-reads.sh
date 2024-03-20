@@ -33,37 +33,52 @@ rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 0 -f 0 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "822" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "822" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 
 # In this case, --flip makes no difference
 # Using merged cache also should make no difference
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --flip --merged-cache $TMP/merged_cache/ -a 0 -f 0 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "822" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "822" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 
 rm -rf $TMP/ITS1
 # Reusing the pre-primer-trim pre-abundance cache here:
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --merged-cache $TMP/merged_cache/ -a 5 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 -d $DB --database '-'
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 -d $DB
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "27" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 
 echo "---------------------"
 echo "With negative control"
 echo "---------------------"
 echo "Generating mock control file"
 rm -rf $TMP/pool/
-mkdir  $TMP/pool/
+mkdir $TMP/pool/
 cp tests/reads/DNAMIX_S95_L001_*.fastq.gz $TMP/pool/
 # Using just 50 real reads (50 * 4 = 200 lines), and alternative extension
 set +o pipefail
@@ -73,7 +88,10 @@ set -o pipefail
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100
-if [ `grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta` -ne "7" ]; then echo "Wrong FASTA output count"; false; fi
+if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "7" ]; then
+    echo "Wrong FASTA output count"
+    false
+fi
 diff $TMP/ITS1/DNAMIX_S95_L001.fasta tests/prepare-reads/DNAMIX_S95_L001.fasta
 
 # Testing primers (default)
@@ -104,7 +122,7 @@ thapbi_pict import -d $DB -x -k Nema --minlen 150 --maxlen 350 \
 rm -rf $TMP/Nema
 thapbi_pict prepare-reads -d $DB \
     -i tests/nematodes/sample_R*.fastq.gz -a 10 -o $TMP/
-diff $TMP/Nema/sample.fasta tests/nematodes/sample_noflip_a10.fasta  # empty!
+diff $TMP/Nema/sample.fasta tests/nematodes/sample_noflip_a10.fasta # empty!
 
 rm -rf $TMP/Nema
 thapbi_pict prepare-reads --database $DB \

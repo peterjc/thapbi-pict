@@ -28,24 +28,39 @@ if [ ! -d "new_taxdump_2019-09-01" ]; then unzip new_taxdump_2019-09-01.zip node
 thapbi_pict load-tax -d "sqlite:///:memory:" -t new_taxdump_2019-09-01
 
 # Same taxonomy as database/build_ITS1_DB.sh via tests/test_build_db.sh (old style, ~50MB)
-export `grep ^TAX= database/build_ITS1_DB.sh`
+export $(grep ^TAX= database/build_ITS1_DB.sh)
 if [ ! -f "${TAX}.zip" ]; then curl -L -O "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/${TAX}.zip"; fi
 if [ ! -d "database/${TAX}" ]; then unzip ${TAX}.zip nodes.dmp names.dmp merged.dmp -d database/${TAX}; fi
 
 # 2025987 = Nothophytophthora
 export DB=$TMP/Nothophytophthora.sqlite
 thapbi_pict load-tax -d $DB -t "database/${TAX}" -a 2025987
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "0" ]; then echo "Wrong data_source count"; false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM data_source;") -ne "0" ]; then
+    echo "Wrong data_source count"
+    false
+fi
 # 1 genus plus 6 top level species plus 9 species under unclassified:
-if [ `sqlite3 $DB "SELECT COUNT(*) FROM taxonomy;"` -ne 16 ]; then echo "Wrong taxonomy count"; false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(*) FROM taxonomy;") -ne 16 ]; then
+    echo "Wrong taxonomy count"
+    false
+fi
 # Currently no synonyms or child nodes:
-if [ `sqlite3 $DB "SELECT COUNT(*) FROM synonym;"` -ne 0 ]; then echo "Wrong synonym count"; false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(*) FROM synonym;") -ne 0 ]; then
+    echo "Wrong synonym count"
+    false
+fi
 
 # Defaults to all Oomycetes
 export DB=$TMP/Oomycetes.sqlite
 thapbi_pict load-tax -d $DB -t "database/${TAX}"
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Hyaloperonospora' AND species='parasitica species group'"` -ne 1 ]; then echo "Missing species entry for Hyaloperonospora parasitica species group"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'"` -ne 25 ]; then echo "Wrong synonym count for Hyaloperonospora parasitica species group";false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM taxonomy WHERE genus='Hyaloperonospora' AND species='parasitica species group'") -ne 1 ]; then
+    echo "Missing species entry for Hyaloperonospora parasitica species group"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'") -ne 25 ]; then
+    echo "Wrong synonym count for Hyaloperonospora parasitica species group"
+    false
+fi
 
 # Request Phytophthora and Peronospora
 thapbi_pict load-tax -d sqlite:///:memory: -t "database/${TAX}" -a 4783,70742

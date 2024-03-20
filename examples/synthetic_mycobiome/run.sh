@@ -64,12 +64,11 @@ thapbi_pict edit-graph -d references.sqlite \
     -i summary/defaults.ITS2.1s5g.tsv \
     -o summary/defaults.ITS2.edit-graph.1s5g.xgmml
 
-
 echo "Recreating stacked-line plot from THAPBI PICT paper"
 
 python ../../scripts/plot_reduction.py \
-       -i summary/defaults.ITS2.samples.1s5g.tsv \
-       -o summary/defaults.ITS2.read-reduction.pdf
+    -i summary/defaults.ITS2.samples.1s5g.tsv \
+    -o summary/defaults.ITS2.read-reduction.pdf
 
 echo ==========================================
 echo Running analysis excluding only singletons
@@ -118,19 +117,19 @@ if ! [ -x "$(command -v usearch)" ]; then
     echo "Skipping using USEARCH"
 else
     thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -y raw_data/SRR7109420_*.fastq.gz \
-    -s intermediate/ -o summary/ctrl_usearch -a 100 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise usearch
+        -i raw_data/ expected/ --merged-cache tmp_merged/ \
+        -y raw_data/SRR7109420_*.fastq.gz \
+        -s intermediate/ -o summary/ctrl_usearch -a 100 -f 0 \
+        -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise usearch
 fi
 if ! [ -x "$(command -v vsearch)" ]; then
     echo "Skipping using VSEARCH"
 else
     thapbi_pict pipeline -d references.sqlite \
-    -i raw_data/ expected/ --merged-cache tmp_merged/ \
-    -y raw_data/SRR7109420_*.fastq.gz \
-    -s intermediate/ -o summary/ctrl_vsearch -a 100 -f 0 \
-    -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise vsearch
+        -i raw_data/ expected/ --merged-cache tmp_merged/ \
+        -y raw_data/SRR7109420_*.fastq.gz \
+        -s intermediate/ -o summary/ctrl_vsearch -a 100 -f 0 \
+        -t metadata.tsv -x 1 -c 3,4 -m 1s5g --denoise vsearch
 fi
 
 echo ====

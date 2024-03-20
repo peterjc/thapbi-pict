@@ -23,13 +23,13 @@ if [ ! -f pooled.sqlite ]; then
     NAME=MOL16S
     LEFT=RRWRGACRAGAAGACCCT
     RIGHT=ARTCCAACATCGAGGT
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # SPH16S primers, 299 bp
     NAME=SPH16S
     LEFT=TAGGGGAAGGTATGAATGGTTTG
     RIGHT=ACATCGAGGTCGCAACC
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 fi
 
 echo ================
@@ -59,7 +59,7 @@ for NAME in MOL16S SPH16S; do
     # as need to pass in different expected files per marker.
     thapbi_pict assess -d pooled.sqlite --marker $NAME \
         -i expected/$NAME/ summary/$NAME.tally.tsv \
-           summary/$NAME.onebp.tsv \
+        summary/$NAME.onebp.tsv \
         -o summary/$NAME.assess.onebp.tsv
 done
 
@@ -80,12 +80,12 @@ echo
 echo "Edit graph of just the 7 MOL16S mock community samples"
 thapbi_pict sample-tally -d pooled.sqlite -k MOL16S -a 10 -f 0 \
     -i intermediate/MOL16S/SRR5534972.* \
-       intermediate/MOL16S/SRR5534973.* \
-       intermediate/MOL16S/SRR5534974.* \
-       intermediate/MOL16S/SRR5534975.* \
-       intermediate/MOL16S/SRR5534976.* \
-       intermediate/MOL16S/SRR5534977.* \
-       intermediate/MOL16S/SRR5534979.* \
+    intermediate/MOL16S/SRR5534973.* \
+    intermediate/MOL16S/SRR5534974.* \
+    intermediate/MOL16S/SRR5534975.* \
+    intermediate/MOL16S/SRR5534976.* \
+    intermediate/MOL16S/SRR5534977.* \
+    intermediate/MOL16S/SRR5534979.* \
     -o summary/MOL16S.mocks.tally.tsv
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i summary/MOL16S.mocks.tally.tsv \
@@ -95,8 +95,8 @@ echo
 echo "Edit graph of just the 3 SPH16S mock community samples"
 thapbi_pict sample-tally -d pooled.sqlite -k SPH16S -a 10 -f 0 \
     -i intermediate/SPH16S/SRR5534978.* \
-       intermediate/SPH16S/SRR5534980.* \
-       intermediate/SPH16S/SRR5534981.* \
+    intermediate/SPH16S/SRR5534980.* \
+    intermediate/SPH16S/SRR5534981.* \
     -o summary/SPH16S.mocks.tally.tsv
 thapbi_pict edit-graph -d pooled.sqlite -a 100 \
     -i summary/SPH16S.mocks.tally.tsv \

@@ -27,7 +27,7 @@ export DB=$TMP/curated.sqlite
 if [ ! -f $DB ]; then
     thapbi_pict load-tax -d $DB -t new_taxdump_2019-09-01
     thapbi_pict import -d $DB -i database/Phytophthora_ITS1_curated.fasta -s ";" \
-                -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
+        -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC
 fi
 
 # Passing one filename; default output dir:
@@ -39,8 +39,8 @@ if [ -x "$(command -v biom)" ]; then
     biom validate-table -i $TMP/input/Phytophthora_ITS1_curated.identity.biom
     echo "Checking BIOM output (like this FASTA input) has no sample metadata:"
     biom export-metadata -i $TMP/input/Phytophthora_ITS1_curated.identity.biom \
-        --sample-metadata-fp sample_meta.tsv \
-        | grep "biom does not contain sample metadata"
+        --sample-metadata-fp sample_meta.tsv |
+        grep "biom does not contain sample metadata"
     echo "Checking BIOM output has sequence, genus-species, and taxid metadata:"
     biom export-metadata -i $TMP/input/Phytophthora_ITS1_curated.identity.biom \
         --observation-metadata-fp /dev/stdout | grep "^.Sequence.genus-species.taxid$"
@@ -67,7 +67,10 @@ mkdir -p $TMP/duo
 cp database/Phytophthora_ITS1_curated.fasta $TMP/duo/
 cp database/controls.fasta $TMP/duo/
 thapbi_pict classify -m identity -d $DB -i $TMP/duo -o $TMP/duo
-if [ "`ls -1 $TMP/duo/*.identity.tsv | wc -l`" -ne "2" ]; then echo "Expected 4 files"; false; fi
+if [ "$(ls -1 $TMP/duo/*.identity.tsv | wc -l)" -ne "2" ]; then
+    echo "Expected 4 files"
+    false
+fi
 
 # Test using sequences from a single isolate control,
 rm -rf $TMP/P-infestans-T30-4.*.tsv
@@ -84,7 +87,7 @@ for M in "${methods[@]}"; do
     thapbi_pict classify -d $DB -i tests/classify/P-infestans-T30-4.fasta -o $TMP/ -m $M
     # Ignore any DOS vs Unix newline differences
     diff -w $TMP/P-infestans-T30-4.$M.tsv \
-         <(grep -v -E "#(Control|Max non-spike|Max spike-in)" tests/classify/P-infestans-T30-4.$M.tsv)
+        <(grep -v -E "#(Control|Max non-spike|Max spike-in)" tests/classify/P-infestans-T30-4.$M.tsv)
 done
 
 rm -rf $TMP/hmm_trim.*.tsv
