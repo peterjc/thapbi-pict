@@ -18,8 +18,8 @@ for ACC in $(grep "Illumina MiSeq\tm6-" PRJNA305924.tsv | cut -f 1); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
@@ -38,7 +38,7 @@ for EXPT in BioMockStds BioMock SynMock; do
     # Solution: Use the $'\t' trick here:
     for ACC in $(grep "Illumina MiSeq"$'\t'"m6-" PRJNA305924.tsv | grep "$EXPT$" | cut -f 1); do
         FILE=expected/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to $EXPT mixture"

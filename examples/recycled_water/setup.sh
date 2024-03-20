@@ -24,8 +24,8 @@ for ACC in $(grep ^SRR PRJNA417859.tsv | cut -f 1); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"

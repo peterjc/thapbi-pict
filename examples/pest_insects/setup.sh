@@ -22,8 +22,8 @@ for ACC in $(grep ^SRR PRJNA716058.tsv | cut -f 1); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
@@ -39,7 +39,7 @@ echo "=================================="
 for POOL in {1..5}; do
     for ACC in $(grep Pool-${POOL}_ PRJNA716058.tsv | cut -f 1); do
         FILE=expected/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to Pool $POOL mock community"
