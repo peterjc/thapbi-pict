@@ -14,7 +14,7 @@ fi
 for ACC in $(grep "Illumina MiSeq\tm6-" PRJNA305924.tsv | cut -f 1); do
     # echo "Downloading $ACC"
     # Column 6 should have two URLs (R1 and R2), semi-colon separated:
-    for URL in $(grep ^$ACC PRJNA305924.tsv | cut -f 6 | sed "s/;/ /g"); do
+    for URL in $(grep "^$ACC" PRJNA305924.tsv | cut -f 6 | sed "s/;/ /g"); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
@@ -37,13 +37,13 @@ for EXPT in BioMockStds BioMock SynMock; do
     # maxOS: BSD grep understands \t but rejects -P
     # Solution: Use the $'\t' trick here:
     for ACC in $(grep "Illumina MiSeq"$'\t'"m6-" PRJNA305924.tsv | grep "$EXPT$" | cut -f 1); do
-        FILE=expected/$ACC.known.tsv
+        FILE="expected/$ACC.known.tsv"
         if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to $EXPT mixture"
             cd expected/
-            ln -s ../$EXPT.known.tsv $ACC.known.tsv
+            ln -s ../$EXPT.known.tsv "$ACC.known.tsv"
             cd ..
         fi
     done

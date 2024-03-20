@@ -18,7 +18,7 @@ echo "=========================="
 for ACC in $(grep ^SRR PRJNA716058.tsv | cut -f 1); do
     # echo "Downloading $ACC"
     # Column 6 should have two URLs (R1 and R2), semi-colon separated:
-    for URL in $(grep ^$ACC PRJNA716058.tsv | cut -f 6 | sed "s/;/ /g"); do
+    for URL in $(grep "^$ACC" PRJNA716058.tsv | cut -f 6 | sed "s/;/ /g"); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
@@ -38,13 +38,13 @@ echo "Setting up expected classification"
 echo "=================================="
 for POOL in {1..5}; do
     for ACC in $(grep Pool-${POOL}_ PRJNA716058.tsv | cut -f 1); do
-        FILE=expected/$ACC.known.tsv
+        FILE="expected/$ACC.known.tsv"
         if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to Pool $POOL mock community"
             cd expected/
-            ln -s ../mock_community_${POOL}.known.tsv $ACC.known.tsv
+            ln -s ../mock_community_${POOL}.known.tsv "$ACC.known.tsv"
             cd ..
         fi
     done
