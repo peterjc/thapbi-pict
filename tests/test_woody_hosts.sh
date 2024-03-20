@@ -40,12 +40,13 @@ if [ -d tests/woody_hosts/raw_data/ ]; then
     echo "================================="
     mkdir $TMP/intermediate_new
     time thapbi_pict prepare-reads -i tests/woody_hosts/raw_data/ -o $TMP/intermediate_new -n tests/woody_hosts/raw_data/NEGATIVE*.fastq.gz
-    for f in $TMP/intermediate/ITS1/*.fasta; do
-        echo diff $f $TMP/intermediate_new/ITS1/${f##*/}
-        diff $f $TMP/intermediate_new/ITS1/${f##*/}
+    for f in "$TMP"/intermediate/ITS1/*.fasta; do
+        echo diff "$f" "$TMP/intermediate_new/ITS1/${f##*/}"
+        diff "$f" "$TMP/intermediate_new/ITS1/${f##*/}"
     done
 else
     echo "To check how much tests/woody_hosts/intermediate.tar.bz2 is out of date,"
+    # shellcheck disable=SC2016
     echo 'use: $ ln -s $PWD/examples/woody_hosts/raw_data tests/woody_hosts/'
     echo "and then re-run tests/test_woody_hosts.sh which will report first diff."
     echo "Replace the old FASTA files, then in the updated intermediate folder run:"
