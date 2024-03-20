@@ -33,7 +33,7 @@ rm -rf $TMP/merged_cache/
 mkdir $TMP/merged_cache/
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 0 -f 0 -d $DB
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "822" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "822" ]; then
     echo "Wrong FASTA output count"
     false
 fi
@@ -43,7 +43,7 @@ fi
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --flip --merged-cache $TMP/merged_cache/ -a 0 -f 0 -d $DB
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "822" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "822" ]; then
     echo "Wrong FASTA output count"
     false
 fi
@@ -52,7 +52,7 @@ rm -rf $TMP/ITS1
 # Reusing the pre-primer-trim pre-abundance cache here:
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     --merged-cache $TMP/merged_cache/ -a 5 -d $DB
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "27" ]; then
     echo "Wrong FASTA output count"
     false
 fi
@@ -60,7 +60,7 @@ fi
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 -d $DB --database '-'
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "27" ]; then
     echo "Wrong FASTA output count"
     false
 fi
@@ -68,7 +68,7 @@ fi
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz \
     -a 5 -d $DB
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "27" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "27" ]; then
     echo "Wrong FASTA output count"
     false
 fi
@@ -88,7 +88,7 @@ set -o pipefail
 
 rm -rf $TMP/ITS1
 thapbi_pict prepare-reads -o $TMP -i tests/reads/DNAMIX_S95_L001_*.fastq.gz -a 100
-if [ $(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta) -ne "7" ]; then
+if [ "$(grep -c "^>" $TMP/ITS1/DNAMIX_S95_L001.fasta)" -ne "7" ]; then
     echo "Wrong FASTA output count"
     false
 fi
