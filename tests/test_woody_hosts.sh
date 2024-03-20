@@ -106,7 +106,7 @@ echo "==========================="
 time thapbi_pict summary -i $TMP/woody_hosts.onebp.tsv \
     -o $TMP/summary/no-metadata
 ls $TMP/summary/no-metadata.*
-if [ $(grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv) -ne 100 ]; then
+if [ "$(grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv)" -ne 100 ]; then
     echo "Wrong unique sequence count"
     false
 fi
@@ -122,7 +122,7 @@ ls $TMP/summary/with-metadata.*
 # Discarding the header row as only one will still have hash at start
 diff <(grep -v "^#" $TMP/summary/no-metadata.samples.onebp.tsv | sort) <(grep -v "^#" $TMP/summary/with-metadata.samples.onebp.tsv | cut -f 16- | sort)
 
-if [ $(grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv) -ne 100 ]; then
+if [ "$(grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv)" -ne 100 ]; then
     echo "Wrong unique sequence count"
     false
 fi
@@ -132,11 +132,11 @@ echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
 time thapbi_pict edit-graph -i $TMP/woody_hosts.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
-if [ $(grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml) -ne 99 ]; then
+if [ "$(grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml)" -ne 99 ]; then
     echo "Wrong node count"
     false
 fi
-if [ $(grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml) -ne 69 ]; then
+if [ "$(grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml)" -ne 69 ]; then
     echo "Wrong edge count"
     false
 fi
