@@ -9,8 +9,8 @@ for ACC in $(grep ^SRR PRJNA638011.tsv | cut -f 1); do
     for URL in $(grep ^$ACC PRJNA638011.tsv | cut -f 3 | sed "s/;/ /g"); do
         FILE=raw_data/${URL##*/}
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
@@ -24,7 +24,7 @@ done
 echo "Setting up positive controls"
 for ACC in $(grep "positive" PRJNA638011.tsv | cut -f 1); do
     FILE=expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
+    if [ -f "$FILE" ]; then
         echo "Already have $FILE"
     else
         echo "Linking $FILE to cichlid positive control"
@@ -38,7 +38,7 @@ done
 echo "Setting up negative and blank controls"
 for ACC in $(grep -E "(negative|blank)" PRJNA638011.tsv | cut -f 1); do
     FILE=expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
+    if [ -f "$FILE" ]; then
         echo "Already have $FILE"
     else
         echo "Linking $FILE to negative control"
@@ -52,7 +52,7 @@ done
 echo "Setting up expected New Lake classification"
 for ACC in $(grep "New Lake" PRJNA638011.tsv | cut -f 1); do
     FILE=expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
+    if [ -f "$FILE" ]; then
         echo "Already have $FILE"
     else
         echo "Linking $FILE to cichlid positive control"
@@ -65,7 +65,7 @@ done
 echo "Setting up expected Middle Lake classification"
 for ACC in $(grep -E "(STX|MCE)" PRJNA638011.tsv | cut -f 1); do
     FILE=expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
+    if [ -f "$FILE" ]; then
         echo "Already have $FILE"
     else
         echo "Linking $FILE to cichlid positive control"

@@ -23,8 +23,8 @@ for ACC in $(grep ^SRR PRJNA574765.tsv | cut -f 1); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
@@ -34,7 +34,7 @@ for ACC in $(grep ^SRR PRJNA574765.tsv | cut -f 1); do
     done
     # echo "Setting up expected classification"
     FILE=expected/$ACC.known.tsv
-    if [ -f $FILE ]; then
+    if [ -f "$FILE" ]; then
         echo "Already have $FILE"
     else
         echo "Linking $FILE to mock community"

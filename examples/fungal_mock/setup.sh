@@ -18,8 +18,8 @@ for LIBRARY in AL1 AL2; do
             NAME=${URL##*/}
             FILE=raw_data/$LIBRARY/$NAME
             # Avoiding leaving partial FASTQ if wget is interrupted
-            rm -rf $FILE.tmp
-            if [ -f $FILE ]; then
+            rm -rf "$FILE.tmp"
+            if [ -f "$FILE" ]; then
                 echo "Already have $FILE"
             else
                 echo "Downloading $FILE"
@@ -29,7 +29,7 @@ for LIBRARY in AL1 AL2; do
         done
         # echo "Setting up expected classification"
         FILE=expected/$LIBRARY/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         elif grep $ACC metadata_$LIBRARY.tsv | grep --quiet negative; then
             echo "Linking $FILE to negative control"

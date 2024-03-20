@@ -11,7 +11,7 @@ for NAME in MOL16S SPH16S; do
     mkdir -p expected/$NAME/
     for ACC in $(grep Blank PRJNA379165.tsv | grep $NAME | cut -f 1); do
         FILE=expected/$NAME/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to negative control"
@@ -22,7 +22,7 @@ for NAME in MOL16S SPH16S; do
     done
     for ACC in $(grep Mock PRJNA379165.tsv | grep -v $NAME | cut -f 1); do
         FILE=expected/$NAME/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to negative control"
@@ -33,7 +33,7 @@ for NAME in MOL16S SPH16S; do
     done
     for ACC in $(grep Mock PRJNA379165.tsv | grep $NAME | cut -f 1); do
         FILE=expected/$NAME/$ACC.known.tsv
-        if [ -f $FILE ]; then
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Linking $FILE to mock community"
@@ -51,8 +51,8 @@ for ACC in $(grep ^SRR PRJNA379165.tsv | cut -f 1); do
         NAME=${URL##*/}
         FILE=raw_data/$NAME
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"

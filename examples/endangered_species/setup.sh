@@ -22,8 +22,8 @@ for ACC in $(grep ERR PRJEB18620.tsv | cut -f 1); do
             FILE=raw_download/${NAME%.gz}.zip
         fi
         # Avoiding leaving partial FASTQ if wget is interrupted
-        rm -rf $FILE.tmp
-        if [ -f $FILE ]; then
+        rm -rf "$FILE.tmp"
+        if [ -f "$FILE" ]; then
             echo "Already have $FILE"
         else
             echo "Downloading $FILE"
