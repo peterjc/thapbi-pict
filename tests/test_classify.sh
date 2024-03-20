@@ -67,6 +67,7 @@ mkdir -p $TMP/duo
 cp database/Phytophthora_ITS1_curated.fasta $TMP/duo/
 cp database/controls.fasta $TMP/duo/
 thapbi_pict classify -m identity -d $DB -i $TMP/duo -o $TMP/duo
+# shellcheck disable=SC2012
 if [ "$(ls -1 $TMP/duo/*.identity.tsv | wc -l)" -ne "2" ]; then
     echo "Expected 4 files"
     false
