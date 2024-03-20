@@ -40,7 +40,6 @@ repos:
     hooks:
     -   id: shellcheck
         args: [
-            '--exclude=SC2046',
             '--severity=warning',
         ]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
