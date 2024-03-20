@@ -12,14 +12,14 @@ echo "Downloading reads from ENA"
 echo "=========================="
 for ACC in $(grep ERR PRJEB18620.tsv | cut -f 1); do
     # echo "Downloading $ACC"
-    SAMPLE=$(grep ^$ACC PRJEB18620.tsv | cut -f 4)
+    SAMPLE=$(grep "^$ACC" PRJEB18620.tsv | cut -f 4)
     # Column 3 should have two URLs (R1 and R2), semi-colon separated:
-    for URL in $(grep ^$ACC PRJEB18620.tsv | cut -f 3 | sed "s/;/ /g"); do
+    for URL in $(grep "^$ACC" PRJEB18620.tsv | cut -f 3 | sed "s/;/ /g"); do
         NAME=${URL##*/}
         FILE=raw_download/$NAME
-        if [ "EM_" == ${NAME:0:3} ]; then
+        if [ "EM_" == "${NAME:0:3}" ]; then
             # Rename EM_* files as really *zipped* FASTQ, not *gzipped*
-            FILE=raw_download/${NAME%.gz}.zip
+            FILE="raw_download/${NAME%.gz}.zip"
         fi
         # Avoiding leaving partial FASTQ if wget is interrupted
         rm -rf "$FILE.tmp"
@@ -34,8 +34,8 @@ for ACC in $(grep ERR PRJEB18620.tsv | cut -f 1); do
             # The EM_* files are really *zipped* FASTQ, not *gzipped*
             # The filename does however already match the short sample
             # (and we're ignoring the long name used within the zip file)
-            NEW=raw_data/$NAME
-            if [ ! -f $NEW ]; then
+            NEW="raw_data/$NAME"
+            if [ ! -f "$NEW" ]; then
                 echo "Unzipping $FILE and instead gzipping to make $NEW"
                 unzip -p "$FILE" | gzip > "${NEW}.tmp"
                 mv "${NEW}.tmp" "${NEW}"
@@ -50,8 +50,8 @@ for ACC in $(grep ERR PRJEB18620.tsv | cut -f 1); do
                 echo "ERROR: $NAME lacks R1 or R2"
                 false
             fi
-            if [ ! -f $NEW ]; then
-                ln -s ../$FILE $NEW
+            if [ ! -f "$NEW" ]; then
+                ln -s "../$FILE" "$NEW"
             fi
         fi
     done
