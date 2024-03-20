@@ -6,13 +6,14 @@ Python style conventions
 
 The Python code follows `PEP8 <https://www.python.org/dev/peps/pep-0008/>`__
 and `PEP257 docstring <https://www.python.org/dev/peps/pep-0257/>`__ style,
-guided by the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
+with `black <https://github.com/python/black>`__ formatting, and is guided by
+the `Zen of Python <https://www.python.org/dev/peps/pep-0020/>`__.
 
 Practically, coding style is enforced with several command line tools
-including `ruff <https://github.com/astral-sh/ruff>`__ (which implements
-a faster version of `black <https://github.com/python/black>`__) and `flake8
-<http://flake8.pycqa.org/>`__ (with plugins) run via the tool `pre-commit
-<https://pre-commit.com/>`__.
+including `ruff <https://github.com/astral-sh/ruff>`__ , `flake8
+<http://flake8.pycqa.org/>`__ (with plugins), and `shfmt
+<https://github.com/mvdan/sh>`__ (for the formatting bash scripts),
+run via the tool `pre-commit <https://pre-commit.com/>`__.
 
 You can install these tools using:
 
