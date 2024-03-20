@@ -51,7 +51,7 @@ repos:
         args: [
             '--fix',
             '--exit-non-zero-on-fix',
-            '--extend-select=B,PIE,D,I,ISC,UP',
+            '--extend-select=B,BLE,C4,D,I,ISC,PIE,UP',
             '--extend-ignore=D203,D213,UP007,UP031',
             '--config=lint.isort.force-single-line=true',
             '--config=lint.isort.order-by-type=false',
@@ -67,15 +67,8 @@ repos:
     hooks:
     -   id: flake8
         additional_dependencies: [
-            'flake8-blind-except',
-            'flake8-docstrings',
             'flake8-rst-docstrings',
-            'flake8-bugbear',
             'flake8-sfs',
-            'flake8-pie',
-            'flake8-comprehensions',
-            'flake8-implicit-str-concat',
-            'pydocstyle>=5.0.0',
          ]
 -   repo: https://github.com/asottile/blacken-docs
     rev: 1.16.0
