@@ -39,27 +39,27 @@ thapbi_pict import -d $DB -i $TMP/three_controls.fasta -x \
     -k NotITS1 -l ATGCGATACTTGGTGTGAAT -r GACGCTTCTCCAGACTACAAT \
     --minlen 50 --maxlen 250
 
-if [ $(sqlite3 $DB "SELECT COUNT(id) FROM marker_definition;") -ne "2" ]; then
+if [ $(sqlite3 "$DB" "SELECT COUNT(id) FROM marker_definition;") -ne "2" ]; then
     echo "Wrong marker count"
     false
 fi
-if [ $(sqlite3 $DB "SELECT COUNT(id) FROM data_source;") -ne "3" ]; then
+if [ $(sqlite3 "$DB" "SELECT COUNT(id) FROM data_source;") -ne "3" ]; then
     echo "Wrong data_source count"
     false
 fi
-if [ $(sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;") -ne "8" ]; then
+if [ $(sqlite3 "$DB" "SELECT COUNT(id) FROM sequence_source;") -ne "8" ]; then
     echo "Wrong sequence_source count"
     false
 fi
-if [ $(sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;") -ne "5" ]; then
+if [ $(sqlite3 "$DB" "SELECT COUNT(id) FROM marker_sequence;") -ne "5" ]; then
     echo "Wrong marker_sequence count"
     false
 fi
-if [ $(sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;") -ne "8" ]; then
+if [ $(sqlite3 "$DB" "SELECT COUNT(id) FROM taxonomy;") -ne "8" ]; then
     echo "Wrong taxonomy count"
     false
 fi
-if [ $(sqlite3 $DB "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l) -ne 8 ]; then
+if [ $(sqlite3 "$DB" "SELECT DISTINCT genus, species FROM taxonomy;" | wc -l) -ne 8 ]; then
     echo "Wrong species count"
     false
 fi
