@@ -13,10 +13,10 @@ echo =========================
 
 echo "First with default settings and DB"
 thapbi_pict pipeline \
-        -i raw_data/ -o summary/recycled-water-defaults \
-        -s intermediate_defaults/ \
-        --merged-cache tmp_merged/ \
-        -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+    -i raw_data/ -o summary/recycled-water-defaults \
+    -s intermediate_defaults/ \
+    --merged-cache tmp_merged/ \
+    -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo ==========================
 echo Recycled water - Custom DB
@@ -32,24 +32,24 @@ if [ ! -f Redekar_et_al_2019_sup_table_3.sqlite ]; then
     # Adding 32bp conserved TTTCCGTAGGTGAACCTGCGGAAGGATCATTA to left primer
     # Not giving primers, sequences are already trimmed
     thapbi_pict import -x -s ";" \
-                -d Redekar_et_al_2019_sup_table_3.sqlite \
-                -i Redekar_et_al_2019_sup_table_3.fasta \
-                --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
-                --right AGCGTTCTTCATCGATGTGC --marker ITS1-long
+        -d Redekar_et_al_2019_sup_table_3.sqlite \
+        -i Redekar_et_al_2019_sup_table_3.fasta \
+        --left GAAGGTGAAGTCGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTA \
+        --right AGCGTTCTTCATCGATGTGC --marker ITS1-long
 fi
 
 echo "Drawing edit-graph for database entries alone"
 # Using -k / --marker to show the DB entries too
 thapbi_pict edit-graph -k ITS1-long \
-        -d Redekar_et_al_2019_sup_table_3.sqlite \
-        -o Redekar_et_al_2019_sup_table_3.xgmml
+    -d Redekar_et_al_2019_sup_table_3.sqlite \
+    -o Redekar_et_al_2019_sup_table_3.xgmml
 
 echo "Running analysis"
 thapbi_pict pipeline \
-        -i raw_data/ -s intermediate_long/ -o summary/recycled-water-custom \
-        --merged-cache tmp_merged/ \
-        -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
-        -t metadata.tsv -x 7 -c 1,2,3,4,5,6
+    -i raw_data/ -s intermediate_long/ -o summary/recycled-water-custom \
+    --merged-cache tmp_merged/ \
+    -d Redekar_et_al_2019_sup_table_3.sqlite -m onebp \
+    -t metadata.tsv -x 7 -c 1,2,3,4,5,6
 
 echo ====
 echo Done

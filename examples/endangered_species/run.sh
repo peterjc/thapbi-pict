@@ -17,8 +17,8 @@ mkdir -p tmp_merged/ intermediate/ summary/
 function import_marker {
     # Takes arguments via variable names
     thapbi_pict import -d references/pooled.sqlite \
-                -i references/${NAME}.fasta -x -s ";" \
-                -k $NAME --left $LEFT --right $RIGHT --minlen $MINLEN
+        -i references/${NAME}.fasta -x -s ";" \
+        -k $NAME --left $LEFT --right $RIGHT --minlen $MINLEN
 }
 
 if [ ! -f references/pooled.sqlite ]; then
@@ -31,21 +31,21 @@ if [ ! -f references/pooled.sqlite ]; then
     LEFT=CGCCTGTTTATCAAAAACAT
     RIGHT=CCGGTCTGAACTCAGATCACGT
     MINLEN=200
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # Universal animal DNA barcodes and mini-barcodes - Mini-16S
     NAME=Mini-16S
     LEFT=AYAAGACGAGAAGACCC
     RIGHT=GATTGCGCTGTTATTCC
     MINLEN=200
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # Universal animal DNA barcodes and mini-barcodes - Mini-COI
     NAME=Mini-COI
     LEFT=GGWACWGGWTGAACWGTWTAYCCYCC
     RIGHT=TAIACYTCIGGRTGICCRAARAAYCA
     MINLEN=200
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     #TODO - COI, multiple right primers?
 
@@ -62,7 +62,7 @@ if [ ! -f references/pooled.sqlite ]; then
     LEFT=CCATCCAACATCTCAGCATGATGAAA
     RIGHT=CCCTCAGAATGATATTTGTCCTCA
     MINLEN=200
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # Universal plant DNA barcodes and mini-barcodes - matK
     NAME=matK
@@ -76,36 +76,36 @@ if [ ! -f references/pooled.sqlite ]; then
     NAME=rbcL
     LEFT=ATGTCACCACAAACAGAGACTAAAGC
     RIGHT=GTAAAATCAAGTCCACCRCG
-    MINLEN=100  # Even shorter than author's 200 default
-    import_marker  # calls function defined above
+    MINLEN=100    # Even shorter than author's 200 default
+    import_marker # calls function defined above
 
     # Universal plant DNA barcodes and mini-barcodes - Mini-rbcL
     NAME=Mini-rbcL
     LEFT=GTTGGATTCAAAGCTGGTGTTA
     RIGHT=CVGTCCAMACAGTWGTCCATGT
-    MINLEN=140  # Shorter!
-    import_marker  # calls function defined above
+    MINLEN=140    # Shorter!
+    import_marker # calls function defined above
 
     # Universal plant DNA barcodes and mini-barcodes - trnL-UAA
     NAME=trnL-UAA
     LEFT=CGAAATCGGTAGACGCTACG
     RIGHT=GGGGATAGAGGGACTTGAAC
     MINLEN=200
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # Universal plant DNA barcodes and mini-barcodes - trnL-P6-loop
     NAME=trnL-P6-loop
     LEFT=GGGCAATCCTGAGCCAA
     RIGHT=CCATTGAGTCTCTGCACCTATC
-    MINLEN=10  # Much shorter!
-    import_marker  # calls function defined above
+    MINLEN=10     # Much shorter!
+    import_marker # calls function defined above
 
     # Universal plant DNA barcodes and mini-barcodes - ITS2
     NAME=ITS2
     LEFT=ATGCGATACTTGGTGTGAAT
     RIGHT=GACGCTTCTCCAGACTACAAT
-    MINLEN=100  # Shorter!
-    import_marker  # calls function defined above
+    MINLEN=100    # Shorter!
+    import_marker # calls function defined above
 fi
 
 echo ================
@@ -113,11 +113,11 @@ echo Running pipeline
 echo ================
 
 thapbi_pict pipeline -d references/pooled.sqlite --synthetic "" \
-            -i raw_data/ expected/ -s intermediate/ --merged-cache tmp_merged/ \
-            -o summary/ -t metadata.tsv -c 3,4,5 -x 2 -g 4
+    -i raw_data/ expected/ -s intermediate/ --merged-cache tmp_merged/ \
+    -o summary/ -t metadata.tsv -c 3,4,5 -x 2 -g 4
 
 echo ====
 echo Done
 echo ====
 
-echo "You may wish to delete ``tmp_merged/*.fasta.gz`` now (about 1GB)."
+echo "You may wish to delete $()tmp_merged/*.fasta.gz$() now (about 1GB)."

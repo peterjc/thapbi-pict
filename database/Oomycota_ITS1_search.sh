@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=`thapbi_pict -v | sed "s/THAPBI PICT //g"`
+VERSION=$(thapbi_pict -v | sed "s/THAPBI PICT //g")
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
 if ! command -v efetch &> /dev/null; then
@@ -17,16 +17,16 @@ mkdir -p $TMP
 
 echo "Starting NCBI search..."
 esearch -db nuccore -sort accession \
-     -query "(Peronosporales[organism] OR Pythiales[organism])\
+    -query "(Peronosporales[organism] OR Pythiales[organism])\
      AND ((internal AND transcribed AND spacer) OR its1)\
      AND 150:10000[sequence length]" > $TMP/search.xml
 
-COUNT=`grep -oh "<Count>[0-9]*</Count>" search.xml | grep -oh "[0-9]*"`
+COUNT=$(grep -oh "<Count>[0-9]*</Count>" search.xml | grep -oh "[0-9]*")
 
 echo "Fetching $COUNT NCBI matches (may take over an hour)..."
 efetch -format fasta < $TMP/search.xml > $TMP/search.fasta
 
-FOUND=`grep -c "^>" $TMP/search.fasta`
+FOUND=$(grep -c "^>" $TMP/search.fasta)
 echo "Downloaded $FOUND ITS1 sequences."
 if [ $COUNT != $FOUND ]; then
     echo "ERROR: Search said $COUNT entries, but FASTA file has $FOUND"
@@ -38,13 +38,13 @@ echo
 
 echo "Selecting and trimming those with expected 32bp leader..."
 cutadapt -a GYRGGGACGAAAGTCYYTGC Oomycota_ITS1_search.fasta \
-  --discard-untrimmed -e 0.2 --quiet \
-  | sed "s/^TTCCGTAGGTGAAC/tTTCCGTAGGTGAAC/" \
-  | sed  "s/^TCCGTAGGTGAAC/ttTCCGTAGGTGAAC/"  \
-  | cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin \
-  | cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 32 --action retain \
-  --discard-untrimmed -M 450 --quiet /dev/stdin \
-  -o Oomycota_ITS1_w32.fasta
+    --discard-untrimmed -e 0.2 --quiet |
+    sed "s/^TTCCGTAGGTGAAC/tTTCCGTAGGTGAAC/" |
+    sed "s/^TCCGTAGGTGAAC/ttTCCGTAGGTGAAC/" |
+    cutadapt -g GAAGGTGAAGTCGTAACAAGG --quiet /dev/stdin |
+    cutadapt -g TTTCCGTAGGTGAACCTGCGGAAGGATCATTA -O 32 --action retain \
+        --discard-untrimmed -M 450 --quiet /dev/stdin \
+        -o Oomycota_ITS1_w32.fasta
 
 echo "Checking for observed NCBI entries without the expected 32bp leader..."
 if [ ! -f unknowns.fasta ]; then
@@ -54,8 +54,8 @@ if [ ! -f unknowns.fasta ]; then
     exit 1
 fi
 ../scripts/missed_refs.py -i unknowns.fasta \
-  -f Oomycota_ITS1_search.fasta \
-  -x Oomycota_ITS1_w32.fasta \
-  -o Oomycota_ITS1_obs.fasta
+    -f Oomycota_ITS1_search.fasta \
+    -x Oomycota_ITS1_w32.fasta \
+    -o Oomycota_ITS1_obs.fasta
 
 echo "Done - review and commit Oomycota_ITS1_w32.fasta & Oomycota_ITS1_obs.fasta"

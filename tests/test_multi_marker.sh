@@ -23,7 +23,7 @@ echo "====================================="
 # This is a cut down version of examples/endangered_species/run.sh
 function import_marker {
     # Takes arguments via variable names
-    if [ "$FASTA" == "" ] ; then
+    if [ "$FASTA" == "" ]; then
         # Take first sequence for a minimal DB
         head -n 2 examples/endangered_species/references/${NAME}.fasta > $TMP/${NAME}.fasta
     else
@@ -31,7 +31,7 @@ function import_marker {
         echo -e "${FASTA}" > $TMP/${NAME}.fasta
     fi
     thapbi_pict import -d $DB -i $TMP/${NAME}.fasta -x -s ";" \
-                -k $NAME --left $LEFT --right $RIGHT -x --minlen $MINLEN
+        -k $NAME --left $LEFT --right $RIGHT -x --minlen $MINLEN
 }
 
 NAME=16S
@@ -39,7 +39,7 @@ LEFT=CGCCTGTTTATCAAAAACAT
 RIGHT=CCGGTCTGAACTCAGATCACGT
 MINLEN=200
 FASTA=""
-import_marker  # call function above
+import_marker # call function above
 
 NAME=Mini-16S
 LEFT=AYAAGACGAGAAGACCC
@@ -47,56 +47,56 @@ RIGHT=GATTGCGCTGTTATTCC
 MINLEN=200
 FASTA=">MG736676.1 Bos taurus
 TATGGAGCTTTAACTAACCAACCCAAAGAGAATAGATTTAACCATTAAGGAATAACAACAATCTCCATGAGTTGGTAGTTTCGGTTGGGGTGACCTCGGAGAATAAAAAATCCTCCGAGCGATTTTAAAGACTAGACCCACAAGTCAAATCACTCTATCGCTCATTGATCCAAAAACTTGATCAACGGAACAAGTTACCCTA"
-import_marker  # call function above
+import_marker # call function above
 
 NAME=Mini-COI
 LEFT=GGWACWGGWTGAACWGTWTAYCCYCC
 RIGHT=TAIACYTCIGGRTGICCRAARAAYCA
 MINLEN=200
 FASTA=""
-import_marker  # call function above
+import_marker # call function above
 
 NAME=Mini-cyt-b
 LEFT=CCATCCAACATCTCAGCATGATGAAA
 RIGHT=CCCTCAGAATGATATTTGTCCTCA
 MINLEN=200
 FASTA=">MN510465.1 Bos taurus\nTTTCGGTTCCCTCCTGGGAATCTGCCTAATCCTACAAATCCTCACAGGCCTATTCCTAGCAATACACTACACATCCGACACAACAACAGCATTCTCCTCTGTTACCCATATCTGCCGAGACGTGAACTACGGCTGAATCATCCGATACATACACGCAAACGGAGCTTCAATGTTTTTTATCTGCTTATATATGCACGTAGGACGAGGCTTATATTACGGGTCTTACACTTTTCTAGAAACATGAAATATTGGAGTAATCCTTCTGCTCACAGTAATAGCCACAGCATTTATAGGATACGTCCTACCA"
-import_marker  # call function above
+import_marker # call function above
 
 NAME=rbcL
 LEFT=ATGTCACCACAAACAGAGACTAAAGC
 RIGHT=GTAAAATCAAGTCCACCRCG
-MINLEN=100  # Even shorter than author's 200 default
+MINLEN=100 # Even shorter than author's 200 default
 FASTA=""
-import_marker  # call function above
+import_marker # call function above
 
 NAME=Mini-rbcL
 LEFT=GTTGGATTCAAAGCTGGTGTTA
 RIGHT=CVGTCCAMACAGTWGTCCATGT
-MINLEN=140  # Shorter!
+MINLEN=140 # Shorter!
 FASTA=">AP007232.1 Lactuca sativa\nAAGATTATAAATTGACTTATTATACTCCTGAGTATGAAACCAAGGATACTGATATTTTGGCAGCATTTCGAGTAACTCCTCAACCTGGAGTTCCGCCTGAAGAAGCAGGGGCCGCAGTAGCTGCCGAATCTTCTACTGGT"
-import_marker  # call function above
+import_marker # call function above
 
 NAME=trnL-UAA
 LEFT=CGAAATCGGTAGACGCTACG
 RIGHT=GGGGATAGAGGGACTTGAAC
 MINLEN=200
 FASTA=""
-import_marker  # call function above
+import_marker # call function above
 
 NAME=trnL-P6-loop
 LEFT=GGGCAATCCTGAGCCAA
 RIGHT=CCATTGAGTCTCTGCACCTATC
-MINLEN=10  # Much shorter!
+MINLEN=10 # Much shorter!
 FASTA=">7efade5aeb4841ea5509d33c6629f1da Lactuca sativa\nATCACGTTTTCCGAAAACAAACAACGGTTCAGAAAGCGAAAATCAAAAAG"
-import_marker  # call function above
+import_marker # call function above
 
 NAME=ITS2
 LEFT=ATGCGATACTTGGTGTGAAT
 RIGHT=GACGCTTCTCCAGACTACAAT
-MINLEN=100  # Shorter!
+MINLEN=100 # Shorter!
 FASTA=""
-import_marker  # call function above
+import_marker # call function above
 
 echo "====================="
 echo "Running prepare-reads"

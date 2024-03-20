@@ -18,7 +18,7 @@ echo "Preparing sample data for woody hosts example"
 mkdir $TMP/intermediate
 mkdir $TMP/summary
 mkdir $TMP/positive_controls/
-for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positive_controls/ ; done
+for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positive_controls/; done
 
 # Idea here is to mimic what "thapbi_pict pipeline" would do if we had
 # the FASTQ files here:
@@ -28,7 +28,6 @@ for f in examples/woody_hosts/expected/*.known.tsv; do ln -s $PWD/$f $TMP/positi
 #     -o $TMP/summary/woody-hosts \
 #     -t examples/woody_hosts/metadata.tsv \
 #     -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
-
 
 echo "=================================="
 echo "Decompressing prepare-reads output"
@@ -58,16 +57,16 @@ echo "Running woody hosts sample-tally"
 echo "================================"
 if [ -x "$(command -v biom)" ]; then
     thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
-                -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
-                -o $TMP/woody_hosts.tally.tsv -b $TMP/woody_hosts.tally.biom
+        -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+        -o $TMP/woody_hosts.tally.tsv -b $TMP/woody_hosts.tally.biom
     biom validate-table -i $TMP/woody_hosts.tally.biom
     # Export the ASV names and their sequences, confirm matches our TSV
     diff <(biom export-metadata -i $TMP/woody_hosts.tally.biom --observation-metadata-fp /dev/stdout | grep ^ITS1) \
-         <(cut -f 1,124 $TMP/woody_hosts.tally.tsv | grep ^ITS1)
+        <(cut -f 1,124 $TMP/woody_hosts.tally.tsv | grep ^ITS1)
 else
     thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
-                -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
-                -o $TMP/woody_hosts.tally.tsv
+        -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+        -o $TMP/woody_hosts.tally.tsv
 fi
 
 echo diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
@@ -75,8 +74,8 @@ diff $TMP/woody_hosts.tally.tsv tests/woody_hosts/all.tally.tsv
 
 echo "And with UNOISE..."
 thapbi_pict sample-tally -i $TMP/intermediate/ITS1/*.fasta \
-            -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
-            -o $TMP/woody_hosts.de-noise.tsv --denoise unoise-l
+    -n $TMP/intermediate/ITS1/NEGATIVE_*.fasta \
+    -o $TMP/woody_hosts.de-noise.tsv --denoise unoise-l
 echo diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 diff $TMP/woody_hosts.de-noise.tsv tests/woody_hosts/denoise.tally.tsv
 
@@ -107,7 +106,10 @@ echo "==========================="
 time thapbi_pict summary -i $TMP/woody_hosts.onebp.tsv \
     -o $TMP/summary/no-metadata
 ls $TMP/summary/no-metadata.*
-if [ `grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
+if [ $(grep -c -v "^#" $TMP/summary/no-metadata.reads.onebp.tsv) -ne 100 ]; then
+    echo "Wrong unique sequence count"
+    false
+fi
 # Expect 99 + total line
 
 time thapbi_pict summary -i $TMP/woody_hosts.onebp.tsv \
@@ -120,15 +122,24 @@ ls $TMP/summary/with-metadata.*
 # Discarding the header row as only one will still have hash at start
 diff <(grep -v "^#" $TMP/summary/no-metadata.samples.onebp.tsv | sort) <(grep -v "^#" $TMP/summary/with-metadata.samples.onebp.tsv | cut -f 16- | sort)
 
-if [ `grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv` -ne 100 ]; then echo "Wrong unique sequence count"; false; fi
+if [ $(grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv) -ne 100 ]; then
+    echo "Wrong unique sequence count"
+    false
+fi
 # Expect 99 + total line
 
 echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
 time thapbi_pict edit-graph -i $TMP/woody_hosts.onebp.tsv -o $TMP/summary/no-metadata.edit-graph.xgmml
-if [ `grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 99 ]; then echo "Wrong node count"; false; fi
-if [ `grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml` -ne 69 ]; then echo "Wrong edge count"; false; fi
+if [ $(grep -c "<node " $TMP/summary/no-metadata.edit-graph.xgmml) -ne 99 ]; then
+    echo "Wrong node count"
+    false
+fi
+if [ $(grep -c "<edge " $TMP/summary/no-metadata.edit-graph.xgmml) -ne 69 ]; then
+    echo "Wrong edge count"
+    false
+fi
 
 echo "=========================="
 echo "Running woody hosts assess"

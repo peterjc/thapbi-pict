@@ -11,7 +11,7 @@ set -eu
 # Note not using "set -o pipefail" until after check error message with grep
 
 export TMP=${TMP:-/tmp/thapbi_pict}/sample-tally
-    rm -rf $TMP
+rm -rf $TMP
 mkdir -p $TMP
 
 echo "====================="
@@ -27,7 +27,7 @@ thapbi_pict sample-tally -i tests/prepare-reads/DNAMIX_S95_L001.fasta \
 diff $TMP/x.tsv tests/sample-tally/DNAMIX_S95_L001.tally.tsv
 # Confirm the TSV and FASTA are using the same ASV names:
 diff <(grep ^ITS1 /tmp/thapbi_pict/sample-tally/x.tsv | cut -f 1) \
-     <(grep "^>" /tmp/thapbi_pict/sample-tally/x.fasta | cut -c 2-)
+    <(grep "^>" /tmp/thapbi_pict/sample-tally/x.fasta | cut -c 2-)
 
 if ! [ -x "$(command -v biom)" ]; then
     echo 'WARNING: biom-format not installed, skipping some tests'
@@ -36,7 +36,7 @@ else
 
     echo "Checking our TSV output works with biom convert"
     biom convert -i $TMP/x.tsv -o $TMP/biom.tsv --table-type="OTU table" --to-tsv \
-         --header-key Sequence --tsv-metadata-formatter naive
+        --header-key Sequence --tsv-metadata-formatter naive
     biom convert -i $TMP/x.tsv -o $TMP/biom.hdf5 --table-type="OTU table" --to-hdf5
     biom convert -i $TMP/x.tsv -o $TMP/biom.json --table-type="OTU table" --to-json
     # Don't know how stable the output is, so don't use diff
@@ -48,7 +48,7 @@ else
     diff <(biom table-ids -i $TMP/x.biom) <(echo DNAMIX_S95_L001)
     # Export the ASV names and their sequences, confirm matches our TSV
     diff <(biom export-metadata -i $TMP/x.biom --observation-metadata-fp /dev/stdout | grep ^ITS1) \
-         <(cut -f 1,3 $TMP/x.tsv | grep ^ITS1)
+        <(cut -f 1,3 $TMP/x.tsv | grep ^ITS1)
 fi
 
 echo "----------------"

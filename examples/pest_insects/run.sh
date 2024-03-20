@@ -16,15 +16,15 @@ function import_marker {
     fi
     if [ ! -f references/$NAME.fasta ]; then
         echo "Trimming reference FASTA for $NAME"
-        RIGHT_RC=`python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))"`
+        RIGHT_RC=$(python -c "from Bio.Seq import reverse_complement as rc; print(rc('$RIGHT'))")
         cutadapt --discard-untrimmed --quiet \
-                 -g $LEFT...$RIGHT_RC -o references/$NAME.fasta \
-                 merged_arthropoda_rdp_species.fasta
+            -g $LEFT...$RIGHT_RC -o references/$NAME.fasta \
+            merged_arthropoda_rdp_species.fasta
     fi
     echo "Importing $NAME into DB"
     thapbi_pict import -d references/merged_arthropoda.sqlite \
-                -i references/${NAME}.fasta -x -s ";" \
-                -k $NAME --left $LEFT --right $RIGHT
+        -i references/${NAME}.fasta -x -s ";" \
+        -k $NAME --left $LEFT --right $RIGHT
 }
 
 if [ ! -f references/merged_arthropoda.sqlite ]; then
@@ -50,19 +50,19 @@ if [ ! -f references/merged_arthropoda.sqlite ]; then
     NAME=18S
     LEFT=ATGCATGTCTCAGTGCAAG
     RIGHT=TCGACAGTTGATAAGGCAGAC
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # 12S - Sterno12S_F/Sterno12S_R
     NAME=12S
     LEFT=CAYCTTGACYTAACAT
     RIGHT=TAAAYYAGGATTAGATACCC
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
     # COI - SternoCOI_F/SternoCOI_R
     NAME=COI
     LEFT=ATTGGWGGWTTYGGAAAYTG
     RIGHT=TATRAARTTRATWGCTCCTA
-    import_marker  # calls function defined above
+    import_marker # calls function defined above
 
 fi
 

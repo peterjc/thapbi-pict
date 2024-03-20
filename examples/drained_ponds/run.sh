@@ -8,8 +8,8 @@ echo
 if [ ! -f NCBI_12S.sqlite ]; then
     echo "Building 12S database from NCBI sequences"
     thapbi_pict import -d NCBI_12S.sqlite -i NCBI_12S.fasta -x -s ";" \
-                -k 12S --left ACTGGGATTAGATACCCC --right TAGAACAGGCTCCTCTAG \
-                --minlen 80 --maxlen 130
+        -k 12S --left ACTGGGATTAGATACCCC --right TAGAACAGGCTCCTCTAG \
+        --minlen 80 --maxlen 130
 fi
 
 # Primers, quoting Muri et al:
@@ -30,7 +30,7 @@ echo "Running the pipeline"
 mkdir -p intermediate/ summary/
 # Fraction 0.001 means 0.1%
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
-            -o summary/drained_ponds --synthetic '' -a 50 -f 0.001 -d NCBI_12S.sqlite \
-            -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,2,3
+    -o summary/drained_ponds --synthetic '' -a 50 -f 0.001 -d NCBI_12S.sqlite \
+    -t metadata.tsv -x 1 -c 5,6,7,8,9,10,4,2,3
 
 echo "Done"

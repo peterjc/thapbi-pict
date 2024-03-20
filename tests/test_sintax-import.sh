@@ -33,11 +33,26 @@ export DB=$TMP/refs.sqlite
 rm -rf $DB
 thapbi_pict import -x -k ITS1 -l $LEFT -r $RIGHT -c sintax -d $DB -i tests/sintax-import/refs.fasta
 
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM data_source;"` -ne "1" ]; then echo "Wrong data_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "2" ]; then echo "Wrong sequence_source count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "2" ]; then echo "Wrong marker_sequence count"; false; fi
-if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "2" ]; then echo "Wrong taxonomy count"; false; fi
-if [ `sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM marker_sequence;"` -ne "226" ]; then echo "Wrong max ITS1 sequence length"; false; fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM data_source;") -ne "1" ]; then
+    echo "Wrong data_source count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;") -ne "2" ]; then
+    echo "Wrong sequence_source count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;") -ne "2" ]; then
+    echo "Wrong marker_sequence count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;") -ne "2" ]; then
+    echo "Wrong taxonomy count"
+    false
+fi
+if [ $(sqlite3 $DB "SELECT MAX(LENGTH(sequence)) FROM marker_sequence;") -ne "226" ]; then
+    echo "Wrong max ITS1 sequence length"
+    false
+fi
 
 thapbi_pict dump -d $DB -m -o $TMP/refs.tsv
 diff $TMP/refs.tsv tests/sintax-import/refs.tsv

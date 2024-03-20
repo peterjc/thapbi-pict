@@ -69,24 +69,24 @@ diff $TMP/output/thapbi-pict.ITS1.reads.onebp.tsv tests/pipeline/thapbi-pict.rea
 
 # Now with denoising, changes the counts but not the 10 sequences themselves
 thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache \
-            -o $TMP/output/unoise-l -i tests/reads/ --denoise unoise-l
+    -o $TMP/output/unoise-l -i tests/reads/ --denoise unoise-l
 diff <(cut -f 1-3 $TMP/output/unoise-l.ITS1.samples.onebp.tsv) \
-     <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
+    <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
 if ! [ -x "$(command -v vsearch)" ]; then
     echo "Skipping testing using VSEARCH"
 else
     thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache \
-                -o $TMP/output/vsearch -i tests/reads/ --denoise vsearch
+        -o $TMP/output/vsearch -i tests/reads/ --denoise vsearch
     diff <(cut -f 1-3 $TMP/output/vsearch.ITS1.samples.onebp.tsv) \
-         <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
+        <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
 fi
 if ! [ -x "$(command -v usearch)" ]; then
     echo "Skipping testing using USEARCH"
 else
     thapbi_pict pipeline --merged-cache $TMP/merged_cache -s $TMP/intermediate_with_cache \
-                -o $TMP/output/usearch -i tests/reads/ --denoise usearch
+        -o $TMP/output/usearch -i tests/reads/ --denoise usearch
     diff <(cut -f 1-3 $TMP/output/usearch.ITS1.samples.onebp.tsv) \
-         <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
+        <(cut -f 1-3 tests/pipeline/thapbi-pict.samples.onebp.tsv)
 fi
 
 echo "$0 - test_pipeline.sh passed"
