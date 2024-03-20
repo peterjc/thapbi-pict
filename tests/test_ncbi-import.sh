@@ -139,8 +139,8 @@ if [ `sqlite3 $DB "SELECT COUNT(id) FROM sequence_source;"` -ne "269" ]; then ec
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM marker_sequence;"` -ne "109" ]; then echo "Wrong marker_sequence count"; false; fi
 if [ `sqlite3 $DB "SELECT COUNT(id) FROM taxonomy;"` -ne "3003" ]; then echo "Wrong taxonomy count"; false; fi
 # 120 + 120 + 29 = 269
-if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c Phytophthora$'\t'[a-z]` -ne 120 ]; then echo "Wrong Phytophthora species count"; false; fi
-if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c Phytophthora$'\t\t'` -ne 120 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
-if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c -v Phytophthora` -ne 29 ]; then echo "Wrong sister genus count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c $'Phytophthora\t[a-z]'` -ne 120 ]; then echo "Wrong Phytophthora species count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c $'Phytophthora\t\t'` -ne 120 ]; then echo "Wrong Phytophthora genus-only count"; false; fi
+if [ `thapbi_pict dump -d $DB | grep -v "^#" | grep -c -v 'Phytophthora'` -ne 29 ]; then echo "Wrong sister genus count"; false; fi
 
 echo "$0 - test_ncbi-import.sh passed"
