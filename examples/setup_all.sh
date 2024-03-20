@@ -6,7 +6,7 @@ for example in $(grep "/index" ../docs/examples/index.rst | cut -f 1 -d "/" | cu
     echo "============================="
     echo "Setting up $example"
     echo "============================="
-    cd $example
+    cd "$example"
     ./setup.sh
     cd ..
 done
