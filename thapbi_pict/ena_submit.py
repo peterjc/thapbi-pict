@@ -19,15 +19,36 @@ from typing import Optional
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
 
-TABLE_HEADER = (
-    "sample_alias\tinstrument_model\tlibrary_name\tlibrary_source\t"
-    "library_selection\tlibrary_strategy\tdesign_description\t"
-    "library_construction_protocol\tinsert_size\t"
-    "forward_file_name\tforward_file_md5\t"
-    "reverse_file_name\treverse_file_md5\n"
+# column name, any default
+MANDATORY = {
+    "sample": None,
+    "study": None,
+    "instrument_model": None,  # e.g. Illumina MiSeq
+    "library_name": None,  # e.g. folder name
+    "library_source": "METAGENOMIC",
+    "library_selection": "PCR",
+    "library_strategy": "AMPLICON",
+    "library_layout": "PAIRED",
+    "forward_file_name": None,
+    "forward_file_md5": None,
+    "reverse_file_name": None,
+    "reverse_file_md5": None,
+}
+OPTIONAL = (
+    # The design of the library including details of how it was constructed:
+    "library_design",
+    # The protocol used to construct the library:
+    # (used to be mandatory, in our CLI API)
+    "library_construction_protocol",
+    # The design of the library including details of how it was constructed:
+    # (used to be mandatory, in our CLI API)
+    "design_description",
+    # The distance between paired reads:
+    # (used to be mandatory, in our CLI API)
+    "insert_size",
+    "forward_file_unencrypted_md5",
+    "reverse_file_unencrypted_md5",
 )
-TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t%s\t%s\t%i\t%s\t%s\t%s\t%s\n"
-assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 
 
 def load_md5(file_list: list[str]) -> dict[str, str]:
@@ -69,8 +90,26 @@ def write_table(
     design_description: str,
     library_construction_protocol: str,
     insert_size: int,
+    study: str = "",
 ) -> None:
     """Write read file table for ENA upload."""
+    headers = MANDATORY.copy()
+    headers["study"] = study if study else ""
+    headers["instrument_model"] = instrument_model
+    if library_construction_protocol:
+        headers["library_construction_protocol"] = library_construction_protocol
+    if design_description:
+        headers["design_description"] = design_description
+    if insert_size:  # want to ignore default value 0 from CLI API
+        headers["insert_size"] = str(insert_size)
+    for k in headers:
+        assert k in MANDATORY or k in OPTIONAL, k
+    TABLE_HEADER = "\t".join(headers) + "\n"
+    TABLE_TEMPLATE = (
+        "\t".join("%s" if v is None else v for k, v in headers.items()) + "\n"
+    )
+    assert TABLE_TEMPLATE.count("%s") == 6, TABLE_TEMPLATE
+
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
     lines = []
@@ -81,11 +120,7 @@ def write_table(
             TABLE_TEMPLATE
             % (
                 meta[sample] if meta else sample,
-                instrument_model,
                 folder if library_name == "-" else library_name,
-                design_description,
-                library_construction_protocol,
-                insert_size,
                 os.path.split(raw_R1)[1],
                 md5_dict[raw_R1],
                 os.path.split(raw_R2)[1],
@@ -106,6 +141,7 @@ def main(
     metadata_fieldnames: Optional[str] = None,
     metadata_index: Optional[str] = None,
     ignore_prefixes: Optional[str] = None,
+    study: str = "",
     library_name: str = "-",
     instrument_model: str = "Illumina MiSeq",
     design_description: str = "",
@@ -187,6 +223,7 @@ def main(
         design_description,
         library_construction_protocol,
         insert_size,
+        study,
     )
 
     if output != "-":

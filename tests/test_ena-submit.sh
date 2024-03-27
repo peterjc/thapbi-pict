@@ -24,12 +24,12 @@ thapbi_pict ena-submit 2>&1 | grep "the following arguments are required"
 set -o pipefail
 
 thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 \
-    -o $TMP/ena_submit.tsv -e UTF-8
+    -o $TMP/ena_submit.tsv -e UTF-8 --study STUDY
 diff $TMP/ena_submit.tsv tests/reads/ena_submit.tsv
 
 thapbi_pict ena-submit -i tests/reads/ -t tests/reads/metadata.tsv -c 5 -x 1 \
     -o $TMP/ena_submit_custom.tsv --metaencoding latin1 \
-    --library "Test set" --instrument "Illumina Widget" \
+    --library "Test set" --instrument "Illumina Widget" --study STUDY \
     --design "Ad hoc" --protocol "Making it up" --insert 275
 diff $TMP/ena_submit_custom.tsv tests/reads/ena_submit_custom.tsv
 

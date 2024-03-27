@@ -1901,8 +1901,14 @@ def main(args=None):
     subcommand_parser.add_argument(
         "--insert",
         type=int,
-        default=250,
-        help="Value for nominal/average insert_size, default 250.",
+        default=0,
+        help="Value for nominal/average insert_size, default 0 meaning omitted.",
+    )
+    subcommand_parser.add_argument(
+        "--study",
+        type=str,
+        default="",
+        help="Value for study alias or accession, default blank.",
     )
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
