@@ -24,5 +24,4 @@ Python API
    thapbi_pict.summary
    thapbi_pict.taxdump
    thapbi_pict.utils
-   thapbi_pict.ena_submit
    thapbi_pict.versions
