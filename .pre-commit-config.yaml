@@ -44,7 +44,7 @@ repos:
             '--severity=info',
         ]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.3.4
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
@@ -98,7 +98,7 @@ repos:
         files: \.(py|sh|rst|yml|yaml)$
         args: ['-L', 'sintax,nin,otu']
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.9.0
     hooks:
     -   id: mypy
         # equivalent to "files" in .mypy.ini
