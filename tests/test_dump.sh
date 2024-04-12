@@ -19,30 +19,30 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4473 ]; then
+if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4499 ]; then
     echo "Wrong source count for table dump"
     false
 fi
-if [ "$(thapbi_pict dump -f fasta | grep -c "^>")" -ne 1441 ]; then
+if [ "$(thapbi_pict dump -f fasta | grep -c "^>")" -ne 1453 ]; then
     echo "Wrong sequence count for fasta dump"
     false
 fi
 
-if [ "$(thapbi_pict dump --minimal | grep -c -v "^#")" -ne 1441 ]; then
+if [ "$(thapbi_pict dump --minimal | grep -c -v "^#")" -ne 1453 ]; then
     echo "Wrong sequence count for minimal table dump"
     false
 fi
-if [ "$(thapbi_pict dump -m -f fasta | grep -c "^>")" -ne 1441 ]; then
+if [ "$(thapbi_pict dump -m -f fasta | grep -c "^>")" -ne 1453 ]; then
     echo "Wrong sequence count for minimal fasta dump"
     false
 fi
 
 # With genus filter,
-if [ "$(thapbi_pict dump -f txt -g Phytophthora | grep -v -c "^#")" -ne 2947 ]; then
+if [ "$(thapbi_pict dump -f txt -g Phytophthora | grep -v -c "^#")" -ne 2951 ]; then
     echo "Wrong source count for Phytophthora genus"
     false
 fi
-if [ "$(thapbi_pict dump -f fasta -g Phytophthora -m | grep -c "^>")" -ne 790 ]; then
+if [ "$(thapbi_pict dump -f fasta -g Phytophthora -m | grep -c "^>")" -ne 792 ]; then
     echo "Wrong sequence count for Phytophthora genus"
     false
 fi
