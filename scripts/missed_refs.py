@@ -18,26 +18,49 @@ usage = """\
 The input file should be a FASTA file of observed amplicon sequences (e.g. the
 all reads output, or your unknowns), with a reference FASTA file of published
 untrimmed sequences expected to contain the amplicon, and optionally another
-FASTA file which is a subset of those already trimmed:
+FASTA file which is a subset of those already trimmed.
 
-$ ../scripts/unknowns.py -i thapbi-pict.ITS1.all_reads.identity.tsv \
-                         -o unknowns.fasta
+Complete example as part of DB update:
+
+$ ./Oomycota_ITS1_search.sh
+
+That updates Oomycota_ITS1_search.fasta (all search results) and also
+Oomycota_ITS1_w32.fasta (those with expected 32bp leader) which will be
+included in the database.
+
+Enare the observed NCBI entries file is empty, build a TEMP database:
+
+$ rm -rf Oomycota_ITS1_obs.fasta; touch Oomycota_ITS1_obs.fasta
+$ ./build_ITS1_DB.sh  # TEMP DB!
+
+Then rerun the pipeline using this temp DB to get a full list of unknowns
+without any previously obsered entries from NCBI:
+
+$ ### run pipeline here with identity classifier! ###
+$ ../scripts/unknowns.py -i thapbi_pict.ITS1.identity.tsv -o unknowns.fasta
 
 $ ../scripts/missed_refs.py -i unknowns.fasta \
-                            -f Oomycota_ITS1_search.fasta \
-                            -x Oomycota_ITS1_w32.fasta \
-                            -o Oomycota_ITS1_obs.fasta
+                   -f Oomycota_ITS1_search.fasta \
+                   -x Oomycota_ITS1_w32.fasta \
+                      Phytophthora_ITS1_curated.fasta \
+                      Nothophytophthora_ITS1_curated.fasta \
+                   -o Oomycota_ITS1_obs.fasta
 
+$ ./build_ITS1_DB.sh  # Finished DB
+
+i.e. Generate unknowns.fasta, then use it with this script to make
+Oomycota_ITS1_obs.fasta for input to the database.
 """
 
 parser = argparse.ArgumentParser(
-    prog="unknown_refs.py",
-    description="Generate reference FASTA file from BLASTN of unknowns.",
+    prog="missed_refs.py",
+    description="Extract NCBI references matching unknown FASTA entries.",
     epilog=usage,
 )
 parser.add_argument(
     "-i",
     "--input",
+    type=str,
     default="/dev/stdin",
     metavar="FILE",
     help="Input amplicons FASTA file. Required, default stdin.",
@@ -45,6 +68,7 @@ parser.add_argument(
 parser.add_argument(
     "-f",
     "--fasta",
+    type=str,
     required=True,
     metavar="FILE",
     help="Input untrimmed reference FASTA file. Required.",
@@ -52,7 +76,9 @@ parser.add_argument(
 parser.add_argument(
     "-x",
     "--exclude",
+    type=str,
     metavar="FILE",
+    nargs="+",
     help="FASTA file of trimmed references to exclude. Optional.",
 )
 parser.add_argument(
@@ -60,6 +86,7 @@ parser.add_argument(
     "--output",
     dest="output",
     default="/dev/stdout",
+    type=str,
     metavar="FASTA",
     help="Output FASTA filename, defaults to stdout.",
 )
@@ -93,7 +120,7 @@ def species_heuristics(text):
 
 
 def generate_references(
-    input_fasta, reference_fasta, output_fasta, exclude_fasta, left, sep=";"
+    input_fasta, reference_fasta, output_fasta, exclude_fastas, left, sep=";"
 ):
     """Extract FASTA file of reference sequences."""
     references = defaultdict(set)
@@ -107,13 +134,17 @@ def generate_references(
             )
     sys.stderr.write(f"Loaded {len(references)} references\n")
     exclude = set()
-    if exclude_fasta:
-        with open(exclude_fasta) as handle:
-            for title, seq in SimpleFastaParser(handle):
-                if reject_title(title):
-                    continue
-                exclude.add(seq.upper())
-        sys.stderr.write(f"Will exclude {len(exclude)} trimmed references\n")
+    if exclude_fastas:
+        for exclude_fasta in exclude_fastas:
+            sys.stderr.write(f"Will exclude entries from {exclude_fasta}\n")
+            with open(exclude_fasta) as handle:
+                for title, seq in SimpleFastaParser(handle):
+                    if reject_title(title):
+                        continue
+                    exclude.add(seq.upper())
+        sys.stderr.write(
+            f"Will exclude {len(exclude)} refs from {len(exclude_fastas)} files\n"
+        )
 
     drop_via_exclude = 0
     with open(input_fasta) as handle:
@@ -160,7 +191,9 @@ def generate_references(
                         )
                     )
     if drop_via_exclude:
-        sys.stderr.write(f"Dropped {drop_via_exclude} via the exclude file\n")
+        sys.stderr.write(
+            f"Dropped {drop_via_exclude} via the {len(exclude_fastas)} exclude files\n"
+        )
 
 
 generate_references(
