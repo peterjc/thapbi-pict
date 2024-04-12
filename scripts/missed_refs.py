@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract references for unknown FASTA."""
+"""Extract NCBI references matching unknown FASTA entries."""
 
 import argparse
 import sys
@@ -10,7 +10,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from thapbi_pict.db_import import parse_ncbi_fasta_entry
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.2")
+    print("v0.0.3")
     sys.exit(0)
 
 # Parse Command Line
@@ -20,17 +20,15 @@ all reads output, or your unknowns), with a reference FASTA file of published
 untrimmed sequences expected to contain the amplicon, and optionally another
 FASTA file which is a subset of those already trimmed:
 
-$ ./unknowns.py -i thapbi-pict.ITS1.all_reads.identity.tsv \
-                -f thapbi-pict.ITS1.all_reads.fasta -o unknowns.fasta
+$ ../scripts/unknowns.py -i thapbi-pict.ITS1.all_reads.identity.tsv \
+                         -o unknowns.fasta
 
-$ ./missed_refs.py -i unknowns.fasta \
-                   -f 2022-07-05_ITS1_Oomycota_34111.fasta \
-                   -x 2022-07-05_ITS1_Oomycota_w32.fasta \
-                   -o 2022-07-05_ITS1_Oomycota_obs.fasta
+$ ../scripts/missed_refs.py -i unknowns.fasta \
+                            -f Oomycota_ITS1_search.fasta \
+                            -x Oomycota_ITS1_w32.fasta \
+                            -o Oomycota_ITS1_obs.fasta
 
 """
-
-# TODO - do we want to use sallseqid?
 
 parser = argparse.ArgumentParser(
     prog="unknown_refs.py",
@@ -71,7 +69,7 @@ parser.add_argument(
     default="TTTCCGTAGGTGAACCTGCGGAAGGATCATTA",
     metavar="SEQ",
     help="String to assume at the start of the amplicon, will be added to "
-    "partial BLAST matches. Default TTTCCGTAGGTGAACCTGCGGAAGGATCATTA for ITS1.",
+    "partial matches. Default TTTCCGTAGGTGAACCTGCGGAAGGATCATTA for ITS1.",
 )
 
 if len(sys.argv) == 1:
@@ -117,6 +115,7 @@ def generate_references(
                 exclude.add(seq.upper())
         sys.stderr.write(f"Will exclude {len(exclude)} trimmed references\n")
 
+    drop_via_exclude = 0
     with open(input_fasta) as handle:
         with open(output_fasta, "w") as out_handle:
             for _, seq in SimpleFastaParser(handle):
@@ -128,6 +127,9 @@ def generate_references(
                     "ATTACTGAACAAACT"
                 ):
                     # Seems to have been truncated...
+                    continue
+                if seq in exclude:
+                    drop_via_exclude += 1
                     continue
                 # sys.stderr.write(f"{title}\n")
                 target = seq[len(left) :] if seq.startswith(left) else seq
@@ -157,6 +159,8 @@ def generate_references(
                             seq,
                         )
                     )
+    if drop_via_exclude:
+        sys.stderr.write(f"Dropped {drop_via_exclude} via the exclude file\n")
 
 
 generate_references(
