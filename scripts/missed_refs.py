@@ -10,7 +10,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from thapbi_pict.db_import import parse_ncbi_fasta_entry
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.3")
+    print("v0.0.4")
     sys.exit(0)
 
 # Parse Command Line
@@ -147,49 +147,50 @@ def generate_references(
         )
 
     drop_via_exclude = 0
+    seq_dict = defaultdict(set)
     with open(input_fasta) as handle:
-        with open(output_fasta, "w") as out_handle:
-            for _, seq in SimpleFastaParser(handle):
-                seq = seq.upper()
-                if seq == (
-                    "TGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAA"
-                    "CCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATC"
-                    "ATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTA"
-                    "ATTACTGAACAAACT"
-                ):
-                    # Seems to have been truncated...
+        for _, seq in SimpleFastaParser(handle):
+            seq = seq.upper()
+            if seq == (
+                "TGAACCTGCGGAAGGATCATTACCACACCTAAAAAACTTTCCACGTGAACCGTATCAAAA"
+                "CCCTTTTATTGGGGGCTTCTGTCTGGTCTGGCTTCGGCTGGATTGGGTGGCGGCTCTATC"
+                "ATGGCGACCGCTCTGAGCTTCGGCCTGGAGCTAGTAGCCCACTTTTTAAACCCATTCTTA"
+                "ATTACTGAACAAACT"
+            ):
+                # Seems to have been truncated...
+                continue
+            if seq in exclude:
+                drop_via_exclude += 1
+                continue
+            # sys.stderr.write(f"{title}\n")
+            target = seq[len(left) :] if seq.startswith(left) else seq
+            # Will try looking for matches which can be extended
+            for ref in references:
+                if target not in ref:
                     continue
-                if seq in exclude:
-                    drop_via_exclude += 1
-                    continue
-                # sys.stderr.write(f"{title}\n")
-                target = seq[len(left) :] if seq.startswith(left) else seq
-                # Will try looking for matches which can be extended
-                seq_dict = defaultdict(set)
-                for ref in references:
-                    if target not in ref:
-                        continue
-                    common = seq
-                    while common not in ref and len(left) + len(common) > len(seq):
-                        common = common[1:]
-                    assert common in ref
-                    assert target in common
-                    assert len(left) + len(common) >= len(seq)
-                    masked = left[: len(seq) - len(common)].lower() + common
-                    assert (
-                        masked.upper() == seq
-                    ), f"{left[:len(seq) - len(common)]} + {common} != {seq} from {ref}"
-                    seq_dict[masked].update(references[ref])
-                    # sys.stderr.write(f"{title} {references[ref]}\n")
+                common = seq
+                while common not in ref and len(left) + len(common) > len(seq):
+                    common = common[1:]
+                assert common in ref
+                assert target in common
+                assert len(left) + len(common) >= len(seq)
+                masked = left[: len(seq) - len(common)].lower() + common
+                assert (
+                    masked.upper() == seq
+                ), f"{left[:len(seq) - len(common)]} + {common} != {seq} from {ref}"
+                seq_dict[masked].update(references[ref])
+                # sys.stderr.write(f"{title} {references[ref]}\n")
 
-                for seq in sorted(seq_dict, key=lambda s: (s.upper(), s)):
-                    out_handle.write(
-                        ">%s\n%s\n"
-                        % (
-                            sep.join(sorted(seq_dict[seq])),
-                            seq,
-                        )
-                    )
+    with open(output_fasta, "w") as out_handle:
+        for seq in sorted(seq_dict, key=lambda s: (s.upper(), s)):
+            out_handle.write(
+                ">%s\n%s\n"
+                % (
+                    sep.join(sorted(seq_dict[seq])),
+                    seq,
+                )
+            )
+
     if drop_via_exclude:
         sys.stderr.write(
             f"Dropped {drop_via_exclude} via the {len(exclude_fastas)} exclude files\n"
