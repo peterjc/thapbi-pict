@@ -44,6 +44,7 @@ $ ../scripts/missed_refs.py -i unknowns.fasta \
                    -x Oomycota_ITS1_w32.fasta \
                       Phytophthora_ITS1_curated.fasta \
                       Nothophytophthora_ITS1_curated.fasta \
+                      Peronosporales_ITS1_curated.fasta \
                    -o Oomycota_ITS1_obs.fasta
 
 $ ./build_ITS1_DB.sh  # Finished DB
