@@ -19,7 +19,7 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4446 ]; then
+if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4445 ]; then
     echo "Wrong source count for table dump"
     false
 fi
