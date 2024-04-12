@@ -2,7 +2,7 @@
 VERSION=$(thapbi_pict -v | sed "s/THAPBI PICT //g")
 echo "Using THAPBI PICT $VERSION"
 set -euo pipefail
-TAX=taxdmp_2024-02-01
+TAX=taxdmp_2024-04-01
 DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
@@ -15,7 +15,7 @@ if [ ! -d "${TAX}/" ]; then unzip ${TAX}.zip nodes.dmp names.dmp merged.dmp -d $
 # 4762 = Oomycetes
 thapbi_pict load-tax -d "$DB.sqlite" -t "$TAX" -a 4762
 
-# Ad-hoc fixes for NCBI taxonomy as of Feb 2024 not having synonyms for older names:
+# Ad-hoc fixes for NCBI taxonomy as of Feb ~ April 2024 not having synonyms for older names:
 # Phytophthora austrocedrae -> Phytophthora austrocedri (txid631361):
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=631361), 'Phytophthora austrocedrae');"
 # Phytophthora citricola III -> Phytophthora aff. citricola III (txid572928)
