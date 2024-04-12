@@ -7,6 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.13 *Pending*  Updated NCBI taxonomy and bulk genus-only entries in default DB.
 v1.0.12 2024-03-11 Restored Python 3.8 support. More robust import of SINTAX style FASTA files.
 v1.0.11 2024-03-05 Harmonize ASV naming in BIOM output, optional ``sample-tally`` BIOM output.
 v1.0.10 2024-02-26 Sample report 'Unique' column is now the unique ASV count. Misc updates.
