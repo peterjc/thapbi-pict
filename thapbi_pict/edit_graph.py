@@ -508,7 +508,7 @@ def main(
             + "\n"
         )
         for c in sorted(nx.connected_components(G), key=len, reverse=True):
-            c = sorted(c, key=md5_abundance.get, reverse=True)
+            c = sorted(c, key=md5_abundance.__getitem__, reverse=True)
             total = sum(md5_abundance[md5] for md5 in c)
             md5 = c[0]
             if any(species_level(_) for _ in md5_species.get(md5, [])):
