@@ -388,7 +388,7 @@ def method_dist(
 
     if not input_seqs:
         # Shortcut
-        return {}
+        return
 
     # Compute all the query vs DB distances in one call
     all_dists = cdist(
