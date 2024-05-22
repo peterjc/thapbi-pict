@@ -273,7 +273,6 @@ def sample_summary(
     col_offset += len(stats_fields)
     for offset, sp in enumerate(species_predictions):
         worksheet.write_string(current_row, col_offset + offset, _sp_display(sp))
-    worksheet.freeze_panes(current_row + 1, col_offset)
 
     # Main body
     # =========
@@ -716,8 +715,6 @@ def read_summary(
             sample_formats[s],
         )
     current_row += 1
-    # keep total line in view plus headers:
-    worksheet.freeze_panes(current_row, LEADING_COLS)
 
     # Main body
     # ---------
