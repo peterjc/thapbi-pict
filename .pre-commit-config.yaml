@@ -44,7 +44,7 @@ repos:
             '--severity=info',
         ]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.3
+    rev: v0.4.7
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
@@ -92,7 +92,7 @@ repos:
         additional_dependencies: [pygments]
         args: [--quiet,--ignore=D001]
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
     -   id: codespell
         files: \.(py|sh|rst|yml|yaml)$
