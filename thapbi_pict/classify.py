@@ -118,7 +118,7 @@ def taxid_and_sp_lists(
     """Return semi-colon separated summary of the taxonomy objects from DB.
 
     Will discard genus level predictions (e.g. 'Phytophthora') if there is a
-    species level prediciton within that genus (e.g. 'Phytophthora infestans').
+    species level prediction within that genus (e.g. 'Phytophthora infestans').
 
     If there is a single result, returns a tuple of taxid (integer), genus-species,
     and debugging comment (strings).
