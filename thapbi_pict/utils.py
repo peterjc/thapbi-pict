@@ -831,7 +831,7 @@ def load_metadata(
     be sequenced more than once (e.g. technical replicates). These sample
     names are matched against the file name stems, see function find_metadata.
 
-    The metadata table rows are sorted based on the requested colunms.
+    The metadata table rows are sorted based on the requested columns.
 
     Return values:
 
