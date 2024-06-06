@@ -50,7 +50,7 @@ def check_rapidfuzz() -> str:
 def check_tools(names: list[str], debug: bool) -> list[str]:
     """Verify the named tools are present, log versions if debug=True.
 
-    Argument names should be an interable of tool binary names.
+    Argument names should be an iterable of tool binary names.
 
     If all the tools are present, returns a list of version strings.
 
