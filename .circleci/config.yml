@@ -39,9 +39,11 @@ jobs:
             cd database
             bash build_ITS1_DB.sh
             cd ..
+            echo "Confirming with git that database/ITS1_DB.fasta is unchanged"
             git diff  # Confirm database/ITS1_DB.fasta unchanged
             cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
             chmod a-w thapbi_pict/ITS1_DB.sqlite
+            echo "DB ready, uninstalling THAPBI PICT..."
             python -m pip uninstall --yes thapbi_pict
             echo "Building tar-ball and then wheel"
             python -m build
