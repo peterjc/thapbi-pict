@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2018-2021 by Peter Cock, The James Hutton Institute.
+# Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -50,10 +50,8 @@ if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM taxonomy;")" -ne "3003" ]; then
     false
 fi
 # NCBI import at genus level only, as used in bundled ITS1_DB.sqlite
-# 5 sequences all with multiple HMM matches, but after primer trimming most become single HMM entries.
-cutadapt --quiet -g $LEFT tests/ncbi-import/multiple_hmm.fasta |
-    cutadapt --quiet -a $RIGHT_RC -o $TMP/multiple_hmm.fasta -
-thapbi_pict import -k ITS1 -l $LEFT -r $RIGHT -c ncbi -d $DB -g -i $TMP/multiple_hmm.fasta \
+# 5 sequences, originally flagged as giving multiple HMM matches
+thapbi_pict import -k ITS1 -l $LEFT -r $RIGHT -c ncbi -d $DB -g -i tests/ncbi-import/multiple_hmm.fasta \
     -n "NCBI examples with multiple HMM matches"
 # WARNING: 2 HMM matches in MF095142.1
 # WARNING: Uncultured, so ignoring 'MF095142.1 Uncultured Peronosporaceae clone MZOo17 small subunit ri...'
