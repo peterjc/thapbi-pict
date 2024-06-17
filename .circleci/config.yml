@@ -40,7 +40,7 @@ jobs:
             bash build_ITS1_DB.sh
             cd ..
             echo "Confirming with git that database/ITS1_DB.fasta is unchanged"
-            git diff database/ITS1_DB.fasta
+            git diff origin/master database/ITS1_DB.fasta
             cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
             chmod a-w thapbi_pict/ITS1_DB.sqlite
             echo "DB ready, uninstalling THAPBI PICT..."
