@@ -87,12 +87,11 @@ fi
 
 # When importing NCBI files, we no longer assume P. is Phytophthora:
 rm -rf $TMP/20th_Century_ITS1.fasta $TMP/20th_Century_ITS1_Peronosporaceae.fasta
-cat tests/ncbi-import/20th_Century_ITS1.fasta | sed "s/ P\./ Phytophthora /g" |
-    cutadapt --quiet -g $LEFT - |
-    cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1.fasta -
-cat tests/ncbi-import/20th_Century_ITS1_Peronosporaceae.fasta | sed "s/ P\./ Phytophthora /g" |
-    cutadapt --quiet -g $LEFT - |
-    cutadapt --quiet -a $RIGHT_RC -o $TMP/20th_Century_ITS1_Peronosporaceae.fasta -
+# Apply primer trimming and expand P. to Phytophthora at run time:
+cutadapt --quiet -a ${LEFT}...${RIGHT_RC} tests/ncbi-import/20th_Century_ITS1.fasta |
+    sed "s/ P\./ Phytophthora /g" > $TMP/20th_Century_ITS1.fasta
+cutadapt --quiet -a ${LEFT}...${RIGHT_RC} tests/ncbi-import/20th_Century_ITS1_Peronosporaceae.fasta |
+    sed "s/ P\./ Phytophthora /g" > $TMP/20th_Century_ITS1_Peronosporaceae.fasta
 
 export DB=$TMP/20th_Century_ITS1.sqlite
 rm -rf $DB
