@@ -10,7 +10,7 @@ for example in $(grep "/index" ../docs/examples/index.rst | cut -f 1 -d "/" | cu
     echo "Checking docs for $example"
     echo "================================="
     cd "$example"
-    ../../scripts/rst_doc_test.py "../../docs/examples/$example/*.rst"
+    ../../scripts/rst_doc_test.py ../../docs/examples/"$example"/*.rst
     cd ..
 done
 
