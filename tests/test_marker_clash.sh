@@ -22,10 +22,10 @@ export DB=$TMP/clashes.sqlite
 set -x
 
 cutadapt --discard-untrimmed --quiet -g GAAGGTGAAGTCGTAACAAGG...GYRGGGACGAAAGTCYYTGC \
-    database/controls.fasta -o $TMP/trimmed-controls.fasta
+    database/synthetic_controls_ITS1.fasta -o $TMP/trimmed-synthetic_controls_ITS1.fasta
 
 # This also defines the marker name, primers, and length range for preparing reads
-thapbi_pict import -d $DB -i $TMP/trimmed-controls.fasta -x \
+thapbi_pict import -d $DB -i $TMP/trimmed-synthetic_controls_ITS1.fasta -x \
     -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC \
     --minlen 100 --maxlen 1000
 
@@ -34,8 +34,8 @@ thapbi_pict import -d $DB -k ITS1 -x -i tests/marker_clash/Phytophthora_cinnamom
 
 # Now setup the clash, import the controls AGAIN under a different marker name
 # File needs to have different MD5 checksum due to current import assumptions
-head -n 6 $TMP/trimmed-controls.fasta | sed "s/synthetic/unreal/g" > $TMP/three_controls.fasta
-thapbi_pict import -d $DB -i $TMP/three_controls.fasta -x \
+head -n 6 $TMP/trimmed-synthetic_controls_ITS1.fasta | sed "s/synthetic/unreal/g" > $TMP/three_synthetic_controls_ITS1.fasta
+thapbi_pict import -d $DB -i $TMP/three_synthetic_controls_ITS1.fasta -x \
     -k NotITS1 -l ATGCGATACTTGGTGTGAAT -r GACGCTTCTCCAGACTACAAT \
     --minlen 50 --maxlen 250
 

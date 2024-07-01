@@ -22,14 +22,14 @@ echo "Checking curated-import"
 echo "======================="
 set -x
 thapbi_pict import 2>&1 | grep "the following arguments are required"
-thapbi_pict import -d "sqlite:///:memory:" -i database/controls.fasta 2>&1 | grep "Taxonomy table empty"
+thapbi_pict import -d "sqlite:///:memory:" -i database/synthetic_controls_ITS1.fasta 2>&1 | grep "Taxonomy table empty"
 set -o pipefail
 
 echo "Untrimmed controls (lax mode, without the synthetic controls in the taxonomy)"
 export DB=$TMP/contols_lax.sqlite
 rm -rf $DB
 thapbi_pict import -d $DB -k ITS1 -l $LEFT -r $RIGHT \
-    -i database/controls.fasta -x --minlen 268 --maxlen 268
+    -i database/synthetic_controls_ITS1.fasta -x --minlen 268 --maxlen 268
 if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM data_source;")" -ne "1" ]; then
     echo "Wrong data_source count"
     false
