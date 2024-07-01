@@ -65,7 +65,7 @@ thapbi_pict classify -m 1s3g -d $DB -i tests/prepare-reads/DNAMIX_S95_L001.fasta
 rm -rf $TMP/duo
 mkdir -p $TMP/duo
 cp database/Phytophthora_ITS1_curated.fasta $TMP/duo/
-cp database/controls.fasta $TMP/duo/
+cp database/synthetic_controls_ITS1.fasta $TMP/duo/
 thapbi_pict classify -m identity -d $DB -i $TMP/duo -o $TMP/duo
 # shellcheck disable=SC2012
 if [ "$(ls -1 $TMP/duo/*.identity.tsv | wc -l)" -ne "2" ]; then
