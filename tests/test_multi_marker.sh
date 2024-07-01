@@ -14,7 +14,8 @@ rm -rf $TMP
 mkdir -p $TMP
 
 export DB=$TMP/pooled.sqlite
-mkdir $TMP/intermediate $TMP/summary
+mkdir $TMP/intermediate-subset $TMP/intermediate
+mkdir $TMP/summary-subset $TMP/summary
 
 echo "====================================="
 echo "Setting up empty DB for multi-markers"
@@ -99,7 +100,23 @@ FASTA=""
 import_marker # call function above
 
 echo "====================="
-echo "Running prepare-reads"
+echo "Running prepare-reads (16S markers)"
+echo "====================="
+
+thapbi_pict prepare-reads \
+    -i tests/multi_marker/raw_data/ \
+    -o $TMP/intermediate-subset \
+    -k 16S,Mini-16S \
+    -d $DB -a 10
+
+for m in 16S Mini-16S; do
+    f=tests/multi_marker/intermediate/$m/EM_1_sample.fasta
+    echo diff $TMP/intermediate-subset/$m/EM_1_sample.fasta $f
+    diff $TMP/intermediate-subset/$m/EM_1_sample.fasta $f
+done
+
+echo "====================="
+echo "Running prepare-reads (all markers)"
 echo "====================="
 
 thapbi_pict prepare-reads \
@@ -116,7 +133,7 @@ for f in tests/multi_marker/intermediate/*/EM_1_sample.fasta; do
 done
 
 echo "================"
-echo "Running pipeline"
+echo "Running pipeline (all markers)"
 echo "================"
 
 thapbi_pict pipeline \
@@ -128,6 +145,25 @@ for f in tests/multi_marker/summary/*.tsv; do
     f=${f##*/}
     echo diff $TMP/summary/$f tests/multi_marker/summary/$f
     diff $TMP/summary/$f tests/multi_marker/summary/$f
+done
+
+echo "================"
+echo "Running pipeline (16S markers)"
+echo "================"
+
+thapbi_pict pipeline \
+    -i tests/multi_marker/raw_data/ \
+    -s $TMP/intermediate -o $TMP/summary-subset/ \
+    -k 16S,Mini-16S \
+    -d $DB -a 10 --synthetic ''
+
+for m in 16S Mini-16S; do
+    # shellcheck disable=SC2231
+    for f in $TMP/summary-subset/${m}*.tsv; do
+        f=${f##*/}
+        echo diff $TMP/summary-subset/$f $TMP/summary/$f
+        diff $TMP/summary-subset/$f $TMP/summary/$f
+    done
 done
 
 echo "$0 - test_multi_marker.sh passed"
