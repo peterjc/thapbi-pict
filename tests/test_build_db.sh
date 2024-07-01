@@ -30,7 +30,7 @@ set -x
 
 cd database/
 rm -rf ITS1_DB.sqlite ITS1_DB.sql ITS1_DB.txt ITS1_DB.fasta
-./build_ITS1_DB.sh
+./build_default_DB.sh
 cd ..
 
 set +x

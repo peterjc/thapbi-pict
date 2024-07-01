@@ -21,7 +21,7 @@ include thapbi_pict/ITS1_DB.sqlite
 # e.g. NCBI taxonomy or symlinks to control plate positive controls.
 include database/README.rst
 include database/ITS1_DB.fasta
-include database/build_ITS1_DB.sh
+include database/build_default_DB.sh
 include database/synthetic_controls_ITS1.fasta
 include database/Phytophthora_ITS1_curated.fasta
 include database/Nothophytophthora_ITS1_curated.fasta
