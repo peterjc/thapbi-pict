@@ -1,4 +1,5 @@
 # Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -801,7 +802,7 @@ ARG_MARKER = dict(  # noqa: C408
     "and max product length are recommended. Required unless DB has exactly "
     "one marker already defined in it.",
 )
-ARG_MARKER_PICK = dict(  # noqa: C408
+ARG_MARKER_PICK_ONE = dict(  # noqa: C408
     type=str,
     default="",
     # Comma separated?
@@ -1598,7 +1599,7 @@ def main(args=None):
         "FASTA sample file, default 0 (classify all).",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
-    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER_PICK)
+    subcommand_parser.add_argument("-k", "--marker", **ARG_MARKER_PICK_ONE)
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument(
         "-o",
