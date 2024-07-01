@@ -37,7 +37,7 @@ jobs:
             rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
             mv database/ITS1_DB.fasta database/expected_DB.fasta
             cd database
-            bash build_ITS1_DB.sh
+            bash build_default_DB.sh
             cd ..
             echo "Confirming database/ITS1_DB.fasta is unchanged"
             diff database/expected_DB.fasta  database/ITS1_DB.fasta
