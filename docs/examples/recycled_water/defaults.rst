@@ -7,9 +7,10 @@ Running thapbi-pict pipeline
 ----------------------------
 
 First, we will run the THAPBI PICT pipeline command with largely default
-settings (including the default database and primers), other than including
-the metadata about the water samples. Note that this dataset has no blanks or
-negative controls, so we must trust the default minimum abundance threshold.
+settings (including the default database and primers for ITS1), other than
+including the metadata about the water samples. Note that this dataset has no
+blanks or negative controls, so we must trust the default minimum abundance
+threshold.
 
 The key values which we will be changing later are the primers and database.
 
@@ -21,7 +22,7 @@ as follows, and you should get the listed output report files:
     $ mkdir -p intermediate_defaults/ summary/
     $ thapbi_pict pipeline \
       -i raw_data/ -o summary/recycled-water-defaults \
-      -s intermediate_defaults/ \
+      -s intermediate_defaults/ -k ITS1 \
       -t metadata.tsv -x 7 -c 1,2,3,4,5,6
     ...
     onebp classifier assigned species/genus to 437 of 794 unique sequences from 1 files

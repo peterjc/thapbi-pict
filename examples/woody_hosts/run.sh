@@ -22,14 +22,14 @@ echo "Running analysis"
 mkdir -p intermediate/ summary/
 
 echo "Pipeline without metadata..."
-thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+thapbi_pict pipeline -i raw_data/ -s intermediate/ -k ITS1 \
     -o summary/thapbi-pict -n raw_data/NEGATIVE*.fastq.gz
 
 echo "Pipeline with metadata & assess classifier..."
 # Reuses the intermediate files (prepared FASTA files)
 # Giving different report name stem (so not to over-write reports without metadata)
 thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
-    -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
+    -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz -k ITS1 \
     -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
 
 echo =============================
@@ -42,13 +42,13 @@ echo =============================
 thapbi_pict pipeline -a 2 -f 0 -i expected \
     raw_data/DNA15MIX_R?.fastq.gz \
     raw_data/DNA10MIX_undiluted_R?.fastq.gz \
-    -s intermediate -o summary/mocks_a2
+    -s intermediate -o summary/mocks_a2 -k ITS1
 
 # Crude parameter sweep of the abundance threshold (-a) with -f 0 assumed.
 echo -e "#Threshold\tTP\tFP\tFN\tTN\tsensitivity\tspecificity\tprecision\tF1\tHamming-loss\tAd-hoc-loss" > summary/mocks_a2.assess-vs-abundance.tsv
 for A in 2 10 20 30 40 50 60 70 80 90 100; do
     # Name files explicitly to avoid warnings about unused entries
-    thapbi_pict assess -i \
+    thapbi_pict assess --marker ITS1 -i \
         summary/mocks_a2.ITS1.tally.tsv \
         summary/mocks_a2.ITS1.onebp.tsv \
         expected/DNA15MIX.known.tsv \

@@ -18,8 +18,11 @@ Assuming you have the FASTQ files in ``raw_data/`` as described above:
 
 .. code:: console
 
-    $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/
+    $ thapbi_pict prepare-reads -i raw_data/ -o intermediate/ -k ITS1
     ...
+
+Here we explicitly limit this to the ITS1 marker (by default it will look
+for all markers defined in the database).
 
 For each input FASTQ file pair ``raw_data/<sample_name>_R1.fastq.gz`` and
 ``raw_data/<sample_name>_R2.fastq.gz`` you should get a small FASTA file
