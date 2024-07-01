@@ -14,6 +14,7 @@ the ``main()`` function define in this Python file.
 import argparse
 import os
 import sys
+from typing import List
 from typing import Optional
 
 from . import __version__
@@ -129,6 +130,24 @@ def expand_database_argument(
     return prefix + db
 
 
+def validate_markers(markers: List[str], requested_markers: str) -> List[str]:
+    """Confirm requests are a subset of those defined."""
+    if requested_markers:
+        subset = [_.strip() for _ in requested_markers.split(",")]
+        for _ in subset:
+            if _ not in markers:
+                all = ", ".join(sorted(markers))
+                sys.exit(f"ERROR - Marker {_} is not defined in DB, only: {all}")
+        if len(subset) < len(markers):
+            sys.stderr.write(
+                "WARNING: Only looking at a subset of the markers defined in the DB "
+                f"({len(subset)} of {len(markers)})\n"
+            )
+        markers = [_ for _ in markers if _ in subset]
+        del subset
+    return markers
+
+
 # Subcommand dispatch
 # ===================
 
@@ -208,11 +227,14 @@ def prepare_reads(args=None):
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
     Session = connect_to_db(db)
     session = Session()
+    markers = sorted(_.name for _ in session.query(MarkerDef))
+    markers = validate_markers(markers, args.markers)
 
     return_code = main(
         fastq=args.input,
         out_dir=args.output,
         session=session,
+        markers=markers,
         flip=args.flip,
         min_abundance=args.abundance,
         min_abundance_fraction=args.abundance_fraction,
@@ -439,6 +461,7 @@ def pipeline(args=None):
     Session = connect_to_db(db)
     session = Session()
     markers = sorted(_.name for _ in session.query(MarkerDef))
+    markers = validate_markers(markers, args.markers)
 
     # TODO - apply require_metadata=True to the prepare and classify steps?
 
@@ -808,6 +831,13 @@ ARG_MARKER_PICK_ONE = dict(  # noqa: C408
     # Comma separated?
     help="If DB has multiple amplicon markers, which one should be used?",
 )
+ARG_MARKER_PICK_SOME = dict(  # noqa: C408
+    type=str,
+    default="",
+    # Comma separated?
+    help="If the DB defines multiple amplicon markers, but you only wish to "
+    "use a subset, list them as a comma-separated string",
+)
 
 # "-d", "--database",
 ARG_DB_WRITE = dict(  # noqa: C408
@@ -1122,6 +1152,7 @@ def main(args=None):
     subcommand_parser.add_argument("-a", "--abundance", **ARG_FASTQ_MIN_ABUNDANCE)
     subcommand_parser.add_argument("-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("-k", "--markers", **ARG_MARKER_PICK_SOME)
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
@@ -1394,6 +1425,7 @@ def main(args=None):
         "-f", "--abundance-fraction", **ARG_FASTQ_NOISE_PERC_ZERO
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("-k", "--markers", **ARG_MARKER_PICK_SOME)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
     subcommand_parser.add_argument("-t", "--temp", **ARG_TEMPDIR)

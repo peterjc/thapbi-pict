@@ -1,4 +1,5 @@
 # Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -781,7 +782,7 @@ def marker_cut(
 
 
 def load_marker_defs(
-    session, spike_genus: str = ""
+    session, spike_genus: str = "", filter: Optional[list[str]] = None
 ) -> dict[str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]]:
     """Load marker definitions and any spike-in sequences from the DB."""
     tmp_genus_set = set()
@@ -803,6 +804,12 @@ def load_marker_defs(
         str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]
     ] = {}
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
+        if filter and reference_marker.name not in filter:
+            # Print only in verbose/debug mode?
+            sys.stderr.write(
+                f"WARNING - Not looking for marker {reference_marker.name}\n"
+            )
+            continue
         if not reference_marker.left_primer or not reference_marker.right_primer:
             # TODO - ERROR if more than one marker? Always an error?
             sys.exit(f"ERROR: Missing primer(s) for {reference_marker.name}")
@@ -852,6 +859,7 @@ def main(
     fastq: list[str],
     out_dir: str,
     session,
+    markers: Optional[list[str]] = None,
     flip: bool = False,
     min_abundance: int = 2,
     min_abundance_fraction: float = 0.0,
@@ -903,7 +911,7 @@ def main(
 
     check_tools(["flash", "cutadapt"], debug)
 
-    marker_definitions = load_marker_defs(session)
+    marker_definitions = load_marker_defs(session, filter=markers)
 
     fastq_file_pairs = find_fastq_pairs(
         fastq, ignore_prefixes=ignore_prefixes, debug=debug
