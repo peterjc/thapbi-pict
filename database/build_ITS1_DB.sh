@@ -38,9 +38,9 @@ sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C4');"
 sqlite3 "$DB.sqlite" "INSERT INTO taxonomy (ncbi_taxid, genus, species) VALUES (32630, 'synthetic', 'construct C5');"
 # Trim the primers off
-cutadapt --discard-untrimmed --quiet -g GAAGGTGAAGTCGTAACAAGG...GYRGGGACGAAAGTCYYTGC controls.fasta -o trimmed-controls.fasta
+cutadapt --discard-untrimmed --quiet -g GAAGGTGAAGTCGTAACAAGG...GYRGGGACGAAAGTCYYTGC synthetic_controls_ITS1.fasta -o trimmed_syn_ctrl_ITS1.fasta
 # This also defines the marker name, primers, and length range for preparing reads
-thapbi_pict import -d "$DB.sqlite" -i trimmed-controls.fasta \
+thapbi_pict import -d "$DB.sqlite" -i trimmed_syn_ctrl_ITS1.fasta \
     -k ITS1 -l GAAGGTGAAGTCGTAACAAGG -r GCARRGACTTTCGTCCCYRC \
     --minlen 100 --maxlen 1000
 

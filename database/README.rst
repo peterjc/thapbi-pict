@@ -49,7 +49,7 @@ sets of biological sequences (subject to taxonomy filtering):
 
 Additionally:
 
-- Five G-BLOCKS synthetic controls in file ``database/controls.fasta``
+- Five G-BLOCKS synthetic controls in ``database/synthetic_controls_ITS1.fasta``
 
 - This used the NCBI taxonomy recorded in the script, which typically means
   a handful of unrecognised curated entries may be imported without an NCBI
