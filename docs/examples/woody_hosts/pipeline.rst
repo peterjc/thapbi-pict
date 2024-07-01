@@ -17,7 +17,7 @@ command as follows, and should get multiple output report files:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+    $ thapbi_pict pipeline -k ITS1 -i raw_data/ -s intermediate/ \
       -o summary/thapbi-pict
     ...
     $ ls -1 summary/thapbi-pict.*
@@ -36,7 +36,7 @@ increase the plate level minimum abundance threshold:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+    $ thapbi_pict pipeline -k ITS1 -i raw_data/ -s intermediate/ \
       -o summary/thapbi-pict -n raw_data/NEGATIVE*.fastq.gz
     ...
 
@@ -45,7 +45,7 @@ provide metadata:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ -s intermediate/ \
+    $ thapbi_pict pipeline -k ITS1 -i raw_data/ -s intermediate/ \
       -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...
@@ -55,7 +55,7 @@ against any expected sample species classifications:
 
 .. code:: console
 
-    $ thapbi_pict pipeline -i raw_data/ expected/ -s intermediate/ \
+    $ thapbi_pict pipeline -k ITS1 -i raw_data/ expected/ -s intermediate/ \
       -o summary/with-metadata -n raw_data/NEGATIVE*.fastq.gz \
       -t metadata.tsv -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
     ...

@@ -21,8 +21,8 @@ echo =========================
 echo Recycled water - Defaults
 echo =========================
 
-echo "First with default settings and DB"
-thapbi_pict pipeline \
+echo "First with default settings and default DB ITS1 marker"
+thapbi_pict pipeline -k ITS1 \
     -i raw_data/ -o summary/recycled-water-defaults \
     -s intermediate_defaults/ \
     --merged-cache tmp_merged/ \
