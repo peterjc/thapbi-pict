@@ -843,7 +843,10 @@ def load_marker_defs(
                         kmers(seq_source.marker_seq.sequence),
                     )
                 )
-            sys.stderr.write(f"Loaded {len(spikes)} spike-in control sequences.\n")
+            sys.stderr.write(
+                f"Loaded {len(spikes)} {reference_marker.name} "
+                "spike-in control sequences.\n"
+            )
 
         marker_definitions[reference_marker.name] = {
             "left_primer": reference_marker.left_primer,
