@@ -28,9 +28,9 @@ if [ ! -f pooled.sqlite ]; then
     # https://github.com/grunwaldlab/rps10_barcode/blob/main/raw_data/primer_data.csv
 
     # Doing the left and right primer trimming separately:
-    cutadapt --quiet -g GTTGGTTAGAGYARAAGACT 2020-10-22_release_1_rps10.fasta \
-      | cutadapt --quiet -a AGTTCRARTCTTTCTARRYAT /dev/stdin \
-      | ./rename_fasta.py > rps10.fasta
+    cutadapt --quiet -g GTTGGTTAGAGYARAAGACT 2020-10-22_release_1_rps10.fasta |
+        cutadapt --quiet -a AGTTCRARTCTTTCTARRYAT /dev/stdin |
+        ./rename_fasta.py > rps10.fasta
     thapbi_pict import -d pooled.sqlite \
         -i rps10.fasta -c obitools -x \
         -k rps10 --left GTTGGTTAGAGYARAAGACT --right ATRYYTAGAAAGAYTYGAACT
@@ -50,7 +50,7 @@ thapbi_pict pipeline -d pooled.sqlite --synthetic '' -m 1s3g \
     --merged-cache tmp_merged/ \
     -s intermediate/ -o summary/ \
     -t metadata.tsv -x 1 -c 7,6,3,4
-    #-t PRJNA699663.tsv -x 1 -c 5,3,4
+#-t PRJNA699663.tsv -x 1 -c 5,3,4
 
 echo ====
 echo Done

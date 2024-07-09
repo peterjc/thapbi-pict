@@ -15,7 +15,7 @@ if [ ! -f 2020-10-22_release_1_rps10.fasta ]; then
     wget "https://github.com/grunwaldlab/OomyceteDB/raw/master/website/2020-10-22_release_1_rps10.fasta"
 fi
 
-for ACC in `grep ^SRR PRJNA699663.tsv | cut -f 1`; do
+for ACC in $(grep ^SRR PRJNA699663.tsv | cut -f 1); do
     if grep ^$ACC metadata.tsv | grep -q "rps10_Felipe"; then
         echo "Ignoring $ACC as using alternative rps10 primers"
         # The "Felipe" rps10 primers differ in the left primer, giving a
@@ -24,7 +24,7 @@ for ACC in `grep ^SRR PRJNA699663.tsv | cut -f 1`; do
         # samples, we will too.
     else
         # Column 7 should have two URLs (R1 and R2), semi-colon separated:
-        for URL in `grep ^$ACC PRJNA699663.tsv | cut -f 7 | sed "s/;/ /g"`; do
+        for URL in $(grep ^$ACC PRJNA699663.tsv | cut -f 7 | sed "s/;/ /g"); do
             NAME=${URL##*/}
             FILE=raw_data/$NAME
             # Avoiding leaving partial FASTQ if wget is interrupted

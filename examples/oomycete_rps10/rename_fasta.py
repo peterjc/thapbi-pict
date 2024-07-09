@@ -7,6 +7,7 @@ species name and the NCBI taxid.
 NOTE: Does not preserve sequence case or any line breaks, gets converted to
 upper case as a single line.
 """
+
 import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
