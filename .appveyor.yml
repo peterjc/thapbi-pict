@@ -33,7 +33,7 @@ install:
   - unzip sqlite-tools-win32-x86-3370200.zip
   - mv sqlite-tools-win32-x86-3370200/sqlite3.exe %PYTHON%\\
   - echo "Installing flash"
-  - curl -O "https://ccb.jhu.edu/software/FLASH/FLASH-1.2.11-windows-bin.zip"
+  - curl -O "https://web.archive.org/web/20240229164934/http://ccb.jhu.edu/software/FLASH/FLASH-1.2.11-windows-bin.zip"
   - unzip FLASH-1.2.11-windows-bin.zip
   - mv flash.exe %PYTHON%\\
   - flash --version
