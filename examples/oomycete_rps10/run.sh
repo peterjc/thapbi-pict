@@ -35,6 +35,13 @@ if [ ! -f pooled.sqlite ]; then
         -i rps10.fasta -c obitools -x \
         -k rps10 --left GTTGGTTAGAGYARAAGACT --right ATRYYTAGAAAGAYTYGAACT
 
+    # For the controls trim the primers off in one go
+    cutadapt --discard-untrimmed --quiet \
+        -g GTTGGTTAGAGYARAAGACT...AGTTCRARTCTTTCTARRYAT \
+        ../../database/synthetic_controls_rps10.fasta \
+        -o trimmed-rps10-controls.fasta
+    thapbi_pict import -d pooled.sqlite -x -k rps10 -i trimmed-rps10-controls.fasta
+
     # Note we are ignoring the samples for the alternative Felipe rps10 primers,
     # where the left primer is ~25bp later but right is same (overlapping product)
 fi
