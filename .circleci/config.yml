@@ -7,7 +7,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: continuumio/miniconda3
+      - image: condaforge/miniforge3 
     steps:
       - checkout
       - run:
