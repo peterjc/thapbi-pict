@@ -113,7 +113,7 @@ setup(
         "xopen !=2.0.0",
         "matplotlib >=3.7",
         "networkx >=2.4,!=2.8.3,!=2.8.4",
-        "pydot",
+        "pydot <3",
         "rapidfuzz >=2.4.0",
         "sqlalchemy",
         "xlsxwriter",
