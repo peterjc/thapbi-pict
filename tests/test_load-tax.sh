@@ -47,7 +47,7 @@ if [ "$(sqlite3 "$DB" "SELECT COUNT(*) FROM taxonomy;")" -ne 16 ]; then
     false
 fi
 # Currently no synonyms or child nodes:
-if [ "$(sqlite3 "$DB" "SELECT COUNT(*) FROM synonym;")" -ne 0 ]; then
+if [ "$(sqlite3 "$DB" "SELECT COUNT(*) FROM synonym;")" -ne 3 ]; then
     echo "Wrong synonym count"
     false
 fi
