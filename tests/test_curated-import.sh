@@ -62,11 +62,11 @@ if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM data_source;")" -ne "1" ]; then
     echo "Wrong data_source count"
     false
 fi
-if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM sequence_source;")" -ne "309" ]; then
+if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM sequence_source;")" -ne "365" ]; then
     echo "Wrong sequence_source count"
     false
 fi
-if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM marker_sequence;")" -ne "266" ]; then
+if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM marker_sequence;")" -ne "297" ]; then
     echo "Wrong marker_sequence count"
     false
 fi
