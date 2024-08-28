@@ -24,6 +24,8 @@ sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=132615), 'Phytophthora glovera');"
 # txid187986 Phytophthora bisheria -> txid1880901 Phytophthora bishii (with entry in merged.dmp for taxid change)
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=1880901), 'Phytophthora bisheria');"
+# Phytophthora novaeguineae -> Phytophthora novae-guineae (txid3070859)
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=3070859), 'Phytophthora novaeguineae');"
 
 # Another ad-hoc taxonomy fix, treating  Phytophthora cambivora txid53983
 # as a synonym of Phytophthora x cambivora txid2056922
