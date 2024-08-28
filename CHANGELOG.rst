@@ -7,6 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.15 *Pending*  Additional curated entries in default DB, many from Jung *et al.* (2024).
 v1.0.14 2024-08-26 Added a fifth synthetic control to the default DB.
 v1.0.13 2024-05-22 Updated NCBI taxonomy and bulk genus-only entries in default DB.
 v1.0.12 2024-03-11 Restored Python 3.8 support. More robust import of SINTAX style FASTA files.
