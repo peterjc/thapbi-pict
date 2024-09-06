@@ -647,6 +647,8 @@ def parse_sample_tsv(
     min_abundance: int = 0,
     debug: bool = False,
     force_upper: bool = True,
+    accept_samples: set[str] | None = None,
+    ignore_samples: set[str] | None = None,
 ) -> tuple[
     dict[tuple[str, str], str],
     dict[tuple[str, str], dict[str, str]],
@@ -680,6 +682,7 @@ def parse_sample_tsv(
     seq_meta_keys = None
     seq_meta = {}
     seq_col: Optional[int] = None
+    ignore = set(ignore_samples) if ignore_samples else set()
     with open(tabular_file) as handle:
         for line in handle:
             parts = line.rstrip("\n").split("\t")
@@ -703,6 +706,10 @@ def parse_sample_tsv(
                 for sample, value in zip(samples, parts[1:seq_col]):
                     if value == "0":  # Don't bother with int("0")
                         continue  # Don't store blank values!
+                    if sample in ignore:
+                        continue
+                    if accept_samples and sample not in accept_samples:
+                        continue
                     try:
                         abundance = int(value)
                     except ValueError:
@@ -727,10 +734,22 @@ def parse_sample_tsv(
                 )
                 raise ValueError(msg)
     # TODO: Turn counts into an array?
-    sample_headers: dict[str, dict[str, str]] = {sample: {} for sample in samples}
+    sample_headers: dict[str, dict[str, str]] = {}
+    if accept_samples:
+        sample_headers = {
+            sample: {}
+            for sample in samples
+            if sample not in ignore and sample in accept_samples
+        }
+    else:
+        sample_headers = {sample: {} for sample in samples if sample not in ignore}
     for parts in header_lines:
         name = parts[0][1:]  # Drop the leading "#"
         for sample, value in zip(samples, parts[1:seq_col]):
+            if sample in ignore:
+                continue
+            if accept_samples and sample not in accept_samples:
+                continue
             sample_headers[sample][name] = value
     return seqs, seq_meta, sample_headers, counts
 

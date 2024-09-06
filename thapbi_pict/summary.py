@@ -900,13 +900,15 @@ def main(
 
     for filename in classifications_tsv:
         seqs, seq_meta, sample_headers, counts = parse_sample_tsv(
-            filename, min_abundance=min_abundance, debug=debug
+            filename,
+            min_abundance=min_abundance,
+            accept_samples=set(stem_to_meta) if require_metadata else None,
+            ignore_samples=set(filter_out) if filter_out else None,
+            debug=debug,
         )
         for sample, fasta_header in sample_headers.items():
             if sample in filter_out:
-                if debug:
-                    sys.stderr.write(f"DEBUG: Dropping {sample} via metadata filter\n")
-                continue
+                sys.exit(f"ERROR: Failed to drop {sample} via metadata filter\n")
             if sample not in stem_to_meta:
                 if require_metadata:
                     if debug:
