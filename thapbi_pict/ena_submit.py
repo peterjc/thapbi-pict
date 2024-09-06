@@ -1,4 +1,5 @@
 # Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock, University of Strathclyde.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
