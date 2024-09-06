@@ -17,9 +17,9 @@ if "-v" in sys.argv or "--version" in sys.argv:
 
 # Parse Command Line
 usage = """\
-The input file should be a THAPBI PICT sample-tally TSV intermediate files,
+The input file should be a THAPBI PICT sample-tally TSV intermediate file,
 optionally with classifier output included (taxid and genus-species columns).
-The output is a subset filtering the sample columns according to the regex. e.g.
+The output is a subset filtering the sample names according to the regex. e.g.
 
 $ python sample_filter.py -i input.onebp.tsv -o subet.onebp.tsv -r "^N[00-99]-"
 """
