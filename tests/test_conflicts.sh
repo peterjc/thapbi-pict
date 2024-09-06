@@ -33,4 +33,4 @@ thapbi_pict import -x -d $DB -i tests/curated-import/dup_seqs.fasta -c ncbi -s $
 thapbi_pict conflicts -d $TMP/dup_seqs.sqlite -o $TMP/dup_seqs.tsv
 diff $TMP/dup_seqs.tsv tests/conflicts/dup_seqs.tsv
 
-echo "$0 - test_dump.sh passed"
+echo "$0 - test_conflicts.sh passed"
