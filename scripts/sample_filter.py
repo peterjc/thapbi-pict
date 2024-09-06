@@ -12,7 +12,7 @@ import sys
 from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.1")
+    print("v0.0.2")
     sys.exit(0)
 
 # Parse Command Line
@@ -22,6 +22,10 @@ optionally with classifier output included (taxid and genus-species columns).
 The output is a subset filtering the sample names according to the regex. e.g.
 
 $ python sample_filter.py -i input.onebp.tsv -o subet.onebp.tsv -r "^N[00-99]-"
+
+This has largely been superseded by the --metafilter argument for the pipeline
+and summary commands added in THAPBI PICT v1.0.16, although that requires the
+use of a metadata table to filter on.
 """
 
 # TODO - Offer -a for minimum per seq per sample abundance threshold?
