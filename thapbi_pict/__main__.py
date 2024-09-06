@@ -401,6 +401,7 @@ def summary(args=None):
         metadata_groups=args.metagroups,
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
+        metadata_filter=args.metafilter,
         require_metadata=args.requiremeta,
         show_unsequenced=args.unsequenced,
         ignore_prefixes=tuple(args.ignore_prefixes),
@@ -601,6 +602,7 @@ def pipeline(args=None):
             metadata_groups=args.metagroups,
             metadata_fieldnames=args.metafields,
             metadata_index=args.metaindex,
+            metadata_filter=args.metafilter,
             require_metadata=args.requiremeta,
             show_unsequenced=args.unsequenced,
             ignore_prefixes=tuple(args.ignore_prefixes),
@@ -1077,6 +1079,16 @@ ARG_METAFIELDS = dict(  # noqa: C408
     "Use in conjunction with -m / --metadata argument.",
 )
 
+# "--metafilter"
+ARG_METAFILTER = dict(  # noqa: C408
+    type=str,
+    default="",
+    metavar="FILTER",
+    help="Optional report sample filter applied via the metadata, expressed "
+    "as column number, colon, then a regular expression. e.g. '4:Scotland' "
+    "would report only samples with Scotland as part of column 4.",
+)
+
 # "-q", "--requiremeta",
 ARG_REQUIREMETA = dict(  # noqa: C408
     action="store_true",
@@ -1166,6 +1178,7 @@ def main(args=None):
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
     subcommand_parser.add_argument("--merged-cache", **ARG_MERGED_CACHE)
+    subcommand_parser.add_argument("--metafilter", **ARG_METAFILTER)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)
@@ -1786,6 +1799,7 @@ def main(args=None):
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("-g", "--metagroups", **ARG_METAGROUPS)
     subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
+    subcommand_parser.add_argument("--metafilter", **ARG_METAFILTER)
     subcommand_parser.add_argument("-q", "--requiremeta", **ARG_REQUIREMETA)
     subcommand_parser.add_argument("-u", "--unsequenced", **ARG_UNSEQUENCED)
     subcommand_parser.add_argument("-b", "--biom", **ARG_BIOM)

@@ -10,6 +10,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import os
+import re
 import subprocess
 import sys
 import time
@@ -810,6 +811,7 @@ def load_metadata(
     metadata_groups=None,
     metadata_name_row=1,
     metadata_index=0,
+    metadata_filter=None,
     metadata_index_sep=";",
     ignore_prefixes=("Undetermined",),
     debug=False,
@@ -827,11 +829,16 @@ def load_metadata(
 
     The index column is assumed to contain one or more sequenced sample
     names separated by the character specified (default is semi-colon).
-    This one-to-many mapping reflecting that a single field sample could
+    This one-to-many mapping reflects that a single field sample could
     be sequenced more than once (e.g. technical replicates). These sample
     names are matched against the file name stems, see function find_metadata.
 
     The metadata table rows are sorted based on the requested columns.
+
+    Argument metadata_filter consists of a one-based column number,
+    colon, and regular expression. Any FASTQ stems linked from samples
+    failing to match this pattern will be ignored for the report.
+    (Inclusion of samples with no metadata are controlled separately.)
 
     Return values:
 
@@ -839,13 +846,14 @@ def load_metadata(
     - Ordered dict mapping metadata tuples to lists of FASTQ stems
     - list of the N field names
     - Color grouping offset into the N values
+    - Set of stems to ignore in the report (filtered out)
     """
     # TODO - Accept Excel style A, ..., Z, AA, ... column names?
 
     if not metadata_file or not metadata_cols:
         if debug:
             sys.stderr.write("DEBUG: Not loading any metadata\n")
-        return {}, {}, [], 0
+        return {}, {}, [], 0, {}
 
     if metadata_groups and not metadata_cols:
         sys.exit("ERROR: Using -g / --metagroups requires -c / --metacols")
@@ -881,6 +889,24 @@ def load_metadata(
             f"{[_ + 1 for _ in sample_cols]}\n"
         )
 
+    filter_cols = []
+    if metadata_filter:
+        try:
+            filter_col, filter_regex = metadata_filter.split(":", 1)
+            filter_col = int(filter_col) - 1
+            filter_cols = [filter_col]
+            filter_regex = re.compile(filter_regex)
+        except ValueError:
+            sys.exit(
+                "ERROR: The metadata filter argument should be column:regex, not "
+                + repr(metadata_filter)
+            )
+        if filter_col < 1:
+            sys.exit(
+                "ERROR: Invalid metadata filter column, should be positive,"
+                f" not {metadata_filter!r}."
+            )
+
     if metadata_groups:
         try:
             group_col = int(metadata_groups) - 1
@@ -913,6 +939,7 @@ def load_metadata(
 
     names = [""] * len(value_cols)  # default
     meta = {}
+    filtered_out = set()
     if not metadata_encoding:
         metadata_encoding = None
     try:
@@ -960,7 +987,9 @@ def load_metadata(
             sys.exit(f"ERROR: Missing column {max(value_cols)+1} for {_!r}")
 
     # Select columns of interest
-    meta_plus_idx = [[_[i].strip() for i in [*value_cols, *sample_cols]] for _ in lines]
+    meta_plus_idx = [
+        [_[i].strip() for i in [*value_cols, *filter_cols, *sample_cols]] for _ in lines
+    ]
 
     # Remove blanks
     meta_plus_idx = [_ for _ in meta_plus_idx if any(_)]
@@ -973,12 +1002,17 @@ def load_metadata(
     meta_to_stem = {}
     stem_to_meta = {}
     for meta_and_index in meta_plus_idx:
-        # The first batch of columns are the metadata, the rest are indexes
+        # The first columns are metadata, optional filter col, the rest are indexes
         meta = tuple(meta_and_index[: len(value_cols)])
-        stems = metadata_index_sep.join(meta_and_index[len(value_cols) :]).split(
-            metadata_index_sep
-        )
+        stems = metadata_index_sep.join(
+            meta_and_index[len(value_cols) + len(filter_cols) :]
+        ).split(metadata_index_sep)
         stems = [_.strip() for _ in stems if _]  # drop any blanks
+        if metadata_filter:
+            field = meta_and_index[len(value_cols)]
+            if not filter_regex.search(field):
+                filtered_out.update(stems)
+                continue  # discard this metadata row!
         if ignore_prefixes:
             stems = [_ for _ in stems if not _.startswith(ignore_prefixes)]
         for stem in stems:
@@ -996,13 +1030,18 @@ def load_metadata(
             f"DEBUG: Loaded {len(meta_to_stem)} metadata entries, and "
             f" {len(stem_to_meta)} sequenced samples\n"
         )
+        if metadata_filter or filtered_out:
+            sys.stderr.write(
+                "DEBUG: Metadata filter on column "
+                f"{filter_col} dropped {len(filtered_out)} samples.\n"
+            )
     if bad:
         sys.exit(
             f"ERROR: Duplicated metadata for {len(bad)} samples,"
             f" {sorted(bad)[0]} (etc)"
         )
 
-    return stem_to_meta, meta_to_stem, names, group_col
+    return stem_to_meta, meta_to_stem, names, group_col, filtered_out
 
 
 def load_fasta_header(fasta_file, gzipped=False) -> dict:

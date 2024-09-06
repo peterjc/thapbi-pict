@@ -803,6 +803,7 @@ def main(
     metadata_groups: Optional[str] = None,
     metadata_fieldnames: Optional[str] = None,
     metadata_index: Optional[str] = None,
+    metadata_filter: Optional[str] = None,
     require_metadata: bool = False,
     show_unsequenced: bool = True,
     ignore_prefixes: Optional[tuple[str]] = None,
@@ -825,6 +826,7 @@ def main(
         meta_to_stem,
         meta_names,
         group_col,
+        filter_out,
     ) = load_metadata(
         metadata_file,
         metadata_encoding,
@@ -832,9 +834,12 @@ def main(
         metadata_groups,
         metadata_fieldnames,
         metadata_index,
+        metadata_filter,
         ignore_prefixes=ignore_prefixes,
         debug=debug,
     )
+    if metadata_filter or filter_out:
+        sys.stderr.write(f"Dropped {len(filter_out)} samples via the metadata filter\n")
 
     meta_default = tuple([MISSING_META] * len(meta_names))
     markers: set[str] = set()
@@ -897,6 +902,10 @@ def main(
             filename, min_abundance=min_abundance, debug=debug
         )
         for sample, fasta_header in sample_headers.items():
+            if sample in filter_out:
+                if debug:
+                    sys.stderr.write(f"DEBUG: Dropping {sample} via metadata filter\n")
+                continue
             if sample not in stem_to_meta:
                 if require_metadata:
                     if debug:
@@ -969,6 +978,8 @@ def main(
                 seq_meta[marker, md5]["genus-species"].split(";")
             )
             for sample in sample_headers:
+                if sample in filter_out:
+                    continue
                 if require_metadata and sample not in stem_to_meta:
                     continue
                 try:
@@ -985,6 +996,12 @@ def main(
                     ";".join(sorted(marker_md5_species[marker, md5]))
                 ] += abundance
         del seqs, sample_headers, counts
+
+    if not abundance_by_samples:
+        if metadata_filter:
+            sys.exit("ERROR: Nothing to report on, check metadata filter setting.")
+        else:
+            sys.exit("ERROR: Nothing to report on!")
 
     if debug:
         sys.stderr.write(
