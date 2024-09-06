@@ -896,14 +896,39 @@ def main(
         seqs, seq_meta, sample_headers, counts = parse_sample_tsv(
             filename, min_abundance=min_abundance, debug=debug
         )
+        if require_metadata:
+            # Drop unwanted samples & thus unwanted md5
+            counts = {
+                (marker, md5, sample): a
+                for (marker, md5, sample), a in counts.items()
+                if sample in stem_to_meta
+            }
+            sample_headers = {
+                sample: fasta_header
+                for (sample, fasta_header) in sample_headers.items()
+                if sample in stem_to_meta
+            }
+            # Can now potentially drop some sequences:
+            totals: dict[tuple[str, str], int] = Counter()
+            for (idn, marker, sample), a in counts.items():
+                assert sample in stem_to_meta  # we filtered counts earlier
+                if a:
+                    totals[idn, marker] += a
+            seqs = {
+                (idn, marker): seq
+                for (idn, marker), seq in seqs.items()
+                if totals[idn, marker]
+            }
+            seq_meta = {
+                (idn, marker): value
+                for (idn, marker), value in seq_meta.items()
+                if totals[idn, marker]
+            }
+            del totals
         for sample, fasta_header in sample_headers.items():
             if sample not in stem_to_meta:
                 if require_metadata:
-                    if debug:
-                        sys.stderr.write(
-                            f"DEBUG: Missing required metadata for {sample}\n"
-                        )
-                    continue
+                    sys.exit(f"ERROR: Failed to drop {sample} with no metadata\n")
                 stem_to_meta[sample] = meta_default
                 if meta_default in meta_to_stem:
                     meta_to_stem[meta_default].append(sample)
@@ -970,7 +995,7 @@ def main(
             )
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
-                    continue
+                    sys.exit(f"ERROR: Should have dropped {sample} with no metadata")
                 try:
                     abundance = counts.pop((marker, md5, sample))  # empty the dict
                 except KeyError:
