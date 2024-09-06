@@ -129,6 +129,27 @@ if [ "$(grep -c -v "^#" $TMP/summary/with-metadata.reads.onebp.tsv)" -ne 100 ]; 
 fi
 # Expect 99 + total line
 
+echo "Checking metadata filter works..."
+# There are only 34 Urban samples, no total line in sample report currently
+# This is with the filter column as one being reported on:
+time thapbi_pict summary -i $TMP/woody_hosts.onebp.tsv \
+    -o $TMP/summary/urban-only \
+    -t examples/woody_hosts/metadata.tsv --metafilter 3:Urban \
+    -c 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
+if [ "$(grep -c -v "^#" $TMP/summary/urban-only.samples.onebp.tsv)" -ne 34 ]; then
+    echo "Wrong sample count"
+    false
+fi
+# This is with the filter column not being reported on:
+time thapbi_pict summary -i $TMP/woody_hosts.onebp.tsv \
+    -o $TMP/summary/urban-only-lite \
+    -t examples/woody_hosts/metadata.tsv --metafilter 3:Urban \
+    -c 1,2,4,5,6,7,8,9,10,11,12,13,14,15 -x 16
+if [ "$(grep -c -v "^#" $TMP/summary/urban-only-lite.samples.onebp.tsv)" -ne 34 ]; then
+    echo "Wrong sample count"
+    false
+fi
+
 echo "=============================="
 echo "Running woody hosts edit-graph"
 echo "=============================="
