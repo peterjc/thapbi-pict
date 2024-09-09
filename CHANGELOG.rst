@@ -7,7 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v1.0.16 *Pending*  Additional curated entries in default DB.
+v1.0.16 2024-09-09 Hide any zero rows/cols in reports when using ``-q`` or ``--requiremeta``.
 v1.0.15 2024-09-05 Additional curated entries in default DB, many from Jung *et al.* (2024).
 v1.0.14 2024-08-26 Added a fifth synthetic control to the default DB.
 v1.0.13 2024-05-22 Updated NCBI taxonomy and bulk genus-only entries in default DB.
