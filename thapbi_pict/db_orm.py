@@ -1,4 +1,5 @@
 # Copyright 2018-2023 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock, University of Strathclyde.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -18,6 +19,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 
 
@@ -137,17 +139,16 @@ class SeqSource(Base):
     taxonomy = relationship(Taxonomy, foreign_keys=[taxonomy_id])
 
 
-def connect_to_db(*args, **kwargs):
+def connect_to_db(db_url: str, *, echo: bool = False) -> Session:
     """Create engine and return session bound to it.
 
-    >>> Session = connect_to_db("sqlite:///:memory:", echo=True)
-    >>> session = Session()
+    >>> session = connect_to_db("sqlite:///:memory:", echo=True)
     """
-    engine = create_engine(*args, **kwargs)
+    engine = create_engine(db_url, echo=echo)
     Base.metadata.create_all(engine)
-    return sessionmaker(bind=engine)
+    return sessionmaker(bind=engine)()
 
 
 if __name__ == "__main__":
     print("Debugging example")
-    Session = connect_to_db("sqlite:///:memory:", echo=True)
+    session = connect_to_db("sqlite:///:memory:", echo=True)
