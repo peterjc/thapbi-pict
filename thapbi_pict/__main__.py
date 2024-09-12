@@ -1,5 +1,6 @@
 # Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
 # Revisions copyright 2024 by Peter Cock.
+# Revisions copyright 2024 by Peter Cock, University of Strathclyde.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -225,8 +226,8 @@ def prepare_reads(args=None):
 
     # Connect to the DB,
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
-    Session = connect_to_db(db)
-    session = Session()
+    session = connect_to_db(db)
+
     markers = sorted(_.name for _ in session.query(MarkerDef))
     markers = validate_markers(markers, args.markers)
 
@@ -296,8 +297,7 @@ def sample_tally(args=None):
 
     # Connect to the DB,
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
-    Session = connect_to_db(db)
-    session = Session()
+    session = connect_to_db(db)
 
     return main(
         inputs=args.input,
@@ -333,10 +333,9 @@ def classify(args=None):
         check_output_directory(args.temp)
 
     # Connect to the DB,
-    Session = connect_to_db(
+    session = connect_to_db(
         expand_database_argument(args.database, exist=True, hyphen_default=True)
     )
-    session = Session()
 
     return_code = main(
         inputs=args.input,
@@ -458,8 +457,8 @@ def pipeline(args=None):
 
     # Connect to the DB,
     db = expand_database_argument(args.database, exist=True, hyphen_default=True)
-    Session = connect_to_db(db)
-    session = Session()
+    session = connect_to_db(db)
+
     markers = sorted(_.name for _ in session.query(MarkerDef))
     markers = validate_markers(markers, args.markers)
 

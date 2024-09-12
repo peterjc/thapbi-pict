@@ -1,4 +1,5 @@
 # Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock, University of Strathclyde.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -297,8 +298,7 @@ def main(tax: str, db_url: str, ancestors: str, debug: bool = True) -> int:
         )
 
     # Connect to the DB,
-    Session = connect_to_db(db_url, echo=False)  # echo=debug
-    session = Session()
+    session = connect_to_db(db_url, echo=False)  # echo=debug
 
     g_old = 0
     g_new = 0
