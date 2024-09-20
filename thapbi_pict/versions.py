@@ -119,17 +119,17 @@ def version_blast(cmd: str = "blastn") -> Optional[str]:
     tools in the suite)::
 
         $ makeblastdb -h | grep BLAST
-        Application to create BLAST databases, version 2.7.1+
+        Application to create BLAST databases, version 2.16.0+
 
         $ blastn -h | grep BLAST
-        Nucleotide-Nucleotide BLAST 2.7.1+
+        Nucleotide-Nucleotide BLAST 2.16.0+
 
     In the above examples, it would behave as follows:
 
     >>> version_blast("makeblastdb")
-    '2.7.1+'
+    '2.16.0+'
     >>> version_blast("blastn")
-    '2.7.1+'
+    '2.16.0+'
 
     If the command is not on the path, returns None.
     """
@@ -148,12 +148,12 @@ def version_cutadapt(cmd: str = "cutadapt") -> Optional[str]:
     Uses the output with ``--version``::
 
         $ cutadapt --version
-        1.18
+        4.7
 
     It would capture this:
 
     >>> version_cutadapt()
-    '1.18'
+    '4.7'
 
     If the command is not on the path, returns None.
     """
@@ -174,7 +174,7 @@ def version_flash(cmd: str = "flash") -> Optional[str]:
     It would capture the version from the first line as follows:
 
     >>> version_flash()
-    'v1.2.11'
+    '1.2.11'
 
     If the command is not on the path, returns None.
     """
@@ -195,15 +195,15 @@ def version_usearch(cmd: str = "usearch") -> Optional[str]:
 
     It would capture this:
 
-    >>> version_vsearch()
-    'v11.0.667'
+    >>> version_usearch()  # doctest: +SKIP
+    '11.0.667'
 
     If the command is not on the path, returns None.
     """
     text = getoutput(cmd + " --version").strip().split("\n", 1)[0]
     ver = text.split("_", 1)[0]
     if ver.lower().startswith("usearch v"):
-        return ver[8:]
+        return ver[9:]
     return None
 
 
@@ -213,14 +213,13 @@ def version_vsearch(cmd: str = "vsearch") -> Optional[str]:
     Uses the output with ``--version``::
 
         $ vsearch --version
-        ...
-        vsearch v2.22.1_macos_x86_64, 8.0GB RAM, 8 cores
+        vsearch v2.28.1_macos_x86_64, 8.0GB RAM, 8 cores
         ...
 
     It would capture this:
 
     >>> version_vsearch()
-    'v2.22.1'
+    '2.28.1'
 
     If the command is not on the path, returns None.
     """
@@ -229,5 +228,5 @@ def version_vsearch(cmd: str = "vsearch") -> Optional[str]:
     for text in getoutput(cmd + " --version").strip().split("\n"):
         ver = text.split(",", 1)[0].split("_", 1)[0]
         if ver.lower().startswith("vsearch v"):
-            return ver[8:]
+            return ver[9:]
     return None
