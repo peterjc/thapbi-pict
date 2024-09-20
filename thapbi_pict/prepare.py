@@ -260,7 +260,8 @@ def parse_flash_stdout(stdout: str) -> tuple[int, int]:
 
     >>> parse_flash_stdout(
     ...     "...\n"
-    ...     "[FLASH] Read combination statistics:[FLASH]     Total pairs:      6105\n"
+    ...     "[FLASH] Read combination statistics:\n"
+    ...     "[FLASH]     Total pairs:      6105\n"
     ...     "[FLASH]     Combined pairs:   5869\n"
     ...     "..."
     ... )
