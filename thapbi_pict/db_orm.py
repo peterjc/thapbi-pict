@@ -143,6 +143,7 @@ def connect_to_db(db_url: str, *, echo: bool = False) -> Session:
     """Create engine and return session bound to it.
 
     >>> session = connect_to_db("sqlite:///:memory:", echo=True)
+    20...
     """
     engine = create_engine(db_url, echo=echo)
     Base.metadata.create_all(engine)
