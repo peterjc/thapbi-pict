@@ -313,8 +313,8 @@ def abundance_from_read_name(text: str, debug: bool = False) -> int:
 def split_read_name_abundance(text: str, debug: bool = False) -> tuple[str, int]:
     """Split SWARM style read name into prefix and abundance.
 
-    >>> abundance_from_read_name("9e8f051c64c2b9cc3b6fcb27559418ca_988")
-    '9e8f051c64c2b9cc3b6fcb27559418ca', 988
+    >>> split_read_name_abundance("9e8f051c64c2b9cc3b6fcb27559418ca_988")
+    ('9e8f051c64c2b9cc3b6fcb27559418ca', 988)
 
     If fails to detect the abundance, will return the original text
     as the prefix with an abundance of 1.
