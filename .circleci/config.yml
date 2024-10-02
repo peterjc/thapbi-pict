@@ -17,7 +17,6 @@ jobs:
             grep -v '^>' database/Phytophthora_ITS1_curated.fasta  | LC_ALL=C sort -c -f
             conda config --set always_yes yes --set changeps1 no --set channel_priority strict
             conda update -q conda
-            conda config --remove channels defaults
             conda config --add channels bioconda
             conda config --add channels conda-forge
             conda info -a
