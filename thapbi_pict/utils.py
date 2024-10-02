@@ -159,7 +159,7 @@ def onebp_inserts(seq: str) -> set[str]:
     return variants
 
 
-def expand_IUPAC_ambiguity_codes(seq: str):
+def expand_IUPAC_ambiguity_codes(seq: str) -> Iterator[str]:
     """Convert to upper case and iterate over possible unabmigous interpretations.
 
     This is a crude recursive implementation, intended for use on sequences with
@@ -228,7 +228,7 @@ def md5_hexdigest(filename: str, chunk_size: int = 1024) -> str:
     return hash_md5.hexdigest()
 
 
-def cmd_as_string(cmd):
+def cmd_as_string(cmd: list[str]) -> str:
     """Express a list command as a suitably quoted string.
 
     Intended for using in debugging or error messages.
@@ -240,7 +240,9 @@ def cmd_as_string(cmd):
         return cmd
 
 
-def run(cmd, debug: bool = False, attempts: int = 1) -> subprocess.CompletedProcess:
+def run(
+    cmd: list[str], debug: bool = False, attempts: int = 1
+) -> subprocess.CompletedProcess:
     """Run a command via subprocess, abort if fails.
 
     Returns a subprocess.CompletedProcess object, or None if all attempts fail.
@@ -424,13 +426,13 @@ def find_requested_files(
 
 
 def find_paired_files(
-    filenames_or_folders,
-    ext1,
-    ext2,
-    ignore_prefixes=None,
-    debug=False,
-    strict=False,
-):
+    filenames_or_folders: list[str],
+    ext1: str,
+    ext2: str,
+    ignore_prefixes: None | tuple[str] = None,
+    debug: bool = False,
+    strict: bool = False,
+) -> list[tuple[str, str]]:
     """Interpret a list of filenames and/or foldernames to find pairs.
 
     Looks for paired files named XXX.ext1 and XXX.ext2 which can be
@@ -735,7 +737,10 @@ def parse_sample_tsv(
 
 
 def parse_species_tsv(
-    tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
+    tabular_file: str,
+    min_abundance: int = 0,
+    req_species_level: bool = False,
+    allow_wildcard: bool = False,
 ) -> Iterator[tuple[Optional[str], str, str, str]]:
     """Parse file of species assignments/predictions by sequence.
 
@@ -804,16 +809,16 @@ def parse_species_tsv(
 
 
 def load_metadata(
-    metadata_file,
-    metadata_encoding,
-    metadata_cols,
-    metadata_groups=None,
-    metadata_name_row=1,
-    metadata_index=0,
-    metadata_index_sep=";",
-    ignore_prefixes=("Undetermined",),
-    debug=False,
-):
+    metadata_file: str,
+    metadata_encoding: str | None,
+    metadata_cols: str,
+    metadata_groups: str | None = None,
+    metadata_name_row: int = 1,
+    metadata_index: str = "0",
+    metadata_index_sep: str = ";",
+    ignore_prefixes: tuple[str] = ("Undetermined",),
+    debug: bool = False,
+) -> tuple[dict[str, tuple[str]], dict[tuple[str], list[str]], list[str], int]:
     """Load specified metadata as several lists.
 
     The encoding argument can be None or "", meaning use the default.
@@ -912,7 +917,6 @@ def load_metadata(
     ]
 
     names = [""] * len(value_cols)  # default
-    meta = {}
     if not metadata_encoding:
         metadata_encoding = None
     try:
@@ -969,9 +973,9 @@ def load_metadata(
     # Sort on metadata
     meta_plus_idx.sort()
 
-    bad = set()
-    meta_to_stem = {}
-    stem_to_meta = {}
+    bad: set[str] = set()
+    meta_to_stem: dict[tuple[str], list[str]] = {}
+    stem_to_meta: dict[str, tuple[str]] = {}
     for meta_and_index in meta_plus_idx:
         # The first batch of columns are the metadata, the rest are indexes
         meta = tuple(meta_and_index[: len(value_cols)])
@@ -1005,9 +1009,10 @@ def load_metadata(
     return stem_to_meta, meta_to_stem, names, group_col
 
 
-def load_fasta_header(fasta_file, gzipped=False) -> dict:
+def load_fasta_header(fasta_file: str, gzipped: bool = False) -> dict[str, str | int]:
     """Parse our FASTA hash-comment line header as a dict."""
-    answer = {}
+    answer: dict[str, str | int] = {}
+    value: str | int = ""
     if gzipped:
         handle = gzip.open(fasta_file, "rt")
     else:
