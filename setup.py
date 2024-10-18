@@ -113,6 +113,7 @@ setup(
         "networkx >=3.4.2",
         "pydot >=3.0.1",
         "rapidfuzz >=3.10.1",
+        "rich >=13.9.4",
         "sqlalchemy >=2.0.36",
         "xlsxwriter >=3.2.0",
     ],

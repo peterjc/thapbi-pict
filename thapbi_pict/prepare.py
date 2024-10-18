@@ -641,126 +641,149 @@ def marker_cut(
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
 
-    for stem, raw_R1, raw_R2 in file_pairs:
-        if debug:
-            sys.stderr.write(f"Preparing sample {stem}\n")
+    # Could use tqdm or something else instead for the progress bar:
+    from rich.progress import BarColumn
+    from rich.progress import MofNCompleteColumn
+    from rich.progress import Progress
+    from rich.progress import TaskProgressColumn
+    from rich.progress import TextColumn
+    from rich.progress import TimeElapsedColumn
 
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        pool_path = os.path.abspath(os.path.split(stem)[0])
-        # Use relative path if under the current directory
-        try:
-            _ = os.path.relpath(pool_path)
-            if not _.startswith(".."):
-                pool_path = _
-        except ValueError:
-            # Will fail on Windows if using different drives
-            pass
-        stem = os.path.split(stem)[1]
-        merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
-
-        count_raw = count_flash = None
-        if any(
-            not os.path.isfile(os.path.join(out_dir, marker, f"{stem}.fasta"))
-            for marker in marker_definitions
+    progress_columns = [
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        # Removing TimeRemainingColumn() from defaults, replacing with:
+        TimeElapsedColumn(),
+        # Add this last as have some out of N and some out of N^2:
+        MofNCompleteColumn(),
+    ]
+    with Progress(*progress_columns) as progress:
+        for stem, raw_R1, raw_R2 in progress.track(
+            file_pairs, description="Preparing samples"
         ):
-            # Run flash to merge reads; or parse pre-existing files
-            start = time()
-            count_raw, count_flash = merge_paired_reads(
-                raw_R1, raw_R2, merged_fasta_gz, tmp, debug=debug, cpu=cpu
-            )
-            time_flash += time() - start
-            assert count_raw is not None
-            assert count_flash is not None
-            if count_flash:
-                # Run cutadapt to cut primers (giving one output per marker)
+            if debug:
+                sys.stderr.write(f"Preparing sample {stem}\n")
+
+            sys.stdout.flush()
+            sys.stderr.flush()
+
+            pool_path = os.path.abspath(os.path.split(stem)[0])
+            # Use relative path if under the current directory
+            try:
+                _ = os.path.relpath(pool_path)
+                if not _.startswith(".."):
+                    pool_path = _
+            except ValueError:
+                # Will fail on Windows if using different drives
+                pass
+            stem = os.path.split(stem)[1]
+            merged_fasta_gz = os.path.join(merged_cache, f"{stem}.fasta.gz")
+
+            count_raw = count_flash = None
+            if any(
+                not os.path.isfile(os.path.join(out_dir, marker, f"{stem}.fasta"))
+                for marker in marker_definitions
+            ):
+                # Run flash to merge reads; or parse pre-existing files
                 start = time()
-                unique_merged_, unique_cutadapt_ = run_cutadapt(
-                    merged_fasta_gz,
-                    # Here {name} is the cutadapt filename template:
-                    os.path.join(tmp, stem + ".{name}.fasta"),
-                    marker_definitions,
-                    flip=flip,
+                count_raw, count_flash = merge_paired_reads(
+                    raw_R1, raw_R2, merged_fasta_gz, tmp, debug=debug, cpu=cpu
+                )
+                time_flash += time() - start
+                assert count_raw is not None
+                assert count_flash is not None
+                if count_flash:
+                    # Run cutadapt to cut primers (giving one output per marker)
+                    start = time()
+                    unique_merged_, unique_cutadapt_ = run_cutadapt(
+                        merged_fasta_gz,
+                        # Here {name} is the cutadapt filename template:
+                        os.path.join(tmp, stem + ".{name}.fasta"),
+                        marker_definitions,
+                        flip=flip,
+                        debug=debug,
+                        cpu=cpu,
+                    )
+                    time_cutadapt += time() - start
+                else:
+                    # More fiddly, but could skip the abundance code below too?
+                    # Just make an empty file for prepare_sample to parse.
+                    if debug:
+                        sys.stderr.write("DEBUG: Skipping cutadapt as no reads\n")
+                    for marker in marker_definitions:
+                        with open(
+                            os.path.join(tmp, f"{stem}.{marker}.fasta"), "w"
+                        ) as handle:
+                            handle.write("#Nothing\n")
+
+            # Apply abundance thresholds
+            start = time()
+            for marker, marker_values in marker_definitions.items():
+                sys.stdout.flush()
+                sys.stderr.flush()
+                fasta_name = os.path.join(out_dir, marker, f"{stem}.fasta")
+                if fasta_name in fasta_files_prepared:
+                    sys.exit(f"ERROR: Multiple files named {fasta_name}")
+                # This skips pre-existing samples:
+                (
+                    marker_total,
+                    uniq_count,
+                    accepted_total,
+                    min_a,
+                ) = prepare_sample(
+                    fasta_name,
+                    os.path.join(tmp, f"{stem}.{marker}.fasta"),
+                    {
+                        "marker": marker,
+                        "left_primer": marker_values["left_primer"],
+                        "right_primer": marker_values["right_primer"],
+                        # Convert Windows style path separators:
+                        "threshold_pool": pool_path.replace("\\", "/"),
+                        "raw_fastq": count_raw,
+                        "flash": count_flash,
+                    },
+                    marker_values["min_length"],
+                    marker_values["max_length"],
+                    min_abundance,
+                    min_abundance_fraction,
+                    tmp,
                     debug=debug,
                     cpu=cpu,
                 )
-                time_cutadapt += time() - start
-            else:
-                # More fiddly, but could skip the abundance code below too?
-                # Just make an empty file for prepare_sample to parse.
-                if debug:
-                    sys.stderr.write("DEBUG: Skipping cutadapt as no reads\n")
-                for marker in marker_definitions:
-                    with open(
-                        os.path.join(tmp, f"{stem}.{marker}.fasta"), "w"
-                    ) as handle:
-                        handle.write("#Nothing\n")
-
-        # Apply abundance thresholds
-        start = time()
-        for marker, marker_values in marker_definitions.items():
-            sys.stdout.flush()
-            sys.stderr.flush()
-            fasta_name = os.path.join(out_dir, marker, f"{stem}.fasta")
-            if fasta_name in fasta_files_prepared:
-                sys.exit(f"ERROR: Multiple files named {fasta_name}")
-            # This skips pre-existing samples:
-            (
-                marker_total,
-                uniq_count,
-                accepted_total,
-                min_a,
-            ) = prepare_sample(
-                fasta_name,
-                os.path.join(tmp, f"{stem}.{marker}.fasta"),
-                {
-                    "marker": marker,
-                    "left_primer": marker_values["left_primer"],
-                    "right_primer": marker_values["right_primer"],
-                    # Convert Windows style path separators:
-                    "threshold_pool": pool_path.replace("\\", "/"),
-                    "raw_fastq": count_raw,
-                    "flash": count_flash,
-                },
-                marker_values["min_length"],
-                marker_values["max_length"],
-                min_abundance,
-                min_abundance_fraction,
-                tmp,
-                debug=debug,
-                cpu=cpu,
-            )
-            fasta_files_prepared.append(fasta_name)
-            if uniq_count:
-                assert marker_total is not None
-                assert accepted_total is not None
-                assert accepted_total <= marker_total, (accepted_total, marker_total)
-            if uniq_count is None:
-                skipped_samples.add(stem)
-                if debug:
-                    sys.stderr.write(f"Skipping {fasta_name} as already done\n")
-            elif min_a > 1:
-                assert marker_total is not None
+                fasta_files_prepared.append(fasta_name)
+                if uniq_count:
+                    assert marker_total is not None
+                    assert accepted_total is not None
+                    assert accepted_total <= marker_total, (
+                        accepted_total,
+                        marker_total,
+                    )
+                if uniq_count is None:
+                    skipped_samples.add(stem)
+                    if debug:
+                        sys.stderr.write(f"Skipping {fasta_name} as already done\n")
+                elif min_a > 1:
+                    assert marker_total is not None
+                    sys.stderr.write(
+                        f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                        f" or {accepted_total}/{marker_total}"
+                        f" reads over abundance threshold {min_a}\n"
+                    )
+                else:
+                    assert marker_total is not None
+                    assert accepted_total == marker_total
+                    sys.stderr.write(
+                        f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                        f" or {accepted_total} reads (abundance threshold {min_a})\n"
+                    )
+            time_abundance += time() - start
+            if debug:
                 sys.stderr.write(
-                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" or {accepted_total}/{marker_total}"
-                    f" reads over abundance threshold {min_a}\n"
+                    f"Thus far, {time_flash:0.1f}s running flash and making NR,"
+                    f" {time_cutadapt:0.1f}s on cutadapt,"
+                    f" and {time_abundance:0.1f}s applying abundance thresholds\n"
                 )
-            else:
-                assert marker_total is not None
-                assert accepted_total == marker_total
-                sys.stderr.write(
-                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" or {accepted_total} reads (abundance threshold {min_a})\n"
-                )
-        time_abundance += time() - start
-        if debug:
-            sys.stderr.write(
-                f"Thus far, {time_flash:0.1f}s running flash and making NR,"
-                f" {time_cutadapt:0.1f}s on cutadapt,"
-                f" and {time_abundance:0.1f}s applying abundance thresholds\n"
-            )
 
     # Finished all files
     if skipped_samples:
