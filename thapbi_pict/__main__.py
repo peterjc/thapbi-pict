@@ -9,7 +9,7 @@
 
 This works via ``setup.py`` where under ``entry_points`` we define a
 ``console_scripts`` entry for ``thapbi_pict`` (executable name) pointing to
-the ``main()`` function define in this Python file.
+the ``main()`` function defined in this Python file.
 """
 
 import argparse
