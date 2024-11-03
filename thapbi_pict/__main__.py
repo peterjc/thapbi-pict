@@ -18,6 +18,14 @@ import sys
 from typing import List
 from typing import Optional
 
+# Apply rich-argparse formatting to help text if installed
+try:
+    import rich_argparse
+
+    cmd_formatter = rich_argparse.RichHelpFormatter
+except ImportError:
+    cmd_formatter = argparse.HelpFormatter
+
 from . import __version__
 from .classify import method_classify_file as method_classifier
 from .db_import import DEF_MAX_LENGTH
@@ -1111,6 +1119,7 @@ def main(args=None):
         ),
         epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help. "
         "Please see https://thapbi-pict.readthedocs.io/ for documentation.",
+        formatter_class=cmd_formatter,
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"THAPBI PICT v{__version__}"
@@ -1126,6 +1135,7 @@ def main(args=None):
         epilog="This is equivalent to running the individual stages (prepare-reads, "
         "sample-tally, classify, summary, assess) with their defaults, with only a "
         "minority of settings available here.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
@@ -1177,7 +1187,9 @@ def main(args=None):
 
     # load-tax
     subcommand_parser = subparsers.add_parser(
-        "load-tax", description="Load an NCBI taxonomy dump into a marker database."
+        "load-tax",
+        description="Load an NCBI taxonomy dump into a marker database.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-t",
@@ -1220,6 +1232,7 @@ def main(args=None):
         "taxid=123456 and takes genus/species from the DB, ignoring all the "
         "other text.\n\n"
         "See also the 'load-tax' command.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA)
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
@@ -1316,6 +1329,7 @@ def main(args=None):
         "dump",
         description="Export a marker database to a text file.",
         epilog="e.g. 'thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt'",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument(
@@ -1383,6 +1397,7 @@ def main(args=None):
         description="Count genus or species conflicts in a marker database.",
         epilog="Number of marker or genus level conflicts is used as the return "
         "code. e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     subcommand_parser.add_argument(
@@ -1408,6 +1423,7 @@ def main(args=None):
         "output file XXX.fasta. These FASTA files have a header, and their "
         "sequences are non-redundant, named by MD5 checksum and their abundance, "
         "and sorted by decreasing abundance then alphabetically by sequence.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
@@ -1440,6 +1456,7 @@ def main(args=None):
         "the MD5 checksum of the upper case sequence and its total "
         "abundance. Input files may use <prefix>_<count> naming, this "
         "count will be used for the associated sequence.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1490,6 +1507,7 @@ def main(args=None):
         "FASTA file each unique sequence will be named <prefix>_<count> using "
         "the first seen name for each sequence in the input files, and its total "
         "abundance including contributions from any reads corrected to that sequences.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1545,6 +1563,7 @@ def main(args=None):
         "sample, and the uppercase sequence as the final column. The ASV vs "
         "sample values are the counts from the input FASTA files (pooling any "
         "read-corrected sequences if using denoising).",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-k",
@@ -1659,6 +1678,7 @@ def main(args=None):
         "classifier performance metrics (to stdout by default). Assessment is "
         "at sample level (taking the union of species predicted by all "
         "sequences from each sample).",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1740,6 +1760,7 @@ def main(args=None):
         "unique sequence (can be thousands of rows) and one column per sample "
         "(often hundreds, typically 96 samples per plate). The sample tables "
         "have one row per sample, and one column per genus and species.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
         "-i",
@@ -1805,6 +1826,7 @@ def main(args=None):
         "menu 'File', 'Import', 'Import from file', and then run a layout. "
         "Both 'Perfuse Force Directed' and 'Edge-weighted Spring Embedded' "
         "work well.",
+        formatter_class=cmd_formatter,
     )
     arg = subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
     arg.help += " Used for labels and colors. Use '' to mean no DB."
@@ -1888,6 +1910,7 @@ def main(args=None):
         "If your ENA sample names match your FASTQ prefixes, no metadata file is "
         "needed here. However, you can provide a metadata table to map the FASTQ "
         "stem to your sample aliases or ENA sample accessions.",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
