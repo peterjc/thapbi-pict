@@ -34,4 +34,4 @@ for filename in sys.argv[1:]:
                     seq_dict[seq] = {entry}
 
 for seq in sorted(seq_dict, key=lambda s: (s.upper(), s)):
-    print(">%s\n%s" % (sep.join(sorted(seq_dict[seq])), seq))
+    print(f">{sep.join(sorted(seq_dict[seq]))}\n{seq}")

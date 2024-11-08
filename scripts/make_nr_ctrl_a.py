@@ -18,4 +18,4 @@ for filename in sys.argv[1:]:
                     seq_dict[seq] = {entry}
 
 for seq in sorted(seq_dict):
-    print(">%s\n%s" % (CTRL_A.join(sorted(seq_dict[seq])), seq))
+    print(f">{CTRL_A.join(sorted(seq_dict[seq]))}\n{seq}")
