@@ -20,7 +20,7 @@ jobs:
             conda config --add channels bioconda
             conda config --add channels conda-forge
             conda info -a
-            conda create -q -n testing python=3.8 mamba
+            conda create -q -n testing python=3.9
             source activate testing
             python --version
             # For installing the Python requirements either conda or pip should work,

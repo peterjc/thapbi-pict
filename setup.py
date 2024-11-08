@@ -1,4 +1,5 @@
 # Copyright 2018-2024 by Peter Cock, The James Hutton Institute.
+# Revisions copyright 2024 by Peter Cock, University of Strathclyde.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -48,9 +49,9 @@ except ImportError:
 
 
 # Make sure we have the right Python version.
-if sys.version_info[:2] < (3, 8):  # noqa: UP036
+if sys.version_info[:2] < (3, 9):  # noqa: UP036
     sys.exit(
-        "THAPBI PICT requires Python 3.8 or later. "
+        "THAPBI PICT requires Python 3.9 or later. "
         "Python %d.%d detected.\n" % sys.version_info[:2]
     )
 
@@ -103,19 +104,19 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     entry_points={"console_scripts": ["thapbi_pict = thapbi_pict.__main__:main"]},
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "biopython >=1.82",
-        "cutadapt >=4.0",
-        "xopen !=2.0.0",
-        "matplotlib >=3.7",
-        "networkx >=2.4,!=2.8.3,!=2.8.4",
-        "pydot <3",
-        "rapidfuzz >=2.4.0",
-        "sqlalchemy",
-        "xlsxwriter",
+        "biopython >=1.84",
+        "cutadapt >=4.9",
+        "xopen >=2.0.2",
+        "matplotlib >=3.9.2",
+        "networkx >=3.4.2",
+        "pydot >=3.0.2",
+        "rapidfuzz >=3.10.1",
+        "sqlalchemy >=2.0.36",
+        "xlsxwriter >=3.2.0",
     ],
 )
