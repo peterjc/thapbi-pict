@@ -20,8 +20,6 @@ from __future__ import annotations
 import os
 import sys
 from collections import Counter
-from typing import Optional
-from typing import Union
 
 import xlsxwriter
 
@@ -798,15 +796,15 @@ def main(
     report_stem: str,
     method: str,
     min_abundance: int = 1,
-    metadata_file: Optional[str] = None,
-    metadata_encoding: Optional[str] = None,
-    metadata_cols: Optional[str] = None,
-    metadata_groups: Optional[str] = None,
-    metadata_fieldnames: Optional[str] = None,
-    metadata_index: Optional[str] = None,
+    metadata_file: str | None = None,
+    metadata_encoding: str | None = None,
+    metadata_cols: str | None = None,
+    metadata_groups: str | None = None,
+    metadata_fieldnames: str | None = None,
+    metadata_index: str | None = None,
     require_metadata: bool = False,
     show_unsequenced: bool = True,
-    ignore_prefixes: Optional[tuple[str]] = None,
+    ignore_prefixes: tuple[str] | None = None,
     biom: bool = False,
     debug: bool = False,
 ) -> int:
@@ -882,7 +880,7 @@ def main(
     )
     blank_stat = -1
     # nested dict, keys are sample, then field name:
-    sample_stats: dict[str, dict[str, Union[str, int]]] = {}
+    sample_stats: dict[str, dict[str, str | int]] = {}
 
     if not markers:
         # Corner case of zero sequences in all markers?

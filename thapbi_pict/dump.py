@@ -12,7 +12,6 @@ This implements the ``thapbi_pict dump ...`` command.
 from __future__ import annotations
 
 import sys
-from typing import Optional
 
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
@@ -38,11 +37,11 @@ def main(
     db_url: str,
     output_filename: str,
     output_format: str,
-    marker: Optional[str] = None,
+    marker: str | None = None,
     minimal: bool = False,
     genus: str = "",
     species: str = "",
-    sep: Optional[str] = None,
+    sep: str | None = None,
     debug: bool = True,
 ):
     """Run the database dump with arguments from the command line."""

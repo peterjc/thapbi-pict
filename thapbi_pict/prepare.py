@@ -20,8 +20,6 @@ from collections import Counter
 from math import ceil
 from time import time
 from typing import Any
-from typing import Optional
-from typing import Union
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -47,7 +45,7 @@ from .versions import check_tools
 def find_fastq_pairs(
     filenames_or_folders: list[str],
     ext: tuple[str, ...] = (".fastq", ".fastq.gz", ".fq", ".fq.gz"),
-    ignore_prefixes: Optional[tuple[str]] = None,
+    ignore_prefixes: tuple[str] | None = None,
     debug: bool = False,
 ) -> list[tuple[str, str, str]]:
     """Interpret a list of filenames and/or foldernames.
@@ -320,7 +318,7 @@ def save_nr_fasta(
     output_fasta: str,
     min_abundance: int = 0,
     gzipped: bool = False,
-    header_dict: Optional[dict[str, Union[str, int, None]]] = None,
+    header_dict: dict[str, str | int | None] | None = None,
 ) -> tuple[int, int]:
     r"""Save a dictionary of sequences and counts as a FASTA file.
 
@@ -382,7 +380,7 @@ def make_nr_fasta(
     weighted_input: bool = False,
     fastq: bool = False,
     gzipped: bool = False,
-    header_dict: Optional[dict[str, Union[str, int, None]]] = None,
+    header_dict: dict[str, str | int | None] | None = None,
     debug: bool = False,
 ) -> tuple[int, int, int, int]:
     r"""Trim and make non-redundant FASTA/Q file from FASTA input.
@@ -494,7 +492,7 @@ def merge_paired_reads(
 def prepare_sample(
     fasta_name: str,
     trimmed_fasta: str,
-    headers: dict[str, Union[int, str, None]],
+    headers: dict[str, int | str | None],
     min_len: int,
     max_len: int,
     min_abundance: int,
@@ -502,7 +500,7 @@ def prepare_sample(
     tmp: str,
     debug: bool = False,
     cpu: int = 0,
-) -> tuple[Optional[int], Optional[int], Optional[int], int]:
+) -> tuple[int | None, int | None, int | None, int]:
     """Create marker-specific FASTA file for sample from paired FASTQ.
 
     Applies abundance threshold, and min/max length.
@@ -783,8 +781,8 @@ def marker_cut(
 
 
 def load_marker_defs(
-    session, spike_genus: str = "", filter: Optional[list[str]] = None
-) -> dict[str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]]:
+    session, spike_genus: str = "", filter: list[str] | None = None
+) -> dict[str, dict[str, int | str | list[tuple[str, str, set[str]]]]]:
     """Load marker definitions and any spike-in sequences from the DB."""
     tmp_genus_set = set()
     # Split on commas, strip white spaces,
@@ -802,7 +800,7 @@ def load_marker_defs(
     del tmp_genus_set
 
     marker_definitions: dict[
-        str, dict[str, Union[int, str, list[tuple[str, str, set[str]]]]]
+        str, dict[str, int | str | list[tuple[str, str, set[str]]]]
     ] = {}
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
         if filter and reference_marker.name not in filter:
@@ -863,13 +861,13 @@ def main(
     fastq: list[str],
     out_dir: str,
     session,
-    markers: Optional[list[str]] = None,
+    markers: list[str] | None = None,
     flip: bool = False,
     min_abundance: int = 2,
     min_abundance_fraction: float = 0.0,
-    ignore_prefixes: Optional[tuple[str]] = None,
-    merged_cache: Optional[str] = None,
-    tmp_dir: Optional[str] = None,
+    ignore_prefixes: tuple[str] | None = None,
+    merged_cache: str | None = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ) -> list[str]:

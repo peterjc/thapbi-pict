@@ -14,7 +14,6 @@ import os
 import shutil
 import sys
 import tempfile
-from typing import Optional
 
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
@@ -63,7 +62,7 @@ def load_md5(file_list: list[str]) -> dict[str, str]:
 def write_table(
     handle,
     pairs: list[tuple[str, str, str]],
-    meta: Optional[dict[str, str]],
+    meta: dict[str, str] | None,
     library_name: str,
     instrument_model: str,
     design_description: str,
@@ -100,18 +99,18 @@ def write_table(
 def main(
     fastq: list[str],
     output: str,
-    metadata_file: Optional[str] = None,
-    metadata_encoding: Optional[str] = None,
-    metadata_cols: Optional[str] = None,
-    metadata_fieldnames: Optional[str] = None,
-    metadata_index: Optional[str] = None,
-    ignore_prefixes: Optional[str] = None,
+    metadata_file: str | None = None,
+    metadata_encoding: str | None = None,
+    metadata_cols: str | None = None,
+    metadata_fieldnames: str | None = None,
+    metadata_index: str | None = None,
+    ignore_prefixes: str | None = None,
     library_name: str = "-",
     instrument_model: str = "Illumina MiSeq",
     design_description: str = "",
     library_construction_protocol: str = "",
     insert_size: int = 250,
-    tmp_dir: Optional[str] = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
 ):
     """Implement the ``thapbi_pict ena-submit`` command."""

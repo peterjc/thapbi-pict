@@ -15,7 +15,6 @@ from __future__ import annotations
 import os
 import re
 import sys
-from typing import Optional
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -42,7 +41,7 @@ taxid_regex = re.compile(r"(ncbi|[ _:;({\[\-\t])taxid=\d+")
 
 
 def parse_ncbi_fasta_entry(
-    text: str, known_species: Optional[list[str]] = None
+    text: str, known_species: list[str] | None = None
 ) -> tuple[int, str]:
     """Split an entry of Accession Genus Species-name Description.
 
@@ -125,7 +124,7 @@ assert parse_ncbi_fasta_entry(
 
 
 def parse_ncbi_taxid_entry(
-    text: str, know_species: Optional[list[str]] = None
+    text: str, know_species: list[str] | None = None
 ) -> tuple[int, str]:
     """Find any NCBI taxid as a pattern in the text.
 
@@ -161,7 +160,7 @@ assert parse_ncbi_taxid_entry("HQ013219:Phytophthora_arenaria:taxid=456") == (45
 
 
 def parse_curated_fasta_entry(
-    text: str, known_species: Optional[list[str]] = None
+    text: str, known_species: list[str] | None = None
 ) -> tuple[int, str]:
     """Split an entry of "Accession genus species etc" into fields.
 
@@ -224,7 +223,7 @@ assert parse_curated_fasta_entry(
 
 
 def parse_sintax_fasta_entry(
-    text: str, known_species: Optional[list[str]] = None
+    text: str, known_species: list[str] | None = None
 ) -> tuple[int, str]:
     """Extract the species from SINTAX taxonomy annotation.
 
@@ -301,7 +300,7 @@ assert parse_sintax_fasta_entry(
 
 
 def parse_obitools_fasta_entry(
-    text: str, known_species: Optional[list[str]] = None
+    text: str, known_species: list[str] | None = None
 ) -> tuple[int, str]:
     """Parse species from the OBITools extended FASTA header.
 

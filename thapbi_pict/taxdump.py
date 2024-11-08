@@ -16,7 +16,6 @@ import os
 import sys
 from collections import defaultdict
 from typing import Iterator
-from typing import Optional
 from typing import Sequence
 
 from .db_orm import connect_to_db
@@ -26,7 +25,7 @@ from .utils import reject_species_name
 
 
 def load_nodes(
-    nodes_dmp: str, wanted_ranks: Optional[Sequence[str]] = None
+    nodes_dmp: str, wanted_ranks: Sequence[str] | None = None
 ) -> tuple[dict[int, int], dict[str, set[int]]]:
     """Load the NCBI taxdump nodes.dmp file.
 
@@ -55,7 +54,7 @@ def load_nodes(
     return tree, ranks
 
 
-def load_merged(merged_dmp: str, wanted: Optional[set[int]] = None) -> dict[int, int]:
+def load_merged(merged_dmp: str, wanted: set[int] | None = None) -> dict[int, int]:
     """Load mapping of merged taxids of interest from NCBI taxdump merged.dmp file."""
     merged = {}
     with open(merged_dmp) as handle:
@@ -71,7 +70,7 @@ def load_merged(merged_dmp: str, wanted: Optional[set[int]] = None) -> dict[int,
 
 
 def load_names(
-    names_dmp: str, wanted: Optional[set[int]] = None
+    names_dmp: str, wanted: set[int] | None = None
 ) -> tuple[dict[int, str], dict[int, set[str]]]:
     """Load scientific names of species from NCBI taxdump names.dmp file."""
     names = {}
