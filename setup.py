@@ -33,9 +33,6 @@ Or start it as a module::
 Either should find the installed copy of the Python code.
 """
 
-from __future__ import print_function  # noqa: UP010
-from __future__ import with_statement  # noqa: UP010
-
 import sys
 
 try:
