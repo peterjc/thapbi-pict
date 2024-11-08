@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import sys
 from collections import Counter
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -206,11 +205,11 @@ def main(
     db_url: str,
     input_file: str,
     min_abundance: int = 100,
-    show_db_marker: Optional[str] = None,
+    show_db_marker: str | None = None,
     total_min_abundance: int = 0,
     min_samples: int = 0,
     max_edit_dist: int = 3,
-    ignore_prefixes: Optional[tuple[str, ...]] = None,
+    ignore_prefixes: tuple[str, ...] | None = None,
     debug: bool = False,
 ) -> int:
     """Run the edit-graph command with arguments from the command line.

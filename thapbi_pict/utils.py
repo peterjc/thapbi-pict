@@ -16,8 +16,6 @@ import time
 from collections import Counter
 from keyword import iskeyword
 from typing import Iterator
-from typing import Optional
-from typing import Union
 
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -381,8 +379,8 @@ def file_to_sample_name(filename: str) -> str:
 
 def find_requested_files(
     filenames_or_folders: list[str],
-    ext: Union[str, tuple[str, ...]] = ".fasta",
-    ignore_prefixes: Optional[tuple[str]] = None,
+    ext: str | tuple[str, ...] = ".fasta",
+    ignore_prefixes: tuple[str] | None = None,
     debug: bool = False,
 ) -> list[str]:
     """Interpret a list of filenames and/or foldernames.
@@ -489,7 +487,7 @@ def export_sample_biom(
     output_file: str,
     seqs: dict[tuple[str, str], str],  # (marker, idn): seq
     seq_meta: dict[tuple[str, str], dict],  # (marker, idn): dict
-    sample_meta: dict[str, dict[str, Union[str, int, None]]],  # (sample,): dict
+    sample_meta: dict[str, dict[str, str | int | None]],  # (sample,): dict
     counts: dict[tuple[str, str, str], int],  # (marker, idn, sample): abundance
     gzipped: bool = True,
 ) -> bool:
@@ -678,7 +676,7 @@ def parse_sample_tsv(
     seqs = {}
     seq_meta_keys = None
     seq_meta = {}
-    seq_col: Optional[int] = None
+    seq_col: int | None = None
     with open(tabular_file) as handle:
         for line in handle:
             parts = line.rstrip("\n").split("\t")
@@ -736,14 +734,14 @@ def parse_sample_tsv(
 
 def parse_species_tsv(
     tabular_file, min_abundance=0, req_species_level=False, allow_wildcard=False
-) -> Iterator[tuple[Optional[str], str, str, str]]:
+) -> Iterator[tuple[str | None, str, str, str]]:
     """Parse file of species assignments/predictions by sequence.
 
     Yields tuples of marker name (from the file header line), sequence name,
     taxid, and genus_species.
     """
-    marker: Optional[str] = None
-    tally_mode: Optional[tuple] = None
+    marker: str | None = None
+    tally_mode: tuple | None = None
     with open(tabular_file) as handle:
         for line in handle:
             if line.startswith("#"):

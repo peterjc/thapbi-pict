@@ -21,8 +21,6 @@ from collections import defaultdict
 from math import floor
 from math import log2
 from time import time
-from typing import Optional
-from typing import Union
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
@@ -37,8 +35,8 @@ from .versions import check_tools
 
 def unoise(
     counts: dict[str, int],
-    unoise_alpha: Optional[float] = 2.0,
-    unoise_gamma: Optional[int] = 4,
+    unoise_alpha: float | None = 2.0,
+    unoise_gamma: int | None = 4,
     abundance_based: bool = False,
     debug: bool = False,
 ) -> tuple[dict[str, str], dict[str, str]]:
@@ -168,10 +166,10 @@ def unoise(
 
 def usearch(
     counts: dict[str, int],
-    unoise_alpha: Optional[float] = None,
-    unoise_gamma: Optional[int] = None,
+    unoise_alpha: float | None = None,
+    unoise_gamma: int | None = None,
     abundance_based: bool = False,
-    tmp_dir: Optional[str] = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ) -> tuple[dict[str, str], dict[str, str]]:
@@ -288,10 +286,10 @@ def usearch(
 
 def vsearch(
     counts: dict[str, int],
-    unoise_alpha: Optional[float] = None,
-    unoise_gamma: Optional[int] = None,
+    unoise_alpha: float | None = None,
+    unoise_gamma: int | None = None,
     abundance_based: bool = True,
-    tmp_dir: Optional[str] = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ) -> tuple[dict[str, str], dict[str, str]]:
@@ -436,10 +434,10 @@ def vsearch(
 def read_correction(
     algorithm: str,
     counts: dict[str, int],
-    unoise_alpha: Optional[float] = None,
-    unoise_gamma: Optional[int] = None,
+    unoise_alpha: float | None = None,
+    unoise_gamma: int | None = None,
     abundance_based: bool = False,
-    tmp_dir: Optional[str] = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ) -> tuple[dict[str, str], dict[str, str]]:
@@ -484,16 +482,16 @@ def read_correction(
 
 
 def main(
-    inputs: Union[str, list[str]],
+    inputs: str | list[str],
     output: str,
     denoise_algorithm: str,
     total_min_abundance: int = 0,
     min_length: int = 0,
     max_length: int = sys.maxsize,
-    unoise_alpha: Optional[float] = None,  # e.g. 2.0,
-    unoise_gamma: Optional[int] = None,  # e.g. 4,
+    unoise_alpha: float | None = None,  # e.g. 2.0,
+    unoise_gamma: int | None = None,  # e.g. 4,
     gzipped: bool = False,  # output
-    tmp_dir: Optional[str] = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ):

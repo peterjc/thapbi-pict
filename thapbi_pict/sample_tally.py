@@ -19,8 +19,6 @@ from collections import Counter
 from collections import defaultdict
 from math import ceil
 from time import time
-from typing import Optional
-from typing import Union
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -35,12 +33,12 @@ from .utils import md5seq
 
 
 def main(
-    inputs: Union[str, list[str]],
+    inputs: str | list[str],
     synthetic_controls: list[str],
     negative_controls: list[str],
     output: str,
     session,
-    marker: Optional[str] = None,
+    marker: str | None = None,
     spike_genus=None,
     fasta=None,
     min_abundance: int = 100,
@@ -49,11 +47,11 @@ def main(
     min_length: int = 0,
     max_length: int = sys.maxsize,
     denoise_algorithm: str = "-",
-    unoise_alpha: Optional[float] = None,
-    unoise_gamma: Optional[int] = None,
+    unoise_alpha: float | None = None,
+    unoise_gamma: int | None = None,
     gzipped: bool = False,  # output
-    biom: Optional[str] = None,
-    tmp_dir: Optional[str] = None,
+    biom: str | None = None,
+    tmp_dir: str | None = None,
     debug: bool = False,
     cpu: int = 0,
 ) -> None:
@@ -118,7 +116,7 @@ def main(
     totals: dict[str, int] = Counter()
     counts: dict[tuple[str, str], int] = Counter()
     sample_cutadapt: dict[str, int] = {}  # before any thresholds
-    samples: Union[set[str], list[str]] = set()
+    samples: set[str] | list[str] = set()
     sample_pool: dict[str, str] = {}
     sample_headers: dict[str, dict] = {}
     for filename in inputs:
@@ -477,7 +475,7 @@ def main(
             for stat in stats_fields
             if stat not in ("Max non-spike", "Max spike-in")
         )
-    sample_stats: dict[str, dict[str, Union[int, str, None]]] = {
+    sample_stats: dict[str, dict[str, int | str | None]] = {
         sample: {} for sample in samples
     }
     for stat in stats_fields:

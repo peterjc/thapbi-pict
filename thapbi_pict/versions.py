@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import sys
 from subprocess import getoutput
-from typing import Optional
 
 
 def check_rapidfuzz() -> str:
@@ -88,7 +87,7 @@ def check_tools(names: list[str], debug: bool) -> list[str]:
         return versions
 
 
-def version_graphviz_fdp(cmd: str = "fdp") -> Optional[str]:
+def version_graphviz_fdp(cmd: str = "fdp") -> str | None:
     """Return the version of the GraphViz tool fdp (as a short string).
 
     Depends on the -V switch::
@@ -111,7 +110,7 @@ def version_graphviz_fdp(cmd: str = "fdp") -> Optional[str]:
     return None
 
 
-def version_blast(cmd: str = "blastn") -> Optional[str]:
+def version_blast(cmd: str = "blastn") -> str | None:
     """Return the version of the NCBI BLAST+ suite's blastn (as a short string).
 
     In the absence of a built in version switch like ``-v``, this works by
@@ -142,7 +141,7 @@ def version_blast(cmd: str = "blastn") -> Optional[str]:
     return None
 
 
-def version_cutadapt(cmd: str = "cutadapt") -> Optional[str]:
+def version_cutadapt(cmd: str = "cutadapt") -> str | None:
     """Return the version of cutadapt (as a short string).
 
     Uses the output with ``--version``::
@@ -163,7 +162,7 @@ def version_cutadapt(cmd: str = "cutadapt") -> Optional[str]:
     return None
 
 
-def version_flash(cmd: str = "flash") -> Optional[str]:
+def version_flash(cmd: str = "flash") -> str | None:
     """Return the version of flash (as a short string).
 
     Parses the output with ``-v``::
@@ -185,7 +184,7 @@ def version_flash(cmd: str = "flash") -> Optional[str]:
     return None
 
 
-def version_usearch(cmd: str = "usearch") -> Optional[str]:
+def version_usearch(cmd: str = "usearch") -> str | None:
     """Return the version of usearch (as a short string).
 
     Uses the output with ``--version``::
@@ -207,7 +206,7 @@ def version_usearch(cmd: str = "usearch") -> Optional[str]:
     return None
 
 
-def version_vsearch(cmd: str = "vsearch") -> Optional[str]:
+def version_vsearch(cmd: str = "vsearch") -> str | None:
     """Return the version of vsearch (as a short string).
 
     Uses the output with ``--version``::

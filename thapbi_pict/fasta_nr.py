@@ -14,7 +14,6 @@ from __future__ import annotations
 import os
 import sys
 from collections import Counter
-from typing import Union
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -24,8 +23,8 @@ from .utils import abundance_from_read_name
 
 
 def main(
-    inputs: Union[str, list[str]],
-    revcomp: Union[str, list[str]],
+    inputs: str | list[str],
+    revcomp: str | list[str],
     output: str,
     min_abundance: int = 0,
     min_length: int = 0,
