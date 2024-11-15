@@ -267,7 +267,7 @@ F-measure here (from zero to one for perfect recall), plus our own metric
 provisionally called *Ad hoc loss* which is a modification of the Hamming loss
 without using the true negative count (which we expect to always be very large
 as the database will contain many species, while a community might contain
-only ten).
+only ten). The TN column is omitted below.
 
 Doing that for one of the 10 species mixtures:
 
@@ -276,30 +276,30 @@ Doing that for one of the 10 species mixtures:
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA10MIX_undiluted.known.tsv -o DNA10MIX.assess.tsv
     Assessed onebp vs known in 2 files (315 species; 1 samples)
-    $ cut -f 1-5,9,11 DNA10MIX.assess.tsv
+    $ cut -f 1-4,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
 As this is still only one sample, new table ``DNA10MIX.assess.tsv`` is very
 similar to what we had before:
 
-========================== == == == === ==== ===========
-#Species                   TP FP FN TN  F1   Ad-hoc-loss
-========================== == == == === ==== ===========
-OVERALL                    8  2  2  303 0.80 0.333
-Phytophthora agathidicida  0  1  0  0   0.00 1.000
-Phytophthora boehmeriae    0  0  1  0   0.00 1.000
-Phytophthora cactorum      0  0  1  0   0.00 1.000
-Phytophthora capsici       1  0  0  0   1.00 0.000
-Phytophthora castaneae     1  0  0  0   1.00 0.000
-Phytophthora fallax        1  0  0  0   1.00 0.000
-Phytophthora foliorum      1  0  0  0   1.00 0.000
-Phytophthora gloveri       0  1  0  0   0.00 1.000
-Phytophthora obscura       1  0  0  0   1.00 0.000
-Phytophthora plurivora     1  0  0  0   1.00 0.000
-Phytophthora rubi          1  0  0  0   1.00 0.000
-Phytophthora siskiyouensis 1  0  0  0   1.00 0.000
-OTHER 303 SPECIES IN DB    0  0  0  303 0.00 0.000
-========================== == == == === ==== ===========
+========================== == == == ==== ===========
+#Species                   TP FP FN F1   Ad-hoc-loss
+========================== == == == ==== ===========
+OVERALL                    8  2  2  0.80 0.333
+Phytophthora agathidicida  0  1  0  0.00 1.000
+Phytophthora boehmeriae    0  0  1  0.00 1.000
+Phytophthora cactorum      0  0  1  0.00 1.000
+Phytophthora capsici       1  0  0  1.00 0.000
+Phytophthora castaneae     1  0  0  1.00 0.000
+Phytophthora fallax        1  0  0  1.00 0.000
+Phytophthora foliorum      1  0  0  1.00 0.000
+Phytophthora gloveri       0  1  0  0.00 1.000
+Phytophthora obscura       1  0  0  1.00 0.000
+Phytophthora plurivora     1  0  0  1.00 0.000
+Phytophthora rubi          1  0  0  1.00 0.000
+Phytophthora siskiyouensis 1  0  0  1.00 0.000
+OTHER 303 SPECIES IN DB    0  0  0  0.00 0.000
+========================== == == == ==== ===========
 
 It is clear from the metrics that the classifier is performing better on the
 second 10 species mock community.
@@ -315,47 +315,47 @@ giving the combined intermediate filenames, and *all* the expected files:
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/ -o thabpi-pict.ITS1.assess.tsv
     Assessed onebp vs known in 5 files (315 species; 4 samples)
-    $ cut -f 1-5,9,11 thabpi-pict.ITS1.assess.tsv
+    $ cut -f 1-4,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
 New table ``thabpi-pict.ITS1.assess.tsv`` is similar, but notice all the
 per-species lines have TP+FP+FN+TN=4 as there were 4 samples:
 
-=========================== == == == ==== ==== ===========
-#Species                    TP FP FN TN   F1   Ad-hoc-loss
-=========================== == == == ==== ==== ===========
-OVERALL                     32 8  13 1207 0.75 0.396
-Phytophthora agathidicida   0  3  0  1    0.00 1.000
-Phytophthora aleatoria      0  1  0  3    0.00 1.000
-Phytophthora alpina         0  1  0  3    0.00 1.000
-Phytophthora austrocedri    1  0  0  3    1.00 0.000
-Phytophthora boehmeriae     0  0  4  0    0.00 1.000
-Phytophthora cactorum       1  0  3  0    0.40 0.750
-Phytophthora capsici        3  0  0  1    1.00 0.000
-Phytophthora castaneae      3  0  0  1    1.00 0.000
-Phytophthora chlamydospora  0  0  1  3    0.00 1.000
-Phytophthora cinnamomi      0  0  1  3    0.00 1.000
-Phytophthora fallax         3  0  0  1    1.00 0.000
-Phytophthora foliorum       3  0  0  1    1.00 0.000
-Phytophthora gloveri        0  3  0  1    0.00 1.000
-Phytophthora gonapodyides   1  0  0  3    1.00 0.000
-Phytophthora ilicis         1  0  0  3    1.00 0.000
-Phytophthora kernoviae      1  0  0  3    1.00 0.000
-Phytophthora lateralis      0  0  1  3    0.00 1.000
-Phytophthora obscura        4  0  0  0    1.00 0.000
-Phytophthora plurivora      3  0  1  0    0.86 0.250
-Phytophthora pseudosyringae 1  0  0  3    1.00 0.000
-Phytophthora ramorum        1  0  0  3    1.00 0.000
-Phytophthora rubi           3  0  0  1    1.00 0.000
-Phytophthora siskiyouensis  3  0  0  1    1.00 0.000
-Phytophthora syringae       0  0  1  3    0.00 1.000
-Phytophthora x cambivora    0  0  1  3    0.00 1.000
-OTHER 290 SPECIES IN DB     0  0  0  1160 0.00 0.000
-=========================== == == == ==== ==== ===========
+=========================== == == == ==== ===========
+#Species                    TP FP FN F1   Ad-hoc-loss
+=========================== == == == ==== ===========
+OVERALL                     32 8  13 0.75 0.396
+Phytophthora agathidicida   0  3  0  0.00 1.000
+Phytophthora aleatoria      0  1  0  0.00 1.000
+Phytophthora alpina         0  1  0  0.00 1.000
+Phytophthora austrocedri    1  0  0  1.00 0.000
+Phytophthora boehmeriae     0  0  4  0.00 1.000
+Phytophthora cactorum       1  0  3  0.40 0.750
+Phytophthora capsici        3  0  0  1.00 0.000
+Phytophthora castaneae      3  0  0  1.00 0.000
+Phytophthora chlamydospora  0  0  1  0.00 1.000
+Phytophthora cinnamomi      0  0  1  0.00 1.000
+Phytophthora fallax         3  0  0  1.00 0.000
+Phytophthora foliorum       3  0  0  1.00 0.000
+Phytophthora gloveri        0  3  0  0.00 1.000
+Phytophthora gonapodyides   1  0  0  1.00 0.000
+Phytophthora ilicis         1  0  0  1.00 0.000
+Phytophthora kernoviae      1  0  0  1.00 0.000
+Phytophthora lateralis      0  0  1  0.00 1.000
+Phytophthora obscura        4  0  0  1.00 0.000
+Phytophthora plurivora      3  0  1  0.86 0.250
+Phytophthora pseudosyringae 1  0  0  1.00 0.000
+Phytophthora ramorum        1  0  0  1.00 0.000
+Phytophthora rubi           3  0  0  1.00 0.000
+Phytophthora siskiyouensis  3  0  0  1.00 0.000
+Phytophthora syringae       0  0  1  0.00 1.000
+Phytophthora x cambivora    0  0  1  0.00 1.000
+OTHER 290 SPECIES IN DB     0  0  0  0.00 0.000
+=========================== == == == ==== ===========
 
-This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 1207 TN.
-Their total, 32+8+13+1207 = 1260 = 4 * 315, is the number of samples times the
-number of species in the database.
+This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN. The total of
+TP+FP+FN+TN (not shown) is four times the number of samples times the number
+of species in the database (four samples).
 
 Running assessment as part of pipeline
 --------------------------------------
@@ -408,7 +408,7 @@ complicated since it appears to show just one of the 10 species mixes (so the
 TP count is out of 10) while we used all three (for a TP count out of 30).
 
 We can therefore pick a single representative sample for the 10 species mix,
-to make direct comparison more straight forward:
+to make direct comparison more straightforward:
 
 .. code:: console
 
@@ -450,21 +450,21 @@ with the fractional threshold unused (``-f 0``). This produces a simple table:
 
 Open the table in Excel if you prefer, the columns of particular interest:
 
-========== == == == === ==== ===========
-#Threshold TP FP FN TN  F1   Ad-hoc-loss
-========== == == == === ==== ===========
-A=2        22 23 3  582 0.63 0.542
-A=10       20 9  5  596 0.74 0.412
-A=20       20 8  5  597 0.75 0.394
-A=30       19 8  6  597 0.73 0.424
-A=40       19 6  6  599 0.76 0.387
-A=50       19 5  6  600 0.78 0.367
-A=60       18 5  7  600 0.75 0.400
-A=70       18 5  7  600 0.75 0.400
-A=80       18 5  7  600 0.75 0.400
-A=90       16 4  9  601 0.71 0.448
-A=100      16 4  9  601 0.71 0.448
-========== == == == === ==== ===========
+========== == == == ==== ===========
+#Threshold TP FP FN F1   Ad-hoc-loss
+========== == == == ==== ===========
+A=2        22 23 3  0.63 0.542
+A=10       20 9  5  0.74 0.412
+A=20       20 8  5  0.75 0.394
+A=30       19 8  6  0.73 0.424
+A=40       19 6  6  0.76 0.387
+A=50       19 5  6  0.78 0.367
+A=60       18 5  7  0.75 0.400
+A=70       18 5  7  0.75 0.400
+A=80       18 5  7  0.75 0.400
+A=90       16 4  9  0.71 0.448
+A=100      16 4  9  0.71 0.448
+========== == == == ==== ===========
 
 This suggests the optimal absolute abundance threshold for these two samples
 is in the region of 50 reads, giving 19 TP, 5 FP, and 6 FN for an F1 of 0.78
