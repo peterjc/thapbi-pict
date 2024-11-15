@@ -7,6 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.18 *Pending*  Updated NCBI taxonomy in default DB.
 v1.0.17 2024-11-08 Requires Python 3.10. Uses ``rich-argparse`` if installed for CLI colors.
 v1.0.16 2024-09-09 Hide any zero rows/cols in reports when using ``-q`` or ``--requiremeta``.
 v1.0.15 2024-09-05 Additional curated entries in default DB, many from Jung *et al.* (2024).
