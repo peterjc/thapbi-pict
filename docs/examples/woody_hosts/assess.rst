@@ -249,9 +249,9 @@ OTHER 298 SPECIES IN DB     0  0  0  298 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 2 false
-positives, 7 false negatives, and 226 true negatives. The final number needs a
-little explanation. First, 8+2+7+226 = 243, which is the number of species in
-the database. With only one sample being considered, 226 is the number of
+positives, 7 false negatives, and 298 true negatives. The final number needs a
+little explanation. First, 8+2+7+298 = 315, which is the number of species in
+the database. With only one sample being considered, 298 is the number of
 other species in the database which the tool correctly says are not present.
 
 Following this we get one line per species, considering this species in
@@ -353,8 +353,8 @@ Phytophthora x cambivora    0  0  1  3    0.00 1.000
 OTHER 290 SPECIES IN DB     0  0  0  1160 0.00 0.000
 =========================== == == == ==== ==== ===========
 
-This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 827 TN.
-Their total, 32+8+13+927 = 980 = 4 * 245, is the number of samples times the
+This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN and 1207 TN.
+Their total, 32+8+13+1207 = 1260 = 4 * 315, is the number of samples times the
 number of species in the database.
 
 Running assessment as part of pipeline
@@ -414,10 +414,10 @@ to make direct comparison more straight forward:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
-      | head -n 2 | cut -f 1-5,9,11
+      | head -n 2 | cut -f 1-4,9,11
     Assessed onebp vs known in 3 files (315 species; 2 samples)
-    #Species  TP  FP  FN  TN   F1    Ad-hoc-loss
-    OVERALL   16  4   9   601  0.71  0.448
+    #Species  TP  FP  FN  F1    Ad-hoc-loss
+    OVERALL   16  4   9   0.71  0.448
 
 We can recover most of the missing species (the FN) by dropping the minimum
 abundance thresholds (which requires deleting the intermediate FASTA files,
@@ -445,7 +445,7 @@ with the fractional threshold unused (``-f 0``). This produces a simple table:
 
 .. code:: console
 
-    $ cut -f 1-5,9,11 summary/mocks_a2.assess-vs-abundance.tsv
+    $ cut -f 1-4,9,11 summary/mocks_a2.assess-vs-abundance.tsv
     <SEE TABLE BELOW>
 
 Open the table in Excel if you prefer, the columns of particular interest:
