@@ -708,15 +708,14 @@ def ena_submit(args=None):
     if args.metadata:
         check_input_file(args.metadata)
         if not args.metacols:
-            sys.exit("ERROR: Must also supply -c / --metacols argument.")
+            sys.exit(
+                "ERROR: Must also supply -c / --metacols argument"
+                " (one column containing sample names)."
+            )
     if "\t" in args.library:
         sys.exit("ERROR: Can't use tabs in --library argument")
     if "\t" in args.instrument:
         sys.exit("ERROR: Can't use tabs in --instrument argument")
-    if "\t" in args.design:
-        sys.exit("ERROR: Can't use tabs in --design argument")
-    if "\t" in args.protocol:
-        sys.exit("ERROR: Can't use tabs in --protocol argument")
     return main(
         fastq=args.input,
         output=args.output,
@@ -726,11 +725,9 @@ def ena_submit(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         ignore_prefixes=args.ignore_prefixes,
+        study=args.study,
         library_name=args.library,
         instrument_model=args.instrument,
-        design_description=args.design,
-        library_construction_protocol=args.protocol,
-        insert_size=args.insert,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1909,7 +1906,8 @@ def main(args=None):
         "Then use the output of this command to match the FASTQ files to the samples. "
         "If your ENA sample names match your FASTQ prefixes, no metadata file is "
         "needed here. However, you can provide a metadata table to map the FASTQ "
-        "stem to your sample aliases or ENA sample accessions.",
+        "stem to your sample aliases or ENA sample accessions. Here -x should be "
+        "the FASTQ stem column, and -c should be the sample name column.",
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
@@ -1921,6 +1919,12 @@ def main(args=None):
         default="-",
         metavar="FILENAME",
         help="File to write to (default '-' meaning stdout)",
+    )
+    subcommand_parser.add_argument(
+        "--study",
+        type=str,
+        required=True,
+        help="Value for study field, your PRJEB or ERP number.",
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
@@ -1940,24 +1944,6 @@ def main(args=None):
         type=str,
         default="Illumina MiSeq",
         help="Value for instrument_model field, default 'Illumina MiSeq'.",
-    )
-    subcommand_parser.add_argument(
-        "--protocol",
-        type=str,
-        default="",
-        help="Value for optional library_construction_protocol field, default blank.",
-    )
-    subcommand_parser.add_argument(
-        "--design",
-        type=str,
-        default="",
-        help="Value for optional design_description field, default blank.",
-    )
-    subcommand_parser.add_argument(
-        "--insert",
-        type=int,
-        default=250,
-        help="Value for nominal/average insert_size, default 250.",
     )
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
