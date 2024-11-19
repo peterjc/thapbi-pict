@@ -18,14 +18,40 @@ import tempfile
 from .prepare import find_fastq_pairs
 from .utils import load_metadata
 
+# As of Nov 2024 and earlier, there are 12 mandatory fields:
+#
+# Field Name         Field Label            Permitted Value
+# sample             Sample
+# study              Study
+# instrument_model   Instrument model       Illumina MiSeq
+# library_name       Library name
+# library_source     Library source         METAGENOMIC
+# library_selection  Library selection      PCR
+# library_strategy   Library strategy       AMPLICON
+# library_layout     Library layout         PAIRED
+# forward_file_name  Forward file name
+# forward_file_md5   Forward File checksum
+# reverse_file_name  Reverse file name
+# reverse_file_md5   Reverse file checksum
+#
+# We will ignore the optional fields (some of which used to be expected
+# but accepted blank values):
+#
+# Field Name                    Field Label
+# library_design                Library design
+# library_construction_protocol Library construction protocol
+# design_description            Design description
+# insert_size                   Insert size
+# forward_file_unencrypted_md5  Forward file unencrypted checksum
+# reverse_file_unencrypted_md5  Reverse file unencrypted checksum
+
 TABLE_HEADER = (
-    "sample_alias\tinstrument_model\tlibrary_name\tlibrary_source\t"
-    "library_selection\tlibrary_strategy\tdesign_description\t"
-    "library_construction_protocol\tinsert_size\t"
+    "sample\tstudy\tinstrument_model\tlibrary_name\tlibrary_source\t"
+    "library_selection\tlibrary_strategy\tlibrary_layout\t"
     "forward_file_name\tforward_file_md5\t"
     "reverse_file_name\treverse_file_md5\n"
 )
-TABLE_TEMPLATE = "%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\t%s\t%s\t%i\t%s\t%s\t%s\t%s\n"
+TABLE_TEMPLATE = "%s\t%s\t%s\t%s\tMETAGENOMIC\tPCR\tAMPLICON\tPAIRED\t%s\t%s\t%s\t%s\n"
 assert TABLE_HEADER.count("\t") == TABLE_TEMPLATE.count("\t")
 
 
@@ -63,13 +89,14 @@ def write_table(
     handle,
     pairs: list[tuple[str, str, str]],
     meta: dict[str, str] | None,
+    study: str,
     library_name: str,
     instrument_model: str,
-    design_description: str,
-    library_construction_protocol: str,
-    insert_size: int,
 ) -> None:
-    """Write read file table for ENA upload."""
+    """Write read file table for ENA upload.
+
+    Leave library name as "-" and the folder name will be used.
+    """
     file_list = [_[1] for _ in pairs] + [_[2] for _ in pairs]
     md5_dict = load_md5(file_list)
     lines = []
@@ -80,11 +107,9 @@ def write_table(
             TABLE_TEMPLATE
             % (
                 meta[sample] if meta else sample,
+                study,
                 instrument_model,
                 folder if library_name == "-" else library_name,
-                design_description,
-                library_construction_protocol,
-                insert_size,
                 os.path.split(raw_R1)[1],
                 md5_dict[raw_R1],
                 os.path.split(raw_R2)[1],
@@ -99,17 +124,15 @@ def write_table(
 def main(
     fastq: list[str],
     output: str,
+    study: str,
     metadata_file: str | None = None,
     metadata_encoding: str | None = None,
-    metadata_cols: str | None = None,
+    metadata_cols: str | None = None,  # single column with sample name
     metadata_fieldnames: str | None = None,
     metadata_index: str | None = None,
     ignore_prefixes: str | None = None,
     library_name: str = "-",
     instrument_model: str = "Illumina MiSeq",
-    design_description: str = "",
-    library_construction_protocol: str = "",
-    insert_size: int = 250,
     tmp_dir: str | None = None,
     debug: bool = False,
 ):
@@ -181,11 +204,9 @@ def main(
         table_handle,
         fastq_file_pairs,
         meta,
+        study,
         library_name,
         instrument_model,
-        design_description,
-        library_construction_protocol,
-        insert_size,
     )
 
     if output != "-":
