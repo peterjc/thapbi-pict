@@ -725,6 +725,7 @@ def ena_submit(args=None):
         metadata_fieldnames=args.metafields,
         metadata_index=args.metaindex,
         ignore_prefixes=args.ignore_prefixes,
+        ignore_stems=args.ignore_stems,
         study=args.study,
         library_name=args.library,
         instrument_model=args.instrument,
@@ -1912,6 +1913,14 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
+    subcommand_parser.add_argument(
+        "--ignore-stems",
+        type=str,
+        default=None,
+        metavar="FILENAME",
+        help="Text file of FASTQ stems to ignore, one per line. Useful if you have "
+        "already upload some data to the ENA.",
+    )
     subcommand_parser.add_argument(
         "-o",
         "--output",
