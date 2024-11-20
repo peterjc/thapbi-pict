@@ -1908,7 +1908,9 @@ def main(args=None):
         "If your ENA sample names match your FASTQ prefixes, no metadata file is "
         "needed here. However, you can provide a metadata table to map the FASTQ "
         "stem to your sample aliases or ENA sample accessions. Here -x should be "
-        "the FASTQ stem column, and -c should be the sample name column.",
+        "the FASTQ stem column, and -c should be the sample name column."
+        "See https://ena-docs.readthedocs.io/en/latest/submit/reads/interactive.html "
+        "where this is intended to produce the completed spreadsheet for you.",
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTQ)
