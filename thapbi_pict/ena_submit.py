@@ -133,14 +133,35 @@ def main(
     ignore_prefixes: str | None = None,
     library_name: str = "-",
     instrument_model: str = "Illumina MiSeq",
+    ignore_stems: str | None = None,
     tmp_dir: str | None = None,
     debug: bool = False,
 ):
     """Implement the ``thapbi_pict ena-submit`` command."""
     fastq_file_pairs = find_fastq_pairs(fastq, debug=debug)
-
     if not fastq_file_pairs:
         sys.exit("ERROR: No FASTQ pairs found")
+
+    if ignore_stems:
+        ignore = set()
+        with open(ignore_stems) as handle:
+            for line in handle:
+                if line and not line.startswith("#"):
+                    ignore.add(line.strip())
+        before = len(fastq_file_pairs)
+        fastq_file_pairs = [
+            (stem, left_filename, right_filename)
+            for (stem, left_filename, right_filename) in fastq_file_pairs
+            if os.path.basename(stem) not in ignore
+        ]
+        sys.stderr.write(
+            f"Ignored {before-len(fastq_file_pairs)} paired FASTQ stems using"
+            f" {len(ignore)} potential entries from file {ignore_stems}\n"
+        )
+        del ignore
+        if not fastq_file_pairs:
+            sys.exit("ERROR: Ignored all FASTQ pairs found")
+
     if debug:
         sys.stderr.write("Preparing %i FASTQ pairs\n" % len(fastq_file_pairs))
 
@@ -190,10 +211,20 @@ def main(
         )
     missing_meta = set(samples).difference(metadata)
     if metadata_file and missing_meta:
-        sys.exit(
-            "ERROR: Loaded %i samples, %i missing metadata, e.g. %s\n"
-            % (len(samples), len(missing_meta), sorted(missing_meta)[0])
-        )
+        if len(missing_meta) == 1:
+            msg = "ERROR: Loaded %i samples, %i missing metadata, %s\n" % (
+                len(samples),
+                len(missing_meta),
+                sorted(missing_meta)[0],
+            )
+        else:
+            msg = "ERROR: Loaded %i samples, %i missing metadata, e.g. %s .. %s\n" % (
+                len(samples),
+                len(missing_meta),
+                sorted(missing_meta)[0],
+                sorted(missing_meta)[-1],
+            )
+        sys.exit(msg)
     if metadata_file:
         # Just one column, don't need values as list:
         meta = {k: v[0] for k, v in metadata.items()}
