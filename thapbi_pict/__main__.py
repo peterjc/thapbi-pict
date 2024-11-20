@@ -729,6 +729,7 @@ def ena_submit(args=None):
         study=args.study,
         library_name=args.library,
         instrument_model=args.instrument,
+        flat=args.flat,
         tmp_dir=args.temp,
         debug=args.verbose,
     )
@@ -1939,6 +1940,7 @@ def main(args=None):
     )
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
+    # Ought really to alter the help text for this:
     subcommand_parser.add_argument("-c", "--metacols", **ARG_METACOLS)
     subcommand_parser.add_argument("-x", "--metaindex", **ARG_METAINDEX)
     subcommand_parser.add_argument("--metafields", **ARG_METAFIELDS)
@@ -1955,6 +1957,12 @@ def main(args=None):
         type=str,
         default="Illumina MiSeq",
         help="Value for instrument_model field, default 'Illumina MiSeq'.",
+    )
+    subcommand_parser.add_argument(
+        "--flat",
+        action="store_true",
+        help="Output FASTQ filenames without their directory prefix. "
+        "Use this if you uploaded them to the root of the ENA FTP site.",
     )
     # Can't use -t for --temp as already using for --metadata:
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)

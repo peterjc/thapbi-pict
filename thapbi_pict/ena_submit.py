@@ -92,6 +92,7 @@ def write_table(
     study: str,
     library_name: str,
     instrument_model: str,
+    flat: bool = False,
 ) -> None:
     """Write read file table for ENA upload.
 
@@ -110,9 +111,9 @@ def write_table(
                 study,
                 instrument_model,
                 folder if library_name == "-" else library_name,
-                os.path.split(raw_R1)[1],
+                os.path.split(raw_R1)[1] if flat else raw_R1,
                 md5_dict[raw_R1],
-                os.path.split(raw_R2)[1],
+                os.path.split(raw_R2)[1] if flat else raw_R2,
                 md5_dict[raw_R2],
             )
         )
@@ -135,6 +136,7 @@ def main(
     instrument_model: str = "Illumina MiSeq",
     ignore_stems: str | None = None,
     tmp_dir: str | None = None,
+    flat: bool = False,
     debug: bool = False,
 ):
     """Implement the ``thapbi_pict ena-submit`` command."""
@@ -238,6 +240,7 @@ def main(
         study,
         library_name,
         instrument_model,
+        flat=flat,
     )
 
     if output != "-":

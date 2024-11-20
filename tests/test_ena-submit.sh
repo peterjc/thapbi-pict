@@ -25,7 +25,7 @@ set -o pipefail
 
 thapbi_pict ena-submit --study PRJEB00000 -i tests/reads/ \
     -t tests/reads/metadata.tsv -c 5 -x 1 \
-    -o $TMP/ena_submit.tsv -e UTF-8
+    -o $TMP/ena_submit.tsv -e UTF-8 --flat
 diff $TMP/ena_submit.tsv tests/reads/ena_submit.tsv
 
 thapbi_pict ena-submit --study PRJEB00000 -i tests/reads/ \
