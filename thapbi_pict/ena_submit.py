@@ -111,9 +111,9 @@ def write_table(
                 study,
                 instrument_model,
                 folder if library_name == "-" else library_name,
-                os.path.split(raw_R1)[1] if flat else raw_R1,
+                os.path.split(raw_R1)[1] if flat else raw_R1.replace("\\", "/"),
                 md5_dict[raw_R1],
-                os.path.split(raw_R2)[1] if flat else raw_R2,
+                os.path.split(raw_R2)[1] if flat else raw_R2.replace("\\", "/"),
                 md5_dict[raw_R2],
             )
         )
