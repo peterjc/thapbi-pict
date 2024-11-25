@@ -4,27 +4,6 @@ Release History
 The following table lists a consise summary of the main changes in each release. Please see
 https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 
-Version 1.1
-~~~~~~~~~~~
-
-This is still in pre-release, and is a gradual evolution from v1.0 with the main changes being
-alterations to the default settings, and an expansion of the default *Phytophthora*-centric
-ITS1 marker database to also include an rps10 marker dataset targeting the wider group of
-Oomycetes (see Foster *et al.* (2022) `doi.org/10.1094/PBIOMES-02-22-0009-R
-<https://doi.org/10.1094/PBIOMES-02-22-0009-R>`__).
-
-======= ========== ============================================================================
-Version Date       Notes
-======= ========== ============================================================================
-v1.1a1  *Pending*  Default settings changed. Note default database now ITS1 *and* rps10 marker.
-======= ========== ============================================================================
-
-Version 1.0
-~~~~~~~~~~~
-
-This is still the recommended and stable release, as described in Cock *et al.* (2023)
-`doi.org/10.7717/peerj.15648 <https://doi.org/10.7717/peerj.15648>`__.
-
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
