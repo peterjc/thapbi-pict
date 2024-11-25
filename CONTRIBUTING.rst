@@ -93,7 +93,7 @@ read only to prevent accidental edits:
     $ cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
     $ chmod a-w thapbi_pict/ITS1_DB.sqlite
 
-Assuming your default Python is at least version 3.8, to install the tool and
+Assuming your default Python is at recent enough, to install the tool and
 automatically get our Python dependencies:
 
 .. code:: console
@@ -101,7 +101,8 @@ automatically get our Python dependencies:
     $ pip install .
 
 If your system defaults to Python 2, try ``pip3 install .`` or
-``python3 -m pip install .`` instead.
+``python3 -m pip install .`` instead. If you have Python 3 but it is too old,
+consider using a conda environment with a newer Python 3.
 
 Once installed, you should be able to run the tool using:
 
