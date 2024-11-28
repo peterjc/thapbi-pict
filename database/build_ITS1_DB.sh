@@ -80,6 +80,10 @@ BAD="('MK794853.1', 'MK794848.1', 'MK795051.1', 'KY785380.1', 'KY785381.1', 'KU7
 sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN $BAD;"
 # Recent entry OR398863.1 Globisporangium vs five older accessions saying Pythium
 sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('OR398863.1');"
+# Drop PP845835.1 Pythium vs 5 saying Phytopythium
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('PP845835.1');"
+# Drop PQ482500.1 Pythium vs 3 saying Globisporangium
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('PQ482500.1');"
 
 # =================
 # Curated sequences
