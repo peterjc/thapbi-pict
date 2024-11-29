@@ -415,6 +415,8 @@ def find_requested_files(
                 sys.stderr.write(
                     f"DEBUG: Looking for extension {ext} so ignoring {x}\n"
                 )
+        elif os.path.islink(x):
+            sys.stderr.write(f"WARNING: Ignoring broken link {x}\n")
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?

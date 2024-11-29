@@ -96,6 +96,11 @@ def find_fastq_pairs(
                 sys.stderr.write(f"WARNING: Ignoring {x} due to prefix\n")
                 continue
             answer.append(x)
+        elif os.path.islink(x) and x.endswith(ext):
+            if ignore_prefixes and os.path.split(x)[1].startswith(ignore_prefixes):
+                sys.stderr.write(f"WARNING: Ignoring broken link {x} due to prefix\n")
+                continue
+            answer.append(x)
         else:
             sys.exit(f"ERROR: {x!r} is not a file or a directory\n")
     # Warn if there were duplicates?
