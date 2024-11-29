@@ -127,20 +127,16 @@ def find_fastq_pairs(
                     sys.exit(
                         f"ERROR: Did not recognise {left!r} and {right!r} as a pair\n"
                     )
-        if not os.path.isfile(left) and os.path.islink(left):
-            sys.stderr.write(f"WARNING: Ignoring {left} as symlink broken\n")
-            continue
-        if not os.path.isfile(right) and os.path.islink(right):
-            sys.stderr.write(f"WARNING: Ignoring {right} as symlink broken\n")
-            continue
         for filename in (left, right):
             if not os.path.isfile(filename):
                 if os.path.islink(filename):
-                    sys.exit(f"ERROR: Broken symlink: {filename}")
+                    sys.stderr.write(
+                        f"WARNING: Broken symlink {filename} (OK if was processed)\n"
+                    )
                 else:
                     # What might cause this - other than deletion after our dir listing?
                     sys.exit(f"ERROR: Missing file: {filename}")
-            if not os.stat(filename).st_size:
+            elif not os.stat(filename).st_size:
                 if filename.endswith(".gz"):
                     sys.exit(f"ERROR: Empty gzip file {filename}")
                 else:
