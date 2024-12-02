@@ -14,8 +14,8 @@ import subprocess
 import sys
 import time
 from collections import Counter
+from collections.abc import Iterator
 from keyword import iskeyword
-from typing import Iterator
 
 from Bio.Data.IUPACData import ambiguous_dna_values
 from Bio.SeqIO.FastaIO import SimpleFastaParser
