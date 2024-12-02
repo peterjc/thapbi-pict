@@ -26,14 +26,13 @@ of a matched sequence differ slightly from the BLAST matches.
 
 import os
 import sys
-from typing import Dict
 
 if len(sys.argv) != 2 or (
     sys.argv[1] != "/dev/stdin" and not os.path.isfile(sys.argv[1])
 ):
     sys.exit("ERROR: Require a BLAST TSV filename as input.")
 
-seq_to_entry: Dict[str, set[str]] = {}
+seq_to_entry: dict[str, set[str]] = {}
 for line in open(sys.argv[1]):
     parts = line.rstrip("\n").split("\t")
     if len(parts) != 4:

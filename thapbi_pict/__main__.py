@@ -15,7 +15,6 @@ the ``main()`` function defined in this Python file.
 import argparse
 import os
 import sys
-from typing import List
 from typing import Optional
 
 # Apply rich-argparse formatting to help text if installed
@@ -139,7 +138,7 @@ def expand_database_argument(
     return prefix + db
 
 
-def validate_markers(markers: List[str], requested_markers: str) -> List[str]:
+def validate_markers(markers: list[str], requested_markers: str) -> list[str]:
     """Confirm requests are a subset of those defined."""
     if requested_markers:
         subset = [_.strip() for _ in requested_markers.split(",")]

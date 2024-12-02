@@ -14,7 +14,6 @@ See also the thapbi_pict fasta-nr and various import commands.
 """
 
 import sys
-from typing import Dict
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
@@ -22,7 +21,7 @@ if len(sys.argv) == 1:
     sys.exit("ERROR: Requires one or more FASTA filenames")
 
 sep = ";"
-seq_dict: Dict[str, set[str]] = {}
+seq_dict: dict[str, set[str]] = {}
 
 for filename in sys.argv[1:]:
     with open(filename) as handle:
