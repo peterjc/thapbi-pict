@@ -15,8 +15,8 @@ from __future__ import annotations
 import os
 import sys
 from collections import defaultdict
-from typing import Iterator
-from typing import Sequence
+from collections.abc import Iterator
+from collections.abc import Sequence
 
 from .db_orm import connect_to_db
 from .db_orm import Synonym
