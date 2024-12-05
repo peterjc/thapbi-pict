@@ -255,10 +255,10 @@ def sample_summary(
     cols = len(species_predictions)
     if cols > 50:
         # Set column width to 2
-        worksheet.set_column(col_offset + 2, col_offset + 1 + cols, 2)
+        worksheet.set_column(col_offset, col_offset + cols - 1, 2)
     elif cols > 20:
         # Set column width to 4
-        worksheet.set_column(col_offset + 2, col_offset + 1 + cols, 4)
+        worksheet.set_column(col_offset, col_offset + cols - 1, 4)
     del cols
     for offset, name in enumerate(meta_names):
         worksheet.write_string(current_row, offset, name)
@@ -272,6 +272,7 @@ def sample_summary(
     col_offset += len(stats_fields)
     for offset, sp in enumerate(species_predictions):
         worksheet.write_string(current_row, col_offset + offset, _sp_display(sp))
+    assert col_offset == len(meta_names) + 2 + len(stats_fields)
 
     # Main body
     # =========
