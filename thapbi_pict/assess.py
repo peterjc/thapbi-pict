@@ -426,14 +426,17 @@ def main(
 
     # Connect to the DB, load species list and synonyms (needed before parse files)
     session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
-    view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
+    # Only want taxonomy entries where a sequence is recorded, so .join(SeqSource)
+    view = (
+        session.query(Taxonomy)
+        .distinct(Taxonomy.genus, Taxonomy.species)
+        .join(SeqSource)
+    )
     if marker:
         # The taxonomy and marker tables are linked indirectly via the SeqSource
         # TODO - Explicitly check if the marker is actually in the DB?
-        view = (
-            view.join(SeqSource)
-            .join(MarkerDef, SeqSource.marker_definition)
-            .filter(MarkerDef.name == marker)
+        view = view.join(MarkerDef, SeqSource.marker_definition).filter(
+            MarkerDef.name == marker
         )
     db_sp_list = sorted(
         {genus_species_name(_.genus, _.species) for _ in view if _.species}
@@ -443,13 +446,6 @@ def main(
         .join(Synonym)
         .with_entities(Taxonomy.genus, Taxonomy.species, Synonym.name)
     )
-    if marker:
-        # To filter by marker again have to link via SeqSource
-        view = (
-            view.join(SeqSource)
-            .join(MarkerDef, SeqSource.marker_definition)
-            .filter(MarkerDef.name == marker)
-        )
     synonyms = {_.name: genus_species_name(_.genus, _.species) for _ in view}
     session.close()
     if not db_sp_list:
