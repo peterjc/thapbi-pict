@@ -19,6 +19,7 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from .db_orm import connect_to_db
 from .db_orm import MarkerDef
 from .db_orm import SeqSource
+from .db_orm import Synonym
 from .db_orm import Taxonomy
 from .utils import file_to_sample_name
 from .utils import find_requested_files
@@ -414,14 +415,53 @@ def main(
         inputs, f".{method}.tsv", ignore_prefixes, debug=debug
     )
     if not method_filenames:
-        sys.exit(f"ERROR: Need file(s) name *.{method}.tsv")
+        sys.exit(f"ERROR: Need file(s) named *.{method}.tsv")
 
     known_filenames = find_requested_files(
         inputs, f".{known}.tsv", ignore_prefixes, debug=debug
     )
     if not known_filenames:
-        sys.exit(f"ERROR: Need file(s) name *.{known}.tsv")
+        sys.exit(f"ERROR: Need file(s) named *.{known}.tsv")
     file_count = len(known_filenames) + len(method_filenames)
+
+    # Connect to the DB, load species list and synonyms (needed before parse files)
+    session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
+    view = session.query(Taxonomy).distinct(Taxonomy.genus, Taxonomy.species)
+    if marker:
+        # The taxonomy and marker tables are linked indirectly via the SeqSource
+        # TODO - Explicitly check if the marker is actually in the DB?
+        view = (
+            view.join(SeqSource)
+            .join(MarkerDef, SeqSource.marker_definition)
+            .filter(MarkerDef.name == marker)
+        )
+    db_sp_list = sorted(
+        {genus_species_name(_.genus, _.species) for _ in view if _.species}
+    )
+    view = (
+        session.query(Taxonomy)
+        .join(Synonym)
+        .with_entities(Taxonomy.genus, Taxonomy.species, Synonym.name)
+    )
+    if marker:
+        # To filter by marker again have to link via SeqSource
+        view = (
+            view.join(SeqSource)
+            .join(MarkerDef, SeqSource.marker_definition)
+            .filter(MarkerDef.name == marker)
+        )
+    synonyms = {_.name: genus_species_name(_.genus, _.species) for _ in view}
+    session.close()
+    if not db_sp_list:
+        sys.exit("ERROR: No species listed in DB")
+    for sp in db_sp_list:
+        assert species_level(sp), sp
+    if debug:
+        if marker:
+            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB for {marker}\n")
+        else:
+            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB (all markers)\n")
+        sys.stderr.write(f"DEBUG: Loaded {len(synonyms)} synonyms")
 
     method_sp = {}
     known_sp = {}
@@ -450,6 +490,7 @@ def main(
                         f"DEBUG: Trying {filename} as a legacy file for {sample}\n"
                     )
                 genus_species = set(sp_in_tsv([filename], min_abundance).split(";"))
+                genus_species = {synonyms.get(_, _) for _ in genus_species}
                 if sample in sample_dict:
                     # Update existing value...
                     sample_dict[sample].update(genus_species)
@@ -477,6 +518,7 @@ def main(
                         sys.exit(
                             f"ERROR: No {marker2}/{idn} genus-species in {filename}"
                         )
+                    genus_species = {synonyms.get(_, _) for _ in genus_species}
                     if sample in sample_dict:
                         sample_dict[sample].update(genus_species)
                     else:
@@ -495,33 +537,6 @@ def main(
             f"{known} ({len(known_sp)} samples in {len(known_filenames)} files) and "
             f"{method} ({len(method_sp)} samples in {len(method_filenames)} files)"
         )
-
-    # Connect to the DB,
-    session = connect_to_db(db_url, echo=False)  # echo=debug is too distracting now
-
-    view = (
-        session.query(Taxonomy)
-        .distinct(Taxonomy.genus, Taxonomy.species)
-        .join(SeqSource)
-    )
-    if marker:
-        # TODO - Check this is actually in the DB?
-        view = view.join(MarkerDef, SeqSource.marker_definition).filter(
-            MarkerDef.name == marker
-        )
-    db_sp_list = sorted(
-        {genus_species_name(t.genus, t.species) for t in view if t.species}
-    )
-    session.close()
-    if not db_sp_list:
-        sys.exit("ERROR: No species listed in DB")
-    for sp in db_sp_list:
-        assert species_level(sp), sp
-    if debug:
-        if marker:
-            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB for {marker}\n")
-        else:
-            sys.stderr.write(f"DEBUG: {len(db_sp_list)} species in DB (all markers)\n")
 
     global_tally = {}
     for sample in samples:
