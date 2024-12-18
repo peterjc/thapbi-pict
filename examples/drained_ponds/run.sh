@@ -1,4 +1,14 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=150M
+#SBATCH --time=0:10:00
+#SBATCH --job-name=drained_ponds
+#======================================================
+
 set -euo pipefail
 
 echo NOTE: Expected first time run time is under 5 minutes,

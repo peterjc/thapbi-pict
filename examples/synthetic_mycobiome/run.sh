@@ -1,9 +1,19 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1400M
+#SBATCH --time=0:30:00
+#SBATCH --job-name=synthetic_mycobiome
+#======================================================
+
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is just over 20 minutes"
 echo "(or about 8 minutes from the merged reads cache),"
-echo "repeat runs about a minute to regenerate reports."
+echo "repeat runs a few minutes to regenerate reports."
 echo
 
 mkdir -p tmp_merged/ intermediate/ summary/

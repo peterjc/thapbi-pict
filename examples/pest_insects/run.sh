@@ -1,9 +1,19 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=2:30:00
+#SBATCH --job-name=pest_insects
+#======================================================
+
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is about two hours,"
 echo "about 15 minutes from the merged reads cache."
-echo "Repeat runs take under a minute just to regenerate reports."
+echo "Repeat runs take a few minutes to regenerate reports."
 echo
 
 mkdir -p references/ intermediate/ summary/

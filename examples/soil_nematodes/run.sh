@@ -1,4 +1,14 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1400MB
+#SBATCH --time=4:00:00
+#SBATCH --job-name=soil_nematodes
+#======================================================
+
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is a few hours"

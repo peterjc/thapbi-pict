@@ -1,4 +1,14 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=200M
+#SBATCH --time=2:00:00
+#SBATCH --job-name=endangered_species
+#======================================================
+
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is about 1.5 hours,"

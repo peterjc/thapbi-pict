@@ -1,4 +1,14 @@
 #!/bin/bash
+
+#The following will be used on SLURM via sbatch:
+#======================================================
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=100M
+#SBATCH --time=0:03:00
+#SBATCH --job-name=woody_hosts
+#======================================================
+
 set -euo pipefail
 
 echo "NOTE: Expected first time run time is about a minute,"
