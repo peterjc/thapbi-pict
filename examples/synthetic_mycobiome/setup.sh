@@ -11,7 +11,7 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
     false
 fi
 # Only want the specific Illumina plates (using library prefix)
-for ACC in $(grep "Illumina MiSeq\tm6-" PRJNA305924.tsv | cut -f 1); do
+for ACC in $(grep "Illumina MiSeq"$'\t'"m6-" PRJNA305924.tsv | cut -f 1); do
     # echo "Downloading $ACC"
     # Column 6 should have two URLs (R1 and R2), semi-colon separated:
     for URL in $(grep "^$ACC" PRJNA305924.tsv | cut -f 6 | sed "s/;/ /g"); do
