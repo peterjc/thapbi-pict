@@ -1640,6 +1640,7 @@ def main(args=None):
         epilog="Each input file `XXX.fasta` will result in an output file "
         "named `XXX.method.tsv` in the specified output directory (default "
         "input dir).",
+        formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA_OR_TSV)
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
