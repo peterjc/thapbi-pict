@@ -1631,6 +1631,7 @@ def main(args=None):
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
     subcommand_parser.set_defaults(func=sample_tally)
+    del subcommand_parser  # To prevent accidentally adding more
 
     # classify
     subcommand_parser = subparsers.add_parser(
