@@ -22,6 +22,10 @@ try:
     import rich_argparse
 
     cmd_formatter = rich_argparse.RichHelpFormatter
+    # We have some syntax examples like `usearch -unoise3 ...` where
+    # rich-argpase formats the "-unoise3" bit like an argument.
+    # So we'll just format all of it like an argument:
+    cmd_formatter.styles["argparse.syntax"] = cmd_formatter.styles["argparse.args"]
 except ImportError:
     cmd_formatter = argparse.HelpFormatter
 
@@ -748,14 +752,14 @@ ARG_INPUT_FASTA = dict(  # noqa: C408
     required=True,
     nargs="+",
     help="One or more prepared FASTA filenames or folder names "
-    "(containing files named *.fasta).",
+    "(containing files named `*.fasta`).",
 )
 ARG_INPUT_FASTA_OR_TSV = dict(  # noqa: C408
     type=str,
     required=True,
     nargs="+",
     help="One or more prepared FASTA or sample tally TSV filenames, or folder "
-    "names (containing files named *.fasta or *.tsv).",
+    "names (containing files named `*.fasta` or `*.tsv`).",
 )
 
 # "--ignore-prefixes",
@@ -885,9 +889,9 @@ ARG_DENOISE = dict(  # noqa: C408
     help="Optional read-correction algorithm, default '-' for none. "
     "Use 'unoise-l' for built-in reimplementation of the Levenshtein distance "
     "UNOISE algorithm as described in Edgar (2016). Use 'usearch' to "
-    "call external tool 'usearch -unoise3 ...' and the original "
+    "call external tool `usearch -unoise3 ...` and the original "
     "author's UNOISE3 implementation. Use 'vsearch' to call "
-    "external tool 'vsearch --cluster_unoise ...' and their UNOISE3 "
+    "external tool `vsearch --cluster_unoise ...` and their UNOISE3 "
     "reimplementation using pairwise alignment based distance.",
 )
 
@@ -920,7 +924,7 @@ ARG_INPUT_FASTQ = dict(  # noqa: C408
     nargs="+",
     metavar="FASTQ",
     help="One or more paired FASTQ filenames or folder names "
-    "(containing files named *.fastq or *.fastq.gz).",
+    "(containing files named `*.fastq` or `*.fastq.gz`).",
 )
 
 
@@ -1115,7 +1119,7 @@ def main(args=None):
         description=(
             f"THAPBI Phytophthora ITS1 Classifier Tool (PICT), v{__version__}."
         ),
-        epilog="e.g. run 'thapbi_pict pipeline -h' for the pipeline subcommand help. "
+        epilog="e.g. run `thapbi_pict pipeline -h` for the pipeline subcommand help. "
         "Please see https://thapbi-pict.readthedocs.io/ for documentation.",
         formatter_class=cmd_formatter,
     )
@@ -1195,7 +1199,7 @@ def main(args=None):
         type=str,
         required=True,
         metavar="DIRNAME",
-        help="Folder containing NCBI taxonomy files 'names.dmp' etc.",
+        help="Folder containing NCBI taxonomy files `names.dmp` etc.",
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_WRITE)
     subcommand_parser.add_argument(
@@ -1326,7 +1330,7 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "dump",
         description="Export a marker database to a text file.",
-        epilog="e.g. 'thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt'",
+        epilog="e.g. `thapbi_pict dump -d ... -g Peronospora -o Peronospora.txt`",
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
@@ -1394,7 +1398,7 @@ def main(args=None):
         "conflicts",
         description="Count genus or species conflicts in a marker database.",
         epilog="Number of marker or genus level conflicts is used as the return "
-        "code. e.g. 'thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?'",
+        "code. e.g. `thapbi_pict conflicts -d ... -o conflicts.txt ; echo $?`",
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
@@ -1415,10 +1419,10 @@ def main(args=None):
         "prepare-reads",
         description="Trim and merge paired FASTQ files of marker amplicons.",
         epilog="Each pair of input files should follow the naming style "
-        "XXX_1.fastq[.gz] and XXX_2.fastq[.gz], or "
-        "XXX_R1.fastq[.gz] and XXX_R2.fastq[.gz], or "
-        "XXX_R1_001.fastq[.gz] and XXX_R2_001.fastq[.gz], and will given an "
-        "output file XXX.fasta. These FASTA files have a header, and their "
+        "`XXX_1.fastq[.gz]` and `XXX_2.fastq[.gz]`, or "
+        "`XXX_R1.fastq[.gz]` and `XXX_R2.fastq[.gz]`, or "
+        "`XXX_R1_001.fastq[.gz]` and `XXX_R2_001.fastq[.gz]`, and will given an "
+        "output file `XXX.fasta`. These FASTA files have a header, and their "
         "sequences are non-redundant, named by MD5 checksum and their abundance, "
         "and sorted by decreasing abundance then alphabetically by sequence.",
         formatter_class=cmd_formatter,
@@ -1450,9 +1454,9 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "fasta-nr",
         description="Prepare non-redundant FASTA file using MD5 naming.",
-        epilog="Each unique sequence will be named <MD5>_<count> using "
+        epilog="Each unique sequence will be named `<MD5>_<count>` using "
         "the MD5 checksum of the upper case sequence and its total "
-        "abundance. Input files may use <prefix>_<count> naming, this "
+        "abundance. Input files may use `<prefix>_<count>` naming, this "
         "count will be used for the associated sequence.",
         formatter_class=cmd_formatter,
     )
@@ -1501,8 +1505,8 @@ def main(args=None):
         "denoise",
         description="Apply UNOISE based read-correction to denoise FASTA file(s).",
         epilog="This is a simplified version of the sample-tally command. "
-        "Input FASTA files should use <prefix>_<count> naming. In the output "
-        "FASTA file each unique sequence will be named <prefix>_<count> using "
+        "Input FASTA files should use `<prefix>_<count>` naming. In the output "
+        "FASTA file each unique sequence will be named `<prefix>_<count>` using "
         "the first seen name for each sequence in the input files, and its total "
         "abundance including contributions from any reads corrected to that sequences.",
         formatter_class=cmd_formatter,
@@ -1531,8 +1535,8 @@ def main(args=None):
         help="Choice of read-correction algorithm, default 'unoise-l' for "
         "built-in reimplementation of the Edgar (2016) UNOISE algorithm "
         "using Levenshtein distance. Use 'usearch' or 'vsearch' to call "
-        "external tools 'usearch -unoise3 ...' or 'vsearch --cluster_unoise "
-        "...' respectively.",
+        "external tools `usearch -unoise3 ...` or `vsearch --cluster_unoise "
+        "...` respectively.",
     )
     subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
     subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
@@ -1553,9 +1557,9 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "sample-tally",
         description="Prepare ASV x sample TSV sequence file using MD5 naming.",
-        epilog="Each unique sequence will be named <Marker>/<MD5>_<count> "
+        epilog="Each unique sequence will be named `<Marker>/<MD5>_<count>` "
         "using the upper case sequence MD5 checksum, and its total abundance. "
-        "Per-sample input FASTA files should use <prefix>_<count> naming. "
+        "Per-sample input FASTA files should use `<prefix>_<count>` naming. "
         "Output is a plain text tab-separated table with one line per unique "
         "sequence (ASV), named in the first column, then one column per "
         "sample, and the uppercase sequence as the final column. The ASV vs "
@@ -1632,8 +1636,8 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "classify",
         description="Classify FASTA file of marker sequences by species.",
-        epilog="Each input file XXX.fasta will result in an output file "
-        "named XXX.method.tsv in the specified output directory (default "
+        epilog="Each input file `XXX.fasta` will result in an output file "
+        "named `XXX.method.tsv` in the specified output directory (default "
         "input dir).",
     )
     subcommand_parser.add_argument("-i", "--input", **ARG_INPUT_FASTA_OR_TSV)
@@ -1669,9 +1673,9 @@ def main(args=None):
     subcommand_parser = subparsers.add_parser(
         "assess",
         description="Assess accuracy of marker sequence classification.",
-        epilog="Takes input sample-tally classification files (*.<method>.tsv), "
-        "to be assessed against sample-tally classification files (*.<known>.tsv) "
-        "or legacy per-sample expected classification files (<sample>.known.tsv). "
+        epilog="Takes input sample-tally classification files `*.<method>.tsv`, "
+        "to be assessed against sample-tally classification files `*.<known>.tsv` "
+        "or legacy per-sample expected classification files `<sample>.known.tsv`. "
         "Produces a multi-species confusion matrix (output on request) and "
         "classifier performance metrics (to stdout by default). Assessment is "
         "at sample level (taking the union of species predicted by all "
@@ -1684,7 +1688,7 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="TSV filenames or folders named *.<method>.tsv, and *.<known>.tsv "
+        help="TSV filenames or folders named `*.<method>.tsv`, and `*.<known>.tsv` "
         "where the filename suffixes can be set via the -m / --method and "
         "--known arguments.",
     )
@@ -1752,8 +1756,8 @@ def main(args=None):
         "summary",
         description="Sample and sequence summary reports on classifier output.",
         epilog="Assumes you've run prepare-reads, sample-tally and classify "
-        "giving tally-file XXX.tsv (with sequences counts per sample), and "
-        "classifier output XXX.method.tsv (for the same sequences). "
+        "giving `XXX.tally.tsv` (with sequences counts per sample), and "
+        "classifier output `XXX.method.tsv` (for the same sequences). "
         "The output is two sets of tables. The read tables have one row per "
         "unique sequence (can be thousands of rows) and one column per sample "
         "(often hundreds, typically 96 samples per plate). The sample tables "
@@ -1766,8 +1770,8 @@ def main(args=None):
         type=str,
         required=True,
         nargs="+",
-        help="Sample tally file (*.tally.tsv) and matching classifier output "
-        "file (*.method.tsv), or folder name(s). "
+        help="Sample tally file `*.tally.tsv` and matching classifier output "
+        "file `*.method.tsv`, or folder name(s). "
         "The classifier method extension can be set via -m / --method.",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
@@ -1835,8 +1839,8 @@ def main(args=None):
         type=str,
         metavar="FILENAME",
         required=False,
-        help="Sample-tally TSV file (*.tally.tsv) or classifier output "
-        "(*.<method>.tsv)",
+        help="Sample-tally TSV file `*.tally.tsv` or classifier output "
+        "`*.<method>.tsv`",
     )
     subcommand_parser.add_argument("--ignore-prefixes", **ARG_IGNORE_PREFIXES)
     subcommand_parser.add_argument(
