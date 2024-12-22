@@ -23,9 +23,11 @@ try:
 
     cmd_formatter = rich_argparse.RichHelpFormatter
     # We have some syntax examples like `usearch -unoise3 ...` where
-    # rich-argpase formats the "-unoise3" bit like an argument.
-    # So we'll just format all of it like an argument:
-    cmd_formatter.styles["argparse.syntax"] = cmd_formatter.styles["argparse.args"]
+    # rich-argpase v1.6.0 formats the "-unoise3" bit like an argument.
+    # This will be fixed in their next release, interim workaround:
+    cmd_formatter.highlights = [
+        r"`(?P<syntax>[^`]*)`|(?:^|\s)(?P<args>-{1,2}[\w]+[\w-]*)"
+    ]
 except ImportError:
     cmd_formatter = argparse.HelpFormatter
 
