@@ -19,7 +19,7 @@ set -x
 thapbi_pict dump -s fallax 2>&1 | grep "species requires a single genus"
 set -o pipefail
 
-if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4687 ]; then
+if [ "$(thapbi_pict dump | grep -c -v "^#")" -ne 4688 ]; then
     echo "Wrong source count for table dump"
     false
 fi
@@ -38,7 +38,7 @@ if [ "$(thapbi_pict dump -m -f fasta | grep -c "^>")" -ne 1552 ]; then
 fi
 
 # With genus filter,
-if [ "$(thapbi_pict dump -f txt -g Phytophthora | grep -v -c "^#")" -ne 3027 ]; then
+if [ "$(thapbi_pict dump -f txt -g Phytophthora | grep -v -c "^#")" -ne 3028 ]; then
     echo "Wrong source count for Phytophthora genus"
     false
 fi
