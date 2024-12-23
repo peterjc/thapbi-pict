@@ -62,7 +62,7 @@ options = parser.parse_args()
 
 
 def sample_filter(input_filename, output_filename, regex):
-    """Filter samples using a regular expressoin (regex)."""
+    """Filter samples using a regular expression (regex)."""
     pattern = re.compile(regex)
 
     try:
