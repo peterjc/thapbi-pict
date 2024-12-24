@@ -138,7 +138,9 @@ def sample_filter(input_filenames, output_filename, regex):
             "ERROR: Couldn't import Python function thapbi_pict.utils.export_sample_tsv"
         )
 
-    export_sample_tsv(output_filename, seqs, seq_meta, sample_headers, counts)
+    export_sample_tsv(
+        output_filename, all_seqs, all_seq_meta, all_sample_headers, all_counts
+    )
     sys.stderr.write(
         f"Wrote {len(all_sample_headers)} samples and {len(all_seqs)} sequences"
         f" to {output_filename}\n"
