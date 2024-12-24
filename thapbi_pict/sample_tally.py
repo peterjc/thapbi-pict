@@ -357,9 +357,9 @@ def main(
     for pool, fraction in pool_fraction_threshold.items():
         if fraction > min_abundance_fraction:
             sys.stderr.write(
-                f"Negative controls for marker {marker} increased "
+                f"Synthetic controls for marker {marker} increased "
                 f"pool {pool} fractional abundance threshold to "
-                f"{fraction*100:0.4f}%\n."
+                f"{fraction*100:0.4f}%.\n"
             )
 
     # Apply any dynamic abundance threshold increases from controls:
