@@ -897,7 +897,7 @@ ARG_DENOISE = dict(  # noqa: C408
     "reimplementation using pairwise alignment based distance.",
 )
 
-# "-α", "--unoise_alpha",
+# "-α", "--unoise_alpha", "--unoise-alpha",
 ARG_UNOISE_ALPHA = dict(  # noqa: C408
     type=float,
     default=None,
@@ -906,7 +906,7 @@ ARG_UNOISE_ALPHA = dict(  # noqa: C408
     "skew threshold function beta (β). Default 2.0 for UNOISE-L, "
     "tool defaults for USEARCH and VSEARCH.",
 )
-# "-γ", "--unoise_gamma"
+# "-γ", "--unoise_gamma", "--unoise-gamma"
 ARG_UNOISE_GAMMA = dict(  # noqa: C408
     type=int,
     default=None,
@@ -1169,8 +1169,12 @@ def main(args=None):
     subcommand_parser.add_argument("--synthetic", **ARG_SYNTHETIC_SPIKE)
     subcommand_parser.add_argument("--flip", **ARG_FLIP)
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
-    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
-    subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument(
+        "-α", "--unoise_alpha", "--unoise-alpha", **ARG_UNOISE_ALPHA
+    )
+    subcommand_parser.add_argument(
+        "-γ", "--unoise_gamma", "--unoise-gamma", **ARG_UNOISE_GAMMA
+    )
     subcommand_parser.add_argument("-m", "--method", **ARG_METHOD_OUTPUT)
     subcommand_parser.add_argument("-t", "--metadata", **ARG_METADATA)
     subcommand_parser.add_argument("-e", "--metaencoding", **ARG_METAENCODING)
@@ -1540,8 +1544,12 @@ def main(args=None):
         "external tools `usearch -unoise3 ...` or `vsearch --cluster_unoise "
         "...` respectively.",
     )
-    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
-    subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument(
+        "-α", "--unoise_alpha", "--unoise-alpha", **ARG_UNOISE_ALPHA
+    )
+    subcommand_parser.add_argument(
+        "-γ", "--unoise_gamma", "--unoise-gamma", **ARG_UNOISE_GAMMA
+    )
     subcommand_parser.add_argument(
         "-t",
         "--total",
@@ -1627,8 +1635,12 @@ def main(args=None):
     subcommand_parser.add_argument("--minlen", **ARG_MIN_LENGTH)
     subcommand_parser.add_argument("--maxlen", **ARG_MAX_LENGTH)
     subcommand_parser.add_argument("--denoise", **ARG_DENOISE)
-    subcommand_parser.add_argument("-α", "--unoise_alpha", **ARG_UNOISE_ALPHA)
-    subcommand_parser.add_argument("-γ", "--unoise_gamma", **ARG_UNOISE_GAMMA)
+    subcommand_parser.add_argument(
+        "-α", "--unoise_alpha", "--unoise-alpha", **ARG_UNOISE_ALPHA
+    )
+    subcommand_parser.add_argument(
+        "-γ", "--unoise_gamma", "--unoise-gamma", **ARG_UNOISE_GAMMA
+    )
     subcommand_parser.add_argument("--temp", **ARG_TEMPDIR)
     subcommand_parser.add_argument("--cpu", **ARG_CPU)
     subcommand_parser.add_argument("-v", "--verbose", **ARG_VERBOSE)
