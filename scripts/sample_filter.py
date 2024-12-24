@@ -115,6 +115,7 @@ def sample_filter(input_filenames, output_filename, regex):
     all_seq_meta = {}
     all_sample_headers = {}
     all_counts = {}
+    all_total = Counter()  # keyed by (marker, idn)
 
     for input_filename in input_filenames:
         seqs, seq_meta, sample_headers, counts = parse_sample_tsv(input_filename)
@@ -130,6 +131,9 @@ def sample_filter(input_filenames, output_filename, regex):
         all_seq_meta.update(seq_meta)
         all_sample_headers.update(sample_headers)
         all_counts.update(counts)
+        for (marker, idn, _sample), a in counts.items():
+            all_total[marker, idn] += a
+        del seqs, seq_meta, sample_headers, counts
 
     try:
         from thapbi_pict.utils import export_sample_tsv
@@ -137,6 +141,12 @@ def sample_filter(input_filenames, output_filename, regex):
         sys.exit(
             "ERROR: Couldn't import Python function thapbi_pict.utils.export_sample_tsv"
         )
+
+    # Want to sort seqs[marker,idn]=seq by decreasing counts
+    all_seqs = {
+        (marker, idn): all_seqs[marker, idn]
+        for (marker, idn) in sorted(all_seqs, reverse=True, key=all_total.get)
+    }
 
     export_sample_tsv(
         output_filename, all_seqs, all_seq_meta, all_sample_headers, all_counts
