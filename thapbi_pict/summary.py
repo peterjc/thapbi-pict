@@ -465,7 +465,7 @@ def read_summary(
             # Use field name f"{method}-predictions" to match TSV/Excel?
             # TODO - include list of taxids?
             {
-                key: {"genus-species": ";".join(sorted(value))}
+                key: {"genus-species": value}
                 for key, value in marker_md5_species.items()
             },
             # User-supplied sample data, plus stats from the pipeline:
@@ -723,7 +723,7 @@ def read_summary(
         [
             marker,
             md5,
-            ";".join(sorted(marker_md5_species[marker, md5])),
+            marker_md5_species[marker, md5],
             marker_md5_to_seq[marker, md5],
             sum(
                 1
@@ -857,8 +857,8 @@ def main(
     marker_md5_abundance: dict[tuple[str, str], int] = Counter()
     abundance_by_samples: dict[tuple[str, str, str], int] = {}
     marker_md5_species: dict[
-        tuple[str, str], set[str]
-    ] = {}  # sp values are sets (e.g. ambiguous matches)
+        tuple[str, str], str
+    ] = {}  # sp values are ";" separated sorted (e.g. ambiguous matches)
     marker_md5_to_seq: dict[tuple[str, str], str] = {}
     sample_species_counts: dict[
         str, dict[str, int]
@@ -990,8 +990,8 @@ def main(
             markers.add(marker)
             assert md5 == md5seq(seq), (marker, md5, filename)
             marker_md5_to_seq[marker, md5] = seq
-            marker_md5_species[marker, md5] = set(
-                seq_meta[marker, md5]["genus-species"].split(";")
+            marker_md5_species[marker, md5] = ";".join(
+                sorted(set(seq_meta[marker, md5]["genus-species"].split(";")))
             )
             for sample in sample_headers:
                 if require_metadata and sample not in stem_to_meta:
@@ -1003,12 +1003,12 @@ def main(
                 assert (marker, md5, sample) not in abundance_by_samples
                 abundance_by_samples[marker, md5, sample] = abundance
                 marker_md5_abundance[marker, md5] += abundance
-                assert sample in sample_species_counts, sorted(
-                    sample_species_counts.keys()
+                # assert sample in sample_species_counts, sorted(
+                #    sample_species_counts.keys()
+                # )
+                sample_species_counts[sample][marker_md5_species[marker, md5]] += (
+                    abundance
                 )
-                sample_species_counts[sample][
-                    ";".join(sorted(marker_md5_species[marker, md5]))
-                ] += abundance
         del seqs, sample_headers, counts
 
     if debug:
