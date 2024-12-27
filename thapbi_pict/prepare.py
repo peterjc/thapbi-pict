@@ -1002,7 +1002,8 @@ def main(
             f" of {total} samples, {total - done} needed"
         )
         sys.exit(msg)
-    assert done == total == len(fasta_files_prepared)
+    assert done == total
+    assert total * len(marker_definitions) == len(fasta_files_prepared), (total, len(fasta_files_prepared))
 
     if tmp_dir:
         sys.stderr.write(
