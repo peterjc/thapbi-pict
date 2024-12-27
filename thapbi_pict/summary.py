@@ -887,12 +887,9 @@ def main(
         # Corner case of zero sequences in all markers?
         assert not marker_md5_species
 
-    if debug:
-        sys.stderr.write(
-            f"DEBUG: Loading samples sequences etc from {classifications_tsv}\n"
-        )
-
     for filename in classifications_tsv:
+        if debug:
+            sys.stderr.write(f"DEBUG: Loading samples sequences etc from {filename}\n")
         seqs, seq_meta, sample_headers, counts = parse_sample_tsv(
             filename, min_abundance=min_abundance, debug=debug
         )
@@ -986,6 +983,9 @@ def main(
             ):
                 sys.stderr.write(f"WARNING: Missing stats header for {sample}\n")
 
+        if debug:
+            sys.stderr.write(f"DEBUG: Loaded sample headers from {filename}\n")
+
         for (marker, md5), seq in seqs.items():
             markers.add(marker)
             assert md5 == md5seq(seq), (marker, md5, filename)
@@ -1055,15 +1055,19 @@ def main(
     # Both of these are potentially altered by the min_abundance argument,
     # simplest to calculate them here rather than in the separate reports:
     stats_fields = tuple(list(stats_fields) + ["Accepted", "Unique"])
+    tmp_accepted_by_sample: dict[str, list[int]] = {}
+    for (marker, _md5, sample), a in abundance_by_samples.items():
+        if a >= min_abundance and marker in markers:
+            try:
+                tmp_accepted_by_sample[sample].append(a)
+            except KeyError:
+                tmp_accepted_by_sample[sample] = [a]
     for sample in sample_stats:
-        asv_counts = [
-            a
-            for (marker, md5, s), a in abundance_by_samples.items()
-            if a >= min_abundance and sample == s and marker in markers
-        ]
+        asv_counts = tmp_accepted_by_sample.get(sample, [])
         sample_stats[sample]["Accepted"] = sum(asv_counts)
         sample_stats[sample]["Unique"] = len(asv_counts)
         del asv_counts
+    del tmp_accepted_by_sample
 
     if require_metadata:
         assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
