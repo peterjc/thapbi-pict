@@ -25,4 +25,20 @@ automatically from the ``docs/`` folder of the `software repository
 within the source code which document the Python API.
 """
 
+from rich.progress import BarColumn
+from rich.progress import MofNCompleteColumn
+from rich.progress import TaskProgressColumn
+from rich.progress import TextColumn
+from rich.progress import TimeElapsedColumn
+
 __version__ = "1.0.20"
+
+PROGRESS_BAR_COLUMNS = [
+    TextColumn("[progress.description]{task.description}"),
+    BarColumn(),
+    TaskProgressColumn(),
+    # Removing TimeRemainingColumn() from defaults, replacing with:
+    TimeElapsedColumn(),
+    # Add this last field:
+    MofNCompleteColumn(),
+]
