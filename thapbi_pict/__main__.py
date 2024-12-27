@@ -821,7 +821,7 @@ ARG_CPU = dict(  # noqa: C408
     type=int,
     default=0,
     help="Number of parallel threads to use for called tools. "
-    "Use zero for all available. Default 1.",
+    "Use zero for all available. Default 0.",
 )
 
 # Common import arguments
