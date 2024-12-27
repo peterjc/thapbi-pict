@@ -26,7 +26,9 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import extract
 from rapidfuzz.process import extract_iter
+from rich.progress import Progress
 
+from . import PROGRESS_BAR_COLUMNS
 from .utils import md5seq
 from .utils import run
 from .utils import split_read_name_abundance
@@ -69,92 +71,100 @@ def unoise(
     else:
         sys.stderr.write("Starting UNOISE distance-based greedy clustering (DGC)\n")
     # Start by sorting sequences by abundance, largest first
-    for a, query in sorted(
-        ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
-        key=lambda x: (-x[0], x[1]),
-    ):
-        if debug:
-            sys.stderr.write(f"DEBUG: UNOISE on {query}_{a}\n")
-        # All the larger abundances have been processed already
-        # Towards the end have lots of entries with the same abundance
-        # so cache these dynamic thresholds use to narrow search pool
-        if a != last_a:
-            last_a = a
-            # Fist centroid is largest, so gives upper bound on d
-            cutoff = min(
-                floor((log2(top_a / a) - 1) / unoise_alpha) if a * 2 < top_a else 0, 10
-            )
-            # dist = 1 is a lower bound
-            high_abundance_centroids = [
-                seq for seq in centroids if counts[seq] >= a * 2 ** (unoise_alpha + 1)
-            ]
-        if abundance_based:
-            # size ordered abundance-based greedy clustering (AGC),
-            # where choices are sorted by decreasing abundance.
-            # Don't need to calculate all the distances:
-            for choice, dist, _index in extract_iter(
-                query,
-                high_abundance_centroids,
-                scorer=Levenshtein.distance,
-                score_cutoff=cutoff,
-            ):
-                # UNOISE merges query into centroid if skew(M,C) <= beta(d),
-                #   (query abundance) / (centroid abundance) <= 1 / 2**(alpha*dist +1)
-                #   (query abundance) * 2**(alpha*dist + 1) <= centroid abundance
-                if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
+    with Progress(*PROGRESS_BAR_COLUMNS) as progress:
+        for a, query in progress.track(
+            sorted(
+                ((a, seq) for (seq, a) in counts.items() if a >= unoise_gamma),
+                key=lambda x: (-x[0], x[1]),
+            ),
+            description="Clustering ASVs",
+        ):
+            if debug:
+                sys.stderr.write(f"DEBUG: UNOISE on {query}_{a}\n")
+            # All the larger abundances have been processed already
+            # Towards the end have lots of entries with the same abundance
+            # so cache these dynamic thresholds use to narrow search pool
+            if a != last_a:
+                last_a = a
+                # Fist centroid is largest, so gives upper bound on d
+                cutoff = min(
+                    floor((log2(top_a / a) - 1) / unoise_alpha) if a * 2 < top_a else 0,
+                    10,
+                )
+                # dist = 1 is a lower bound
+                high_abundance_centroids = [
+                    seq
+                    for seq in centroids
+                    if counts[seq] >= a * 2 ** (unoise_alpha + 1)
+                ]
+            if abundance_based:
+                # size ordered abundance-based greedy clustering (AGC),
+                # where choices are sorted by decreasing abundance.
+                # Don't need to calculate all the distances:
+                for choice, dist, _index in extract_iter(
+                    query,
+                    high_abundance_centroids,
+                    scorer=Levenshtein.distance,
+                    score_cutoff=cutoff,
+                ):
+                    # UNOISE merges query into centroid if skew(M,C) <= beta(d),
+                    # (query abundance) / (centroid abundance) <= 1 / 2**(alpha*dist +1)
+                    # (query abundance) * 2**(alpha*dist + 1) <= centroid abundance
+                    if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]:
+                        centroids[choice].add(query)
+                        if debug:
+                            sys.stderr.write(
+                                "DEBUG: unoise-agc"
+                                f" C:{md5seq(choice)}_{counts[choice]} "
+                                f"<-- Q:{md5seq(query)}_{a} dist {dist}\n"
+                            )
+                        break
+                else:
+                    # New centroid
+                    centroids[query].add(query)
+                    # print(query, "new")
+            else:
+                # distance-based greedy clustering (DGC), must compute all distances
+                # in order to sort on them. Can't use ``extractOne`` as the single
+                # entry it picks may not pass the dynamic threshold.
+                candidates = sorted(
+                    [
+                        (dist, choice)
+                        for (choice, dist, _index) in extract(
+                            query,
+                            high_abundance_centroids,
+                            scorer=Levenshtein.distance,
+                            score_cutoff=cutoff,
+                            limit=None,
+                        )
+                        if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]
+                    ],
+                    key=lambda x: (x[0], counts[x[1]], x[1]),
+                )
+                if candidates:
+                    if debug:
+                        sys.stderr.write(
+                            f"DEBUG: unoise-dgc {md5seq(query)} has "
+                            f"{len(candidates)} candidates\n"
+                        )
+                        if len(candidates) > 1:
+                            for i, (dist, choice) in enumerate(candidates):
+                                sys.stderr.write(
+                                    f"DEBUG: #{i+1} {md5seq(choice)}_{counts[choice]} "
+                                    f"dist {dist}\n"
+                                )
+                    # Take the closest one - tie break on abundance then sequence
+                    dist, choice = candidates[0]
                     centroids[choice].add(query)
                     if debug:
                         sys.stderr.write(
-                            f"DEBUG: unoise-agc C:{md5seq(choice)}_{counts[choice]} "
+                            f"DEBUG: unoise-dgc C:{md5seq(choice)}_{counts[choice]} "
                             f"<-- Q:{md5seq(query)}_{a} dist {dist}\n"
                         )
-                    break
-            else:
-                # New centroid
-                centroids[query].add(query)
-                # print(query, "new")
-        else:
-            # distance-based greedy clustering (DGC), must compute all distances
-            # in order to sort on them. Can't use ``extractOne`` as the single
-            # entry it picks may not pass the dynamic threshold.
-            candidates = sorted(
-                [
-                    (dist, choice)
-                    for (choice, dist, _index) in extract(
-                        query,
-                        high_abundance_centroids,
-                        scorer=Levenshtein.distance,
-                        score_cutoff=cutoff,
-                        limit=None,
-                    )
-                    if a * 2 ** (unoise_alpha * dist + 1) <= counts[choice]
-                ],
-                key=lambda x: (x[0], counts[x[1]], x[1]),
-            )
-            if candidates:
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: unoise-dgc {md5seq(query)} has "
-                        f"{len(candidates)} candidates\n"
-                    )
-                    if len(candidates) > 1:
-                        for i, (dist, choice) in enumerate(candidates):
-                            sys.stderr.write(
-                                f"DEBUG: #{i+1} {md5seq(choice)}_{counts[choice]} "
-                                f"dist {dist}\n"
-                            )
-                # Take the closest one - tie break on abundance then sequence
-                dist, choice = candidates[0]
-                centroids[choice].add(query)
-                if debug:
-                    sys.stderr.write(
-                        f"DEBUG: unoise-dgc C:{md5seq(choice)}_{counts[choice]} "
-                        f"<-- Q:{md5seq(query)}_{a} dist {dist}\n"
-                    )
-            else:
-                # New centroid
-                centroids[query].add(query)
-                # print(query, "new")
+                else:
+                    # New centroid
+                    centroids[query].add(query)
+                    # print(query, "new")
 
     corrections: dict[str, str] = {}
     for seq, choices in centroids.items():
