@@ -16,7 +16,7 @@ echo "about 15 minutes from the merged reads cache."
 echo "Repeat runs take a few minutes to regenerate reports."
 echo
 
-mkdir -p references/ intermediate/ summary/
+mkdir -p references/ tmp_merged/ intermediate/ summary/
 
 function import_marker {
     # Takes arguments via variable names
