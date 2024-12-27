@@ -34,17 +34,20 @@ from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
+from .utils import FASTQ_SUFFIXES
 from .utils import kmers
 from .utils import load_fasta_header
 from .utils import md5seq
 from .utils import primer_clean
+from .utils import R1_SUFFIXES
+from .utils import R2_SUFFIXES
 from .utils import run
 from .versions import check_tools
 
 
 def find_fastq_pairs(
     filenames_or_folders: list[str],
-    ext: tuple[str, ...] = (".fastq", ".fastq.gz", ".fq", ".fq.gz"),
+    ext: tuple[str, ...] = FASTQ_SUFFIXES,
     ignore_prefixes: tuple[str] | None = None,
     debug: bool = False,
 ) -> list[tuple[str, str, str]]:
@@ -121,9 +124,7 @@ def find_fastq_pairs(
                 )
             continue
         stem = None
-        for suffix_left, suffix_right in zip(
-            ("_R1_001", "_R1", "_1"), ("_R2_001", "_R2", "_2")
-        ):
+        for suffix_left, suffix_right in zip(R1_SUFFIXES, R2_SUFFIXES):
             if left.endswith(tuple(suffix_left + _ for _ in ext)) and right.endswith(
                 tuple(suffix_right + _ for _ in ext)
             ):

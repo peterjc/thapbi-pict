@@ -22,6 +22,10 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 
 KMER_LENGTH = 31
 
+FASTQ_SUFFIXES = (".fastq", ".fastq.gz", ".fq", ".fq.gz")
+R1_SUFFIXES = ("_R1_001", "_R1", "_1")
+R2_SUFFIXES = ("_R2_001", "_R2", "_2")
+
 
 def valid_marker_name(text: str) -> bool:
     """Check the proposed string valid for use as a marker name.
@@ -968,6 +972,10 @@ def load_metadata(
     # Sort on metadata
     meta_plus_idx.sort()
 
+    fastq_endings = tuple(
+        r + e for r in (R1_SUFFIXES + R2_SUFFIXES) for e in FASTQ_SUFFIXES
+    )
+
     bad = set()
     meta_to_stem = {}
     stem_to_meta = {}
@@ -977,7 +985,14 @@ def load_metadata(
         stems = metadata_index_sep.join(meta_and_index[len(value_cols) :]).split(
             metadata_index_sep
         )
+        # Strip any folder name or URL prefix if present
+        stems = [_.rsplit("/", 1)[1] if "/" in _ else _ for _ in stems]
+        # Strip any R1/R2.fastq suffix if present
+        if any(_.endswith(fastq_endings) for _ in stems):
+            for ending in fastq_endings:
+                stems = [_.removesuffix(ending) for _ in stems]
         stems = [_.strip() for _ in stems if _]  # drop any blanks
+        stems = sorted(set(stems))  # remove any duplicates, e.g via _R1 and _R2
         if ignore_prefixes:
             stems = [_ for _ in stems if not _.startswith(ignore_prefixes)]
         for stem in stems:
