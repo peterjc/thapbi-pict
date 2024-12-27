@@ -18,22 +18,28 @@ import sys
 import tempfile
 from collections import Counter
 from math import ceil
+from multiprocessing import TimeoutError
+from multiprocessing.pool import Pool
+from time import sleep
 from time import time
 from typing import Any
 
 from Bio.Seq import reverse_complement
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from rich.progress import Progress
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 
+from . import PROGRESS_BAR_COLUMNS
 from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
 from .utils import abundance_from_read_name
 from .utils import abundance_values_in_fasta
+from .utils import available_cores
 from .utils import kmers
 from .utils import load_fasta_header
 from .utils import md5seq
@@ -627,17 +633,13 @@ def marker_cut(
     cpu: int = 0,
 ) -> list[str]:
     """Apply primer-trimming for given markers."""
-    sys.stderr.write(
-        f"Looking for {len(marker_definitions)} markers in {len(file_pairs)} samples\n"
-    )
+    if debug and len(file_pairs) > 1:
+        sys.stderr.write(
+            f"Looking for {len(marker_definitions)} markers"
+            f" in {len(file_pairs)} samples\n"
+        )
 
     time_flash = time_cutadapt = time_abundance = 0.0
-
-    for marker in marker_definitions:
-        if not os.path.isdir(os.path.join(out_dir, marker)):
-            if debug:
-                sys.stderr.write(f"Making {marker} output sub-directory\n")
-            os.mkdir(os.path.join(out_dir, marker))
 
     skipped_samples = set()  # marker specific
     fasta_files_prepared = []  # return value
@@ -743,18 +745,20 @@ def marker_cut(
                     sys.stderr.write(f"Skipping {fasta_name} as already done\n")
             elif min_a > 1:
                 assert marker_total is not None
-                sys.stderr.write(
-                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" or {accepted_total}/{marker_total}"
-                    f" reads over abundance threshold {min_a}\n"
-                )
+                if debug:
+                    sys.stderr.write(
+                        f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                        f" or {accepted_total}/{marker_total}"
+                        f" reads over abundance threshold {min_a}\n"
+                    )
             else:
                 assert marker_total is not None
                 assert accepted_total == marker_total
-                sys.stderr.write(
-                    f"Sample {stem} has {uniq_count} unique {marker} sequences,"
-                    f" or {accepted_total} reads (abundance threshold {min_a})\n"
-                )
+                if debug:
+                    sys.stderr.write(
+                        f"Sample {stem} has {uniq_count} unique {marker} sequences,"
+                        f" or {accepted_total} reads (abundance threshold {min_a})\n"
+                    )
         time_abundance += time() - start
         if debug:
             sys.stderr.write(
@@ -764,16 +768,19 @@ def marker_cut(
             )
 
     # Finished all files
-    if skipped_samples:
+    if skipped_samples and debug:
         sys.stderr.write(
             f"Skipped {len(skipped_samples)} previously prepared {marker} samples\n"
         )
 
-    sys.stderr.write(
-        f"Spent {time_flash:0.1f}s running flash and making NR,"
-        f" {time_cutadapt:0.1f}s on cutadapt,"
-        f" and {time_abundance:0.1f}s applying abundance thresholds\n"
-    )
+    if debug:
+        # This used to be global information worth logging,
+        # with refactoring to use multiprocessing it is local
+        sys.stderr.write(
+            f"Spent {time_flash:0.1f}s running flash and making NR,"
+            f" {time_cutadapt:0.1f}s on cutadapt,"
+            f" and {time_abundance:0.1f}s applying abundance thresholds\n"
+        )
 
     sys.stdout.flush()
     sys.stderr.flush()
@@ -935,19 +942,67 @@ def main(
     if not fastq_file_pairs:
         sys.stderr.write("WARNING: No FASTQ pairs!\n")
 
+    for marker in marker_definitions:
+        if not os.path.isdir(os.path.join(out_dir, marker)):
+            if debug:
+                sys.stderr.write(f"Making {marker} output sub-directory\n")
+            os.mkdir(os.path.join(out_dir, marker))
+
     # Run flash & cutadapt (once doing demultiplexing), apply abundance thresholds
-    fasta_files_prepared = marker_cut(
-        marker_definitions,
-        file_pairs,
-        out_dir,
-        merged_cache,
-        shared_tmp,
-        flip,
-        min_abundance,
-        min_abundance_fraction,
-        debug=debug,
-        cpu=cpu,
-    )
+    fasta_files_prepared = []
+    threads = min(cpu, available_cores()) if cpu and cpu > 0 else available_cores()
+    done = 0
+    failures = 0
+    total = len(file_pairs)
+    if debug:
+        sys.stderr.write(f"Using {threads} threads to process {total} samples\n")
+    with Progress(*PROGRESS_BAR_COLUMNS) as progress:
+        task = progress.add_task("Preparing reads by sample", total=total)
+        with Pool(processes=threads) as pool:
+            jobs = [
+                pool.apply_async(
+                    func=marker_cut,
+                    args=(
+                        marker_definitions,
+                        [file_pair],
+                        out_dir,
+                        merged_cache,
+                        shared_tmp + "/" + file_pair[0],  # append stem to be unique
+                        flip,
+                        min_abundance,
+                        min_abundance_fraction,
+                    ),
+                    kwds={
+                        "debug": debug,
+                        "cpu": 1,
+                    },
+                )
+                for file_pair in file_pairs
+            ]
+            pool.close()  # won't add any more
+            while jobs:
+                sleep(1)
+                running = []
+                for job in jobs:
+                    try:
+                        fasta_list = job.get(0)
+                    except TimeoutError:
+                        running.append(job)
+                    else:
+                        if fasta_list:
+                            fasta_files_prepared.extend(fasta_list)
+                            done += 1
+                        else:
+                            failures += 1
+                jobs = running
+                progress.update(task, completed=done)
+    if failures:
+        msg = (
+            f"{failures} child job(s) failed, currently have {done}"
+            f" of {total} samples, {total - done} needed"
+        )
+        sys.exit(msg)
+    assert done == total == len(fasta_files_prepared)
 
     if tmp_dir:
         sys.stderr.write(

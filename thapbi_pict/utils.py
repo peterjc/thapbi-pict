@@ -23,6 +23,24 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 KMER_LENGTH = 31
 
 
+def available_cores() -> int:
+    """How many CPU cores/threads are available to use."""
+    try:
+        # This will take into account SLURM limits,
+        # so don't need to check $SLURM_CPUS_PER_TASK explicitly.
+        # Probably don't need to check $NSLOTS on SGE either.
+        available = len(os.sched_getaffinity(0))  # type: ignore[attr-defined]
+    except AttributeError:
+        # Unavailable on macOS or Windows, use this instead
+        # Can return None (but under what circumstances?)
+        cpus = os.cpu_count()
+        if not cpus:
+            msg = "Cannot determine CPU count"  # pragma: no cover
+            raise RuntimeError(msg) from None  # pragma: no cover
+        available = cpus
+    return available
+
+
 def valid_marker_name(text: str) -> bool:
     """Check the proposed string valid for use as a marker name.
 
