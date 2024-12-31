@@ -7,7 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
-v1.0.20 *Pending*  ``sample_filter.py`` script now accepts multiple (classified) tally files.
+v1.0.20 2024-12-31 ``sample_filter.py`` script now accepts multiple (classified) tally files.
 v1.0.19 2024-12-05 Updated curated and NCBI bulk genus-only entries in default DB.
 v1.0.18 2024-11-25 Updated NCBI taxonomy in default DB, and ``ena-submit`` for current Webin.
 v1.0.17 2024-11-08 Requires Python 3.10. Uses ``rich-argparse`` if installed for CLI colors.
