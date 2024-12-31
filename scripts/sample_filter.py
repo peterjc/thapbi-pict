@@ -11,9 +11,23 @@ import re
 import sys
 from collections import Counter
 
-if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.1.0")
+if (len(sys.argv) == 2 and "-v" in sys.argv) or "--version" in sys.argv:
+    print("v0.2.0")
     sys.exit(0)
+
+# Apply rich-argparse formatting to help text if installed
+try:
+    import rich_argparse
+
+    cmd_formatter = rich_argparse.RichHelpFormatter
+    # We have some syntax examples like `usearch -unoise3 ...` where
+    # rich-argpase v1.6.0 formats the "-unoise3" bit like an argument.
+    # This will be fixed in their next release, interim workaround:
+    cmd_formatter.highlights = [
+        r"`(?P<syntax>[^`]*)`|(?:^|\s)(?P<args>-{1,2}[\w]+[\w-]*)"
+    ]
+except ImportError:
+    cmd_formatter = argparse.HelpFormatter
 
 # Parse Command Line
 usage = """\
@@ -32,6 +46,7 @@ parser = argparse.ArgumentParser(
     prog="sample_filter.py",
     description="Select samples in a THAPBI PICT sample-tally TSV file with a regex",
     epilog=usage,
+    formatter_class=cmd_formatter,
 )
 parser.add_argument(
     "-i",
@@ -58,6 +73,12 @@ parser.add_argument(
     metavar="REGEX",
     help="Regular expression applied to sample names.",
 )
+parser.add_argument(
+    "-v",
+    "--invert-match",
+    action="store_true",
+    help="Select samples where the regular expression does NOT match.",
+)
 if len(sys.argv) == 1:
     sys.exit("ERROR: Invalid command line, try -h or --help.")
 options = parser.parse_args()
@@ -68,13 +89,20 @@ if not options.regex and len(options.input) == 1:
     )
 
 
-def apply_filter(seqs, seq_meta, sample_headers, counts, compiled_regex):
+def apply_filter(seqs, seq_meta, sample_headers, counts, compiled_regex, invert):
     """Apply regex filter."""
-    sample_headers = {
-        sample: value
-        for sample, value in sample_headers.items()
-        if compiled_regex.match(sample)
-    }
+    if invert:
+        sample_headers = {
+            sample: value
+            for sample, value in sample_headers.items()
+            if not compiled_regex.match(sample)
+        }
+    else:
+        sample_headers = {
+            sample: value
+            for sample, value in sample_headers.items()
+            if compiled_regex.match(sample)
+        }
     # Don't actually need to drop the redundant entries in counts dict, but can:
     counts = {
         (idn, marker, sample): a
@@ -100,7 +128,7 @@ def apply_filter(seqs, seq_meta, sample_headers, counts, compiled_regex):
     return seqs, seq_meta, sample_headers, counts
 
 
-def sample_filter(input_filenames, output_filename, regex):
+def sample_filter(input_filenames, output_filename, regex, invert):
     """Filter samples using a regular expression (regex)."""
     pattern = re.compile(regex) if regex else None
 
@@ -125,7 +153,7 @@ def sample_filter(input_filenames, output_filename, regex):
         )
         if regex:
             seqs, seq_meta, sample_headers, counts = apply_filter(
-                seqs, seq_meta, sample_headers, counts, pattern
+                seqs, seq_meta, sample_headers, counts, pattern, invert
             )
         all_seqs.update(seqs)
         all_seq_meta.update(seq_meta)
@@ -161,4 +189,5 @@ sample_filter(
     options.input,
     options.output,
     options.regex,
+    options.invert_match,
 )

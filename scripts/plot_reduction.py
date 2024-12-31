@@ -17,8 +17,22 @@ import numpy as np
 plt.style.use("tableau-colorblind10")
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.2")
+    print("v0.0.3")
     sys.exit(0)
+
+# Apply rich-argparse formatting to help text if installed
+try:
+    import rich_argparse
+
+    cmd_formatter = rich_argparse.RichHelpFormatter
+    # We have some syntax examples like `usearch -unoise3 ...` where
+    # rich-argpase v1.6.0 formats the "-unoise3" bit like an argument.
+    # This will be fixed in their next release, interim workaround:
+    cmd_formatter.highlights = [
+        r"`(?P<syntax>[^`]*)`|(?:^|\s)(?P<args>-{1,2}[\w]+[\w-]*)"
+    ]
+except ImportError:
+    cmd_formatter = argparse.HelpFormatter
 
 # Parse Command Line
 usage = """\
@@ -58,6 +72,7 @@ parser = argparse.ArgumentParser(
     prog="plot_reduction.py",
     description="Stacked line plot showing read data reduction per sample.",
     epilog=usage,
+    formatter_class=cmd_formatter,
 )
 parser.add_argument(
     "-i",

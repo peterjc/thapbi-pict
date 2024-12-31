@@ -10,8 +10,22 @@ from Bio.SeqIO.FastaIO import SimpleFastaParser
 from thapbi_pict.db_import import parse_ncbi_fasta_entry
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.4")
+    print("v0.0.5")
     sys.exit(0)
+
+# Apply rich-argparse formatting to help text if installed
+try:
+    import rich_argparse
+
+    cmd_formatter = rich_argparse.RichHelpFormatter
+    # We have some syntax examples like `usearch -unoise3 ...` where
+    # rich-argpase v1.6.0 formats the "-unoise3" bit like an argument.
+    # This will be fixed in their next release, interim workaround:
+    cmd_formatter.highlights = [
+        r"`(?P<syntax>[^`]*)`|(?:^|\s)(?P<args>-{1,2}[\w]+[\w-]*)"
+    ]
+except ImportError:
+    cmd_formatter = argparse.HelpFormatter
 
 # Parse Command Line
 usage = """\
@@ -57,6 +71,7 @@ parser = argparse.ArgumentParser(
     prog="missed_refs.py",
     description="Extract NCBI references matching unknown FASTA entries.",
     epilog=usage,
+    formatter_class=cmd_formatter,
 )
 parser.add_argument(
     "-i",
