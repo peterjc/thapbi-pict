@@ -185,7 +185,7 @@ def pool(
                 sys.exit("ERROR: Header does not match THAPBI PICT sample report.")
         if max(value_cols) > sample_col or max(value_cols) >= count_col:
             sys.exit(
-                f"ERROR: Requested column {max(value_cols)+1} not in metadata range."
+                f"ERROR: Requested column {max(value_cols) + 1} not in metadata range."
             )
         if column_pending is not None and column_pending >= min(sample_col, count_col):
             sys.exit("ERROR: Pending column not in metadata range.")

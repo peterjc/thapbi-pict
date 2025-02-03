@@ -172,17 +172,17 @@ def class_list_from_tally_and_db_list(
     for expt, pred in tally:
         if expt:
             for sp in expt.split(";"):
-                assert species_level(
-                    sp
-                ), f"{sp} from expected value {pred} is not species-level"
+                assert species_level(sp), (
+                    f"{sp} from expected value {pred} is not species-level"
+                )
                 classes.add(sp)
                 if sp not in db_sp_list:
                     impossible.add(sp)
         if pred:
             for sp in pred.split(";"):
-                assert species_level(
-                    sp
-                ), f"{sp} from prediction {pred} is not species-level"
+                assert species_level(sp), (
+                    f"{sp} from prediction {pred} is not species-level"
+                )
                 classes.add(sp)
                 if sp not in db_sp_list:
                     sys.exit(f"ERROR: Predicted species {sp} was not in the database!")

@@ -1072,9 +1072,9 @@ def main(
     if require_metadata:
         assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
     else:
-        assert set(sample_stats) == set(
-            sample_species_counts
-        ), f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
+        assert set(sample_stats) == set(sample_species_counts), (
+            f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
+        )
         assert len(sample_stats) <= len(stem_to_meta)
 
     sample_summary(

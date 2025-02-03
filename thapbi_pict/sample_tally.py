@@ -183,9 +183,9 @@ def main(
             if seq not in corrections:
                 # Should have been ignored as per UNOISE algorithm
                 if unoise_gamma:
-                    assert (
-                        totals[seq] < unoise_gamma
-                    ), f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
+                    assert totals[seq] < unoise_gamma, (
+                        f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
+                    )
                 continue
             seq = corrections[seq]
             new_counts[seq, sample] += a
@@ -334,18 +334,18 @@ def main(
                 if f > 0.5:
                     sys.exit(
                         f"ERROR: Control {sample} suggests extremely high"
-                        f" fractional abundance threshold {f*100:.1f}%\n"
+                        f" fractional abundance threshold {f * 100:.1f}%\n"
                     )
                 elif f > 0.05:
                     sys.stderr.write(
                         f"WARNING: Control {sample} suggests overly high"
-                        f" fractional abundance threshold {f*100:.1f}%\n"
+                        f" fractional abundance threshold {f * 100:.1f}%\n"
                     )
                 elif debug:
                     sys.stderr.write(
                         f"DEBUG: Synthetic control {sample} says increase "
                         f"{pool} fractional abundance threshold from "
-                        f"{min_abundance_fraction*100:.4f} to {f*100:.4f}%\n"
+                        f"{min_abundance_fraction * 100:.4f} to {f * 100:.4f}%\n"
                     )
 
     for pool, value in pool_absolute_threshold.items():
@@ -359,7 +359,7 @@ def main(
             sys.stderr.write(
                 f"Synthetic controls for marker {marker} increased "
                 f"pool {pool} fractional abundance threshold to "
-                f"{fraction*100:0.4f}%.\n"
+                f"{fraction * 100:0.4f}%.\n"
             )
 
     # Apply any dynamic abundance threshold increases from controls:

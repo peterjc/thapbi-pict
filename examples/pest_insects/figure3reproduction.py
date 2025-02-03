@@ -98,9 +98,9 @@ def load_species_counts(tsv_filename):
                             values[i] += int(parts[j])
                 answer[parts[sample_name_col]] = values
                 assert sum(values), line
-    assert len(answer) == len(
-        samples_of_interest
-    ), f"Looking for {samples_of_interest}, got {answer}"
+    assert len(answer) == len(samples_of_interest), (
+        f"Looking for {samples_of_interest}, got {answer}"
+    )
     return answer
 
 

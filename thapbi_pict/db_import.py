@@ -739,9 +739,9 @@ def import_fasta_file(
             f"Of {entry_count} potential entries, loaded {good_entries} entries,"
             f" {bad_entries} failed parsing.\n"
         )
-        assert (
-            entry_count == good_entries + bad_entries + bad_sp_entries
-        ), f"{entry_count} != {good_entries} + {bad_entries} + {bad_sp_entries}"
+        assert entry_count == good_entries + bad_entries + bad_sp_entries, (
+            f"{entry_count} != {good_entries} + {bad_entries} + {bad_sp_entries}"
+        )
         assert downgraded_entries == 0, downgraded_entries
 
     if bad_species and (validate_species or debug):

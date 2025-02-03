@@ -520,7 +520,7 @@ def prepare_sample(
         sys.stderr.write(
             f"DEBUG: Starting to prepare sample"
             f" {fasta_name} (min abundance set to {min_abundance};"
-            f" fraction abundance set to {min_abundance_fraction*100:.4f}%)\n"
+            f" fraction abundance set to {min_abundance_fraction * 100:.4f}%)\n"
         )
 
     # count_raw = _header["raw_fastq"]
@@ -536,7 +536,7 @@ def prepare_sample(
     if debug:
         sys.stderr.write(
             f"DEBUG: Absolute abundance threshold {min_abundance}, vs"
-            f" {min_abundance_fraction*100:.4f}% giving"
+            f" {min_abundance_fraction * 100:.4f}% giving"
             f" {ceil(min_abundance_fraction * count_cutadapt)}\n"
         )
 
@@ -580,7 +580,7 @@ def prepare_sample(
                 f" cutadapt -> {count_cutadapt} [{uniq_count} unique];"
                 f" min abundance {min_abundance} -> {accepted_total}"
                 f" [{accepted_uniq_count} unique]"
-                f", or {accepted_total*100.0/count_raw:.4f}%\n"
+                f", or {accepted_total * 100.0 / count_raw:.4f}%\n"
             )
         if accepted_uniq_count:
             sys.stderr.write(

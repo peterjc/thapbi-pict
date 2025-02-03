@@ -140,7 +140,7 @@ def unoise(
                     if len(candidates) > 1:
                         for i, (dist, choice) in enumerate(candidates):
                             sys.stderr.write(
-                                f"DEBUG: #{i+1} {md5seq(choice)}_{counts[choice]} "
+                                f"DEBUG: #{i + 1} {md5seq(choice)}_{counts[choice]} "
                                 f"dist {dist}\n"
                             )
                 # Take the closest one - tie break on abundance then sequence
@@ -394,9 +394,9 @@ def vsearch(
             if seq not in corrections:
                 # Ignored as per UNOISE algorithm
                 if unoise_gamma:
-                    assert (
-                        a < unoise_gamma
-                    ), f"{md5seq(seq)} total {a} vs {unoise_gamma}"
+                    assert a < unoise_gamma, (
+                        f"{md5seq(seq)} total {a} vs {unoise_gamma}"
+                    )
                 continue
             seq = corrections[seq]
             post_counts[seq] += a
@@ -561,9 +561,9 @@ def main(
         if seq not in corrections:
             # Ignored as per UNOISE algorithm
             if unoise_gamma:
-                assert (
-                    totals[seq] < unoise_gamma
-                ), f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
+                assert totals[seq] < unoise_gamma, (
+                    f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
+                )
             del seq_names[seq]
             continue
         seq = corrections[seq]

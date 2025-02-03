@@ -169,7 +169,7 @@ def load_samples(input_sample_report_tsv, caption_column=0, sample_threshold=0):
         else:
             sys.exit(f"ERROR - Did not find this in header columns: {caption_column}")
         sys.stderr.write(
-            f"Using column(s) {','.join(str(v+1) for v in idn_col)}, "
+            f"Using column(s) {','.join(str(v + 1) for v in idn_col)}, "
             f"{' - '.join(parts[v] for v in idn_col)}, for captions/grouping\n"
         )
         count = 0
