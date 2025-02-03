@@ -1482,8 +1482,7 @@ def main(args=None):
         type=str,
         required=False,
         metavar="INPUT",
-        help="One or more FASTA files as input "
-        "to be reverse-complemented on loading.",
+        help="One or more FASTA files as input to be reverse-complemented on loading.",
     )
     subcommand_parser.add_argument(
         "-o",

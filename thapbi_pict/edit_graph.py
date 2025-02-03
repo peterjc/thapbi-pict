@@ -427,9 +427,9 @@ def main(
     )
     del seq_list
     sys.stderr.write("Computed Levenshtein edit distances.\n")
-    assert (
-        min(min(_) for _ in distances) == 0
-    ), f"Possible overflow, min distance {min(min(_) for _ in distances)} not zero."
+    assert min(min(_) for _ in distances) == 0, (
+        f"Possible overflow, min distance {min(min(_) for _ in distances)} not zero."
+    )
 
     if graph_format == "matrix":
         # Report all nodes, even if isolated and low abundance
@@ -594,8 +594,7 @@ def main(
 
     if debug:
         sys.stderr.write(
-            f"DEBUG: {edge_count} edges up to maximum edit distance"
-            f" {max_edit_dist}\n"
+            f"DEBUG: {edge_count} edges up to maximum edit distance {max_edit_dist}\n"
         )
         sys.stderr.write(
             f"DEBUG: {edge_count1} one-bp edges; {edge_count2} two-bp edges;"

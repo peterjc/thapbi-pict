@@ -191,9 +191,9 @@ def generate_references(
                 assert target in common
                 assert len(left) + len(common) >= len(seq)
                 masked = left[: len(seq) - len(common)].lower() + common
-                assert (
-                    masked.upper() == seq
-                ), f"{left[:len(seq) - len(common)]} + {common} != {seq} from {ref}"
+                assert masked.upper() == seq, (
+                    f"{left[: len(seq) - len(common)]} + {common} != {seq} from {ref}"
+                )
                 seq_dict[masked].update(references[ref])
                 # sys.stderr.write(f"{title} {references[ref]}\n")
 

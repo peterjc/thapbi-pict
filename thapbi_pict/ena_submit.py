@@ -157,7 +157,7 @@ def main(
             if os.path.basename(stem) not in ignore
         ]
         sys.stderr.write(
-            f"Ignored {before-len(fastq_file_pairs)} paired FASTQ stems using"
+            f"Ignored {before - len(fastq_file_pairs)} paired FASTQ stems using"
             f" {len(ignore)} potential entries from file {ignore_stems}\n"
         )
         del ignore

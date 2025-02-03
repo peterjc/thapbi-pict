@@ -938,8 +938,7 @@ def load_metadata(
         names = [parts[_].strip() for _ in value_cols]
         if debug:
             sys.stderr.write(
-                f"DEBUG: Row {metadata_name_row} gave metadata field names:"
-                f" {names!r}\n"
+                f"DEBUG: Row {metadata_name_row} gave metadata field names: {names!r}\n"
             )
             sys.stderr.write(
                 f"DEBUG: Grouping on {names[group_col]} for colour bands\n"
@@ -955,9 +954,9 @@ def load_metadata(
 
     for _ in lines:
         if len(_) <= max(sample_cols):
-            sys.exit(f"ERROR: Missing column {max(sample_cols)+1} for {_!r}")
+            sys.exit(f"ERROR: Missing column {max(sample_cols) + 1} for {_!r}")
         if len(_) <= max(value_cols):
-            sys.exit(f"ERROR: Missing column {max(value_cols)+1} for {_!r}")
+            sys.exit(f"ERROR: Missing column {max(value_cols) + 1} for {_!r}")
 
     # Select columns of interest
     meta_plus_idx = [[_[i].strip() for i in [*value_cols, *sample_cols]] for _ in lines]
@@ -998,8 +997,7 @@ def load_metadata(
         )
     if bad:
         sys.exit(
-            f"ERROR: Duplicated metadata for {len(bad)} samples,"
-            f" {sorted(bad)[0]} (etc)"
+            f"ERROR: Duplicated metadata for {len(bad)} samples, {sorted(bad)[0]} (etc)"
         )
 
     return stem_to_meta, meta_to_stem, names, group_col

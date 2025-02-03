@@ -403,9 +403,9 @@ def method_dist(
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
         if min_dist == 0:
-            assert (
-                seq in db_seqs
-            ), f"Expected {idn} to be in DB as min dist zero:\n{seq}"
+            assert seq in db_seqs, (
+                f"Expected {idn} to be in DB as min dist zero:\n{seq}"
+            )
             # If seq in db_seqs might be genus only, and
             # we'd prefer a species level match 1bp away:
             taxid, genus_species, note = perfect_match_in_db(session, marker_name, seq)
