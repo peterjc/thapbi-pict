@@ -234,8 +234,8 @@ def main(
 
     pool_absolute_threshold: dict[str, int] = {}
     pool_fraction_threshold: dict[str, float] = {}
-    max_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
-    max_non_spike_abundance = {sample: 0 for sample in samples}  # exporting in metadata
+    max_spike_abundance = dict.fromkeys(samples, 0)  # exporting in metadata
+    max_non_spike_abundance = dict.fromkeys(samples, 0)  # exporting in metadata
     if spikes:
         if debug:
             sys.stderr.write(
