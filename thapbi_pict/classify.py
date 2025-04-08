@@ -167,7 +167,6 @@ def perfect_substr_in_db(
     If the matches containing the sequence as a substring give multiple species,
     then taxid and genus_species will be semi-colon separated strings.
     """
-    global db_seqs
     assert db_seqs is not None
     assert seq == seq.upper(), seq
     matches = set()
@@ -379,10 +378,7 @@ def method_dist(
     cpu: int = 0,
 ) -> Iterator[tuple[str, str, str, str]]:
     """Classify using edit distance."""
-    global db_seqs
     assert db_seqs is not None
-    global genus_taxid
-    global max_dist_genus
     assert max_dist_genus and max_dist_genus >= 1, max_dist_genus
 
     if not input_seqs:
