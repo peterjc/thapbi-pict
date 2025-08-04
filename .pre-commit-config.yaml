@@ -27,7 +27,7 @@ repos:
         language: pygrep
         files: \.(py|sh|rst|yml|yaml)$
 -   repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.11.0-1
+    rev: v3.12.0-2
     hooks:
     -   id: shfmt  # prebuilt upstream executable
         args: [
@@ -44,11 +44,11 @@ repos:
             '--severity=info',
         ]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.20.0
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.4
+    rev: v0.12.7
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
@@ -67,7 +67,7 @@ repos:
             '--config=format.docstring-code-format=true'
         ]
 -   repo: https://github.com/PyCQA/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
     -   id: flake8
         additional_dependencies: [
@@ -80,7 +80,7 @@ repos:
         additional_dependencies: [black==24.4.2]
         exclude: ^.github/
 -   repo: https://github.com/rstcheck/rstcheck
-    rev: v6.2.4
+    rev: v6.2.5
     hooks:
     -   id: rstcheck
         args: [
@@ -90,7 +90,7 @@ repos:
             --ignore-substitutions=version
         ]
 -   repo: https://github.com/PyCQA/doc8
-    rev: 'v1.1.2'
+    rev: 'v2.0.0'
     hooks:
     -   id: doc8
         additional_dependencies: [pygments]
@@ -102,7 +102,7 @@ repos:
         files: \.(py|sh|rst|yml|yaml)$
         args: ['-L', 'sintax,nin,otu']
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.1
+    rev: v1.17.1
     hooks:
     -   id: mypy
         # equivalent to "files" in .mypy.ini
