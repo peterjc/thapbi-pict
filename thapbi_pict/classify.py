@@ -14,10 +14,10 @@ import os
 import shutil
 import sys
 import tempfile
+from collections.abc import Callable
 from collections.abc import Iterable
 from collections.abc import Iterator
 from collections.abc import Sequence
-from typing import Callable
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from numpy import int8

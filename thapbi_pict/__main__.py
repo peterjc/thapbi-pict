@@ -15,7 +15,6 @@ the ``main()`` function defined in this Python file.
 import argparse
 import os
 import sys
-from typing import Optional
 
 # Apply rich-argparse formatting to help text if installed
 try:
@@ -82,7 +81,7 @@ def check_input_file(filename: str) -> None:
 
 def check_output_stem(
     out_stem: str, dir_only_ok: bool = False, dir_must_exist: bool = True
-) -> Optional[str]:
+) -> str | None:
     """Command line validation of output stem value.
 
     Returns the output directory, or aborts.
@@ -105,7 +104,7 @@ def check_output_stem(
     return None
 
 
-def check_output_directory(out_dir: str, must_exist: bool = True) -> Optional[bool]:
+def check_output_directory(out_dir: str, must_exist: bool = True) -> bool | None:
     """Command line validation of output directory value."""
     if not out_dir:
         sys.exit("ERROR: Output directory name blank")
