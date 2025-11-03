@@ -44,11 +44,11 @@ repos:
             '--severity=info',
         ]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.21.0
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.11
+    rev: v0.14.3
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
@@ -74,7 +74,7 @@ repos:
             'flake8-rst-docstrings',
          ]
 -   repo: https://github.com/asottile/blacken-docs
-    rev: 1.19.1
+    rev: 1.20.0
     hooks:
     -   id: blacken-docs
         additional_dependencies: [black==24.4.2]
@@ -102,7 +102,7 @@ repos:
         files: \.(py|sh|rst|yml|yaml)$
         args: ['-L', 'sintax,nin,otu']
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.1
+    rev: v1.18.2
     hooks:
     -   id: mypy
         # equivalent to "files" in .mypy.ini
