@@ -117,6 +117,7 @@ def main(
     counts: dict[tuple[str, str], int] = Counter()
     sample_cutadapt: dict[str, int] = {}  # before any thresholds
     samples: set[str] | list[str] = set()
+    pool: str | None = None
     sample_pool: dict[str, str] = {}
     sample_headers: dict[str, dict] = {}
     for filename in inputs:
@@ -519,7 +520,9 @@ def main(
                     sys.stderr.write(
                         f"DEBUG: Dropping threshold pool common prefix {common}\n"
                     )
-                stat_values = [_[len(common) + 1 :] for _ in stat_values]
+                stat_values = [
+                    None if _ is None else _[len(common) + 1 :] for _ in stat_values
+                ]
             elif len(set(stat_values)) == 1:
                 # discard possibly platform specific start
                 common = common.rsplit(os.path.sep, 1)[-1]
