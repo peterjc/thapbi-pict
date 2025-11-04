@@ -395,7 +395,7 @@ def method_dist(
     )
 
     results: dict[str, tuple[int | str, str, str]] = {}
-    for (idn, seq), dists in zip(input_seqs.items(), all_dists):
+    for (idn, seq), dists in zip(input_seqs.items(), all_dists, strict=True):
         min_dist = min(dists)
         results[idn] = 0, "", f"No matches up to distance {max_dist_genus}"
         if min_dist == 0:
@@ -414,7 +414,9 @@ def method_dist(
         if min_dist == 1:
             # No species level exact matches, so do we have 1bp off match(es)?
             # What if the 1bp genus differ from any 0bp genus? Take both!
-            matches = {s for (s, d) in zip(db_seqs, dists) if d <= min_dist}
+            matches = {
+                s for (s, d) in zip(db_seqs, dists, strict=True) if d <= min_dist
+            }
             assert matches
             taxid, genus_species, _ = taxid_and_sp_lists(
                 session.query(Taxonomy)
@@ -432,7 +434,9 @@ def method_dist(
             # We now come to the genus-only fall back for 1sXg if relevant:
             results[idn] = 0, "?", "Skipped"
             # Nothing within 1bp, take genus only info from Xbp away:
-            matches = {s for (s, d) in zip(db_seqs, dists) if d <= min_dist}
+            matches = {
+                s for (s, d) in zip(db_seqs, dists, strict=True) if d <= min_dist
+            }
             assert matches
             note = f"{len(matches)} matches at distance {min_dist}"
             genus = sorted(

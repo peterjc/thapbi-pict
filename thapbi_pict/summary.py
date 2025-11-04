@@ -471,8 +471,8 @@ def read_summary(
             # User-supplied sample data, plus stats from the pipeline:
             {
                 sample: dict(
-                    list(zip(meta_names, stem_to_meta[sample]))
-                    + list(zip(stats_fields, sample_stats[sample]))
+                    list(zip(meta_names, stem_to_meta[sample], strict=True))
+                    + list(zip(stats_fields, sample_stats[sample], strict=True))
                 )
                 for sample in sample_stats
             },

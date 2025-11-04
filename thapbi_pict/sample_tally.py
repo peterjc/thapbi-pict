@@ -527,7 +527,7 @@ def main(
                 # discard possibly platform specific start
                 common = common.rsplit(os.path.sep, 1)[-1]
                 stat_values = [common] * len(stat_values)
-            for sample, pool in zip(samples, stat_values):
+            for sample, pool in zip(samples, stat_values, strict=True):
                 sample_stats[sample][stat] = pool
             del common, pool, stat_values
         else:

@@ -703,7 +703,7 @@ def parse_sample_tsv(
                 idn = idn.rsplit("_")[0]  # drop the total count
                 above_threshold = False
                 assert seq_col, "Error: Did not find 'Sequence' column"
-                for sample, value in zip(samples, parts[1:seq_col]):
+                for sample, value in zip(samples, parts[1:seq_col], strict=True):
                     if value == "0":  # Don't bother with int("0")
                         continue  # Don't store blank values!
                     try:
@@ -721,7 +721,7 @@ def parse_sample_tsv(
                         seqs[marker, idn] = parts[seq_col]
                     if seq_meta_keys:
                         seq_meta[marker, idn] = dict(
-                            zip(seq_meta_keys, parts[seq_col + 1 :])
+                            zip(seq_meta_keys, parts[seq_col + 1 :], strict=True)
                         )
             else:
                 msg = (
@@ -733,7 +733,7 @@ def parse_sample_tsv(
     sample_headers: dict[str, dict[str, str]] = {sample: {} for sample in samples}
     for parts in header_lines:
         name = parts[0][1:]  # Drop the leading "#"
-        for sample, value in zip(samples, parts[1:seq_col]):
+        for sample, value in zip(samples, parts[1:seq_col], strict=True):
             sample_headers[sample][name] = value
     return seqs, seq_meta, sample_headers, counts
 
@@ -794,7 +794,9 @@ def parse_species_tsv(
                     assert taxid.count(";") == genus_species.count(";"), line
                     wanted = [
                         (t, s)
-                        for (t, s) in zip(taxid.split(";"), genus_species.split(";"))
+                        for (t, s) in zip(
+                            taxid.split(";"), genus_species.split(";"), strict=True
+                        )
                         if species_level(s)
                     ]
                     taxid = ";".join(t for (t, s) in wanted)

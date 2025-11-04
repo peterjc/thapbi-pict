@@ -124,7 +124,7 @@ def find_fastq_pairs(
                 )
             continue
         stem = None
-        for suffix_left, suffix_right in zip(R1_SUFFIXES, R2_SUFFIXES):
+        for suffix_left, suffix_right in zip(R1_SUFFIXES, R2_SUFFIXES, strict=True):
             if left.endswith(tuple(suffix_left + _ for _ in ext)) and right.endswith(
                 tuple(suffix_right + _ for _ in ext)
             ):

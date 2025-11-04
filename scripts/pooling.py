@@ -232,11 +232,13 @@ def pool(
     total_counts = sum(v for v in meta_species.values() if v is not None)
     assert len(total_counts) == len(sp_headers), total_counts.shape
     if hide_zeros:
-        sp_headers = [v for v, t in zip(sp_headers, total_counts) if t]
+        sp_headers = [v for v, t in zip(sp_headers, total_counts, strict=True) if t]
         for meta in meta_species:
             if meta_species[meta] is not None:
                 meta_species[meta] = [
-                    v for v, t in zip(meta_species[meta], total_counts) if t
+                    v
+                    for v, t in zip(meta_species[meta], total_counts, strict=True)
+                    if t
                 ]
         total_counts = [t for t in total_counts if t]
 

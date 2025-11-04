@@ -27,7 +27,9 @@ with open(sys.argv[1]) as handle:
             url_col = parts.index("fastq_ftp")
             continue  # ignore header
         assert checksum_col is not None and url_col is not None, "Missing header?"
-        for md5, url in zip(parts[checksum_col].split(";"), parts[url_col].split(";")):
+        for md5, url in zip(
+            parts[checksum_col].split(";"), parts[url_col].split(";"), strict=True
+        ):
             filename = os.path.split(url)[1]
             if filename.startswith("EM"):
                 filename = filename.replace(".fastq.gz", ".zip")
