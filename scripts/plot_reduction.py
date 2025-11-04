@@ -242,7 +242,7 @@ def plot_read_reduction(
     # ax.stackplot(captions, data, labels=labels)
     if mode == "stacked":
         line_values = np.zeros(len(captions), dtype=np.uint64)
-    for idx, (sample, values) in enumerate(zip(labels, data)):
+    for idx, (sample, values) in enumerate(zip(labels, data, strict=True)):
         if mode == "percent":
             # Convert to a percentage of this group's raw reads
             line_values = 100.0 * np.array(values, dtype=np.float64) / values[0]

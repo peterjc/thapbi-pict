@@ -112,6 +112,7 @@ def tally_files(
         for expt, pred in zip(
             sorted(parse_species_tsv(expected_file, req_species_level=True)),
             sorted(parse_species_tsv(predicted_file, req_species_level=True)),
+            strict=True,
         ):
             if not expt[1] == pred[1]:
                 sys.exit(

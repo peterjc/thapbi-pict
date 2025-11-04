@@ -128,7 +128,7 @@ def load_subplot_data(tsv_filename, classifications, classes):
             caption = fields[0].replace(" ", "-")  # TODO drop this
             classification = classifications.index(fields[1])
             # print(f"{caption} {fields[2]} --> field {classification}")
-            for class_name, value in zip(header[2:], fields[2:]):
+            for class_name, value in zip(header[2:], fields[2:], strict=True):
                 if caption not in answer[class_name]:
                     answer[class_name][caption] = np.zeros(len(classes))
                 answer[class_name][caption][classification] = float(value)
@@ -150,7 +150,7 @@ def plot(tsv_filename, img_filename=None):
 
     fig, axes = plt.subplots(1, len(subplot_data))
     y_pos = np.arange(len(row_captions))
-    for plot_index, (ax, caption) in enumerate(zip(axes, col_captions)):
+    for plot_index, (ax, caption) in enumerate(zip(axes, col_captions, strict=True)):
         if plot_index == 0:
             assert caption == "Expected"
             ax.set_yticks(y_pos, labels=row_captions)
