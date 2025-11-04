@@ -1029,7 +1029,7 @@ def load_fasta_header(fasta_file, gzipped=False) -> dict:
         if line.startswith("#") and ":" in line:
             tag, value = line[1:].strip().split(":", 1)
             try:
-                value = int(value)
+                value = int(value)  # type: ignore
             except ValueError:
                 pass
             answer[tag] = value
