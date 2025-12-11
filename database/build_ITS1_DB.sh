@@ -2,7 +2,7 @@
 set -euo pipefail
 VERSION=$(thapbi_pict -v | sed "s/THAPBI PICT //g")
 echo "Using THAPBI PICT $VERSION"
-TAX=taxdmp_2025-08-01
+TAX=taxdmp_2025-12-01
 DB=ITS1_DB
 rm -rf "$DB.sqlite" "$DB.fasta" "$DB.txt" "$DB.sql"
 
@@ -26,14 +26,8 @@ sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=1880901), 'Phytophthora bisheria');"
 # Phytophthora novaeguineae -> Phytophthora novae-guineae (txid3070859)
 sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=3070859), 'Phytophthora novaeguineae');"
-
-# Another ad-hoc taxonomy fix, treating  Phytophthora cambivora txid53983
-# as a synonym of Phytophthora x cambivora txid2056922
-#
-# Drop the old species entry
-sqlite3 "$DB.sqlite" "DELETE FROM taxonomy WHERE ncbi_taxid=53983;"
-# Now add synonym
-sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=2056922), 'Phytophthora cambivora');"
+# Phytophthora cambivora --> Phytophthora x cambivora (txid53983)
+sqlite3 "$DB.sqlite" "INSERT INTO synonym (taxonomy_id, name) VALUES ((SELECT id FROM taxonomy WHERE ncbi_taxid=53983), 'Phytophthora cambivora');"
 
 # ==========================
 # G-BLOCK synthetic controls
