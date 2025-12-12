@@ -78,6 +78,8 @@ sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('OR
 sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('PP845835.1');"
 # Drop PQ482500.1 Pythium vs 3 saying Globisporangium
 sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('PQ482500.1');"
+# Drop JX122746.X Pythium sp. vs Phytopythium vexans
+sqlite3 "$DB.sqlite" "DELETE FROM sequence_source WHERE source_accession IN ('JX122746.X');"
 
 # =================
 # Curated sequences
