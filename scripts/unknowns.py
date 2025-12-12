@@ -57,6 +57,12 @@ parser.add_argument(
     help="Output FASTA filename, defaults stdout.",
 )
 parser.add_argument(
+    "-g",
+    "--genus",
+    action="store_true",
+    help=("Treat genus-only matches as unknown."),
+)
+parser.add_argument(
     "-s",
     "--samples",
     type=int,
@@ -126,7 +132,13 @@ def filter_unclassifed(input_filename, output_fasta, abundance, samples):
                     if total < abundance:
                         continue
                     if parts[predictions_col] not in ("", "-"):
-                        continue
+                        if not options.genus:
+                            # not unknown
+                            continue
+                        elif " " in parts[predictions_col]:
+                            # at least species level, so not unknown
+                            continue
+                    assert " " not in parts[predictions_col]
                     output.write(
                         f">{parts[0]} in {len(counts)} samples\n{parts[seq_col]}\n"
                     )
@@ -149,7 +161,12 @@ def filter_unclassifed(input_filename, output_fasta, abundance, samples):
                     if parts[seq_col] in ("", "-"):
                         continue
                     if parts[predictions_col] not in ("", "-"):
-                        continue
+                        if not options.genus:
+                            # not unknown
+                            continue
+                        elif " " in parts[predictions_col]:
+                            # at least species level, so not unknown
+                            continue
                     output.write(
                         f">{parts[md5_col]}_{parts[abundance_col]} "
                         f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"

@@ -50,7 +50,7 @@ echo "Checking for observed NCBI entries without the expected 32bp leader..."
 if [ ! -f unknowns.fasta ]; then
     echo "ERROR: Missing unknowns.fasta, use:"
     echo "../scripts/unknowns.py -i thapbi-pict.ITS1.reads.identity.tsv \\"
-    echo "-a 1000 -s 5 -o unknowns.fasta"
+    echo "-g -a 1000 -s 5 -o unknowns.fasta"
     exit 1
 fi
 ../scripts/missed_refs.py -i unknowns.fasta \
