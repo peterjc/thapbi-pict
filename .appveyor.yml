@@ -50,7 +50,7 @@ build_script:
   - python -m pip install -e .
   - rm -rf dist/* thapbi_pict/ITS1_DB.sqlite
   - cd database
-  - bash build_ITS1_DB.sh
+  - bash build_default_DB.sh
   - cd ..
   - git diff  # Confirm database/ITS1_DB.fasta unchanged
   - cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite

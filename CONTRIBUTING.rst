@@ -88,7 +88,7 @@ read only to prevent accidental edits:
 .. code:: console
 
     $ cd database
-    $ ./build_ITS1_DB.sh
+    $ ./build_default_DB.sh
     $ cd ..
     $ cp database/ITS1_DB.sqlite thapbi_pict/ITS1_DB.sqlite
     $ chmod a-w thapbi_pict/ITS1_DB.sqlite
@@ -135,7 +135,7 @@ If there have been changes requiring the DB be rebuilt, do this:
 .. code:: bash
 
     cd database
-    ./build_ITS1_DB.sh
+    ./build_default_DB.sh
     git commit ITS1_DB.fasta -m "Rebuilt DB"
     cd ..
 
