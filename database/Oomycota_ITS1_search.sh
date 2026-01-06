@@ -19,21 +19,21 @@ echo "Starting NCBI search..."
 esearch -db nuccore -sort accession \
     -query "(Peronosporales[organism] OR Pythiales[organism])\
      AND ((internal AND transcribed AND spacer) OR its1)\
-     AND 150:10000[sequence length]" > $TMP/search.xml
+     AND 150:10000[sequence length]" > $TMP/search_ITS1.xml
 
-COUNT=$(grep -oh "<Count>[0-9]*</Count>" $TMP/search.xml | grep -oh "[0-9]*")
+COUNT=$(grep -oh "<Count>[0-9]*</Count>" $TMP/search_ITS1.xml | grep -oh "[0-9]*")
 
 echo "Fetching $COUNT NCBI matches (may take over an hour)..."
-efetch -format fasta < $TMP/search.xml > $TMP/search.fasta
+efetch -format fasta < $TMP/search_ITS1xml > $TMP/search_ITS1.fasta
 
-FOUND=$(grep -c "^>" $TMP/search.fasta)
+FOUND=$(grep -c "^>" $TMP/search_ITS1.fasta)
 echo "Downloaded $FOUND ITS1 sequences."
 if [ $COUNT != $FOUND ]; then
     echo "ERROR: Search said $COUNT entries, but FASTA file has $FOUND"
     exit 1
 fi
 
-mv $TMP/search.fasta Oomycota_ITS1_search.fasta
+mv $TMP/search_ITS1.fasta Oomycota_ITS1_search.fasta
 echo
 
 echo "Selecting and trimming those with expected 32bp leader..."
