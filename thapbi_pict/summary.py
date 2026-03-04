@@ -1070,7 +1070,14 @@ def main(
     del tmp_accepted_by_sample
 
     if require_metadata:
-        assert set(sample_stats) == set(sample_species_counts) == set(stem_to_meta)
+        if not len(sample_stats) == len(sample_species_counts) == len(stem_to_meta):
+            sys.stderr.write(
+                f"ERROR: Metadata required, but mis-matched {len(sample_stats)} stats vs {len(sample_species_counts)} counts vs {len(stem_to_meta)} meta\n"
+            )
+            return 1
+        if not set(sample_stats) == set(sample_species_counts) == set(stem_to_meta):
+            sys.stderr.write("ERROR: Metadata required, but mis-matched\n")
+            return 1
     else:
         assert set(sample_stats) == set(sample_species_counts), (
             f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
