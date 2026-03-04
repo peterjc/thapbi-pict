@@ -1072,7 +1072,8 @@ def main(
     if require_metadata:
         if not len(sample_stats) == len(sample_species_counts) == len(stem_to_meta):
             sys.stderr.write(
-                f"ERROR: Metadata required, but mis-matched {len(sample_stats)} stats vs {len(sample_species_counts)} counts vs {len(stem_to_meta)} meta\n"
+                f"ERROR: Metadata required, but mis-matched {len(sample_stats)} stats"
+                f" vs {len(sample_species_counts)} counts vs {len(stem_to_meta)} meta\n"
             )
             return 1
         if not set(sample_stats) == set(sample_species_counts) == set(stem_to_meta):
