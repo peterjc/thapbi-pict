@@ -1,5 +1,6 @@
 # Copyright 2019-2024 by Peter Cock, The James Hutton Institute.
 # Revisions copyright 2024 by Peter Cock, University of Strathclyde.
+# Revisiosn copyright 2026 by Peter Cock, Forest Research.
 # All rights reserved.
 # This file is part of the THAPBI Phytophthora ITS1 Classifier Tool (PICT),
 # and is released under the "MIT License Agreement". Please see the LICENSE
@@ -456,6 +457,10 @@ def read_summary(
 
     The expectation is that the inputs represent all the samples
     from one (96 well) plate, or some other meaningful batch.
+
+    Only shows columns for sequenced samples, unlike the sample
+    report which can show rows for any unsequenced samples in the
+    metadata.
     """
     if biom and marker_md5_to_seq and stem_to_meta:
         if export_sample_biom(
@@ -485,6 +490,16 @@ def read_summary(
 
     if not output:
         sys.exit("ERROR: No output file specified.\n")
+
+    if set(stem_to_meta).difference(sample_stats):
+        if debug:
+            sys.stderr.write("DEBUG: Dropping metadata for unsequenced samples\n")
+        # The metadata may contain references to sequenced samples not in
+        # the currently passed inputs (eg global metadata and latest seqs)
+        stem_to_meta = {
+            stem: meta for (stem, meta) in stem_to_meta.items() if stem in sample_stats
+        }
+    assert not set(stem_to_meta).difference(sample_stats)
 
     # Excel setup
     # -----------
@@ -1069,21 +1084,44 @@ def main(
         del asv_counts
     del tmp_accepted_by_sample
 
+    assert set(sample_stats) == set(sample_species_counts), (
+        f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
+    )
+    assert len(sample_stats) <= len(stem_to_meta)
+
+    if not show_unsequenced and set(stem_to_meta).difference(sample_stats):
+        if debug:
+            sys.stderr.write("DEBUG: Dropping metadata for unsequenced samples\n")
+        # The metadata may contain references to sequenced samples not in
+        # the currently passed inputs (eg global metadata and latest seqs)
+        stem_to_meta = {
+            stem: meta for (stem, meta) in stem_to_meta.items() if stem in sample_stats
+        }
+        # Filter to samples present
+        meta_to_stem = {
+            metadata: [sample for sample in sample_batch if sample in sample_stats]
+            for metadata, sample_batch in meta_to_stem.items()
+        }
+        meta_to_stem = {
+            metadata: sample_batch
+            for metadata, sample_batch in meta_to_stem.items()
+            if sample_batch
+        }
+        assert not set(stem_to_meta).difference(sample_stats)
+
     if require_metadata:
-        if not len(sample_stats) == len(sample_species_counts) == len(stem_to_meta):
+        if len(sample_stats) > len(stem_to_meta):
             sys.stderr.write(
-                f"ERROR: Metadata required, but mis-matched {len(sample_stats)} stats"
-                f" vs {len(sample_species_counts)} counts vs {len(stem_to_meta)} meta\n"
+                f"ERROR: Metadata required, but have {len(sample_stats)} samples"
+                f" but only {len(stem_to_meta)} metadata entries.\n"
             )
             return 1
-        if not set(sample_stats) == set(sample_species_counts) == set(stem_to_meta):
-            sys.stderr.write("ERROR: Metadata required, but mis-matched\n")
+        if not set(stem_to_meta).issuperset(sample_stats):
+            sys.stderr.write(
+                "ERROR: Metadata required, but missing for"
+                f" {len(set(sample_stats).difference(stem_to_meta))} samples\n"
+            )
             return 1
-    else:
-        assert set(sample_stats) == set(sample_species_counts), (
-            f"{sorted(set(sample_stats))} vs {sorted(set(sample_species_counts))}"
-        )
-        assert len(sample_stats) <= len(stem_to_meta)
 
     sample_summary(
         sample_species_counts,
