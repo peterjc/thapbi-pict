@@ -1774,8 +1774,9 @@ def main(args=None):
         "classifier output `XXX.method.tsv` (for the same sequences). "
         "The output is two sets of tables. The read tables have one row per "
         "unique sequence (can be thousands of rows) and one column per sample "
-        "(often hundreds, typically 96 samples per plate). The sample tables "
-        "have one row per sample, and one column per genus and species.",
+        "(often hundreds, typically 96 samples per MiSeq plate, or nearly 400 "
+        "sample per NextSeq run). The sample tables have one row per sample, "
+        "and one column per genus and species.",
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument(
