@@ -1010,7 +1010,7 @@ def load_metadata(
     if debug:
         sys.stderr.write(
             f"DEBUG: Loaded {len(meta_to_stem)} metadata entries, and "
-            f" {len(stem_to_meta)} sequenced samples\n"
+            f"{len(stem_to_meta)} sequenced samples\n"
         )
     if bad:
         sys.exit(
