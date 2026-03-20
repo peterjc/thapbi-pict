@@ -1057,15 +1057,16 @@ def main(
         # Try to remove any common folder prefix like raw_data/
         i: int = stats_fields.index("Threshold pool")
         paths = {_["Threshold pool"] for _ in sample_stats.values()}
-        common = os.path.commonpath([str(_) for _ in paths])  # make type explicit!
-        if len(paths) > 1 and common:
-            if debug:
-                sys.stderr.write(
-                    f"DEBUG: Dropping threshold pool common prefix {common}\n"
-                )
-            for values in sample_stats.values():
-                assert isinstance(values, list)
-                values[i] = values[i][len(common) + 1 :]
+        if len(paths) > 1:
+            common = os.path.commonpath([str(_) for _ in paths])  # make type explicit!
+            if common:
+                if debug:
+                    sys.stderr.write(
+                        f"DEBUG: Dropping threshold pool common prefix {common}\n"
+                    )
+                for values in sample_stats.values():
+                    assert isinstance(values, list)
+                    values[i] = values[i][len(common) + 1 :]
 
     # Both of these are potentially altered by the min_abundance argument,
     # simplest to calculate them here rather than in the separate reports:
