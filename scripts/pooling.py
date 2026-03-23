@@ -15,7 +15,7 @@ import xlsxwriter
 # from collections import Counter
 
 if "-v" in sys.argv or "--version" in sys.argv:
-    print("v0.0.5")
+    print("v0.0.6")
     sys.exit(0)
 
 # Apply rich-argparse formatting to help text if installed
@@ -196,7 +196,10 @@ def pool(
         for line in handle:
             parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
             if len(parts) != len(header):
-                sys.exit("ERROR: Inconsistent field counts")
+                sys.exit(
+                    "ERROR: Inconsistent field counts"
+                    f" ({len(parts)} while header had {len(header)}:\n{line!r})"
+                )
             meta = tuple(parts[_] for _ in value_cols)
             if column_pending is not None and parts[column_pending].upper().strip() in (
                 "Y",
@@ -217,7 +220,7 @@ def pool(
                     meta_species[meta] = None
             else:
                 assert "-" not in sp_counts, sp_counts
-                sp_counts = np.array([int(_) for _ in sp_counts], int)
+                sp_counts = np.array([int(_) if _ else 0 for _ in sp_counts], int)
                 if meta in meta_samples:
                     meta_samples[meta].update(samples)
                     if meta_species[meta] is None:
