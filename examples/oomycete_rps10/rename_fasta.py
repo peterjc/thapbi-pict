@@ -12,9 +12,44 @@ import sys
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+genus_prefices = (
+    "Phytophthora_",
+    "Phytopythium_",
+    "Pythium_",
+    "Globisporangium_",
+    "Pilasporangia_",
+)
+suffices = ("_rps10", "_rps10plus", "_rps10_plus", "_rps1", "_(reversed)", "_-")
+
 for title, seq in SimpleFastaParser(sys.stdin):
-    species = title.rstrip().rsplit(";")[-1].replace("_", " ")
+    idn = title.split(None, 1)[0].strip("_")
+    if idn.startswith(genus_prefices) or idn.endswith(suffices):
+        # Ad hoc style
+        species = idn.replace("'", "").split("|", 1)[0]
+        while species.endswith(suffices):
+            for _ in suffices:
+                if species.endswith(_):
+                    species = species[: -len(_)].rstrip("_")
+        species = species.replace("_", " ")
+        words = species.split()
+        if words[1] in ("aff.", "cf.", "sp.", "taxon", "x"):
+            species = " ".join(words[:3])
+        else:
+            species = " ".join(words[:2])
+        sys.stdout.write(f">{idn} species_name={species};\n{seq}\n")
+        continue
+    # Database style?
+    species = title.rstrip().rsplit(";")[-1].replace("_", " ").replace("  ", " ")
     species = species.replace(".", ". ").replace("  ", " ").strip()
-    idn = title[title.index("|oodb_id=") :].split("|", 2)[1]
-    taxid = title[title.index("|ncbi_taxid=") + 12 :].split("|", 1)[0]
-    sys.stdout.write(f">{idn} species_name={species}; taxid={taxid};\n{seq}\n")
+    try:
+        idn = title[title.index("|oodb_id=") :].split("|", 2)[1]
+    except ValueError:
+        idn = None
+    try:
+        taxid = title[title.index("|ncbi_taxid=") + 12 :].split("|", 1)[0]
+    except ValueError:
+        taxid = None
+    if idn and taxid:
+        sys.stdout.write(f">{idn} species_name={species}; taxid={taxid};\n{seq}\n")
+    else:
+        sys.stderr.write(f">{title}\n")
