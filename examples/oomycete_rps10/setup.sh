@@ -8,9 +8,9 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
     false
 fi
 
-if [ ! -f release_1.fa ]; then
+if [ ! -f release_2.fa ]; then
     echo "Downloading rps10 references (need primer trimming)"
-    wget "https://github.com/grunwaldlab/OomyceteDB/raw/refs/heads/master/data/releases/release_1.fa"
+    wget "https://github.com/grunwaldlab/OomyceteDB/raw/refs/heads/master/data/releases/release_2.fa"
 fi
 
 for ACC in $(grep ^SRR PRJNA699663.tsv | cut -f 1); do

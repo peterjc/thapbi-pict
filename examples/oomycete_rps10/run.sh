@@ -6,7 +6,7 @@ echo "repeat runs are a few seconds (regenerating reports etc)."
 
 mkdir -p tmp_merged/ intermediate/ summary/
 
-if [ ! -f release_1.fa ]; then
+if [ ! -f release_2.fa ]; then
     echo "Missing rps10 references, run setup.sh"
     false
 fi
@@ -28,7 +28,7 @@ if [ ! -f pooled.sqlite ]; then
     # https://github.com/grunwaldlab/rps10_barcode/blob/main/raw_data/primer_data.csv
 
     # Doing the left and right primer trimming separately:
-    cutadapt --quiet -g GTTGGTTAGAGYARAAGACT release_1.fa |
+    cutadapt --quiet -g GTTGGTTAGAGYARAAGACT release_2.fa |
         cutadapt --quiet -a AGTTCRARTCTTTCTARRYAT /dev/stdin |
         ./rename_fasta.py > rps10.fasta
     thapbi_pict import -d pooled.sqlite \
