@@ -8,11 +8,9 @@ if [ ! -f raw_data/MD5SUM.txt ]; then
     false
 fi
 
-if [ ! -f 2020-10-22_release_1_rps10.fasta ]; then
+if [ ! -f release_1.fa ]; then
     echo "Downloading rps10 references (need primer trimming)"
-    # TODO - This was the closest I could find on their GitHub at the time
-    # to their website release 1 which was dated 2021-03-01:
-    wget "https://github.com/grunwaldlab/OomyceteDB/raw/863dfddc7e7688c945542da1bd3dc59380d48c52/website/2020-10-22_release_1_rps10.fasta"
+    wget "https://github.com/grunwaldlab/OomyceteDB/raw/refs/heads/master/data/releases/release_1.fa"
 fi
 
 for ACC in $(grep ^SRR PRJNA699663.tsv | cut -f 1); do
