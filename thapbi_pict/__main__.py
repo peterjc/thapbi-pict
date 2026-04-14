@@ -221,9 +221,18 @@ def conflicts(args=None):
     """Subcommand to look for taxonomic conflicts in a database."""
     from .conflicts import main
 
+    if args.markers:
+        # Connect to the DB,
+        db = expand_database_argument(args.database, exist=True, hyphen_default=True)
+        session = connect_to_db(db)
+
+        markers = sorted(_.name for _ in session.query(MarkerDef))
+        markers = validate_markers(markers, args.markers)
+
     return main(
         db_url=expand_database_argument(args.database, exist=True, hyphen_default=True),
         output_filename=args.output,
+        markers=args.markers,
         debug=args.verbose,
     )
 
@@ -1407,6 +1416,7 @@ def main(args=None):
         formatter_class=cmd_formatter,
     )
     subcommand_parser.add_argument("-d", "--database", **ARG_DB_INPUT)
+    subcommand_parser.add_argument("-k", "--markers", **ARG_MARKER_PICK_SOME)
     subcommand_parser.add_argument(
         "-o",
         "--output",
