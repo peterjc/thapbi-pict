@@ -30,7 +30,7 @@ diff $TMP/conflicts.tsv tests/conflicts/default.tsv
 export DB=$TMP/dup_seqs.sqlite
 rm -rf $DB
 thapbi_pict import -x -d $DB -i tests/curated-import/dup_seqs.fasta -c ncbi -s $'\001' -k ITS1 -l "N" -r "N"
-thapbi_pict conflicts -d $TMP/dup_seqs.sqlite -o $TMP/dup_seqs.tsv
+thapbi_pict conflicts -d $TMP/dup_seqs.sqlite -o $TMP/dup_seqs.tsv -k ITS1
 diff $TMP/dup_seqs.tsv tests/conflicts/dup_seqs.tsv
 
 echo "$0 - test_conflicts.sh passed"

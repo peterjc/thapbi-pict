@@ -18,10 +18,16 @@ from .db_orm import MarkerDef
 from .db_orm import MarkerSeq
 from .db_orm import SeqSource
 from .db_orm import Taxonomy
+from .prepare import load_marker_defs
 from .utils import genus_species_name
 
 
-def main(db_url: str, output_filename: str, debug: bool = False) -> int:
+def main(
+    db_url: str,
+    output_filename: str,
+    markers: list[str] | None = None,
+    debug: bool = False,
+) -> int:
     """Implement the ``thapbi_pict conflicts`` subcommand.
 
     Looks for taxonomy conflicts at marker, genus or species level, with the
@@ -58,6 +64,10 @@ def main(db_url: str, output_filename: str, debug: bool = False) -> int:
         .options(contains_eager(SeqSource.marker_definition, alias=marker_def))
         .options(contains_eager(SeqSource.taxonomy, alias=cur_tax))
     )
+    if markers:
+        marker_definitions = load_marker_defs(session, filter=markers)
+        view = view.filter(marker_def.name.in_(marker_definitions))
+
     md5_to_seq: dict[str, str] = {}
     md5_to_marker: dict[str, set[str]] = {}
     md5_to_genus: dict[str, set[str]] = {}
@@ -89,9 +99,11 @@ def main(db_url: str, output_filename: str, debug: bool = False) -> int:
     marker_conflicts = 0
     genus_conflicts = 0
     out_handle.write("#MD5\tLevel\tConflicts\n")
-    for md5, markers in sorted(md5_to_marker.items()):
-        if len(markers) > 1:
-            out_handle.write(f"{md5}\tmarker\t{';'.join(sorted(markers))}\n")
+    for md5, conflicting_markers in sorted(md5_to_marker.items()):
+        if len(conflicting_markers) > 1:
+            out_handle.write(
+                f"{md5}\tmarker\t{';'.join(sorted(conflicting_markers))}\n"
+            )
             marker_conflicts += 1
     for md5, genus in sorted(md5_to_genus.items()):
         if len(genus) > 1:
