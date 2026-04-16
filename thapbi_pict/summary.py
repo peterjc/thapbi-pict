@@ -957,7 +957,12 @@ def main(
                 if field in ("Sample", "Control", "Threshold pool"):
                     # Text fields; should be consistent between markers
                     if field in sample_stats[sample]:
-                        assert sample_stats[sample][field] == value
+                        if sample_stats[sample][field] != value:
+                            msg = (
+                                "ERROR: Inconsistent between markers,"
+                                f" {value} vs {sample_stats[sample][field]}"
+                            )
+                            sys.exit(msg)
                     else:
                         sample_stats[sample][field] = value
                 else:
