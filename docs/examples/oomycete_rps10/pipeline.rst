@@ -37,12 +37,12 @@ Results
 
 Quoting Foster *et al.* (2021):
 
-> The taxonomic classifications of ASVs produced by the rps10 method included
-> 23 of the 24 mock community species whereas the ITS1 classifications included
-> 17 (Table 3). The species missing in the rps10 classifications was
-> *Phytophthora ipomoeae* and the species missing in the ITS1 classifications
-> were *P. citrophthora*, *P. himalsilva, *P. ipomoeae*, *P. quercina*,
-> *Pythium dissotocum*, *P. oligandrum*, and *P. undulatum.*
+    The taxonomic classifications of ASVs produced by the rps10 method included
+    23 of the 24 mock community species whereas the ITS1 classifications included
+    17 (Table 3). The species missing in the rps10 classifications was
+    *Phytophthora ipomoeae* and the species missing in the ITS1 classifications
+    were *P. citrophthora*, *P. himalsilva, *P. ipomoeae*, *P. quercina*,
+    *Pythium dissotocum*, *P. oligandrum*, and *P. undulatum.*
 
 Here are the results for the ITS1 marker on the 24 species mock community,
 sequenced twice so the true positive (TP) and false negative (FN) columns
@@ -94,7 +94,8 @@ OTHER 298 SPECIES IN DB         0  0  0
 
 This isn't actually a shock if you spotted this warning while running the pipeline:
 
-> WARNING: 13 expected species were not a possible prediction: Aphanomyces euteiches;Elongisporangium undulatum;Globisporangium irregulare;Peronospora farinosa;Peronospora schachtii;Phytopythium citrinum;Plasmopara halstedii;Plasmopara obducens;Pseudoperonospora cubensis;Pythium apiculatum;Pythium dissotocum;Pythium oligandrum;Saprolegnia diclina
+    WARNING: 13 expected species were not a possible prediction:
+    Aphanomyces euteiches;Elongisporangium undulatum;Globisporangium irregulare;Peronospora farinosa;Peronospora schachtii;Phytopythium citrinum;Plasmopara halstedii;Plasmopara obducens;Pseudoperonospora cubensis;Pythium apiculatum;Pythium dissotocum;Pythium oligandrum;Saprolegnia diclina
 
 We can ignore the 13 non-*Phytophthora* and the associated 26 false negatives
 because the THAPBI PICT ITS1 database intentionally doesn't cover them.
@@ -145,7 +146,8 @@ OTHER 317 SPECIES IN DB    0  0  0
 
 This time the database is only missing one species, the warning was:
 
-> WARNING: 1 expected species were not a possible prediction: Peronospora farinosa
+    WARNING: 1 expected species were not a possible prediction:
+    Peronospora farinosa
 
 This is because the version of the OomyceteDB rps10 reference sequences used
 lacks *Peronospora farinosa*.
