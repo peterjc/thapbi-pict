@@ -807,9 +807,9 @@ def load_marker_defs(
     for reference_marker in session.query(MarkerDef).order_by(MarkerDef.name):
         if filter and reference_marker.name not in filter:
             # Print only in verbose/debug mode?
-            sys.stderr.write(
-                f"WARNING - Not looking for marker {reference_marker.name}\n"
-            )
+            # sys.stderr.write(
+            #     f"WARNING - Not looking for marker {reference_marker.name}\n"
+            # )
             continue
         if not reference_marker.left_primer or not reference_marker.right_primer:
             # TODO - ERROR if more than one marker? Always an error?
