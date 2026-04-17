@@ -1,3 +1,5 @@
+.. _oomycete_rps10:
+
 Oomycete ITS1 & rps10
 =====================
 
