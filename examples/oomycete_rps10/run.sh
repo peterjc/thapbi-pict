@@ -50,10 +50,9 @@ echo ================
 echo Running pipeline
 echo ================
 
-# Drop from -a 100 -f 0.001
 mkdir -p intermediate/ summary/
-thapbi_pict pipeline -d pooled.sqlite --synthetic '' -m 1s3g \
-    -a 50 -f 0.0001 --denoise unoise-l --unoise_alpha 6 \
+thapbi_pict pipeline -d pooled.sqlite --synthetic '' \
+    -m 1s3g --denoise unoise-l --unoise_alpha 6 \
     -i raw_data/ expected/ \
     --merged-cache tmp_merged/ \
     -s intermediate/ -o summary/ \
