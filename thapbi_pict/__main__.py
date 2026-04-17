@@ -151,11 +151,11 @@ def validate_markers(markers: list[str], requested_markers: str) -> list[str]:
             if _ not in markers:
                 all = ", ".join(sorted(markers))
                 sys.exit(f"ERROR - Marker {_} is not defined in DB, only: {all}")
-        if len(subset) < len(markers):
-            sys.stderr.write(
-                "WARNING: Only looking at a subset of the markers defined in the DB "
-                f"({len(subset)} of {len(markers)})\n"
-            )
+        # if len(subset) < len(markers):
+        #     sys.stderr.write(
+        #         "WARNING: Only looking at a subset of the markers defined in the DB "
+        #         f"({len(subset)} of {len(markers)})\n"
+        #     )
         markers = [_ for _ in markers if _ in subset]
         del subset
     return markers
