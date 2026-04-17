@@ -17,6 +17,7 @@ been mock communities with known species composition.
 
    woody_hosts/index
    recycled_water/index
+   oomycete_rps10/index
    drained_ponds/index
    fungal_mock/index
    great_lakes/index
@@ -39,6 +40,12 @@ been mock communities with known species composition.
     Redekar *et al.* (2019) Diversity of *Phytophthora*, *Pythium*, and
     *Phytopythium* species in recycled irrigation water in a container
     nursery. https://doi.org/10.1094/PBIOMES-10-18-0043-R
+
+* :ref:`oomycete_rps10` - An example with two markers (sequenced separately)
+  extending the default ITS1 database with a second marker:
+
+    Foster *et al.* (2021) A New Oomycete Metabarcoding Method Using the rps10
+    Gene. https://doi.org/10.1094/PBIOMES-02-22-0009-R
 
 * :ref:`drained_ponds` - An example with a single marker and custom database.
   Based on:
