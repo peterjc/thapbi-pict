@@ -65,9 +65,9 @@ hundred unique ITS2 sequences:
 .. code:: console
 
     $ grep -c "^ITS2" summary/defaults.ITS2.tally.tsv
-    360
+    365
     $ grep -c "^ITS2" summary/defaults.ITS2.reads.1s5g.tsv
-    360
+    365
 
 Look at ``summary/defaults.ITS2.samples.1s5g.xlsx`` or working at the command
 line with the TSV file:
@@ -99,7 +99,7 @@ As a table:
 766-1         792260   793       526535        0            583643   16
 766-2         711176   712       251097        0            469397   26
 BioMock       866253   867       56120         0            591947   23
-BioMock       846519   847       65686         0            585715   23
+BioMock       833690   834       56847         0            199830   27
 BioMock       1023231  1024      84748         0            698170   22
 BioMockStds   736334   737       35300         0            521693   26
 SynMock       1199806  1200      0             103014       862950   18
@@ -117,7 +117,7 @@ Excluding only singletons
 -------------------------
 
 The ``run.sh`` example continues by running the pipeline on the m6 dataset with
-``-f 0 -a 2`` to accept everything except singletons (sequences which are only
+``-a 2 -f 0`` to accept everything except singletons (sequences which are only
 seen once in a sample; including them gives about ten times as many unique
 sequences which slows everything down). Also, this analysis does *not* use the
 synthetic control to raise the threshold on the rest of the samples - we want
@@ -125,14 +125,14 @@ to see any low level mixing. We then can compare our sample report against
 Figure 6.
 
 Looking at the unique reads in the FASTA file, tally table, or in the reads
-report with metadata, we have nearly 200 thousand ITS2 sequences:
+report with metadata, we have just over 200 thousand ITS2 sequences:
 
 .. code:: console
 
     $ grep -c "^ITS2" summary/a2.ITS2.tally.tsv
-    196480
+    206840
     $ grep -c "^ITS2" summary/a2.ITS2.reads.onebp.tsv
-    196480
+    206840
 
 Look at ``summary/a2.ITS2.samples.onebp.xlsx`` or working at the command line
 with the TSV file:
@@ -164,7 +164,7 @@ As a table:
 766-1         840068    794475  792260   526535        0            712126   7519
 766-2         785776    714894  711176   251097        0            606887   11189
 BioMock       943839    872263  866253   56120         0            744007   17274
-BioMock       922440    859262  846519   65686         0            733784   16676
+BioMock       922440    859262  833690   56847         0            340822   18571
 BioMock       1125275   1047383 1023231  84748         3            884514   18416
 BioMockStds   817764    740627  736334   35300         0            628576   17202
 SynMock       1299238   1204532 1199806  187           103014       1043525  14234
@@ -195,9 +195,9 @@ allowing use of a slower but more lenient classifier as well:
 .. code:: console
 
     $ grep -c "^ITS2" summary/ctrl.ITS2.tally.tsv
-    3097
+    3180
     $ grep -c "^ITS2" summary/ctrl.ITS2.reads.1s5g.tsv
-    3097
+    3180
 
 Look at ``summary/ctrl.ITS2.samples.1s5g.xlsx`` or working at the command line
 with the TSV file:
@@ -232,7 +232,7 @@ unique sequences accepted has dropped even more dramatically:
 766-1         792260   124       526535        0            648524   301
 766-2         711176   111       251097        0            508838   205
 BioMock       866253   136       56120         0            607401   77
-BioMock       846519   132       65686         0            603186   82
+BioMock       833690   130       56847         0            222662   120
 BioMock       1023231  160       84748         0            718660   85
 BioMockStds   736334   115       35300         0            526317   48
 SynMock       1199806  100       187           103014       885051   113
@@ -266,11 +266,11 @@ which allows a lot of PCR noise:
 
 As a table:
 
-======== === == == === =========== =========== ========= ==== ============ ===========
-#Species TP  FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
-======== === == == === =========== =========== ========= ==== ============ ===========
-OVERALL  102 11 1  186 0.99        0.94        0.90      0.94 0.0400       0.105
-======== === == == === =========== =========== ========= ==== ============ ===========
+======== == == == === =========== =========== ========= ==== ============ ===========
+#Species TP FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
+======== == == == === =========== =========== ========= ==== ============ ===========
+OVERALL  99 11 4  186 0.96        0.94        0.90      0.93 0.0500       0.132
+======== == == == === =========== =========== ========= ==== ============ ===========
 
 Versus the stricter higher default abundance fraction which excludes most of
 the PCR noise:
@@ -285,7 +285,7 @@ As a table:
 ======== == == == === =========== =========== ========= ==== ============ ===========
 #Species TP FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
 ======== == == == === =========== =========== ========= ==== ============ ===========
-OVERALL  92 8  11 189 0.89        0.96        0.92      0.91 0.0633       0.171
+OVERALL  91 8  12 189 0.88        0.96        0.92      0.90 0.0667       0.180
 ======== == == == === =========== =========== ========= ==== ============ ===========
 
 You could use the assessment metrics to help decide on your preferred
@@ -324,9 +324,9 @@ unique read count from over 3 thousand to just over 700:
 .. code:: console
 
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.tally.tsv
-    704
+    703
     $ grep -c "^ITS2" summary/ctrl_denoise.ITS2.reads.1s5g.tsv
-    704
+    703
 
 This gives an edit graph visually somewhere in between the examples above,
 with the obvious variant halos collapsed, but some of the more complex chains
@@ -344,7 +344,7 @@ As a table:
 ======== === == == === =========== =========== ========= ==== ============ ===========
 #Species TP  FP FN TN  sensitivity specificity precision F1   Hamming-loss Ad-hoc-loss
 ======== === == == === =========== =========== ========= ==== ============ ===========
-OVERALL  102 11 1  186 0.99        0.94        0.90      0.94 0.0400       0.105
+OVERALL  100 11 3  186 0.97        0.94        0.90      0.93 0.0467       0.123
 ======== === == == === =========== =========== ========= ==== ============ ===========
 
 Looking at the reports, the read counts are of course different, but also some
