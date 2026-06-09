@@ -189,9 +189,9 @@ the first five columns from the 15 species mix:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv | cut -f 1-5
-    Assessed onebp vs known in 2 files (315 species; 1 samples)
+    Assessed onebp vs known in 2 files (320 species; 1 samples)
     #Species                     TP  FP  FN  TN
-    OVERALL                      8   2   7   298
+    OVERALL                      8   2   7   303
     Phytophthora aleatoria       0   1   0   0
     Phytophthora alpina          0   1   0   0
     Phytophthora austrocedri     1   0   0   0
@@ -209,7 +209,7 @@ the first five columns from the 15 species mix:
     Phytophthora ramorum         1   0   0   0
     Phytophthora syringae        0   0   1   0
     Phytophthora x cambivora     0   0   1   0
-    OTHER 298 SPECIES IN DB      0   0   0   298
+    OTHER 303 SPECIES IN DB      0   0   0   303
 
 More usually, you would output to a named file, and look at that:
 
@@ -217,7 +217,7 @@ More usually, you would output to a named file, and look at that:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv -o DNA15MIX.assess.tsv
-    Assessed onebp vs known in 2 files (315 species; 1 samples)
+    Assessed onebp vs known in 2 files (320 species; 1 samples)
     $ cut -f 1-5,9,11 DNA15MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -227,7 +227,7 @@ and focus on the same column selection:
 =========================== == == == === ==== ===========
 #Species                    TP FP FN TN  F1   Ad-hoc-loss
 =========================== == == == === ==== ===========
-OVERALL                     8  2  7  298 0.64 0.529
+OVERALL                     8  2  7  303 0.64 0.529
 Phytophthora aleatoria      0  1  0  0   0.00 1.000
 Phytophthora alpina         0  1  0  0   0.00 1.000
 Phytophthora austrocedri    1  0  0  0   1.00 0.000
@@ -245,7 +245,7 @@ Phytophthora pseudosyringae 1  0  0  0   1.00 0.000
 Phytophthora ramorum        1  0  0  0   1.00 0.000
 Phytophthora syringae       0  0  1  0   0.00 1.000
 Phytophthora x cambivora    0  0  1  0   0.00 1.000
-OTHER 298 SPECIES IN DB     0  0  0  298 0.00 0.000
+OTHER 303 SPECIES IN DB     0  0  0  303 0.00 0.000
 =========================== == == == === ==== ===========
 
 The ``OVERALL`` line tells us that there were 8 true positives, 2 false
@@ -275,7 +275,7 @@ Doing that for one of the 10 species mixtures:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA10MIX_undiluted.known.tsv -o DNA10MIX.assess.tsv
-    Assessed onebp vs known in 2 files (315 species; 1 samples)
+    Assessed onebp vs known in 2 files (320 species; 1 samples)
     $ cut -f 1-4,9,11 DNA10MIX.assess.tsv
     <SEE TABLE BELOW>
 
@@ -298,7 +298,7 @@ Phytophthora obscura       1  0  0  1.00 0.000
 Phytophthora plurivora     1  0  0  1.00 0.000
 Phytophthora rubi          1  0  0  1.00 0.000
 Phytophthora siskiyouensis 1  0  0  1.00 0.000
-OTHER 303 SPECIES IN DB    0  0  0  0.00 0.000
+OTHER 308 SPECIES IN DB    0  0  0  0.00 0.000
 ========================== == == == ==== ===========
 
 It is clear from the metrics that the classifier is performing better on the
@@ -314,7 +314,7 @@ giving the combined intermediate filenames, and *all* the expected files:
 
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/ -o thabpi-pict.ITS1.assess.tsv
-    Assessed onebp vs known in 5 files (315 species; 4 samples)
+    Assessed onebp vs known in 5 files (320 species; 4 samples)
     $ cut -f 1-4,9,11 thabpi-pict.ITS1.assess.tsv
     <SEE TABLE BELOW>
 
@@ -350,7 +350,7 @@ Phytophthora rubi           3  0  0  1.00 0.000
 Phytophthora siskiyouensis  3  0  0  1.00 0.000
 Phytophthora syringae       0  0  1  0.00 1.000
 Phytophthora x cambivora    0  0  1  0.00 1.000
-OTHER 290 SPECIES IN DB     0  0  0  0.00 0.000
+OTHER 295 SPECIES IN DB     0  0  0  0.00 0.000
 =========================== == == == ==== ===========
 
 This time the ``OVERALL`` line says we had 32 TP, 8 FP, 13 FN. The total of
@@ -415,7 +415,7 @@ to make direct comparison more straightforward:
     $ thapbi_pict assess -i summary/thapbi-pict.ITS1.onebp.tsv \
       expected/DNA15MIX.known.tsv expected/DNA10MIX_undiluted.known.tsv \
       | head -n 2 | cut -f 1-4,9,11
-    Assessed onebp vs known in 3 files (315 species; 2 samples)
+    Assessed onebp vs known in 3 files (320 species; 2 samples)
     #Species  TP  FP  FN  F1    Ad-hoc-loss
     OVERALL   16  4   9   0.71  0.448
 
