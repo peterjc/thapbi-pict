@@ -7,6 +7,7 @@ https://github.com/peterjc/thapbi-pict/releases for more detailed release notes.
 ======= ========== ============================================================================
 Version Date       Notes
 ======= ========== ============================================================================
+v1.0.24 *Pending*  Default DB updated.
 v1.0.23 2026-06-09 Conflicts command ``-k`` / ``--markers`` argument. Sample sorting fix.
 v1.0.22 2026-03-05 Bug fix for unsequenced samples in metadata appearing unwanted in reports.
 v1.0.21 2026-01-05 Updated NCBI taxonomy in default DB, and version of VSEARCH used in tests.
