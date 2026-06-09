@@ -994,7 +994,7 @@ def load_metadata(
             for ending in fastq_endings:
                 stems = [_.removesuffix(ending) for _ in stems]
         stems = [_.strip() for _ in stems if _]  # drop any blanks
-        stems = sorted(set(stems))  # remove any duplicates, e.g via _R1 and _R2
+        stems = list(dict.fromkeys(stems))  # remove any duplicates, e.g via _R1 and _R2
         if ignore_prefixes:
             stems = [_ for _ in stems if not _.startswith(ignore_prefixes)]
         for stem in stems:
