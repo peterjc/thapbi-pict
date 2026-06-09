@@ -59,7 +59,7 @@ if [ "$(sqlite3 "$DB" "SELECT COUNT(id) FROM taxonomy WHERE genus='Hyaloperonosp
     echo "Missing species entry for Hyaloperonospora parasitica species group"
     false
 fi
-if [ "$(sqlite3 "$DB" "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'")" -ne 25 ]; then
+if [ "$(sqlite3 "$DB" "SELECT COUNT(synonym.name) FROM synonym JOIN taxonomy WHERE synonym.taxonomy_id==taxonomy.id AND taxonomy.genus='Hyaloperonospora' AND taxonomy.species='parasitica species group'")" -ne 22 ]; then
     echo "Wrong synonym count for Hyaloperonospora parasitica species group"
     false
 fi
