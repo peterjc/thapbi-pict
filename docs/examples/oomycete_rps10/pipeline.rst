@@ -61,6 +61,7 @@ We have lots of false negatives with ITS1, often for both samples:
 OVERALL                         10 6  38
 Aphanomyces euteiches           0  0  2
 Elongisporangium undulatum      0  0  2
+Globisporangium apiculatum      0  0  2
 Globisporangium irregulare      0  0  2
 Peronospora farinosa            0  0  2
 Peronospora schachtii           0  0  2
@@ -85,11 +86,10 @@ Phytopythium citrinum           0  0  2
 Plasmopara halstedii            0  0  2
 Plasmopara obducens             0  0  2
 Pseudoperonospora cubensis      0  0  2
-Pythium apiculatum              0  0  2
 Pythium dissotocum              0  0  2
 Pythium oligandrum              0  0  2
 Saprolegnia diclina             0  0  2
-OTHER 298 SPECIES IN DB         0  0  0
+OTHER 303 SPECIES IN DB         0  0  0
 =============================== == == ==
 
 This isn't actually a shock if you spotted this warning while running the pipeline:
@@ -117,6 +117,7 @@ We have less false negatives with rps10:
 OVERALL                    17 2  31
 Aphanomyces euteiches      1  0  1
 Elongisporangium undulatum 0  0  2
+Globisporangium apiculatum 1  0  1
 Globisporangium irregulare 1  0  1
 Peronospora farinosa       0  0  2
 Peronospora schachtii      0  0  2
@@ -137,7 +138,6 @@ Phytopythium citrinum      1  0  1
 Plasmopara halstedii       0  0  2
 Plasmopara obducens        1  0  1
 Pseudoperonospora cubensis 0  0  2
-Pythium apiculatum         1  0  1
 Pythium dissotocum         0  0  2
 Pythium oligandrum         1  0  1
 Saprolegnia diclina        1  0  1
