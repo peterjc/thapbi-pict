@@ -24,7 +24,7 @@ esearch -db nuccore -sort accession \
 COUNT=$(grep -oh "<Count>[0-9]*</Count>" $TMP/search_ITS1.xml | grep -oh "[0-9]*")
 
 echo "Fetching $COUNT NCBI matches (may take over an hour)..."
-efetch -format fasta < $TMP/search_ITS1xml > $TMP/search_ITS1.fasta
+efetch -format fasta < $TMP/search_ITS1.xml > $TMP/search_ITS1.fasta
 
 FOUND=$(grep -c "^>" $TMP/search_ITS1.fasta)
 echo "Downloaded $FOUND ITS1 sequences."
