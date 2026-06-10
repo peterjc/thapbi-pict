@@ -46,7 +46,7 @@ MIN_BLAST_COVERAGE = 0.85  # percentage of query length
 
 db_seqs = None  # global dict (seq to genus) for onebp and 1s?g distance classifiers
 max_dist_genus = None  # global variable for 1s?g distance classifiers
-genus_taxid = {}  # global variable to cache taxids for genus names
+genus_taxid: dict[str, int] = {}  # global variable to cache taxids for genus names
 
 
 def unique_or_separated(values: Sequence[str | int], sep: str = ";") -> str:
