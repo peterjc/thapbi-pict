@@ -7,6 +7,9 @@
 .. image:: https://results.pre-commit.ci/badge/github/peterjc/thapbi-pict/master.svg
    :target: https://results.pre-commit.ci/latest/github/peterjc/thapbi-pict/master
    :alt: pre-commit.ci status
+.. image:: https://github.com/peterjc/thapbi-pict/actions/workflows/github-actions.yml/badge.svg
+   :alt: GitHub Actions status
+   :target: https://github.com/peterjc/thapbi-pict/actions/workflows/github-actions.yml
 .. image:: https://img.shields.io/circleci/project/github/peterjc/thapbi-pict/master.svg?label=CI&logo=CircleCI
    :alt: CircleCI status
    :target: https://circleci.com/gh/peterjc/thapbi-pict/tree/master
