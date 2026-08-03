@@ -64,7 +64,7 @@ def parse_ncbi_fasta_entry(
 
     Dividing the species name into genus, species, strain etc is not handled
     here.
-    """  # noqa: E501
+    """
     parts = text.rstrip().split()
     taxid = 0
     name = parts[1:]  # ignore accession
@@ -113,11 +113,11 @@ assert parse_ncbi_fasta_entry("A57915.1 Sequence 20 from Patent EP0751227") == (
 assert parse_ncbi_fasta_entry("Y08654.1 P.cambivora ribosomal internal ...") == (0, "")
 
 assert parse_ncbi_fasta_entry(
-    "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+    "MG707849.1 Phytophthora humicola x Phytophthora inundata isolate SCVWD597 internal transcribed spacer 1, ..."
 ) == (0, "Phytophthora humicola x inundata")
 
 assert parse_ncbi_fasta_entry(
-    "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."  # noqa: E501
+    "MG707849.1 Phytophthora humicola x inundata isolate SCVWD597 internal transcribed spacer 1, ..."
 ) == (0, "Phytophthora humicola x inundata")
 # TODO: Should we stop converting "Phytophthora humicola x Phytophthora inundata"
 # into "Phytophthora humicola x inundata"?
@@ -291,11 +291,11 @@ def parse_sintax_fasta_entry(
 
 
 assert parse_sintax_fasta_entry(
-    "AB008314;tax=d:Bacteria,p:Firmicutes,c:Bacilli,o:Lactobacillales,f:Streptococcaceae,g:Streptococcus;"  # noqa: E501
+    "AB008314;tax=d:Bacteria,p:Firmicutes,c:Bacilli,o:Lactobacillales,f:Streptococcaceae,g:Streptococcus;"
 ) == (0, "Streptococcus")
 
 assert parse_sintax_fasta_entry(
-    ">X80725_S000004313;tax=d:Bacteria,p:Proteobacteria,c:Gammaproteobacteria,o:Enterobacteriales,f:Enterobacteriaceae,g:Escherichia/Shigella,s:Escherichia_coli"  # noqa: E501
+    ">X80725_S000004313;tax=d:Bacteria,p:Proteobacteria,c:Gammaproteobacteria,o:Enterobacteriales,f:Enterobacteriaceae,g:Escherichia/Shigella,s:Escherichia_coli"
 ) == (0, "Escherichia coli")
 
 
@@ -333,11 +333,11 @@ def parse_obitools_fasta_entry(
 
 
 assert parse_obitools_fasta_entry(
-    "AP009202 species_name=Abalistes stellaris; taxid=392897; genus_name=Abalistes; rank=species; Abalistes stellaris mitochondrial DNA, complete genome"  # noqa: E501
+    "AP009202 species_name=Abalistes stellaris; taxid=392897; genus_name=Abalistes; rank=species; Abalistes stellaris mitochondrial DNA, complete genome"
 ) == (392897, "Abalistes stellaris")
 
 assert parse_obitools_fasta_entry(
-    "MF101792 family_name=Acipenseridae; species_name=Scaphirhynchus suttkusi; family=7900; reverse_match=CTTCCGGTACACTTACCATG; taxid=36179; rank=species; forward_error=0; forward_tm=60.26; genus_name=Scaphirhynchus; seq_length_ori=16495; forward_match=ACACCGCCCGTCACTCT; reverse_tm=54.79; genus=7909; reverse_error=0; species=36179; strand=D; Scaphirhynchus suttkusi isolate NFWFLH10433 mitochondrion, complete genome"  # noqa: E501
+    "MF101792 family_name=Acipenseridae; species_name=Scaphirhynchus suttkusi; family=7900; reverse_match=CTTCCGGTACACTTACCATG; taxid=36179; rank=species; forward_error=0; forward_tm=60.26; genus_name=Scaphirhynchus; seq_length_ori=16495; forward_match=ACACCGCCCGTCACTCT; reverse_tm=54.79; genus=7909; reverse_error=0; species=36179; strand=D; Scaphirhynchus suttkusi isolate NFWFLH10433 mitochondrion, complete genome"
 ) == (36179, "Scaphirhynchus suttkusi")
 
 fasta_parsing_function = {

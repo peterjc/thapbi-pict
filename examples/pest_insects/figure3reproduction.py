@@ -125,10 +125,10 @@ ratio_12S = make_into_ratios(load_species_counts("summary/12S.samples.onebp.tsv"
 with open("figure3reproduction.tsv", "w") as handle:
     handle.write("Caption\tGenus\tExpected\tCOI\t18S\t12S\n")
     for sample in expected:
-        for i, genus in enumerate([_[0].split()[0] for _ in species_key]):
-            handle.write(
-                f"{sample.replace('-', ' ')}\t{genus}"
-                f"\t{ratio_expt[sample][i]}\t{ratio_COI[sample][i]}"
-                f"\t{ratio_18S[sample][i]}\t{ratio_12S[sample][i]}\n"
-            )
+        handle.writelines(
+            f"{sample.replace('-', ' ')}\t{genus}"
+            f"\t{ratio_expt[sample][i]}\t{ratio_COI[sample][i]}"
+            f"\t{ratio_18S[sample][i]}\t{ratio_12S[sample][i]}\n"
+            for i, genus in enumerate([_[0].split()[0] for _ in species_key])
+        )
 print("Wrote figure3reproduction.tsv")

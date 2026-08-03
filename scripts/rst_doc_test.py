@@ -111,7 +111,7 @@ def scan_rst(filename):
                 assert "\n" not in block, block
                 yield block, meta
             elif ".. code:: console" in line:
-                sys.exit(f"ERROR: {filename} has this line:\n{repr(line)}")
+                sys.exit(f"ERROR: {filename} has this line:\n{line!r}")
 
 
 def parse_block(block):
@@ -282,16 +282,16 @@ for filename in sys.argv[1:]:
                 if err_out:
                     # Warning?
                     print(err_out)
-            elif old_out == new_out + err_out or old_out == err_out + new_out:
-                pass
-            elif old_out.startswith("...\n") and (
-                new_out.endswith(old_out[3:]) or err_out.endswith(old_out[3:])
-            ):
-                pass
             elif (
-                old_out.startswith("...\n")
-                and old_out.endswith("...\n")
-                and (old_out[3:-4] in new_out or old_out[3:-4] in err_out)
+                old_out == new_out + err_out
+                or old_out == err_out + new_out
+                or old_out.startswith("...\n")
+                and (new_out.endswith(old_out[3:]) or err_out.endswith(old_out[3:]))
+                or (
+                    old_out.startswith("...\n")
+                    and old_out.endswith("...\n")
+                    and (old_out[3:-4] in new_out or old_out[3:-4] in err_out)
+                )
             ):
                 pass
             elif cmd.startswith("ls ") and set(old_out.split("\n")).issubset(

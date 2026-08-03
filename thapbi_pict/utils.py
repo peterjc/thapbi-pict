@@ -358,13 +358,12 @@ def abundance_filter_fasta(
     input_fasta: str, output_fasta: str, min_abundance: int
 ) -> None:
     """Apply a minimum abundance filter to a FASTA file."""
-    with open(input_fasta) as in_handle:
-        with open(output_fasta, "w") as out_handle:
-            for title, seq in SimpleFastaParser(in_handle):
-                a = abundance_from_read_name(title.split(None, 1)[0])
-                if a < min_abundance:
-                    continue
-                out_handle.write(f">{title}\n{seq}\n")
+    with open(input_fasta) as in_handle, open(output_fasta, "w") as out_handle:
+        for title, seq in SimpleFastaParser(in_handle):
+            a = abundance_from_read_name(title.split(None, 1)[0])
+            if a < min_abundance:
+                continue
+            out_handle.write(f">{title}\n{seq}\n")
 
 
 def file_to_sample_name(filename: str) -> str:
@@ -936,8 +935,7 @@ def load_metadata(
 
     if metadata_name_row:
         line = lines[metadata_name_row - 1]
-        if line.startswith("#"):
-            line = line[1:]
+        line = line.removeprefix("#")
         parts = dequote_line(line.rstrip("\n").split("\t"))
         if len(parts) < max(value_cols) + 1:
             sys.exit("ERROR: Not enough columns in metadata name row")

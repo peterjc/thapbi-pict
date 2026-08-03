@@ -179,7 +179,7 @@ def generate_references(
                 drop_via_exclude += 1
                 continue
             # sys.stderr.write(f"{title}\n")
-            target = seq[len(left) :] if seq.startswith(left) else seq
+            target = seq.removeprefix(left)
             # Will try looking for matches which can be extended
             for ref in references:
                 if target not in ref:

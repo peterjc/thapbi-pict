@@ -261,12 +261,14 @@ def main(
                 # This could raise the max (non-)spike-in abundance
                 if is_spike_in(seq, spikes):
                     for sample in samples:
-                        if max_spike_abundance[sample] < counts[seq, sample]:
-                            max_spike_abundance[sample] = counts[seq, sample]
+                        max_spike_abundance[sample] = max(
+                            max_spike_abundance[sample], counts[seq, sample]
+                        )
                 else:
                     for sample in samples:
-                        if max_non_spike_abundance[sample] < counts[seq, sample]:
-                            max_non_spike_abundance[sample] = counts[seq, sample]
+                        max_non_spike_abundance[sample] = max(
+                            max_non_spike_abundance[sample], counts[seq, sample]
+                        )
         time_spike_tagging = time() - start
         if debug:
             sys.stderr.write(
