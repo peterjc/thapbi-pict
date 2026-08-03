@@ -88,77 +88,72 @@ options = parser.parse_args()
 
 def filter_unclassifed(input_filename, output_fasta, abundance, samples):
     """Extract FASTA file of unknown sequences."""
-    with open(input_filename) as handle:
-        with open(output_fasta, "w") as output:
+    with open(input_filename) as handle, open(output_fasta, "w") as output:
+        line = handle.readline().rstrip("\n")
+        while line.startswith("#") and not line.startswith(
+            ("#Marker/MD5_abundance\t", "#Marker\tMD5\t")
+        ):
             line = handle.readline().rstrip("\n")
-            while line.startswith("#") and not line.startswith(
-                ("#Marker/MD5_abundance\t", "#Marker\tMD5\t")
-            ):
-                line = handle.readline().rstrip("\n")
-            if line.startswith("#Marker/MD5_abundance\t"):
-                # Tally file
-                header = [_.rstrip() for _ in line.split("\t")]
-                try:
-                    seq_col = header.index("Sequence")
-                except ValueError:
-                    sys.exit("ERROR: Invalid TSV input (missing 'Sequence' column).")
-                try:
-                    predictions_col = header.index("genus-species")
-                except ValueError:
-                    sys.exit(
-                        "ERROR: Invalid TSV input (missing 'genus-species' column)."
-                    )
-                assert seq_col < predictions_col
-                # Assumes all columns between "Marker/MD5_abundance"
-                # and "Sequence" are sample counts
-                for line in handle:
-                    parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
-                    if len(parts) != len(header):
-                        sys.exit("ERROR: Inconsistent field counts")
-                    marker_md5, total = parts[0].rsplit("_")
-                    total = int(total)
-                    marker, md5 = marker_md5.split("/")
-                    counts = [int(_) for _ in parts[1:seq_col]]
-                    assert sum(counts) == total, f"{parts[0]} vs sum {sum(counts)}"
-                    counts = [_ for _ in counts if _]
-                    if len(counts) < samples:
-                        continue
-                    if total < abundance:
-                        continue
-                    if parts[predictions_col] not in ("", "-"):
-                        continue
-                    output.write(
-                        f">{parts[0]} in {len(counts)} samples\n{parts[seq_col]}\n"
-                    )
-            elif line.startswith("#Marker\tMD5\t"):
-                # Read file
-                header = [_.rstrip() for _ in line.split("\t")]
-                md5_col = 1
-                predictions_col = 2
-                seq_col = header.index("Marker-sequence")
-                samples_col = header.index("Sample-count")
-                abundance_col = header.index("Total-abundance")
-                for line in handle:
-                    parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
-                    if len(parts) != len(header):
-                        sys.exit("ERROR: Inconsistent field counts")
-                    if int(parts[samples_col]) < samples:
-                        continue
-                    if int(parts[abundance_col]) < abundance:
-                        continue
-                    if parts[seq_col] in ("", "-"):
-                        continue
-                    if parts[predictions_col] not in ("", "-"):
-                        continue
-                    output.write(
-                        f">{parts[md5_col]}_{parts[abundance_col]} "
-                        f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"
-                    )
-            else:
-                hint = "\t".join(line.rsplit("\t")[0:2])
-                sys.exit(
-                    f"ERROR: Invalid TSV input. Didn't expect line starting: {hint}"
+        if line.startswith("#Marker/MD5_abundance\t"):
+            # Tally file
+            header = [_.rstrip() for _ in line.split("\t")]
+            try:
+                seq_col = header.index("Sequence")
+            except ValueError:
+                sys.exit("ERROR: Invalid TSV input (missing 'Sequence' column).")
+            try:
+                predictions_col = header.index("genus-species")
+            except ValueError:
+                sys.exit("ERROR: Invalid TSV input (missing 'genus-species' column).")
+            assert seq_col < predictions_col
+            # Assumes all columns between "Marker/MD5_abundance"
+            # and "Sequence" are sample counts
+            for line in handle:
+                parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
+                if len(parts) != len(header):
+                    sys.exit("ERROR: Inconsistent field counts")
+                marker_md5, total = parts[0].rsplit("_")
+                total = int(total)
+                marker, md5 = marker_md5.split("/")
+                counts = [int(_) for _ in parts[1:seq_col]]
+                assert sum(counts) == total, f"{parts[0]} vs sum {sum(counts)}"
+                counts = [_ for _ in counts if _]
+                if len(counts) < samples:
+                    continue
+                if total < abundance:
+                    continue
+                if parts[predictions_col] not in ("", "-"):
+                    continue
+                output.write(
+                    f">{parts[0]} in {len(counts)} samples\n{parts[seq_col]}\n"
                 )
+        elif line.startswith("#Marker\tMD5\t"):
+            # Read file
+            header = [_.rstrip() for _ in line.split("\t")]
+            md5_col = 1
+            predictions_col = 2
+            seq_col = header.index("Marker-sequence")
+            samples_col = header.index("Sample-count")
+            abundance_col = header.index("Total-abundance")
+            for line in handle:
+                parts = [_.rstrip() for _ in line.rstrip("\n").split("\t")]
+                if len(parts) != len(header):
+                    sys.exit("ERROR: Inconsistent field counts")
+                if int(parts[samples_col]) < samples:
+                    continue
+                if int(parts[abundance_col]) < abundance:
+                    continue
+                if parts[seq_col] in ("", "-"):
+                    continue
+                if parts[predictions_col] not in ("", "-"):
+                    continue
+                output.write(
+                    f">{parts[md5_col]}_{parts[abundance_col]} "
+                    f"in {parts[samples_col]} samples\n{parts[seq_col]}\n"
+                )
+        else:
+            hint = "\t".join(line.rsplit("\t")[0:2])
+            sys.exit(f"ERROR: Invalid TSV input. Didn't expect line starting: {hint}")
 
 
 filter_unclassifed(options.input, options.output, options.abundance, options.samples)

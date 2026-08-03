@@ -167,7 +167,7 @@ def parse_cutadapt_stdout(stdout: str) -> tuple[int, int]:
     ...     "..."
     ... )
     (5869, 5861)
-    """  # noqa: E501
+    """
     before = None
     after = None
     for line in stdout.strip().splitlines():
@@ -266,7 +266,7 @@ def parse_flash_stdout(stdout: str) -> tuple[int, int]:
     ...     "..."
     ... )
     (6105, 5869)
-    """  # noqa: E501
+    """
     before = None
     after = None
     for line in stdout.strip().splitlines():
@@ -360,13 +360,11 @@ def save_nr_fasta(
         assert "abundance" not in header_dict
         assert "threshold" not in header_dict
         assert "singletons" not in header_dict
-        for key, value in header_dict.items():
-            out_handle.write(f"#{key}:{value}\n")
+        out_handle.writelines(f"#{key}:{value}\n" for key, value in header_dict.items())
         out_handle.write(f"#abundance:{accepted_total}\n")
         out_handle.write(f"#threshold:{min_abundance}\n")
         out_handle.write(f"#singletons:{singletons}\n")
-    for count, seq in values:
-        out_handle.write(f">{md5seq(seq)}_{count}\n{seq}\n")
+    out_handle.writelines(f">{md5seq(seq)}_{count}\n{seq}\n" for count, seq in values)
     if output_fasta != "-":
         out_handle.close()
     assert accepted_total >= 0

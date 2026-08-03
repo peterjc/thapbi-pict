@@ -215,7 +215,7 @@ def load_samples(input_sample_report_tsv, caption_column=0, sample_threshold=0):
             )
         else:
             sys.stderr.write(f"Loaded read counts for {len(data)} samples\n")
-    return captions, [" - ".join(_) for _ in data.keys()], list(data.values())
+    return captions, [" - ".join(_) for _ in data], list(data.values())
 
 
 def plot_read_reduction(

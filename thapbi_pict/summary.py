@@ -552,11 +552,11 @@ def read_summary(
         # Insert extra header rows at start for sample meta-data
         # Make a single metadata call for each sample
         meta = [stem_to_meta[sample] for sample in stem_to_meta]
-        for i, name in enumerate(meta_names):
-            handle.write(
-                "#%s%s\t%s\n"
-                % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
-            )
+        handle.writelines(
+            "#%s%s\t%s\n"
+            % ("\t" * (LEADING_COLS - 1), name, "\t".join(_[i] for _ in meta))
+            for i, name in enumerate(meta_names)
+        )
         sample_formats = color_bands(
             [stem_to_meta[_][group_col] for _ in stem_to_meta],
             sample_color_bands,

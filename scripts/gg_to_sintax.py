@@ -156,15 +156,15 @@ def merge(fasta_filename, tsv_filename, output_fasta):
         if fasta_filename.endswith(".gz")
         else qza_open(fasta_filename, "rt", ".fasta")
         if fasta_filename.endswith((".qza", ".qzv"))
-        else open(fasta_filename) as handle
+        else open(fasta_filename) as handle,
+        open(output_fasta, "w") as output,
     ):
-        with open(output_fasta, "w") as output:
-            for title, seq in SimpleFastaParser(handle):
-                idn = title.split(None, 1)[0]
-                try:
-                    output.write(f">{idn};tax={taxonomy[idn]}\n{seq}\n")
-                except KeyError:
-                    sys.exit(f"ERROR: Missing taxonomy for: {title}")
+        for title, seq in SimpleFastaParser(handle):
+            idn = title.split(None, 1)[0]
+            try:
+                output.write(f">{idn};tax={taxonomy[idn]}\n{seq}\n")
+            except KeyError:
+                sys.exit(f"ERROR: Missing taxonomy for: {title}")
 
 
 merge(options.input, options.taxonomy, options.output)

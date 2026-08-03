@@ -561,9 +561,7 @@ def main(
         if seq not in corrections:
             # Ignored as per UNOISE algorithm
             if unoise_gamma:
-                assert totals[seq] < unoise_gamma, (
-                    f"{md5seq(seq)} total {totals[seq]} vs {unoise_gamma}"
-                )
+                assert a < unoise_gamma, f"{md5seq(seq)} total {a} vs {unoise_gamma}"
             del seq_names[seq]
             continue
         seq = corrections[seq]

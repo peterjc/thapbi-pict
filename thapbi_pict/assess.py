@@ -203,8 +203,9 @@ def save_mapping(
     """Output tally table of expected species to predicted sp."""
     with open(filename, "w") as handle:
         handle.write("#sample-count\tExpected\tPredicted\n")
-        for expt, pred in sorted(tally):
-            handle.write(f"{tally[expt, pred]}\t{expt}\t{pred}\n")
+        handle.writelines(
+            f"{tally[expt, pred]}\t{expt}\t{pred}\n" for expt, pred in sorted(tally)
+        )
     if debug:
         sys.stderr.write(
             f"DEBUG: Wrote {len(tally)} entry mapping table"
