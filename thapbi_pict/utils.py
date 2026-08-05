@@ -1011,9 +1011,7 @@ def load_metadata(
             f"{len(stem_to_meta)} sequenced samples\n"
         )
     if bad:
-        sys.exit(
-            f"ERROR: Duplicated metadata for {len(bad)} samples, {sorted(bad)[0]} (etc)"
-        )
+        sys.exit(f"ERROR: Duplicated metadata for {len(bad)} samples, {min(bad)} (etc)")
 
     return stem_to_meta, meta_to_stem, names, group_col
 
