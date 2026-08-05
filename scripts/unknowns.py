@@ -116,7 +116,9 @@ def filter_unclassifed(input_filename, output_fasta, abundance, samples):
                 total = int(total)
                 marker, md5 = marker_md5.split("/")
                 counts = [int(_) for _ in parts[1:seq_col]]
-                assert sum(counts) == total, f"{parts[0]} vs sum {sum(counts)}"
+                assert sum(counts) == total, (
+                    f"{parts[0]} vs sum {sum(counts)} for {marker} {md5}"
+                )
                 counts = [_ for _ in counts if _]
                 if len(counts) < samples:
                     continue

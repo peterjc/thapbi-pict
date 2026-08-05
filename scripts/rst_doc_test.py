@@ -187,7 +187,7 @@ def fasta_wrap(text):
             while len(line) > 80 and " " in line:
                 cut = line
                 while len(cut) > 80 and " " in cut:
-                    cut, rest = cut.rsplit(" ", 1)
+                    cut, _rest = cut.rsplit(" ", 1)
                 new.append(cut)
                 line = line[len(cut) + 1 :].lstrip()
                 del cut

@@ -244,8 +244,10 @@ def run_cutadapt(
             # -g LEFT...RIGHT = non-anchored
             "-g",
             # Here o=... short for min_overlap=...
-            f"{marker}={left_primer};o={len(left_primer)}..."
-            f"{reverse_complement(right_primer)};o={len(right_primer)}",
+            (
+                f"{marker}={left_primer};o={len(left_primer)}..."
+                f"{reverse_complement(right_primer)};o={len(right_primer)}"
+            ),
         ]
     cmd += [
         "-o",
@@ -676,7 +678,7 @@ def marker_cut(
             if count_flash:
                 # Run cutadapt to cut primers (giving one output per marker)
                 start = time()
-                unique_merged_, unique_cutadapt_ = run_cutadapt(
+                _unique_merged, _unique_cutadapt = run_cutadapt(
                     merged_fasta_gz,
                     # Here {name} is the cutadapt filename template:
                     os.path.join(tmp, stem + ".{name}.fasta"),
