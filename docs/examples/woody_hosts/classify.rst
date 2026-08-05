@@ -45,6 +45,66 @@ the command line will result in a ``summary/thapbi-pict.ITS1.onebp.biom`` file
 as well, equivalent to the data in ``summary/thapbi-pict.ITS1.tally.tsv`` but
 potentially more useful for export to other analysis tools.
 
+Abundance thresholds
+--------------------
+
+As you might gather from reading the sample-tally command line help, there
+are a few settings for read abundance thresholds.
+
+For the minimum read absolute abundance threshold, we have ``-a`` or
+``--abundance`` (default 100 suitable for MiSeq, try 1000 for HiSeq), and
+``-n`` or ``--negctrls`` for specifying negative controls (default none).
+
+Related to this, there is a relative of fractional abundance threshold ```-f``
+or ``--abundance-fraction``, and ``-y`` or ``--synctrls`` to specify and
+synthetic control samples. See :ref:`negative_controls` which discusses this.
+
+If any negative controls are specified, those paired FASTQ files are processed
+*first*. If any of these contained ITS1 sequences above the specified minimum
+absolute abundance threshold (default 100), that higher number is used as
+the minimum abundance threshold for the non-control samples. For example, say
+one control had several ITS1 sequences with a maximum abundance of 124, and
+another control had a maximum ITS1 abundance of 217, while the remaining
+controls had no ITS1 sequence above the default level. In that case, the tool
+would take maximum 217 as the abundance threshold for the non-control samples.
+
+.. WARNING::
+
+    Setting the abundance threshold low (say under 50 with MiSeq samples)
+    risks background contamination coming through into the results. Do not do
+    this without strong justification (e.g. look at suitable controls over
+    multiple plates from your own laboratory procedure).
+
+.. WARNING::
+
+    Setting the abundance threshold *very* low (under 10) has the additional
+    problem that the number of unique sequences accepted will increase many
+    times over. This will *dramatically* slow down the rest of the analysis.
+    This is only advised for investigating single samples.
+
+For the woody host data, each plate had a negative control sample which should
+contain no ITS1 sequences. We can specify the negative controls with ``-n`` or
+``--negctrls`` by entering the four FASTQ filenames in full, but since they
+have a common prefix we can use a simple wildcard.
+
+For this sample data, happily neither of the negative controls have any ITS1
+present above the default threshold, so this would have no effect.
+
+For the THAPBI Phyto-Threats project we now run each 96-well PCR plate with
+multiple negative controls. Rather than a simple blank, these include a known
+mixture of synthetic sequences of the same length, same nucleotide
+composition, and also same di-nucleotide composition as real *Phytophthora*
+ITS1. This means we might have say 90 biological samples which should contain
+ITS1 but not the synthetics controls, and 6 negative controls which should
+contain synthetic controls but not ITS1.
+
+We therefore run ``thapbi_pict sample-tally`` separately for each plate,
+where any ITS1 contamination in the synthetic controls is used to set a plate
+specific minimum abundance. This means we cannot run ``thapbi_pict pipeline``
+on multiple plates at once (although we could run it on each plate, we
+generally want to produce reports over multiple plates).
+
+
 Intermediate TSV files
 ----------------------
 
