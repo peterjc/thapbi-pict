@@ -461,10 +461,9 @@ def main(
         f" ({n - len(wanted)} are isolated sequences).\n"
     )
     for md5 in md5_list:
-        if md5 not in wanted:
-            # Will include high abundance singletons too
-            if total_min_abundance <= md5_abundance.get(md5, 0):
-                wanted.add(md5)
+        # Will include high abundance singletons too
+        if md5 not in wanted and total_min_abundance <= md5_abundance.get(md5, 0):
+            wanted.add(md5)
     if input_file:
         sys.stderr.write(
             "Including high abundance isolated sequences,"
