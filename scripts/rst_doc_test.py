@@ -133,8 +133,8 @@ def parse_block(block):
 
 
 def run_cmd(cmd):
-    """Run a shell command, return stdout and sterr as strings."""
-    child = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    """Run a shell command, return stdout and stderr as strings."""
+    child = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
     return child.stdout, child.stderr
 
 
