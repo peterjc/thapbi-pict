@@ -2,6 +2,8 @@
 doctests = True
 max-line-length = 88
 extend-ignore =
+    # Have a few long lines in our tests...
+    E501,
     # See https://github.com/PyCQA/pycodestyle/issues/373
     E203,
     # We like f-strings
