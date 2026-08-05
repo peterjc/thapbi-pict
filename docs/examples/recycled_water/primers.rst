@@ -26,7 +26,7 @@ which will start by applying the prepare-reads step to the FASTQ files in
 
     $ mkdir -p intermediate/
     $ thapbi_pict prepare-reads -i raw_data/ -o intermediate_long/ \
-      --db Redekar_et_al_2019_sup_table_3.sqlite
+      -d Redekar_et_al_2019_sup_table_3.sqlite
     ...
     $ ls -1 intermediate_long/ITS1-long/SRR*.fasta | wc -l
     384
