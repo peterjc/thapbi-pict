@@ -114,7 +114,7 @@ def tally_files(
             sorted(parse_species_tsv(predicted_file, req_species_level=True)),
             strict=True,
         ):
-            if not expt[1] == pred[1]:
+            if expt[1] != pred[1]:
                 sys.exit(
                     f"ERROR: Sequence name mismatch in {expected_file} vs"
                     f" {predicted_file}, {expt[1]} vs {pred[1]}\n"
