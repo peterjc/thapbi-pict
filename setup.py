@@ -58,8 +58,8 @@ if sys.version_info[:2] < (3, 10):  # noqa: UP036
 __version__ = "Undefined"
 with open("thapbi_pict/__init__.py") as handle:
     for line in handle:
-        if line.startswith("__version__ = "):
-            exec(line.strip())
+        if line.startswith('__version__ = "'):
+            __version__ = line[15:-2].strip()
             break
 
 # Load our rsStructuredText file README.rst as the long description.
