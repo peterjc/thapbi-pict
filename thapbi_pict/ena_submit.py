@@ -217,14 +217,14 @@ def main(
             msg = "ERROR: Loaded %i samples, %i missing metadata, %s\n" % (
                 len(samples),
                 len(missing_meta),
-                sorted(missing_meta)[0],
+                min(missing_meta),
             )
         else:
             msg = "ERROR: Loaded %i samples, %i missing metadata, e.g. %s .. %s\n" % (
                 len(samples),
                 len(missing_meta),
-                sorted(missing_meta)[0],
-                sorted(missing_meta)[-1],
+                min(missing_meta),
+                max(missing_meta),
             )
         sys.exit(msg)
     if metadata_file:
