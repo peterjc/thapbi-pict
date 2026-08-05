@@ -149,7 +149,7 @@ the command line search tool ``grep`` as follows:
 
 .. code:: console
 
-    $ grep 2e4f0ed53888ed39a2aee6d6d8e02206 intermediate/*.fasta
+    $ grep 2e4f0ed53888ed39a2aee6d6d8e02206 intermediate/ITS1/*.fasta
     ...
 
 Or, since we deliberately record the sequences without line wrapping, you
