@@ -195,7 +195,7 @@ def main(
         metadata,
         _,
         meta_names,
-        group_col,
+        _,
     ) = load_metadata(
         metadata_file,
         metadata_encoding,

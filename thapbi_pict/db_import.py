@@ -181,7 +181,7 @@ def parse_curated_fasta_entry(
     species name to be used in preference (i.e. 'Phytophthora aff. infestans'
     with a dot in it).
     """
-    acc, sp = text.split(None, 1)
+    _acc, sp = text.split(None, 1)
     taxid = 0
     match = taxid_regex.search(sp)
     if match:
@@ -320,7 +320,7 @@ def parse_obitools_fasta_entry(
     """
     taxid = 0
     sp = ""
-    identifier, description = text.split(None, 1)
+    _identifier, description = text.split(None, 1)
     for part in description.split(";"):
         part = part.strip()  # We may be more lienent that OBITools here
         if part.startswith("taxid="):

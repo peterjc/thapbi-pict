@@ -238,7 +238,7 @@ def plot_read_reduction(
     line_styles = ("solid", "dotted", "dashed", "dashdot")
     marker_styles = (".", "o", "s")
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    _fig, ax = plt.subplots(figsize=(12, 6))
     # ax.stackplot(captions, data, labels=labels)
     if mode == "stacked":
         line_values = np.zeros(len(captions), dtype=np.uint64)
