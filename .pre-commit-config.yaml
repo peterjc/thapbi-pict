@@ -27,7 +27,7 @@ repos:
         language: pygrep
         files: \.(py|sh|rst|yml|yaml)$
 -   repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.1-1
+    rev: v3.14.1-1
     hooks:
     -   id: shfmt  # prebuilt upstream executable
         args: [
@@ -48,7 +48,7 @@ repos:
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.6
+    rev: v0.16.10
     hooks:
     # Run the Ruff linter (flake8 alternative):
     -   id: ruff
@@ -67,7 +67,7 @@ repos:
             '--config=format.docstring-code-format=true'
         ]
 -   repo: https://github.com/PyCQA/flake8
-    rev: 7.3.0
+    rev: 7.4.1
     hooks:
     -   id: flake8
         additional_dependencies: [
@@ -102,7 +102,7 @@ repos:
         files: \.(py|sh|rst|yml|yaml)$
         args: ['-L', 'sintax,nin,otu']
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.1
+    rev: v2.4.0
     hooks:
     -   id: mypy
         # equivalent to "files" in .mypy.ini
