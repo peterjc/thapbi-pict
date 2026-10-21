@@ -1,6 +1,8 @@
 Development Notes
 =================
 
+AI/LLM authored or assisted contributions are not welcome.
+
 Python style conventions
 ------------------------
 
